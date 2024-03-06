@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12106230"
+    labels:
+        datastore_id: "1868404"
+data:
+    classification: Serious Bug
+    created: "2012-08-16T20:21:48.181885Z"
+    description: "15-Aug-2012 01:05 PM Eric Wing:\r\nSummary:\r\n\r\nIKImageView leaks a huge amount of memory (possibly the entire image data) when quickly releasing an instance and then creating a new one. There are also smaller memory leaks in the implementation reported by the Instruments Leaks tool.\r\n\r\nBased on my analysis, I think there is a race condition problem in the IKImageView implementation which is contributing to the big memory leak.\r\n\r\n\r\nAttached is a simple reproducible test case. It loads a large image using IKImageView. It loads an image on start up. There is a button called reload. When you hit reload, the IKImageView will be released/dealloc'd and a new IKImageView instance will be created to take its place. If you hit the reload button many times fast and if you watch either Allocations in Instruments (Created & Still Living) or watch the memory utilization in Activity Monitor, the memory keeps going up.\r\n\r\nNote that Leaks doesn't seem to show the big memory increases as leaks so maybe IKImageView has some kind of retain cycle problem. However, there are small memory leaks showing up.\r\n\r\n\r\nSteps to Reproduce:\r\nBuild and launch the attached test app. Run it in Instruments with the Allocations and Leaks tools. Also watch Activity monitor.\r\nHit the Reload button very fast and many times and watch the memory utilization climb up and never come back down.\r\n\r\n\r\nExpected Results:\r\nMemory utilization should stay constant and not continuously grow.\r\n\r\nActual Results:\r\nMemory utilization keeps growing.\r\n\r\nRegression:\r\nVerified that this is a problem in both 10.7 and 10.8. I didn't test 10.5 and 10.6. (I never noticed the leak until now but it explains some mysterious bugs my users have reported for a long time.)\r\n\r\n\r\nNotes:\r\nYou can ignore the trivial subclass stuff of IKImageView in the example which is commented out/not used. I originally thought the bug might be related to subclassing IKImageView, but the problem is even more trivial/basic than that.\r\n\r\nI discovered if I put a performSelectorWithDelay for some amount of time between the release and the new allocation, the large memory leak doesn't seem to occur. (The small leaks seem to still be a problem though.) This makes me think there is some kind of race condition in the implementation.\r\n\r\nI also tested under garbage collection to see what happens. It still leaks as badly and the performSelectorWithDelay trick doesn't help.\r\n\r\nI ran it in the OpenGL profiler also to see if there was any texture memory still resident (via Core Animation). I didn't see anything but I'm not sure if that means if it is actually unloaded or you guys are hiding it from me. But if the former, it means you are probably NOT leaking on the GPU side, just the CPU side (if that helps you).\r\n\r\n\r\nThis is a serious problem for me because in my real app (which is heavily entrenched with IKImageView) hits this condition pretty easily. The performWithDelay workaround may be difficult for me to employ in the real world.\r\n\r\n\r\n\r\n15-Aug-2012 01:05 PM Eric Wing:\r\n'IKImageViewTestMemLeak.zip' was successfully uploaded\r\n\r\n15-Aug-2012 01:06 PM Eric Wing:\r\nAlso attaching my Instruments trace.\r\n\r\n15-Aug-2012 01:06 PM Eric Wing:\r\n'IKImageViewLeaks.trace.zip' was successfully uploaded\r\n\r\n15-Aug-2012 04:39 PM Eric Wing:\r\nI tried the performSelectorwithDelay workaround in my real app, but it doesn't work. I don't know why it doesn't work. But I'm in deep trouble now.\r\n\r\n\r\nAlso I forgot to mention that originally setting setImageWithURL had no effect. But in a recent run, not doing it seemed to prevent the workaround from working.\r\n\r\n\r\n\r\n----------\r\nI posted a simple reproducible test case at GitHub:\r\nhttps://github.com/ewmailing/MyAppleBugs\r\nhttps://github.com/downloads/ewmailing/MyAppleBugs/IKImageViewTestMemLeak.zip"
+    email: ewmailing@gmail.com
+    modified: "2012-08-16T20:21:48.182467Z"
+    number: "12106230"
+    number_intvalue: 12106230
+    originated: "2012-08-15"
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: "10.8"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: IKImageView leaks (huge) amounts of memory when releasing and creating new insta

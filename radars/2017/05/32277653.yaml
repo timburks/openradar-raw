@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32277653"
+    labels:
+        datastore_id: "5027919789293568"
+data:
+    classification: CloudKit
+    created: "2017-05-18T18:57:57.64076Z"
+    description: "Area:\r\nCloudKit\r\n\r\nSummary:\r\nCKContainer.default().fetchUserRecordID returns 'No iCloud account is configured' (code error 9) if the iCloudDrive is DISABLED but the user is logged into iCloud. This is a bug as the UserRecordID should return if the user is logged into iCloud anyway. \r\n\r\niCloudDrive should only be required when we need to make use of the disk space in iCloudDrive.\r\n\r\nSteps to Reproduce:\r\nTry to get the iCloud UserRecordID.\r\n\r\nRef:\r\nhttps://developer.apple.com/reference/cloudkit/ckcontainer/1399191-fetchuserrecordid\r\n\r\nExpected Results:\r\nCKContainer.default().fetchUserRecordID() { recordID, error in\r\n            if let userID = recordID {\r\n//This should get called if user is logged into iCloud, even if iCloudDrive is disabled.\r\n                print(\"fetched ID \\(userID.recordName)\")\r\n            } else if let error = error as NSError? {\r\nprint(\"Error Code:\", error.code, \"Error Description:\", error.localizedDescription)\r\n            }\r\n        }\r\n\r\nObserved Results:\r\nCKContainer.default().fetchUserRecordID() { recordID, error in\r\n            if let userID = recordID {\r\n                print(\"fetched ID \\(userID.recordName)\")\r\n            } else if let error = error as NSError? {\r\n//This get called if iCloudDrive is disabled. Even if the user is logged into iCloud.\r\nprint(\"Error Code:\", error.code, \"Error Description:\", error.localizedDescription)\r\n            }\r\n        }\r\n\r\nVersion:\r\niOS 10.3.2(14F89)\r\nIt also happens in iOS 9.3 but the error message is:  \"This request requires an authenticated account\""
+    email: PPacie@gmail.com
+    modified: "2017-05-18T18:57:57.64099Z"
+    number: "32277653"
+    number_intvalue: 32277653
+    originated: 05/18/2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK (CloudKit)
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Opened
+    title: CloudKit - fetchUserRecordID() not working when iCloudDrive is disabled.

@@ -1,0 +1,33 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21364664"
+    labels:
+        datastore_id: "6665609592963072"
+data:
+    classification: Other Bug
+    created: "2015-06-12T21:14:16.96557Z"
+    description: |-
+        The communication channel used by WatchConnectivity seems to deadlock in the event of repetitively calling the updateApplicationContext method. In my testing, calling this method more than once a second (or 2) will result in significant delays in messages being sent by the sendMessage API, as well as updates to the application context being delivered very slowly.
+
+        In an environment where you are using both the sendMessage API and updating the application context at least once per second, none of your messages are delivered in close to real time. The messages are eventually delivered, but often several seconds after they otherwise would be.
+
+        What I've found in testing is that if I put a block around updateApplicationContext that prevents it from being called more than once every 5 seconds that everything works more or less as you would expect. Messages sent to sendMessage are delivered very quickly, even at once per second intervals. Updates to the application context are delivered also fairly quickly, once you remove the repetitive updates to that method that seem to deadlock the overall communication channel.
+
+        I have a few thoughts on how I'd like to see this fixed. My preference is that updateApplicationContext should be able to handle repetitive updates, even as fast as once per second or faster. If there are engineering reasons that the information given to that method should not be transmitted more than once every few seconds, then updates to that method should be coalesced together by the framework and delivered in that manner. I shouldn't have to worry about preventing my code from calling that method more than that amount of time to avoid the issue. Basically, updateApplicationContext shouldn't allow developers to hang themselves.
+
+        Another thing I would like to see is some feedback from the framework if I as a developer am calling methods like that too often. If doing so is going to result in an error, then the API should return an error or a failure message telling me of the issue so that I can take some action to handle it. Otherwise, feedback via logging would also help me make better decisions while using the API to design my communication scheme.
+
+        I want to point out that I do understand that calling methods like this as frequently as every second is not a great idea from a communication system design standpoint. But, I do believe the framework should handle this gracefully and support developers in making better decisions about how they design their communication system. There could be legitimate use cases for passing messages in real time between devices, and if there aren't I'd like to see better feedback that results in developers making the right decisions about how to communicate between their iPhone and Apple Watch apps.
+    email: conrad.stoll@mutualmobile.com
+    modified: "2015-06-12T21:14:16.96578Z"
+    number: "21364664"
+    number_intvalue: 21364664
+    originated: 12-Jun-2015 02:14 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9 Beta 1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: WCSession updateApplicationContext Deadlocking on Frequent Updates

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21440887"
+    labels:
+        datastore_id: "6111604445806592"
+data:
+    classification: ""
+    created: "2015-06-18T15:24:04.80173Z"
+    description: "Sample:\r\nhttp://cloud.mgorbach.name/181W272I2k2a\r\n\r\nSummary:\r\nWe have found a reproducible CD deadlock that can occur when using a fetched results controller with a \"complex\" (i.e. either multi-level or \"synthesized\" (not in the database) sectionNameKeyPath). This occurs specifically with a stack that has a top-level background (private queue) writing context, where the main thread context is a child of this context. \r\nChanges to CD (object creations and updates) as well as fetch requests, are taking place sequentially on background \"import\" contexts (private queue contexts). These contexts are also children of the top-level private queue writing context. If, while these CD changes and fetch requests are taking place in the background, the main thread Fetched Results Controller is asked to perform it's initial fetch, a deadlock results.\r\n\r\nThe deadlock appears to occur as follows:\r\n\r\nOn the main thead:\r\nFetched Results Controller executes fetchRequest\r\nFetch Request execution locks access main thread MOC\r\nperforms _computeSectionInfo:error:\r\n_computeSectionInfo:error: takes the main-thread MOC lock again (OK because it is re-entrant)\r\n_computeSectionInfo takes the PSC lock (via performBlockAndWait: on the PSC)\r\n_computeSectionInfo does its work\r\ncalls newValuesForObjectWithID:withContext:error:, which appears to require a lock on the parent context (the top-level private queue context)\r\nnewValuesForObjectWithID waits on the parent context lock\r\n\r\nOn some background thread:\r\nA Fetch Request is being executed\r\nexecuteFetchRequest: takes a lock on the background import context\r\nexecuteFetchRequest:withContext:error takes a lock on parent context\r\ncalls _parentObjectsForFetchRequest:inContext:error:\r\ncalls executeFetchRequest: for root / parent writing context (private queue context)\r\nexecuteFetchRequest waits on the PSC lock to do its work\r\n\r\nIn summary:\r\nThe main thread, having acquired the PSC lock, waits for the lock on the root writer context\r\nThe background thread, having acquired a lock on the root writer context, waits for the PSC lock\r\n\r\nThis looks like a situation where the locks are acquired in different order, and therefore a deadlock results.\r\n\r\nWorkaround:\r\nThis issue appears to have to do specifically with whether an object is faulted in during the fetch request on the main thread. If the objects being retrieved are faults at the time, everything is OK. If they have already been faulted in, we get this deadlock. Resetting the objects immediately prior to calling fetch on the FRC appears to work around the issue. (see commented out code)\r\n\r\nNote:\r\nRegression from iOS 7. This sample code does not deadlock on iOS 7.\r\n\r\nNote:\r\nDeadlock still occurs on iOS 9.\r\n\r\nSteps to Reproduce:\r\nSee description for the scenario.\r\nTo reproduce, run attached sample project.\r\nNotice deadlock.\r\n\r\nUncomment the \"refresh / merge changes\" code in the second FRC fetch.\r\nNotice that deadlock goes away.\r\n\r\nExpected Results:\r\nNo deadlock in either case.\r\n\r\nActual Results:\r\nDeadlock.\r\n\r\nVersion:\r\niOS 8 and iOS 9\r\n\r\nNotes:\r\n\r\nConfiguration:\r\nSimulator or Device, iOS 8 and iOS 9"
+    email: michael.gorbach@raizlabs.com
+    modified: "2015-06-18T15:24:04.80205Z"
+    number: "21440887"
+    number_intvalue: 21440887
+    originated: 6/18/15
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 8 and iOS 9
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'Reproducible Core Data Deadlock: FRC and sectionNameKeyPath (iOS 8 and iOS 9)'

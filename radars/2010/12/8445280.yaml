@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8445280"
+    labels:
+        datastore_id: "962401"
+data:
+    classification: Serious Bug
+    created: "2010-12-13T23:01:07.756468Z"
+    description: "17-Sep-2010 09:36 AM Timothy Wood:\r\nSummary:\r\nInstruments doesn't reliably show ref count events. This, and its lack of event matching facilities, make it much harder to track down leaks.\r\n\r\nSteps to Reproduce:\r\n- Create a new Mac application, checking the 'document based' option (I didn't check the CoreData storage)\r\n- Build the app\r\n- Open Instruments and select the Mac OS X > Memory > Allocations template\r\n- Configure the Allocations instrument, enabling \"Record reference counts\" and \"Only track active allocations\".\r\n- Launch your build app in Instruments\r\n- Click the \"Category\" column to sort by category name, scroll down to \"MyDocument\"\r\n- Navigate to the single MyDocument instance via the (->) arrow buttons, going into its ref count history. Sometimes no events will be shown.\r\n- If events are shown, continue:\r\n- Click on \"Object Summary\" in Instruments to get back out to the top level.\r\n- Drag the track head arrow to the current time and then click the left-clip button for the Inspection range to filter down to only objects created after this point in time.\r\n- In the target app, cmd-n to make a new document.\r\n- Navigated to the new document's reference count history. It will be empty (or has been every time I've tried).\r\n\r\nExpected Results:\r\n- Reference counts should always be displayed for objects created in the inspection range.\r\n- Ideally, event matching would be added to make *interpreting* those events easier. For example, I should be able to efficiently select 15 retains and 15 release that match, based on their stack traces, and \"group\" them. This would leave fewer and fewer events to consider, making it easier to track down the leak or zombie.\r\n\r\nActual Results:\r\nInstruments can't be counted on to display reference counts.\r\n\r\nRegression:\r\nHas been a problem for a while, but not sure how long.\r\n\r\nNotes:\r\n\r\n\r\n24-Sep-2010 01:04 PM Timothy Wood:\r\nYes, this happens in Xcode 3.2.5 beta 1.  Note that this is not an iOS project, it is a Mac project. I've not tried this recently under iOS, but you should give it a whirl to see if this is platform specific.\r\n\r\n\r\n\r\n13-Dec-2010 02:59 PM Timothy Wood:\r\nJust tried again, this time in one of our apps on iOS and still can't get reference counts of the remaining live objects in a given inspection range."
+    email: twiomood@gmail.com
+    modified: "2011-08-28T05:39:51.779635Z"
+    number: "8445280"
+    number_intvalue: 8445280
+    originated: 17-Sep-2010 09:36 AM
+    parent_number: "8269406"
+    product: Developer Tools
+    product_version: Xcode 3.2.5
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/8269406
+    title: Instruments doesn't reliably show ref count events

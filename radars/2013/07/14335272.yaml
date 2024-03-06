@@ -1,0 +1,94 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14335272"
+    labels:
+        datastore_id: "3172402"
+data:
+    classification: Enhancement
+    created: "2013-07-02T19:05:01.496332Z"
+    description: |-
+        Summary:
+        Since installing Mavericks DP1 I had some indexing issues with my gmail accounts in Mail (see rdar://14334638). Updating to DP2 didn't help and after some other approaches I tried to removing the whole ~/Library/Mail/V2 folder and replacing it with a backup version from before installing Mavericks. This made Mail reimporting all my accounts and emails upon launch. The indexing issue was fixed, but now the bodies of most of my emails are gone. As far as I can tell this affects all emails I received before installing Mavericks and all accounts except gmail or some reason. The bodies of sent emails are preserved.
+        When I select an email that "lost" it's body Mail logs a message like this (names changed):
+
+        02.07.13 20:06:49.145 Mail[21476]: Metadata.framework [Error]: MDItemRef MDItemCreate(CFAllocatorRef, CFStringRef): could not find /Users/Me/Library/Mail/V2/POP-my@corp.com@mail.corp.com/INBOX.mbox/44F845C0-B44F-4499-A38D-B84BD6A841C5/Data/3/Messages/3300.emlx
+
+        I checked that path and there is nothing there. There is no "Messages" folder in "3". The only folder I have in the folder "3" is a folder "4", which has an "Attachments" and a "Messages" subfolder. However the 3300.emlx file is nowhere to be found in that account's folder anywhere. Most of the emlx files seem to be lost during the import process. In my backup I have the following folder structure for one of the affected accounts:
+
+        POP-my@corp.com@mail.corp.com
+        |   INBOX.mbox
+        |   |   Info.plist
+        |   |   C087E556-153C-4E4c-99DA-67C97CB26D6D
+        |   |   |   Data
+        |   |   |   |   0
+        |   |   |   |   |   4
+        |   |   |   |   |   |   Attachements
+        |   |   |   |   |   |   |   <attachements in folders>
+        |   |   |   |   |   |   Messages
+        |   |   |   |   |   |   |   <.emlx files>
+        |   |   |   |   1
+        |   |   |   |   |   4
+        |   |   |   |   |   |   Attachements
+        |   |   |   |   |   |   |   <attachements in folders>
+        |   |   |   |   |   |   Messages
+        |   |   |   |   |   |   |   <.emlx files>
+        |   |   |   |   2
+        |   |   |   |   |   4
+        |   |   |   |   |   |   Attachements
+        |   |   |   |   |   |   |   <attachements in folders>
+        |   |   |   |   |   |   Messages
+        |   |   |   |   |   |   |   <.emlx files>
+        |   |   |   |   3
+        |   |   |   |   |   4
+        |   |   |   |   |   |   Attachements
+        |   |   |   |   |   |   |   <attachements in folders>
+        |   |   |   |   |   |   Messages
+        |   |   |   |   |   |   |   <.emlx files>
+        |   |   |   |   |   Messages
+        |   |   |   |   |   |   <.emlx files>
+        |   |   |   |   4
+        |   |   |   |   |   4
+        |   |   |   |   |   |   Attachements
+        |   |   |   |   |   |   |   <attachements in folders>
+        |   |   |   |   |   |   Messages
+        |   |   |   |   |   |   |   <.emlx files>
+        |   |   |   |   |   Messages
+        |   |   |   |   |   |   <.emlx files>
+        |   |   |   |   5
+        |   |   |   |   |   Messages
+        |   |   |   |   |   |   <.emlx files>
+
+        The emails that have no body in Mail can be found in this folder structure (the one in the logged error message for instance).
+        After launching Mail with this (among other) accounts put into ~/Library/Mail/V2 and waiting for the import process to finish I have the following structure:
+
+        POP-my@corp.com@mail.corp.com
+        |   INBOX.mbox
+        |   |   Info.plist
+        |   |   44F845C0-B44F-4499-A38D-B84BD6A841C5
+        |   |   |   Data
+        |   |   |   |   3
+        |   |   |   |   |   4
+        |   |   |   |   |   |   Attachements
+        |   |   |   |   |   |   |   <attachements in folders>
+        |   |   |   |   |   |   Messages
+        |   |   |   |   |   |   |   <.emlx files>
+        |   |   |   |   5
+        |   |   |   |   |   Messages
+        |   |   |   |   |   |   <.emlx files>
+
+        Most of the .emlx files seem to be gone now and can't be shown in Mail. Same thing for sent messages.
+
+        Re-adding the missing dmlx files seems to fix the issue and all bodies are displayed correctly.
+    email: balazsfaludi@gmail.com
+    modified: "2013-07-02T19:05:01.496457Z"
+    number: "14335272"
+    number_intvalue: 14335272
+    originated: 02-Jul-2013 09:04 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mail
+    product_version: Mail 7.0 (1780.1)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Mail 7.0: (Re)importing the mail accounts results in most email bodies being lost'

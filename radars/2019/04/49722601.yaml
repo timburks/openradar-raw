@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "49722601"
+    labels:
+        datastore_id: "6168453962530816"
+data:
+    classification: Bug
+    created: "2019-04-09T03:18:28.903985Z"
+    description: "Area:\r\nWebKit\r\n\r\nSummary:\r\n\r\nIn WKWebView:evaluateJavaScript:completionHandler call, if the javascript has a large str parameter, the WebView will always hold a reference to this large str after evaluateJavaScript execution. Although you set null to str parameter in javascript code, there will not release memory of str parameter forever.\r\nThat means WebView context will leak memory.\r\n\r\nSteps to Reproduce:\r\nDemo project is here, git@github.com:hite/MessageHandlerIOLimitTest.git.\r\nCode summary:\r\n`objective c\r\n\r\nNSString *content = '*******';// content is a large str,  for example, which length is 1024*1024 * 100 bytes. In megabyte, it is a variable of 100 M size.\r\n\r\n[self.webView evaluateJavaScript:[NSString stringWithFormat:@\"window.onReceived('%@')\", content] completionHandler:nil]\r\n`\r\nIn webview  side,  it consume 99M javascript memory which will not be released. The image is here https://upload-images.jianshu.io/upload_images/277783-cc2e7e082a4d7b57.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000\r\n\r\nExpected Results:\r\nAfter window.onReceived execution, the memory of large str is released automatically by webview\r\n\r\nActual Results:\r\nThe webview hold memory forever that leads to leak issue. If the large str is big big content, the iOS system  may kill app totally for memory exhaust.\r\n\r\nVersion/Build:\r\niOS SDK 12.2"
+    email: IamHite@gmail.com
+    modified: "2019-04-09T03:20:11.20989Z"
+    number: "49722601"
+    number_intvalue: 49722601
+    originated: "2019-04-09"
+    parent_number: '&{NULL_VALUE}'
+    product: WKWebview
+    product_version: iOS 12.2
+    reproducible: YES
+    resolved: NO
+    status: Open
+    title: Memory leak issue for WKWebView:evaluateJavaScript:completionHandler

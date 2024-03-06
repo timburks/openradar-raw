@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9862872
+    labels:
+        datastore_id: "5524451064020992"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2022-01-28T22:58:14.52271Z"
+    description: "When using `CABasicAnimation` to animate `transform.scale.x` and `transform.scale.y` simultaneously, the resulting animation is different from performing a single animation on `transform`. Specifically, the sign component of `fromValue` / `toValue` is ignored.\r\n\r\nWith a simple CALayer:\r\n\r\n```swift\r\nlet textLayer = CATextLayer()\r\ntextLayer.string = \"Hello world\"\r\ntextLayer.foregroundColor = UIColor.white.cgColor\r\ntextLayer.backgroundColor = UIColor.blue.cgColor\r\ntextLayer.position = CGPoint(x: 200, y: 300)\r\ntextLayer.bounds.size = CGSize(width: 200, height: 200)\r\nview.layer.addSublayer(textLayer)\r\n```\r\n\r\nthese two equivalent CAAnimation configurations result in different animations at runtime:\r\n\r\n(1) animateSeparately\r\n\r\n```swift\r\nlet scaleX = CABasicAnimation(keyPath: \"transform.scale.x\")\r\nscaleX.duration = 1.0\r\nscaleX.fromValue = -0.5\r\nscaleX.toValue = -1\r\nscaleX.repeatCount = .greatestFiniteMagnitude\r\nscaleX.autoreverses = true\r\ntextLayer.add(scaleX, forKey: \"transform.scale.x\")\r\n\r\nlet scaleY = CABasicAnimation(keyPath: \"transform.scale.y\")\r\nscaleY.duration = 1.0\r\nscaleY.fromValue = -0.5 // results in same animation as `scaleY.fromValue = 0.5`\r\nscaleY.toValue = -1 // results in same animation as `scaleY.toValue = 1`\r\nscaleY.repeatCount = .greatestFiniteMagnitude\r\nscaleY.autoreverses = true\r\ntextLayer.add(scaleY, forKey: \"transform.scale.y\")\r\n```\r\n\r\n(2) singleAnimation\r\n\r\n```swift\r\nlet transform = CABasicAnimation(keyPath: \"transform\")\r\ntransform.duration = 1.0\r\ntransform.fromValue = CATransform3DMakeScale(-0.5, -0.5, 1)\r\ntransform.toValue = CATransform3DMakeScale(-1, -1, 1)\r\ntransform.repeatCount = .greatestFiniteMagnitude\r\ntransform.autoreverses = true\r\ntextLayer.add(transform, forKey: \"transform\")\r\n```\r\n\r\nI expect these two CAAnimation configurations to result in the same animation at runtime, where the layer is flipped across both the x axis and y axis."
+    email: cal.stephens@airbnb.com
+    modified: "2022-02-28T18:46:35.538714Z"
+    number: FB9862872
+    number_intvalue: 9862872
+    originated: "2022-1-28"
+    parent_number: '&{NULL_VALUE}'
+    product: Core Animation API
+    product_version: ""
+    reproducible: yes
+    resolved: Yes
+    status: Closed
+    title: Sign component of `fromValue` / `toValue` ignored when animating `transform.scale.x` and `transform.scale.y` simultaneously

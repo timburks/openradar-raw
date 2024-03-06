@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20464240"
+    labels:
+        datastore_id: "5321939274956800"
+data:
+    classification: Serious Bug
+    created: "2015-04-08T10:56:00.719581Z"
+    description: "Summary:\r\nWKWebView will empty the HTTPBody of a POST URLRequest.\r\nCreating a URLRequest with a HTTPBody and using this request to load content in the WKWebView. Will result in the WKWebView emptying the HTTPBody.\r\n\r\nSteps to Reproduce:\r\n- Create WKWebView.\r\n- Create a NSMutableURLRequest.\r\n- Set the HTTPMethod of the URLRequest to POST.\r\n- Set some data to the HTTPBody of the URLRequest.\r\n- Make WKWebView perform the URLRequest by `loadRequest:`.\r\n- Track the request that is going out with Charles for instance or use the NSURLProtocol to see the HTTPBody of the request.\r\n\r\nOr use this code snippet:\r\n\r\n- (void)viewDidLoad\r\n{\r\n    [super viewDidLoad];\r\n    \r\n    WKWebView *webView = [WKWebView new];\r\n    webView.translatesAutoresizingMaskIntoConstraints = NO;\r\n    [self.view addSubview:webView];\r\n    \r\n    NSDictionary *views = @{@\"webView\": webView};\r\n    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@\"H:|[webView]|\" options:0 metrics:nil views:views]];\r\n    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@\"V:|[webView]|\" options:0 metrics:nil views:views]];\r\n    \r\n    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@\"http://www.apple.com\"]];\r\n    urlRequest.HTTPMethod = @\"POST\";\r\n    urlRequest.HTTPBody = [@\"test\" dataUsingEncoding:NSUTF8StringEncoding];\r\n    [webView loadRequest:urlRequest];\r\n}\r\n\r\nExpected Results:\r\nThe request going out to the www.apple.com server will not contain the HTTPBody. This works in UIWebView.\r\n\r\nActual Results:\r\nHTTPBody is nil.\r\n\r\nVersion:\r\niOS 8.2 (12D508)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPad air, iPhone 6, iOS simulators"
+    email: dick@dickverbunt.nl
+    modified: "2015-04-08T10:56:00.719726Z"
+    number: "20464240"
+    number_intvalue: 20464240
+    originated: 07-Apr-2015 12:49 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 8.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: It's not possible to perform a POST request with HTTPBody content in a WKWebView.

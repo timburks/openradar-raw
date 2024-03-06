@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23412056"
+    labels:
+        datastore_id: "5426404120330240"
+data:
+    classification: Crash
+    created: "2015-11-05T16:03:45.21652Z"
+    description: "Summary:\r\nGiven a project with at least 3 targets: Framework, Application, UI Tests.\r\n\r\nIf the first target created in a project is a framework, then the application target isn't properly linked with the framework when it get's created and added to the project.  Because of the improper linking of the framework with the application, the UI Test target is not able to execute it's tests, even though it compiles properly.\r\n\r\nSteps to Reproduce:\r\nI've included two example projects, along with the logs.  \r\n\r\nThe project \"Example-Broken-Frmwrk\" was created by: \r\n1. Select \"Cocoa Touch Framework\" as the new project template\r\n2. Configure Options (name, org ID, etc.) however you'd like.  I left \"Include Unit Tests\" checked\r\n3. Add code to the framework, to be used in the next target (Application)\r\n4. Create a new target (iOS -> Application -> Single View Application)\r\n    a. Language: Swift\r\n    b. Devices Universal\r\n    c. Leave checked the boxes to create the Unit Tests and UI Tests\r\n    d. Project: Same \"Example-Broken\"\r\n5. Create a simple UI in the newly created target, making sure to import/use the code from the framework (first target). - This is where the bug happens.  Don't do this, and the UI Tests in step 8 will run just fine.\r\n7. Create a simple UI Test that tests something about Target #2\r\n8. Run the UI Tests\r\n\r\n***\r\nThe difference between the \"Broken\" project and the \"Works\" project is simply that I had to go in and add the framework to the \"Embedded Binaries\" section on the project settings page.\r\n\r\nExpected Results:\r\nI expect the UI Tests to run and report on the pass/failure of the UI Tests written\r\n\r\nActual Results:\r\nAn error is thrown and the process ends because it cannot run the tests.\r\n\r\ndyld: Library not loaded: @rpath/Broken.framework/Broken\r\n  Referenced from: /Users/<username>/Library/Developer/CoreSimulator/Devices/A8610398-E90B-4480-8F01-C5146D86D39A/data/Containers/Bundle/Application/3CDF0C66-52FF-4EC2-B917-7962801F5ACB/BrokenDemo.app/BrokenDemo\r\n  Reason: image not found\r\n\r\n\r\nNotes:\r\nThe plot thickens when you have a workspace, and the frameworks are in a different project from the Application Target and accompanying tests.  For some reason I cannot add frameworks from Project A into the demo app in Project B.  When I click on the add button on \"Embedded Binaries\" on Project B (Demo App), the frameworks in Project A show up, but when I select the framework -> Ok, the framework acts like it's going to be added, but never is added.  I haven't found a way to work around this, and it prevents UI Tests from being run.\r\n\r\nI've included the file \"ReallyBroken.zip\" with an example project that illustrates that.\r\n\r\n\r\nConfiguration:\r\niPhone 6s simulator, 9.1\r\n\r\nAttachments:\r\n'Session-2015-11-04_11:14:02-6elAwb.log', 'Broken.zip', 'ReallyBroken.zip' and 'Works.zip' were successfully uploaded."
+    email: BlotterG@gmail.com
+    modified: "2015-11-05T16:03:45.21673Z"
+    number: "23412056"
+    number_intvalue: 23412056
+    originated: 05-Nov-2015 08:38 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 'Xcode: Version 7.1 (7B91b) - iOS Simulator: Version 9.1 (13B137)'
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UI Tests fail to run when project is first created with a Framework, and application target comes later

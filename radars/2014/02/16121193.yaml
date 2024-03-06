@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16121193"
+    labels:
+        datastore_id: "6098252533334016"
+data:
+    classification: Bug
+    created: "2014-02-20T16:14:20.860022Z"
+    description: "Summary:\r\nIn the function IOUserClient::setAsyncReference64 the OSAsyncReference64[kIOAsyncReservedIndex] is set as:\r\n\r\n    asyncRef[kIOAsyncReservedIndex]  = ((io_user_reference_t)wakePort) | (kIOUCAsync0Flags & asyncRef[kIOAsyncReservedIndex]);\r\n\r\nWith a new OSAsyncReference64 asyncRef this reduces to:\r\n\r\n    asyncRef[kIOAsyncReservedIndex]  = ((io_user_reference_t)wakePort);\r\n\r\nThis results in the kIOUCAsync64Flag not being set on asyncRef[kIOAsyncReservedIndex]. Later when IOUserClient::sendAsyncResult64 is called from a IOUserClient subclass, the mach_msg_header_t reply is performed as if it was a 32 bit callout. This results in the Userspace program crashing as as the callout function address is invalid.\r\n\r\nSteps to Reproduce:\r\nsetAsyncReference64(m_ref, m_notification_port, arguments->asyncReference[kIOAsyncCalloutFuncIndex], arguments->asyncReference[kIOAsyncCalloutRefconIndex]);\r\n\r\nExpected Results:\r\nm_ref[kIOAsyncReservedIndex] & kIOUCAsync64Flag == kIOUCAsync64Flag\r\n\r\nActual Results:\r\nm_ref[kIOAsyncReservedIndex] & kIOUCAsync64Flag == 0\r\n\r\nVersion:\r\nxnu-2050.48.11\r\n\r\nNotes:\r\nTo fix I do in my IOUserClient subclass:\r\n\r\nasyncRef[kIOAsyncReservedIndex] |= 1; // (kIOUCAsync64Flag)\r\n\r\n\r\nConfiguration:\r\nAnything running 10.9.x. May exist in prior versions but have not investigated.\r\n\r\nAttachments:"
+    email: ciderapps@gmail.com
+    modified: "2014-02-20T16:14:20.860193Z"
+    number: "16121193"
+    number_intvalue: 16121193
+    originated: 2/20/2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: xnu-2050.48.11
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: IOUserClient::setAsyncReference64 Doesn't Set kIOUCAsync64Flag Causing Callouts To Be 32 Bit

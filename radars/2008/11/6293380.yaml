@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6293380"
+    labels:
+        datastore_id: "626"
+data:
+    classification: Serious Bug
+    created: "2008-11-18T11:17:57.504217Z"
+    description: "Summary:\r\n\r\nI have a thread created using the NSThread class. Since NSThread does not support interrupting or cancelling threads, I rely on the POSIX thread functions to terminate the thread (pthread_cancel()).\r\n\r\nUsing the iPhone Simulator, this method works fine. On the device, pthread_cancel() returns 0 as if the thread had been successfully cancelled, but continues execution of the thread.\r\n\r\nUnfortunately, a workaround using the target object to finish execution is not possible due to 3rd constraints in the framework we are implementing right now, therefore the thread has to be cancelled from the main thread.\r\n\r\nSteps to Reproduce:\r\n\r\nTry to terminate a thread using pthread_cancel().\r\n\r\nExpected Results:\r\n\r\nTermination of the specified thread.\r\n\r\nActual Results:\r\n\r\nThread continues execution.\r\n\r\nRegression:\r\n\r\nWorks as expected in the iPhone Simulator (Version 1.0 (77.4)), fails on the actual iPhone hardware (2.1 (5F136)). Using Xcode 3.1.1 on Mac OS X 10.5.5\r\n\r\nNotes:\r\n\r\nI have prepared a small Xcode project which I have attached to this report. Please try running it in the simulator and on the device to see the difference.\r\n\r\nRun log results are the same:\r\n\r\nSimulator:\r\n\r\n2008-10-15 15:20:26.925 Threading[5294:4e03] ThreadWrapper runThread: self=<ThreadWrapper: 0x44c550> threadID=0xB0185000\r\n2008-10-15 15:20:27.882 Threading[5294:5503] ThreadWrapper runThread: self=<ThreadWrapper: 0x44c9f0> threadID=0xB0207000\r\n2008-10-15 15:20:30.529 Threading[5294:20b] ThreadWrapper interrupt: self=<ThreadWrapper: 0x44c550> threadID=0xB0185000\r\n2008-10-15 15:20:30.530 Threading[5294:20b] pthread_cancel() result: 0\r\n2008-10-15 15:20:31.529 Threading[5294:20b] ThreadWrapper interrupt: self=<ThreadWrapper: 0x44c9f0> threadID=0xB0207000\r\n2008-10-15 15:20:31.530 Threading[5294:20b] pthread_cancel() result: 0\r\n\r\nDevice:\r\n\r\n2008-10-15 15:21:36.083 Threading[1607:5903] ThreadWrapper runThread: self=<ThreadWrapper: 0x11aaa0> threadID=0x834A00\r\n2008-10-15 15:21:36.868 Threading[1607:6003] ThreadWrapper runThread: self=<ThreadWrapper: 0x11b0a0> threadID=0x83C800\r\n2008-10-15 15:21:39.736 Threading[1607:20b] ThreadWrapper interrupt: self=<ThreadWrapper: 0x11aaa0> threadID=0x834A00\r\n2008-10-15 15:21:39.743 Threading[1607:20b] pthread_cancel() result: 0\r\n2008-10-15 15:21:40.482 Threading[1607:20b] ThreadWrapper interrupt: self=<ThreadWrapper: 0x11b0a0> threadID=0x83C800\r\n2008-10-15 15:21:40.488 Threading[1607:20b] pthread_cancel() result: 0\r\n\r\nSample project for Open Radar users: http://proculo.de/other/Threading.zip"
+    email: alexander.repty@gmail.com
+    modified: "2011-08-28T05:49:35.11193Z"
+    number: "6293380"
+    number_intvalue: 6293380
+    originated: 15-Oct-2008 05:07 AM
+    parent_number: "6193908"
+    product: iPhone SDK
+    product_version: "2.1"
+    reproducible: always
+    resolved: Yes (unknown OS version)
+    status: Duplicate/6193908
+    title: pthread_cancel() not cancelling threads on iPhone

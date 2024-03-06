@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15427258"
+    labels:
+        datastore_id: "6178096780673024"
+data:
+    classification: ""
+    created: "2013-11-08T21:00:05.65874Z"
+    description: "Core Data does not appear to have a nice way to apply a single change to a bunch of managed objects. For example, if I want to mark 200 items as read by changing a single isRead property to YES on them, I have to first fetch them all and iterate over them changing the property myself.\r\n\r\nNaturally that makes a lot of sense in the context of Core Data as an object store, but we all know there’s a database under there somewhere and in SQL a change like that is not only fast but trivial.\r\n\r\nThis same concern applies for deleting multiple objects at once as well, because you have to fetch them all and then spin through them and then delete them one by one when the system might very well be able to generate an optimized SQL query under the hood if it knew more about my intentions up front.\r\n\r\nWhat might be a fascinating solution is if there could be an API that allowed you to specify a fetch request that returned a proxy NSManagedObject instance which represents the set of ALL matching managed objects for that fetch request. Then any changes you make to that proxy object are actually made to all of the matching objects in one shot. Example:\r\n\r\nid unreadItems = [managedObjectContext proxyObjectForFetchRequest:unreadQuery error:&anError];\r\n[unreadItems setIsRead:YES];\r\n\r\nor..\r\n\r\nid expiredItems = [managedObjectContext proxyObjectForFetchRequest:expiredItemsQuery error:&anError];\r\n[managedObjectContext deleteObject:expiredItems];\r\n\r\nSo in this case, the returned proxy objects actually represent a huge set of “virtual” managed objects, but it is not actually an array of managed object instances but instead a special instance of NSManagedObject. You probably would not be able to read property values, only set them, and there would likely have to be some other limitations, but it seems like an approach like this could be an interesting way to solve this problem from an API point of view.\r\n\r\nOf course it could also be totally crazy."
+    email: bigzaphod@gmail.com
+    modified: "2013-11-08T21:00:05.658891Z"
+    number: "15427258"
+    number_intvalue: 15427258
+    originated: Nov 8, 2013
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Need a way to apply a single change to a whole set of managed objects in bulk

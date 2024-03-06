@@ -1,0 +1,81 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18453000"
+    labels:
+        datastore_id: "5239028890730496"
+data:
+    classification: Enhancement
+    created: "2014-09-25T10:49:19.607324Z"
+    description: |-
+        Summary:
+        Forward traversal in Swift is clumsy and unsafe. I suggest replacing SequenceType and GeneratorType with Reducible & left fold/stream API over it.
+
+        GeneratorType/SequenceType
+
+        - can’t get current element without advancing
+        - advancing mutates; clutters clients with var/inout
+        - not generally safe to copy (per docs & experience)
+        - have to convert generators to sequences to e.g. map/filter/fold
+        - no first/dropFirst
+        - can’t define dropFirst recursively except for recursive sequence types, e.g. SequenceOf
+        - documented inappropriate for multiple pass & therefore backtracking
+
+        CollectionType/Sliceable
+
+        - client must pass collections/indices together; separation risks bugs
+        - Sliceable has first/dropFirst & can partition, but there’s no requirement that a conforming Sliceable be recursive, so it’s hard to express recursive algorithms in terms of arbitrary Sliceables. My workaround sucks:
+
+        func f<C : Sliceable, C.SubSlice : Sliceable, C.SubSlice.SubSlice == C.SubSlice, C.SubSlice.Generator.Element == C.Generator.Element>(a: C) -> Blah {
+        	return f(Slice(a))
+        }
+        func diff<C : Sliceable, C.SubSlice == C>(a: C) -> Blah { … }
+
+        - slicing/advancing is clumsy & unclear
+        - index is often superfluous for forward traversal
+        - API favours imperative style over functional
+
+        Oleg Kiselyov shows[1] that a nonrecursive left fold suffices for both iteration and enumeration (pull- and push-driven API respectively).
+
+        Recursive foldl (push) is a fixpoint. Streams (pull) are easily recoverable, too. Simple forward traversal are accommodated for both push- and pull-driven APIs using a single type which requires only a nonrecursive left fold—the details of producing recursive folds and streams from this are completely generic.
+
+        protocol Reducible {
+        	typealias Element
+        	func leftFold<U>(recur: (U, (U, Element) -> U) -> U, initial: U, combine: (U, Element) -> U) -> U
+        }
+
+        Oleg returns Either from the combine function, allowing for early termination by returning .Left(…). This appears to be the core of iteratees. This is easy to implement[2].
+
+        Collections implement traversal once. Clients select push/pull API as appropriate. Parallel traversals a la zip2 are trivial. Streams are referentially transparent & safe & can be backtracked/recursed with. Reducibles can use batches/buffers a la NSFastEnumeration without leaking abstractions. When combine returns Either<U>, the precise resource lifetime benefits of iteratee IO apply.
+
+        Steps to Reproduce:
+        Expected Results:
+        Actual Results:
+        Regression:
+        Notes:
+        1: http://okmij.org/ftp/Streams.html#enumerator-stream
+        2:
+        enum Stream<T> : Reducible {
+        	case Cons(Box<T>, () -> Stream<T>)
+        	case Nil
+        }
+
+        // this type signature crashes in 6.1b2, so I use a struct, Iteratee<U, Element> for both combine parameters
+        func leftFold<T, U>(stream: Stream<T>, recur: (Stream<T>, U, (U, T) -> U) -> U, initial: U, combine: (U, T) -> U) -> U {
+        	switch stream {
+        	case .Nil: return initial
+        	case let .Cons(x, rest): return recur(rest(), combine(initial, x), combine)
+        	}
+        }
+    email: rix.rob@gmail.com
+    modified: "2014-09-25T10:49:19.607463Z"
+    number: "18453000"
+    number_intvalue: 18453000
+    originated: 25-Sep-2014 06:49 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-6.1 (6A1030)
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: 'Swift: SequenceType and GeneratorType should be replaced with functional abstractions'

@@ -1,0 +1,20 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: '7487784. '
+    labels:
+        datastore_id: "134409"
+data:
+    classification: Serious Bug
+    created: "2009-12-19T23:27:25.948346Z"
+    description: "19-Dec-2009 06:24 PM Anton Marini:\r\nSummary:\r\n\r\nOutputting an image in a custom QC plugin via outputImageWithTexture: ... convenience method and with a colorspace that is *not* the contexts color space results in the Queue object no longer storing multiple images. Only one (and the same) image is output for each indexed object, rather than a series of different images.\r\n\r\nSteps to Reproduce:\r\n\r\nTo re-create, download the OpenGL Image QCPlugin example from Apple here:\r\n\r\nhttp://developer.apple.com/mac/library/samplecode/GLImage/index.html\r\n\r\nMake sure your header is set to use the outputImageProvider method by making sure you use \r\n\r\n#define __USE_PROVIDER__ 0\r\n and \r\n#define __USE_RENDERED_TEXTURES__ 1\r\n\r\nNow, you should be able to compile the plugin and run the composition below. You will see the gradient change over time and a series of sprites displayed each queued image, which will show the color changes.\r\n\r\nNow, if You change the colorspace of the output Image Provider (lines 231 and friends) to the following: (I am simply passing in a generic RGB color space)\r\n\r\n\t\t/* Create output image provider */\r\n\t\tCGColorSpaceRef cspace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);\r\n#if __BIG_ENDIAN__\r\n\t\tprovider = [context outputImageProviderFromTextureWithPixelFormat:QCPlugInPixelFormatARGB8 pixelsWide:self.inputWidth pixelsHigh:self.inputHeight name:name flipped:NO releaseCallback:_TextureReleaseCallback releaseContext:NULL colorSpace:cspace shouldColorMatch:YES];\r\n#else\r\n\t\tprovider = [context outputImageProviderFromTextureWithPixelFormat:QCPlugInPixelFormatBGRA8 pixelsWide:self.inputWidth pixelsHigh:self.inputHeight name:name flipped:NO releaseCallback:_TextureReleaseCallback releaseContext:NULL colorSpace:cspace shouldColorMatch:YES];\r\n#endif\r\n\t\tCGColorSpaceRelease(cspace);\r\n\r\n\r\nAnd re-run compile/run the attach composition, you will only see the lastest image in the queue for all queue items. In other words, the queue is only seeing \"one image\".\r\n\r\nExpected Results:\r\n\r\nRegardless of attached colorspace, the image should be properly placed in series in the Queue object, and a series of images should be displayed in that particular QTZ\r\n\r\nActual Results:\r\nWhen using any other colorspace than [context colorspace] the Queue outputs only the last input image.\r\n\r\n"
+    email: vade@vade.info
+    modified: "2009-12-19T23:27:25.948589Z"
+    number: '7487784. '
+    originated: 19-Dec-2009 06:24 PM
+    product: Quartz Composer
+    product_version: "4.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Colorspace issue with Queue and outputImageProviderWithTexture

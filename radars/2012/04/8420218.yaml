@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8420218"
+    labels:
+        datastore_id: "1664403"
+data:
+    classification: ""
+    created: "2012-04-28T15:11:04.475353Z"
+    description: "12-Sep-2010 03:03 AM Vlad Alexa:\r\nSummary:\r\n\r\n\"24-hour time\" setting applies to NSDateFormatter\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nNSString *theTime;  \r\n  NSDateFormatter *formatter;\r\n\r\n  formatter = [[NSDateFormatter alloc] init];\r\n  [formatter setDateFormat:@\"hh:mm aa\"];  \r\n  theTime = [formatter stringFromDate:[NSDate date]];\r\n  NSLog(@\"%@\",theTime);  \r\n  [formatter release];\r\n\r\n  formatter = [[NSDateFormatter alloc] init];\r\n  [formatter setDateFormat:@\"hh:mm aa\"];  \r\n  [formatter setAMSymbol:@\"AM\"];\r\n  [formatter setPMSymbol:@\"PM\"];  \r\n  theTime = [formatter stringFromDate:[NSDate date]];\r\n  NSLog(@\"%@\",theTime);  \r\n  [formatter release];    \r\n\r\n//iOS 4+ only\r\n  //theTime = [NSDateFormatter localizedStringFromDate:[NSDate date] dateStyle:NSDateFormatterNoStyle timeStyle:NSDateFormatterShortStyle];  \r\n  //NSLog(@\"%@\",theTime);  \r\n\r\n  time_t currentTime = time(NULL);\r\n  struct tm timeStruct;\r\n  localtime_r(¤tTime, &timeStruct);\r\n  char buffer[20];\r\n  strftime(buffer, 20, \"%I:%m %p\", &timeStruct);\r\n  NSString *cTime = [NSString stringWithCString:buffer encoding:NSASCIIStringEncoding];\r\n  NSLog(@\"%@\",cTime);\r\n\r\n\r\nExpected Results:\r\n\r\nAM from NSDateFormatter too not only strftime\r\n\r\nActual Results:\r\n\r\niOS 3.2\r\n\r\n\"24-hour time\" setting ON\r\n2010-09-12 02:31:18.005 FooBar[13855:207] 02:31\r\n2010-09-12 02:31:18.011 FooBar[13855:207] 02:31\r\n2010-09-12 02:31:18.013 FooBar[13855:207] 02:09 AM \r\n\r\n\"24-hour time\" setting OFF\r\n2010-09-12 02:30:38.861 FooBar[13848:207] 02:30 AM\r\n2010-09-12 02:30:38.866 FooBar[13848:207] 02:30 AM\r\n2010-09-12 02:30:38.871 FooBar[13848:207] 02:09 AM\r\n\r\n\r\niOS 4.1\r\n\r\n\"24-hour time\" setting ON\r\n2010-09-12 02:28:00.981 FooBar[1453:307] 02:28\r\n2010-09-12 02:28:01.049 FooBar[1453:307] 02:28\r\n2010-09-12 02:28:01.098 FooBar[1453:307] 2:28\r\n2010-09-12 02:28:01.112 FooBar[1453:307] 02:09 AM\r\n\r\n\"24-hour time\" setting OFF\r\n2010-09-12 02:29:11.590 FooBar[1460:307] 02:29 AM\r\n2010-09-12 02:29:11.610 FooBar[1460:307] 02:29 AM\r\n2010-09-12 02:29:11.662 FooBar[1460:307] 2:29 AM\r\n2010-09-12 02:29:11.674 FooBar[1460:307] 02:09 AM\r\n\r\n\r\nOSX emulator\r\n2010-09-12 02:27:03.983 FooBar[17181:207] 02:27 AM\r\n2010-09-12 02:27:03.985 FooBar[17181:207] 02:27 AM\r\n2010-09-12 02:27:03.987 FooBar[17181:207] 2:27 AM\r\n2010-09-12 02:27:03.996 FooBar[17181:207] 02:09 AM\r\n\r\nRegression:\r\n\r\nNO\r\n\r\nNotes:\r\n\r\nhttp://multinc.com/2009/09/27/iphone-sdk-time-bug-for-international-users/\r\n\r\n14-Sep-2010 02:05 AM Vlad Alexa:\r\nhere you go \r\n\r\n28-Apr-2012 04:17 PM Vlad Alexa:\r\nIf it worked correctly why was it fixed/changed in iOS 4.0 ?\r\nI can see it working properly since iOS 4.0 e.g.: the code above now returns \r\n\r\nwith \"24-hour time\" setting ON\r\n2012-04-28 16:10:43.326 FooBar[13177:707] 04:10 PM\r\n2012-04-28 16:10:43.331 FooBar[13177:707] 04:10 PM\r\n2012-04-28 16:10:43.335 FooBar[13177:707] 04:04 PM\r\n\r\nwith \"24-hour time\" setting OFF\r\n2012-04-28 16:16:09.321 FooBar[13201:707] 04:16 PM\r\n2012-04-28 16:16:09.325 FooBar[13201:707] 04:16 PM\r\n2012-04-28 16:16:09.327 FooBar[13201:707] 04:04 PM\r\n\r\n28-Apr-2012 06:15 PM Vlad Alexa:\r\nHowever this seems to be restricted to the RELEASE_ARM_S5L8940X kernel of iOS 5.1, another machine with RELEASE_ARM_S5L8930X shows the old behavior"
+    email: valexa@gmail.com
+    modified: "2012-04-28T15:16:27.9754Z"
+    number: "8420218"
+    number_intvalue: 8420218
+    originated: 12-Sep-2010 03:03 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iPad
+    product_version: "3.1"
+    reproducible: Always
+    resolved: ""
+    status: Behaves correctly
+    title: '"24-hour time" setting applies to NSDateFormatter'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31725316"
+    labels:
+        datastore_id: "5040881597939712"
+data:
+    classification: Other Bug
+    created: "2017-04-20T04:55:24.01281Z"
+    description: "Summary:\r\nUp until recently Mobile Safari has correctly posted the resize event after the viewport was resized and after page layout. However, that’s no longer the case. Instead it’s posted before the page has been completely laid out. Any JavaScript relying on clientWidth, clientHeight, getBoundingClientRect etc. in an onresize callback is now broken.\r\n\r\nSteps to Reproduce:\r\nPlease open the following JSBin on iOS and rotate from portrait to landscape, then back to portrait:\r\n\r\nhttp://output.jsbin.com/rotedotari\r\n\r\nCode is available here:\r\n\r\nhttp://jsbin.com/rotedotari/edit?html,css,js\r\n\r\nNote: The first link must be opened on iOS, not the latter. The problem is *not* reproducible in an iframe.\r\n\r\nExpected Results:\r\nThe words \"Stretch me, please.\" should remain centred with the red background covering the entire viewport after rotation, both to and from portrait.\r\n\r\nActual Results:\r\nUpon rotating back to portrait (from landscape) that the webpage layout is messed up and that the portrait view has laid out as if still in landscape (#stretch-me, has not been stretched correctly). This is because the `resize` event has been fired off too early - the viewport has resized, but the page is yet to be laid out. The `resize` event needs to be fired after the page as been laid out.\r\n\r\nIf you have an Android phone handy (I know, I know), the correct behaviour can be observed in Chrome for Android.\r\n\r\nVersion:\r\niOS 10.3.1 (14E304)\r\n\r\nNotes:\r\nApple's own webpage displays an image carousel, it works around resize event issues by setting a 500ms timeout, then performing layout. Presumably that 500ms is arbitrary, although on my own website I noticed 300ms was not sufficient (although I suppose it varies depending on page complexity).\r\n\r\nIf you visit the Apple homepage right now the experience when rotating whilst looking at the image carousel at the top of the page is less than stellar - this is due to the 500ms layout delay.\r\n\r\nConfiguration:\r\nThis is a recent breaking change. As a developer I'm often holding off on upgrading my iOS version. However, a client reported this problem and I could not reproduce it until upgrading to iOS 10.3.1. So I believe this was introduced in 10.3.1, or possibly 10.3.0.\r\n\r\nAttachments:\r\n'correct_layout.PNG' and 'broken_layout_post_rotation.PNG' were successfully uploaded."
+    email: benjamin.dobell@glassechidna.com.au
+    modified: "2017-04-20T04:55:24.01307Z"
+    number: "31725316"
+    number_intvalue: 31725316
+    originated: 20-Apr-2017
+    parent_number: '&{NULL_VALUE}'
+    product: Safari
+    product_version: 10.3.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Mobile - 'resize' Event Now Firing Prior to Page Layout

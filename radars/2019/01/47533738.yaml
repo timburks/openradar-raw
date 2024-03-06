@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "47533738"
+    labels:
+        datastore_id: "5026446405795840"
+data:
+    classification: Bug
+    created: "2019-01-25T17:35:48.514275Z"
+    description: "Area:\r\nSomething not on this list\r\n\r\nSummary:\r\nIn order to implement a \"waitpid with timeout\" function, we have a function that calls waitpid(pid, &stat, WNOHANG) in a loop, with nanosleep() calls up to a certain timeout. We've found that if a debugger is attached to the child being waited on, waitpid() returns -1 with errno set to ECHILD. Before the debugger is attached, and after it is again detached, waitpid() returns 0. It is in the debugger-attached state that waitpid() returns unexpected results.\r\n\r\nSteps to Reproduce:\r\n1. Download waitpid-debugger.c and compile it\r\n2. Run the program, output like this will be observed:\r\n\r\nPARENT: created child 43439\r\nPARENT: starting waitpid\r\nPARENT: waitpid() returned 0, stat=0, errno=0 (Undefined error: 0)\r\nCHILD: now running, pid=43439\r\nCHILD: busy loop\r\nPARENT: waitpid() returned 0, stat=0, errno=0 (Undefined error: 0)\r\nPARENT: waitpid() returned 0, stat=0, errno=0 (Undefined error: 0)\r\nCHILD: busy loop\r\n\r\n3. In a new shell, do `lldb -p <pid-of-child>`\r\n4. Observe the output change to:\r\n\r\nPARENT: waitpid() returned -1, stat=0, errno=10 (No child processes)\r\n\r\n5. In lldb, detach from the process\r\n6. Observe the output return to:\r\n\r\nPARENT: waitpid() returned 0, stat=0, errno=0 (Undefined error: 0)\r\n\r\nExpected Results:\r\nwaitpid() should continue to return 0 when a debugger is attached to the process.\r\n\r\nActual Results:\r\nwaitpid() returns -1 with ECHILD errno.\r\n\r\nNote that continuing in lldb to move the process out of the STOPPED state does not affect the results, nor does passing WUNTRACED in the options to waitpid().\r\n\r\nVersion/Build:\r\n10.14.3 18D42\r\n10.10.5 14F1713\r\n\r\n===================================\r\n% cat /Volumes/Build/tests/waitpid-debugger.c \r\n// clang -o waitpid-debugger waitpid-debugger.c\r\n\r\n#include <stdio.h>\r\n#include <string.h>\r\n#include <sys/errno.h>\r\n#include <sys/types.h>\r\n#include <sys/wait.h>\r\n#include <unistd.h>\r\n\r\nvoid do_parent(pid_t child_pid) {\r\n  printf(\"PARENT: created child %d\\n\", child_pid);\r\n  printf(\"PARENT: starting waitpid\\n\");\r\n\r\n  for (;;) {\r\n    errno = 0;\r\n    int statloc = 0;\r\n    int rv = waitpid(child_pid, &statloc, WNOHANG|WUNTRACED);\r\n    printf(\"PARENT: waitpid() returned %d, stat=%d, errno=%d (%s)\\n\", rv, statloc, errno, strerror(errno));\r\n#if 0\r\n    if (rv != 0)\r\n      break;\r\n#endif\r\n    sleep(2);\r\n  }\r\n\r\n  printf(\"PARENT: exiting\\n\");\r\n}\r\n\r\nvoid do_child() {\r\n  printf(\"CHILD: now running, pid=%d\\n\", getpid());\r\n\r\n  for (;;) {\r\n    printf(\"CHILD: busy loop\\n\");\r\n    sleep(5);\r\n  }\r\n}\r\n\r\nint main() {\r\n  pid_t pid = fork();\r\n  if (pid == -1) {\r\n    perror(\"fork()\");\r\n    return 1;\r\n  } else if (pid == 0) {\r\n    do_child();\r\n  } else {\r\n    do_parent(pid);\r\n  }\r\n\r\n  return 0;\r\n}"
+    email: rsesek@gmail.com
+    modified: "2019-01-25T17:35:48.514543Z"
+    number: "47533738"
+    number_intvalue: 47533738
+    originated: "2019-01-24"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.14.3 18D42
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: waitpid WNOHANG on debugged-process returns -ECHILD

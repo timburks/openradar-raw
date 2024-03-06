@@ -1,0 +1,84 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15770532"
+    labels:
+        datastore_id: "5613258652254208"
+data:
+    classification: Serious Bug
+    created: "2014-01-08T08:26:23.871169Z"
+    description: |-
+        Summary:
+        Creating a pushbutton in code and giving its layer a shadow causes the shadow to be clipped to view bounds (i.e. ugly, useless). Creating a pushbutton that has a shadow from a XIB and then changing its attributes works fine and causes the shadow to draw properly.
+
+        Steps to Reproduce:
+        Run the following code in a Cocoa application:
+        ==== SNIP! ====
+        NSRect          wdBox = NSMakeRect(0,0,100,100);
+        NSWindow    *   theWindow = [[[NSWindow alloc] initWithContentRect: wdBox styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask backing: NSBackingStoreBuffered defer: NO] autorelease];
+        NSView* cv = [[[NSView alloc] initWithFrame: wdBox] autorelease];
+        cv.wantsLayer = YES;
+        [cv setLayerUsesCoreImageFilters: YES];
+        theWindow.contentView = cv;
+        [theWindow setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
+        [theWindow setTitle: @"foo"];
+
+        NSButton* mView = [[NSButton alloc] initWithFrame: NSMakeRect(10, 10, 100, 80)];
+        [mView setLayerUsesCoreImageFilters: YES]; // *
+        [mView setWantsLayer: YES]; // *
+        mView.layer.masksToBounds = NO; // *
+        [mView.layer setShadowColor: [NSColor.redColor CGColor]];
+        [mView.layer setShadowOffset: CGSizeMake(4, 4)];
+        [mView.layer setShadowRadius: 8];
+        [mView.layer setShadowOpacity: 1.0];
+        [mView setBezelStyle: NSRoundRectBezelStyle];
+        [mView setTitle: @"bar"];
+        [theWindow.contentView addSubview: mView];
+        ==== UNSNIP! ====
+
+        Expected Results:
+        A window containing a pushbutton with a red shadow below it.
+
+        Actual Results:
+        The shadow draws, but is clipped to the NSView's bounds.
+
+        Regression:
+        This used to work in 10.8 and earlier. The issue is new since 10.9.0.
+
+        Notes:
+        Here's my Stackoverflow thread on the issue: http://stackoverflow.com/questions/20962005/why-is-my-layer-shadow-clipped-to-my-nsviews-rect/
+
+        The workaround is to use the following code to create the button:
+
+        ==== SNIP! ====
+        @interface WILDButtonOwner : NSViewController
+
+        @property (retain,nonatomic) IBOutlet NSButton* button;
+
+        @end
+
+
+        @implementation WILDButtonOwner
+
+        @end
+        ==== UNSNIP ====
+
+        ==== SNIP2 ====
+        WILDButtonOwner * mButtonOwner = [[WILDButtonOwner alloc] initWithNibName: @"WILDButtonOwner" bundle: nil];
+        [mButtonOwner view];
+        NSButton* mView = [mButtonOwner button];
+        ==== UNSNIP2====
+
+        And a WILDButtonOwner.xib containing a pushbutton (type is irrelevant, it seems, I can change it afterwards), whose button already has a shadow offset, blur radius and color set. The button created from the XIB doesn't clip its shadow.
+    email: kusterer@gmail.com
+    modified: "2014-01-08T08:26:23.871362Z"
+    number: "15770532"
+    number_intvalue: 15770532
+    originated: 08-Jan-2014 09:25 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.1 (13B42)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Pushbutton layer shadow is clipped unless created from XIB

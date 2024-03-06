@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13619556
+    labels:
+        datastore_id: "5502288252633088"
+data:
+    classification: Bug
+    created: "2024-03-04T17:33:41.579531Z"
+    description: "We've observed (and have received numerous user complaints about) Mail performance issues when loading messages when a MailKit extension that implements the MEMessageSecurityHandler protocol is enabled. This is exhibited by Mail showing a 'spinner' as a message content placeholder for an abnormally long time before displaying the message content (if ever).\r\n\r\nObservations:\r\n- only happens when a MailKit extension that implements the MEMessageSecurityHandler protocol is enabled. Mail functions properly with extensions that omit that functionality\r\n- when Mail is 'loading' the message, the extension isn't triggered for that message until the message finally loads, so the extension is not yet involved (and as such cannot affect Mail's performance) until then\r\n- it's been observed that when such an extension is enabled, Mail always re-fetches the entire message, instead of using any existing local copy of the message data that would have been fetched previously (more on this below)\r\n- typically, this is more noticeable with larger messages (often those with attachments)\r\n- connectivity issues (slow internet or email server) exasperate this message loading slowness\r\n\r\n\r\nSteps:\r\n\r\n1. Install a MailKit extention that implements the MEMessageSecurityHandler protocol; Apple's sample MailKit extension is included (unmodified from https://developer.apple.com/documentation/mailkit/build_mail_app_extensions) with this report as an example to use. Do not enable it yet in Mail's Extensions preferences.\r\n2. Open Mail's Connection Doctor window, and show the live logs by clicking on Show Details\r\n3. View an inbound email in Mail that is large - say with a 1MB attachment. Let it load fully as needed from the email server.\r\n4. Switch to any other (non-large) email, then switch back to the large email; observe the logs in the Connection Doctor window - there should be no (or minimal) interactions with the email server as the message is loaded and displayed in Mail again - Mail uses the previously downloaded local copy, as expected.\r\n5. Switch back to the other email.\r\n6. Enable the extension.\r\n7. Select the large email again, and observe the logs; Mail shows the 'loading' spinner, and there's significant interactions from Mail with the email server fetching the entire contents of the message again, without Mail using the local copy instead (re-fetching it completely as if it were a 'new' message).\r\n\r\nNote: if the above does not reproduce the 'loading' spinner in Mail, degrade the machine's network connection to the email server by using the Network Link Conditioner to slow down the data stream or degrade other aspects of the connection to simulate a typical \"subpar\" connection most users might encounter in the real world."
+    email: sebastienboisvert@gmail.com
+    modified: "2024-03-06T01:35:03.804821Z"
+    number: FB13619556
+    number_intvalue: 13619556
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Mail
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open/Unresolved
+    title: Mail message loading performance issues when a MailKit security extension is enabled

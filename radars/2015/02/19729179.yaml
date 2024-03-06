@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19729179"
+    labels:
+        datastore_id: "6445660693856256"
+data:
+    classification: Serious Error
+    created: "2015-02-05T13:51:42.24109Z"
+    description: "Summary:\r\nIn general, it is fine to refer to an enclosing function from the body of a closure that is defined within the function.  For example, the following code compiles without a hitch:\r\n\r\nfunc function() {\r\n    let closure: ()->() = { () -> Void in\r\n        let f = function\r\n        return\r\n    }\r\n}\r\n\r\nHowever, the situation changes when the enclosing function is a local function.  This code yields\r\n\r\nfunc outerfunction() {\r\n    func function() {\r\n        let closure: ()->() = { () -> Void in\r\n            let l = function\r\n            return\r\n        }\r\n    }\r\n}\r\n\r\nyields the following error:\r\n\r\nInstruction does not dominate all uses!\r\n  %6 = bitcast %SS* %0 to %swift.opaque*, !dbg !82\r\n  %2 = bitcast %swift.opaque* %6 to i8*, !dbg !79\r\nLLVM ERROR: Broken function found, compilation aborted!\r\n\r\nSteps to Reproduce:\r\n1. Feed swiftc the following text:\r\n\r\nfunc outerfunction() {\r\n    func function() {\r\n        let closure: ()->() = { () -> Void in\r\n            let l = function\r\n            return\r\n        }\r\n    }\r\n}\r\n\r\n2. Witness the error.\r\n\r\nExpected Results:\r\nThis code should perhaps compile without a hitch given that it works just fine for a non-local function.  Or perhaps not, I don't have the clearest sense of the intended semantics of local functions.  At any rate, this sort of error shouldn't be produced.\r\n\r\nActual Results:\r\nSwift Compiler Error\r\n\r\nInstruction does not dominate all uses!\r\n  %6 = bitcast %SS* %0 to %swift.opaque*, !dbg !82\r\n  %2 = bitcast %swift.opaque* %6 to i8*, !dbg !79\r\nLLVM ERROR: Broken function found, compilation aborted!\r\n\r\nVersion:\r\n6.1.1 (6A2008a)\r\n6.2 Beta (6C86e)\r\n\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: nathaniel.chandler@gmail.com
+    modified: "2015-04-19T18:10:12.67556Z"
+    number: "19729179"
+    number_intvalue: 19729179
+    originated: 02/05/2015
+    parent_number: '&{NULL_VALUE}'
+    product: swiftc/Xcode
+    product_version: Xcode versions 6A2008a, 6C86e
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 11266246
+    title: 'LLVM ERROR: when referencing an enclosing local function from within an enclosed closure'

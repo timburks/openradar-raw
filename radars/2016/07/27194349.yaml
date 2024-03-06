@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27194349"
+    labels:
+        datastore_id: "5587160786796544"
+data:
+    classification: APNS
+    created: "2016-07-06T13:01:29.82432Z"
+    description: "Area:\r\nAPNS (Notifications)\r\n\r\nSummary:\r\nEnvironment: iOS 10 beta 1 (14A5261v) on an iPod touch 6th generation\r\n\r\nWhile testing applications build for iOS 8/iOS 9 on the iOS 10 beta, I noticed that when the app is running, but not in the foreground, received push notifications acted upon in Notification Center or via banner display cause application:handleActionWithIdentifier:forRemoteNotification:completionHandler: to be called with an identifier of \"com.apple.UNNotificationDefaultActionIdentifier\", rather than the iOS 9 SDK behavior of application:didReceiveRemoteNotification: being called.\r\n\r\nDue to this change, existing applications will not work correctly under iOS 10 as there is no defined (or known at time of release) identifier for \"com.apple.UNNotificationDefaultActionIdentifier\".\r\n\r\nAdditionally, -application:handleActionWithIdentifier.... is documented to be called for defined categories within the payload:\r\n\r\n\"Tells the app delegate to perform the custom action specified by a remote notification.\r\nThe app calls this method when the user taps an action button in an alert displayed in response to a remote notification. Remote notifications that include a category key in their payload display buttons for the actions in the corresponding category\"\r\n\r\nThe method is documented to only fire when there is a specified category, not a default.\r\n\r\nSteps to Reproduce:\r\n1. Using an application which supports push categories (registered with UIUserNotificationSettings which include categories) and is registered & provisioned for push notifications\r\n\r\n2. Implement application:handleActionWithIdentifier:forRemoteNotification:completionHandler:\r\n\r\n3. Implement application:didReceiveRemoteNotification:\r\n\r\n4. Send a basic push notification to the device\r\n\r\n5. Notice that application:didReceiveRemoteNotification: is not called, but rather application:handleActionWithIdentifier:forRemoteNotification:completionHandler:\r\n\r\nExpected Results:\r\napplication:didReceiveRemoteNotification: is called (the \"default\" push handler since UINotifications were first supported.\r\n\r\nActual Results:\r\napplication:handleActionWithIdentifier:forRemoteNotification:completionHandler: is called, with an \"unknown\" (to iOS 8/iOS 9 deployment target apps) identifier of \"com.apple.UNNotificationDefaultActionIdentifier\".\r\n\r\nVersion:\r\n iOS 10 beta 1 (14A5261v)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPod touch 6th generation\r\n\r\nAttachments:"
+    email: bcriscuolo@warmwindssoftware.com
+    modified: "2016-07-06T13:01:29.82451Z"
+    number: "27194349"
+    number_intvalue: 27194349
+    originated: 06-Jul-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 10 beta 1
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: handleActionWithIdentifier called instead of didReceiveRemoteNotification when app is running but not in foreground

@@ -1,0 +1,83 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21671072"
+    labels:
+        datastore_id: "6547535036416000"
+data:
+    classification: Enhancement
+    created: "2015-07-03T18:04:30.56381Z"
+    description: |-
+        Summary:
+        I wanted a scan method, so I wrote myself a ScanSequenceView and added my scan method to an extension of SequenceType:
+
+        extension SequenceType {
+        	func scan<T>(initial: T, combine: (T, Generator.Element) -> T) -> ScanSequenceView<Self, T>
+        }
+
+        Then I wanted it to be lazy, so I wrote a LazySequence extension with a scan method:
+
+        extension LazySequence {
+        	func scan<T>(initial: T, combine: (T, Generator.Element) -> T) -> LazySequence<ScanSequenceView<LazySequence<S>, T>> { … }
+        }
+
+        But my tests of its laziness failed, because lazy([ 0, 1, 2 ]).scan(…) isn’t calling the LazySequence implementation, it’s calling the SequenceType implementation, because [Int] is a RandomAccessCollection and thus lazy([ 0, 1, 2 ]) returns a LazyRandomAccessCollection. There is no relationship between LazyRandomAccessCollection and LazySequence; they are entirely disjoint.
+
+        A LazySequenceType protocol joins them back up:
+
+        public protocol LazySequenceType: SequenceType {
+        	typealias Sequence: SequenceType
+        }
+
+        extension LazySequenceType {
+        	public func scan<T>(initial: T, combine: (T, Generator.Element) -> T) -> LazySequence<ScanSequenceView<Self, T>> {
+        		return lazy(ScanSequenceView(sequence: self, initial: initial, combine: combine))
+        	}
+        }
+
+        extension LazySequence: LazySequenceType {
+        	public typealias Sequence = S
+        }
+
+        extension LazyForwardCollection: LazySequenceType {
+        	public typealias Sequence = S
+        }
+
+        extension LazyBidirectionalCollection: LazySequenceType {
+        	public typealias Sequence = S
+        }
+
+        extension LazyRandomAccessCollection: LazySequenceType {
+        	public typealias Sequence = S
+        }
+
+
+        Please relate LazySequence and the various Lazy*Collections such that we can extend them once, like how extending SequenceType with scan() extended CollectionType instances too.
+
+
+        Steps to Reproduce:
+        N/A
+
+        Expected Results:
+        N/A
+
+        Actual Results:
+        N/A
+
+        Regression:
+        N/A
+
+        Notes:
+        Fortunately this is something that app & library authors can undertake for themselves, as witnessed by the code I wrote above actually functioning. I think it should be in the standard library regardless, however.
+    email: rix.rob@gmail.com
+    modified: "2015-07-03T18:04:30.56414Z"
+    number: "21671072"
+    number_intvalue: 21671072
+    originated: 03-Jul-2015 02:04 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A121l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2b2: Conforming LazySequence and Lazy*Collection to a LazySequenceType protocol enables better extensions'

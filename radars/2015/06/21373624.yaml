@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21373624"
+    labels:
+        datastore_id: "6231706495352832"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-06-13T23:19:18.01863Z"
+    description: "Summary:\nJust like rdar://21373621 but with a slightly different stack trace.\n\nSteps to Reproduce:\n1. This:\nprotocol AlgebraicType {\n\ttypealias Term\n}\n\nenum Expr<T>: AlgebraicType {\n\ttypealias Term = T\n\n\tcase Var(String)\n\tcase Abstraction(String, T)\n\tcase Application(T, T)\n}\n\nstruct Term<E: AlgebraicType where E.Term == T> {\n\tlet expression: E\n}\n\n\nExpected Results:\nshould not crash the compiler\n\nActual Results:\nbut totally does:\nterm.swift:14:46: error: use of undeclared type 'T'\nstruct Term<E: AlgebraicType where E.Term == T> {\n                                             ^\n0  swift                    0x0000000104c12e0b llvm::sys::PrintStackTrace(__sFILE*) + 43\n1  swift                    0x0000000104c1354b SignalHandler(int) + 379\n2  libsystem_platform.dylib 0x00007fff84de5f1a _sigtramp + 26\n3  libsystem_platform.dylib 000000000000000000 _sigtramp + 2065801472\n4  swift                    0x00000001033cb487 swift::DeclContext::lookupQualified(swift::Type, swift::DeclName, unsigned int, swift::LazyResolver*, llvm::SmallVectorImpl<swift::ValueDecl*>&) const + 71\n5  swift                    0x00000001033ca894 swift::UnqualifiedLookup::UnqualifiedLookup(swift::DeclName, swift::DeclContext*, swift::LazyResolver*, bool, swift::SourceLoc, bool, bool) + 2228\n6  swift                    0x00000001033cd074 swift::UnqualifiedLookup::UnqualifiedLookup(swift::DeclName, swift::DeclContext*, swift::LazyResolver*, bool, swift::SourceLoc, bool, bool) + 36\n7  swift                    0x00000001032c609f swift::TypeChecker::lookupUnqualified(swift::DeclContext*, swift::DeclName, swift::SourceLoc, swift::OptionSet<swift::NameLookupFlags, unsigned int>) + 223\n8  swift                    0x00000001032ef95d resolveIdentTypeComponent(swift::TypeChecker&, swift::DeclContext*, llvm::ArrayRef<swift::ComponentIdentTypeRepr*>, swift::OptionSet<swift::TypeResolutionFlags, unsigned int>, bool, swift::GenericTypeResolver*) + 2221\n…\nStack dump:\n0.\tProgram arguments: /Applications/Xcode-7-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift -frontend -c -primary-file term.swift -target x86_64-apple-darwin14.3.0 -enable-objc-interop -module-name term -o /var/folders/9y/f7n4rvx901nctm_5d16c1wm40000gn/T/term-490201.o \n1.\tWhile type-checking 'Term' at term.swift:14:1\n2.\tWhile resolving type E at [term.swift:15:18 - line:15:18] RangeText=\"E\"\n<unknown>:0: error: unable to execute command: Segmentation fault: 11\n<unknown>:0: error: swift frontend command failed due to signal (use -v to see invocation)\n\n\nRegression:\nN/A\n\nNotes:\nN/A"
+    email: rix.rob@gmail.com
+    modified: "2015-06-13T23:19:18.01888Z"
+    number: "21373624"
+    number_intvalue: 21373624
+    originated: 13-Jun-2015 07:19 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-7-beta (7A120f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2: Different error in recursive type constraint crashes the compiler differently'

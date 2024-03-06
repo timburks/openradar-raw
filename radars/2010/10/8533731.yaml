@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8533731"
+    labels:
+        datastore_id: "726401"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2010-10-09T23:10:57.513893Z"
+    description: "10-Oct-2010 01:07 AM Daniel Svensson:\r\n'sigpipetest.txt' was successfully uploaded\r\n\r\n10-Oct-2010 01:07 AM Daniel Svensson:\r\nSummary:\r\nUsing FindNextComponent causes SIGPIPE to be not blocked any longer in the whole process. This causes problems when a unix socket is unexpectedly closed while writing.\r\n\r\nSteps to Reproduce:\r\nBuild the following C-code by using:\r\ngcc -pthread -o sigpipetest sigpipe.c -framework CoreServices -framework CoreAudio\r\n\r\nThe code:\r\n#include <signal.h>\r\n#include <stdlib.h>\r\n#include <stdio.h>\r\n\r\n#include <CoreServices/CoreServices.h>\r\n#include <AudioUnit/AudioUnit.h>\r\n\r\nint break_the_pipe ()\r\n{\r\n\tComponentDescription desc;\r\n\r\n\tdesc.componentType = kAudioUnitType_Output;\r\n\tdesc.componentSubType = kAudioUnitSubType_DefaultOutput;\r\n\tdesc.componentManufacturer = kAudioUnitManufacturer_Apple;\r\n\tdesc.componentFlags = 0;\r\n\tdesc.componentFlagsMask = 0;\r\n\r\n\tFindNextComponent (NULL, &desc);\r\n}\r\n\r\n\r\nint main (int argc, char **argv)\r\n{\r\n\tsigset_t signals, old;\r\n\r\n\tsigemptyset(&signals);\r\n\tsigaddset (&signals, SIGPIPE);\r\n\tpthread_sigmask (SIG_BLOCK, &signals, &old);\r\n\r\n\tbreak_the_pipe ();\r\n\r\n\twhile (1) {\r\n\t\tprintf (\"main loop lives!\\n\");\r\n\t\tsleep (1);\r\n\t}\r\n\r\n\treturn 0;\r\n}\r\n\r\nExpected Results:\r\nThe code above should properly block SIGPIPE.\r\n\r\nActual Results:\r\nWhen killing the process with SIGPIPE it exits.\r\n\r\nRegression:\r\nI belive this was introduced in 10.6 but I'm not sure. We haven't had any problems with OS X since it was first supported around 2004.\r\n\r\nNotes:\r\nThe code that used FindNextComponent now uses the new AudioComponentFindNext instead and works as expected, but this requires me to depend on 10.6 and thus leaving users with older versions of the OS out of luck.\r\n\r\n10-Oct-2010 01:33 AM Daniel Svensson:\r\nActually using AudioComponentFindNext instead did not solve the problem. It still unblocks SIGPIPE. I must have used the NO-OP output plugin in my software when I tried that, so this leaves my application completly broken, unless I resort to using signal(SIGPIPE, SIG_BLOCK)."
+    email: dsvensson@gmail.com
+    modified: "2011-08-28T05:39:39.162674Z"
+    number: "8533731"
+    number_intvalue: 8533731
+    originated: 10-Oct-2010 01:07 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CoreServices FindNextComponent unblocks SIGPIPE

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35125028"
+    labels:
+        datastore_id: "6071001821478912"
+data:
+    classification: Performance
+    created: "2017-10-23T15:32:30.99973Z"
+    description: "Area:\r\nCore Graphics\r\n\r\nSummary:\r\n\r\niOS 11 introduced a cache used by CGPDFDocumentGetPage, but it has unwanted performance implications.\r\n\r\nWhen a new page is requested, it's added to the cache (CGPDFDocumentAppendMRUPage). The least recently used page is then probably removed and old images are purged (CGPDFPagePurgeImages)\r\n\r\nTo know which images can be purged, the old page is probably parsed again (CGPDFScannerScan), but for heavy PDF documents, this can be very CPU- and memory intensive.\r\n\r\nThe worst thing is, this even happens when only metadata is requested, e.g. looping over all CGPDFPageRefs in a document and requesting their document dictionary (CGPDFPageGetDictionary). In this case, CGPDFPagePurgeImages won't even need to do anything. \r\n\r\n\r\nSteps to Reproduce:\r\n\r\nOpen a complex multi-page PDF document\r\nLoop over all pages, and get their page dictionaries\r\n\r\n\r\nExpected Results:\r\n\r\nLike on iOS 10, this should be a linear task, not relative to the complexity of the pages.\r\n\r\n\r\nActual Results:\r\n\r\nA lot of memory and CPU is consumed for no obvious reason.\r\n\r\n\r\nVersion/Build:\r\n\r\niOS 11.0.1\r\n\r\n\r\nConfiguration:\r\n\r\nDevice and simulator"
+    email: lievendekeyser@gmail.com
+    modified: "2017-10-23T15:32:30.99999Z"
+    number: "35125028"
+    number_intvalue: 35125028
+    originated: October 23 2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "11.0"
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: CGPDFDocumentAppendMRUPage parses pages needlessly

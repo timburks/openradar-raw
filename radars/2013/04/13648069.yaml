@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13648069"
+    labels:
+        datastore_id: "2932404"
+data:
+    classification: Serious Bug
+    created: "2013-04-13T20:11:32.49631Z"
+    description: "Summary:\r\nUsing what the 6.0 release notes call a \"pure constraints\" approach, UIScrollView defines its content size through the layout constraints of subviews tying to the superview.\r\n\r\ne.g. The constraints @\"H:|-[someView(280)]-|\" when applied to a scroll view will cause the content size to be 320pts wide\r\n\r\nThis is does work, but when navigating away from a view controller and then back to the same instance the scroll view's content area is drawn incorrectly.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Setup a view controller that manages a scroll view in code or storyboard following this idea from the iOS 6.0 SDK Release Notes:\r\n\r\n--- CUT / PASTE ---\r\n\r\nUIScrollView *scrollView = [[UIScrollView alloc] init];\r\nUIImageView *imageView = [[UIImageView alloc] init];\r\n[imageView setImage:[UIImage imageNamed:\"MyReallyBigImage\"]];\r\n[self.view addSubview:scrollView];\r\n[scrollView addSubview:imageView];\r\n \r\nscrollView.translatesAutoresizingMaskIntoConstraints = NO;\r\nimageView.translatesAutoresizingMaskIntoConstraints = NO;\r\n \r\nNSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(scrollView,imageView);\r\n[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@\"H:|[scrollView]|\" options:0 metrics: 0 viewsDictionary:viewsDictionary]];\r\n[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@\"V:|[scrollView]|\" options:0 metrics: 0 viewsDictionary:viewsDictionary]];\r\n[scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@\"H:|[imageView]|\" options:0 metrics: 0 viewsDictionary:viewsDictionary]];\r\n[scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@\"V:|[imageView]|\" options:0 metrics: 0 viewsDictionary:viewsDictionary]];\r\n\r\n--- CUT / PASTE ---\r\n\r\n2. Install this view controller (\"image view controller\") into a tab bar controller\r\n3. Build and run\r\n4. Move the content offset of the image view controller's scroll view to the maximum allowable distance from (0, 0)\r\n5. Tap on another tab in the tab bar controller\r\n6. Tap on the tab to return to the image view controller\r\n\r\nExpected Results:\r\n\r\n7. Expect content offset and content view to look as they did before navigating away\r\n\r\nActual Results:\r\n\r\n7. Content offset reports same value, however on screen content view is drawn at incorrect location\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\nSample project attached"
+    email: evan@thinkfishhook.com
+    modified: "2013-04-17T03:07:16.912025Z"
+    number: "13648069"
+    number_intvalue: 13648069
+    originated: 13-Apr-2013 04:10 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 6.1.3
+    reproducible: Always
+    resolved: 16-Apr-2013 07:45 PM
+    status: Duplicate
+    title: Auto Layout - UIScrollView Unexpected Behavior

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33305419"
+    labels:
+        datastore_id: "5053386630103040"
+data:
+    classification: Other Bug
+    created: "2017-07-14T00:40:28.90012Z"
+    description: "Summary:\r\nThis is a duplicate of radar #26276263\n\nIt’s currently very difficult to use CommonCrypto in Swift frameworks and scripts. The work-around solution is to define our own module map as outlined in the first suggestion in this dev forum post: https://forums.developer.apple.com/thread/36217\n\r\n\r\nSteps to Reproduce:\r\n1. Create Swift file sample.swift with the lines:\r\n#!/usr/bin/env xcrun swift\r\n\r\nimport Foundation\r\nimport CommonCrypto\r\n\r\nextension String {\r\n    func sha1() -> String {\r\n        let data = self.dataUsingEncoding(NSUTF8StringEncoding)!\r\n        var digest = [UInt8](count:Int(CC_SHA1_DIGEST_LENGTH), repeatedValue: 0)\r\n        CC_SHA1(data.bytes, CC_LONG(data.length), &digest)\r\n        let hexBytes = digest.map { String(format: \"%02hhx\", $0) }\r\n        return hexBytes.joinWithSeparator(\"\")\r\n    }\r\n}\r\n\r\nprint(\"Hello world\".sha1())\r\n\r\n2. chmod +x sample.swift\r\n\r\n3. ./sample.swift\r\n\r\nExpected Results:\r\n7b502c3a1f48c8609ae212cdfb639dee39673f5e\r\n\r\nActual Results:\r\n./sample.swift:3:8: error: no such module 'CommonCrypto'\r\nimport CommonCrypto\r\n\r\nVersion:\r\nVersion 8.3.3 (8E3004b)\r\n\r\nNotes:"
+    email: daniel@duan.ca
+    modified: "2017-07-14T00:40:28.90039Z"
+    number: "33305419"
+    number_intvalue: 33305419
+    originated: 13-Jul-2017 05:40 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Version 8.3.3 (8E3004b)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Missing module map for CommonCrypto

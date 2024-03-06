@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8983951
+    labels:
+        datastore_id: "4971351718756352"
+data:
+    classification: Unexpected behavior
+    created: "2021-01-29T03:36:56.322558Z"
+    description: "Running an iOS via Catalyst on a Mac using built-in mic & speaker, AVAudioSession always reports the inputLatency as 0.\r\n\r\nprivate func initAudioSession() {\r\n    do {\r\n        audioSession = AVAudioSession()\r\n        try audioSession.setCategory(.playAndRecord, options: [.allowBluetooth, .allowBluetoothA2DP, .defaultToSpeaker])\r\n\r\n        let builtInTypes: [AVAudioSession.Port] = [.lineIn, .builtInMic]\r\n        let connectedTypes: [AVAudioSession.Port] = [.headsetMic, .usbAudio, .bluetoothHFP]\r\n\r\n        guard let inputs = audioSession.availableInputs else {\r\n            preconditionFailure()\r\n        }\r\n        \r\n        var input: AVAudioSessionPortDescription!\r\n        \r\n        // Prefer airpods/headphones if connected\r\n        if let connectedInput = (inputs.first { connectedTypes.contains($0.portType) }) {\r\n            input = connectedInput\r\n        }\r\n        if input == nil {\r\n            if let builtInInput = (inputs.first { builtInTypes.contains($0.portType) }) {\r\n                input = builtInInput\r\n            }\r\n        }\r\n\r\n        precondition(input != nil)\r\n                    \r\n        try audioSession.setPreferredInput(input)\r\n        try audioSession.setActive(true)\r\n    } catch {\r\n        assertionFailure(\"*** Caught: \\(error)\")\r\n    }\r\n}\r\n\r\nAt some point during the capture session:\r\n\r\nfunc printLatencyInfo() {\r\n    print(\"audioSession.inputLatency: \\(audioSession.inputLatency)\")\r\n    print(\"audioSession.outputLatency: \\(audioSession.outputLatency)\")\r\n    print(\"audioSession.ioBufferDuration: \\(audioSession.ioBufferDuration)\")\r\n    print(\"engine.mainMixerNode.auAudioUnit.latency: \\(engine.mainMixerNode.auAudioUnit.latency)\")\r\n    print(\"engine.inputNode.auAudioUnit.latency: \\(engine.inputNode.auAudioUnit.latency)\")\r\n    print(\"engine.outputNode.auAudioUnit.latency: \\(engine.outputNode.auAudioUnit.latency)\")\r\n    print(\"engine.mainMixerNode.outputPresentationLatency: \\(engine.mainMixerNode.outputPresentationLatency)\")\r\n    print(\"engine.inputNode.outputPresentationLatency: \\(engine.inputNode.outputPresentationLatency)\")\r\n    print(\"engine.outputNode.outputPresentationLatency: \\(engine.outputNode.outputPresentationLatency)\")\r\n    print(\"engine.inputNode.auAudioUnit.latency: \\(engine.inputNode.auAudioUnit.latency)\")\r\n    print(\"engine.outputNode.auAudioUnit.latency: \\(engine.outputNode.auAudioUnit.latency)\")\r\n    print(\"metronomePlayerNode.auAudioUnit.latency: \\(metronomePlayerNode.auAudioUnit.latency)\")\r\n}\r\n\r\nAnd here audioSession.inputLatency is always 0 on Mac Catalyst with built-in mic & speaker."
+    email: jscalo@gmail.com
+    modified: "2021-01-29T03:36:56.322716Z"
+    number: FB8983951
+    number_intvalue: 8983951
+    originated: 1/28/2021
+    parent_number: '&{NULL_VALUE}'
+    product: AVFoundation
+    product_version: iOS 14
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'AVAudioSession: Mac Catalyst speaker reports input latency as 0'

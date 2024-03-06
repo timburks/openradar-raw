@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "48711554"
+    labels:
+        datastore_id: "5030825875734528"
+data:
+    classification: Serious Bug
+    created: "2019-03-08T15:24:40.01617Z"
+    description: "Area:\r\nSomething not on this list\r\n\r\nSummary:\r\n\r\nAfter a smart card login, if the user is asked to change their password, a form is displayed, and the change is never accepted or executed. The user cannot login, except if a password login is also allowed.\r\n\r\nSteps to Reproduce:\r\n\r\n* pair a smart card to a user account\r\n* set password policy newPasswordRequired=1 for the user\r\n* logout\r\n* login with the smart card, enter the PIN\r\n* the change password form is displayed, enter new password and new password confirmation\r\n\r\nExpected Results:\r\n\r\nthe password is changed in the background and the user is logged in\r\n\r\nActual Results:\r\n\r\nThe new password change is not accepted. The password change form is still open. In the logs, we can see:\r\n\r\nerror changing password for 'max': Error Domain=com.apple.OpenDirectory Code=5000 \"Credentials could not be verified; username or password is invalid.\" UserInfo={NSLocalizedDescription=Credentials could not be verified; username or password is invalid., NSLocalizedFailureReason=Credentials could not be verified; username or password is invalid.\r\n\r\nVersion/Build:\r\n\r\n10.14.3 (18D109)\r\n\r\nConfiguration:\r\n\r\nMacBook 9,1\r\n\r\nNotes:\r\n\r\nAs it happens (the new password form is displayed), if we remotely change the local user password to match the PIN of the smart card, the password change will be successful. This shows that the smart card PIN is probably used as the old password during the password change. We are then blocked after the successful password change at the smart card login, because the new password is also probably carried as the smart card PIN and doesn't match. If we enter the smart card PIN, we can login, and verify that the new password is correct.\r\n\r\nThe authorization plug-ins chain seems to be broken in this case, because the smart card PIN is probably used during the password change as the old password. The password change form should ask for the old password, if it is coming after a smartcard login. It should also not replace the password after the change, leaving the valid smart card PIN in place."
+    email: eric@zentral.pro
+    modified: "2019-03-08T15:24:40.016403Z"
+    number: "48711554"
+    number_intvalue: 48711554
+    originated: 8/3/19
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.14.3 (18D109)
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: Impossible password change after smart card login

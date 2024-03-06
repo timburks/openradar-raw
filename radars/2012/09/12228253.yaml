@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12228253"
+    labels:
+        datastore_id: "1956404"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2012-09-12T18:51:13.593689Z"
+    description: "Problem:\r\nUsing the OpenGL 3.2 core profile, when compiling a GLSL vertex shader that uses an uint variable as an index into a uniform array, the compiler crashes (and the entire program around it with it).\r\n\r\nAs an example, consider the following vertex shader:\r\n\r\n\r\n#version 150\r\n\r\nuniform mat4 matrices[25];\r\nuint index1;\r\n\r\nvoid main()\r\n{\r\n\tmat4 matrix = matrices[index1];\r\n}\r\n\r\n\r\nCompiling this shader (in an OpenGL 3.2 Core Profile context) causes a crash in the internal function glpASTNodeGetKind which gets called (through several layers) from glCompileShader.\r\n\r\nThis does not happen with the following shader:\r\n\r\n\r\n#version 150\r\n\r\nuniform mat4 matrices[25];\r\nint index1;\r\n\r\nvoid main()\r\n{\r\n\tmat4 matrix = matrices[index1];\r\n}\r\n\r\n\r\nThe crash does not happen if there are any normal compile errors in the code. E.g.\r\n\r\n\r\n#version 150\r\n\r\nuniform mat4 matrices[25];\r\nuint index1;\r\n#error Test error\r\n\r\nvoid main()\r\n{\r\n\tmat4 matrix = matrices[index1];\r\n}\r\n\r\n\r\nor\r\n\r\n\r\n#version 150\r\n\r\nuniform mat4 matrices[25];\r\nuinttttttt index1;\r\n\r\nvoid main()\r\n{\r\n\tmat4 matrix = matrices[index1];\r\n}\r\n\r\n\r\nboth work as expected, i.e. glCompileShader does not crash, the compile status is GL_FALSE and the info log mentions the error; e.g. in the second case:\r\n\r\nCould not compile shader. Log: ERROR: 0:3: 'uinttttttt' : syntax error syntax error \r\n\r\nIt does not matter whether the index variable is declared as \"uniform\" or as \"in\". If an error is someplace else in the shader, it is listed correctly in the log, but the log does not mention that there is anything wrong with using an uint to index into the array. The error also appears when using a component of an uvec4 or similar.\r\n\r\n\r\nExpected result:\r\nA shader that compiles properly, or at least a clean failure of the shader compile and an info log message that unsigned indices are not supported.\r\n\r\n\r\nAttachmments:\r\nAttached are a crash log from the project where I first noticed this bug, and a system configuration report from the computer where I noticed the issue.\r\n\r\n[No attachments on openradar as far as I can see]\r\n\r\nEdit to add: I just saw that Apple has marked this as a duplicate of rdar://11305413 (status: Open), but my bug has not been set to closed yet."
+    email: webmaster@ferroequinologist.de
+    modified: "2012-09-12T18:53:09.424814Z"
+    number: "12228253"
+    number_intvalue: 12228253
+    originated: 04-Sep-2012 04:30 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.8.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: GLSL vertex shader compile crashes when using unsigned array indices.

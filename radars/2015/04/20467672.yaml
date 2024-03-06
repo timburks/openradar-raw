@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20467672"
+    labels:
+        datastore_id: "5837369710215168"
+data:
+    classification: Serious Bug
+    created: "2015-04-08T17:21:53.104814Z"
+    description: "Processes can be killed by an EXC_GUARD exception (GUARD_TYPE_MACH_PORT or GUARD_TYPE_FD) or an EXC_RESOURCE exception made fatal (RESOURCE_TYPE_CPU/FLAVOR_CPU_MONITOR_FATAL or RESOURCE_TYPE_WAKEUPS/FLAVOR_WAKEUPS_MONITOR when WAKEMON_MAKE_FATAL has been set). Although there are no public APIs to request these behaviors, Apple library code makes use of these features, so these violations can and do occur in user programs from third-party developers using only public APIs.\r\n\r\nWhen a process is killed for any of these reasons, its exit status as returned to its parent by waitpid() or any other call in the wait() family should indicate that the process was killed. The exit status should not indicate success (0). Returning a successful exit status can mislead the killed process’ parent into believing that the killed process actually completed successfully. Normally, a process killed with prejudice will have an exit status reporting termination by signal SIGKILL.\r\n\r\nOf these possible EXC_GUARD and fatal EXC_RESOURCE exceptions, only EXC_GUARD for GUARD_TYPE_FD properly causes a process to show termination by SIGKILL as its exit status. The other exceptions result in the process having a 0 exit status, indicating normal termination.\r\n\r\nSteps to Reproduce:\r\nThe attached set of test programs triggers these exceptions. While they use non-public interfaces, this is just to establish the conditions under which the kernel will terminate them for a guard or resource violation. Ordinary user programs can experience termination for these reasons without using any non-public interfaces when system library code enables guards or resource monitors.\r\n\r\n1. unzip exc_guard_and_resource.zip\r\n2. cd exc_guard_and_resource\r\n3. sh test.sh\r\n\r\nExpected Results:\r\nAll of the tests result in an EXC_GUARD or fatal EXC_RESOURCE exception, and each should have an exit status indicating that it was killed by SIGKILL (9) with perhaps the WCOREFLAG bit set (SIGKILL | WCOREFLAG = 137).\r\n\r\n$ unzip exc_guard_and_resource.zip\r\n$ cd exc_guard_and_resource\r\n$ sh test.sh\r\nCompiling exc_guard_file_descriptor\r\nCompiling exc_guard_mach_port\r\nCompiling exc_resource_cpu_usage\r\nCompiling exc_resource_wakeups\r\nRunning exc_guard_file_descriptor\r\ntest.sh: line 17:   234 Killed: 9               \"./${test}\"\r\nExit status from exc_guard_file_descriptor: 137 (good)\r\nRunning exc_guard_mach_port\r\ntest.sh: line 17:   235 Killed: 9               \"./${test}\"\r\nExit status from exc_guard_mach_port: 137 (good)\r\nRunning exc_resource_cpu_usage\r\ntest.sh: line 17:   236 Killed: 9               \"./${test}\"\r\nExit status from exc_resource_cpu_usage: 137 (good)\r\nRunning exc_resource_wakeups\r\ntest.sh: line 17:   237 Killed: 9               \"./${test}\"\r\nExit status from exc_resource_wakeups: 137 (good)\r\n\r\nActual Results:\r\nOnly exc_guard_file_descriptor, an EXC_GUARD violation for GUARD_TYPE_FILE_DESCRIPTOR, has the correct exit status. All other tests report an exit status of 0, indicating success, even though all of the tests are killed by the kernel.\r\n\r\n$ unzip exc_guard_and_resource.zip\r\n$ cd exc_guard_and_resource\r\n$ sh test.sh\r\nCompiling exc_guard_file_descriptor\r\nCompiling exc_guard_mach_port\r\nCompiling exc_resource_cpu_usage\r\nCompiling exc_resource_wakeups\r\nRunning exc_guard_file_descriptor\r\ntest.sh: line 17:   123 Killed: 9               \"./${test}\"\r\nExit status from exc_guard_file_descriptor: 137 (good)\r\nRunning exc_guard_mach_port\r\nExit status from exc_guard_mach_port: 0 (bad)\r\nRunning exc_resource_cpu_usage\r\nExit status from exc_resource_cpu_usage: 0 (bad)\r\nRunning exc_resource_wakeups\r\nExit status from exc_resource_wakeups: 0 (bad)\r\n\r\nVersion:\r\nThis was tested and occurs on both 10.10.2 14C1514 and 10.9.5 13F1066."
+    email: mark@chromium.org
+    modified: "2015-04-08T17:21:53.104944Z"
+    number: "20467672"
+    number_intvalue: 20467672
+    originated: "2015-04-08"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.5 13F1066, 10.10.2 14C1514
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Processes killed by EXC_GUARD and fatal EXC_RESOURCE exceptions have a successful exit status instead of SIGKILL

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21328632"
+    labels:
+        datastore_id: "5606665374138368"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-06-10T21:45:21.21898Z"
+    description: "Summary:\nAlgebraic types make Swift 2 sad.\n\n\nSteps to Reproduce:\n1. Compile this _with swiftc_. I repeat, _swiftc_. It does _not_ crash with _swift_, only with _swiftc_:\n\nenum E<T> {\n\tfunc map<U>(_ : T -> U) -> E<U> { return .C }\n\tcase C\n}\nenum Either<T, U> {\n\tcase Left(T)\n\tcase Right(U)\n\tfunc either<V>(ifLeft ifLeft: T -> V, ifRight: U -> V) -> V {\n\t\tswitch self {\n\t\tcase let .Left(t):\n\t\t\treturn ifLeft(t)\n\t\tcase let .Right(u):\n\t\t\treturn ifRight(u)\n\t\t}\n\t}\n}\nprotocol FixpointType {\n\ttypealias Recur\n\n\tinit(_ : Recur)\n\tvar out: Recur { get }\n}\nfunc map<T, U>(f: T -> U)(_ c: E<T>) -> E<U> { return E.map(c)(f) }\nfunc apo<T, Fix: FixpointType where Fix.Recur == E<Fix>>(f: T -> E<Either<Fix, T>>)(_ seed: T) -> Fix {\n\tlet fanin = { Either<Fix, T>.either($0)(ifLeft: {$0}, ifRight: { apo(f)($0) }) }\n\treturn Fix((map(fanin))(f(seed)))\n}\n\n\nExpected Results:\nshould not crash\n\n\nActual Results:\nbut totally does:\nAssertion failed: (ptr->getType()->getPointerElementType() == StorageType), function getAddressForPointer, file /Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-700.0.38.1/src/swift/lib/IRGen/GenType.cpp, line 311.\n0  swift                    0x000000010d10de0b llvm::sys::PrintStackTrace(__sFILE*) + 43\n1  swift                    0x000000010d10e54b SignalHandler(int) + 379\n2  libsystem_platform.dylib 0x00007fff88493f1a _sigtramp + 26\n3  libsystem_platform.dylib 0x00007f8d24851860 _sigtramp + 2621167968\n4  libsystem_c.dylib        0x00007fff86f90b53 abort + 129\n5  libsystem_c.dylib        0x00007fff86f58c39 basename + 0\n6  swift                    0x000000010b22b7d6 swift::irgen::TypeInfo::getAddressForPointer(llvm::Value*) const + 70\n7  swift                    0x000000010b256caa bindParameter((anonymous namespace)::IRGenSILFunction&, swift::SILArgument*, swift::irgen::Explosion&) + 154\n8  swift                    0x000000010b252def (anonymous namespace)::IRGenSILFunction::emitSILFunction() + 3279\n9  swift                    0x000000010b251d52 swift::irgen::IRGenModule::emitSILFunction(swift::SILFunction*) + 498\n…\nStack dump:\n0.\tProgram arguments: /Applications/Xcode-7-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift -frontend -c -primary-file recur.swift -target x86_64-apple-darwin14.3.0 -enable-objc-interop -module-name recur -o /var/folders/9y/f7n4rvx901nctm_5d16c1wm40000gn/T/recur-2efa8f.o \n1.\tWhile emitting IR SIL function @_TFF5recur3apou0_Rq0_S_12FixpointTypezqq0_S0_5RecurGOS_1Eq0___FFq_GS1_GOS_6Eitherq0_q___Fq_q0_U_FGS2_Q0_Q__Q0_ for expression at [recur.swift:25:14 - line:25:81] RangeText=\"{ Either<Fix, T>.either($0)(ifLeft: {$0}, ifRight: { apo(f)($0) }) }\"\n<unknown>:0: error: unable to execute command: Abort trap: 6\n<unknown>:0: error: swift frontend command failed due to signal (use -v to see invocation)\n\n\nRegression:\nThis didn’t crash in Swift 1.2.\nHaven’t figured out a workaround yet.\n\n\nNotes:\nMaybe if I don’t have any functions at all, maybe then Swift 2 will love me."
+    email: rix.rob@gmail.com
+    modified: "2015-06-10T21:45:21.2193Z"
+    number: "21328632"
+    number_intvalue: 21328632
+    originated: 10-Jun-2015 05:45 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-7-beta (7A120f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift 2 and the Abstruse Algebraic Apomorphism Address Assertion Altercation

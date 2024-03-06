@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB11684022
+    labels:
+        datastore_id: "5607270004031488"
+data:
+    classification: Bug
+    created: "2022-10-13T12:12:27.602239Z"
+    description: "If we have an ongoing call (for example a GSM call) and a held call (VOIP) and the ongoing call is terminated by the remote party, the audio session is never reactivated for the held call.\r\n\r\nSteps to reproduce:\r\n\r\n1. Download the speakerbox demo from here: https://developer.apple.com/documentation/callkit/making_and_receiving_voip_calls_with_callkit/.\r\n2. Run the project on a device and set up an incoming call in 5 seconds.\r\n3. Answer the incoming call.\r\n4. From a second device, place a GSM call to the first device and answer it via the \"Hold & Answer\" option, putting the Speakerbox call on hold.\r\n5. Hang up the GSM call from the second device. \r\n6. The speakerbox call is now in \"On Hold\" state, attempt to make it active. \r\n\r\nExpected behavior:\r\nThe speakerbox call is active and is recording and playing audio. WE should see the following output in the console:\r\n\r\n\"Received provider(_:didActivate:)\r\nStarting audio\"\r\n\r\n\r\nActual behavior:\r\nThe speakerbox call is active, but the system will not activate the audio session any more via the provider(_:didActivate:) that is usually called when toggling between held and unheld calls. \r\nThe following message is printed to the console: \r\n\r\n\"Received provider(_:didDeactivate:)\"\r\n\r\n\r\nMentions:\r\na. if the first device (the one that has Speakerbox running on it) hangs up the GSM call, the Speakerbox audio session is correctly reactivated and the Speakerbox call can be resumed and is recording and playing audio.\r\n\r\nb. trying to manually enable the audio session after unholding the call results in error AVAudioSessionErrorInsufficientPriority = '!pri', /* 0x21707269, 561017449 */\r\n\r\n2022-10-13 12:41:41.277301+0300 Speakerbox[73935:6651754] [aurioc]            AURemoteIO.cpp:1128  failed: 561017449 (enable 3, outf< 1 ch,  44100 Hz, Float32> inf< 1 ch,  44100 Hz, Float32>)\r\n2022-10-13 12:41:41.281120+0300 Speakerbox[73935:6651754] [avae]            AVAEInternal.h:109   [AVAudioEngineGraph.mm:1344:Initialize: (err = PerformCommand(*outputNode, kAUInitialize, NULL, 0)): error 561017449\r\n2022-10-13 12:41:41.281410+0300 Speakerbox[73935:6651754] Couldn't start Apple Voice Processing IO: Error Domain=com.apple.coreaudio.avfaudio Code=561017449 \"(null)\" UserInfo={failed call=err = PerformCommand(*outputNode, kAUInitialize, NULL, 0)}\r\n\r\nc. this behavior happens regardless of the device lock state\r\n\r\nd. this behavior directly impacts the user experience and the only reliable solution is to completely disable \"On Hold\" for CallKit apps.\r\n\r\ne. this behavior has been observed on iOS 15.6.1, iOS 16.0 on iPhone 6s, iPhone 7 and iPhone XS."
+    email: alin.claudiu.radut@gmail.com
+    modified: "2022-10-13T12:12:27.602444Z"
+    number: FB11684022
+    number_intvalue: 11684022
+    originated: "2020-10-13"
+    parent_number: '&{NULL_VALUE}'
+    product: CallKit
+    product_version: 14.5.1
+    reproducible: Yes
+    resolved: No
+    status: Open
+    title: The system does not reactivate the audio session for a held call after the ongoing call is terminated by the remote party

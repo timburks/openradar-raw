@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "40926834"
+    labels:
+        datastore_id: "4970013802889216"
+data:
+    classification: Bug
+    created: "2019-04-11T21:38:07.468039Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nUICollectionView has glitchy scrolling issues and cell sizing issues when \r\n- isPrefetchingEnabled == true\r\n- a UICollectionViewLayout subclass that self-sizes cells is used (but not a UICollectionViewFlowLayout subclass). \r\n\r\nThe issue occurs specifically when in the aforementioned scenario, and scrolling up to rubber band / over scroll at the top immediately after the collection view loads. When the user lets go and the over scrolled collection view begins to rubber band back *toward* contentOffset.y == 0 (the final resting state at the top), the contentOffset.y will be briefly set to 0 *during the rubber band animation* - which causes the collection view to jump to offset 0 in the middle of the animation. This is very jarring and noticeable.\r\n\r\n\r\nAttached is a demo project with a UI test to simulate this over scroll behavior reliably and consistently. See Steps to Reproduce.\r\n\r\n\r\nSteps to Reproduce:\r\n1. Open sample project. The included project is set to use a simple, self sizing layout by default (subclass of UICollectionViewLayout).\r\n2. Command+U to run the UI test, which will simulate an over scroll at the top in a consistent way each time the test is run.\r\n3. Note the jumpiness. If it's not obvious, re-run the UI test a few more times.\r\n\r\nWays to \"fix\" the issue:\r\n-  ViewController.swift:24, switch to using flow layout.\r\nor\r\n- ViewController.swift:44, set isPrefetchingEnabled to false.\r\nor\r\n- SelfSizingLayout.swift:26, override _estimatesSizes and return true. The code is already there, so just uncomment it at the top.\r\n\r\nExpected Results:\r\nThe user should be able to over scroll at the top without jumpy animations. No special internal flags should be needed to achieve correct behavior.\r\n\r\nActual Results:\r\nThe over scroll animation at the top is jumpy, due to a mix of prefetching and self sizing cells.\r\n\r\nVersion/Build:\r\niOS 11 (and 12)\r\n\r\n\r\n\r\nDemo project: https://drive.google.com/file/d/1nA32eHFbUwKJbFFwyHX1FwqDY0D0ah5V/view?usp=sharing"
+    email: kellerbryan19@gmail.com
+    modified: "2019-04-11T21:38:07.468207Z"
+    number: "40926834"
+    number_intvalue: 40926834
+    originated: 6/8/2018
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: iOS 12
+    reproducible: Yes
+    resolved: No
+    status: Open
+    title: Self Sizing + Prefetching Bugs

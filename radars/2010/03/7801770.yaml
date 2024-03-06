@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7801770"
+    labels:
+        datastore_id: "220401"
+data:
+    classification: Serious Bug
+    created: "2010-03-28T00:02:17.849362Z"
+    description: "Summary: \r\nWhen I remove an element from a XIB in Interface Builder that has an existing entry in a .strings file, ibtool stops processing the .strings file when I try to generate a new localized XIB using the source XIB with the missing element.\r\n\r\nSteps to Reproduce:\r\n1) Create a new Mac OS X app project in Xcode.\r\n2) Open Interface Builder and add a button to the main window in MainMenu.xib.\r\n3) Generate MainMenu.strings: ibtool --generate-strings-file MainMenu.strings English.lproj/MainMenu.xib.\r\n4) Open MainMenu.strings and do a search/replace \"; for 1\"; so that every element name is touched.\r\n5) Generate the localized XIB with a button: ibtool --strings-file MainMenu.strings --write MainMenu.with.button.xib English.lproj/MainMenu.xib.\r\n6) Open English.lproj/MainMenu.xib and remove the button. Save that.\r\n7) Generate the localized XIB with a button: ibtool --strings-file MainMenu.strings --write MainMenu.without.button.xib English.lproj/MainMenu.xib. This command should generate the error.\r\n8) Dump the strings for first localized XIB: ibtool --generate-strings-file MainMenu.with.button.strings MainMenu.with.button.xib.\r\n9) Dump the strings for second localized XIB: ibtool --generate-strings-file MainMenu.without.button.strings MainMenu.without.button.xib.\r\n10) Diff the strings files with Changes: chdiff MainMenu.with.button.strings MainMenu.without.button.strings.\r\n11) Diff the XIB files with Changes: chdiff MainMenu.with.button.xib MainMenu.without.button.xib.\r\n\r\nExpected Results:\r\nI expected ibtool to not find the ObjectID from the .strings file in the source XIB and move on.\r\n\r\nActual Results:\r\nibtool creates a partially localized XIB/NIB. The error means ibtool has encountered a string in the strings file with an ObjectID that isn’t present in the source XIB file. When ibtool is unable to find this ObjectID in the source XIB, it stops localizing the new XIB.\r\n\r\nRegression:\r\nN/A\r\n\r\nNotes:\r\nN/A"
+    email: bdunagan@gmail.com
+    modified: "2011-08-28T05:42:09.31048Z"
+    number: "7801770"
+    number_intvalue: 7801770
+    originated: "2010-03-27"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 3.2.2/760
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ibtool fails on error "Missing object referenced from oid-keyed mapping"

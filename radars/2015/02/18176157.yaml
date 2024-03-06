@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18176157"
+    labels:
+        datastore_id: "6203305353019392"
+data:
+    classification: Serious Bug
+    created: "2015-02-12T13:26:14.803471Z"
+    description: "Summary:\r\nOn iOS8 (beta 5), NSURLSession returns errors that have no \"NSLocalizedDescription\". This is not the case with NSURLConnection, and it is new to iOS7.\r\n\r\nSteps to Reproduce:\r\nSee attached minimal sample project. Here's the relevant code section:\r\n\r\n```\r\n\r\n    // Create a failing request\r\n    NSURLRequest * request = [NSURLRequest requestWithURL:[NSURL URLWithString:@\"http://nonexistingdomain.tld\"]];\r\n    \r\n    // Load it with NSURLConnection\r\n    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue]\r\n                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)\r\n     {\r\n         printf(\"NSURLConnection: %s(%d) %s\\n\", error.domain.UTF8String, (int)error.code, error.localizedDescription.UTF8String);\r\n         // On iOS7.1: NSURLConnection: NSURLErrorDomain(-1009) The Internet connection appears to be offline.\r\n         // On iOS8b5: NSURLConnection: NSURLErrorDomain(-1009) The Internet connection appears to be offline.\r\n     }];\r\n    \r\n    // Load it with NSURLSession\r\n    [[[NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]]\r\n      dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)\r\n      {\r\n          printf(\"NSURLSession: %s(%d) %s\\n\", error.domain.UTF8String, (int)error.code, error.localizedDescription.UTF8String);\r\n          // On iOS7.1: NSURLSession: NSURLErrorDomain(-1009) The Internet connection appears to be offline.\r\n          // On iOS8b5: NSURLSession: NSURLErrorDomain(-1009) The operation couldn’t be completed. (NSURLErrorDomain error -1009.)\r\n      }] resume];\r\n\r\n\r\n```\r\n\r\nExpected Results:\r\nThe returned NSError should have a localized description, and be user-displayable.\r\n\r\nActual Results:\r\nThe returned NSError has no userInfo at all, just a domain and a code.\r\n\r\nThis is only happening when using NSURLSession on iOS8. On iOS7, NSURLSession is returning a displayable NSError, and NSURLConnection is working fine both on iOS7 and iOS8.\r\n\r\nVersion:\r\niOS8b5\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nXcode6b6, iPhone Simulator\r\n\r\nAttachments:\r\n'NetworkErrorDescriptionTest.zip' was successfully uploaded.\r\n\r\n\r\nhttp://cl.ly/2i2y2r38010G/download/NetworkErrorDescriptionTest.zip"
+    email: nicolas.bouilleaud@gmail.com
+    modified: "2015-02-12T13:47:54.616523Z"
+    number: "18176157"
+    number_intvalue: 18176157
+    originated: "2014-09-30"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "8.0"
+    reproducible: Always
+    resolved: "2015-02-12"
+    status: Resolved
+    title: Network errors returned by NSURLSession have no localized description

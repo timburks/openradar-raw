@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21676778"
+    labels:
+        datastore_id: "5018759144144896"
+data:
+    classification: ""
+    created: "2015-07-05T15:17:34.89893Z"
+    description: "Summary:\r\nCompiler crashes if conditions of the case clause are duplicated in the initializer.\r\nFor example: Conforming to RawRepresentable protocol\r\n\r\nSteps to Reproduce:\r\n1. Define following enum\r\n2. Set build configuration in scheme to 'Release'\r\n3. Build it\r\n\r\npublic enum Enum {\r\n    case A\r\n    case B\r\n    case C\r\n}\r\n\r\nextension Enum : RawRepresentable {\r\n\r\n    public init?(rawValue: Int) {\r\n        switch rawValue {\r\n        case 0:\r\n            self = A\r\n        case 1:\r\n            self = B\r\n        case 1:\r\n            self = B\r\n        default:\r\n            self = C\r\n        }\r\n    }\r\n\r\n    public var rawValue: Int {\r\n        switch self {\r\n        case A:\r\n            return 0\r\n        case B:\r\n            return 1\r\n        default:\r\n            return 2\r\n        }\r\n    }\r\n}\r\n\r\nExpected Results:\r\nBuild succeeded\r\n\r\nActual Results:\r\nBuild failed due to following error:\r\nCommand failed due to signal: Illegal instruction: 4\r\n\r\nSIL verification failed: select_value dispatches on same case value more than once: !seenCaseValues.count(elt)\r\nVerifying instruction:\r\n     %4 = load %3 : $*Builtin.Int64               // user: %10\r\n     %5 = integer_literal $Builtin.Int64, 0       // user: %10\r\n     %6 = enum $Enum, #Enum.A!enumelt             // user: %10\r\n     %7 = integer_literal $Builtin.Int64, 1       // users: %10, %10\r\n     %7 = integer_literal $Builtin.Int64, 1       // users: %10, %10\r\n     %8 = enum $Enum, #Enum.B!enumelt             // users: %10, %10\r\n     %8 = enum $Enum, #Enum.B!enumelt             // users: %10, %10\r\n     %9 = enum $Enum, #Enum.C!enumelt             // user: %10\r\n->   %10 = select_value %4 : $Builtin.Int64, case %5: %6, case %7: %8, case %7: %8, default %9 : $Enum // user: %11\r\n     %11 = enum $Optional<Enum>, #Optional.Some!enumelt.1, %10 : $Enum // user: %12\r\nIn function:\r\n// protocol witness for Swift.RawRepresentable.init <A where A: Swift.RawRepresentable> (A.Type)(rawValue : A.RawValue) -> Swift.Optional<A> in conformance EnumTest.Enum : Swift.RawRepresentable in EnumTest\r\nsil [transparent] [thunk] @_TTWO8EnumTest4EnumSs16RawRepresentableS_FS1_CuRq_S1__fMq_FT8rawValueqq_S1_8RawValue_GSqq__ : $@convention(witness_method) (@out Optional<Enum>, @in Int, @thick Enum.Type) -> () {\r\nbb0(%0 : $*Optional<Enum>, %1 : $*Int, %2 : $@thick Enum.Type):\r\n  %3 = struct_element_addr %1 : $*Int, #Int.value // user: %4\r\n  %4 = load %3 : $*Builtin.Int64                  // user: %10\r\n  %5 = integer_literal $Builtin.Int64, 0          // user: %10\r\n  %6 = enum $Enum, #Enum.A!enumelt                // user: %10\r\n  %7 = integer_literal $Builtin.Int64, 1          // users: %10, %10\r\n  %8 = enum $Enum, #Enum.B!enumelt                // users: %10, %10\r\n  %9 = enum $Enum, #Enum.C!enumelt                // user: %10\r\n  %10 = select_value %4 : $Builtin.Int64, case %5: %6, case %7: %8, case %7: %8, default %9 : $Enum // user: %11\r\n  %11 = enum $Optional<Enum>, #Optional.Some!enumelt.1, %10 : $Enum // user: %12\r\n  store %11 to %0 : $*Optional<Enum>              // id: %12\r\n  %13 = tuple ()                                  // user: %14\r\n  return %13 : $()                                // id: %14\r\n}\r\n\r\nVersion:\r\nOS X 10.10.3 (14D136), Version 7.0 beta (7A121l)\r\nOS X 10.11 (15A204h), Version 7.0 beta (7A120f)\r\n\r\nNotes:\r\nThis crash is occurred RELEASE build only\r\n\r\nConfiguration:\r\nMacBookPro10,1, 16GB RAM\r\nMacBook8,1, 8GB RAM\r\n\r\nAttachments:"
+    email: kishikawakatsumi@gmail.com
+    modified: "2015-07-05T15:17:34.89928Z"
+    number: "21676778"
+    number_intvalue: 21676778
+    originated: 06-Jul-2015 00:15 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Compiler crashes if conditions of the case clause are duplicated

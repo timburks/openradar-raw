@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13540385"
+    labels:
+        datastore_id: "2882409"
+data:
+    classification: Other Bug
+    created: "2013-03-29T23:44:07.295217Z"
+    description: "Summary:\n    Certificates attributes with key kSecAttrCertificateEncoding are documented to have values of type CFNumberRef, but they are returned as CFDataRef instead.\n\nSteps to Reproduce:\n\n    Try the code below:\n\n    #import <Foundation/Foundation.h>\n    #import <Security/Security.h>\n\n    int main(int argc, char *argv[])\n    {\n        // Query a random certificate's attributes.\n        CFMutableDictionaryRef cfquery = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);\n    \n        CFDictionarySetValue(cfquery, kSecClass, kSecClassCertificate);\n        CFDictionarySetValue(cfquery, kSecReturnAttributes, kCFBooleanTrue);\n        CFDictionarySetValue(cfquery, kSecMatchLimit, kSecMatchLimitOne);\n    \n        CFDictionaryRef cfattrs = NULL;\n        OSStatus status = SecItemCopyMatching(cfquery, (CFTypeRef *)&cfattrs);\n        CFRelease(cfquery);\n        if (status) {\n            NSError *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:status userInfo:nil];\n            NSLog(@\"Error querying certificate attributes: %@ (%@)\", error.localizedDescription, error);\n            abort();\n        }\n    \n        // Get certificate encoding attribute.\n        CFTypeRef cfvalue = CFDictionaryGetValue(cfattrs, kSecAttrCertificateEncoding);\n        if (cfvalue == NULL) {\n            NSLog(@\"Certificate without a kSecAttrCertificateEncoding?\");\n        }\n        else if (CFGetTypeID(cfvalue) == CFNumberGetTypeID()) {\n            NSLog(@\"OK, kSecAttrCertificateEncoding is a CFNumberRef - %@\", cfvalue);\n        }\n        else if (CFGetTypeID(cfvalue) == CFDataGetTypeID()) {\n            NSLog(@\"FAIL, kSecAttrCertificateEncoding should not be a CFDataRef - %@\", cfvalue);\n        }\n        else {\n            NSLog(@\"FAIL, unknown type in kSecAttrCertificateEncoding - %@\", cfvalue);\n        }\n        CFRelease(cfattrs);\n    \n        return 0;\n    }\n\n\nExpected Results:\n    kSecAttrCertificateEncoding has an associated value of type CFNumberRef:\n\n            kSecAttrCertificateEncoding\n              Certificate encoding attribute key.\n              The corresponding value is of type CFNumberRef and denotes the certificate encoding (see the CSSM_CERT_ENCODING enumeration in cssmtype.h). Items of class kSecClassCertificate have this attribute. Read only.\n              Available in OS X v10.6 and later.\n              Declared in SecItem.h.\n\nActual Results:\n    kSecAttrCertificateEncoding has an associated value of type CFDataRef. The data encodes a 4-byte integer value.\n\nRegression:\n    Unknown\n\nNotes:\n    -"
+    email: Karoly.Lorentey@gmail.com
+    modified: "2013-03-29T23:44:07.29535Z"
+    number: "13540385"
+    number_intvalue: 13540385
+    originated: 30-Mar-2013 12:43 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.8.3 (12D78)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Security Framework: SecAttrCertificateEncoding is of type CFDataRef, not CFNumberRef.'

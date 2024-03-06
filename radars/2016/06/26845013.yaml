@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26845013"
+    labels:
+        datastore_id: "5185377602109440"
+data:
+    classification: Feature (new)
+    created: "2016-06-17T02:08:30.8638Z"
+    description: "Summary:\r\nHTTP trailers (introduced in HTTP/1.1 and present in HTTP/2 too) are an essential feature for protocols on top of HTTP to:\r\n- Signal errors occurred while the response was already being streamed to the client.\r\n- Send metadata whose value can only be known by the server when it's finished streaming a response (e.g. for dynamically-generated responses).\r\n\r\nNSHTTPURLResponse has an allHeaderFields property, from which the response headers can be read by an NSURLSession delegate before the response body is received. There is no corresponding property for reading the trailers after the response is completed.\r\n\r\nSteps to Reproduce:\r\nUse NSURLSession to connect to an HTTP/2 server that sends trailers. E.g. (in Swift 3 syntax):\r\n\r\nimport UIKit\r\n\r\nlet session = URLSession(configuration: URLSessionConfiguration.default())\r\n\r\nlet url = URL(string: \"https://grpc-test.sandbox.googleapis.com/grpc.testing.TestService/EmptyCall\")!\r\nvar request = URLRequest(url: url)\r\n// That specific server would return a 404 if we didn't set these:\r\nrequest.httpMethod = \"POST\"\r\nrequest.addValue(\"application/grpc\", forHTTPHeaderField: \"content-type\")\r\nrequest.addValue(\"trailers\", forHTTPHeaderField: \"te\")\r\n\r\nlet requestData = Data(bytes: [0, 0, 0, 0, 0])\r\n\r\nsession.uploadTask(with: request, from: requestData) { (data, response, error) in\r\n  if let httpResponse = response as? NSHTTPURLResponse {\r\n    print(\"Headers:\\n\\(httpResponse.allHeaderFields)\")\r\n    // Trailers?\r\n  }\r\n}.resume()\r\n\r\n(Using a delegate instead of a callback makes it clear why adding both headers and trailers into allHeaderFields might not be a great fit for this: I can read response.allHeaderFields before any trailer has been received).\r\n\r\nExpected Results:\r\nNSHTTPURLResponse having an allTrailerFields property, from which trailers can be accessed by the delegate when the response is finished; or anything with equivalent functionality.\r\n\r\nActual Results:\r\nNo such property. (If you run the code above, CFNetwork asserts - that's already filed as radar 26843578)."
+    email: jcanizales@gmail.com
+    modified: "2016-06-17T02:08:30.86398Z"
+    number: "26845013"
+    number_intvalue: 26845013
+    originated: 16-Jun-2016 01:17 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 10.0-beta (14A5261u), and 9.3
+    reproducible: N/A
+    resolved: ""
+    status: Open
+    title: NSHTTPURLResponse should surface HTTP trailers

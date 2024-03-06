@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27968875"
+    labels:
+        datastore_id: "6141940152139776"
+data:
+    classification: Other Bug
+    created: "2016-08-23T16:33:32.8581Z"
+    description: "Summary:\n\nWhen using the “Open In…” feature, the system creates an “Inbox” directory in the app’s Documents directory. That directory is not writable by the app, so documents usually need to be immediately moved outside of the Inbox directory. This leads to an empty Inbox directory in the app’s Documents directory. The Inbox directory itself is protected and cannot be removed by the app after it has been created.\n\nOur application shows the content of the Documents directory to the user. Since the user cannot interact with that empty directory we need to explicitly filter it out in our UI. The application also utilizes iTunes file sharing, which exposes the contents of the Documents directory to our users using iTunes. We have no way to hide the Inbox directory in the iTunes UI. \n\nThe directory was debatable before iOS 9. Being simply able to delete the directory would make this whole process much simpler and solve the iTunes file sharing issue. \n\nSteps to Reproduce:\n\nUsing the following code to clean up an existing Inbox directory (created using the Open In… feature of an app that supports it). \n\n- (void)cleanUpInbox {\n    NSFileManager *fileManager = [NSFileManager defaultFileManager];\n\tNSString *documentsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;\n    NSString *inbox = [documentsPath stringByAppendingPathComponent:@\"Inbox\"];\n    BOOL isDirectory;\n    if ([fileManager fileExistsAtPath:inbox isDirectory:&isDirectory] && isDirectory) {\n        NSError *error;\n        if (![fileManager removeItemAtPath:inbox error:&error]) {\n            NSLog(\"Could not remove the documents Inbox directory. Error: %@\", error);\n        }\n    }\n}\n\nExpected Results:\n\nThe Inbox directory would be app-deletable, or moved outside of the Documents directory, so it does not interfere with iTunes file sharing and the app file management. \n\nActual Results:\n\nThe delete operation fails with the following error.\n\nPrinting description of error:\nError Domain=NSCocoaErrorDomain Code=513 \"“Inbox” couldn’t be removed because you don’t have permission to access it.\" UserInfo={NSFilePath=/var/mobile/Containers/Data/Application/9410A118-CE6F-4D95-82FD-2E8604EC3406/Documents/Inbox, NSUserStringVariant=(\n    Remove\n), NSUnderlyingError=0x17044e5b0 {Error Domain=NSPOSIXErrorDomain Code=1 \"Operation not permitted\"}}\n\nRegression:\n\nVerified on iOS 9 and iOS 10. Might not be the case on older systems. \n\nNotes:\n\nhttps://forums.developer.apple.com/message/47582#47582 mentions the change in behavior after iOS 9. \n\n> As an aside, in iOS 8 you were able to delete the whole Documents/Inbox folder. Seems like iOS 9 prevents deletion of that folder. And if you try to delete it using something like -[NSFileManager removeItemAtURL:...] it will delete the contents and then leave the folder. Seems like that might be good info to have.\n\nhttp://stackoverflow.com/questions/15707874/good-way-to-manage-the-documents-inbox-folder-in-an-ios-app also mentions mentions the behavior already changed with iOS 7"
+    email: matej@bukovinski.com
+    modified: "2016-08-23T16:33:32.85826Z"
+    number: "27968875"
+    number_intvalue: 27968875
+    originated: 23-Aug-2016 06:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 10.0b7
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Documents Inbox directory cannot be removed

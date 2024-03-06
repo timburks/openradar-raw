@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13705585"
+    labels:
+        datastore_id: "2962401"
+data:
+    classification: Enhancement
+    created: "2013-04-22T15:17:29.65685Z"
+    description: "Summary:\nThe Clang Static Analyzer should warn me when I use an API that isn't available on my deployment target but I fail to wrap it in a respondsToSelector: conditional. The analyzer should automatically recognize and accept simple idioms like this:\n\n\tif ([foo respondsToSelector:@selector(bar)]) {\n\t\t[foo bar]; // 10.8+\n\t}\n\nIt should also be possible to explicitly mark specific calls as OK via some kind of source annotation.\n\nSteps to Reproduce:\nRun the Clang static analyzer on the attached project. It deploys to 10.6, but includes unprotected use of the -[NSBundle loadNibNamed:owner:topLevelObjects:] and -[NSAnimationContext runAnimationGroup:completionHandler:] messages.\n\n- (void)applicationDidFinishLaunching:(NSNotification *)aNotification\n{\n    NSBundle *bundle = [NSBundle mainBundle];\n    NSArray *tlo;\n    [bundle loadNibNamed:@\"Foo\" owner:self topLevelObjects:&tlo]; // 10.8\n    \n    [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) { // 10.7\n        [context setTimingFunction:nil]; // 10.7\n        context.allowsImplicitAnimation = YES; // 10.8\n    } completionHandler:^{\n    }];\n}\n\n\nExpected Results:\nThe analyzer should warn me about usages of backward-incompatible API calls that aren't wrapped in respondsToSelector: conditionals.\n\nActual Results:\nNo analyzer warnings.\n\nRegression:\nNone\n\nNotes:"
+    email: Karoly.Lorentey@gmail.com
+    modified: "2013-04-22T15:17:29.656992Z"
+    number: "13705585"
+    number_intvalue: 13705585
+    originated: 22-Apr-2013 05:17 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 4.6.2 (4H1003)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Clang static analyzer: Detect API usage issues with deployment targets'

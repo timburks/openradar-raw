@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18465821"
+    labels:
+        datastore_id: "5324230774226944"
+data:
+    classification: ""
+    created: "2015-01-08T12:07:28.681798Z"
+    description: "Summary:\r\nWith iOS 8 we're getting numerous user complaints about our apps having a significant lag when tapping a text field. When investigating I found that the lag is mostly attributed to slow initialisation of the keyboard.\r\n\r\nOn an 3rd gen iPad Instruments Time Profiler reports up to 500ms running time before the keyboard is first shown. But the lag is still very noticeable on an iPad Air as well.\r\n\r\nI've a attached a sample app and a sample Instruments trace showing the cpu spike at around the 10 second mark.\r\n\r\nMost time is spent here:\r\n\r\nRunning Time\tSelf\t\tSymbol Name\r\n424.0ms   38.2%\t0,0\t \t           -[UIKeyboardSliceTransitionView _delayedUpdateTransition]\r\n289.0ms   26.0%\t0,0\t \t            -[UIKeyboardSliceTransitionView refreshKeyplaneImages]\r\n104.0ms    9.3%\t1,0\t \t            -[UIKeyboardSliceTransitionView rebuildSliceTransitions]\r\n19.0ms    1.7%\t0,0\t \t            -[UIKeyboardSliceTransitionView rebuildMoreIntlKeys]\r\n6.0ms    0.5%\t0,0\t \t            CA::Transaction::commit()\r\n2.0ms    0.1%\t0,0\t \t            -[UIKeyboardSliceTransitionView rebuildShiftSlices]\r\n2.0ms    0.1%\t0,0\t \t            -[UIKeyboardSliceTransitionView rebuildBackgroundAndShadowTransitions]\r\n1.0ms    0.0%\t0,0\t \t            -[UIKeyboardSliceTransitionView rebuildPositionTransition]\r\n1.0ms    0.0%\t0,0\t \t            -[UIKeyboardSliceTransitionView rebuildReturnSlices]\r\n\r\nWhile this also takes a significant amount of time:\r\n\r\nRunning Time\tSelf\t\tSymbol Name\r\n112.0ms   10.1%\t0,0\t \t                         -[UIPeripheralHost(UIKitInternal) _reloadInputViewsForResponder:]\r\n72.0ms    6.4%\t0,0\t \t                          -[UIKeyboardImpl setDelegate:force:]\r\n60.0ms    5.4%\t0,0\t \t                           -[UIKeyboardImpl updateLayout]\r\n6.0ms    0.5%\t0,0\t \t                           +[UIDictationController keyboardWillChangeFromDelegate:toDelegate:]\r\n2.0ms    0.1%\t0,0\t \t                           -[UIKeyboardImpl takeTextInputTraitsFromDelegate]\r\n2.0ms    0.1%\t0,0\t \t                           -[UIKeyboardTaskQueue continueExecutionOnMainThread]\r\n1.0ms    0.0%\t0,0\t \t                           -[UIKeyboardImpl recomputeActiveInputModesFromList:]\r\n1.0ms    0.0%\t0,0\t \t                           -[UIKeyboardImpl setAutocorrectSpellingEnabled:]\r\n38.0ms    3.4%\t0,0\t \t                          -[UIPeripheralHost(UIKitInternal) _inputViewsForResponder:withAutomaticKeyboard:]\r\n38.0ms    3.4%\t0,0\t \t                           +[UIInputViewSet inputSetWithKeyboardAndAccessoryView:]\r\n37.0ms    3.3%\t0,0\t \t                            -[UIPeripheralHost automaticKeyboard]\r\n1.0ms    0.0%\t0,0\t \t                            -[UIViewController view]\r\n\r\nSteps to Reproduce:\r\n1) Profile the attached sample app on a device with the Time Profile\r\n2) tap the text field\r\n3) Inspect the Time Profilers track\r\n\r\nExpected Results:\r\nKeyboard slides out with no noticeable lag\r\n\r\nActual Results:\r\nUp to 500ms lag before the keyboard is shown on older devices. Up to 200ms lag on an iPad Air, which is still pretty bad.\r\n\r\nVersion:\r\niOS 8.0.2 12A405\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPad 3 MD370FD/A\r\n\r\nAttachments:\r\n'keyboardlag.trace.zip' and 'Keyboardlag.zip' were successfully uploaded."
+    email: dieter.komendera@gmail.com
+    modified: "2015-01-08T12:07:28.682074Z"
+    number: "18465821"
+    number_intvalue: 18465821
+    originated: 26-Sep-2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 8.0.2 12A405
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Showing the keyboard in an app the first time is very slow

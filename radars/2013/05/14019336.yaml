@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14019336"
+    labels:
+        datastore_id: "3048403"
+data:
+    classification: Feature (New)
+    created: "2013-05-30T01:48:58.448111Z"
+    description: "Summary:\r\nUnder ARC, when accessing an instance variable within a block, it is entirely possible to create a retain cycle when the block captures self that ARC is unable to reclaim. This leaves the programmer to manually spot this, and take a weak reference to one of the objects in the cycle, so that ARC is able to reclaim the objects. This enhancement suggestion proposes two methods for this problem to be easier for developers to handle.\r\n\r\nGeneral Method:\r\nBoth methods require a base to build on. This base includes a precise concurrent garbage collector. For the sake of argument, let us assume a simple mark-sweep collector augmented with a lightweight concurrent algorithm I'll describe below:\r\n1. When creating the GC instance, create a separate queue or thread for the \"recycler\". A recycler is defined as being the program which scans over the known roots and reclaims memory according to these rules.\r\n2. Main a cycle count, initially set to 0.\r\n3. When allocating objects, set their cycle number to the value of the current cycle counter created in step 2\r\n4. After a collection cycle occurs, atomically increment this cycle count using a fetch-and-add instruction.\r\n5. When the recycler scans the roots, it looks for objects whose cycle number is 2 less than the current collection cycle count, and scans those objects for strong references, according to the basic rules of a mark-sweep collector.\r\n6. Any surviving objects have their cycle count incremented by one using an atomic fetch-and-add instruction.\r\n7. All remaining garbage will be zeroed so that ARC may reclaim the resources at that time.\r\n\r\nThis simple concurrent algorithm is outlined in detail in [1]\r\n\r\nOf course, it is only one possible concurrent algorithm.\r\n\r\nMethod 1: Manual Promotion\r\nBy way of some API, I as a programmer expect to be able to promote an object that I believe might leak, to henceforth be maintained by the recycler.\r\nThis is just as error prone as taking a weak reference to an object explicitly and remembering to break the reference when you're done. It is not a method I recommend, but at least better than taking a weak ref and remembering to break the cycle later, all we would have to do in this method is when we introduce the object, tell the recycler about it and then not worry about it going forward. One place in the code does help make this slightly less error prone.\r\n\r\nMethod 2: Automatic Scanning\r\nFor any object that the compiler reasonably believes to be involved in a cycle, as these processes get better over time, can instead insert a call to automatically promote objects it believes are involved in cycles. This doesn't solve the whole problem, but as static analysis tools become better over time, this method will catch more objects.\r\n\r\nBoth of these methods have one benefit: By and large, many of the objects will not be involved with the recycler at any given time, and therefore not be subject to much of the cost of traditional garbage collection. Also, since we only work with objects, whose layout we know ahead of time, we can be precise about our scanning, as opposed to being conservative. The one caveat here is blocks would need to be given an unlimited extent whenever they're found during a scan or promotion operation. This is one possible area of contention.\r\n\r\nReferences:\r\n[1] \"Very Concurrent Mark and Sweep Garbage Collection without Fine-Grain Synchronization\" available for free at http://doc.cat-v.org/inferno/concurrent_gc/concurrent_gc.pdf"
+    email: jeremytregunna@gmail.com
+    modified: "2013-05-30T01:48:58.448313Z"
+    number: "14019336"
+    number_intvalue: 14019336
+    originated: 29-May-2013 07:39 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: N/A
+    reproducible: N/A
+    resolved: No
+    status: Open
+    title: Mechanism to detect and reclaim leaks ARC cannot handle alone

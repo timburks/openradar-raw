@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10483378"
+    labels:
+        datastore_id: "1445401"
+data:
+    classification: Serious Bug
+    created: "2011-11-23T13:20:02.452074Z"
+    description: "Summary: It is very difficult (possibly impossible) to reliably work out whether a method should call its super-implementation.\r\n\r\nNotes:\r\nClass A extends B. B implements protocol C which has optional methods. A implements optional method -d; should it call [super d]?\r\n\r\nObvious answer: maybe. This is not a useful answer. What we want to do is invoke [super d] if and only if something will respond to it.\r\n\r\nApparently sensible answer 1:\r\n\r\n    [super d]; // Delete this line if a runtime exception occurs\r\n\r\nThis does not work because B might implement -d dynamically so this works when you test it and not in the field. Or the implementation of B could change so that the result of this test is no longer correct.\r\n\r\nApparently sensible answer 2:\r\n\r\n    if ([super respondsToSelector:_cmd])\r\n        [super d];\r\n\r\nThis does not work, because NSObject's implementation of -respondsToSelector will find the implementation in A and return YES.\r\n\r\nApparently sensible answer 3:\r\n\r\n    if ([[self superclass] instancesRespondToSelector:_cmd])\r\n        [super d];\r\n\r\nThis works if and only if the superclass knows it always implements -d; if instances dynamically determine whether this method is present this technique will not work.\r\n\r\nApparently sensible answer 4:\r\n\r\n    @try\r\n    {\r\n        [super d];\r\n    }\r\n    @catch (NSException *exception)\r\n    {\r\n        NSString *templateReason = [NSString stringWithFormat:\r\n                                    @\"-[%@ %@]: unrecognized selector sent to instance %p\"\r\n                                    ,NSStringFromClass([self superclass])\r\n                                    ,NSStringFromSelector(_cmd)\r\n                                    ,self];\r\n        if (![exception.reason isEqualToString:templateReason])\r\n            @throw exception;\r\n    }\r\n\r\nPerformance of this is poor if the method in the superclass does not exist because computing templateReason and then comparing it to the exception reason is expensive.\r\n\r\nThis mechanism is fragile because the format of the exception reason string in this case could be altered in a future SDK or runtime release."
+    email: philip.willoughby@dotankstudios.com
+    modified: "2011-11-23T13:20:02.452434Z"
+    number: "10483378"
+    number_intvalue: 10483378
+    originated: 23-Nov-2011 01:16 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPad SDK
+    product_version: all
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Too difficult to find out if a method should invoke super

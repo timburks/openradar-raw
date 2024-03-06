@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33919217"
+    labels:
+        datastore_id: "4939424236306432"
+data:
+    classification: Security
+    created: "2017-08-16T15:55:53.36627Z"
+    description: "Summary:\r\nTesting my app against macOS 10.13 beta 6 (17A344b), I discovered that floating elements in NSCollectionViews were greatly lagging behind.\n\nThis seems to be caused by NSCollectionView's use of Responsive Scrolling in 10.13 as overriding -prepareContentInRect: does indeed fix the issue. \n\nMy app uses a custom NSCollectionViewLayout subclass that provides support for floating elements beyond just floating headers. The implementation overrides -[NSCollectionViewLayout prepareLayout] to update the layout attributes for the floating items.\n\nBefore 10.13, this method is called every time scrolling occurs. In 10.13, it is only called a few times a second, so that the floating elements lag greatly behind and scroll with the content at times they shouldn't do.\n\nThe AppKit Release Notes say that overriding -prepareContentInRect: can be used to *experimentally* disable responsive scrolling.\n\nSince I see no way to implement custom floating element support with responsive scrolling turned on, I hope that the ability to turn off responsive scrolling for NSCollectionViews will not go away in future versions as I'd have to essentially write my own NSCollectionView in order to avoid having to rewrite the majority of my app's UI code.\n\r\n\r\nSteps to Reproduce:\r\n1) Scroll NSCollectionView using a custom NSCollectionViewLayout with floating items.\r\n\r\nExpected Results:\r\n-[CustomCollectionViewLayout prepareLayout] is called every time a scroll event occurs, so that it can update the layout attributes for the floating items.\r\n\r\nActual Results:\r\n-[CustomCollectionViewLayout prepareLayout] is called only a few times per second, so that the layout attributes can not be updated in time. In consequence, floating items don't stick to their positions and scroll out of view at times they are not supposed to scroll out of view.\r\n\r\nVersion:\r\n10.13 beta 6 (17A344b)\r\n\r\nNotes:"
+    email: iospiritongt@googlemail.com
+    modified: "2017-08-16T15:55:53.36654Z"
+    number: "33919217"
+    number_intvalue: 33919217
+    originated: 16-Aug.-2017 05:55 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13 beta 6 (17A344b)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSCollectionView responsive scrolling in 10.13 conflicts with floating elements implemented in NSCollectionViewLayout subclass

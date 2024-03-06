@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28827236"
+    labels:
+        datastore_id: "6187031537385472"
+data:
+    classification: Performance
+    created: "2016-10-18T18:04:28.86804Z"
+    description: "Summary:\n\nWe are fighting with the following error NSCocoaErrorDomain 513 reported by a very small number of users (~ 0.01%). Although this affects a very small number of users, this renders the app useless for them as Genius Scan is unable to create any content.\n \nUnable to create directory at path /var/mobile/Containers/Data/Application/EBE2C5D8-5AEC-4D62-9393-B19CAD598FE5/Documents/documents/FF2F88FB-2C07-4FA3-988E-58AD5C21F659/9A02F8A0-74EB-4ED6-81B6-4F40653856D3. Error: Error Domain=NSCocoaErrorDomain Code=513 \"You don’t have permission to save the file “9A02F8A0-74EB-4ED6-81B6-4F40653856D3” in the folder “FF2F88FB-2C07-4FA3-988E-58AD5C21F659”.\" UserInfo={ NSFilePath=/var/mobile/Containers/Data/Application/EBE2C5D8-5AEC-4D62-9393-B19CAD598FE5/Documents/documents/FF2F88FB-2C07-4FA3-988E-58AD5C21F659/9A02F8A0-74EB-4ED6-81B6-4F40653856D3, NSUnderlyingError=0x15e09de00 { Error Domain=NSPOSIXErrorDomain Code=13 \"Permission denied\" } }\n \nThis error means that the directory cannot be created because of a permission error. \n\nThe code generating this error:\n\nNSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES); \nNSString* documentsDirectory = [paths objectAtIndex:0]; \nNSString *directory = [documentsDirectory stringByAppendingPathComponent:documentsPathAndUUIDs]; \nNSError *error = nil; \nif (![[NSFileManager defaultManager] createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error]) { \n  NSError(@\"Unable to create directory at path %@. Error: %@\", directory, error); \n}\n \nA couple things worth noting:\n- This path isn't saved, it's regenerated every time, so it's not as if the app container had changed between installs;\n- The users seem to have available disk space;\n- This affects both iOS 9 and 10\n\n\nSteps to Reproduce:\nWe are unable to reproduce the issue. It happens to a very small number of users.\n\nIt might happen after they are updating the app."
+    email: bruno@thegrizzlylabs.com
+    modified: "2016-10-18T18:04:28.86822Z"
+    number: "28827236"
+    number_intvalue: 28827236
+    originated: 18-Oct-2016 08:04 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 9, 10
+    reproducible: Unable
+    resolved: ""
+    status: Open
+    title: Unexpected NSCocoaErrorDomain 513 When Manipulating Files in Sandbox

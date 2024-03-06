@@ -1,0 +1,55 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21404245"
+    labels:
+        datastore_id: "5559546529447936"
+data:
+    classification: Feature (New)
+    created: "2015-06-16T17:24:37.1252Z"
+    description: |-
+        Summary:
+        There should be a way to enumerate the set of ObjC classes registered with the runtime without allocating lots of memory
+
+        Steps to Reproduce:
+        objc_copyClassList() and objc_getClassList() both require large buffers to obtain the class list
+
+        Expected Results:
+        There should be a function like the following:
+
+        void
+        objc_enumerateClassList(void (^enumerator)(Class cls))
+        {
+            if (!enumerator) {
+                return;
+            }
+
+            mutex_lock(&classLock);
+            unsigned int count = class_hash ? NXCountHashTable(class_hash) : 0;
+
+            if (count > 0) {
+                Class cls;
+                NXHashState state = NXInitHashState(class_hash);
+                result = (Class *)malloc((1+count) * sizeof(Class));
+                while (NXNextHashState(class_hash, &state, (void **)&cls)) {
+                    enumerator(cls)
+                }
+            }
+            mutex_unlock(&classLock);
+        }
+
+
+        Actual Results:
+        No such function exists
+    email: segiddins@gmail.com
+    modified: "2015-06-16T17:24:37.12551Z"
+    number: "21404245"
+    number_intvalue: 21404245
+    originated: 16-Jun-2015 10:24 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-6.3 (6D1002)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode-6.3 (6D1002): ObjC --  objc_enumerateClassList()'

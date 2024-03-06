@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13461247"
+    labels:
+        datastore_id: "2885401"
+data:
+    classification: Enhancement
+    created: "2013-03-20T11:42:34.019301Z"
+    description: "Summary:\r\nThe official FSEvents API offers a callback that delivers events by passing an array of paths, an array of flags, an array of event IDs and a count of elements in those arrays:\r\n\r\ntypedef void ( *FSEventStreamCallback )(\r\n   ConstFSEventStreamRef streamRef,\r\n   void *clientCallBackInfo,\r\n   size_t numEvents,\r\n   void *eventPaths,\r\n   const FSEventStreamEventFlags eventFlags[],\r\n   const FSEventStreamEventId eventIds[]);\r\n\r\nAs a consequence, for a rename event (kFSEventStreamEventFlagItemRenamed) the old and the new paths of the item in question cannot be passed with the same event ID. Instead, two events with separate event IDs are generated: one for the old path and one for the new path. Unfortunately, there's no way to know which two events in the callback belong to the same item. It gets especially tricky if a file or directory is moved into or out of the file system hierarchy that is being watched.\r\nAfter some testing I suspect that the event with the new path always has an event ID that is one greater than the event ID of the event with the old path. But that is just speculation, it is not documented and it sure is not pretty to implement for clients of the API.\r\n\r\nOn the other hand, the (undocumented) output of /dev/fsevents delivers two string arguments for rename events: the old path and the new path. It sure would be nice if the official API would deliver the same kind of information.\r\n\r\n\r\nSteps to Reproduce:\r\n• Open the attached Xcode project. It uses an FSEventStream, watches a directory and logs any events delivered (including file events)\r\n• Change the path specified by #define DIRECTORY_TO_WATCH if necessary\r\n• Run the project\r\n• Rename some items within that directory\r\n• Move some items out of the directory\r\n• Move some items into the directory\r\n• Now try to make sense of the FSEvents that are delivered in the callback\r\n\r\n\r\nExpected Results:\r\nI'd expect there to be some information in the callback telling me what the new path if for any given rename event. With the current API design, this doesn't seem to be possible.\r\n\r\nActual Results:\r\nThe client of the API has to guess which is the new and which is the old path.\r\nMaybe if two events' event IDs differ by exactly 1 and they are delivered in the batch, they can be treated as the source and destination of the rename? But that's not exactly beautiful code to write."
+    email: marco@duckcode.com
+    modified: "2013-03-20T11:42:34.020161Z"
+    number: "13461247"
+    number_intvalue: 13461247
+    originated: 20-Mar-2013 12:38 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: Any with FSEvents API
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: FSEvents callback makes it hard to properly handle rename events

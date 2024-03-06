@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11017946"
+    labels:
+        datastore_id: "1599413"
+data:
+    classification: ""
+    created: "2012-03-19T11:44:07.519324Z"
+    description: "09-Mar-2012 09:06 AM Joe Rickerby:\r\nSummary:\r\n\r\nI'm running into an issue with loadable bundles and KVO. It seems that any class that has KVO observers attached to an instance of it cannot be safely be unloaded via NSBundle's -unload method.\r\n\r\nSteps to Reproduce:\r\n\r\nI'm doing the following:\r\n\r\nfor (int i = 0; i < 100; i++)\r\n{\r\n    [bundle load];\r\n\r\n    Class bundleClass = [bundle principalClass];\r\n\r\n    [[[bundleClass alloc] init] release];\r\n\r\n    [bundle unload];\r\n}\r\nAnd in the bundle's principle class -init method,\r\n\r\n    [self addObserver: self \r\n           forKeyPath: @\"name\"\r\n              options: 0\r\n              context: nil];\r\n\r\n    self.name = @\"jim\";\r\nThe loop gets through a number of iterations, sometimes crashing on the second time round, sometimes on the thirtieth.\r\n\r\nExpected Results:\r\n\r\nI'm expecting this to work successfully, and for the loop to complete.\r\n\r\nActual Results:\r\n\r\nIt always crashes with this backtrace, with the EXC_BAD_ACCESS signal.\r\n\r\n#0  0x00007fff8a30deab in objc_msgSend ()\r\n#1  0x00007fff8609d862 in NSKeyValueNotifyObserver ()\r\n#2  0x00007fff860be99b in NSKeyValueDidChange ()\r\n#3  0x00007fff8606b0fb in -[NSObject(NSKeyValueObserverNotification) didChangeValueForKey:] ()\r\n#4  0x00000001007a4c2c in -[Bundle init] (self=0x101902130, _cmd=0x7fff8ea369b0) at /Users/joerick/Desktop/bundleTest/testbundle/Bundle.m:26\r\n#5  0x0000000100001731 in -[SIAppDelegate applicationDidFinishLaunching:] (self=0x100326a90, _cmd=0x7fff876e285f, aNotification=0x100131ea0) at /Users/joerick/Desktop/bundleTest/bundleTest/SIAppDelegate.m:28\r\n#6  0x00007fff8606ade2 in __-[NSNotificationCenter addObserver:selector:name:object:]_block_invoke_1 ()\r\n#7  0x00007fff8b470e0a in _CFXNotificationPost ()\r\n#8  0x00007fff86057097 in -[NSNotificationCenter postNotificationName:object:userInfo:] ()\r\n#9  0x00007fff8e1bbaa7 in -[NSApplication _postDidFinishNotification] ()\r\n#10 0x00007fff8e1bb80d in -[NSApplication _sendFinishLaunchingNotification] ()\r\n\r\nRegression:\r\n\r\nI've tested this on OS X 10.7.3\r\n\r\nNotes:\r\n\r\nI've posted the full source code here\r\nhttps://gist.github.com/1799355\r\n\r\nYou can download a zip file of the example project\r\nhttps://gist.github.com/raw/1799355/4a9be98963e022d1c927867ce76324b83e1f8efa/bundleTest.zip"
+    email: joerick@mac.com
+    modified: "2012-03-19T11:44:07.519451Z"
+    number: "11017946"
+    number_intvalue: 11017946
+    originated: 09-Mar-2012 09:06 AM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: KVO/KVC crash on reloading previously unloaded bundles

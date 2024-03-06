@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14277466"
+    labels:
+        datastore_id: "3159401"
+data:
+    classification: Enhancement
+    created: "2013-06-26T19:04:15.026497Z"
+    description: "Summary:\r\nAccessibility privileges are not granular enough to separate out intent to observe a Mac from intent to control a Mac. Combined with the new per-app controls in 10.9, this leads to a very poor user experience.\r\n\r\nThe app I work on uses universal access to passively track application activity on the Mac. It in no way controls the computer. However, there is no way for me to declare this or limit my app's access to only those Accessibility API calls used for observing, not interacting. So when I ask for accessibility access for my app, the user is told my app wants to control her computer. That's the last thing I want to do, and it needlessly scares the user.\r\n\r\nI understand and support Apple's decision to lock down security for Accessibility. And given the current all-or-nothing privileges, it makes sense to warn the user about the worst case scenario (a malicious app controlling the device). But if we're going down this path, then we need a way to turn on different parts of accessibility depending on an app's needs. I should be able to tell the system that my app only needs access to read and not write accessibility info, so the warning can instead alert the user that my app wants to observe their Mac, not control it.\r\n\r\nSteps to Reproduce:\r\nFeed AXIsProcessTrustedWithOptions() an options dictionary.\r\n\r\nExpected Results:\r\nThe options dictionary passed to AXIsProcessTrustedWithOptions should be able to contain a new key, maybe kAXTrustedOnlyForVoyeurismCheckOptionPrompt or something. This would alert the user that the app wants to observe but not control the computer. Then, the Accessibility API would grant read but *not* write access to AXElements for this app. It could be represented in the security preferences as a \"-\" on the accessibility checkbox instead of a full check.\r\n\r\nActual Results:\r\nThe only option in the AXIsProcessTrustedWithOptions() dictionary is kAXTrustedCheckOptionPrompt, and the user is told the app wants to control the computer.\r\n\r\nRegression:\r\nN/A, although with previous OS versions one could just modify /private/var/db/.AccessibilityAPIEnabled to turn on accessibility without causing a negative user experience. Of course that was very unsecure and left the machine vulnerable to any app that wanted to abuse AX.\r\n\r\nNotes:\r\nIn case you're curious, my app uses accessibility to observe:\r\n- When apps launch, quit, or come to the foreground\r\n- When windows open, close, or come into focus\r\n\r\nThis is done with the user's explicit consent, and the information is aggregated and used anonymously."
+    email: jb.rubin@gmail.com
+    modified: "2014-07-23T02:37:04.907221Z"
+    number: "14277466"
+    number_intvalue: 14277466
+    originated: 26-Jun-2013 3:01 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Accessibility
+    product_version: Mac OS X 10.9 DPs
+    reproducible: Yes
+    resolved: ""
+    status: Closed
+    title: 'Mac OS X 10.9: Accessibility privileges need to be more granular'

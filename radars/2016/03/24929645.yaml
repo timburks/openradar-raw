@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24929645"
+    labels:
+        datastore_id: "5013517035896832"
+data:
+    classification: ""
+    created: "2016-03-02T13:45:48.00128Z"
+    description: "Summary:\r\nIf the app is started using the Xcode debugger, and recovers an in-progress download task from a background NSURLSession, cancelling the recovered task causes all future download tasks to either:\r\n\r\na) Hang forever and never actually progress or return any data\r\nb) Fail immediately with an NSError with domain NSPOSIXErrorDomain and code 2 (\"No such file or directory\")\r\n\r\nSteps to Reproduce:\r\n1. Create an NSURLSession instance using a background NSURLSessionConfiguration object\r\n2. Start an NSURLSessionDownloadTask using the background session\r\n3. While the download is still in progress, close the app from Xcode, and then relaunch it from Xcode\r\n4. Recover the in-progress download task using [NSURLSession getTasksWithCompletionHandler:]\r\n5. Cancel the in-progress download task\r\n6. Attempt to start a new download task\r\n\r\nExpected Results:\r\nThe download should progress normally, including callbacks to URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:, and eventually complete successfully.\r\n\r\nActual Results:\r\nThe download will actually either:\r\n\r\na) Hang forever and never actually progress or return any data. None of the NSURLSessionDownloadDelegate methods are ever called.\r\nb) Fail immediately (via a callback to URLSession:task:didCompleteWithError:) with an NSError with domain NSPOSIXErrorDomain and code 2 (\"No such file or directory\")\r\n\r\nBoth of the above appear to happen with essential equal frequency.\r\n\r\nVersion:\r\niOS 9.2"
+    email: chris.vig@gmail.com
+    modified: "2016-03-02T13:45:48.00146Z"
+    number: "24929645"
+    number_intvalue: 24929645
+    originated: 3/2/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "9.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Cancelling an NSURLSession background download that was in progress when the app started causes all future downloads to fail when debugger is attached

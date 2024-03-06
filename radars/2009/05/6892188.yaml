@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6892188"
+    labels:
+        datastore_id: "39411"
+data:
+    classification: Other bug
+    created: "2009-05-15T18:28:48.839721Z"
+    description: "15-May-2009 11:05 AM Karl Kuehn:\r\nSummary: \r\n\tWhen using the command line program \"installer\" in a chroot environment the path to the package must be supplied as if it were not in a chroot. While reading it will fail to read anything in the package outside the chroot environment (as expected), and everything else seems to work.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a simple package using PackageMaker that installs a file to /tmp/chroot-test. Build the installer and name it \"ChrootTest.pkg\".\r\n\r\n2. Pick a bootable volume other than the one you are booted from (FireWire-connected volumes are just fine), we will be referring to this as VOLUME_NAME. Copy the installer to /Volumes/VOLUME_NAME/tmp/ChrootTest.pkg.\r\n\r\n3. Perform this command (supplying credentials as required): 'sudo chroot /Volumes/VOLUME_NAME /usr/sbin/installer -pkg /private/tmp/ChrootTest.pkg -target /'. Note that you get an error about not being able to verify the package.\r\n\r\n4. Perform the command again with the full path (from a non-chroot perspective): 'sudo chroot /Volumes/VOLUME_NAME /usr/sbin/installer -pkg /Volumes/VOLUME_NAME/private/tmp/ChrootTest.pkg -target /'. Note that it succeeds, and look for the file in /Volumes/VOLUME_NAME/tmp. It will be there.\r\n\r\n5. Move the package from /Volumes/VOLUME_NAME/tmp/ChrootTest.pkg to tmp/ChrootTest.pkg (note this is move, not copy. There should be nothing at /Volumes/VOLUME_NAME/tmp/ChrootTest.pkg). Perform the command one more time with the new absolute (non-chroot) path: 'sudo chroot /Volumes/VOLUME_NAME /usr/sbin/installer -pkg /private/tmp/ChrootTest.pkg -target /'. Note that it can't be found.\r\n\r\nExpected Results:\r\n\tI would expect step 3 to work, and 4 and 5 to fail.\r\n\r\nActual Results:\r\n\tIn-line.\r\n\r\nRegression:\r\n\tI believe this has been the state of affairs for a while. I have tested this on the 10A354 build of 10.6 through AppleSeed and it looks like it is the same there. \r\n\r\nNotes:\r\n\tWhen this is fixed it would be nice to make sure that the version number on the installer was different enough that I could check for that before using it.\r\n\r\n15-May-2009 02:14 PM Karl Kuehn:\r\nAnother oddity: I can get it to successfully work as expected (like step 3 from above) if the target is a DMG (read-only with a shadow file) mounted at a custom mount point (/tmp/random-name) with the -nobrowse option. I have not tried any variants around that, so it is possible that I am missing what is different from this example to the HD in /Volumes one.\r\n\r\n15-May-2009 04:15 PM Karl Kuehn:\r\nAnother related bug (or expression of the original bug) when using mounted disk images: installer is trying to install packages at the mount point path, but is using the absolute path inside the chroot space. For example this:\r\n\r\nchroot /tmp/random-mount installer -pkg /tmp/copied-installer.pkg -target /\r\n\r\nis trying to install at:\r\n\r\n/tmp/random-mount/tmp/random-mount\r\n\r\nIf I create a softlink at that location and point it at /, things work fine."
+    email: kuehn.karl@gmail.com
+    modified: "2011-08-28T05:46:49.04535Z"
+    number: "6892188"
+    number_intvalue: 6892188
+    originated: 05/15/2009
+    parent_number: '&{NULL_VALUE}'
+    product: MacOS X
+    product_version: 10.5.7
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: command line installer works oddly in a chroot environment

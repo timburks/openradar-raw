@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18570939"
+    labels:
+        datastore_id: "5872903987920896"
+data:
+    classification: Serious Bug
+    created: "2014-10-07T18:36:18.012542Z"
+    description: "Summary:\r\nI have an app that plays iTunes previews and encourages people tp buy the songs on iTunes.  In previous iOS releases, when the user comes back into my app, I could detect the purchases song and restart the user experience with the full song.  In iOS 8.0.2, more often than not, changes (purchases) aren't being detected.\r\n\r\nSteps to Reproduce:\r\n1. download the Apple same code AVPlayerDemo\r\nhttps://developer.apple.com/library/IOs/samplecode/AVPlayerDemo/Introduction/Intro.html#//apple_ref/doc/uid/DTS40010101-Intro-DontLinkElementID_2 \r\n\r\n2. open the project in Xcode, open the file AssetBrowserSource.m and put a breakpoint on line 168:\r\n\r\n- (void)iPodLibraryDidChange:(NSNotification*)changeNotification\r\n{\r\n\t[self updateIPodLibrary];\r\n}\r\n\r\n3. run the app from Xcode on your device, and switch to the iPod Library Tab, let it load music library.\r\n\r\n4. on your device, switch to iTunes and purchase a song\r\n\r\n5. once the purchase is complete and the song is downloaded, switch back to AVPlayerDemo App.\r\n\r\n\r\nExpected Results:\r\niOS detects a change to your music library and sends a MPMediaLibraryDidChangeNotification\r\n\r\nThis worked in iOS 7 and before.\r\n\r\nActual Results:\r\nmore often than not, no MPMediaLibraryDidChangeNotification is received.  (Doing a query for the song by name using [MPMediaQuery songsQuery] returns nil.)\r\n\r\nVersion:\r\n8.0.2 (12A405)\r\n\r\nNotes:\r\nmy app is called tappr.tv.  You can see this bug happen there as well.  Install the app, go thru the first launch sequence but don't sign into any Spotify or Rdio accounts, then play dances from the Featured Dances tab. If you don't have the song in your music library, a preview from iTunes is played.  Tap the iTunes icon in the bottom toolbar, and choose \"Purchase…\"  You'll be switched to that song in iTunes, where you can complete the purchase, then return to tappr.tv.  Expected result is, on coming to the foreground, my call to [MPMediaQuery songsQuery] with predicates can find that named song, but it doesn't.  If you then choose \"Pick…\" and search for the song, you can find it, select it, and *then* my code can access and play it.\r\n\r\nThis worked reliably in tappr.tv on iOS 7 and before.\r\n\r\nConfiguration:\r\niPhone 6, 128Gb"
+    email: deeje@tappr.tv
+    modified: "2014-10-07T18:36:18.012812Z"
+    number: "18570939"
+    number_intvalue: 18570939
+    originated: "2014-10-07"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 8.0.2
+    reproducible: Often
+    resolved: ""
+    status: Open
+    title: iTunes purchases don't reliably trigger MPMediaLibraryDidChangeNotification notifications

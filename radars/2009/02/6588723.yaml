@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6588723"
+    labels:
+        datastore_id: "4421"
+data:
+    classification: Enhancement
+    created: "2009-02-15T09:11:14.842134Z"
+    description: "The programming guides for KVO[1] and Cocoa Bindings[2] do not mention that Bindings will set the bound property of a view using its accessors. Instead, they claim that the programmer must implement KVO's observe method and change the bound property himself.\r\n\r\nBindings' behavior of setting the property for me is a very handy feature, which I make use of in CPU Usage[3]. I was surprised to find that the documentation doesn't directly mention it—I had thought it was supported behavior. I would not be surprised if other developers are also relying on this behavior.\r\n\r\nI submit that it is the obvious behavior, and that those who don't want it should indeed override the observe method, and that you should codify it by explicitly stating it in the documentation.\r\n\r\nThe closest reference I can find is in the Cocoa Bindings Programming Topics (http://developer.apple.com/documentation/Cocoa/Conceptual/CocoaBindings/Concepts/HowDoBindingsWork.html#//apple_ref/doc/uid/20002373-204283):\r\n\r\n“““\r\n### Model-Initiated Updates\r\n\r\nRecall again that the joystick was bound to the controller with the following method:\r\n\r\n\t[joystick bind:@\"angle\" toObject:GraphicController withKeyPath:@\"selection.shadowAngle\" options:options];\r\n\r\nFrom the perspective of model-initiated updates the method can be interpreted as follows:\r\n\r\n- `toObject: GraphicController`\r\n  If the GraphicController’s\r\n- `withKeyPath:@\"selection.shadowAngle\"`\r\n  selection.shadowAngle changes\r\n- `bind:@\"angle\"`\r\n  update whatever is associated with the exposed angle key\r\n- `options:options`\r\n  using the options specified (for example, using a value transformer).\r\n”””\r\n\r\nNotice the third list item: “update whatever is associated with the exposed angle key”. I can interpret this to mean that the property-assignment behavior I'm seeing is supported, but that doesn't quite match up with earlier statements that I must implement the observe method, nor with the code example that follows this list in the same section.\r\n\r\n[1]: http://developer.apple.com/documentation/Cocoa/Conceptual/KeyValueObserving/\r\n[2]: http://developer.apple.com/documentation/Cocoa/Conceptual/CocoaBindings/\r\n[3]: http://boredzo.org/cpuusage/hg/ — see PRHGradientView, which exposes its gradient property as a binding but does not override the observe method. I suggest that you add an NSLog statement to setGradient:, then run the app; you will see that the binding does, indeed, send one of my views the setGradient: message when you change the gradient colors in the Preferences window.\r\n\r\n07-Mar-2009 11:31 AM Peter Hosey:\r\nI finally found a statement in the docs that seems to confirm that you can simply implement a KVC-/KVO-compliant property and have the Right Thing happen:\r\n\r\n> NSView subclasses can expose additional key-value-coding/key-value-observing compliant properties as bindings by calling the class method exposeBinding: for each of the properties. \r\n— http://developer.apple.com/documentation/Cocoa/Reference/ApplicationKit/Protocols/NSKeyValueBindingCreation_Protocol/Reference/Reference.html\r\n\r\nI'm not sure why the feature is only for NSView subclasses, if indeed it is. I haven't tried it with classes that aren't NSViews.\r\n\r\nMy request stands: A clear and explicit statement of the any-KVC/KVO-compliant-property-can-be-a-binding-with-only-an-exposeBinding:-message feature should exist in the Bindings programming guide as well."
+    email: boredzo@gmail.com
+    modified: "2011-08-28T05:48:07.393601Z"
+    number: "6588723"
+    number_intvalue: 6588723
+    originated: 2009-02-15T0109-0800
+    parent_number: '&{NULL_VALUE}'
+    product: Documentation
+    product_version: "2007-05-22"
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: KVO/Bindings docs don't mention that it will set view properties

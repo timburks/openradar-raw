@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12774166"
+    labels:
+        datastore_id: "2350402"
+data:
+    classification: Other bug
+    created: "2012-11-29T07:40:06.319461Z"
+    description: "Summary:\r\n\r\nThe common pattern to read an image from the pasteboard is:\r\n\r\n        NSArray *pboardContents = [[NSPasteboard generalPasteboard] readObjectsForClasses:@[[NSImage class]] options:nil];\r\n\r\nWhen the image is provided by an app such as Adobe Fireworks, the pasteboard contains a PICT item (com.apple.pict), in a 64bit app the above code eventually calls out to the /usr/sbin/pictd helper app, presumably to decode/render the PICT in 32bit Carbon code.\r\n\r\nWith the sandbox disabled this works fine, with the sandbox enabled the following error is logged to the console and no image is extracted, even if the pasteboard contains PNG or TIFF representations:\r\n\r\n\"Could not connect to pict rendering process pictd. Break on void _NSWarnOnceCouldNotConnectToPICTServer() to debug.  This will be logged only once.  This may break in the future.\"\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n- copy to clipboard in Adobe Fireworks\r\n- paste in a 64bit sandboxed app, such as Prototypes or Sketch\r\n\r\nExpected Results:\r\n\r\n- pasted image\r\n\r\nActual Results:\r\n\r\n- image isn't pasted, actual behaviour varies\r\n\r\nRegression:\r\n\r\nWorks fine with sandbox disabled.\r\n\r\nNotes:\r\n\r\nWorkaround it to manually try and extract PNG or TIFF before letting NSImage give it a shot, such as:\r\n\r\n    NSPasteboard *pboard = [NSPasteboard generalPasteboard];\r\n    \r\n    // workaround for images with PICT data in them (copy/paste from Fireworks)\r\n    NSData *imgData = nil;\r\n    if((imgData = [pboard dataForType:NSPasteboardTypePNG]) != nil ||\r\n      (imgData = [pboard dataForType:NSPasteboardTypeTIFF]))\r\n    {\r\n        NSImage *image = [[NSImage alloc] initWithData:imgData];\r\n        // do something with image\r\n    }\r\n    else\r\n    {\r\n        NSArray *pboardContents = [pboard readObjectsForClasses:@[[NSImage class]] options:nil];\r\n\r\n        for(NSImage *image in pboardContents)\r\n            // do something with image\r\n    }"
+    email: duncan.wilcox@gmail.com
+    modified: "2012-11-29T07:40:06.319616Z"
+    number: "12774166"
+    number_intvalue: 12774166
+    originated: "2012-11-29"
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.8.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Sandbox breaks copy/paste of images containing PICT (Adobe Fireworks)

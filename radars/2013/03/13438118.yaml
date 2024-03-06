@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13438118"
+    labels:
+        datastore_id: "2867401"
+data:
+    classification: Other Bug
+    created: "2013-03-17T10:56:20.997106Z"
+    description: "Summary:\n\nThe SecurityFoundation.framework contains localized strings with names for 1730 ASN.1 Object Identifiers (OID). The key used is a hex representation of the TLV data making of those OIDs. Those strings are for example used to display these values on certificate quick look viewers like the one built into Keychain Access.\n\n29 of these strings (in English, but presumably in all 30 languages) have a length byte value that is either too short (17) or too long (12) for the rest of the data.\n\nAssuming that certificates are usually well-formed that means that if any of these 29 OIDs appear in a viewed certificate the key will be incorrect and no matching name for the string will be found. \n\nThe incorrect entries are:\n\n// too many V bytes\n06 05 2B 24 03 04 02 01 = 'ISO9796-2 with RED'\n06 06 2A 86 48 CE 38 03 01 = 'Countersignature'\n06 06 2A 86 48 CE 38 03 02 = 'Attribute Certificate'\n06 07 2B 0C 02 87 73 07 03 01 = 'DEC MD2 with RSA'\n06 07 2B 0C 02 87 73 07 03 02 = 'DEC MD4 with RSA'\n06 07 2B 0C 02 87 73 07 03 03 = 'DEC DEA-MAC'\n06 07 2B 0C 02 87 73 07 02 01 = 'DEC MD2'\n06 07 2B 0C 02 87 73 07 02 02 = 'DEC MD4'\n06 0B 60 86 48 01 65 02 01 0C 00 01 00 00 = 'TSP1 Tag Set Zero'\n06 0B 60 86 48 01 65 02 01 0C 00 01 00 01 = 'TSP1 Tag Set One'\n06 0B 60 86 48 01 65 02 01 0C 00 01 00 02 = 'TSP1 Tag Set Two'\n06 0B 60 86 48 01 65 02 01 0C 00 02 00 00 = 'TSP2 Tag Set Zero'\n06 0B 60 86 48 01 65 02 01 0C 00 02 00 01 = 'TSP2 Tag Set One'\n06 0B 60 86 48 01 65 02 01 0C 00 02 00 02 = 'TSP2 Tag Set Two'\n06 0B 60 86 48 01 65 02 01 0C 00 03 00 01 = 'Kafka Tag Set Name 1'\n06 0B 60 86 48 01 65 02 01 0C 00 03 00 02 = 'Kafka Tag Set Name 2'\n06 0B 60 86 48 01 65 02 01 0C 00 03 00 03 = 'Kafka Tag Set Name 3'\n\n// too little V bytes\n06 08 2A 86 48 86 F7 0D 02 = 'RSADSI Digest Algorithm'\n06 08 2A 86 48 86 F7 0D 03 = 'RSADSI Encryption Algorithm'\n06 09 2A 86 48 86 F7 14 01 02 81 71 = 'Delivery Mechanism'\n06 09 2A 86 48 CE 3D 01 02 03 = 'Characteristic-Two Basis'\n06 09 60 86 48 01 65 02 01 0B = 'US Department of Defense Infosec'\n06 0A 2A 86 48 CE 3D 01 02 03 01 = 'Null Basis'\n06 0A 2A 86 48 CE 3D 01 02 03 02 = 'Trinomial Basis'\n06 0A 2A 86 48 CE 3D 01 02 03 03 = 'Pentanomial Basis'\n06 0B 2A 83 08 8C 1A 4B 3D 01 01 01 = 'Symmetric Encryption Algorithm'\n06 0B 60 86 48 01 86 F8 37 01 02 08 81 02 = 'MD4 Packet'\n06 0B 60 86 48 01 86 F8 37 01 02 08 81 05 = 'Novell Obfuscate-1'\n06 0C 2A 83 08 8C 9A 4B 3D 01 01 01 01 = 'MISTY1-CBC'\n\n\nSteps to Reproduce:\n\nInspect /System/Library/Frameworks/SecurityFoundation.framework/Versions/A/Resources/English.lproj/OID.strings and look up any of the above mentioned keys.\n\nExpected Results:\n\nThe string keys should have the correct length byte in order to match actual live data.\n\n\nActual Results:\n\n19 OID names will not be displayed in a certificate viewer looking for well-formed keys in the OID strings files.\n\n\nRegression:\n\nWe first saw this error on 10.8.3, we did not inspect any earlier OS X versions.\n\n\nNotes:\n\nWe can provide a command line utility to fix the incorrect keys for your convenience."
+    email: oliver.drobnik@gmail.com
+    modified: "2013-03-17T10:56:20.998487Z"
+    number: "13438118"
+    number_intvalue: 13438118
+    originated: 17-Mar-2013 11:56 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: OS X 10.8.3 (12D78)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Some OID Names have Incorrect Key in Strings Files

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14670403"
+    labels:
+        datastore_id: "5164440475402240"
+data:
+    classification: Serious bug
+    created: "2013-08-07T09:30:29.115014Z"
+    description: "Summary:\r\nWhen creating an NSData object using `initWithBytesNoCopy:length:freeWhenDone:` the object does not behave safely when creating a copy: -[NSData copy] just returns the same instance.\r\n\r\nWhile this behavior is perfectly understandable for standard NSData objects (where the underlying data is immutable and owned by the NSData object) this is not correct in this special case. As the underlying data is not owned by the no-copy-NSData (and could be modified or released at any time) the NSData object is only valid as long as the data is.\r\n\r\nIf some code want's to keep the NSData around it calls `copy` and expects to receive a private, decoupled version of the same data, that does not go away or is mutated from outside.\r\n\r\nSteps to Reproduce:\r\nHere's a code snippet that shows the bug:\r\n\r\n// ------------------------------------------------\r\nchar bytes[4];\r\nstrcpy(bytes, \"foo\");\r\n\r\n// wrap the data in an NSData that points to the original data\r\nNSData *data = [[NSData alloc] initWithBytesNoCopy:bytes length:strlen(bytes) + 1 freeWhenDone:NO];\r\n\r\nNSLog(@\"1.              data: '%s' (%p)\", [data bytes], data);\r\n\r\n// make an immutable and a mutable copy of the NSData\r\nNSData *copyOfData        = [data copy];\r\nNSData *mutableCopyOfData = [data mutableCopy];\r\n\r\n// overwrite the on stack data\r\nstrcpy(bytes, \"bar\");\r\n\r\nNSLog(@\"2.        copyOfData: '%s' (%p)\", [copyOfData bytes], copyOfData);\r\nNSLog(@\"3. mutableCopyOfData: '%s' (%p)\", [mutableCopyOfData bytes], mutableCopyOfData);\r\n// ------------------------------------------------\r\n\r\nExpected Results:\r\ncopyOfData must refer to a different object than data\r\n\r\nActual Results:\r\ncopyOfData refers to the same object as data (pointers are identical)\r\n\r\nNotes:\r\nWhile the example above might seem contrived, I experienced this bug in real world. I fed data from an sqlite database into a CGImageSource to create an CGImage out of it. I assume the CGImageSource copies the data to do the decompression of the image lazily. Obviously problems occurred when the image was accessed after the sqlite data was released. The ImageIO framework expected to get its private copy by calling CFDataCreateCopy or similar. To fix the problem I had to create a `mutableCopy` from the no-copy-data."
+    email: nikolai.ruhe@googlemail.com
+    modified: "2014-02-10T10:05:16.667797Z"
+    number: "14670403"
+    number_intvalue: 14670403
+    originated: 07-Aug-2013 11:30 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: OS X 10.8.4
+    reproducible: Always
+    resolved: 23-Oct-2013
+    status: Closed
+    title: 'Foundation.framework: NSData does not perform copy when needed'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7547846
+    labels:
+        datastore_id: "5003890424545280"
+data:
+    classification: ""
+    created: "2020-01-23T11:30:40.796294Z"
+    description: "If an app is shown in the \"On my iPhone/iPad\" location in the Files app and a file is opened using UIDocument, the system calls presentedItemDidMoveToURL: on the document when the app comes to the foreground, even if the file was in fact not moved. The new file url has a \"private/var\" prefix instead of \"var\".\r\n\r\nFurthermore, and much more critical, the new url is invalid if the file is stored a folder with certain names:\r\n\r\nFor example, if the file is stored in Documents/Test.tmbundle/test.txt, then presentedItemDidMoveToURL: is called with the path Documents/Test.tmbundle/ which is the path of the directory instead of the file. This results in an error trying to open the directory as a file.\r\n\r\nI could isolate the issue in a small sample project that is attached to this feedback.\r\n\r\nStep to reproduce:\r\n- The app's document directory must be visible in the Files app, so enable \"UIFileSharingEnabled\" and \"LSSupportsOpeningDocumentsInPlace\" in the app's Info.plist file.\r\n- Using an UIDocument subclass, open a file called \"text.txt\" in the subfolder called \"Test.tmbundle\" in the app's document folder.\r\n- Leave the app using the home button/indicator.\r\n- Open the app again\r\n- presentedItemDidMoveToURL: is called on the document subclass even though the file was not moved.\r\n\r\nHere is a sample log from the sample project:\r\n\r\n\r\nopened file file:///var/mobile/Containers/Data/Application/9854C1E4-07BE-4E18-865A-2E77D4F66039/Documents/Test.tmbundle/test.txt, success: 1\r\n\r\npresentedItemDidMoveToURL:\r\nfile:///private/var/mobile/Containers/Data/Application/9854C1E4-07BE-4E18-865A-2E77D4F66039/Documents/Test.tmbundle/, old url: \r\nfile:///var/mobile/Containers/Data/Application/9854C1E4-07BE-4E18-865A-2E77D4F66039/Documents/Test.tmbundle/test.txt\r\n\r\nAs you can see, the new URL contains \"private/var\" instead of \"var\" at the beginning AND the URL points to the folder named \"Test.tmbundle\" instead of the actual opened file (test.txt) which is contained within that folder.\r\n\r\nIn a real app, this obviously results in big problems.\r\n\r\n\r\nThe problem with the stripped file name happens  when the folder is named \"Test.tmbundle\", \"Test.pages\" or \"Test.bundle\". It does not happen when the folder is called \"Test.txt\" or \"Test.folder\". In that case, presentedItemDidMoveToURL: is called with a \"private/var\" URL (which is also a bug), but at least the file name is not stripped from the URL.\r\n\r\n\r\nFYI, the sample project can also log info about the .tmbundle extension in ViewController.m. It does not have an UTI type declaration on my device:\r\nuti of .tmbundle is dyn.age81k5pcsz1gk5df\r\ntype declaration: (null)\r\n\r\nThe device is running iOS 13.3."
+    email: lextar@gmail.com
+    modified: "2020-01-23T11:30:40.796499Z"
+    number: FB7547846
+    number_intvalue: 7547846
+    originated: Jan 23, 2020 at 12:28 PM
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'UIDocument''s presentedItemDidMoveToURL: is called even though the presented file was not moved, sometimes with an invalid URL'

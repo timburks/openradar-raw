@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34581827"
+    labels:
+        datastore_id: "6058736367960064"
+data:
+    classification: Bug
+    created: "2017-09-21T21:48:36.52453Z"
+    description: "Area:\r\nCore Foundation\r\n\r\nSummary:\r\nCFLocaleCopyCurrent() will return the value of the application's CFBundleDevelopmentRegion Info.plist key if all of the following conditions are true:\r\n- CFBundleDevelopmentRegion is present in the Info.plist\r\n- The CFBundleDevelopmentRegion language is in the list of preferred languages on the iOS device, but isn't the first one\r\n- There are no localized resources (i.e. no .lproj directory) in the app for the first preferred locale\r\n\r\nThis differs from iOS 10 where the presence of the CFBundleDevelopmentRegion key had no effect.\r\n\r\nThere are logical arguments for both. The previous iOS 10 behavior made sense, because that's what the language was actually set to. However, the new iOS 11 behavior makes sense, because if there are no localized resources for the most preferred language, a fallback can be expected.\r\n\r\nTherefore, we aren't sure if this is a bug/regression, or an intentional change in behavior.\r\n\r\nNote that if the CFBundleDevelopmentRegion key is not present at all, CFLocaleCopyCurrent() always returns the first preferred locale as it did in iOS 10.\r\n\r\nSteps to Reproduce:\r\nAssume that:\r\n- English is the \"development language\" on the Mac (resulting in CFBundleDevelopmentRegion = English)\r\n- The iOS device region/language is set to German/Germany\r\n- The iOS device preferred languages is set to German/Germany, English/US\r\n\r\nCreate a new application in Xcode and add some code to log the identifier of a CFLocale object obtained via CFLocaleCopyCurrent(). Deploy and run the application on an iOS device.\r\n\r\nExpected Results:\r\nCFLocaleCopyCurrent() returns German (like it did in iOS 10)\r\n\r\nActual Results:\r\nCFLocaleCopyCurrent() returns English\r\n\r\nVersion/Build:\r\niOS 11 15A372\r\n\r\nConfiguration:\r\nmacOS 10.12.6 16G29, Xcode 9 9A235"
+    email: jake.petroules@petroules.com
+    modified: "2017-09-21T21:48:36.52483Z"
+    number: "34581827"
+    number_intvalue: 34581827
+    originated: September 21 2017, 2:44 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 11 15A372
+    reproducible: Always
+    resolved: ""
+    status: Reported
+    title: CFLocaleCopyCurrent returns the value of CFBundleDevelopmentRegion in iOS 11

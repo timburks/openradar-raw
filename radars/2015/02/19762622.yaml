@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19762622"
+    labels:
+        datastore_id: "6088766091427840"
+data:
+    classification: Serious Bug
+    created: "2015-02-09T07:34:16.513624Z"
+    description: "Summary:\r\nIf you take a source image of say 4,000 x 6,000, and try to draw it into a rect of say 50 x 75, it works fine.  But, if you try a rect of 51 x 76 (or 51 x 77), it screws up - it offsets the drawn image, within the destination, by some seemingly arbitrary vertical shift (and sometimes wraps the image around from bottom to top, but mostly doesn't).\r\n\r\nBut, this doesn't always happen - it depends on how you get the original NSImage.  e.g. NSImage(fileURLWithPath:) *doesn't* exhibit this issue yet loading it via CIFilter(imageURL:, options:) does.\r\n\r\nSteps to Reproduce:\r\nfunc toNSImage(ciImage : CIImage) -> NSImage {\r\n    let rep = NSCIImageRep(CIImage: ciImage)\r\n    var nsImage = NSImage(size: ciImage.extent().size)\r\n    nsImage.addRepresentation(rep)\r\n    return nsImage\r\n}\r\n\r\nlet url = <path to some NSImage, of 4,000 x 6,000 for this example>\r\nvar rawFilter = CIFilter(imageURL: url, options: [:])\r\nrawFilter.setValue(\"5\", forKey: \"inputDecoderVersion\") // To work around bug in 10.10.2 / RAWUpdate6.02 where version \"6\" only ever renders a completely black image\r\nlet image = toNSImage(rawFilter.outputImage!)\r\nlet scaledSize = NSSize(width: 51, height: 77)\r\nlet scaledImage = NSImage(size: scaledSize)\r\nscaledImage.lockFocus()\r\nimage.drawInRect(NSRect(origin: NSZeroPoint, size: scaledSize))\r\nscaledImage.unlockFocus()\r\n\r\nExpected Results:\r\nDrawing the scaled image correctly.\r\n\r\nActual Results:\r\nNot drawing the scaled image correctly.\r\n\r\nWorkaround:\r\nTurn off image caching for the source image (i.e. image.cacheMode = .Never)."
+    email: wadetregaskis@gmail.com
+    modified: "2015-02-09T07:34:16.51382Z"
+    number: "19762622"
+    number_intvalue: 19762622
+    originated: 8/2/2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: -[NSImage drawInRect:] screws up if the scale factor ends up being non-integral

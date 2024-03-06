@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11540942"
+    labels:
+        datastore_id: "1753401"
+data:
+    classification: Security
+    created: "2012-05-26T17:09:54.115768Z"
+    description: "Summary:\r\nCreating a app-scoped read-only bookmark with\r\n-bookmarkDataWithOptions:includingResourceValuesForKeys:relativeToURL:error:\r\nrequires write-access to bookmarked file.\r\n\r\nSteps to Reproduce:\r\n1. Create app with App Sandboxing and \"com.apple.security.files.user-selected.read-only\" and \"com.apple.security.files.bookmarks.app-scope\" entitlements.\r\n2. In app, present Open Files dialog to user.\r\n3. When user selects file, get URL and call:\r\n   bookmark = [url bookmarkDataWithOptions:(NSURLBookmarkCreationPreferFileIDResolution |\r\n\t\t\t\t\t\t\t\t\t\t\tNSURLBookmarkCreationWithSecurityScope | \r\n\t\t\t\t\t\t\t\t\t\t\tNSURLBookmarkCreationSecurityScopeAllowOnlyReadAccess)\r\n\t\t\tincludingResourceValuesForKeys:[NSArray array]\r\n\t\t\t\t\t\t\t relativeToURL:nil\r\n\t\t\t\t\t\t\t\t\t error:&error];\r\n\r\n\r\nExpected Results:\r\nBookmark is created with read-only access to bookmarked file.\r\n\r\nActual Results:\r\nsandboxd denies \"file-write-data\" to bookmarked file and doesn't create bookmark (== nil)\r\n\r\nRegression:\r\n\r\nNotes:\r\nIf app's sandbox file access entitlement is changed to \"com.apple.security.files.user-selected.read-write\", then call to\r\ncreate bookmark succeeds."
+    email: schiffey@gmail.com
+    modified: "2012-05-26T17:09:54.115932Z"
+    number: "11540942"
+    number_intvalue: 11540942
+    originated: May 26, 2012
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.4
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: Cannot create app-scoped bookmark for read-only files

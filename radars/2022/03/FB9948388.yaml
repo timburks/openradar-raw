@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9948388
+    labels:
+        datastore_id: "5593571314892800"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2022-03-07T20:00:02.280314Z"
+    description: "# Intro\r\n\r\nWe currently work on Wi-Fi transition from SSID: OLDWIFI (WPA2 Personal) to SSID: NEWWIFI (WPA2 Enterprise EAP-TTLS with PAP).\r\nWe want to use EAP-TTLS with PAP inner authentication method so our user can use Okta credentials to authenticate when connecting to Wi-Fi.\r\nmacOS won't connect to EAP-TTLS with PAP by default unless explicitly configured in configuration profile. We provide the configuration profile via MDM (VMware Workspace ONE UEM).\r\n\r\n# Problem\r\n\r\nWhen we deploy SYSTEM scope configuration profile (wifi_system_scope.mobileconfig) with UserName key specified, the user name is not prefilled into authentication prompt.\r\n\r\n# Steps to reproduce\r\n\r\n1. Send SYSTEM scope configuration profile wifi_system_scope.mobileconfig (Profile can be installed manually for the purpose of this bug report).\r\n2. Profile is delivered and configuration applied.\r\n3. If the profile is SYSTEM scope macOS will automatically try to connect to NEWWIFI, fail and reconnect back to OLDWIFI. FB9947906\r\n4. User opens the Wi-Fi menu and clicks on the NEWWIFI SSID.\r\n5. Macs prompts for credentials on the the third connection attempt. FB9948356\r\n\r\n# Expected result\r\n\r\nAccount name is prefilled using the UserName key from the configuration profile.\r\n\r\n# Actual result\r\n\r\nAccount name is not prefilled. See credentials_prompt_system_profile.png.\r\n\r\n# Workaround\r\n\r\nWhen we deploy USER scope configuration profile (wifi_user_scope.mobileconfig) with UserName key specified, the user name is prefilled into authentication prompt. See credentials_prompt_user_profile.png.\r\n \r\n\r\n# Affected systems\r\nBoth M1 and Intel MacBook Pro running macOS 12 Monterey. Tested with\r\n- MacBookPro14,1 running 12.2.1 (21D62)\r\n- MacBookPro17,1 running 12.3 Beta 5 (21E5227a)\r\n\r\nTo provide more detailed logs we turned on extended logging via sudo wdutil log +wifi +eapol."
+    email: michalm.mac@gmail.com
+    modified: "2022-03-07T20:00:02.280471Z"
+    number: FB9948388
+    number_intvalue: 9948388
+    originated: "2022-03-07"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: "12.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Wi-Fi username is not prefilled when using system scope configuration profile

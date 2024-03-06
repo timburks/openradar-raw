@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7369039"
+    labels:
+        datastore_id: "4998855179370496"
+data:
+    classification: ""
+    created: "2019-10-11T15:52:05.521757Z"
+    description: "Here is an example project that creates the issue. I am serving the two php files via camp.\r\n\r\nThe URLSession request to /test.php has the cookies set inside of the nonPersistent WKWebview instance from /index.php\r\n\r\nIndex.php:\r\n```\r\n<?php\r\nob_start();\r\nif (isset($_COOKIE['test'])) {\r\n    echo 'cookie is already set<br>';\r\n    print_r($_COOKIE);\r\n} else {\r\n    setcookie('test', 'cookie test content', time()+3600);  /* expire in 1 hour */\r\n    echo 'Set the cookie';\r\n}\r\n?>\r\n```\r\n\r\ntest.php:\r\n```\r\n<?php\r\nob_start();\r\nif (isset($_COOKIE['test'])) {\r\n    echo 'cookie is set :scream:<br>';\r\n    print_r($_COOKIE);\r\n} else {\r\n   print_r(\"No cookies in request\");\r\n   echo 'No cookies in request';\r\n}\r\n?>\r\n```\r\n\r\nios app:\r\n```\r\nimport UIKit\r\nimport WebKit\r\n\r\nclass ViewController: UIViewController {\r\n    private let kSessionConfiguration: URLSessionConfiguration = {\r\n        let configuration = URLSessionConfiguration.default\r\n        configuration.urlCache = URLCache(memoryCapacity: 100 * 1024 * 1024, diskCapacity: 500 * 1024 * 1024,\r\n                                          diskPath: nil)\r\n        configuration.timeoutIntervalForRequest = 15\r\n        return configuration\r\n    }()\r\n    lazy var session = URLSession(configuration: self.kSessionConfiguration)\r\n    lazy var webViewConfiguration: WKWebViewConfiguration = {\r\n        let config = WKWebViewConfiguration()\r\n        config.websiteDataStore = .nonPersistent()\r\n        config.processPool = WKProcessPool()\r\n        return config\r\n    }()\r\n    lazy var webView = WKWebView(frame: .zero, configuration: self.webViewConfiguration)\r\n\r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n\r\n        self.view.addSubview(self.webView)\r\n        self.webView.frame = UIScreen.main.bounds\r\n        self.webView.navigationDelegate = self\r\n        let url = URLRequest(url: URL(string: \"http://192.168.0.108:8081/index.php\")!)\r\n        self.webView.load(url)\r\n    }\r\n\r\n\r\n}\r\n\r\nextension ViewController: WKNavigationDelegate {\r\n\r\n    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {\r\n        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {\r\n            let urlRequest = URLRequest(url: URL(string: \"http://192.168.0.108:8081/test.php\")!)\r\n            let task = self.session.dataTask(with: urlRequest) { data, response, error in\r\n                DispatchQueue.main.async {\r\n                    let alert = UIAlertController(title: String.init(data: data!, encoding: .utf8), message: nil, preferredStyle: .alert)\r\n                    alert.addAction(UIAlertAction.init(title: \"Cool\", style: .cancel, handler: nil))\r\n                    self.present(alert, animated: true, completion: nil)\r\n                }\r\n            }\r\n            task.resume()\r\n        }\r\n    }\r\n}\r\n\r\n\r\nOn a simulator the cookies are never shared between the webview and URLSessionRequests but on a device they are shared."
+    email: hartwellalex@gmail.com
+    modified: "2019-10-11T15:52:05.521907Z"
+    number: "7369039"
+    number_intvalue: 7369039
+    originated: Oct 11, 2019 at 11:29 AM
+    parent_number: '&{NULL_VALUE}'
+    product: WebKit
+    product_version: iOS 13
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: WKWebsiteDataStore.nonPersistent() shares cookies with NSURLSession/HTTPCookieStorage.shared

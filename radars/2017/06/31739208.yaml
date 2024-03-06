@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31739208"
+    labels:
+        datastore_id: "5033314670870528"
+data:
+    classification: ""
+    created: "2017-06-15T08:09:37.40601Z"
+    description: "the provided readline compatible interface of libedit does not work properly for prompts containing ANSI color codes. Even if the non-printing characters are properly enclosed within RL_PROMPT_START_IGNORE and RL_PROMPT_END_IGNORE they are counted in the length calculation resulting in wrong assumptions on the beginning and end of editable line. This can be seen when jumping at the begin or end of entered line with ctrl-a / ctrl-e: the curser is placed to far right. Another way to see this is when browsing through the history: the first characters of the previous commands are not re-drawn.\r\n\r\nSteps to Reproduce:\r\ncompile and start the attached sample using something like:\r\ngcc -lreadline prompt.c -o prompt && ./prompt\r\n\r\nenter 20-30 characters of text. Jump around with ctrl-a / ctrl-e: you see the cursor not positioned at the begin / end of the actual line. Press enter and enter several inputs of varying lengths. On an empty line use up/down keys. You see the history expanded starting at a position about 20 characters to far right. End the test program by entering \"quit\" or pressing ctrl-c\r\n\r\nExpected Results:\r\ninstall the original readline library:\r\nbrew install readline\r\ncompile the test program using that:\r\ngcc -L/usr/local/opt/readline/lib -lreadline prompt.c -o prompt && ./prompt\r\nperform the same tests as before. Start / End of the editable line is correctly detected\r\n\r\nActual Results:\r\nStart / End of the editable line is not correctly detected if the prompt contains escaped non-printable codes. This mis-behaviour can be seen with several 3rd party tools compiled on macos, like the command line interface to PostgreSQL psql.\r\n\r\nVersion:\r\nmacOS Sierra 10.12.4 (16E195)\r\nXcode 8.3.2\r\n$ otool -L ./prompt\r\n./prompt:\r\n\t/usr/lib/libedit.3.dylib (compatibility version 2.0.0, current version 3.0.0)\r\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1238.50.2)\r\n\r\n\r\nAttachment:\r\n-----8<-- prompt.c -----8<--------\r\n#include <readline/readline.h>\r\n#include <readline/history.h>\r\n#include <stdio.h>\r\n#include <stdlib.h>\r\n#include <string.h>\r\n\r\n#define CYELLOW \"\\001\\e[0;31m\\002\"\r\n#define RESET   \"\\001\\e[0m\\002\"\r\n \r\nint main()\r\n{\r\n    char *buf;\r\n\r\n    while((buf = readline(CYELLOW \"prompt> \" RESET))!=NULL)\r\n    {\r\n        if (strcmp(buf,\"quit\")==0)\r\n            break;\r\n \r\n        printf(\"[%s]\\n\",buf);\r\n \r\n        if (buf[0]!=0)\r\n            add_history(buf);\r\n    }\r\n \r\n    free(buf);\r\n \r\n    return 0;\r\n}\r\n----->8-------------->8--------"
+    email: tobias.bussmann@googlemail.com
+    modified: "2017-06-15T08:10:54.15552Z"
+    number: "31739208"
+    number_intvalue: 31739208
+    originated: "2017-04-20"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Escaping of non-printing characters does not work with readline (libedit)

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11116189"
+    labels:
+        datastore_id: "1614412"
+data:
+    classification: Severe Bug
+    created: "2012-03-25T16:25:49.422583Z"
+    description: "Summary:\r\n\r\nXCode Version 4.3.2 (4E2002) with Apple LLVM 3.1 creates corrupted results from C function returning 64-bit integer when compiled with -mthumb (which is the implicit default when setting up a new project in XCode)\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nCompile and run the attached problem demo app as RELEASE for iOS and run it on an ARMv7 device.\r\nSee below under notes for the function that fails.\r\n\r\n\r\nExpected Results:\r\n\r\nAll three calculations should render the same result (1333152000000000)\r\n\r\n\r\nActual Results:\r\n\r\nWith the following conditions met:\r\n- compiled for ARMv7\r\n- with THUMB enabled (default setting in XCode generated app template or CFlags -mthumb)\r\n- RELEASE build (full optimisation)\r\n- actual function call (inline prevented)\r\n\r\n...the function result is severely wrong (1333151995705032)\r\n\r\n\r\nRegression:\r\n\r\nProblem has appeared by upgrading project (which was fine in fall 2011) according to XCode suggestions, which included switching to Apple LLVM 3.1 compiler.\r\nInsofar it is a regression, as this type of miscalculation was caused only by taking the recommended upgrade path to current developer tools and settings.\r\n\r\n\r\nNotes:\r\n\r\nThe problem is heavily dependent on the actual calculation done inside the function, and apparently also dependent on the value passed in.\r\n\r\nThe function is:\r\n\r\nsigned long long failingWithTHUMB_whenNotInlined(signed long long aInput) \r\n{\r\n  // shows the problem called as a real function (NOT inlined)\r\n  return (aInput-210866803200000)*1000000ll/1000ll;  \r\n}\r\n\r\n\r\n- Called with aInput 212199955200000, it should return 1333152000000000 (and does so in non-THUMB, and also when inlined)\r\n\r\n- But actually actually called as function (in the sample, I enforced this with  __attribute__ ((noinline)), in the real program the problem appeared caller and callee were in separate .c files), the function returns the completely wrong result 1333151995705032"
+    email: syncluz@gmail.com
+    modified: "2012-05-21T08:18:20.803663Z"
+    number: "11116189"
+    number_intvalue: 11116189
+    originated: "2012-03-25"
+    parent_number: '&{NULL_VALUE}'
+    product: XCode
+    product_version: 4.3.2 (4E2002)
+    reproducible: Yes
+    resolved: "2012-05-18"
+    status: Resolved
+    title: wrong 64bit function return value with Apple LLVM 3.1 compiler with -mthumb

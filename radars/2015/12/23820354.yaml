@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23820354"
+    labels:
+        datastore_id: "4954751884066816"
+data:
+    classification: ""
+    created: "2015-12-09T14:35:50.49831Z"
+    description: "Summary:\r\nI'm an engineer and need to interact with serial ports all the time.  I was testing a device and expected to see the CTS line change when I filled its buffer, but it did not. Instead, it always reports CTS as being asserted.  It could be the Apple FTDI driver, but it could be elsewhere in the system too.\r\n\r\nSteps to Reproduce:\r\n1. Obtain an FTDI-based USB-to-Serial cable.  I've used two different ones, the UT232R and the US232R.\r\n2. Attach a loopback device to the cable.  Be sure that it connects pins 7 and 8 of the DB9 together.\r\n3. Run the attached script.  It's a python script that will toggle the RTS line, and we should see the CTS line change.  It does not though.  It always (incorrectly) reports that CTS is asserted.\r\n\r\nExpected Results:\r\nI expect to see the CTS line report back as being de-asserted in the scenario I gave above.  The script output should be:\r\n\r\n:: python check-rtscts.py /dev/tty.usbserial-FTXPLBFQ\r\nRTS:4 CTS:32\r\nRTS set correctly\r\nCTS set correctly\r\nRTS:0 CTS:0\r\nRTS set correctly\r\nCTS set correctly\r\n\r\nActual Results:\r\nCTS is not set correctly.\r\n\r\n:: python check-rtscts.py /dev/tty.usbserial-FTXPLBFQ\r\nRTS:4 CTS:32\r\nRTS set correctly\r\nCTS set correctly\r\nRTS:0 CTS:32\r\nRTS set correctly\r\nCTS is NOT set correctly\r\n\r\nVersion:\r\nTested with both 10.11.1 and 10.11.2.\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'check-rtscts.py' was successfully uploaded.\r\n\r\nFor those interested, this is the contents of the script:\r\n\r\nimport termios\r\nimport fcntl\r\nimport os\r\nimport struct\r\nimport sys\r\n\r\n\r\ndef dump_state(state):\r\n    print \"RTS:%r CTS:%r\" % (state & termios.TIOCM_RTS,\r\n                             state & termios.TIOCM_CTS)\r\n\r\n\r\ndef read_state(fd):\r\n    result = fcntl.ioctl(fd, termios.TIOCMGET, struct.pack('I', 0))\r\n    bits = struct.unpack('I', result)[0]\r\n    dump_state(bits)\r\n    return bits\r\n\r\n\r\ndef set_rts(fd, level):\r\n    if level:\r\n        fcntl.ioctl(fd, termios.TIOCMBIS, struct.pack('I', termios.TIOCM_RTS))\r\n    else:\r\n        fcntl.ioctl(fd, termios.TIOCMBIC, struct.pack('I', termios.TIOCM_RTS))\r\n\r\n\r\nfd = os.open(sys.argv[1], os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)\r\nset_rts(fd, True)\r\nstate = read_state(fd)\r\n\r\nif state & termios.TIOCM_RTS:\r\n    print \"RTS set correctly\"\r\nelse:\r\n    print \"RTS is NOT set correctly\"\r\n\r\nif state & termios.TIOCM_CTS:\r\n    print \"CTS set correctly\"\r\nelse:\r\n    print \"CTS is NOT set correctly\"\r\n\r\nset_rts(fd, False)\r\nstate = read_state(fd)\r\n\r\n# RTS should be off...\r\nif state & termios.TIOCM_RTS:\r\n    print \"RTS is NOT set correctly\"\r\nelse:\r\n    print \"RTS set correctly\"\r\n\r\n# And so should CTS...\r\nif state & termios.TIOCM_CTS:\r\n    print \"CTS is NOT set correctly\"\r\nelse:\r\n    print \"CTS set correctly\"\r\n\r\nos.close(fd)"
+    email: jszakmeister@gmail.com
+    modified: "2015-12-09T14:35:50.49867Z"
+    number: "23820354"
+    number_intvalue: 23820354
+    originated: 12/9/2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: "10.11"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: State of CTS line is not being reported correctly.

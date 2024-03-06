@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10699643"
+    labels:
+        datastore_id: "1634406"
+data:
+    classification: ""
+    created: "2012-04-03T07:51:18.671549Z"
+    description: "16-Jan-2012 07:07 PM Alexander Potapenko:\r\nSummary: Process virtual memory cleanup takes quite a lot of time\r\n\r\nSteps to Reproduce:\r\n=====================\r\n$ cat p.c\r\n#include <sys/mman.h>\r\nint main() {\r\n void *t = mmap(0, 0x00000fffffffffffUL, PROT_READ| PROT_WRITE,\r\nMAP_ANON | MAP_PRIVATE | MAP_NORESERVE, -1, 0);\r\n}\r\n=====================\r\n\r\nruns for half a second on my 64-bit Snow Leopard machine:\r\n=====================\r\n$ time ./p\r\n\r\nreal    0m0.545s\r\nuser    0m0.000s\r\nsys     0m0.544s\r\n=====================\r\n\r\nAccording to Shark, most of the time is spent in pmap_remove at exit time:\r\n=====================\r\n# Report 5 - session_008.mshark - Time Profile of PID #98012\r\nSharkProfileViewer\r\n# Generated from the visible portion of the outline view\r\n+ 59.9%, pmap_remove, mach_kernel\r\n| + 59.9%, vm_map_lookup_locked, mach_kernel\r\n| | + 59.9%, vm_map_remove, mach_kernel\r\n| | | + 59.9%, task_terminate_internal, mach_kernel\r\n| | | | + 59.9%, exit1, mach_kernel\r\n| | | | | + 59.9%, exit, mach_kernel\r\n| | | | | |   59.9%, unix_syscall64, mach_kernel\r\n- 12.0%, pmap64_pde, mach_kernel\r\n- 10.7%, pmap64_pdpt, mach_kernel\r\n- 5.0%, vm_map_lookup_locked, mach_kernel\r\n- 2.7%, zalloc_canblock, mach_kernel\r\n- 2.2%, pmap_pde, mach_kernel\r\n- 1.8%, lck_mtx_lock_spin, mach_kernel\r\n- 1.6%, vm_map_entry_insert, mach_kernel\r\n- 1.0%, lck_mtx_unlock_darwin10, mach_kernel\r\n- 0.5%, hw_lock_to, mach_kernel\r\n=====================\r\n\r\nExpected Results:\r\nThe program runs for milliseconds, as this should be safe to drop all the mappings on process shutdown.\r\n\r\nActual Results:\r\nThe program runs for half a second.\r\n\r\nRegression:\r\n\r\nNotes:\r\nAddressSanitizer (http://code.google.com/p/address-sanitizer/) maps such a huge amount of memory to shadow the address space of the process being debugged.\r\nThe shutdown time for the process being tested affects the testing experience a bit.\r\n\r\n16-Jan-2012 07:08 PM Alexander Potapenko:\r\n$ uname -a\r\nDarwin hostname 10.8.0 Darwin Kernel Version 10.8.0: Tue Jun  7 16:33:36 PDT 2011; root:xnu-1504.15.3~1/RELEASE_I386 i386"
+    email: ramosian.glider@gmail.com
+    modified: "2012-04-03T09:06:57.053347Z"
+    number: "10699643"
+    number_intvalue: 10699643
+    originated: 16-Jan-2012 07:07 PM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Process virtual memory cleanup takes quite a lot of time

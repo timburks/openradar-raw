@@ -1,0 +1,58 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19924870"
+    labels:
+        datastore_id: "5583452451635200"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-02-23T19:45:21.015826Z"
+    description: |-
+        Summary:
+        Weird corner case.
+
+
+        Steps to Reproduce:
+        1. Compile this:
+        func unit<T>(x: T) -> T? { return x }
+        func f() -> Int? {
+        	return unit(1) ?? unit(2).map { 1 } ?? nil
+        }
+
+
+        Expected Results:
+        A clear error describing the fact that I’m passing () -> IntegerLiteralConvertible to map which expects Int -> Int.
+
+
+        Actual Results:
+        The compiler crashed.
+
+
+        Regression:
+        It doesn’t crash if you:
+        - remove the map
+        - only use two operands, and not three
+
+        It still crashes but doesn’t dump the stack trace if you use `unit(1)` as the third expression instead of nil:
+
+            return unit(1) ?? unit(2).map { 1 } ?? unit(1)
+
+        It hangs the front-end outright (indefinitely) if you do that and also place the map on the first expression:
+
+            return unit(1).map { 1 } ?? unit(1) ?? unit(1)
+
+
+        Notes:
+        This makes it look like the new front-end is a bit buggy too.
+    email: rix.rob@gmail.com
+    modified: "2015-02-23T19:45:21.016045Z"
+    number: "19924870"
+    number_intvalue: 19924870
+    originated: 23-Feb-2015 02:45 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (6D532l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2b2: Compiler crash evaluating three nil coalesced expressions with a map lacking arguments'

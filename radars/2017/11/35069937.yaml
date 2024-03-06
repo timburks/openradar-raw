@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35069937"
+    labels:
+        datastore_id: "6160148296892416"
+data:
+    classification: ""
+    created: "2017-11-09T09:46:41.89062Z"
+    description: "Summary:\r\n## This works\r\nlet context = LAContext()\r\ncontext.evaluatePolicy....\r\n\r\ndelay(5.0) {\r\n    context.invalidate\r\n}\r\n\r\n## This doesn't work\r\nlet context = LAContext()\r\ncontext.evaluateAccessControl....\r\n\r\ndelay(5.0) {\r\n    context.invalidate\r\n}\r\n\r\n--- \r\n\r\nSee attachment for more details\r\n\r\nSteps to Reproduce:\r\nimport UIKit\r\nimport LocalAuthentication\r\n\r\nfunc delay( _ delay: Double, queue: DispatchQueue = DispatchQueue.main, completion: @escaping () -> () ) {\r\n    queue.asyncAfter(deadline: DispatchTime.now() + Double(Int64(delay * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) { () -> Void in\r\n        completion()\r\n    }\r\n}\r\n\r\nclass ViewController: UIViewController {\r\n\r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n        \r\n        let context = LAContext()\r\n        \r\n        let accessControl = SecAccessControlCreateWithFlags(kCFAllocatorDefault, kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly, [.userPresence, .privateKeyUsage], nil)!\r\n        context.evaluateAccessControl(accessControl, operation: LAAccessControlOperation.useKeySign, localizedReason: \"Authenticate\") { (success, error) in\r\n            print(\"sucess: \\(success)\")\r\n            print(\"error: \\(String(describing: error))\")\r\n        }\r\n        \r\n        delay(5.0) {\r\n            print(\"invalidating context\")\r\n            context.invalidate()\r\n            /*\r\n             Callback block is called immediately, but dialog doesn't disappear\r\n             */\r\n        }\r\n        \r\n    }\r\n}\r\n\r\nExpected Results:\r\nDialog should disappear\r\n\r\nActual Results:\r\nDialog doesn't disappear\r\n\r\nVersion:\r\n11.0 (15A372)\r\n\r\nNotes:\r\nSee attachment for more details\r\n\r\nConfiguration:\r\nXcode 9"
+    email: hfossli@gmail.com
+    modified: "2017-11-09T09:46:41.89094Z"
+    number: "35069937"
+    number_intvalue: 35069937
+    originated: October 19 2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: ""
+    reproducible: yes
+    resolved: ""
+    status: ""
+    title: LAContext.invalidate() does not dismiss authentication dialog

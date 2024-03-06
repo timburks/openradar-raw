@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14281375"
+    labels:
+        datastore_id: "3143412"
+data:
+    classification: ""
+    created: "2013-06-27T18:12:54.644746Z"
+    description: "26-Jun-2013 02:42 PM Nico Weber:\r\nSummary:\r\n\r\nkSecAppleSharePasswordItemClass is unconditionally marked as SEC_DEPRECATED_ATTRIBUTE in SecKeychainItem.h unconditionally. However, the comment next to it says:\r\n\r\n\"\"\"Note: AppleShare passwords are no longer used by OS X, starting in Leopard (10.5). Use of this item class is deprecated in OS X 10.9 and later; kSecInternetPasswordItemClass should be used instead when storing or looking up passwords for an Apple Filing Protocol (AFP) server.\"\"\"\r\n\r\nSo it should only be marked as deprecated if the deployment target is 10.9+ (i.e. use DEPRECATED_IN_MAC_OS_X_VERSION_10_9_AND_LATER instead of just DEPRECATED_ATTRIBUTE when defining SEC_DEPRECATED_ATTRIBUTE.\r\n\r\nAlso, I think DEPRECATED_ATTRIBUTE is defined in a sane way in AvailabilityMacros.h, you don't need the check for __clang__.\r\n\r\nSteps to Reproduce:\r\n\r\nBuild an app with deployment target 10.6 using the 10.9 sdk.\r\n\r\nExpected Results:\r\n\r\nBuilds.\r\n\r\nActual Results:\r\n\r\nDeprecation warning about kSecAppleSharePasswordItemClass\r\n\r\nRegression:\r\n\r\nYes.\r\n\r\nNotes:\r\n\r\n26-Jun-2013 02:58 PM Nico Weber:\r\nAlso, https://github.com/Apple-FOSS-Mirror/libsecurity_keychain/blob/master/lib/SecItem.cpp still uses kSecAppleSharePasswordItemClass on code that's newer than 10.5."
+    email: thakis@chromium.org
+    modified: "2013-06-27T18:12:54.644916Z"
+    number: "14281375"
+    number_intvalue: 14281375
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: os x sdk
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: kSecAppleSharePasswordItemClass is incorrectly deprecated in the 10.9 SDK

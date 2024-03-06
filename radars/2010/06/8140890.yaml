@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8140890"
+    labels:
+        datastore_id: "460403"
+data:
+    classification: Serious bug
+    created: "2010-06-29T10:07:23.37446Z"
+    description: "Summary:\r\n\r\nfstat() on iPad simulator returns struct stat as though _DARWIN_FEATURE_64_BIT_INODE is not defined, whereas in fact it is (and therefore the return value cannot be properly unpacked).\r\n\r\nSteps to Reproduce:\r\n\r\nCreate a new Universal app project in Xcode. Insert code into -[AppDelegate_iPad application:didFinishLaunchingWithOptions:] as follows:\r\n\r\n- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {\r\n    // Override point for customization after application launch.\r\n\r\n    NSString *documentsDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];\r\n    NSString *path = [documentsDir stringByAppendingPathComponent:@\"test\"];\r\n\r\n    int fd = open([path UTF8String], O_RDWR | O_CREAT, 00644);\r\n    struct stat sbuf;\r\n    NSAssert(fstat(fd, &sbuf) == 0, @\"fstat failed\");\r\n    NSLog(@\"%o %@\", sbuf.st_mode, path);\r\n\r\n    [window makeKeyAndVisible];\r\n    return YES;\r\n}\r\n\r\n \r\nInsert identical code into AppDelegate_iPhone. Run each on simulator.\r\n \r\niPhone version outputs as expected:\r\n2010-06-29 00:27:53.191 StatTest[38313:207] 100644 [...]/Library/Application Support/iPhone Simulator/4.0/Applications/C2793D8B-2AD0-4798-AA2D-2F1DEA9DF618/Documents/test\r\n\r\niPad version outputs the following:\r\n2010-06-29 00:28:04.257 StatTest[38321:207] 35537 [...]/Library/Application Support/iPhone Simulator/3.2/Applications/9D63E353-AB62-4B5D-8931-2B874A46602D/Documents/test\r\n\r\nExpected Results:\r\n\r\niPad simulator fstat() should return 0100644, just as the iPhone simulator (and iPad device, and iPhone device) does.\r\n\r\nActual Results:\r\n\r\niPad simulator returns 035537, which contains correct values iff the struct stat is interpreted as though _DARWIN_FEATURE_64_BIT_INODE is not defined.\r\n\r\nRegression:\r\n\r\nUnknown\r\n\r\nNotes:\r\n\r\nNo further notes."
+    email: hamish@gmail.com
+    modified: "2011-08-28T05:40:53.372392Z"
+    number: "8140890"
+    number_intvalue: 8140890
+    originated: 29-Jun-2010 10:53 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iPad SDK
+    product_version: 3.2.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: fstat() on iPad simulator returns wrong struct stat

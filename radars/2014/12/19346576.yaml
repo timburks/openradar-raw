@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19346576"
+    labels:
+        datastore_id: "6378073209438208"
+data:
+    classification: Bug
+    created: "2014-12-25T20:42:25.71939Z"
+    description: "Summary:\r\nThe concept of a \"Required init\" is silly. Being able to subclass something means your class inherits its methods.\r\nIf a method is not implemented than it simply falls through to the superclasses implementation.\r\n\r\nIn Swift though init methods can be marked \"required\".\r\nThere are a number of possible uses to this, making sure variables are initialised and things aren't missed.\r\n\r\nHowever, missing these methods should ONLY generate compiler warnings! And not errors!!\r\nThe concept of a subclass means calling that method, if it does not exist falls though to the superclass.\r\n\r\nThe \"required init\" should be advisory, and so should generate a warning.\r\n\r\n\r\n\r\nAn example of this is \"init(coder)\" on UIViewController subclasses.\r\nIt is required that subclasses include this if they introduce any init methods of their own.\r\nAs a result the subclass all have this 1 line of code in them:\r\n\r\n    required init(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }\r\n\r\nThis accomplishes nothing! This is simply making developers right the superclass forwarding manually!\r\nThis goes against automatically inheriting methods behaviour that subclasses have.\r\n\r\n\r\nThe point of required init methods is to advice what you need to take note of. That is the job of a compiler \"WARNING\".\r\n\r\n\r\n\r\nCompiler errors should ONLY be for invalid code that will not compile.\r\nNOT code that goes against best practises or code that will generate correct code.\r\n\r\nThe code is 100% perfect without the \"required\" method their. If you could override that 'error' the compiled code would execute successfully. This can even be tested by writing the same class in ObjC and not adding an -initWithCoder. The code will work perfectly, simply calling its superclasses method instead.\r\n\r\nThis should be a compiler \"WARNING\" not an \"Error\". Not only does having missing \"Required init\" methods generate \"Errors\" violate the concept of inheritance, it is also a violation of the concept of \"compiler error\" and a \"compiler warning\".\r\n\r\nSteps to Reproduce:\r\n1: Try to write a UIViewController subclass.\r\n2: Add an\r\n\r\n    init(text: NSString) {\r\n        super.init()\r\n    }\r\n\r\n...method.\r\n\r\n3: Compile\r\n\r\nExpected Results:\r\nThe code will compile and run, with the possibility of a compiler warning about an \"init(coder aDecoder: NSCoder)\" method having not been implemented and a warning about the \"text\" variable being unused.\r\n\r\nActual Results:\r\nThe compiler generates an \"error\", because I am required to write...\r\n\r\n    required init(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }\r\n\r\n...manually, instead of letting inheritance do that automatically for me. \r\n\r\nVersion:\r\nXcode Version 6.1.1  &  OSX 10.10\r\n\r\nNotes:\r\nCompiler Errors should be reserved only for 'errors' the compiled had turning your code into an executable.\r\n\r\nArtificial warnings, about code style or other things should only ever generate \"warnings\"!\r\n\r\nA compiler error should never something which, if bypassed, the compiler would generate a valid executable from valid code.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: freerunnering@gmail.com
+    modified: "2014-12-25T20:42:25.71964Z"
+    number: "19346576"
+    number_intvalue: 19346576
+    originated: 25-Dec-2014 08:40 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode Version 6.1.1  &  OSX 10.10
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Required init should generate warnings not errors'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33638875"
+    labels:
+        datastore_id: "4986609015455744"
+data:
+    classification: ""
+    created: "2017-07-31T23:19:59.07753Z"
+    description: "Area:\r\nMapKit\r\n\r\nSummary:\r\nIn previous version of iOS, MKOverlayRenderer has presented subclasses with a zoomScale and mapRect that are equivalent for both canDraw(_:zoomScale:) and draw(_:zoomScale:in:). Returning true when the content is available to draw results in draw(_:zoomScale:in:) being called with the same zoomScale and mapRect parameters passed to canDraw.\r\n\r\nAlthough this is not a documented relationship, it would seem to make sense for several reasons. Tile content (for example, third party mapping provider images) may be cached on a per mapRect basis, and the relationship between mapRect size and zoomScale until now has remained constant. Some third party mapping providers do not support multiple tile sizes per zoom level, requiring a large amount of work to decouple the expected relationship (i.e. fetching multiple tiles, stitching them together, cropping the result, and performing this such that requests are cached and coalesced).\r\n\r\nAs of iOS 11 beta 4, the mapRect and zoomScale passed to canDraw(_:zoomScale) differs from the values passed to draw(_:zoomScale:in). The latter is called with smaller mapRects, but an equivalent zoomScale. This does not break documented logic, as areas are only drawn inside the mapRect specified by canDraw(_:zoomScale). It does however break assumptions that may have been made about the correlation between mapRect and zoomScale, and that canDraw and draw will be called with matching parameters.\r\n\r\nIs this change intentional? It could well be speculated that this is indeed the case, for performance, pre-caching, or other internal reason - and since the behaviour is not documented should have no undue effect. However, the repercussions of such may be significant for anyone drawing content in an MKOverlayRenderer where the above assumptions were made. In some circumstances the work required to undo these assumptions is certainly non trivial.\r\n\r\nSteps to Reproduce:\r\nRun the attached project, and take a look at the logged output. Note how differing parameters are logged for each the canDraw(_:zoomScale) and draw(_:zoomScale:in) calls.\r\n\r\nExpected Results:\r\nExpected results were for the relationship between zoomLevel and mapRect to be maintained both between iOS 11 and previous versions. The parameters passed to canDraw were also expected to result in a call to draw with matching parameters, provided that true was returned from canDraw.\r\n\r\nObserved Results:\r\ncanDraw(_:zoomLevel) is called with mapRects that are three times the size passed to draw(_:zoomLevel:in) calls, for correlating zoomLevel values.\r\n\r\nVersion:\r\niOS 11 beta 4"
+    email: jordan.smith@telogis.com
+    modified: "2017-09-08T04:15:14.99756Z"
+    number: "33638875"
+    number_intvalue: 33638875
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: iOS - MapKit
+    product_version: iOS 11 beta 1 - 10
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'iOS 11: MKOverlayRenderer decouples previously consistent relationship between mapRect and zoomScale'

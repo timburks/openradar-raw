@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9148288
+    labels:
+        datastore_id: "4963273690578944"
+data:
+    classification: Suggestion
+    created: "2021-06-09T19:53:07.625236Z"
+    description: "Currently, when running UI tests, the `XCUIElement.typeText(_:)` method is entirely dependant on the software keyboard meaning that if you attempt to run your UI Tests on the simulator but happen to have enabled the “Connect Hardware Keyboard” option, your UI Tests will likely fail in an obscure way due to the software keyboard not being presented in the UI.\r\n\r\nThe workaround for this is to uncheck “Connect Hardware Keyboard” in the Simulator menu which is relatively straightforward (it even has a keyboard shortcut) however since it is typically more convenient to use the “Connect Hardware Keyboard” option in day-to-day use of the simulator (when you aren’t running UI Tests), having to toggle the hardware keyboard on and off can be frustrating. Especially if it takes a long time for the UI Tests to build, launch and hit a scenario where `typeText(_:)` is called.\r\n\r\nTo improve the developer experience when switching context between regular debugging and UI testing, please provide a public API to allow us to disable the use of Hardware Keyboards when running test suites. The following code added to `UIApplicationDelegate.application(_:didFinishLaunchingWithOptions:)` provides a workaround using private API:\r\n\r\n```\r\n// Disable hardware keyboards.\r\nlet setHardwareLayout = NSSelectorFromString(\"setHardwareLayout:\")\r\nUITextInputMode.activeInputModes\r\n    // Filter `UIKeyboardInputMode`s.\r\n    .filter({ $0.responds(to: setHardwareLayout) })\r\n    .forEach { $0.perform(setHardwareLayout, with: nil) }\r\n```\r\n\r\n(Source: https://gist.github.com/FishOSU/aa203ab3697e399343a1cc26ee75f29f)\r\n\r\nThis workaround is great, but it has a few pitfalls:\r\n\r\n1. Its abusing private API.\r\n2. It requires adding hacks into production codepaths that could easily be shipped by mistake if this becomes common practice.\r\n\r\nInstead, please provide a way to achieve similar results by configuring `XCUIApplication`, such as the following:\r\n\r\n```\r\nvar app = XCUIApplication()\r\napp.ignoreHardwareKeyboard = true\r\napp.launch()\r\n```\r\n\r\nThe above snippet is purely an example and I am sure there are many better ways to achieve the same result, but a solution such as the above aims to achieve three key things:\r\n\r\n1. Provide a configuration to opt-out on a per-process level in a way that doesn’t persist \r\n2. Avoid nasty workarounds in the Target Application code\r\n3. Provide a way to disable the Hardware Keyboard even if we don’t control the source code for the Target Application (i.e if we are testing universal links using Safari)\r\n\r\nAlternatively this kind of thing could be provided as an undocumented (or documented) launch argument/environment setting, or it could even be a scheme setting. However I don’t think its appropriate for it to be provided by `simctl` since this is something that we need to be able to control on local machines outside of automated CI environments and there isn’t really a way to hook into `simctl` from local UI test runs. \r\n\r\nThanks!"
+    email: liam.nichols.LN@gmail.com
+    modified: "2021-06-09T19:53:07.625392Z"
+    number: FB9148288
+    number_intvalue: 9148288
+    originated: "2021-06-09"
+    parent_number: '&{NULL_VALUE}'
+    product: XCTest
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Please provide a way to disable ignore Hardware Keyboards when running UI Tests

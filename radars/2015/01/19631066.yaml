@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19631066"
+    labels:
+        datastore_id: "6425063104446464"
+data:
+    classification: crash
+    created: "2015-01-28T16:42:33.951818Z"
+    description: "Summary:\r\nThe use of optional enums as parameters to closures in Swift code (such as for completion handlers) crashes the Swift compiler with a segmentation fault\r\n\r\nSteps to Reproduce:\r\nBuild the attached CompilerCrasherExperiment with Xcode 6.1.1. It's an iOS project with an EnumThing.swift file:\r\nenum EnumThing {\r\n    case Foo,\r\n    Bar\r\n}\r\n\r\nfunc doSomething (completion: (thing: EnumThing?) -> Void) {\r\n    completion (thing: .Foo)\r\n}\r\n\r\nwhich is then called from ViewController.viewDidLoad() as follows:\r\n\r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n        // Do any additional setup after loading the view, typically from a nib.\r\n        doSomething { (thing: EnumThing?) -> Void in\r\n            let msg = thing == .Foo ? \"Foo\" : \"Bar\"\r\n        }\r\n    }\r\n\r\n\r\n\r\nExpected Results:\r\nWhen run, this should do nothing (although a breakpoint would allow you to see that the msg variable is being set in doSomething()).\r\n\r\nActual Results:\r\nCrashes the Xcode build. Swift Compiler Error: Command failed due to signal: Segmentation fault: 11\r\n\r\n(too much text to paste - will attach as CompileSwift-crash-log.txt)\r\n\r\nVersion:\r\nMac OS X 10.10.1 (14B25), Xcode Version 6.1.1 (6A2008a)\r\n\r\nNotes:\r\nI have found that using non-optional enums as parameters eliminates crashes like this.\r\n\r\nI've had similar swiftc crashes passing structs as optionals, but don't have a buglet put together for that.\r\n\r\nConfiguration:\r\nMacBook Pro (Retina, 15-inch, Late 2013)\r\n\r\nAttachments:\r\n'CompilerCrasherExperiment.zip' and 'CompileSwift-crash-log.txt' were successfully uploaded."
+    email: invalidname@gmail.com
+    modified: "2015-02-04T14:26:34.539319Z"
+    number: "19631066"
+    number_intvalue: 19631066
+    originated: 1/28/15
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 6.1.1
+    reproducible: always
+    resolved: Duplicate of 18841652
+    status: closed/duplicate
+    title: Optional enum parameters in closures crash Swift compiler

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24169399"
+    labels:
+        datastore_id: "4984318036279296"
+data:
+    classification: UI/Usability
+    created: "2016-01-13T16:41:43.2287Z"
+    description: "Summary:\r\nSwift operators should have quickhelp, completion, and jump to definition. Put another way, they should be treated as first-class citizens alongside functions and methods, with the same developer assistance available for both writing and reading code using them as is available for code calling methods on a class.\r\n\r\nCurrently, option-clicking or command-double-clicking on Swift operators does nothing.\r\n\r\nThe requested enhancement is to treat these like functions, providing jump-to-definition and quick-help.\r\n\r\nQuick-help would include the arity fixity and precedence information for the bare operator as provided at the declaration site. When used in context, it would also pull documentation for the specific definition used for the operands provided.\r\n\r\nJump to definition would prefer the specific version resolved, but if none has been resolved yet, it might jump to the operator declaration instead.\r\n\r\nAutocomplete should be able to suggest `<|>` or `<|?` after typing `<|`, as well as providing info on the argument types, and once completed, function documentation should be visible, as well.\r\n\r\nWithout this support, code relying on operators, such as thoughtbot's Argo library (via its Runes project), is unnecessarily cryptic and difficult to suss out, even with Xcode's assistance, precisely because Xcode provides effectively zero assistance for understanding code using operators rather than named functions.\r\n\r\nSteps to Reproduce:\r\n1. Pull up the Basics page in Argo Playground after checking out and building thoughtbot/Argo.\r\n2. Option-click `<|?` to view quick help for this operator function.\r\n\r\n\r\nExpected Results:\r\n3. I get the documentation and type signature for `<|?` from DecodeOptional.swift (https://github.com/thoughtbot/Argo/blob/v2.2.0/Argo/Operators/DecodeOptional.swift#L18-L21):\r\n\r\n```\r\n// Pull embedded optional value from JSON\r\npublic func <|? <T where T: Decodable, T == T.DecodedType>(json: JSON, keys: [String]) -> T??\r\n```\r\n\r\nActual Results:\r\n3. The text cursor ends up where I clicked. I see a blinking cursor in between the < and the |, and no quick help appears.\r\n\r\nVersion:\r\nApple Swift version 2.1.1 (swiftlang-700.1.101.15 clang-700.1.81)\r\nTarget: x86_64-apple-darwin14.5.0\r\n\r\nXcode 7.2\r\nBuild version 7C68\r\n\r\nProductName:\tMac OS X\r\nProductVersion:\t10.10.5\r\nBuildVersion:\t14F1509\r\n\r\nNotes:\r\nWithout this support, I can't recommend developers rely on operators in their APIs, even where that would otherwise be appropriate. Operators as second- or third-class citizens is very unfortunate. :(\r\n\r\n***\r\n\r\nJeremy Sherman\r\n13-Jan-2016 12:07 PM\r\n\r\nOdd. I played with it further, and managed to get quick help to appear for some operators, but not for others. Specifically, in this patch of code from the Basic page of the playground:\r\n\r\n```swift\r\nextension User: Decodable  {\r\n  static func decode(j: JSON) -> Decoded<User> {\r\n    return curry(self.init)\r\n      <^> j <| \"id\"\r\n      <*> j <| \"name\"\r\n      <*> j <|? \"email\"\r\n  }\r\n}\r\n```\r\n\r\nThe operators from DecodeDecoded.swift (<^> and <*>) _do_ show up as functions and have quick help and jump to definition support, but the operators from its sibling file DecodeOptional.swift (<| and <|?) do NOT provide that support.\r\n\r\nThose are properly linked when I view the test code for the project, so the Playground itself appears to be having the issue. It should be reproducible by checking out the project and interacting with the Playground.\r\n\r\nThis turns this from a UI/Usability issue into a Bug. The title has been amended, but I cannot change the radar classification myself, it seems."
+    email: jeremyw.sherman@gmail.com
+    modified: "2016-01-13T17:08:22.76961Z"
+    number: "24169399"
+    number_intvalue: 24169399
+    originated: "2016-01-13"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.2 (7C68)
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: Xcode sometimes fails to provide assistance in understanding or writing Swift code that uses user-defined operators

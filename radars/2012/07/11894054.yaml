@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11894054"
+    labels:
+        datastore_id: "1828401"
+data:
+    classification: Serious Bug
+    created: "2012-07-17T20:37:40.830034Z"
+    description: "Summary:\r\nA change introduced in OS X 10.8 causes a warning to be emitted on the console every time a setuid or setgid program is run when a DYLD_ environment variable has been set. There appears to be no way to disable this warning, even though the behavior (ignoring DYLD_ variables) was not introduced in 10.8.\r\n\r\nSteps to Reproduce:\r\n1. Set DYLD_LIBRARY_PATH=/foo\r\n2. Run any setuid or setgid program. For example, 'ps'.\r\n\r\nExpected Results:\r\nThe normal output of 'ps' (or whatever was run), without extra stuff output to stderr.\r\n\r\nActual Results:\r\ndyld: DYLD_ environment variables being ignored because main executable (/bin/ps) is setuid or setgid\r\n(normal 'ps' output)\r\n\r\nRegression:\r\n\r\nNotes:\r\nThis is a problem for two reasons. First, DYLD_PRINT_WARNINGS already exists and it seems reasonable that if this variable is not also set, the user is not concerned that running a setuid/setgid program will prune DYLD_ variables. This behavior is not new; http://www.opensource.apple.com/source/dyld/dyld-132.13/src/dyld.cpp shows that it exists prior to 10.8 (that source file prunes but does not emit a warning about it).\r\n\r\nThe second is that the MySQL 5.5 binaries distributed by Oracle have been broken for over 1.5 years and ship with client libraries that are missing an absolute path. The result is that runtime linking with these libraries fails. The simplest solution is to add /usr/local/mysql/lib to DYLD_LIBRARY_PATH (for more information, see http://lightyearsoftware.com/2011/02/mysql-5-5-on-mac-os-x/). However, on 10.8 this new warning is spewing on to our consoles. For example, Phusion Passenger (a popular web server used in Ruby development) runs something every 5 seconds that triggers this warning."
+    email: steve.madsen@gmail.com
+    modified: "2013-06-13T13:53:05.721205Z"
+    number: "11894054"
+    number_intvalue: 11894054
+    originated: 7/17/2012
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 12A269
+    reproducible: Always
+    resolved: ""
+    status: closed
+    title: DYLD_ env vars ignored warning shown without DYLD_PRINT_WARNINGS

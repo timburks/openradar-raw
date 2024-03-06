@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20974299"
+    labels:
+        datastore_id: "6070144858062848"
+data:
+    classification: Bug
+    created: "2015-05-15T15:01:53.12917Z"
+    description: "Summary:\r\nCFNetworkExecuteProxyAutoConfigurationURL leaks the CFRunLoopSourceRef it returns if the URL passed as the first parameter cannot be reached.\r\n\r\nUpon LLDB examination, it seems that the CFRunLoopSource is cached (retained) within a PACCacheEntry in \"EnqueuePACExecutionForKey\", and is only released (balancing the retain) in PACCacheEntry_ConstructJSContext.\r\n\r\nHowever, PACCacheEntry_ConstructJSContext is only called when the PAC file was successfully downloaded (whether it actually was a PAC file or not).\r\n\r\nThis means that the CFRunLoopSourceRef is never released (well, it would be released within 24hrs when the PACCacheEntry expires), and that brings a second problem: the \"release\" function pointer of the CFStreamClientContext structure is not called either, until the source is released.\r\nThis creates a leak within the client application as well, if it uses the \"retain\" and \"release\" function pointers.\r\n\r\nSteps to Reproduce:\r\n1. Write code calling CFNetworkExecuteProxyAutoConfigurationURL properly (attached in this radar [1])\r\n2. Make sure to use an unreachable URL as the first argument (like \"htp://apple.com\") (see attached code [1])\r\n3. Start \"Allocations\" in instruments, with \"Record reference counts\" activated\r\n4. Run within instruments\r\n5. Once finished, look for CFRunLoopSourceRef\r\n6. Select the one created where responsible caller is \"CreateCFNExecutePACContext\"\r\n\r\nExpected Results:\r\nThe object should be released properly, whether the URL passed to CFNetworkExecuteProxyAutoConfigurationURL was reachable or not\r\n\r\nActual Results:\r\nThe CFRunLoopSourceRef is still live despite CFNetworkExecuteProxyAutoConfigurationURL being finished with running, and the only retain call missing a balancing release is EnqueuePACExecutionForKey.\r\n\r\nIt seems the only balancing place is in PACCacheEntry_ConstructJSContext, which seems to only be called upon successful download. As the URL was unreachable, this function was not called, and the CFRunLoopSourceRef is leaked.\r\n\r\nVersion:\r\nXcode Version 6.3.1 (6D1002)\r\nOS X Yosemite 10.10.4 (14E17e)\r\n\r\nAttachements:\r\n[1] https://www.dropbox.com/s/ymeoigea3syzh9i/CFNetworkExecuteProxyAutoConfigurationURL-leak.zip"
+    email: thibault.ml@gmail.com
+    modified: "2017-09-14T10:07:23.14107Z"
+    number: "20974299"
+    number_intvalue: 20974299
+    originated: 15-May-2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.10.4 (14E17e)
+    reproducible: Always
+    resolved: Yes
+    status: Closed (Dupe)
+    title: Memory leak in CFNetworkExecuteProxyAutoConfigurationURL if URL cannot be reached

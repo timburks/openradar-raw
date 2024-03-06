@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22220340"
+    labels:
+        datastore_id: "4998679635165184"
+data:
+    classification: Serious Bug
+    created: "2015-08-10T22:18:48.80125Z"
+    description: "Summary:\r\nIn Swift 2.0, when a protocol-typed property has a didSet observer, and didSet calls a method that accesses a field of that property — not mutates, just accesses — didSet will be called recursively until the stack overflows and the app crashes.\r\n\r\nSteps to Reproduce:\r\nSet up the following scenario in code:\r\n1. Create a non-objc protocol Foo with at least one {get} property (call it ‘x’).\r\n2. Create a class Bar that has a property whose type is the protocol (call it ‘p’).\r\n3. In Bar.p’s didSet, call some instance method.\r\n4. In the instance method body, access p.x (don’t assign to it, just pass its value to print() or something).\r\n5. Initialize an instance of Bar and assign to its ‘p’ field an instance of any class that conforms to Foo.\r\n\r\nExpected Results:\r\nNothing special.\r\n\r\nActual Results:\r\nBar.p’s didSet observer, the instance method, and an internal closure called “materializeForSet” are called in unbounded recursion until the program crashes with EXC_BAD_ACCESS.\r\n\r\nRegression:\r\nIssue observed in all betas of Xcode 7 / Swift 2.0 (but I didn’t manage to narrow down the cause until now).\r\n\r\nNotes:\r\nMaking any of the following changes to the provided sample project prevents the bug from occurring:\r\n\r\n* Tag protocol Foo with @objc and/or “class”\r\n* Make Foo.x a {get set} property instead of just {get}\r\n* Make Bar a struct instead of a class\r\n* In the kablam() method, assign p to a temp var before accessing p.x (this alternative is provided and commented out)"
+    email: dwineman@gmail.com
+    modified: "2015-11-17T00:36:06.02063Z"
+    number: "22220340"
+    number_intvalue: 22220340
+    originated: 10-Aug-2015 03:18 PM
+    parent_number: "22953072"
+    product: Developer Tools
+    product_version: Xcode 7.0 beta 5 (7A176x)
+    reproducible: Always
+    resolved: Yes (in 7.2 beta)
+    status: Duplicate/22953072
+    title: Swift protocol-typed property causes didSet recursion

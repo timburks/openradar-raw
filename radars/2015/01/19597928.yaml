@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19597928"
+    labels:
+        datastore_id: "4626429585129472"
+data:
+    classification: ""
+    created: "2015-01-26T14:15:33.401789Z"
+    description: "RESOLVED: Swift 1.2 and Xcode 6.3 beta\r\n\r\nSummary:\r\n-----------------------\r\n\r\nThe attached Swift file (47 lines) contains an enumeration, \"Foo\", with 3 possible values (named One, Two and Three). The value Foo.One has an associated String.\r\n\r\nThe function makeFoo constructs a Foo value and returns it as an optional to a callback closure.\r\n\r\nWhen the closure is called with .Two it will appear as nil inside the closure.\r\n\r\nWhen the closure is called with .Three it will appear as an optional .One but without the associated value.\r\n\r\n\r\n\r\nSteps to Reproduce:\r\n-----------------------\r\n\r\n1: Compile the attached Swift file and run it\r\n2: Observe the 3 printouts listing expected and actual behavior.\r\n3: Note that the expected results are not produced in the last two cases.\r\n\r\n4: Change Foo.One to .One in line 23 and observe that the compiler unexpectedly aborts compilation\r\n\r\n\r\nExpected Results:\r\n-----------------------\r\n\r\nThe values .Two and .Three should be preserved when passed to the callback closure.\r\n\r\nThe compiler should not abort compilation when using .One instead of Foo.One\r\n\r\nActual Results:\r\nUsing .One (instead of Foo.One) in line 23 causes the compiler to abort compilation with the message \"Bitcast requires types of same width\r\n  %.asUnsubstituted = bitcast i192 %165 to i200, !dbg !1053\r\nLLVM ERROR: Broken function found, compilation aborted!\"\r\n\r\nThe program as attached produces the following unexpected output:\r\n---\r\n\r\nShould make an optional One:\r\nOptional(One with associated value HELLO)\r\n\r\nShould make an optional Two:\r\nnil\r\n\r\nShould make an optional Three:\r\nOptional(One with associated value )\r\n\r\n\r\nVersion:\r\n-----------------------\r\n\r\nXcode Version 6.1.1 (6A2008a)\r\n\r\nswiftc --version\r\nSwift version 1.1 (swift-600.0.56.1)\r\nTarget: x86_64-apple-darwin14.0.0\r\n\r\nOS X Yosemite (version 10.10.1)\r\n\r\n\r\nNotes:\r\n-----------------------\r\n\r\nThe following workarounds have been found:\r\n\r\n- Changing .Two and .Three to Foo.Two and Foo.Three in lines 25 and 27, respectively\r\n- Making the Foo parameter to the closure non-optional\r\n- Removing the second NSError parameter to the closure\r\n- Removing the associated String value for .One\r\n\r\n\r\nAttachments:\r\n-----------------------\r\n\r\n// main.swift\r\nimport Foundation\r\n\r\npublic enum Foo: Printable {\r\n    case One(String)\r\n    case Two\r\n    case Three\r\n    \r\n    public var description: String {\r\n        switch self {\r\n        case .One(let s):\r\n            return \"One with associated value \\(s)\"\r\n        case .Two:\r\n            return \"Two\"\r\n        case .Three:\r\n            return \"Three\"\r\n        }\r\n    }\r\n}\r\n\r\npublic func makeFoo(value: Int, callback: (Foo?, NSError?) -> Void) {\r\n    switch value {\r\n    case 1:\r\n        callback(Foo.One(\"HELLO\"), nil)\r\n    case 2:\r\n        callback(.Two, nil)\r\n    default:\r\n        callback(.Three, nil)\r\n    }\r\n}\r\n\r\nprintln(\"\\nShould make an optional One:\")\r\nmakeFoo(1, { (response, error) in\r\n    println(response)\r\n})\r\n\r\n// ERROR: Returns a nil\r\nprintln(\"\\nShould make an optional Two:\")\r\nmakeFoo(2, { (response, error) in\r\n    println(response)\r\n})\r\n\r\n// ERROR: Returns an optional .One without an associated value\r\nprintln(\"\\nShould make an optional Three:\")\r\nmakeFoo(3, { (response, error) in\r\n    println(response)\r\n})"
+    email: morten.heiberg@gmail.com
+    modified: "2015-02-11T10:10:32.975547Z"
+    number: "19597928"
+    number_intvalue: 19597928
+    originated: January 26, 2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: swift-600.0.56.1
+    reproducible: Always
+    resolved: February 11, 2015
+    status: Closed
+    title: Swift enumeration value corrupted unless fully qualified with enumeration name

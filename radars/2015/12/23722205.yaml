@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23722205"
+    labels:
+        datastore_id: "5588555241881600"
+data:
+    classification: Other Bug
+    created: "2015-12-02T11:39:32.50244Z"
+    description: "Summary:\nThe Swift compiler produces an incorrect diagnostic message when an incompletely specified generic type is used in an Array or Dictionary declaration using the shorthand notation combined with an initializer expression.\n\n1) var values: [Optional] = []\n2) var values: [String: Optional] = [:]\n3) var values: [Optional]\n4) var values: [String: Optional]\n5) var values: Array<Optional> = []\n6) var values: Dictionary<Optional> = [:]\n\nLines 1 and 2 produce misleading error diagnostics of the form “cannot convert value of type ’[_]’ to specified type ’[Optional]’“, pointing to a problem with the initializer.\n\nLines 3 to 6 produce awesome diagnostics of the form “reference to generic type ’Optional’ requires arguments in <…>”, pointing to the incomplete Optional type, as expected.\n\nAs you can see, both the use of the shorthand syntax and an initializer is necessary to reproduce the problem.\n\nSteps to Reproduce:\n\n$ env DEVELOPER_DIR=/Applications/Xcode-beta.app xcrun swift\nWelcome to Apple Swift version 2.1.1 (swiftlang-700.1.101.13 clang-700.1.81). Type :help for assistance.\n  1> var values: [Optional] = []\nrepl.swift:1:26: error: cannot convert value of type '[_]' to specified type '[Optional]'\nvar values: [Optional] = []\n                         ^~\n\n  1> var values: [String: Optional] = [:]\nrepl.swift:1:34: error: cannot convert value of type '[_ : _]' to specified type '[String : Optional]'\nvar values: [String: Optional] = [:]\n                                 ^~~\n\n  1> var values: [Optional]\nrepl.swift:1:14: error: reference to generic type 'Optional' requires arguments in <...>\nvar values: [Optional]\n             ^\ngeneric type 'Optional' declared here\n  1> var values: [String: Optional]\nrepl.swift:1:22: error: reference to generic type 'Optional' requires arguments in <...>\nvar values: [String: Optional]\n                     ^\ngeneric type 'Optional' declared here\n  1> var values: Array<Optional> = []\nrepl.swift:1:19: error: reference to generic type 'Optional' requires arguments in <...>\nvar values: Array<Optional> = []\n                  ^\ngeneric type 'Optional' declared here\n  1> var values: Dictionary<String: Optional> = [:] \nrepl.swift:1:30: error: expected '>' to complete generic argument list\nvar values: Dictionary<String: Optional> = [:]\n                             ^\nrepl.swift:1:23: note: to match this opening '<'\nvar values: Dictionary<String: Optional> = [:]\n                      ^\n\n\nExpected Results:\nThe compiler complains about the unspecified type parameter in the array type.\n\n$ xcrun swift < test.swift\nrepl.swift:6:15: error: reference to generic type ’Result’ requires arguments in <…>\nvar results: [Result] = []\n              ^~\nrepl.swift:1:6: note: generic type 'Result' declared here\nenum Result<Value> {\n     ^\n\n\nActual Results:\nThe compiler complains about the initializer.\n\n    $ xcrun swift < test.swift\n    repl.swift:6:25: error: cannot convert value of type '[_]' to specified type '[Result]'\n    var results: [Result] = []\n                            ^~\n\nRegression:\nUnknown\n\nNotes:\n\nExpanding the shorthand notation to Array[Result] results in the correct diagnostic:\n\n    repl.swift:6:20: error: reference to generic type 'Result' requires arguments in <...>\n    var results: Array<Result> = []\n                       ^\n    repl.swift:1:6: note: generic type 'Result' declared here\n    enum Result<Value> {\n         ^\n\nenv DEVELOPER_DIR=/Applications/Xcode-beta.app xcrun swift\nWelcome to Apple Swift version 2.1.1 (swiftlang-700.1.101.13 clang-700.1.81). Type :help for assistance."
+    email: Karoly.Lorentey@gmail.com
+    modified: "2015-12-02T11:39:32.5028Z"
+    number: "23722205"
+    number_intvalue: 23722205
+    originated: 02-Dec-2015 12:39 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7C62b)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode-beta (7C62b) / Swift 2.1.1: Misleading diagnostic when incomplete generics are used in Array/Dictionary shorthand syntax with initializers'

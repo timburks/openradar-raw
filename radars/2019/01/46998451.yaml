@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "46998451"
+    labels:
+        datastore_id: "5004220688236544"
+data:
+    classification: Other Bug
+    created: "2019-01-02T10:51:28.143804Z"
+    description: "Summary:\r\nI use `NSOpenPanel` to let the user select a directory where my app can output some files. I want to inform the user early, while the open panel is still open, if the user tries to select a read-only directory, as I wouldn't be able to write to that. The problem is that the `validate` delegate method doesn't get access to the user-selected directory, so it will always show the error message for all directories, even writable ones.\r\n\r\nSteps to Reproduce:\r\nI have this code to open the panel:\n\n```swift\n@NSApplicationMain\nfinal class AppDelegate: NSObject, NSApplicationDelegate {\n\tfunc convert() {\n\t\tlet panel = NSOpenPanel()\n\t\tpanel.delegate = self\n\t\tpanel.canChooseFiles = false\n\t\tpanel.canChooseDirectories = true\n\t\tpanel.canCreateDirectories = true\n\t\tpanel.allowsMultipleSelection = false\n\t\tpanel.prompt = \"Convert\"\n\t\tpanel.message = \"Choose where to save the converted images\"\n\n\t\tpanel.beginSheetModal(for: window) {\n\t\t\tif $0 == .OK {\n\t\t\t\tself.startConversion(urls, outputDirectory: panel.urls.first!)\n\t\t\t}\n\t\t}\n\t}\n}\n```\n\nAnd I have implemented the `validate` delegate method to show an error while the open panel is shown, which informs the user that the directory they chose is read-only:\n\n```swift\nextension AppDelegate: NSOpenSavePanelDelegate {\n\tfunc panel(_ sender: Any, validate url: URL) throws {\n\t\tif !FileManager.default.isWritableFile(atPath: url.path) {\n\t\t\tthrow CocoaError(.fileWriteVolumeReadOnly)\n\t\t}\n\t}\n}\n```\r\n\r\nExpected Results:\r\nI expected `FileManager.default.isWritableFile(atPath: url.path)` to return `true` for a path that is writable.\r\n\r\nActual Results:\r\nThe code `FileManager.default.isWritableFile(atPath: url.path)` always returns `false` because it doesn't get access to the security scoped bookmark created by `NSOpenPanel`.\r\n\r\nVersion:\r\nmacOS 10.14.2\r\n\r\nNotes:\r\nThe workaround is to just let the user select anything, then in `panel.beginSheetModal`, check whether the directory writable, and if not, show an NSAlert and then show the `NSOpenPanel` again. This is a bad user-experience."
+    email: sindresorhus@gmail.com
+    modified: "2019-01-02T10:51:28.143956Z"
+    number: "46998451"
+    number_intvalue: 46998451
+    originated: 02-Jan-2019 11:51 AM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: macOS 10.14.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: The NSOpenSavePanelDelegate `validate` delegate method does not receive permission to the selected directory/file in sandboxed app

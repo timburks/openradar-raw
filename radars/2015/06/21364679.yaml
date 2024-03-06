@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21364679"
+    labels:
+        datastore_id: "5732336117219328"
+data:
+    classification: Other Bug
+    created: "2015-06-12T21:14:50.8972Z"
+    description: "WCSession is a singleton and therefore only supports a single session delegate. This presents many challenges for complex watch and phone apps. It's less of an issue for watch apps, since a single interface controller is only active at one time. But it's a significant challenge for phone apps that may have multiple objects that would need to be notified of messages coming off of the session bus at one time.\n\nOne example from an Apple Watch app that would have an issue with this design pattern. Lets say the user is viewing a list of tracks in an interface controller table. A WCSession delegate needs to be active on that interface controller in order to observe and respond to changes in that table's data. On another interface controller, where the player resides in a paged layout, the player needs to observe changes as well. Lets say the user deletes all of the audio they are managing, or logs out. We may need to observe that change on the root interface controller, and run some code to dismiss a interface controller or reload the set of paged interface controllers to display a different UI.\n\nBut really the biggest reason to support a different structure for WCSession delegation that doesn't enforce a single object as the listener is to support better code design practices. If we have an iPhone app designed to play back audio, there may be different objects that manage things like the audio player, downloading resources, organizing the list of tracks, etc. \n\nIf those are all already different objects, they're going to have very different needs in terms of what sort of messages they care about sending and receiving from the WCSession. One may only need to observe received files, while another may care about updating the application context or receiving real time messages. With WCSession as a singleton, developers are going to have to build their own session delegate multiplexing solution in order to keep their application logic segregated in the way that it should be. I think this is something the framework should support at a first party level so that developers don't have to worry about this while designing their code structure.\n\nUnfortunately I don't have any great suggestions for how to address this. One solution could be support for posting notifications when session delegate callbacks are delivered. There are already a lot of delegate methods though, and having an equal number of notifications to observe could be onerous, but it's probably the easiest way to go without blowing up scope and still being a familiar pattern we are all used to. Now that notification center weakly holds observers, maybe this is even the easiest way to go for developers as well.\n\nI should also be clear that whether or not this is a singleton isn't really the main concern to me. Being able to support multiple objects receiving session callbacks is my goal."
+    email: conrad.stoll@mutualmobile.com
+    modified: "2015-06-12T21:14:50.89742Z"
+    number: "21364679"
+    number_intvalue: 21364679
+    originated: 12-Jun-2015 02:14 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9 Beta 1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: WCSession only supports a single session delegate

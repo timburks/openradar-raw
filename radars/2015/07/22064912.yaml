@@ -1,0 +1,75 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22064912"
+    labels:
+        datastore_id: "5348752487350272"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-07-30T02:05:44.64575Z"
+    description: |-
+        Summary:
+        More infinite loopage.
+
+        Steps to Reproduce:
+        1. This code:
+        protocol FixpointType: _FixpointType {
+        	typealias Algebra : AlgebraicType
+        }
+
+        protocol _FixpointType {
+        	typealias Algebra
+        	init(_ : Algebra)
+        	var out: Algebra { get }
+        }
+
+        protocol AlgebraicType {
+        	typealias Recur : _FixpointType
+        }
+
+        enum Expr<T: FixpointType>: AlgebraicType {
+        	typealias Recur = T
+        	case Null
+        	func map<U>(transform: T -> U) -> Expr<U> { return .Null }
+        }
+
+        func out<Fix: FixpointType>(v: Fix) -> Fix.Algebra { return v.out }
+
+        func cata<T, Fix: FixpointType where Fix.Algebra == Expr<Fix>>(f: Expr<T> -> T)(_ term: Fix) -> T {
+        	return f({ $0.map(cata(f)) }(out(term)))
+        }
+
+        Expected Results:
+        should not infinite loop and crash swiftc
+
+        Actual Results:
+        but totally does:
+        rob@Resonance ~/Desktop> swiftc -v boom.swift
+        Apple Swift version 2.0 (swiftlang-700.0.47.4 clang-700.0.59.1)
+        Target: x86_64-apple-darwin14.4.0
+        /Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift -frontend -c -primary-file boom.swift -target x86_64-apple-darwin14.4.0 -enable-objc-interop -color-diagnostics -module-name boom -o /var/folders/9y/f7n4rvx901nctm_5d16c1wm40000gn/T/boom-d6304d.o
+        <unknown>:0: error: unable to execute command: Segmentation fault: 11
+        <unknown>:0: error: swift frontend command failed due to signal (use -v to see invocation)
+
+        509 swift                         	0x000000010ebc2ee3 swift::TypeBase::gatherAllSubstitutions(swift::ModuleDecl*, llvm::SmallVectorImpl<swift::Substitution>&, swift::LazyResolver*, swift::DeclContext*) + 211
+        510 swift                         	0x000000010eb94ca6 swift::ModuleDecl::lookupConformance(swift::Type, swift::ProtocolDecl*, swift::LazyResolver*) + 1958
+        511 swift                         	0x000000010eb93f66 swift::BoundGenericType::getSubstitutions(swift::ModuleDecl*, swift::LazyResolver*, swift::DeclContext*) + 1606
+
+
+        Regression:
+        N/A
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-07-30T02:05:44.64599Z"
+    number: "22064912"
+    number_intvalue: 22064912
+    originated: 29-Jul-2015 10:05 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A165t)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2.0b4: swiftc infinite loop with type conforming to semi-mutually-recursive protocol'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34167402"
+    labels:
+        datastore_id: "4954266301104128"
+data:
+    classification: Bug
+    created: "2017-08-30T18:35:46.59458Z"
+    description: "Area:\r\nNetworking\r\n\r\nSummary:\r\nWhen you call SecureTransport's SSLClose() method, it will send the close_notify alert\r\nand then flag the connection as closed for reading and writing.\r\n\r\nSubsequent calls to SSLRead() will immediately return errSSLClosedGraceful without\r\nactually reading anything.\r\n\r\nThis is a problem if the remote sends a close_notify alert back - as required by\r\nsection 7.2.1 of the TLS 1.2 spec (RFC 5246) - and you want to reuse the underlying\r\ntransport.\r\n\r\nOther TLS 1.2 implementations such as OpenSSL or BoringSSL allow reading after\r\nshutdown - and the read returns \"closed gracefully\" after the close_notify reply has been\r\nreceived.\r\n\r\nSteps to Reproduce:\r\nUse SecureTransport to establish a secure connection to a TLS 1.2 server.  Make sure that upon receiving a close_notify alert, the server send a close_notify back (SecureTransport does that).\r\nWait until the server has sent some data.\r\nCall SSLClose(), then SSLRead().\r\n\r\nExpected Results:\r\nSSLClose() should only make the connection as closed for writing, but still allow reading.\r\nSSLRead() should read everything the server sent - including the close_notify - then return errSSLClosedGraceful.\r\n\r\nObserved Results:\r\nSSLRead() returns immediately with errSSLClosedGraceful, without actually reading anything.\r\n\r\nVersion:\r\n10.12.5\r\n\r\nNotes:\r\nThis makes it impossible to reuse the underlying transport as there is no way of reading the server's (encrypted) close_notify reply."
+    email: martin.baulig@gmail.com
+    modified: "2017-08-30T18:35:46.59479Z"
+    number: "34167402"
+    number_intvalue: 34167402
+    originated: 08/30/2017
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.2.5
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: SecureTransport's SSLClose() marks the connection as closed for reading and writing.

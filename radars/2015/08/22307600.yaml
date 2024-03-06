@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22307600"
+    labels:
+        datastore_id: "5022110661476352"
+data:
+    classification: Other Bug
+    created: "2015-08-17T15:34:16.49022Z"
+    description: "Summary:\n\nFor an implementation of OpenInterval, an interval type that includes neither the starting nor ending bound, the overlaps function returns an incorrect result when called with an interval that includes the start of the OpenInterval. The IntervalType protocol mentions no requirement that start be contained in an interval. To the contrary, since the descriptions for start and end are essentially the same, the existence of HalfOpenInterval and ClosedInterval in the standard library indicates that there should be no such requirement.\n\nSteps to Reproduce:\n\n(See attached Playground.)\n\n1) In a playground, create a new OpenInterval type:\n\n/// A fully open `IntervalType`, which contains neither its `start` nor its\n/// `end`.  Can represent an empty interval.\n///\n/// - parameter Bound: The type of the endpoints.\nstruct OpenInterval<Bound: Comparable where Bound: ForwardIndexType> : IntervalType {\n    let start: Bound\n    let end: Bound\n    \n    init(_ start: Bound, _ end: Bound) {\n        self.start = start\n        self.end = end\n    }\n    \n    var isEmpty: Bool {\n        return start.successor() >= end\n    }\n    \n    func contains(value: Bound) -> Bool {\n        return value > start && value < end\n    }\n    \n    func clamp(intervalToClamp: OpenInterval) -> OpenInterval {\n        let newStart = max(start, intervalToClamp.start)\n        let newEnd = min(end, intervalToClamp.end)\n        return OpenInterval(newStart, max(newEnd, newStart))\n    }\n}\n\n2) Create a closed interval from 0 to 3 and an open interval from 3 to 6, and test with overlaps(). These should be non-overlapping, since the highest value in the closed interval (3) is not contained in the open interval:\n\nlet closed = ClosedInterval(0, 3)\nlet open = OpenInterval(3, 6)\nassert(overlaps(closed, open) == false, \"Intervals do not overlap\")\n\n\nExpected Results:\noverlaps() should return false, so the assertion should pass.\n\nActual Results:\nThe assertion fails."
+    email: natecook@gmail.com
+    modified: "2015-08-17T15:34:16.49044Z"
+    number: "22307600"
+    number_intvalue: 22307600
+    originated: 17-Aug-2015 08:34 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A176x)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: overlaps() assumes that `start` is contained in an interval'

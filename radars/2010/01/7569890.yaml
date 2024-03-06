@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7569890"
+    labels:
+        datastore_id: "141414"
+data:
+    classification: Other Bug
+    created: "2010-01-22T18:00:16.193631Z"
+    description: "22-Jan-2010 11:58 AM Dave Dribin:\r\nSummary: \r\nTime Machine does not preserve hard links in it's snapshots.  Thus, a file that is hard linked in the source volume takes up more space in the snapshot, as each hard link becomes a real file.\r\n\r\nSteps to Reproduce:\r\n\r\n1) Create a new file, then create hard and soft links to it:\r\n\r\n% touch aaa.txt\r\n% ln -s aaa.txt bbb.txt\r\n% ln aaa.txt ccc.txt\r\n\r\n2) Start a Time Machine backup\r\n\r\nExpected Results:\r\nThe files aaa.txt and ccc.txt should be hard links in the Time Machine snapshots.\r\n\r\nActual Results:\r\nThey are each their own file:\r\n\r\n% pwd\r\n/Users/dave/work/scratch\r\n% ls -l\r\ntotal 24\r\n-rw-r--r--  2 dave  staff  -   20B Jan 22 11:31 aaa.txt\r\nlrwxr-xr-x  1 dave  staff  -    7B Jan 22 11:32 bbb.txt@ -> aaa.txt\r\n-rw-r--r--  2 dave  staff  -   20B Jan 22 11:31 ccc.txt\r\n\r\n\r\n% pwd\r\n/Volumes/Time Machine/Backups.backupdb/fuji/Latest/fuji_10_6/Users/dave/work/scratch\r\n% ls -l   \r\ntotal 24\r\n-rw-r--r--@ 1 dave  staff    20B Jan 22 11:31 aaa.txt\r\nlrwxr-xr-x+ 1 dave  staff     7B Jan 22 11:32 bbb.txt@ -> aaa.txt\r\n-rw-r--r--@ 1 dave  staff    20B Jan 22 11:31 ccc.txt\r\n\r\n\r\nRegression:\r\nLeopard and Snow Leopard behave the same.\r\n\r\nNotes:\r\nI use the rsync command with the --link-dest option to backup files from a remote Linux server.  --link-dest uses hard links so I can keep multiple backups while saving space.  If I include these backups in my Time Machine backup, the hard links explode the size of the backups. Furthermore, Time Machine does not take this exploded size into consideration.  For example, Time Machine will clear out enough space for a snapshot, and then fail as it runs out of space during the backup.\r\n\r\nHere's the documentation for --link-dest from the rsync(1) man page: \r\n\r\n       --link-dest=DIR\r\n              This  option  behaves  like --copy-dest, but unchanged files are\r\n              hard linked from DIR to the destination  directory.   The  files\r\n              must be identical in all preserved attributes (e.g. permissions,\r\n              possibly  ownership)  in  order  for  the  files  to  be  linked\r\n              together."
+    email: ddribin@gmail.com
+    modified: "2011-08-28T05:42:53.987957Z"
+    number: "7569890"
+    number_intvalue: 7569890
+    originated: 22-Jan-2010 11:58 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.2/10C540
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Time Machine does not preserve hard links in it's snapshots

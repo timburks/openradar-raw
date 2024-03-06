@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24259140"
+    labels:
+        datastore_id: "6093798820020224"
+data:
+    classification: Other Bug
+    created: "2016-01-20T17:14:33.3677Z"
+    description: "Summary:\r\nThe Objective-C declaration of NSLayoutAnchor uses lightweight generics to provide compile time warnings when creating invalid constraints between anchors with different axis types. The Swift version of these APIs does not use generics and uses implicitly unwrapped instances of NSLayoutAnchor providing no type safety.\r\n\r\nConsider the declaration for the constraintEqualToAnchor method on NSLayoutAnchor.\r\n\r\nIn Objective-C it is declared as:\r\n\r\n- (NSLayoutConstraint *)constraintEqualToAnchor:(NSLayoutAnchor<AnchorType> *)anchor\r\n\r\n...while in Swift it is declared as:\r\n\r\nfunc constraintEqualToAnchor(_ anchor: NSLayoutAnchor!) -> NSLayoutConstraint!\r\n\r\nThis means that when attempting to establish an invalid constraint between a view's top anchor and another view's leading anchor in Objective-C, we get a compile-time warning about incompatible pointer types between NSLayoutAnchor<NSLayoutYAxisAnchor> * and NSLayoutAnchor<NSLayoutXAxisAnchor> *. We get no such warning at compile-time or run-time in Swift. Not even a console message is logged noting the type mismatch.\r\n\r\nSteps to Reproduce:\r\n1. Create a Swift iOS project with a deployment target of iOS 9.0.\r\n2. Initialize two instances of UIView.\r\n3. Constrain the top anchor of the first view to the leading anchor of the second view.\r\n\r\nExpected Results:\r\nI expect the project not to compile in Swift because we're creating a constraint between anchors of different types. At the very least, I'd expect a runtime crash and console message noting the type mismatch.\r\n\r\nActual Results:\r\nThe project compiles successfully. The visual appearance of the layout between the two views is most likely incorrect because the created constraints are invalid. No message is raised in the console.\r\n\r\nVersion:\r\nXcode 7.2 (7C68)\r\nOS X 10.11.3 (15D21)\r\niOS 9.2\r\n\r\nNotes:\r\nThe documentation of the three NSLayoutAnchor subclasses (NSLayoutDimension, NSLayoutXAxisAnchor, and NSLayoutYAxisAnchor) specifically mention that they exist to provide additional type information. For example, from the NSLayoutDimension docs:\r\n\r\n\"In addition to providing size-specific methods for creating constraints, this class adds type information to the methods inherited from NSLayoutAnchor. Specifically, the generic methods declared by NSLayoutAnchor must now take a matching NSLayoutDimension object.\"\r\n\r\nI'm not sure if this is an iOS SDK bug or a bug in the Swift component that converts Objective-C APIs but it's odd that additional type-safety is only available in Objective-C.\r\n\r\nConfiguration:\r\nOccurs on all hardware configurations building an iOS app that targets iOS 9 and greater."
+    email: mark.adams86@gmail.com
+    modified: "2016-01-31T19:41:19.4995Z"
+    number: "24259140"
+    number_intvalue: 24259140
+    originated: 01/20/2016
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: iOS 9
+    reproducible: Always
+    resolved: 01/25/2016
+    status: Duplicate of 20031907
+    title: Obj-C Lightweight Generics for NSLayoutAnchor are not available in Swift

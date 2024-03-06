@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7092666"
+    labels:
+        datastore_id: "141409"
+data:
+    classification: ""
+    created: "2010-01-20T08:16:28.652875Z"
+    description: "25-Jul-2009 03:02 PM Alexander Strange:\r\nSummary:\r\nThe attached project has a target with a custom script rule. The script reruns on every build, even though nothing has changed. It also produces a derived C file, which is recompiled on every build, even though the script checks and doesn't regenerate it.\r\n\r\nSteps to reproduce:\r\nTo regenerate the project:\r\n1. Make a new tool project named \"rageltest\".\r\n2. Add a new rule:\r\nmatching: *.rl\r\n\r\nscript:\r\nRAGEL=${PROJECT_DIR}/ragel\r\nRLCODEGEN=${PROJECT_DIR}/rlgen-cd\r\n[ ${INPUT_FILE_PATH} -nt ${DERIVED_FILES_DIR}/${INPUT_FILE_BASE} ] || exit 0\r\n${RAGEL} ${INPUT_FILE_PATH} | ${RLCODEGEN} -T0 -o ${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}\r\n\r\noutput:\r\n$(DERIVED_FILES_DIR)/$(INPUT_FILE_BASE)\r\n\r\n3. Add a new file named \"ragel.c.rl\".\r\n4. Change the file type from \"text\" to \"sourcecode\".\r\nWithout this, there's no way to add it to the target - although now I see that you can change it back to \"text\" afterwards and it'll still be there. This seems like another bug to me, but I hope it isn't the cause of this one?\r\n\r\nTo reproduce the build log:\r\n5. Run xcodebuild from the commandline.\r\n6. Run it again.\r\n\r\nExpected results:\r\nA shell script execution but no DerivedSource recompilation.\r\n\r\nActual results:\r\nThe derived source is recompiled.\r\n\r\nRegression:\r\nAlso happens under Xcode 3.1, but I didn't report it there in case there were no more updates."
+    email: astrange@gmail.com
+    modified: "2011-08-28T05:45:38.924002Z"
+    number: "7092666"
+    number_intvalue: 7092666
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Xcode custom build rule and derivatives always rebuild

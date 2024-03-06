@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15909474"
+    labels:
+        datastore_id: "5899807864389632"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2014-02-17T13:11:35.524106Z"
+    description: "Summary:\r\nWhen calling gss_export_cred with a GSSAPI credential handle that was previously acquired using gss_acquire_cred, a segmentation fault occurs.\r\n\r\nSteps to Reproduce:\r\n1. Compile the attached test case using \"clang -framework GSS -o test test.c\"\r\n2. Obtain a valid Kerberos TGT using Ticket Viewer.app or kinit\r\n3. Run the compiled test executable\r\n\r\nExpected Results:\r\nThe test executable should print \"Acquiring credential\", acquire the default initiator credential, print \"Exporting credential\", export the previously-acquired credential to a buffer, then print \"Exported credential token:\" and the content of the exported credential token.\r\n\r\nActual Results:\r\nThe test executable exits because of a segmentation fault at the point where it calls gss_export_cred.\r\n\r\nVersion:\r\nOS X Version 10.9.1 / Build 13B42\r\n\r\nNotes:\r\nI have attached a test case C program which always triggers the bug on my configuration. Compile it with \"clang -framework GSS -o test test.c\".\r\n\r\n==== test.c ====\r\n\r\n#include <stdio.h>\r\n#include <GSS/GSS.h>\r\n\r\nint main(int argc, char *argv[]) {\r\n\tOM_uint32 maj_stat, min_stat;\r\n\tgss_cred_id_t cred_handle;\r\n\tgss_buffer_desc token_buffer;\r\n\r\n\tputs(\"Acquiring credential\");\r\n\r\n\tmaj_stat = gss_acquire_cred(\r\n\t\t&min_stat, GSS_C_NO_NAME, GSS_C_INDEFINITE, GSS_C_NO_OID_SET, GSS_C_INITIATE,\r\n\t\t&cred_handle, NULL, NULL\r\n\t);\r\n\r\n\tif (maj_stat != GSS_S_COMPLETE) {\r\n\t\tputs(\"error in gss_acquire_cred\");\r\n\t\treturn maj_stat;\r\n\t}\r\n\r\n\tputs(\"Exporting credential\");\r\n\r\n\tmaj_stat = gss_export_cred(\r\n\t\t&min_stat, cred_handle, &token_buffer\r\n\t);\r\n\r\n\tif (maj_stat != GSS_S_COMPLETE) {\r\n\t\tputs(\"error in gss_export_cred\");\r\n\t\treturn maj_stat;\r\n\t}\r\n\r\n\tputs(\"Exported credential token:\");\r\n\r\n\tfwrite(token_buffer.value, sizeof(char), token_buffer.length, stdout);\r\n\r\n\treturn 0;\r\n}\r\n\r\nUpdate: fixed in OS X Yosemite GM (Build 14A389)"
+    email: sigmaris@gmail.com
+    modified: "2019-05-06T10:25:14.706425Z"
+    number: "15909474"
+    number_intvalue: 15909474
+    originated: 25 Jan 2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.1
+    reproducible: Always
+    resolved: 17 Oct 2014
+    status: Closed
+    title: Using gss_export_cred in GSS.framework causes segfault

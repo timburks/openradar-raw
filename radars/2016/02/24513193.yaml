@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24513193"
+    labels:
+        datastore_id: "5583244246384640"
+data:
+    classification: Other Bug
+    created: "2016-02-04T23:01:20.75994Z"
+    description: "Summary:\r\nWhen a UIScrollView's content view is a container view with an embed segue to embed a child view controller whose view is a custom UIView subclass (\"ItemView\"), the child VC's view's intrinsicContentSize() method is never called, and the view is sized such that it is invisible (zero size in at least one dimension).\r\n\r\nThis behavior is not seen if an ItemView instance is placed directly inside the scroll view instead of using an embed segue to embed its  view controller.\r\n\r\nSteps to Reproduce:\r\n1. Add a UIScrollView and place it in an empty view controller's view.\r\n2. Constrain all 4 sides to its superview such that it fills the screen.\r\n3. Drag a container view into the scroll view.\r\n4. Constrain the container view's 4 sides to its superview (the scroll view)\r\n5. Using an embed segue, embed a view controller in the container view. The view controller's view should be a subclass of UIView that overrides intrinsicContentSize().\r\n6. Run the app.\r\n\r\nExpected Results:\r\n\r\nThe embedded view shows up in the scroll view at a size equal to its intrinsic content size, and can be scrolled if this size is bigger than the scroll view.\r\n\r\nActual Results:\r\n\r\nThe embedded view is invisible, and its intrinsicContentSize() method is never called. Inspection reveals that its size is zero in at least one dimension.\r\n\r\nRegression:\r\n\r\nIf the embedded view is put directly inside the scroll view (sans its own view controller) instead of using an embed segue, intrinsicContentSize() is called and the view is visible and sized as expected.\r\n\r\nAnother possible workaround is to make the embedding container view a subclass of UIView whose intrinsicContentSize() method returns its subview's intrinsic content size (see ContainerView in the attached project).\r\n\r\nNotes:\r\n\r\nA very simple demo project that shows this problem can be found here: https://www.dropbox.com/s/ic3qt5k014a9jzk/ScrollViewTest.zip?dl=1 It contains a storyboard with two scenes, and a single UIView subclass (DummyView) whose intrinsicContentSize() method returns (1000, 1000). In both scenes, DummyView has been set to have a greenish background color to make it obviously visible, while the scroll view has a different background color. \r\n\r\nIn the first scene, the broken scenario above is implemented. Running with this scene's VC set as the initial view controller produces a magenta screen indicating that only the scroll view is visible, and its child green DummyView is not. Additionally a breakpoint in intrinsicContentSize() shows that it is never called.\r\n\r\nIn the second scene, a DummyView instance is placed directly inside a scroll view instead of via embedding a view controller. Running with this scene's VC set to be the initial VC produces a green screen indicating that the DummyView is sized appropriately (or at least not zero) and is visible. Additionally a breakpoint in intrinsicContentSize() shows that it is called."
+    email: armadsen@gmail.com
+    modified: "2016-02-04T23:03:33.99432Z"
+    number: "24513193"
+    number_intvalue: 24513193
+    originated: 04-Feb-2016 04:00 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Version 7.2.1 (7C1002)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Embedding a child view controller inside a scroll view results in that view's intrinsic content size not being respected/used

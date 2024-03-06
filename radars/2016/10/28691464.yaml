@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28691464"
+    labels:
+        datastore_id: "4969628291825664"
+data:
+    classification: ""
+    created: "2016-10-10T08:13:36.76229Z"
+    description: "Summary:\r\n/bin/ls and many other builtins do not obey the MallocLogFile\r\nenvironment variabl , and instead unconditionally write some\r\ninformation to stderr if any of the malloc debug environment variables\r\nare set, e.g. MallocScribble.\r\n\r\nThis bug is new in 10.12, it was not present in 10.11 and earlier.\r\n\r\nThis problem does not seem to happen for user written executables,\r\ni.e. in that case all malloc debug output goes into the file specified\r\niwth MallocLogFile.\r\n\r\nThis bug makes it impractical to globally enable the malloc debug\r\nflags during build/test of our application. The only short term\r\nworkaround is to stop using malloc debug flags, which is unfortunate.\r\n\r\n\r\nTranscript demonstrating that the problem happens with /bin/ls, and\r\ndoes not happen with my own code (m.c).\r\n\r\nbash-3.2$ /bin/ls\r\nm.c\r\n\r\n# The following should not write \"... enabling ...\" to stderr, it\r\n# should go into ls_malloc.log\r\nbash-3.2$ MallocScribble=yes MallocLogFile=$PWD/ls_malloc.log /bin/ls\r\nls(666,0x7fffeb0a03c0) malloc: enabling scribbling to detect mods to free blocks\r\nm.c\r\n\r\n# This shows that no ls_malloc.log was created\r\nbash-3.2$ /bin/ls\r\nm.c\r\n\r\nbash-3.2$ cc m.c -Wall -Werror -o m\r\n\r\n# This shows that the \"... enabling ...\" is not written to stderr,\r\n# i.e. MallocLogFile works as it should.\r\nbash-3.2$ MallocScribble=yes MallocLogFile=$PWD/m_malloc.log ./m\r\nAbort trap: 6\r\n\r\n# This shows that the m_malloc.log file was created, and has both the\r\n# \"... enabling ...\" info, and the double-free error\r\n# report. I.e. everything works as it should. \r\nbash-3.2$ /bin/ls\r\nm\t\tm.c\t\tm_malloc.log\r\nbash-3.2$ cat m_malloc.log \r\nm(671,0x7fffeb0a03c0) malloc: enabling scribbling to detect mods to free blocks\r\nm(671,0x7fffeb0a03c0) malloc: *** error for object 0x7fc159400350: pointer being freed was not allocated\r\n*** set a breakpoint in malloc_error_break to debug\r\n\r\nbash-3.2$ cat m.c\r\n#include <stdlib.h>\r\nint main(int argc, char **argv)\r\n{\r\n  (void)argc; (void)argv;\r\n  void *p = malloc(10);\r\n  free(p);\r\n  free(p); /* double free */\r\n  return 0;\r\n}\r\nbash-3.2$ uname -a\r\nDarwin XXX 16.0.0 Darwin Kernel Version 16.0.0: Mon Aug 29 17:56:20 PDT 2016; root:xnu-3789.1.32~3/RELEASE_X86_64 x86_64\r\nbash-3.2$ sw_vers \r\nProductName:\tMac OS X\r\nProductVersion:\t10.12\r\nBuildVersion:\t16A323\r\nbash-3.2$\r\n\r\nSteps to Reproduce:\r\n1. MallocScribble=yes MallocLogFile=$PWD/ls_malloc.log /bin/ls\r\n\r\nExpected Results:\r\nNo output should be output on stderr.\r\n\r\nActual Results:\r\nInformation from the malloc debug code is output to stderr.\r\n\r\nVersion:\r\nProductName:\tMac OS X\r\nProductVersion:\t10.12\r\nBuildVersion:\t16A323\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: Per.Mildner.usenet@gmail.com
+    modified: "2016-10-10T08:13:36.76251Z"
+    number: "28691464"
+    number_intvalue: 28691464
+    originated: 10-Oct-2016
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: "10.12"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: MallocLogFile ignored by /bin/ls and others

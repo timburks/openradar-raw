@@ -1,0 +1,60 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22996542"
+    labels:
+        datastore_id: "5733103976841216"
+data:
+    classification: Enhancement
+    created: "2015-10-06T20:12:48.86287Z"
+    description: |-
+        Summary:
+        Closely related to rdar://22996431, if you use @autoclosure then you get nondeterministic runtime failures instead of deterministic runtime failures.
+
+        Steps to Reproduce:
+        This code:
+
+        struct A {} // not Equatable!
+
+        func failsNondeterministicallyAtRuntime<A>(@autoclosure a: () -> A, _ test: (A, A) -> Bool, @autoclosure _ b: () -> A) -> Bool {
+        	return test(a(), b())
+        }
+
+        func failsDeterministicallyAtRuntime<A>(a: A, _ test: (A, A) -> Bool, _ b: A) -> Bool {
+        	return test(a, b)
+        }
+
+        for i in 0..<1000000 {
+        	assert(failsNondeterministicallyAtRuntime([ A(), A() ], ==, [ A(), A() ]), "failed at comparison \(i)")
+        }
+
+
+
+        Expected Results:
+        should not compile (rdar://22996431) but since it does, it should fail deterministically at runtime
+
+
+        Actual Results:
+        but it’s totally nondeterministic.
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        I could be persuaded that this is undefined behaviour—after all, it _is_ selecting UnsafePointer equality. In which case rdar://22996431 is a bug but this is not.
+
+        However, both of these together are _much_ worse than rdar://22996431 alone, since it appears to succeed _most_ of the time. I don’t have the slightest idea how that could be.
+    email: rix.rob@gmail.com
+    modified: "2015-10-06T20:12:48.86303Z"
+    number: "22996542"
+    number_intvalue: 22996542
+    originated: 06-Oct-2015 04:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: swiftc’s selection of UnsafePointer == in autoclosure’d generic contexts fails nondeterministically

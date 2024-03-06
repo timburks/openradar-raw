@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8707236"
+    labels:
+        datastore_id: "924402"
+data:
+    classification: other bug
+    created: "2010-11-29T21:45:55.661849Z"
+    description: "Summary:\r\nJavaScript functions that can set and clear the selection programmatically on web pages do not work in a UIWebView\r\n\r\nSteps to Reproduce:\r\n1. Start with the attached project. UIWebViewSelectBuglet.  This is an iPad application that contains an HTML file and a JavaScript, which are copied to the application bundle.  If you open the HTML file in Safari, WebKit Nightly, or Firefox on your Mac, you can test out the three buttons at the top of the document, which call functions in the .js file.  These functions respectively display an alert, select some text in the document, and clear the current selection.\r\n\r\n2. Now build and run the application. This loads the same HTML file into a UIWebView, and provides three UIButtons that also call the JavaScript functions, by means of -[UIWebView stringByEvaluatingJavaScriptFromString:].\r\n\r\nExpected Results:\r\n\r\nWhen tapped, the buttons in the HTML document and the UIButtons should behave as they do in the desktop browsers: the alert button should show a JavaScript alert, the select text button should select some text, and the clear selection should clear the selection (whether set by the second button or by a user gesture)\r\n\r\nActual Results:\r\n\r\nOnly the alert button works.  The buttons to set and clear the selection do nothing.  The functions appear to complete their execution (you can uncomment the alert() functions at the bottom of each to confirm this), but simply have no effect.\r\n\r\nRegression:\r\n\r\nNotes:\r\nHere are the makeSelection() and clearSelection() functions:\r\nfunction makeSelection () {\r\n   \tvar pathResult = document.evaluate (\"/HTML[1]/BODY[1]//P[4]/text()[1]\",\r\n                                        document,\r\n                                        null,\r\n                                        XPathResult.ANY_UNORDERED_NODE_TYPE,\r\n                                        null);\r\n    var startContainer = pathResult.singleNodeValue;\r\n    pathResult =  document.evaluate (\"/HTML[1]/BODY[1]//P[5]/text()[1]\",\r\n\t\t\t\t\t\t\t\t\t document,\r\n\t\t\t\t\t\t\t\t\t null,\r\n\t\t\t\t\t\t\t\t\t XPathResult.ANY_UNORDERED_NODE_TYPE,\r\n\t\t\t\t\t\t\t\t\t null);\r\n    var endContainer = pathResult.singleNodeValue;\r\n\tif (startContainer == null) {\r\n        console.log (\"didn't get startContainer\");\r\n        return;\r\n    }\r\n    if (endContainer == null) {\r\n        console.log (\"didn't get endContainer\");\r\n        return;\r\n    }\r\n    var selectionRange = document.createRange();\r\n    selectionRange.setStart (startContainer, 10);\r\n    selectionRange.setEnd (endContainer, 20);\r\n\t\r\n    window.getSelection().removeAllRanges();\r\n    window.getSelection().addRange (selectionRange);\r\n\t\r\n\t// alert ('bottom of makeSelection()');\r\n}\r\n\r\n\r\nfunction clearSelection() {\r\n\t// window.getSelection().removeAllRanges(); // works on desktop safari\r\n\t// http://stackoverflow.com/questions/3169786/clear-text-selection-with-javascript\r\n\tif (window.getSelection) {\r\n\t\tif (window.getSelection().empty) {  // Chrome\r\n\t\t\twindow.getSelection().empty();\r\n\t\t} else if (window.getSelection().removeAllRanges) {  // Firefox\r\n\t\t\twindow.getSelection().removeAllRanges();\r\n\t\t}\r\n\t} else if (document.selection) {  // IE?\r\n\t\tdocument.selection.empty();\r\n\t}\r\n\t// alert ('bottom of clearSelection()');\r\n}"
+    email: invalidname@gmail.com
+    modified: "2011-08-28T05:38:52.001944Z"
+    number: "8707236"
+    number_intvalue: 8707236
+    originated: 11/29/10
+    parent_number: "7605151"
+    product: iPad
+    product_version: 4.2.1 (8C148)
+    reproducible: always
+    resolved: ""
+    status: Duplicate/7605151
+    title: UIWebView cannot programmatically select/deselect text via JavaScript

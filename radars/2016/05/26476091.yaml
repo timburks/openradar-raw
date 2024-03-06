@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26476091"
+    labels:
+        datastore_id: "4936378617954304"
+data:
+    classification: Serious Bug
+    created: "2016-05-25T20:05:33.20023Z"
+    description: "Summary:\r\nInvoking a dictionary popup by calling -[NSView showDefinitionForAttributedString:atPoint:] does not work if the view's NSWindow has a backgroundColor that is a custom subclass of NSColor.\r\n\r\nSteps to Reproduce:\r\n1. Compile and run the attached code file as indicated at the top of the file.\r\n2. Click anywhere in the window that opens.\r\n\r\nor, alternatively:\r\n\r\n1. Create a subclass of NSColor.\r\n2. Create an instance of that subclass, and call [yourNSWindow setBackgroundColor:yourColor] with it.\r\n3. For any NSView inside that window, call [yourNSView showDefinitionForAttributedString:yourString atPoint:yourPoint];\r\n\r\nExpected Results:\r\nA dictionary lookup panel should open, describing the supplied string.\r\n\r\nActual Results:\r\nNo panel is opened. The following error is printed to the console:\r\nLookup: Unhandled exception 'NSObjectNotAvailableException' caught in -[LULookupDefinitionModule showDefinitionForString:range:options:originProvider:inView:]\r\n\r\nIn the system console, there is an additional error from inside LookupViewService, the important part being:\r\nException: decodeObjectForKey: class \"MyColor\" not loaded or does not exist\r\n\r\nThe full error message is:\r\n2016-05-25 3:05:03.512 PM LookupViewService[95935]: <NSXPCConnection: 0x7f92306338e0> connection from pid 95934: Warning: Exception caught during decoding of received message, dropping incoming message.\r\nException: Exception while decoding argument 0 (#2 of invocation):\r\n<NSInvocation: 0x7f9232829520>\r\nreturn value: {v} void\r\ntarget: {@} 0x0\r\nselector: {:} bootstrap:withReply:\r\nargument 2: {{?=@@@@{CGRect={CGPoint=dd}{CGSize=dd}}Icc@@@}} <00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000>\r\nargument 3: {@?} 0x0 (block)\r\n\r\nException: decodeObjectForKey: class \"MyColor\" not loaded or does not exist\r\n\r\n\r\nVersion:\r\nVersion 7.3.1 (7D1014) & 10.11.6 Beta (15G7a)\r\n\r\nNotes:\r\nWe have to work around this in Firefox, because we use a custom window background color.\r\n\r\nConfiguration:\r\nThis occurs on all versions of Mac OS 10.11, as far as I know. It sounds like it did not occur on 10.10, but I have not verified that part.\r\n\r\nAttachments:\r\n'main.mm' was successfully uploaded."
+    email: markus.stange@gmail.com
+    modified: "2016-05-25T20:05:33.20043Z"
+    number: "26476091"
+    number_intvalue: 26476091
+    originated: "2016-05-25"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: "10.11"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: -[NSView showDefinitionForAttributedString:atPoint:] fails in windows with custom background colors

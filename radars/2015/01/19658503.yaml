@@ -1,0 +1,37 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19658503"
+    labels:
+        datastore_id: "5606747280506880"
+data:
+    classification: Serious Bug
+    created: "2015-01-30T03:24:11.429198Z"
+    description: |-
+        I apologize for dumping this whole project on you rather than a simplified test case, but the behavior is so peculiar I wasn’t sure what part of the environment was relevant.
+
+        This is a framework under development. It includes some C++ code but no Objective-C. The wrapper is written in Swift.
+
+        The problem is that public Swift symbols are not visible to external clients, even to test routines within the same project. But this seems to happen only when the project directory has the same name as the project, LinearMotor.
+
+        To reproduce:
+
+        1) Unpack the project, open in Xcode, and build. If you receive the message “Could not build Objective-C module ‘LinearMotor’”, you will have to work around what is most likely a different and unrelated Xcode bug. To do that, select all .swift files in the main framework project (don’t forget CoinMPModel.swift, hiding within the Solvers folder) and uncheck LinearMotor in the Target Membership inspector pane at the right side of the Xcode window. Build. Then reselect all the .swift files, re-check LinearMotor in the Target Membership pane, and build again. This time it should complete.
+
+        2) Open LinearMotorTests.swift and command-click on the LinearMotor component of “import LinearMotor” to see what symbols the LinearMotor framework is exporting. You should see only LinearMotorVersionNumber and a typealias called WoogaBooga. But there are in fact many more public symbols in the Swift code. If you try to reference a public symbol from a test (e.g., “let foo = LMBinary()”), you’ll receive an error message.
+
+        3) Now do Product -> Clean and close the project within Xcode. In the Finder, rename the top-level project directory to something other than LinearMotor.
+
+        4) Open the project from its new path in Xcode and compile again. Repeat step #2, but this time you should see many more symbols.
+    email: garth@garthsnyder.com
+    modified: "2015-01-30T03:24:11.429396Z"
+    number: "19658503"
+    number_intvalue: 19658503
+    originated: 29-Jan-2015 07:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.2b4 (6C107a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode: Swift symbols not externally accessible when project directory name == project name'

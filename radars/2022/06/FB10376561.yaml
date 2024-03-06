@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB10376561
+    labels:
+        datastore_id: "5580143997222912"
+data:
+    classification: Bug
+    created: "2022-06-20T17:37:16.505752Z"
+    description: "I'm passing a binding into a detail view and it is not updating as I expect. I do have a workaround though which I will share below.\r\n\r\nCopy the following code into a SwiftUI Xcode project, update the App struct to create a ParentListView() and run it on iPhone 13 simulator. Tap on a list item, then in the detail tap the Add 10 button. \r\n\r\nstruct NumberItem: Identifiable {\r\n    let id = UUID()\r\n    var number: Int\r\n}\r\n\r\nstruct ParentListView: View {\r\n    \r\n    @State private var numberItems = [NumberItem(number: 1), NumberItem(number: 2), NumberItem(number: 3), NumberItem(number: 4), NumberItem(number: 5)]\r\n    \r\n    var body: some View {\r\n        NavigationStack {\r\n            List {\r\n                ForEach(numberItems) { numberItem in\r\n                    NavigationLink(value: numberItem.id) {\r\n                        Text(\"\\(numberItem.number)\")\r\n                    }\r\n                }\r\n            }\r\n            .navigationDestination(for: UUID.self) { numberItemID in\r\n                ChildDetailView(numberItem: binding(for: numberItemID))\r\n            }\r\n        }\r\n    }\r\n    \r\n    \r\n    private func binding(for numberItemID: UUID) -> Binding<NumberItem> {\r\n        guard let index = numberItems.firstIndex(where: { $0.id == numberItemID }) else {\r\n            fatalError(\"Can't find item in array\")\r\n        }\r\n        return $numberItems[index]\r\n    }\r\n}\r\n\r\nstruct ChildDetailView: View {\r\n    @Binding var numberItem: NumberItem\r\n         \r\n    var body: some View {\r\n        VStack {\r\n            Text(\"\\(numberItem.number)\")\r\n            Button {\r\n                numberItem.number += 10\r\n            } label: {\r\n                Text(\"Add 10\")\r\n            }\r\n        }\r\n    }\r\n}\r\n\r\n\r\nThe label on the detail screen above the add 10 button should update with the new number but it doesn't\r\n\r\nThe label didn't update, navigating back shows the number has updated in the list though. I figured out if I wrap the detail View in another View then it does behave as expected however it would be great if this could be fixed in a future beta, thanks.\r\n\r\nstruct NumberItem: Identifiable {\r\n    let id = UUID()\r\n    var number: Int\r\n}\r\n\r\nstruct ParentListView: View {\r\n\r\n    @State private var numberItems = [NumberItem(number: 1), NumberItem(number: 2), NumberItem(number: 3), NumberItem(number: 4), NumberItem(number: 5)]\r\n\r\n    var body: some View {\r\n        NavigationStack {\r\n            List {\r\n                ForEach(numberItems) { numberItem in\r\n                    NavigationLink(value: numberItem.id) {\r\n                        Text(\"\\(numberItem.number)\")\r\n                    }\r\n                }\r\n            }\r\n            .navigationDestination(for: UUID.self) { numberItemID in\r\n                ChildDetailView(numberItems: $numberItems, numberItemID: numberItemID)\r\n            }\r\n        }\r\n    }\r\n}\r\n\r\nstruct ChildDetailView: View {\r\n    @Binding var numberItems: [NumberItem]\r\n    let numberItemID: UUID\r\n\r\n    var body: some View {\r\n        ChildDetailView2(numberItem: binding(for: numberItemID))\r\n    }\r\n\r\n    private func binding(for numberItemID: UUID) -> Binding<NumberItem> {\r\n        guard let index = numberItems.firstIndex(where: { $0.id == numberItemID }) else {\r\n            fatalError(\"Can't find item in array\")\r\n        }\r\n        return $numberItems[index]\r\n    }\r\n}\r\n\r\nstruct ChildDetailView2: View {\r\n\r\n    @Binding var numberItem: NumberItem\r\n\r\n    var body: some View {\r\n        VStack {\r\n            Text(\"\\(numberItem.number)\")\r\n            Button {\r\n                numberItem.number += 10\r\n            } label: {\r\n                Text(\"Add 10\")\r\n            }\r\n        }\r\n    }\r\n}"
+    email: indiekiduk@gmail.com
+    modified: "2022-06-20T17:37:16.505892Z"
+    number: FB10376561
+    number_intvalue: 10376561
+    originated: 20/6/22
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: 14b1
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: 'NavigationStack: a detail view with @Binding doesn''t update as expected'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6143276"
+    labels:
+        datastore_id: "4970472726855680"
+data:
+    classification: Unknown
+    created: "2019-06-10T19:40:27.662568Z"
+    description: "After upgrading to High Sierra, an ordinary application presumably doing ordinary file system calls is unable to backup its own file. This only occurs if the application's data file is stored on an APFS volume. There is no such problem if the data file is stored on HFS, either before or after upgrading to High Sierra. The problem is not related to the *destination* of the backup, only the location of the source file.\r\n\r\nThe application in question is Quicken 2007. Quicken has an option where when you quit the application, it will make a copy of its current document file (which is a package) to a user-designated backup folder.  If the source document package is on an APFS volume, then the application says \"Quicken was not able to automatically back up your file\".  In the backup destination, it will have created the high-level package folder and two of the subfolders, but no data is copied nor are the rest of the folders copied.\r\n\r\nQuicken has a menu option for manually triggering a backup. This works fine, even when the document package is on an APFS volume.  There are no other observed issues with having the document package on APFS.\r\n\r\nNo Console messages stand out as a red flag, aside from this one: \"/BuildRoot/Library/Caches/com.apple.xbs/Sources/AppleFSCompression/AppleFSCompression-96.60.1/Common/ChunkCompression.cpp:49: Error: unsupported compressor 8\".  But this may be a red herring; there is no evidence that Quicken is compressing the backup, and as noted above, it works fine to create the backup on APFS as long as the source file it is copying is on HFS.  Also, this same message appears when Quicken 2007 is used in High Sierra on a machine that has no APFS volumes at all, and thus has no problems at all in the automatic backup process.\r\n\r\nThe expected result is that for ordinary macOS applications doing ordinary file system calls, conversion of the startup volume from HFS to APFS (as is required by High Sierra (SSDs) and by Mojave should be neutral; applications should still work as they did before. In this situation, APFS is not neutral; whatever it is doing is not compatible with the same file system calls on HFS.\r\n\r\nThis problem is 100% reproducible.\r\n\r\nNote: My personal theory is that APFS doesn't like something about how the backup file copy is being initiated during the application Quit process."
+    email: msschmitt@gmail.com
+    modified: "2019-06-10T19:40:27.662737Z"
+    number: "6143276"
+    number_intvalue: 6143276
+    originated: 06/10/2019
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: macOS High Sierra 10.13.6
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: APFS file system incompatible with ordinary application

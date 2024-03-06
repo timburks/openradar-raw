@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "44658414"
+    labels:
+        datastore_id: "5029451515559936"
+data:
+    classification: Other Bug
+    created: "2018-09-20T22:30:15.077298Z"
+    description: "Summary:\r\nIn parallel runs, seems that:\n\nxcodebuild builds once for all destinations, creating all the x86_64 binaries once.\nWhen building, also the assets catalogs is compiled, and universal PDF files are converted to their 2x or 3x versions, depending on the target device.\nWhat seems to be happening with parallel builds is that:\n\nxcodebuild is building, using the first destination as the target.\nAs a result, the generated assets match the required ones for the first destination (2x or 3x). Thus, running the tests in the first destination succeeds.\nWhen running the tests in the second destination, it may happen that the assets do not match the required ones: in case this second destination requires different assets than the first destination (ex: first destination requires 2x assets, and second destination requires 3x assets). Thus, the second destination uses assets that are not 100% adapted for it, which produce differences in the borders when showing the icons/images on screen (because its resolution is not the proper one), and the test fails.\n\n(from: https://github.com/uber/ios-snapshot-test-case/issues/37#issuecomment-399801243)\r\n\r\nSteps to Reproduce:\r\n1. Write tests that depend on assets (PDFs without “Preserve Vector Data” or regular images)\n2. Run `xcodebuild test -destination 'platform=iOS Simulator,name=iPhone SE,OS=11.4' -destination 'platform=iOS Simulator,name=iPhone 6,OS=11.4' -destination 'platform=iOS Simulator,name=iPhone X,OS=11.4' -destination 'platform=iOS Simulator,name=iPhone SE,OS=12.0' -destination 'platform=iOS Simulator,name=iPhone 6,OS=12.0' -destination 'platform=iOS Simulator,name=iPhone X,OS=12.0’`\n\r\n\r\nExpected Results:\r\nThe tests would use the appropriate asset on each device. They should produce the same results as running the tests without parallelization or running one destination at a time (multiple commands)\r\n\r\nActual Results:\r\nThe tests fail because the wrong asset is sometimes used\r\n\r\nVersion:\r\nXcode 10.0\r\n\r\nNotes:\r\nThere’re some workarounds that were provided by Brian Croom (@aikoniv) on Twitter:\n\n1) Run xcodebuild with the -disable-concurrent-destination-testing flag to cause the destinations to be run in serial. In that configuration, a new incremental build is performed before testing on each destination, which should produce the correct assets for the current device.\n\n2) First run xcodebuild build-for-testing with \"-destination generic/platform=iOS\" to produce a build targeted at any device, followed by xcodebuild test-without-building with the actual destinations you want to run tests on.\n\n(We actually had to use \"-destination generic/platform=iOS Simulator” though)"
+    email: marcelofabri.mf@gmail.com
+    modified: "2018-09-20T22:30:15.077468Z"
+    number: "44658414"
+    number_intvalue: 44658414
+    originated: 20-Sep-2018 03:30 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 10.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: xcodebuild compiles wrong asset when using parallel destinations

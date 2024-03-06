@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19237746"
+    labels:
+        datastore_id: "5331764683735040"
+data:
+    classification: DNS
+    created: "2015-02-19T14:47:55.530339Z"
+    description: "The method ODRecordContainsMember does not return correct results under OS X 10.10 for the first 60+ seconds after boot or network connection for Active Directory Users and Groups.\r\n\r\nIn OS X 10.10 Results returned are false, even though the user does indeed belong to the group. It takes over 60+ seconds before we get a correct response.\r\n\r\nIf you search for a user that is a member of a group, ODRecordContainsMember will return false. After 60+ seconds the method will start returning proper results.\r\n\r\nhttps://developer.apple.com/library/mac/documentation/Networking/Reference/OpenDirectoryFramework/#//apple_ref/c/func/ODRecordContainsMember\r\n\r\nSTEPS TO REPRODUCE\r\n1) Compile command line app to test the ODRecordContainsMember method.\r\n\r\nThis app has a few classes, 1st for getting the DS (Active Directory) User ODRecord and a 2nd for getting a DS (Active Directory) Group ODRecord.\r\n\r\nI then use ODRecordContainsMember to search for group membership.\r\n\r\n2) Clear the DS cache (dscacheutil -flushcache)\r\n\r\n3) Plugin the network that has access to the AD domain.\r\n\r\n4) Run the binary to test the ODRecordContainsMember method\r\n\r\nThis can also be reproduced with the \"id\" command.\r\n\r\nUnder OS X 10.8.5 and 10.9.5 the ODRecordContainsMember returns the proper value within 1 sec of being connected to the network.\r\n\r\nOS X 10.10.2 does not. It take over 60 sec and multiple runs of the binary for it to display the correct result. I know that the 10.10.2 machine is communicating with AD because I am printing out the ODRecords it is returning.\r\n\r\nSo I was looking through a [Fed-Talk] email chain and someone send out\r\nthis link:\r\n\r\nhttp://arstechnica.com/apple/2015/01/why-dns-in-os-x-10-10-is-broken-and-wh\r\nat-you-can-do-to-fix-it/\r\n\r\nI went ahead and tried it out on my 10.10.2 box… Guess what… The AD lookup\r\nissue is resolved in 10.10 when running mDNSResponder instead of\r\ndiscoveryd.\r\nI tried this on a second 10.10.2 system to confirm. Yep. AD group lookups\r\nresolve correctly almost instantly. Just like 10.7 - 10.9.\r\n\r\nTom Burgin [C]\r\nMac Support Engineer\r\n(301) 443-3904\r\nNIMH | IRTMB"
+    email: tom.j.burgin@gmail.com
+    modified: "2015-02-19T14:54:31.766977Z"
+    number: "19237746"
+    number_intvalue: 19237746
+    originated: 12-Dec-2014 05:32 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.x
+    reproducible: Every Time
+    resolved: ""
+    status: Open
+    title: discoveryd causes inaccurate AD group lookups

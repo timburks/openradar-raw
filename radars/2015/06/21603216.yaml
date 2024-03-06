@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21603216"
+    labels:
+        datastore_id: "6266060059705344"
+data:
+    classification: ""
+    created: "2015-06-30T00:36:16.49642Z"
+    description: "Summary:\r\nIn the attached Swift source file you can see the least needed to reproduce the bug. The compilation succeeds when optimizations are turned off in Debug configuration, but once you want to run Release configuration, you get very vague error from xcode: \"Command /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc failed with exit code 1\".\r\n\r\nI stared digging deeper into the issue and found out that the real error was:\r\n\r\nPHINode should have one entry for each predecessor of its parent basic block!\r\n  %11 = phi i64 [ %43, %33 ], [ 0, %29 ], !dbg !747\r\nLLVM ERROR: Broken function found, compilation aborted!\r\n\r\nThe compilation stops failing when you do one of two things. Either you can make the property in the Foo protocol read-only (by setting it only to { get } ) or not doing the property override in the ChildFoo class.\r\n\r\nSteps to Reproduce:\r\n1. Create new Single-View iOS project\r\n2. Put the contents of the attached file into any source file that will be compiled in the project (you can even place it into AppDelegate.swift)\r\n3. In the project build configuration, make sure you change Swift optimization level to \"Fastest -O\"\r\n4. Run the build\r\n\r\nExpected Results:\r\nExpected result is a successful build.\r\n\r\nActual Results:\r\nAs already stated in the description, it fails with message: \"Command /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc failed with exit code 1\" and when I run the command manually, the problem was:\r\n\r\nPHINode should have one entry for each predecessor of its parent basic block!\r\n  %11 = phi i64 [ %43, %33 ], [ 0, %29 ], !dbg !747\r\nLLVM ERROR: Broken function found, compilation aborted!\r\n\r\nVersion:\r\nXcode 6.3.2 (6D2105)\r\nOS X Yosemite 10.10.3\r\nSwift 1.2\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nThis occurs only when the Swift compiler's optimization level is set to \"Fastest -O\" and I'm using Swift 1.2\r\n\r\nAttachments:\r\n'crash.swift' was successfully uploaded.\r\n\r\n# openradar only: the contents of crash.swift:\r\n\r\nprotocol Foo {\r\n    var bar: String { get set }\r\n}\r\n\r\nclass BaseFoo: Foo {\r\n    var bar: String = \"hello\"\r\n}\r\n\r\nclass ChildFoo: BaseFoo {\r\n    private var _bar: String = \"world\"\r\n    \r\n    override var bar: String {\r\n        get {\r\n            return _bar\r\n        }\r\n        set {\r\n            _bar = newValue\r\n        }\r\n    }\r\n}"
+    email: tadeas@brightify.org
+    modified: "2015-06-30T00:36:55.39652Z"
+    number: "21603216"
+    number_intvalue: 21603216
+    originated: 30-Jun-2015 02:18 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Compilation fails with valid code when "Fastest -O" optimizations are set [Swift]

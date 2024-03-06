@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21784065"
+    labels:
+        datastore_id: "6630489376948224"
+data:
+    classification: Other Bug
+    created: "2015-07-12T03:16:10.05147Z"
+    description: "Summary:\nYou can conform a type to Hashable when it also conforms to another protocol requiring Equatable, but not if you declare the Hashable conformance in an extension.\n\n\nSteps to Reproduce:\n1. This code:\nprotocol P: Equatable {}\nstruct S: P { var hashValue: Int { return 0 } }\nfunc == (_: S, _: S) -> Bool { return true }\nextension S: Hashable {}\n\nExpected Results:\nshould compile\n\nActual Results:\nbut doesn’t:\nboom.swift:4:14: error: ambiguous implied conformance of 'S' to protocol 'Equatable' (via 'Hashable') requires explicit conformance\nextension S: Hashable {}\n             ^\nboom.swift:4:14: note: implied protocol conformance 'Equatable' here can be made explicit\nextension S: Hashable {}\n             ^\n             Equatable, \nboom.swift:2:8: note: 'S' implicitly conforms to protocol 'Equatable' (via conformance to 'P') here\nstruct S: P { var hashValue: Int { return 0 } }\n       ^\n\nRegression:\nDoesn’t happen if you declare S to be Hashable on the line defining it.\nDoesn’t happen if you do what the fixit says and declare S to be Equatable on the extension as well.\nDoesn’t happen if S does not conform to P.\n\nNotes:\nThis isn’t ambiguous. It doesn’t have to resolve some typealias to two different types or something; it’s just got to match Self twice (unambiguously, to the same Self!)."
+    email: rix.rob@gmail.com
+    modified: "2015-07-12T03:16:10.05179Z"
+    number: "21784065"
+    number_intvalue: 21784065
+    originated: 11-Jul-2015 11:16 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A152u)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2b3: spurious “ambiguous” conformance error when conforming w/extension & protocol'

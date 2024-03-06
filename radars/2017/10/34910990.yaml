@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34910990"
+    labels:
+        datastore_id: "5029150263869440"
+data:
+    classification: bug
+    created: "2017-10-10T16:45:36.83882Z"
+    description: "Area:\r\nNotifications\r\n\r\nSummary:\r\n\r\nWe are promised that, provided we've met some preconditions, when we call `[application registerForRemoteNotifications]` the app delegate will soon call one of:\r\n\r\n1. `application:didFailToRegisterForRemoteNotificationsWithError:`\r\n2. `application:didRegisterForRemoteNotificationsWithDeviceToken:`\r\n\r\n* preconditions:\r\n1. registered user notification settings\r\n2. are online\r\n3. implemented the delegate methods\r\n\r\nThis has held true for us on iOS8/9/10. However, on iOS11.0 and iOS11.1, this does not happen when the user has disabled all Notifications and disabled \"Background App Refresh\".\r\n\r\nThis is similar to the behavior seen on prior versions of iOS when the app calls `registerForRemoteNotifications` *before* calling registerUserNotificationSettings:`, but in this case we *have* called `registerUserNotificationSettings` (and met the other preconditions).\r\n\r\nSteps to Reproduce:\r\n\r\n1. Go to Settings.app > MyApp \r\n2. Disable \"Background App Refresh\"\r\n3. Go to Settings.app > MyApp > Notifications \r\n4. Disable \"Allow Notifications\"\r\n5. call \r\n\r\n```\r\nCall:\r\n\r\n[UIApplication.sharedApplication registerUserNotificationSettings:]\r\n\r\nIn  AppDelegate.h\r\n\r\n```\r\n- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings\r\n{\r\n    NSLog(@\"This is called.\");\r\n    [UIApplication.sharedApplication registerForRemoteNotifications]\r\n}\r\n\r\n- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken\r\n{\r\n  NSLog(@\"This is never called.\");\r\n}\r\n\r\n- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error \r\n{\r\n  NSLog(@\"This is never called.\");\r\n}\r\n```\r\n\r\nExpected Results:\r\n\r\nPer documentation, one of the following should be called:\r\n1. `application:didFailToRegisterForRemoteNotificationsWithError:`\r\n2. `application:didRegisterForRemoteNotificationsWithDeviceToken:`\r\n\r\nDocs:\r\n\r\n```\r\n// Calling this will result in either application:didRegisterForRemoteNotificationsWithDeviceToken: or application:didFailToRegisterForRemoteNotificationsWithError: to be called on the application delegate. Note: these callbacks will be made only if the application has successfully registered for user notifications with registerUserNotificationSettings:, or if it is enabled for Background App Refresh.\r\n- (void)registerForRemoteNotifications NS_AVAILABLE_IOS(8_0);\r\n```\r\n\r\nActual Results:\r\n\r\nNeither are called.\r\n\r\nVersion/Build:\r\n\r\nVersion: iOS 11.0.1 \r\nBuild: 15A402\r\n\r\nVersion: iOS 11.1 Beta \r\nBuild: 15B5078e"
+    email: Michael.John.Kirk@gmail.com
+    modified: "2017-10-10T16:46:30.30061Z"
+    number: "34910990"
+    number_intvalue: 34910990
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS11
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: iOS11 Remote registration callbacks not called when notifications AND background refresh are disabled.

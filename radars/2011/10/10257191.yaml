@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10257191"
+    labels:
+        datastore_id: "1387401"
+data:
+    classification: ""
+    created: "2011-10-09T22:56:49.706617Z"
+    description: "Summary:\r\n\r\na NSPipe seems to be always over retained, it never gets deallocated and the pipe stays in use, additionally when the maximum kern.maxfilesperproc is reached [NSPipe pipe] silently starts returning nil , project attached.\r\n\r\nSteps to Reproduce:\r\n\r\n    for (int i=0; i < 5000; i++) {\r\n        NSPipe *pipe = [[NSPipe alloc] init];\r\n        if (pipe == nil) {\r\n            NSLog(@\"ERROR ran out of file descriptors after %@i\",i);\r\n            break;\r\n        }   \r\n        NSTask *task = [[NSTask alloc] init];\r\n        [task setLaunchPath:@\"/usr/bin/who\"];\r\n        [task setStandardOutput:pipe];        \r\n        [task launch];\r\n        //NSFileHandle *file = [pipe fileHandleForReading];  //optional        \r\n        //[file availableData];                             //optional\r\n        [task waitUntilExit];\r\n        //[file closeFile]; fix to close the pipe even if documentation states different\r\n        [pipe release];\r\n        [task release];\r\n        if (i % 100 == 0) {\r\n            NSLog(@\"%i pipes leaked\",i);            \r\n        }\r\n    }\r\n\r\nExpected Results:\r\n\r\nnot have to call closeFile as documented\r\n\r\nActual Results:\r\n\r\nhave to call closeFile else the pipes never get freed\r\n\r\nRegression:\r\n\r\nNotes:"
+    email: valexa@gmail.com
+    modified: "2011-10-09T22:56:49.706875Z"
+    number: "10257191"
+    number_intvalue: 10257191
+    originated: 10-Oct-2011 01:55 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.1
+    reproducible: Always
+    resolved: ""
+    status: open
+    title: NSPipe/NSFileHandle file descriptors never freed

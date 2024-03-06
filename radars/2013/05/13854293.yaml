@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13854293"
+    labels:
+        datastore_id: "3000403"
+data:
+    classification: Crasher/Data loss
+    created: "2013-05-09T22:48:19.253385Z"
+    description: "Summary: NSFilePresenters that are observing a parent directory are not notified of sub-item changes after the parent directory itself is moved.\r\n\r\nSteps to Reproduce: Compile the two helper tools attached.\r\nMake two Terminal windows\r\nIn the first:\r\n    mkdir /tmp/parent\r\n    date > /tmp/parent/file\r\n    ./watch-file /tmp/parent\r\nIn the second, issue the following commands one by one, watching the output in the first (which is interspersed below):\r\n\r\n    ./move-file /tmp/parent/file /tmp/parent/file2\r\n    2013-05-09 15:39:55.179 watch-file[64567:1807] 35.053001: subitem did change at file://localhost/tmp/parent/file2\r\n    2013-05-09 15:39:55.181 watch-file[64567:1d07] 35.055093: subitem did change at file://localhost/tmp/parent/file\r\n\r\n    ./move-file /tmp/parent /tmp/parent2\r\n    2013-05-09 15:40:34.662 watch-file[64567:180b] 74.536468: relinquish to writer\r\n    2013-05-09 15:40:35.166 watch-file[64567:180b] 75.040040: item did move to file://localhost/tmp/parent2/\r\n    2013-05-09 15:40:35.168 watch-file[64567:1a0f] 75.042054: subitem did change at file://localhost/tmp/parent\r\n    2013-05-09 15:40:35.170 watch-file[64567:180b] 75.043873: reacquire from writer\r\n\r\n    ./move-file /tmp/parent2/file2 /tmp/parent2/file3\r\n    No output!\r\n\r\n    ./move-file /tmp/parent2 /tmp/parent3\r\n    2013-05-09 15:41:22.935 watch-file[64567:1b0f] 122.809268: relinquish to writer\r\n    2013-05-09 15:41:23.440 watch-file[64567:1b0f] 123.313709: item did move to file://localhost/tmp/parent3/\r\n    2013-05-09 15:41:23.441 watch-file[64567:2a1f] 123.315531: reacquire from writer\r\n\r\nThe file coordination system knows that the presenter is watching the new location, as evidenced by the second move of the parent directory. But after the first move of the parent directory, no sub-item change notifications are sent to the parent.\r\n    \r\n\r\nExpected Results: Sub-item change notifications should be reliable.\r\n\r\nActual Results: Sub-item change notifications are lost, resulting in possible data loss due to failure to read the new state.\r\n\r\nVersion: 10.8.3\r\n\r\nNotes:"
+    email: twiomood@gmail.com
+    modified: "2013-05-09T22:48:19.253597Z"
+    number: "13854293"
+    number_intvalue: 13854293
+    originated: May 9, 2013
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.8.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Sub-item changes are no longer sent to a presenter after the main presented item is moved

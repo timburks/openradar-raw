@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33838468"
+    labels:
+        datastore_id: "6163139506733056"
+data:
+    classification: ""
+    created: "2017-08-10T23:23:29.26175Z"
+    description: "Area:\r\nFoundation\r\n\r\nSummary:\r\nWe have crashes in the wild (user's phones) on an assert that we have on the first line of our `completionHandler`:\r\n\r\n```\r\n[session getTasksWithCompletionHandler:^(NSArray<NSURLSessionDataTask *> *dataTasks,\r\n                                             NSArray<NSURLSessionUploadTask *> *uploadTasks,\r\n                                             NSArray<NSURLSessionDownloadTask *> *downloadTasks) {\r\n            NSCAssert([[NSOperationQueue currentQueue] isEqual:_queue], @\"Delegate method not called on delegate queue\");\r\n```\r\n\r\nAnd from the code it is not possible that `_queue` is nil, and the session is being created with `_queue` being passed into the call:\r\n\r\n```\r\n        return [NSURLSession sessionWithConfiguration:sessionConfiguration delegate:delegate delegateQueue:queue];\r\n```\r\n\r\nThis is really bad for us because our code uses the fact that all these completion blocks are called in the same serial queue, so that we can reason about the code in a sane way. If we don't have the guarantee of ordering, then the code becomes much harder to reason about and debug.\r\n\r\nSteps to Reproduce:\r\nWe have code that is available to users in the wild that contains the assert on the completion block that we are on the correct queue. That assert is necessary because we depend on the serialization of the callbacks in order to make sense of the code and behave accordingly.\r\n\r\nExpected Results:\r\nWe'd expect the blocks to always run in the correct queue that the url session was initialized with, since that is the documented behavior.\r\n\r\nObserved Results:\r\nWe see that sometimes, in the wild, on user's crash reports, the queue is not correct and in fact the block is being called on the wrong queue, therefore we are crashing and getting these reports. Have not been able to reproduce that locally.\r\n\r\nVersion:\r\niOS/10.3.2\r\niOS/10.3.1\r\niOS/10.2.1\r\niOS/9.3.5\r\niOS/10.3.3\r\niOS/10.2\r\niOS/10.0.2\r\niOS/10.1.1\r\niOS/10.3\r\niOS/10.0.1\r\niOS/11.0\r\niOS/9.3.2\r\niOS/9.3.4\r\niOS/10.1\r\niOS/10.0\r\niOS/9.2.1\r\niOS/9.3.3\r\niOS/9.3.1\r\niOS/9.2\r\niOS/9.1\r\niOS/9.0.2\r\n\r\nNotes:\r\nWe have these crashes happening in the wild but they don't seem to be deterministic, so I'd say it's probably a race condition and therefore very hard to debug.\r\n\r\nI came to the networking labs on WWDC and talked to Steve about it, he looked at the code and seemed to imply that it is possible that in a change/rewrite this behavior was introduced. He told me to file a rdar and mention him here\r\n\r\nConfiguration:"
+    email: henriqueponde90@gmail.com
+    modified: "2017-08-10T23:23:29.26192Z"
+    number: "33838468"
+    number_intvalue: 33838468
+    originated: 08/10/2017
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: No
+    status: Open
+    title: NSURLSession's `getTasksWithCompletionHandler:`'s `completionHandler` is not called on the delegate queue

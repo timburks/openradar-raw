@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19243255"
+    labels:
+        datastore_id: "5859726222950400"
+data:
+    classification: Serious Bug
+    created: "2015-02-13T21:06:35.20982Z"
+    description: "Summary:\r\nI wrote a bug (19032099), marked resolved, where it appeared to me Silent Push was broken in iOS 8.x In the end I saw this in my console log: \"Dec 13 10:15:31 David-Hoerls-iPad apsd[83] <Warning>: Silent Push: Deny app no resources reason: cell quality 0 wifi quality 0 .\" Moving my device closer to a wifi hotspot resulted in every push making it, where before everyone failed.\r\n\r\nNow, but not make it - I mean that iOS refused to pass it to me - I could see the app badge change, so knew iOS got the notiification, it just didn't pass it to me - so all the metadata contained in the push was lost (unless you provide the push later, I have a test in progress).\r\n\r\nBut really - the issue is - if iOS gets the notification, it should pass it to the app. Most background apps are going to schedule a background NSURLSession. iOS could also return no wifi no cell in Reachability and/or refuse to turn on the transmitters - that I wouldn't mind. But completely tossing the notification seems really drastic. Who knows when the user is going to be in a strong WIFI zone next?\r\n\r\nSteps to Reproduce:\r\n- Run your app that accepts background silent push notifications\r\n- Get near a strong WIFI signal\r\n- background the app and send a push containing a new badge value\r\n- See the badge change and the app respond (in my case with a local notification)\r\n- now move the app where you only see 1 bar of WIFI\r\n- send a new push, with a new badge number\r\n\r\nExpected Results:\r\nIf the badge changes, iOS got the notification, it should supply it to my app.\r\n\r\nActual Results:\r\nWhen the WIFI signal is weak, the notification is never provided to my app.\r\n\r\nVersion:\r\niOS 8.2 beta 2 (but probably the same in 8.1)\r\n\r\nNotes:\r\nI left the iPad out for 10 minutes waiting to see if the notification would get delivered. If I ever get it, I'll update this bug report.\r\n\r\nConfiguration:\r\niPad 3 WIFI+Verizon (cellular disabled)\r\n\r\nUPDATE:\r\nSo after about 20 minutes of sitting in a strong WIFI zone, iOS finally delivered the notification to my app. Still, it should have been delivered, and let me schedule what I needed to do right away. The device was still usable in the weak WIFI zone - I could web surf for instance."
+    email: david.hoerl@gmail.com
+    modified: "2015-02-13T21:06:35.210106Z"
+    number: "19243255"
+    number_intvalue: 19243255
+    originated: 12/13/2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "8.1"
+    reproducible: Always
+    resolved: Dup of 18645681
+    status: Open
+    title: iOS refuses to pass content-available notification to app if network signal low

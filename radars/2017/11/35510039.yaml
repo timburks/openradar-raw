@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35510039"
+    labels:
+        datastore_id: "4977061571592192"
+data:
+    classification: Serious Bug
+    created: "2017-11-13T19:38:12.8063Z"
+    description: "Hide Description\r\nArea:\r\nSoftware Update\r\n\r\nSummary:\r\nAfter caching a download with `/usr/sbin/softwareupdate -d -a` and waiting a certain period of time, usually 2-3 days, and then trying to install the update with `/usr/sbin/softwareupdate --verbose --install “item” --no-scan` results in a successful output from Standard Out. Checking again for available updates results in the same update being available.\r\n\r\nSteps to Reproduce:\r\n1.  Run `/usr/sbin/softwareupdate -d -a` to download/cache the updates on a 10.12.* or 10.13.* machine.\r\n2. Wait a certain amount of time. Usually 2-3 Days.\r\n3. Attempt to install the updates with `/usr/sbin/softwareupdate --verbose --install “item” --no-scan`\r\n4. Receive a standard out of “Installing ‘item’”; “Done with ‘item’; “Done.”… There is no mention of a failure.\r\n5. Run `/usr/sbin/softwareupdate -d -a` again to see that the update is downloaded again.\r\n6. Investigating `/var/log/install.log` reveals a message of “Invalid or incomplete local product ‘PRODUCT ID NUMBER’”\r\n\r\n \r\n\r\nExpected Results:\r\nAfter running step 3 the update should successfully install or at least note in the output that it failed. Ideally it should install without issue. \r\n\r\nActual Results:\r\nThe update fails to install. \r\n\r\nRegression:\r\nHappens to mostly all of our 3000 plus machines we attempt to install.\r\n\r\nNotes:\r\nThe only work around that we’ve found is to delete the Cached Update in `/Library/Updates/${PRODUCT ID}` and re-download them immediately install. This happens on a machine if it is on or off the network. I can successfully reproduce this on a machine if I copy over the `/Library/Updates/` directory to a random directory, say `/Users/Shared/`, run the install. on the failure softwareupdate removes `/Library/Updates/${PRODUCT ID}/*.pkgs`. I can copy the updates from `/Users/Shared/` and try again and it will fail fairly consistently. Happens if a user is logged in a or if at login window. Attempting to install the update from the App Store reveals a Failure Dialog as well."
+    email: jckwhet@gmail.com
+    modified: "2017-11-13T19:38:12.80651Z"
+    number: "35510039"
+    number_intvalue: 35510039
+    originated: 10/13/2017
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.12+
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: Installing updates with /usr/sbin/softwareupdate or App Store Fail.

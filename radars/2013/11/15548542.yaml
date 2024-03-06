@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15548542"
+    labels:
+        datastore_id: "5782725713723392"
+data:
+    classification: Serious Bug
+    created: "2013-11-26T03:23:52.672711Z"
+    description: "Summary:\r\n\r\nWhen validating a receipt against `https://sandbox.itunes.apple.com/verifyReceipt`, it will fail every time with the result `{\"status\":21002, \"exception\":\"java.lang.IllegalArgumentException\"}` if the receipt data was base 64 encoded with a line length options (e.g. `NSDataBase64Encoding64CharacterLineLength`).\r\n\r\nIt works fine, however, when you omit the option so no newlines are added, and the itunes server will return status 0 with the associated receipt data as expected.\r\n\r\n(It may also be worth pointing out that the old deprecated method `transactionReceipt` works fine with the new lines included.)\r\n\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n1. In the code for verifying a receipt against Apple (similar to what is described by https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html), do the following to generate the base64-encoded receipt data in the json you send:\r\n\r\n```\r\nNSData *receiptData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] appStoreReceiptURL]];\r\nNSString *receiptString = [receiptData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];\r\n```\r\n\r\n2. To verify the data against Apple, send the data in a Json to https://buy.itunes.apple.com/verifyReceipt (or the sandbox url when testing).\r\n\r\n{ \"receipt-data\" : \"(receiptString here)\" }\r\n\r\ne.g. to simulate it manually, we can do something like:\r\n\r\ncurl -H \"Accept: application/json\" \\\r\n     -H \"Content-Type: application/json\" \\\r\n     -X POST \\\r\n     -d '{\"receipt-data\": \"BASE 64 ENCODED DATA GOES HERE\"}' \\\r\n     https://sandbox.itunes.apple.com/verifyReceipt\r\n\r\n3. Observe the response from iTunes\r\n\r\n\r\nExpected Results:\r\n\r\nThe expected result, assuming that the receipt is legitimate, would be a JSON with status = 0, e.g.\r\n\r\n{\r\n    \"status\" : 0,\r\n    \"receipt\" : { (receipt here) }\r\n}\r\n\r\n\r\nActual Results:\r\n\r\niTunes always returns:\r\n\r\n{\r\n    \"status\": 21002,\r\n    \"exception\":\"java.lang.IllegalArgumentException\"\r\n}\r\n\r\n(Note that, if we replace the line length option NSDataBase64Encoding64CharacterLineLength with 0, everything works fine and the result returns status 0 as expected.)"
+    email: RichWChan@gmail.com
+    modified: "2013-11-26T03:23:52.672944Z"
+    number: "15548542"
+    number_intvalue: 15548542
+    originated: 25-Nov-2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 7.0.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Receipt verification always returns 21002 if the Base64 encoded string contains newlines

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29788075"
+    labels:
+        datastore_id: "4958683507195904"
+data:
+    classification: Other Bug
+    created: "2016-12-22T16:40:23.22234Z"
+    description: "Area:\r\nFoundation\r\n\r\nSummary:\r\nWhen you try to compute the next date with provided time zone information, it will not respect it and instead use the system's time zone to compute the next date that matches provided date components.\r\n\r\nSteps to Reproduce:\r\n1. Change Mac timezone to Europe/London\r\n2. Open attached playground and look at printed logs. You should see that the next date computed for Edmonton will instead show date computed for the London time zone.\r\n\r\nExpected Results:\r\nWhen computing the next date that should match a set of date components that includes a specified time zone, that time zone should be preserved in the calculations.\r\n\r\nActual Results:\r\nIf computing the next date through the Calendar.nextDate API, it will use the system's time zone\r\n\r\n----\r\n\r\nPlayground:\r\n\r\nimport Foundation\r\n\r\nlet calendar = Calendar(identifier: .gregorian)\r\n\r\n// *************************************************************\r\n// Pre-condition: Local machine is set to Europe/London timezone\r\n// *************************************************************\r\n\r\nprint(\"-- America/Edmonton --\")\r\n\r\nlet edmontonComponents = DateComponents(calendar: calendar, timeZone: TimeZone(identifier: \"America/Edmonton\"), year: 2016, month: 12, day: 25, hour: 5, minute: 0, second: 0)\r\nlet edmontonDate = calendar.date(from: edmontonComponents)\r\nprint(\"2016/12/25, 5AM in Edmonton: \\(edmontonDate!.timeIntervalSince1970)\")    // 1482667200.0\r\nprint(edmontonComponents.timeZone!.identifier)                                  // America/Edmonton\r\n\r\nlet desiredEdmontonComponents = DateComponents(timeZone: TimeZone(identifier: \"America/Edmonton\"), hour: 5, minute: 0, second: 0)\r\nlet nextEdmonton5AM = calendar.nextDate(after: edmontonDate!, matching: desiredEdmontonComponents, matchingPolicy: .strict)\r\nlet extractedEdmontonComponents = calendar.dateComponents([.hour, .minute, .timeZone], from: nextEdmonton5AM!)\r\nprint(\"2016/12/26, 5AM in Edmonton: \\(nextEdmonton5AM!.timeIntervalSince1970)\") // 1482728400.0 (incorrect!)\r\nprint(extractedEdmontonComponents.hour!)                                        // 5 (incorrect!)\r\nprint(extractedEdmontonComponents.timeZone!.identifier)                         // Europe/London\r\n\r\nprint(\"\")\r\nprint(\"-- Europe/London --\")\r\n\r\nlet londonComponents = DateComponents(calendar: calendar, timeZone: TimeZone(identifier: \"Europe/London\"), year: 2016, month: 12, day: 25, hour: 5, minute: 0, second: 0)\r\nlet londonDate = calendar.date(from: londonComponents)\r\nprint(\"2016/12/25, 5AM in London: \\(londonDate!.timeIntervalSince1970)\")        // 1482642000.0\r\nprint(londonComponents.timeZone!.identifier)                                    // Europe/London\r\n\r\nlet desiredLondonComponents = DateComponents(timeZone: TimeZone(identifier: \"Europe/London\"), hour: 5, minute: 0, second: 0)\r\nlet nextLondon5AM = calendar.nextDate(after: londonDate!, matching: desiredLondonComponents, matchingPolicy: .strict)\r\nlet extractedLondonComponents = calendar.dateComponents([.hour, .minute, .timeZone], from: nextLondon5AM!)\r\nprint(\"2016/12/26, 5AM in London: \\(nextLondon5AM!.timeIntervalSince1970)\")     // 1482728400.0 (same as line 21)\r\nprint(extractedLondonComponents.hour!)                                          // 5\r\nprint(extractedLondonComponents.timeZone!.identifier)                           // Europe/London"
+    email: sam@gosammy.com
+    modified: "2016-12-22T16:40:23.22257Z"
+    number: "29788075"
+    number_intvalue: 29788075
+    originated: 2016/12/22
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 8.4, iOS 9.3, iOS 10.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Calendar.nextDate does not respect provided time zone

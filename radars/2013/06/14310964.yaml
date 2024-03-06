@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14310964"
+    labels:
+        datastore_id: "3167401"
+data:
+    classification: ""
+    created: "2013-06-29T04:12:31.329005Z"
+    description: "Summary:\r\niOS 5 introduced queue confinement for managing the concurrency of NSManagedObjectContexts. To use this functionality developers must submit blocks to the context using performBlock: or performBlockAndWait: . This is currently best documented in the iOS 5 release notes:\r\nhttp://developer.apple.com/library/ios/#releasenotes/General/WhatsNewIniOS/Articles/iOS5.html\r\nAnd in 2011 and 2012 WWDC Core Data sessions.\r\n\r\nThe relevant portion of the iOS 5 release notes is:\r\n\"The performBlockAndWait: method supports API reentrancy. The performBlock: method includes an autorelease pool and calls the processPendingChanges method upon completion.\"\r\n\r\nThe documentation for NSManagedObjectContext 's performBlockAndWait:\r\nhttps://developer.apple.com/library/mac/#documentation/Cocoa/Reference/CoreDataFramework/Classes/NSManagedObjectContext_Class/NSManagedObjectContext.html#//apple_ref/doc/uid/TP30001182-SW46\r\n\r\nDoes not contain any of the information about this method that is in the iOS 5 release notes. This should cover:\r\n- performBlockAndWait does use an autorelease pool\r\n- performBlockAndWait does not process user events (does not call processPendingChanges)\r\n\r\nThis is important to include as it can have serious side effects, as developers are likely to assume these things will happen. For the most part, user events are invisible to developers even though they can be critical to the behavior of Core Data at runtime.\r\n\r\nAdditionally, some methods may be unsafe or ill advised to call within performBlockAndWait: due to it's synchronous or reentrant nature. Providing guidance in the documentation would be helpful.\r\n\r\nSteps to Reproduce:\r\n\r\nExpected Results:\r\n\r\nActual Results:\r\n\r\nRegression:\r\n\r\nNotes:"
+    email: quellish@gmail.com
+    modified: "2013-06-29T04:12:31.329155Z"
+    number: "14310964"
+    number_intvalue: 14310964
+    originated: Sat, 29 Jun 2013 04:11:47 GMT
+    parent_number: '&{NULL_VALUE}'
+    product: Documentation
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Documentation for NSManagedObjectContext has insufficient detail for method perf

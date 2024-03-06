@@ -1,0 +1,54 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21783846"
+    labels:
+        datastore_id: "4947447386210304"
+data:
+    classification: Other Bug
+    created: "2015-07-12T01:12:04.59242Z"
+    description: |-
+        Summary:
+        Enums can have static variables shadowing their cases but not static functions.
+
+        Steps to Reproduce:
+        1. This code:
+        enum E<F> {
+        	case C
+        	case D(F)
+        }
+        extension E {
+        	static var C: () { return () }
+        	static func D(_:Int) -> () {}
+        }
+
+        Expected Results:
+        should compile
+
+        Actual Results:
+        but does not:
+        boom.swift:7:14: error: invalid redeclaration of 'D'
+                static func D(_:Int) -> () {}
+                            ^
+        boom.swift:3:7: note: 'D' previously declared here
+                case D(F)
+                     ^
+
+        Regression:
+        The static variable C is acceptable, but the static function D is not. This despite the fact that it does not actually redeclare or even shadow the case or the static func implicitly defined by the case; it just overloads it on the return type.
+        The static variable C is only acceptable because E is generic, making me wonder if in fact the bug is that C compiles. But I think overloading on return type ought to be accepted here.
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-07-12T01:12:04.59262Z"
+    number: "21783846"
+    number_intvalue: 21783846
+    originated: 11-Jul-2015 09:11 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A152u)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2b3: Static functions cannot overload cases'

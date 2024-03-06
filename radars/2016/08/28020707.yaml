@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28020707"
+    labels:
+        datastore_id: "6076752430366720"
+data:
+    classification: Enhancement
+    created: "2016-08-25T23:48:24.00549Z"
+    description: "Summary:\r\nI have a distributed filesystem, which uses a local OS X client to provide performance and high availability, in which the client can connect to any one of several storage nodes to fulfill requests, falling back seamlessly if any one node goes down.\r\n\r\nThis works well for producing a high-availability and high-performance filesystem. However, there are issues with using the local client, rather than re-exporting the filesystem on the server side using AFP or SMB. For instance, if you have a Finder window open, and files are created on another client, the list of files does not update in the Finder, since the Finder relies on filesystem change notifications. If we re-export via AFP or SMB, we do get file change notifications and the Finder update appropriately, but that has performance implications and we lose the ability to have no single point of failure, as the server re-exporting the filesystem becomes a single point of failure.\r\n\r\nSteps to Reproduce:\r\n1. Create a filesystem kext. For expedience, maybe use OS X FUSE.\r\n2. Discover that there is no way to call vnode_notify or register a VNOP_MONITOR handler.\r\n\r\nExpected Results:\r\nI would expect that APIs which are available to Apple's own filesystems would be available to third party filesystems as well, allowing third party filesystem to introduce new features without having a limited set of functionality available.\r\n\r\nActual Results:\r\nThe actual result is that there are private APIs, that are inaccessible from third-party filesystem implementations. This means having to trade off features, either by re-using existing filesystem protocols but living with the limitations, or not being able to provide as good an experience to users as is possible with the native network filesystems. \r\n\r\nVersion:\r\nOS X 10.10.5 (14F1808)\r\nDarwin 14.5.0\r\n\r\nNotes:\r\nIf enterprising, one could figure out how to link against these private APIs, and then have a kext that may not be binary compatible between versions of OS X, but would provide all of the required features. According to this mailing list thread, that appears to be what Thursby's DAVE/ADmitMac: http://lists.apple.com/archives/filesystem-dev/2014/Oct/msg00005.html\r\n\r\nAccording to the above thread, this request has previously been submitted as rdar://8509887\r\n\r\nConfiguration:\r\nAll versions of OS X that I checked, 10.8-10.11."
+    email: brian.campbell@editshare.com
+    modified: "2017-12-20T18:10:36.09142Z"
+    number: "28020707"
+    number_intvalue: 28020707
+    originated: 25-Aug-2016 07:45 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: ""
+    reproducible: ""
+    resolved: Duplicate of 18649336
+    status: Open
+    title: Expose VNOP_MONITOR/vnode_notify publicly

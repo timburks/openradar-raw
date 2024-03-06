@@ -1,0 +1,55 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17958880"
+    labels:
+        datastore_id: "5258902241280000"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2014-08-08T13:49:11.951064Z"
+    description: |-
+        Summary:
+        Occasionally there are HTML messages that are not able to be properly interpreted into an attributedString (see radar# 17958771) during the call to -[MFMessageRule _performAutoResponseActionOnMessage:encrypt:includeOrignalMessageText:]. That method does not deal with the nil return value gracefully, an exception is thrown and the rule always evaluates to nil, even if that content is not really relevant to the rule.
+
+        Steps to Reproduce:
+        1. Download the attached email message.
+        2. Open it in Mail (be careful not to click any links it is spam, though I don’t think it is malware, but I could be wrong)
+        3. Move the message into a folder (to run a rule against later)
+        4. Create an Inbox rule that redirects all messages (or messages from “onyx_consumer_goods@invitationsonly.club”) to some other email address (other actions can be applied to see the result, such as change the color) (see screenshot below for example rule).
+        5. Make sure all other rules are not active to avoid any conflicts.
+        6. Run that rule against the downloaded message in the folder you moved it to.
+        7. After a delay (with the beach ball) of 60 seconds the action (again see radar: 17958771 about that issue) the actions of the rule are not applied.
+
+        Expected Results:
+        Rule should be applied and message should be moved.
+
+        Actual Results:
+        Rule is ignored. An exception is thrown
+        “exception raised in routeMessages: -[__NSCFString replaceCharactersInRange:withString:]: nil argument”
+
+        Regression:
+
+
+        Notes:
+
+        The example email can be downloaded from:
+
+        http://media.littleknownsoftware.com/bugs/BadContent.eml
+
+        Here is a screenshot of the rule that I used.
+
+        http://media.littleknownsoftware.com/bugs/RuleExample.png
+
+        I can reproduce this without plugins installed.
+    email: scott.j.little@gmail.com
+    modified: "2014-08-08T13:49:11.951239Z"
+    number: "17958880"
+    number_intvalue: 17958880
+    originated: 08-Aug-2014 03:47 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mail
+    product_version: 7.3 (1878.6)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: During rule evaluation, if the attributedString of the message content returns nil, rule always fails

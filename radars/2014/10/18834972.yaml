@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18834972"
+    labels:
+        datastore_id: "5853964255887360"
+data:
+    classification: Serious Bug
+    created: "2014-10-31T07:38:14.104108Z"
+    description: "Summary:\r\n\r\nThe issue happens dismissing a modal view controller that itself has presented a modal controller. Before iOS8 both modal controllers would animate out together. With the current iOS version the top view controller disappears immediately after the start of the animation revealing the middle view controller which stays visible until the and of animation.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create an empty single view app project\r\n2. Disable size classes in MainStoryboard\r\n3. In the storyboard add three view controllers (Red, Green, Blue).\r\n4. Make Red as the initial view controller in the storyboard.\r\n5. Add this code to RedViewController.m:\r\n\r\n- (void)viewDidAppear:(BOOL)animated\r\n{\r\n   [super viewDidAppear:animated];\r\n\r\n   UIViewController *green = [self.storyboard instantiateViewControllerWithIdentifier:@\"Green\"];\r\n   UIViewController *blue = [self.storyboard instantiateViewControllerWithIdentifier:@\"Blue\"];\r\n   [self presentViewController:green animated:NO completion:NULL];\r\n   [green presentViewController:blue animated:NO completion:NULL];\r\n}\r\n\r\n6. Add a button in Blue view controller and wire it to this method:\r\n\r\n- (IBAction)dismissTapped:(id)sender\r\n{\r\n   UIViewController *parent = self.presentingViewController;\r\n   [parent.presentingViewController dismissViewControllerAnimated:YES completion:NULL];\r\n}\r\n\r\n7. Launch the app and tap “Dismiss” button on Blue controller.\r\n\r\nExpected Results:\r\n\r\nBlue controller would animate out revealing Red controller.\r\n\r\nActual Results:\r\n\r\nAt the start of the animation Blue controller disappears instantly revealing Green controller which then continues to animate out revealing Red controller. It is easier to see this effect in the video provided.\r\n\r\nRegression:\r\n\r\nProblem is only present on iOS 8.0 and above\r\n\r\nNotes:\r\n\r\nThis behavior seem to contradict the documentation. This is what is written about dismissViewControllerAnimated:completion:\r\n\r\n\"If you present several view controllers in succession, thus building a stack of presented view controllers, calling this method on a view controller lower in the stack dismisses its immediate child view controller and all view controllers above that child on the stack. When this happens, only the top-most view is dismissed in an animated fashion; any intermediate view controllers are simply removed from the stack. The top-most view is dismissed using its modal transition style, which may differ from the styles used by other view controllers lower in the stack.”"
+    email: Vytis@lemonlabs.lt
+    modified: "2014-11-14T11:16:53.825671Z"
+    number: "18834972"
+    number_intvalue: 18834972
+    originated: 31-Oct-2014 09:38 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "8.1"
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 18828778 (Open)
+    title: Unexpected transition when dismissing multiple modal view controllers

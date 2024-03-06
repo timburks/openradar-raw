@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29046901"
+    labels:
+        datastore_id: "5059516857057280"
+data:
+    classification: ""
+    created: "2016-11-01T19:01:02.2637Z"
+    description: "This crash is only reproducible on iOS 10 when building with Xcode 8 or 8.1.\r\n\r\nSummary:\r\nGiven a function or method with an NSError** handle as a parameter:\r\nvoid __VIPErrorHandleBrokenTestFunction(NSError **error)\r\n{\r\n\tNSBlockOperation *operation  = [NSBlockOperation blockOperationWithBlock:^{\r\n\t\tif (error) {\r\n\t\t\t*error = [[NSError alloc] initWithDomain:@\"VIPTesting\" code:-123 userInfo:@{}];\r\n\t\t}\r\n\t}];\r\n\tNSOperationQueue *queue = [[NSOperationQueue alloc] init];\r\n\t[queue addOperations:@[operation] waitUntilFinished:YES];\r\n}\r\n\r\nIf I de-reference that error and assign it within a block the compiler will produce crashing code and not flag this as an error or warning.\r\n\r\nSteps to Reproduce:\r\n1. Set xcodebuild to use the Xcode 8 toolchain.\r\n2. Compile the attached file in terminal with: `clang -fobjc-arc -framework Foundation NSErrorCrash.m -o NSErrorCrash`\r\n3. Run the compiled executable in terminal with: `./NSErrorCrash `\r\n\r\n\r\nExpected Results:\r\nCompiler should emit an error or warning indicating that the syntax is wrong and that the inner *error de-reference is going to cause a crash because it is assigning a pointer that is nor marked as __block.\r\n\r\nActual Results:\r\nNo warnings/errors are emitted by the compiler. Executable crashes at runtime.\r\n\r\nVersion:\r\nXcode 8 and 8.1 all GM versions. Have not tested on Xcode 8 betas.\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'NSErrorCrash.m' was successfully uploaded.\r\n\r\n```\r\n#import <Foundation/Foundation.h>\r\n\r\nvoid __VIPErrorHandleBrokenTestFunction(NSError * __autoreleasing *error)\r\n{\r\n\tNSBlockOperation *operation  = [NSBlockOperation blockOperationWithBlock:^{\r\n\t\tif (error) {\r\n\t\t\t*error = [[NSError alloc] initWithDomain:@\"VIPTesting\" code:-123 userInfo:@{}];\r\n\t\t}\r\n\t}];\r\n\tNSOperationQueue *queue = [[NSOperationQueue alloc] init];\r\n\t[queue addOperations:@[operation] waitUntilFinished:YES];\r\n}\r\n\r\nvoid __VIPTestBlockCrashOnIOS10BuiltWithXcode8(void)\r\n{\r\n\tfor (int i = 0; i < 10; i++) {\r\n\t\tNSError *error;\r\n\t\t__VIPErrorHandleBrokenTestFunction(&error);\r\n\t\t//NSLog(@\"Error: %@\", error);\r\n\t}\r\n}\r\n\r\n\r\nint main(int argc, char *argv[]) {\r\n\t@autoreleasepool {\r\n\t\t__VIPTestBlockCrashOnIOS10BuiltWithXcode8();\r\n\t\t\r\n\t\t[[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:5.0]];\r\n\t\tNSLog(@\"iOS X autorelease crash bug is fixed!\");\r\n\t}\r\n}\r\n```"
+    email: SelfTransformingElfMachine@gmail.com
+    modified: "2016-11-09T21:24:16.73469Z"
+    number: "29046901"
+    number_intvalue: 29046901
+    originated: 11/01/2016
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8/8.1
+    reproducible: Always
+    resolved: Duplicate of 15377548 (Open)
+    status: Closed
+    title: Function/Method parameters declared with NSError** handles do not get flagged by compiler if they are assigned within a block.

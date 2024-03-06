@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22702989"
+    labels:
+        datastore_id: "4969941740552192"
+data:
+    classification: Serious Bug
+    created: "2015-09-15T16:36:38.725Z"
+    description: "Description:\r\n\r\nIn iOS 9 and 9.1, when an app is updated (via TestFlight and possibly from the App Store), and subsequently calls [UIApplication setScheduledLocalNotifications:] twice, it causes any existing notifications to be stuck in the system. Notifications with repeatInterval will continue firing over and over again with no way for the app to cancel these notifications (they no longer exist in [UIApplication scheduledLocalNotifications]), until the device is restarted.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n1. Watch the attached video on how the bug is reproduced on sample app (https://vimeo.com/139360427)\r\n2. Launch attached sample app. Better if you upload to TestFlight and install the sample app on actual device. I've better luck reproducing it on an actual device than simulator. (https://dl.dropboxusercontent.com/u/2943526/StuckLocalNotifications.zip)\r\n3. Tap on 'Schedule Notifications'. This calls [UIApplication setScheduledLocalNotifications:] with 64 notifications created at 5 minute intervals, with repeatInterval set to NSCalendarUnitMinute. Each time 'Schedule Notifications' is triggered, a new set of 64 notifications is created. They are differentiated by the alphabet that increments from A-Z.\r\n4. Increment the build number. Compile another build for the device. If possible, upload to TestFlight and update the app from  TestFlight.\r\n5. Launch the updated app on the device.\r\n6. Tap on 'Schedule Notifications' twice. It doesn't have to be fast. It just happens when [UIApplication setScheduledLocalNotifications:] is called twice after the update.\r\n7. Exit to home screen and wait for the bug to take place (i.e. you'll see notifications that have already been replaced in step 6)\r\n8. If you do not experience the bug, repeat step 6-7 again.\r\n9. If you still do not experience the bug, repeat step 4-7. Again, this works \"better\" on an actual device.\r\n\r\n\r\nExpected Results:\r\n\r\nNotifications that were replaced with [UIApplication setScheduledLocalNotifications:] are cancelled and no longer gets fired by iOS.\r\n\r\n\r\nActual Results:\r\n\r\n1. Notifications that were replaced with [UIApplication setScheduledLocalNotifications:] continues to fire. \r\n2. These phantom notifications are not reflected in [UIApplication scheduledLocalNotifications], and cannot be cancelled without restarting the device\r\n\r\n\r\nConfiguration:\r\n\r\niPhone 6 Plus, iPhone 6, Simulator (sometimes). iOS 9 GM, iOS 9.1 beta 1\r\n\r\n\r\nVersion & Build:\r\n\r\niOS 9 GM and iOS 9.1 beta 1\r\n\r\n\r\nAdditional Notes:\r\n\r\nThis is possibly related to the bug first introduced in iOS 5. See rdar://11136251 and rdar://12072780. The problem was still rather rare then. However, on iOS 9, this can be easily reproduced.\r\n\r\n\r\nUpdate to radar on 24-Sep-2015 09:06 AM:\r\n\r\nThis problem persists on iOS 9.0.1 released today. In fact, updating iOS from 9.0 to 9.0.1 actually triggers the problem once again. This means that for every iOS update released by Apple where this bug is not fixed, every single user of mine will experience this bug, and will be forced to restart their device if they know about this solution. Otherwise, they'll attempt to delete my app (which does not resolve the issue), leave bad reviews (doesn't resolve the issue either), ask for refund, or send me a lot of emails…"
+    email: mail.junjie@gmail.com
+    modified: "2015-09-24T03:48:07.17367Z"
+    number: "22702989"
+    number_intvalue: 22702989
+    originated: 16-Sep-2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 9 GM & iOS 9.1 beta 1
+    reproducible: Always
+    resolved: ""
+    status: Open/Duplicate of 22348044
+    title: 'iOS 9 & 9.1: Repeating UILocalNotification cannot be cancelled without restarting device'

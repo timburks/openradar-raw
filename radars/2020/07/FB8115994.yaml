@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8115994
+    labels:
+        datastore_id: "5013115578089472"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2020-07-23T16:58:41.69963Z"
+    description: "Please describe the issue:\r\nMy understanding of the HEADERMAP_INCLUDES_PROJECT_HEADERS build setting is that setting it to NO will prevent a `*-project-header.hmap` file from being generated and passed to clang. Xcode's build setting reference (https://help.apple.com/xcode/mac/11.4/#/itcaec37c2a6) describes it:\r\n\r\n> HEADERMAP_INCLUDES_PROJECT_HEADERS\r\n> Specifies whether the header map contains a name/path entry for every header in the project, regardless of the headers’ target membership.\r\n\r\nI'm unable to reproduce this behavior. I can set HEADERMAP_INCLUDES_PROJECT_HEADERS=NO on a target, and can confirm from the build log that a project-wide header map is being passed to the compiler. Using hmaptool (https://github.com/apple/llvm-project/blob/apple/master/clang/utils/hmaptool/hmaptool), I can confirm that that header map lists headers from outside the target.\r\n\r\nThis unexpected behavior appears to impact both Swift and C-based targets.\r\n\r\n\r\nPlease list the steps you took to reproduce the issue:\r\nReproduced on macOS 10.15.3 (19D76) with Xcode 11.5 (11E608c).\r\n\r\n1. Open the attached sample project and build the \"wtf-hmap\" target.\r\n\r\n2. main.m in wtf-hmap imports `framework.h`, which comes from outside the target and should fail when HEADERMAP_INCLUDES_PROJECT_HEADERS=NO. I added a warning to framework.h to reveal that it's being imported.\r\n\r\n3. Look at the \"Compile main.m\" step in the the build log for the \"wtf-hmap\" target. Observe that clang is being passed a `wtf-hmap-project-headers.hmap` header map. On my system, this is:\r\n\r\n    -iquote /Users/emw/Library/Developer/Xcode/DerivedData/wtf-hmap-bggjknjdtzjtsqfhvdzqmxddxgog/Build/Intermediates.noindex/wtf-hmap.build/Debug/wtf-hmap.build/wtf-hmap-project-headers.hmap\r\n\r\n4. Using hmaptool (https://github.com/apple/llvm-project/raw/apple/master/clang/utils/hmaptool/hmaptool), dump the contents of `wtf-hmap-project-headers.hmap`. Observe that it includes \"framework.h\", even though that header isn't from the target being built. On my system:\r\n\r\n    $ ./hmaptool dump /Users/emw/Library/Developer/Xcode/DerivedData/wtf-hmap-bggjknjdtzjtsqfhvdzqmxddxgog/Build/Intermediates.noindex/wtf-hmap.build/Debug/wtf-hmap.build/wtf-hmap-project-headers.hmap\r\n    Header Map: /Users/emw/Library/Developer/Xcode/DerivedData/wtf-hmap-bggjknjdtzjtsqfhvdzqmxddxgog/Build/Intermediates.noindex/wtf-hmap.build/Debug/wtf-hmap.build/wtf-hmap-project-headers.hmap\r\n    framework.h -> framework/framework.h\r\n\r\n\r\nWhat did you expect to happen?\r\nI expected compilation to fail when `main.m` quote-imported `framework.h`, because framework.h isn't in the search paths for the \"wtf-hmap\" target and I had set HEADERMAP_INCLUDES_PROJECT_HEADERS=NO.\r\n\r\nI expected the arguments passed to clang in the \"Compile main.m\" step to not include the `wtf-hmap-project-headers.hmap` header map.\r\nWhat actually happened?\r\nThe \"wtf-hmap\" target was able to import headers from outside the target.\r\n\r\n\r\nFile uploads:\r\nwtf-hmap.zip: https://drive.google.com/file/d/1DdgPi0_SlQb2niTiL2CBfft7jgyz3Jcj/view?usp=sharing"
+    email: e@elliottwillia.ms
+    modified: "2020-07-23T16:58:41.699828Z"
+    number: FB8115994
+    number_intvalue: 8115994
+    originated: Jul 23, 2020 at 9:53 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Swift Compiler
+    product_version: Xcode 11.5 (11E608c)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift and Objective-C targets still include project-wide header maps when HEADERMAP_INCLUDES_PROJECT_HEADERS=NO

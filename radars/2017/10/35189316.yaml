@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35189316"
+    labels:
+        datastore_id: "5025900315803648"
+data:
+    classification: Bug
+    created: "2017-10-26T02:37:36.59082Z"
+    description: "Area:\r\nMapKit\r\n\r\nSummary:\r\n\r\nWWDC 2015 Session 206: \"What's New in MapKit\" states \"If you are showing buildings on the standard map type, annotations will be placed on top of those. And this will also be the case when you are using the Flyover map types. Annotations will be placed on top of any buildings, trees, large boats, statues, whatever you may find when you are exploring Flyover.\" (https://developer.apple.com/videos/play/wwdc2015-206/?time=1946) \r\n\r\nThis is not true anymore, however. Annotations are not placed on top of buildings in flyover mode, only in standard map mode. I don't doubt this was once true, but I think this is a regression in functionality.\r\n\r\nSteps to Reproduce:\r\n\r\nImplement two maps side by side. Make one map a standard map, and the other a satelliteFlyover map. Create an annotation with coordinate of a building in a city supported by flyover, and add that annotation to both maps. Set initial camera to the same value for both maps. Start rotation animation around the building for both maps.\r\n\r\nExpected Results:\r\n\r\nExpected result is to see the annotation sit on top of the building in both maps as the maps rotate.\r\n\r\nActual Results:\r\n\r\nThe annotation sits on top of the building as expected for the standard map, but sits on street level in the flyover map, giving the impression of the pin \"floating\" across and through buildings as rotation happens.\r\n\r\nVersion/Build:\r\n\r\niOS 11.1 beta 5, Xcode 9.1 beta (9B46)\r\n\r\n---\r\n\r\n//\r\n//  ViewController.swift\r\n//  AnnotationBugDemo\r\n//\r\n//  Created by Michael Edlund on 10/25/17.\r\n//  Copyright © 2017 Michael Edlund. All rights reserved.\r\n//\r\n\r\nimport UIKit\r\nimport MapKit\r\n\r\nclass ViewController: UIViewController {\r\n\r\n  @IBOutlet weak var standardMap: MKMapView!\r\n  @IBOutlet weak var flyoverMap: MKMapView!\r\n  let annotation = MKPointAnnotation()\r\n  let coordinate = CLLocationCoordinate2D(latitude: 40.7412898000, longitude: -74.0068081000)\r\n  \r\n  override func viewDidLoad() {\r\n    super.viewDidLoad()\r\n\r\n    // Set map types\r\n    standardMap.mapType = .standard\r\n    flyoverMap.mapType = .satelliteFlyover\r\n    \r\n    // Set annotation pin\r\n    annotation.coordinate = coordinate\r\n    standardMap.addAnnotation(annotation)\r\n    flyoverMap.addAnnotation(annotation)\r\n\r\n    // Set initial camera\r\n    setInitialCameraFor(map: standardMap)\r\n    setInitialCameraFor(map: flyoverMap)\r\n  }\r\n\r\n  @IBAction func startRotationBtnTouchUp(_ sender: Any) {\r\n    rotateCameraFor(map: standardMap)\r\n    rotateCameraFor(map: flyoverMap)\r\n  }\r\n\r\n  func setInitialCameraFor(map: MKMapView) {\r\n    map.camera = MKMapCamera(lookingAtCenter: coordinate, fromDistance: 300, pitch: 65, heading: 1)\r\n  }\r\n  \r\n  func rotateCameraFor(map: MKMapView) {\r\n    let rotatedCamera = MKMapCamera(lookingAtCenter: coordinate, fromDistance: 300, pitch: 65, heading: 180)\r\n    UIView.animate(withDuration: 20, delay: 0, options: [.allowUserInteraction], animations: {\r\n      map.camera = rotatedCamera\r\n    }) { success in\r\n    }\r\n  }\r\n  \r\n}"
+    email: medlund@gmail.com
+    modified: "2017-10-26T02:39:19.91066Z"
+    number: "35189316"
+    number_intvalue: 35189316
+    originated: 10/25/17
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 11.1
+    reproducible: Yes
+    resolved: No
+    status: Open
+    title: MKPointAnnotation does not sit on top of structures in flyover mode

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35217420"
+    labels:
+        datastore_id: "5003350395322368"
+data:
+    classification: Bug
+    created: "2017-10-29T11:24:43.7159Z"
+    description: "When launching UI tests from Xcode UI, both test runner and SUT have an environment variable LLVM_PROFILE_FILE set. After runnings tests, directory ~/Library/Developer/Xcode/DerivedData/.../Build/ProfileData/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX contains many NNNNN.profraw files and a single large Coverage.profdata file.\r\n\r\nWhen launching tests using xcodebuild, test runner has LLVM_PROFILE_FILE set, but SUT has not. When tests finish running, derived data contains only single NNNNN.profraw file (whose name corresponds to the PID of the test runner) and Coverage.profdata has significantly smaller size.\r\n\r\nThis happens when there are multiple schemes that test identical targets with identical build configurations. A workaround is to remove all but one such scheme.\r\n\r\nSteps to Reproduce:\r\n1. Unzip attached project.\r\n2. Open workspace in the Xcode and run tests using NoProfDataUITests scheme.\r\n3. Observe that test passes.\r\n4. Execute\r\nxcodebuild -workspace NoProfData.xcworkspace -scheme 'NoProfDataUITests' -destination 'platform=iOS Simulator,name=iPhone 6s,OS=11.0' test\r\n5. Observe that test fails while printing 'SUT: nil'\r\n6. Change extension or remove  NoProfData.xcodeproj/xcshareddata/xcschemes/NoProfData.xcscheme\r\n7. Execute the same command again\r\n8. Observe that test passes while printing 'SUT: .../%p.profraw'\r\n\r\nExpected Results:\r\nThe test should pass and coverage data should be generated in all configurations. The behaviour of a scheme should not depend on the presence of other schemes.\r\n\r\nActual Results:\r\nThe test fails and not coverage data is generated when there are two or more schemes testing identical targets with identical build configurations.\r\n\r\nVersion/Build:\r\nXcode 9.0\r\nBuild version 9A235\r\n\r\nConfiguration:\r\nmacOS 10.12.6 (16G29)\r\n\r\nFixed in Xcode 9.3 beta 3 (9Q117m)"
+    email: pohilets@gmail.com
+    modified: "2018-03-28T12:30:26.09945Z"
+    number: "35217420"
+    number_intvalue: 35217420
+    originated: 27 Oct 2017
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 9.0 Build version 9A235
+    reproducible: Always
+    resolved: Fixed
+    status: Closed
+    title: Code coverage is not generated for SUT when running UI tests from command line using xcodebuild

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17157220"
+    labels:
+        datastore_id: "6159060546093056"
+data:
+    classification: ""
+    created: "2014-06-04T19:27:25.199056Z"
+    description: "Juan C Montemayor Elosua04-Jun-2014 03:25 PM\r\n\r\nSummary:\r\nCurried functions are covered in the Swift iBook, and so I started playing around with them. \r\n\r\nOne example from the book, namely `addTwoNumbers(4)(5)` does not compile, since apparently the second argument in the curried function requires a label.\r\n\r\nLocal parameter names work, but curried functions do not work (read: ignore) external parameter names.\r\n\r\nFurthermore, doing something like:\r\n\r\nvar add4 = addTwoNumbers(4)\r\nadd4(10)\r\n\r\ndoesn't work, since apparently the add4 call requires a label for the parameter, even though in theory it is the first parameter.\r\n\r\nSteps to Reproduce:\r\nInstall Xcode 6.0 (6A215l)\r\n\r\nOpen the attached file. There should be one call that works, and three calls that do not work (corresponding to the three points I have laid out)\r\n\r\nHere's the code for good measure:\r\n\r\n// Playground - noun: a place where people can play\r\n\r\nfunc addTwoNumbers(a: Int)(to b: Int) -> Int {\r\n    return a + b\r\n}\r\n\r\n// Works:\r\naddTwoNumbers(4)(b: 4) // Returns 8\r\n\r\n// BUG:\r\n// Expected: No errors. First param name should not require param name (from iBook)\r\n// Actual: \"Missing argument label 'b' in call\"\r\nvar add4 = addTwoNumbers(4)\r\nadd4(10)\r\n\r\n// BUG:\r\n// Expected: No errors, lets us use the external param name\r\n// Actual: \"Incorrect argument label in call (have 'to:', expected 'b:')\"\r\naddTwoNumbers(4)(to: 6) // Result: 10\r\n\r\n// This won't compile, since names are required for any param that's not the first\r\n// This is code from the Swift iBook\r\n\r\n// BUG:\r\n// Expected: No errors\r\n// Actual: \"Missing argument label 'b' in call\"\r\naddTwoNumbers(4)(5) // Returns 9\r\n\r\n\r\nExpected Results:\r\nThere should be no errors when opening the file.\r\n\r\nActual Results:\r\nThere are three distinct errors:\r\n\r\n- Not able to use external parameter names in curried functions\r\n- Forced to use parameter name even when it is the first parameter in a newly created curried function\r\n- The iBook example `addTwoNumbers(4)(5)` doesn't compile. That may be an issue with the book itself though... (please file radar? :)\r\n\r\nVersion:\r\nXcode Version 6.0 (6A215l)\r\nOS X 10.9.3 13D65\r\n\r\nNotes:\r\nThanks for all your work! Xcode and Swift are lookin' fine ;)\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'curry_bug.playground.zip' was successfully uploaded."
+    email: juan.montemayor@nytimes.com
+    modified: "2014-06-04T19:27:25.199207Z"
+    number: "17157220"
+    number_intvalue: 17157220
+    originated: 04-Jun-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6A215l, swift-600.0.34.4.5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Parameter name expectations are erratic in Curried functions

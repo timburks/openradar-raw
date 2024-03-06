@@ -1,0 +1,67 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18340291"
+    labels:
+        datastore_id: "5259087461744640"
+data:
+    classification: Serious Bug
+    created: "2014-09-15T19:22:33.589089Z"
+    description: |-
+        Summary:
+        When declaring a recursive graph of globals, you get a deadlock at runtime because it’s attempting to call dispatch_once reentrantly.
+
+
+        Steps to Reproduce:
+        1. Write a recursive graph of globals, for example a recursive graph of functions.
+        2. Use it.
+
+        See notes for details why, but you basically need to use two files, one which has something like this:
+
+        func c(string: String) -> String -> (String, String)? { return { input in nil } }
+        func | <T>(lhs: String -> (T, String)?, rhs: String -> (T, String)?) -> String -> (T, String)? { return { input in nil } }
+
+        // Note that these are mutually recursive.
+        let x: String -> (String, String)? = c("0") | y
+        let y = c("1") | x
+
+        and the other :
+        // Since globals are initialized lazily, we need to actually call one of the functions.
+        x("")
+        // It never gets this far; it has deadlocked.
+        println("done")
+
+
+        Expected Results:
+        I expected it to produce the recursive graph of globals at runtime and run them as specified.
+
+
+        Actual Results:
+        When you attempt to use the recursive graph, it deadlocks within swift_once/dispatch_once, because it’s calling that reentrantly.
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        I can’t figure out how to do this with a #! script, so you’ll need to use a couple of files in a command-line tool project. Sample project will be attached shortly.
+
+        There are a couple of plausible resolutions I see:
+
+        - disallow recursively-defined globals like this, requiring the developer to resolve the graph with two-step initialization manually (ugh)
+        - resolve the graph with two-step initialization automatically, ~approximately treating the graph of globals as a fixpoint
+
+        I haven’t put the time into deriving a nice little combinator for doing the two-step initialization yet; it’s a little different from the memoize() sorta thing because the result (the graph) is constant (& therefore takes no arguments). Seems solvable tho. Would love it if Swift would do this for me.
+    email: rix.rob@gmail.com
+    modified: "2014-09-15T19:22:33.589363Z"
+    number: "18340291"
+    number_intvalue: 18340291
+    originated: 15-Sep-2014 03:22 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-Beta (6A1027)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Recursive graphs of globals deadlock at runtime'

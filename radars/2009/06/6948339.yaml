@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6948339"
+    labels:
+        datastore_id: "39451"
+data:
+    classification: Serious Bug
+    created: "2009-06-04T21:15:26.181519Z"
+    description: "04-Jun-2009 02:12 PM Karl Kuehn:\r\nSummary: \r\n\tWe use network home directories, and for performance reasons redirect ~/Library/Caches to a local folder. To take care of the atomic/safe save systems we then re-redirect  ~/Library/Caches/TemporaryItems to a on-home-folder location (~/Library/LocalCaches). However it seems that the loginwindow is deleting our redirected folder (~/Library/LocalCaches) somewhat late in the login process, thus killing needed functionality.\r\n\r\nSteps to Reproduce:\r\n\r\n1. From a loginhook create a folder in /tmp\r\n\r\n2. From the same loginhook soft-link ~/Library/Caches/TemporaryItems to that folder\r\n\r\n3. Go through a login\r\n\r\nExpected Results:\r\n\tI expect my folder in /tmp to still exist, and for ~/Library/Caches/TemporaryItems to point to it.\r\n\r\nActual Results:\r\n\tThe folder in /tmp is deleted by loginwindow (verified using fs_useage), ~/Library/Caches/TemporaryItems is left pointing at an invalid location\r\n\r\nRegression:\r\n\tThis may have happened before, but due to a timing issue on most of my users (it takes long enough that loginwindow has completed its routine) I have trouble reproducing it. However there have been sporadic reports that would match this.\r\n\r\nNotes:\r\n\r\n\tI am using the more severe \"Serious Bug\" item because this causes a whole list of problems with network home directories.\r\n\r\n\r\n\tI understand that this is probably trying to keep things clean, but it is a real problem that it follows the link and deletes the target. At worst this should delete the soft link. But I would strongly urge it to simply ignore soft-links.\r\n\r\n10-Jan-2010: Karl Kuehn\r\n\r\nI got a note that this has been resolved in 10.6, but don't currently have access to the radar (long story)."
+    email: kuehn.karl@gmail.com
+    modified: "2011-08-28T05:46:36.63555Z"
+    number: "6948339"
+    number_intvalue: 6948339
+    originated: 06/04/2009
+    parent_number: '&{NULL_VALUE}'
+    product: MacOS X
+    product_version: 10.5.7
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: loginwindow deletes ~/Library/Caches/TemporaryItems softlink target

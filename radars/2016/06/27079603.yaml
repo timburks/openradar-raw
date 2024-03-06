@@ -1,0 +1,46 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27079603"
+    labels:
+        datastore_id: "5012628246102016"
+data:
+    classification: Serious Bug
+    created: "2016-06-29T14:17:50.92938Z"
+    description: |-
+        Summary:
+        I use a 3rd party library called PureLayout (https://github.com/PureLayout/PureLayout) to simplify programmatic auto layout code. It is written in Objective C and includes functions like
+
+        - (NSLayoutConstraint *)autoMatchDimension:(ALDimension)dimension toDimension:(ALDimension)toDimension ofView:(ALView *)otherView
+
+        Swift 3 correctly imports this as
+        func autoMatch(_ dimension: ALDimension, to toDimension: ALDimension, of otherView: UIView) -> NSLayoutConstraint
+
+        However at the callsite Xcode’s Fix It suggested an incorrect replacement.
+
+        Steps to Reproduce:
+        Have an Objective C function named as above and run the Swift 3 migrator
+
+        Expected Results:
+        Callsites of the function in Swift would be correctly updated to
+        autoMatch(…, to: …, of: …)
+
+        Actual Results:
+        The following problems occurred when running the Swift 3 migrator:
+        - the migrator didn’t automatically change all my callsites of these functions
+        - Xcode’s Fix It suggestion (post-migration) suggested an incorrect replacement:
+        “Replace autoMatch” with “autoMatchtoof”
+        - upon clicking Fix It my code got replaced with
+        autoMatchwidthDimension(.…, toDimension: …, ofView: …)
+    email: neilkimmett@gmail.com
+    modified: "2016-06-29T14:17:50.9296Z"
+    number: "27079603"
+    number_intvalue: 27079603
+    originated: 29-Jun-2016 03:17 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (8S128d)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Xcode suggests incorrect function renaming

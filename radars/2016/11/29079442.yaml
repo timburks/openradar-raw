@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29079442"
+    labels:
+        datastore_id: "4956103037157376"
+data:
+    classification: Other Bug
+    created: "2016-11-03T00:03:45.05727Z"
+    description: "I compare task ports received in my catch_mach_exception_raise_state_identity() handlers against known task ports to know which task an exception message corresponds to.\r\n\r\nIn 10.12.1, the task ports received through this mechanism when dyld terminates are not proper task ports, but appear to be corpse tasks ports. A corpse task port has a different port name than the original task port from when it was a live task.\r\n\r\nCorpse task ports are expected when receiving EXC_CORPSE_NOTIFY exceptions, but I am seeing this behavior even when receiving EXC_CRASH exceptions.\r\n\r\ndyld switched to using the new abort_with_payload() mechanism from dyld::halt() in 10.12, but I did not experience this problem in 10.12. I only see it in 10.12.1.\r\n\r\nSteps to Reproduce:\r\ncatch_dyld_crash.cc is a reduced testcase. It runs as a parent, which forks a child. The parent runs a Mach exception handler and waits for the child to crash. The child sets its task exception port for EXC_MASK_CRASH to the handler in the parent. The child then sets DYLD_INSERT_LIBRARIES to a nonexistent file and attempts to re-execute itself, triggering dyld to terminate via dyld::halt(). The EXC_CRASH exception message is delivered to the parent’s catch_exception_raise() function, with the |task| argument indicating which task crashed.\r\n\r\n$ clang++ -g catch_dyld_crash.cc -o catch_dyld_crash\r\n$ ./catch_dyld_crash\r\n\r\nExpected Results:\r\nHere’s 10.12 16A323. Previous OS versions are similar.\r\n\r\n$ ./catch_dyld_crash\r\nfork(): pid 655\r\nchild: pid 655\r\nparent: child task 0xe03\r\ndyld: could not load inserted library '/var/empty/NoDirectory/NoLibrary' because image not found\r\n\r\ncatch_exception_raise(): task 0xe03\r\ncatch_exception_raise(): pid 655\r\nwaitpid(): pid 655, stat 0x6\r\npassed\r\n$ \r\n\r\nNote “passed” at the bottom.\r\n\r\nActual Results:\r\nHere’s 10.12.1 16B2657. It’s broken.\r\n\r\n$ ./catch_dyld_crash\r\nfork(): pid 3377\r\nchild: pid 3377\r\nparent: child task 0xe03\r\ndyld: could not load inserted library '/var/empty/NoDirectory/NoLibrary' because image not found\r\n\r\ncatch_exception_raise(): task 0x1003\r\ncatch_exception_raise(): pid 3377\r\nwaitpid(): pid 3377, stat 0x6\r\nFAILED: child task 0xe03 != exception task 0x1003\r\n$ \r\n\r\nIt says FAILED at the bottom, because the live child task (0xe03) doesn’t match the task received by the EXC_CRASH handler (0x1003).\r\n\r\nVersion:\r\n10.12.1 16B2657\r\n\r\nNotes:\r\nhttps://crashpad.chromium.org/bug/137\r\n\r\nConfiguration:\r\nThis bug occurs in 10.12.1 16B2657. It did not occur in 10.12 16A323 or previous OS versions.\r\n\r\nAttachments:\r\n'catch_dyld_crash.cc' was successfully uploaded. (https://bugs.chromium.org/p/crashpad/issues/attachment?aid=257618)"
+    email: mark@chromium.org
+    modified: "2017-03-07T21:55:36.44581Z"
+    number: "29079442"
+    number_intvalue: 29079442
+    originated: "2016-11-02"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.12.1 16B2657
+    reproducible: Always
+    resolved: Behaves correctly
+    status: Closed
+    title: dyld::halt() EXC_CRASH exceptions arrive with a corpse task port despite not being EXC_CORPSE_NOTIFY

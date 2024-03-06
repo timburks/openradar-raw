@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22437049"
+    labels:
+        datastore_id: "5508413601611776"
+data:
+    classification: Serious Bug
+    created: "2015-08-26T14:16:20.57447Z"
+    description: "Summary:\r\nConsider the following code:\r\n\r\nfunc noexcept<T>(@autoclosure call: () throws -> T) -> T? {\r\n    do {\r\n        return try call()\r\n    } catch {\r\n        return nil\r\n    }\r\n}\r\n\r\nenum Error: ErrorType {\r\n    case SomeError\r\n}\r\n\r\nfunc throwException() throws -> Int {\r\n    throw Error.SomeError\r\n}\r\n\r\nfunc acceptClosure(closure: () -> Void) {\r\n    closure()\r\n}\r\n\r\nfunc test() {\r\n    acceptClosure {\r\n        let _ = noexcept(try throwException())\r\n    }\r\n}\r\n\r\ntest()\r\n\r\n\r\nIt fails to compile. Error shown is \"Invalid conversion from throwing function of type '() throws -> Void' to non-throwing function type '() -> Void'\". It's on the line where 'acceptClosure' is called. For some reason compiler thinks that the closure that is passed to 'acceptClosure' throws, but it really can't throw since it only calls non-throwing function 'noexcept'.\r\n\r\nIf I remove @autoclosure from definition of 'noexcept' and replace 'noexcept(try throwException())' with 'noexcept { try throwException() }', it compiles fine. So autoclosure variant of the function should also compile fine.\r\n\r\nSteps to Reproduce:\r\n1. Install Xcode 7.0b6 (7A192o).\r\n2. Create a playground for iOS, paste my code snippet in playground.\r\n3. Code fails to compile with described message.\r\n\r\nExpected Results:\r\nCode should compile fine.\r\n\r\nActual Results:\r\nCode fails to compile.\r\n\r\nVersion:\r\nXcode 7.0b6 (7A192o), OS X 10.10.5.\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nSwift 2.0, Xcode 7.0b6 (7A192o), OS X 10.10.5, building for iOS 9.0.\r\n\r\nAttachments:"
+    email: maxtram95@gmail.com
+    modified: "2015-08-31T09:43:16.51688Z"
+    number: "22437049"
+    number_intvalue: 22437049
+    originated: 26-Aug-2015 05:14 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0b6 (7A192o)
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 22394263 (Open)
+    title: '[Swift] try in autoclosure makes outer closure be ''throws'''

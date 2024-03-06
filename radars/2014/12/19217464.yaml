@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19217464"
+    labels:
+        datastore_id: "5893701830180864"
+data:
+    classification: Serious Bug
+    created: "2014-12-11T10:00:31.802619Z"
+    description: "When using clang modules, the macros defined in tgmath.h can’t be used in source code.\r\n\r\nSteps to Reproduce:\r\nGiven this minimal sample:\r\n\r\n```\r\n#import <tgmath.h>\r\n#import <Foundation/Foundation.h>\r\nint main() { float f = round(0.42f); }\r\n```\r\n(Also attached as test.m)\r\n\r\nThe `round()` function is defined in math.h as returning a double, it’s overridden by the type-generic version in tgmath.h that returns a float. \r\n\r\nWhen compiling with `clang -Wconversion test.m`, there’s no conversion warning, which is the expected behaviour.\r\n\r\nWhen compiling with `clang -fmodules -Wconversion test.m`, thus enabling modules, we have this warning:\r\n```\r\ntest.m:3:24: warning: implicit conversion loses floating-point precision: 'double' to 'float' [-Wconversion]\r\nint main() { float f = round(0.42f); }\r\n                   ~   ^~~~~~~~~~~~\r\n```\r\nas if we didn’t import tgmath.h\r\n\r\nExpected Results:\r\nUsing modules shouldn’t prevent importing tgmath.h\r\n\r\nActual Results:\r\ntgmath.h macros are not usable.\r\n\r\n\r\nVersion:\r\nXcode 6.1, Mac OS X 10.10.1\r\n\r\nNotes:\r\nMy best guess is that the math.h functions are builtin functions in clang, and somehow when using modules the builtin functions can’t be overridden."
+    email: nicolas.bouilleaud@gmail.com
+    modified: "2014-12-11T10:00:31.802766Z"
+    number: "19217464"
+    number_intvalue: 19217464
+    originated: "2014-12-11"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "6.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Enabling clang Modules breaks type-generic math (tgmath.h)

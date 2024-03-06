@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "44904505"
+    labels:
+        datastore_id: "4931655470940160"
+data:
+    classification: Bug
+    created: "2018-10-01T09:37:21.250811Z"
+    description: "Area:\r\nAVFoundation\r\n\r\nSummary:\r\n\r\n`AVPlayer` and `AVPlayerItem` offer a `-seekToTime:toleranceBefore:toleranceAfter:completionHandler:` method. According to the documentation https://developer.apple.com/documentation/avfoundation/avplayer/1387741-seektotime:\r\n\r\n\"The time seeked to will be within the range [time-beforeTolerance, time+afterTolerance], and may differ from the specified time for efficiency. You can request sample accurate seeking by passing a time value of kCMTimeZero for both toleranceBefore and toleranceAfter\"\r\n\r\nSample accurate seeking obtained by setting zero tolerances works as specified. The behavior observed when using non-zero tolerances is incorrect, though, and the time to which the player seeks might sometimes lie outside the defined range.\r\n\r\nSteps to Reproduce:\r\n\r\nA sample project has been attached. Using standard `AVPlayerViewController` and `AVPlayer`, playback is prepared and the player is asked to seek to some position, with various tolerance settings. The stream played is Apple HLS Bebop with chunk size of ~10 seconds. Three setups are provided:\r\n\r\n1. Sample accurate seeking to position t = 219 seconds, i.e. all tolerances set to zero. The player exactly seeks to 219 seconds, which is correct.\r\n\r\n2. Seeking to t = 219 seconds with a 1 second tolerance before. The player is allowed to efficiently seek within the range [218; 219] if possible. What is observed, though, is that the player efficiently seeks to t = 210 seconds, outside the allowed range.\r\n\r\n3. Seeking to t = 215 seconds with a 1 second tolerance after. The player is allowed to efficiently seek within the range [215; 216] if possible. What is observed, though, is that the player efficiently seeks to t = 210 seconds, outside the allowed range.\r\n\r\nExpected Results:\r\n\r\nThe player should always seek to a location in [time-beforeTolerance, time+afterTolerance]. If it cannot seek efficiently within this range, it should start at `time`, though less efficiently.\r\n\r\nIn the examples 2 and 3 above, the player should therefore start inefficiently at 219 and 215 seconds, respectively.\r\n\r\nWe also expect the following behavior for tolerance settings letting the player find an efficient position:\r\n\r\n4. Seeking to t = 219 seconds with a 10 second tolerance before. The player is allowed to efficiently seek within the range [209; 219] if possible. Since a chunk boundary is found near 210 seconds, the player can seek there efficiently.\r\n\r\n5. Seeking to t = 216 seconds with a 10 second tolerance after. The player is allowed to efficiently seek within the range [216; 226] if possible. Since a chunk boundary is found near 220 seconds, the player can seek there efficiently.\r\n\r\nActual Results:\r\n\r\nIf non-zero tolerance settings have been set, the player always finds an efficient seek position, but this position might (depending on chunk size and tolerance settings) incorrectly fall outside the required range.\r\n\r\nVersion/Build:\r\n\r\niOS 12 SDK.\r\n\r\nConfiguration:\r\n\r\niPhone 5C (9.3.2), iPad Air 2 (10.3.1), iPhone 7+ (11.0.3), iPhone X (12.0)."
+    email: defagos@gmail.com
+    modified: "2021-10-11T14:07:57.548103Z"
+    number: "44904505"
+    number_intvalue: 44904505
+    originated: October 1st 2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: All
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: AVPlayer seek tolerance before and after are incorrectly handled

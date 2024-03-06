@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23605715"
+    labels:
+        datastore_id: "4973678060109824"
+data:
+    classification: Other Bug
+    created: "2015-11-19T02:38:18.7623Z"
+    description: "Summary:\r\nIf an iOS framework contains a fat binary with simulator (i386/x86_64) and device (ARM) slices, any application that attempts to embed that framework will be rejected from App Store submission.\r\n\r\nSteps to Reproduce:\r\n1. Given an iOS framework, build it for simulator use.\r\n2. Build the same framework for device use.\r\n3. Run `lipo -create` to combine the two binaries for the frameworks, embedding the result in one of the original bundles.\r\n4. Merge the contents of “Modules” folders inside each framework bundle, so the resulting bundle contains Swift modules for all simulator and device architectures.\r\n5. Create an application project, and drag the merged framework bundle into the “Embedded Binaries” section of the application target’s settings.\r\n6. Attempt to submit the application to the App Store.\r\n\r\nAttached is an example of such an application project (SubmissionFailure.xcodeproj), with a framework (Realm.framework) demonstrating the issue.\r\n\r\nExpected Results:\r\nApp Store submission would succeed. Perhaps Xcode would automatically strip out the simulator slices/symbols/modules, but this is not (strictly speaking) necessary for this bug to be fixed.\r\n\r\nActual Results:\r\nSpurious errors about the application referencing “non-public symbols,” like __bzero. See https://github.com/realm/realm-cocoa/issues/1163 for a screenshot of those errors.\r\n\r\nVersion:\r\nVersion 7.1.1 (7B1005), OS X 10.11.1\r\n\r\nNotes:\r\nThis does not occur with static libraries (or static pseudo-frameworks), because only the correct slice gets statically linked into the application binary in the first place.\r\n\r\nMore discussion about this issue can be found in https://github.com/realm/realm-cocoa/issues/1163 and https://github.com/Carthage/Carthage/issues/188."
+    email: marcus.kida@gmail.com
+    modified: "2018-01-11T14:17:19.01177Z"
+    number: "23605715"
+    number_intvalue: 23605715
+    originated: 19/11/2015
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 7.1.1
+    reproducible: Always
+    resolved: ""
+    status: Dupe | Open
+    title: 'Xcode 7.1.1: iOS frameworks containing simulator slices can''t be submitted to the App Store'

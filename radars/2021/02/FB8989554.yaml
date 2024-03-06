@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8989554
+    labels:
+        datastore_id: "4964515439443968"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2021-02-03T23:57:48.109467Z"
+    description: "Issue:\r\n\r\nmacOS apps made with Xcode 12 do not correctly create standard NSButtons for deployment on 10.11 and 10.12 (I have not tested 10.10):\r\n\r\nThe problem is that when I use a standard \"OK\" button, with the Return key as its accelerator key, the button should appear highlighted as the default button, e.g. usually in blue. But on 10.11 and 10.12, the button does not appear in blue but just like any other button (white).\r\n\r\nSteps to reproduce:\r\n\r\n1. Open Xcode 12.x on Big Sur\r\n2. Create a new project, choosing macOS App, with storyboard, appkit, ObjC.\r\n3. In the storyboard's single View Controller Scene, add an NSButton, and set its caption to \"OK\". This should automatically designate it as the default button and make it blue.\r\n4. Build the app. Run it. See that the OK button is blue as it should be.\r\n5. Change the project settings set that the deployment target is macOS 10.11\r\n6. Build again, run, and verify the button is still blue.\r\n7. Copy the built app to a Mac running 10.11 or 10.12.\r\n8. Run the app on the older macOS. The button is not blue but white.\r\n\r\nNow, if open the same project in Xcode 9 or 10, and build app, you'll see that the OK button will appear in blue on macOS 10.11 and 10.12. This suggest that this is a bug introduced in Xcode 12 (or perhaps already in Xcode 11, I didn't check).\r\n\r\nI also had a look at the generated nib files and could identify what went wrong:\r\n\r\nThe view's nib file (e.g. XfG-lQ-9wD-view-m2S-Jp-Qdl.nib in the attached project) contains a field named NSButtonFlags for each button. When built with Xcode 12, it has the value -2038415360 (0x86804000). Built with Xcode 10, it has the value -2038284288 (0x86824000). So the difference is bit 18 - it needs to be set, but Xcode 12 does not set it. I could not find anything online explaining the meaning of this bit, but I'm sure you'll know.\r\n\r\nFor now, I'll simply hand-fix the bit in my nib files when releasing my app, but I hope that the next Xcode version will get this right. Or at least offer a way to have control over this."
+    email: tempelmann@gmail.com
+    modified: "2021-02-03T23:57:48.109637Z"
+    number: FB8989554
+    number_intvalue: 8989554
+    originated: 04 Feb 2021
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: "12.4"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Xcode 12 creates defective nib files from storyboards for macOS 10.11 and 10.12

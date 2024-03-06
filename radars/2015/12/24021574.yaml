@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24021574"
+    labels:
+        datastore_id: "4954122805575680"
+data:
+    classification: Crasher
+    created: "2015-12-29T18:18:18.52161Z"
+    description: "Summary:\r\nPHLivePhotoView references a deallocated object when trying to display a requested PHLivePhoto from non-existing files.\r\n\r\nSteps to Reproduce:\r\n1. Run attached project\r\n2. Press \"Load Live Photo\" project\r\n\r\nExpected Results:\r\nApp does not crash.\r\n\r\nActual Results:\r\nPHLivePhotoView bug causes crash.\r\n\r\nLog with zombies enabled: // 2015-12-29 18:01:59.600 Live-Photo-View-Crash[11421:694511] *** -[ISPlayerItem unregisterObserver:]: message sent to deallocated instance 0x7ff4c3e176d0\r\n\r\nVersion:\r\niOS 9.1 (13B143), iOS 9.2 (13C75)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 6, iOS Simulator\r\n\r\nAttachments:\r\n'Live-Photo-View-Crash.zip' was successfully uploaded.\r\n\r\n- (IBAction)loadLivePhoto:(id)sender {\r\n  NSArray<NSURL *> *urls = @[\r\n    [NSURL fileURLWithPath:@\"/some/non-existing/file.jpeg\"],\r\n    [NSURL fileURLWithPath:@\"/some/non-existing/movie.mov\"],\r\n  ];\r\n  \r\n  [PHLivePhoto\r\n    requestLivePhotoWithResourceFileURLs:urls\r\n    placeholderImage:nil\r\n    targetSize:CGSizeZero\r\n    contentMode:PHImageContentModeDefault\r\n    resultHandler:^(PHLivePhoto * _Nullable livePhoto, NSDictionary * _Nonnull info) {\r\n//      if (livePhoto != nil && CGSizeEqualToSize(livePhoto.size, CGSizeZero)) {\r\n//        // crasher workaround\r\n//        return;\r\n//      }\r\n      \r\n      self.liveView.livePhoto = livePhoto;\r\n  }];\r\n}"
+    email: milen@helftone.com
+    modified: "2015-12-29T18:18:18.52201Z"
+    number: "24021574"
+    number_intvalue: 24021574
+    originated: 29-Dec-2015 06:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 9.1 (13B143), iOS 9.2 (13C75)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: PHLivePhotoView crash when requesting PHLivePhoto with non-existing files

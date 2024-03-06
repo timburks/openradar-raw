@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11934772"
+    labels:
+        datastore_id: "5608755232243712"
+data:
+    classification: ""
+    created: "2023-01-10T15:04:17.702289Z"
+    description: "Please describe the issue:\r\n\r\nSystem python3 sets the CPATH, LIBRARY_PATH, SDKROOT env vars in addition to the normal, inherited env:\r\n\r\n% python3 -c 'import os; print(os.environ.get(\"CPATH\", \"good\"))'\r\n/usr/local/include\r\n\r\nThis is a problem because clang looks in $CPATH even if -isysroot is passed to it. This makes builds that try to use a sysroot for deterministic builds look outside it. Furthermore, the warning -Wpoison-system-directories, which is designed to catch this type of problem, starts firing:\r\n\r\nThis works fine:\r\n\r\n% clang -x c -c /dev/null -Wpoison-system-directories -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk   \r\n\r\nThis doesn't:\r\n\r\n% python3 -c 'import subprocess; subprocess.run(\"clang -x c -c /dev/null -Wpoison-system-directories -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk\", shell=True)'\r\nwarning: include location '/usr/local/include' is unsafe for cross-compilation [-Wpoison-system-directories]\r\n1 warning generated.\r\n\r\n\r\nThis is a problem in system python3, but not in other python distributions:\r\n\r\n% conda run python3 -c 'import os; print(os.environ.get(\"CPATH\", \"good\"))'\r\ngood\r\n\r\n\r\nThis means that every project that uses python to drive a continuous build implicitly gets a build env different from what they expect.\r\n\r\n\r\nPlease list the steps you took to reproduce the issue:\r\n\r\nSee above. Repeated here:\r\n\r\n% python3 -c 'import subprocess; subprocess.run(\"clang -x c -c /dev/null -Wpoison-system-directories -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk\", shell=True)'\r\n\r\n\r\nWhat did you expect to happen?\r\n\r\nThis should have the same behavior as running the command outside of python.\r\n\r\n\r\nWhat actually happened?\r\n\r\nSystem python added a bunch of env vars that I didn't ask for and that make my life harder."
+    email: thakis@chromium.org
+    modified: "2023-01-10T15:04:17.702414Z"
+    number: "11934772"
+    number_intvalue: 11934772
+    originated: "2023-01-10"
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: New
+    title: /usr/bin/python3 sets CPATH, LIBRARY_PATH, SDKROOT

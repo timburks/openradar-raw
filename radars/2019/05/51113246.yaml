@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "51113246"
+    labels:
+        datastore_id: "6169909922889728"
+data:
+    classification: Performance
+    created: "2019-05-24T18:01:44.693985Z"
+    description: "Summary:\r\nWhen editing swift source files, if no change is made to the public API, an incremental build of that module and dependent modules is quick. But if an edit is made that causes a build failure, the next successful build will rebuild dependent modules. \r\n\r\nSteps to Reproduce:\r\n- Download and unpack the attached source attached here as a convenience, or download it from GitHub <https://github.com/omnigroup/OmniGroup> as of d714561.\r\n- Open OmniGroup/Workspaces/OmniFrameworks.xcworkspace\r\n- Select the Mac Frameworks scheme and My Mac, and build\r\n- Open OBLogger.swift\r\n- Make a valid, non-API changing edit. For example, duplicate the one line in `OBLogS`.\r\n- Build again\r\n- Switch to the Report navigator and show all messages from the build. Note that only one file was compiled (a few other things were copied)\r\n- Insert an invalid line in `OBLogS`; I just added \"x\"\r\n- Build again and hit the expected failure\r\n- Remove the invalid line and build again\r\n- Switch to the Report navigator and show all messages from the build.\r\n- Note that many, many files are built.\r\n\r\nIn particular, note these extra build steps have happened:\r\n\r\n  Copy OmniBase.swiftdoc\r\n  Copy OmniBase.swiftmodule\r\n  Copy OmniBase-Swift.h\r\n\r\nExpected Results:\r\n- Building after the failure should only build the edited file, and since it has no API changes, the dependent modules should not be rebuilt.\r\n\r\nActual Results:\r\n- Building after the failure rebuilds the world.\r\n\r\nVersion/Build:\r\nXcode 10.2.1 (10E1001)\r\n\r\nConfiguration:\r\nmacOS 10.14.5 (18F132)"
+    email: twiomood@gmail.com
+    modified: "2019-05-24T18:01:44.695356Z"
+    number: "51113246"
+    number_intvalue: 51113246
+    originated: May 24 2019, 10:57 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools / Xcode
+    product_version: 10.2.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Don't invalidate Swift module on a build failure

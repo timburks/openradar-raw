@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8351167"
+    labels:
+        datastore_id: "748403"
+data:
+    classification: Important
+    created: "2010-10-17T05:44:17.542805Z"
+    description: "Summary:\r\nDeveloping an application on an iPhone 4 device. When a CLLocationManager object is sent the startMonitoringForRegion: message, the following error is logged in the debug console:\r\nERROR,Time,304391101.951,Function,\"Boolean CLClientCopyMonitoredRegions(__CLClient*, const __CFDictionary**)\",Could not send successfully\r\n\r\nSteps to Reproduce:\r\n1. Allocate a CLLocationManager object, and set it's delegate.\r\n2. Set filters as such:\r\nlocationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;\r\n\r\n3. Set up a region to be monitored (annotation is a mapview object. Substitute for any coordinate lat/long)\r\n\tCLLocation *loc = [[CLLocation alloc] initWithLatitude:annotation.coordinate.latitude longitude:annotation.coordinate.longitude];\r\n\t\tCLRegion *region = [[CLRegion alloc] initCircularRegionWithCenter:loc.coordinate\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   radius:1000.0 \r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   identifier:@\"Some Identifier\"];\r\n\t\t\r\n\t\tDLog(@\"Will add region: %@ %f %f %f. Current monitored region count: %d\", region.identifier, region.radius, region.center.latitude, region.center.longitude, [regionManager.monitoredRegions count]);\r\n\r\n\t\t[regionManager startMonitoringForRegion:region desiredAccuracy:kCLLocationAccuracyNearestTenMeters]; \r\n\r\nExpected Results:\r\nRegion to be monitored without problems.\r\n\r\nActual Results:\r\nError logged to console:\r\nERROR,Time,304391754.525,Function,\"Boolean CLClientCopyMonitoredRegions(__CLClient*, const __CFDictionary**)\",Could not send successfully\r\n\r\nRegression:\r\nOnly tested on iPhone 4 device, running 4.0.2. Using 4.0.2 SDK on a Macbook, early 2009, running Snow Leopard.\r\n\r\n25-Aug-2010 09:44 AM Hector Ramos:\r\nDid some more testing and was able to isolate the possible cause of the problem.\r\n\r\nIt only seems to occur in my area in Puerto Rico. If I try to create a CLRegion within the continental USA, the method does not throw an error. If I go back and try to add a CLRegion within the island of Puerto Rico, I get the error again.\r\n\r\nI guess the cellular tower data for this area is not cached locally, or something along those lines. The map in WWDC10's session on CL did include a few towers in my area so I'll test out other areas of the island."
+    email: hector.ramos@gmail.com
+    modified: "2011-08-28T05:40:08.010147Z"
+    number: "8351167"
+    number_intvalue: 8351167
+    originated: 24-Aug-2010 09:25 PM
+    parent_number: "8231624"
+    product: iPhone SDK
+    product_version: "4.1"
+    reproducible: ""
+    resolved: 08-Sep-2010 11:13 AM
+    status: Duplicate/8231624
+    title: 'Error on startMonitoringForRegion: CLClientCopyMonitoredRegions'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19510188"
+    labels:
+        datastore_id: "4811986399395840"
+data:
+    classification: ""
+    created: "2015-01-17T23:59:00.813776Z"
+    description: "Summary:\r\nA specific instance of type inference and @autoclosure that produces a different and wrong output from the same program with a manually added type signature. The effect is as if a function parameter would be a plain normal value and wouldn't be @autoclosure at all.\r\n\r\nMore specifically: In the Swift program below (also attached as main.swift) the lines marked as [L2] and [L3] should have exactly the same effect as the are the same except that L2 has the additional type annotation \"as Result<String>\" which should not be needed. As expected, line L2 runs just fine and the constant x gets set to 'let x : Result<String> = Result.Failure(...)'. L3 however does evaluate the expression 'undefined()' which crashes the program. But it should not have evaluated 'undefined()' as it should be wrapped in an @autoclosure and the chain() function does not use the right argument in this case (because the first argument (failure) pattern matches the 'case .Failure(let f)' case in chain() ).\r\n\r\nimport Foundation\r\n\r\nenum Result<T> {\r\n    case Success(@autoclosure () -> T);\r\n    case Failure(@autoclosure () -> NSError)\r\n}\r\n\r\nfunc undefined<T>(file:StaticString=__FILE__, line:UWord=__LINE__) -> T {\r\n    fatalError(\"undefined\", file:file, line:line)\r\n}\r\n\r\nfunc chain<L,R>(l : Result<L>, r : @autoclosure () -> Result<R>) -> Result<R> {\r\n    switch(l) {\r\n    case .Failure(let f):\r\n        return .Failure(f())\r\n    case .Success(let _):\r\n        return r()\r\n    }\r\n}\r\n\r\nfunc testEvaluation() {\r\n    let error = NSError(domain: NSPOSIXErrorDomain, code: Int(ENOENT), userInfo: nil)\r\n    let failure : Result<String> = .Failure(error)\r\n    assert(true || undefined() as Bool) // [L1]: works\r\n    let x : Result<String> = chain(failure, undefined() as Result<String>) // [L2]: works\r\n    print(\"x = \\(x)\\n\")\r\n    let y : Result<String> = chain(failure, undefined()) // [L3]: CRASHES THE PROGRAM EVALUATING undefined()\r\n    print(\"y = \\(y)\\n\")\r\n}\r\n\r\ntestEvaluation()\r\n\r\nSteps to Reproduce:\r\n\r\n1. Download the attached file main.swift\r\n2. Compile and run it with \"xcrun -sdk macosx swiftc main.swift && ./main\"\r\n\r\nExpected Results:\r\n\r\nThe output should be:\r\n\r\nx = (Enum Value)\r\ny = (Enum Value)\r\n\r\nActual Results:\r\n\r\nThe output is:\r\n\r\nx = (Enum Value)\r\nfatal error: undefined: file main.swift, line 27\r\nIllegal instruction: 4\r\n\r\nRegression:\r\n\r\nn/a\r\n\r\nNotes:\r\n\r\n- See also my stackoverflow.com question [1].\r\n- dupes rdar://19510182\r\n\r\n[1]: http://stackoverflow.com/questions/28004126/swift-autoclosure-evaluation-influenced-by-type-annotations-compiler-bug"
+    email: weissismail@gmail.com
+    modified: "2015-02-20T16:55:16.018137Z"
+    number: "19510188"
+    number_intvalue: 19510188
+    originated: "2015-01-17"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1
+    reproducible: always
+    resolved: ""
+    status: Duplicate
+    title: 'Swift/Xcode 6.1.1: Type inference & @autoclosure gone wrong'

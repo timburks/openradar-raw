@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6468791"
+    labels:
+        datastore_id: "2018"
+data:
+    classification: Crash
+    created: "2008-12-29T16:42:38.700231Z"
+    description: "Summary:\r\n\r\nWhen a process has exhausted its file descriptors, things start to fail. When they do, many APIs return NSErrors. Unfortunately, these NSErrors can't be logged or presented to the user because that will invariably result in a call to localizedDescription. This ends up in CF code which perhaps loads a string table from disk, which also fails.The CF code then crashes with EXC_BAD_ACCESS.\r\n\r\nThis prevents me from touching these NSErrors if I want to handle this condition gracefully.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nrun this code:\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\nint main (int argc, const char * argv[]) {\r\n    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];\r\n\r\n\twhile (fopen(\"/usr/share/dict/words\", \"r\"));\r\n\t\r\n\tNSError *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:1 userInfo:nil];\r\n\tNSString *description = [error localizedDescription];\r\n\tNSLog(@\"error: %@\", description);\r\n\r\n    [pool drain];\r\n    return 0;\r\n}\r\n\r\n\r\nExpected Results:\r\n\r\nI expect NSError localizedDescription not to crash and main() to run to completion. If the message can't be loaded, I expect a placeholder message to be used as localized description instead. If a string table entry can't be loaded from disk, I also expect a message to STDERR telling me what's going on.\r\n\r\nActual Results:\r\n\r\nThe code crashes in localizedDescription, never reaching the following NSLog statement.\r\n\r\n0   com.apple.CoreFoundation      \t0x93b1fecd CFBundleCopyLocalizedString + 77\r\n1   com.apple.CoreFoundation      \t0x93b406a5 _CFErrorCreateLocalizedDescription + 277\r\n2   com.apple.Foundation          \t0x924b0408 -[NSError localizedDescription] + 136\r\n\r\n\r\n\r\nRegression:\r\n\r\nNotes:"
+    email: liyanage@gmail.com
+    modified: "2011-08-28T05:48:39.97886Z"
+    number: "6468791"
+    number_intvalue: 6468791
+    originated: "2008-12-29"
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSError localizedDescription crashes when file descriptors are exhausted

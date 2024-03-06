@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11002025"
+    labels:
+        datastore_id: "1579407"
+data:
+    classification: Other Bug
+    created: "2012-03-07T12:36:48.217453Z"
+    description: "07-Mar-2012 11:06 AM Douglas Heriot:\r\nNSSliderCell bug report\r\n\r\n\r\nSummary:\r\n\r\nIn an NSSliderCell subclass, overriding drawBarInside:flipped: doesn’t prevent the default track image from being drawn.\r\n\r\nOverriding drawWithFrame:inView: instead correctly prevents it from being drawn, but causes issue as the private _trackRect ivar is not set (as described in Notes below)\r\n\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nCreate an NSSliderCell subclass.\r\nOverride drawBarInside:flipped: (and optionally drawKnob: to complete the custom visual style)\r\nWhere the custom design of drawBarInside:flipped: uses a transparent background, the default track image shows through.\r\n\r\nSee example project, file NormalCustomSliderCell.m, first group on left of screenshot.\r\n\r\n\r\n\r\nExpected Results:\r\nOverriding drawBarInside:flipped: should prevent the default track image from being drawn.\r\n\r\nActual Results:\r\nOverriding drawBarInside:flipped: has no effect on whether the default track image is drawn\r\n\r\n\r\nRegression: not sure, but appears to have been this way for a while\r\nObserved in 10.6, 10.7 and 10.8\r\n\r\n\r\n\r\nNotes:\r\n\r\nThis only applies where the custom design requires a transparent background. One workaround is to simply draw over the default image in the custom drawBarInside:flipped:, but this doesn’t work for my transparent design (eg. for HUD windows, or within a view with an image texture background)\r\n\r\n\r\nThere are a number of other workarounds.\r\nAn obvious possible way is to instead override drawWithFrame:inView:, and call simply call drawBarInside:flipped: and drawKnob from there. This correctly prevents the default track image from being drawn, however, by not calling the superclass’s method the private _trackRect ivar is not set. This causes issues when the slider is resized, (ie. when the window is resized).\r\n\r\n(See the second group of sliders in the demo project, PublicAPISliderCell.m)\r\n\r\n\r\nThe two other workarounds I’ve discovered both rely on private APIs.\r\nWe can set _trackRect from our overridden drawWithFrame:inView: through a category. However, this isn’t very nice, and my app was eventually rejected from the Mac App Store for doing this.\r\n(See third group of sliders in example, TrackRectSliderCell.m)\r\n\r\n\r\nMy last workaround, which I currently implement in my shipping app, is to override the private _usesCustomTrackImage method to return NO.\r\n(Because I really needed to get a bugdix release out, and I wanted to be extra sure using the private _usesCustomTrackImage wouldn’t be caught by the private API police, I used the class_addMethod() function from objc/runtime.h to add it in at runtime!)\r\n(See the fourth group of sliders, CustomTrackSliderCell.m)\r\n\r\n\r\n\r\nBy correctly solving this drawBarInside:flipped: issue, the private API hacks should no longer be needed.\r\n\r\n\r\n\r\nSample project zip:\r\nhttp://cl.ly/1v0T3T1o3s2I3N3k3S1n\r\n\r\nScreenshot:\r\nhttp://cl.ly/1m0L2f233X1M373h301i"
+    email: douglas@douglasheriot.com
+    modified: "2012-03-07T12:36:48.217812Z"
+    number: "11002025"
+    number_intvalue: 11002025
+    originated: 07-Mar-2012
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS SDK
+    product_version: Tested 10.6-10.8
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'NSSliderCell overriding drawBarInside:flipped: doesn’t remove default track'

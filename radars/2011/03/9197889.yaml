@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9197889"
+    labels:
+        datastore_id: "1145406"
+data:
+    classification: Feature (New)
+    created: "2011-03-28T19:47:14.923035Z"
+    description: "Summary:\r\n\r\nI propose an addition to the Apple Push Notification Service (APNS) whereby the APNS provider can supply a payload data in the notification that receiving iOS devices can fetch and make available to the notified app on launch. This would shorten the initial usage pattern of a client app to: open the app, parse the pre-cached block of update data, use the app. The delay of logging in, making the request for updated data and resulting download is removed. \r\n\r\nImplementation:\r\n\r\nThe notification provider (app or data vendor) would send the payload to APNS with the notification but only the notification, not the payload, would be pushed to the iOS device by APNS. The notification sent to the iOS device would contain an APNS-provided URL where iOS itself can, if it chooses, download that payload and cache it ready for the app to use when it launches. This allows iOS to intelligently control when or if the available payload is downloaded and cached. \r\n\r\nPayloads would only ever be cached when the device is on standby to prevent any disruption to running apps. More intelligent decisions could be made such as only performing the pre-cache for regularly used apps, or caching based on the usage pattern of the app. Ultimately the goal is to have as current a set of data pre-cached as possible without sacrificing battery life or incurring excessive data charges.\r\n\r\nUsage Case:\r\n\r\nTake for example an app like Evernote which I use regularly for note taking. I'll often start a note on my iPhone when I think of something, then flesh it out on my iPad when I have time and finally I'll reference the article on my Mac when coding. Today when I use the app, I first have to wait for the initial sync of data to occur before I can edit that new note. With the pre-caching addition to APNS that I've proposed here, those updates would be waiting for the app to parse in the form of an NSData block that iOS had conveniently downloaded for me earlier when a push notification was received from Evernote to inform the device there was new notes available. \r\n\r\nBoxcar is another good example because the proposed pre-caching of update data would solve two problems with Boxcar: the initial sync delay and the fact that after I see a push notification from Boxcar, that notice is not immediately viewable in the app. If I receive a push notification from Boxcar to tell me of a new event, I naturally expect to see that event waiting for me in the list of notifications when I start the app. Instead, after seeing the push notification and starting the app I have to wait for Boxcar the app to catch up with the already received push notification. If that push notification also included a way for iOS to download the app-data payload for that, and other new, notifications then the updates would be ready and waiting for me when I started Boxcar after receiving the notification. \r\n\r\nAPI:\r\n\r\nFor developers the implementation would be simple: include a new key/value pair in the options dictionary that is given to the app in the existing appDidFinishLaunching:withOptions method. These new key/value pairs would allow the developer to access the latest pre-cached data block and state data such as when the block was downloaded, etc. The app then takes a look at the data, validates it and decides whether to parse and use the pre-cached payload or discard it. The point is that parsing this already-downloaded block of data is going to be much quicker than logging in and downloading updates when the app launches. Of course, a normal login and refresh would follow but at least the app is (more) ready to use when the user launches it to consume new data. \r\n\r\nMore Information:\r\n\r\nhttp://scotchandcode.com/2011/03/28/ios-push-notification-enhancement-pre-cached-update-payloads/"
+    email: jwilson@lithiumcorp.com
+    modified: "2011-08-28T05:37:23.929377Z"
+    number: "9197889"
+    number_intvalue: 9197889
+    originated: 29-Mar-2011 06:45 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iPad SDK
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'iOS Push Notification Enhancement: Pre-Cached Data Payloads'

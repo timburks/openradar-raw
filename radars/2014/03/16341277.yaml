@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16341277"
+    labels:
+        datastore_id: "5843373067862016"
+data:
+    classification: Serious Bug
+    created: "2014-03-17T13:42:08.810481Z"
+    description: "Summary:\r\nThe NSCalendarComponents describes components parameter to decide how to work with a date in different units, for decomposing, adjusting, etc. NSQuarterCalendarUnit is one of those parameters, but it is ignored in any test I perform.\r\n\r\nSteps to Reproduce:\r\nRun this simple app:\r\n\r\n#import <Foundation/Foundation.h>\r\n \r\nint main (int argc, const char * argv[])\r\n{\r\n  NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];\r\n  NSLog( @\"Current Quarter: %d\", [[[NSCalendar currentCalendar] components: NSQuarterCalendarUnit fromDate: [NSDate date]] quarter] );\r\n\r\n  [pool drain];\r\n  return 0;\r\n}\r\n\r\nExpected Results:\r\nWhen retrieving the current quarter, expect a value from 1 to 4, depending on the current date. When adjusting a date by quarter, expect the date to be changed by 3 months * the # of quarters specified.\r\n\r\n\r\nActual Results:\r\nRetrieving the current quarter always returns 0. Attempting to adjust a date using the quarter component has no effect.\r\n\r\nRegression:\r\nBug occurs on Mac OS X as well as iOS, and is 100% reproducible. It appears as if NSQuarterCalendarUnit was defined, but never implemented.\r\n\r\nNotes:\r\nWork around is to write custom methods to calculate quarter information using months (at least for Roman calendar users).\r\n\r\nApple Radar includes a sample project with more examples, specifically this category method on NSDate which should adjust the date by quarters but has no effect (using the day, week, month or year component does work):\r\n\r\n- (NSDate *) dateByAddingQuarters: (NSInteger)numQuarters\r\n{\r\n// OS BUG? Adding quarters does _not_ effect the date!\r\n\r\n\tNSCalendar *calendar = [NSCalendar currentCalendar];\r\n\r\n\tNSDateComponents *offset = [[NSDateComponents alloc] init];\r\n\t[offset setQuarter: numQuarters];\r\n\r\n\tNSDate *date = [calendar dateByAddingComponents: offset toDate: self options: 0];\r\n\r\n\treturn date;\r\n}"
+    email: lroathe@gmail.com
+    modified: "2014-03-17T13:42:08.810691Z"
+    number: "16341277"
+    number_intvalue: 16341277
+    originated: Mar 17, 2014
+    parent_number: '&{NULL_VALUE}'
+    product: NSFoundation SDK
+    product_version: iOS 4.0+, OSX 10.6+
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSQuarterCalendarUnit does not seem to be actually implemented

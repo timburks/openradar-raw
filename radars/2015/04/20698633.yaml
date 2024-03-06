@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20698633"
+    labels:
+        datastore_id: "6628659184009216"
+data:
+    classification: Other Bug
+    created: "2015-04-25T15:40:41.74391Z"
+    description: "Summary:\r\nIn https://opensource.apple.com/source/Security/Security-57031.1.35/Security/libsecurity_apple_x509_cl/lib/clNssUtils.cpp\r\n\r\nCL_extractCSSMKeyNSS allocates memory for cssmKey at the top of the function to return to the caller. However, if the function fails and throws an exception, this memory is never released.\r\n\r\nSee also https://crbug.com/481286\r\n\r\nSteps to Reproduce:\r\n1. Generate a certificate with an RSA key larger than 4096 bits (thus tripping the maximum key size). For example, https://chromium.googlesource.com/chromium/src/+/master/net/data/ssl/certificates/large_key.pem\r\n2. Load this certificate into a SecCertificate\r\n3. Call SecCertificateCopyPublicKey\r\n4. Run the program under a leak checker, like valgrind\r\n\r\nExpected Results:\r\nSecCertificateCopyPublicKey fail, since the key is too large. No memory is leaked.\r\n\r\nActual Results:\r\nSecCertificateCopyPublicKey does fail, but 96 bytes of memory are leaked, as reported by valgrind.\r\n\r\nVersion:\r\n10.10.1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: davidben@google.com
+    modified: "2015-04-25T15:40:41.74413Z"
+    number: "20698633"
+    number_intvalue: 20698633
+    originated: "2015-04-25"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CL_extractCSSMKeyNSS leaks memory on error.

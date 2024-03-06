@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14807464"
+    labels:
+        datastore_id: "5850930868125696"
+data:
+    classification: Serious Bug
+    created: "2013-08-22T17:25:52.951098Z"
+    description: "Summary:\r\n\r\nWhen I use a precompiled Info.plist file with a #ifdef block contained within, codesign is invoked with an incorrect set of designated requirements for the binary.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Load the attached project, signtest, and choose the signtest scheme. Build for archiving, and view the build log. Expand the codesign log item, and you will see this at the end of the output:\r\n\r\n/usr/bin/codesign --force --sign 86351633b75c998646d8053c8058a0d61a418c5a --requirements \"=designated => anchor apple generic  and identifier \\\"signtest\\\" and ((cert leaf[field.1.2.840.113635.100.6.1.9] exists) or ( certificate 1[field.1.2.840.113635.100.6.2.6] exists and certificate leaf[field.1.2.840.113635.100.6.1.13] exists  and certificate leaf[subject.OU] = \\\"FZ6W74R3XC\\\" ))\" /Users/chris/Library/Developer/Xcode/DerivedData/signtest-gbnfvddvfbuzlfhffdmzrpihszlm/Build/Products/Release/signtest.app\r\n\r\n2. Now choose the signtest-nopp scheme. Build for archiving, and view the build log. Expand the codesign log item, and you will see this at the end of the output:\r\n\r\n/usr/bin/codesign --force --sign 86351633b75c998646d8053c8058a0d61a418c5a --requirements \"=designated => anchor apple generic  and identifier \\\"com.supermegaultragroovy.signtest-copy\\\" and ((cert leaf[field.1.2.840.113635.100.6.1.9] exists) or ( certificate 1[field.1.2.840.113635.100.6.2.6] exists and certificate leaf[field.1.2.840.113635.100.6.1.13] exists  and certificate leaf[subject.OU] = \\\"FZ6W74R3XC\\\" ))\" \"/Users/chris/Library/Developer/Xcode/DerivedData/signtest-gbnfvddvfbuzlfhffdmzrpihszlm/Build/Products/Release/signtest copy.app\"\r\n\r\nExpected Results:\r\n\r\nBoth schemes—one with a preprocessed Info.plist file that contains an #ifdef block, and one without—should produce identical parameters for the --requirements flag of codesign.\r\n\r\nActual Results:\r\n\r\nThe scheme with the plist containing an #ifdef block instead uses \\\"signtest\\\" as the identifier, and not the proper identifier of \\\"com.supermegaultragroovy.signtest\\\"\r\n\r\nRegression:\r\n\r\nI am not sure this was always broken in Xcode, but I definitely stumbled on it only recently.\r\n\r\nNotes:\r\n\r\nNote that I have specified my own Developer ID signature to use to sign the product. The --requirements flag only appears to get inserted when a Developer ID signature is chosen to produce the build."
+    email: chris@supermegaultragroovy.com
+    modified: "2013-08-22T17:25:52.95133Z"
+    number: "14807464"
+    number_intvalue: 14807464
+    originated: 22-Aug-2013 10:25 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 4.6.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: codesign is given bad designated requirements when using precompiled Info.plist

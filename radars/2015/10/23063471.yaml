@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23063471"
+    labels:
+        datastore_id: "6688478246993920"
+data:
+    classification: Enhancement
+    created: "2015-10-12T00:59:40.1615Z"
+    description: "An application I work on uses OpenSSL’s RSA_public_decrypt() function to decrypt data encrypted (server-side) using the private key like so:\r\n\r\nint decryptedSize = RSA_public_decrypt([signature length], [signature bytes], checkDigest, rsaKey, RSA_PKCS1_PADDING);\r\nBOOL success = [[NSData dataWithBytes:checkDigest length:decryptedSize] isEqualToData:[digest sha1Hash]]) \r\n\r\nUsing the SecTransform API:\r\n\r\nSecTransformRef decryptor = CFAutorelease(SecDecryptTransformCreate(pubKey, &error));\r\nif (error) { showSecError(error); return NO; }\r\nSecTransformSetAttribute(decryptor, kSecTransformInputAttributeName, (CFDataRef)signatureData, &error);\r\nif (error) { showSecError(error); return NO; }\r\n\r\nCFDataRef result = SecTransformExecute(decryptor, &error);\r\nif (error) { showSecError(error); return NO; }\r\nreturn CFEqual(result, (CFDataRef)[digest sha1Hash]);\r\n\r\nThe call to SecTransformExecute() fails with a CSSMERR_CSP_INVALID_KEY_CLASS, presumably because decryption using the public key is not supported.\r\n\r\nIt would be helpful to have this functionality in order to replace my use of OpenSSL with Security.framework.\r\n\r\nI've figured out how to do this using the CDSA / CSSM APIs (see https://gist.github.com/armadsen/eb78563ef0d94d2f6267). As they are deprecated, it would be most helpful to have this capability using supported, non-deprecated API."
+    email: armadsen@gmail.com
+    modified: "2017-08-02T01:45:03.93943Z"
+    number: "23063471"
+    number_intvalue: 23063471
+    originated: 10/11/2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: Xcode 7.0.1 / 10.11 SDK
+    reproducible: 'AlwaysAn application I work on uses OpenSSL’s RSA_public_decrypt() function to decrypt data encrypted (server-side) using the private key like so:  int decryptedSize = RSA_public_decrypt([signature length], [signature bytes], checkDigest, rsaKey, RSA_PKCS1_PADDING); BOOL success = [[NSData dataWithBytes:checkDigest length:decryptedSize] isEqualToData:[digest sha1Hash]])   Using the SecTransform API:  SecTransformRef decryptor = CFAutorelease(SecDecryptTransformCreate(pubKey, &error)); if (error) { showSecError(error); return NO; } SecTransformSetAttribute(decryptor, kSecTransformInputAttributeName, (CFDataRef)signatureData, &error); if (error) { showSecError(error); return NO; }  CFDataRef result = SecTransformExecute(decryptor, &error); if (error) { showSecError(error); return NO; } return CFEqual(result, (CFDataRef)[digest sha1Hash]);  The call to SecTransformExecute() fails with a CSSMERR_CSP_INVALID_KEY_CLASS, presumably because decryption using the public key is not supported.  It would be helpful to have this functionality in order to replace my use of OpenSSL with Security.framework.'
+    resolved: 25 May 2017 1:43 PM
+    status: Closed (Duplicate of 19155656)
+    title: Add ability to use public RSA key for decryption using SecTransform API

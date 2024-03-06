@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20247227"
+    labels:
+        datastore_id: "5288384440303616"
+data:
+    classification: ""
+    created: "2015-03-21T00:22:07.421551Z"
+    description: "Summary:\r\nFor a Swift module, a non-final class declared as public can be subclassed by consumers of the module arbitrarily. However, it's possible to declare closed class hierarchies using a \"base\" class that is private or internal; in this case, all subclasses must also be private or internal, and as a result must reside within the module or file.\r\n\r\nThe pattern-matching case statement allows matching on subclass. However, a 'default' clause is always required, even if the subclasses of the predicate are a known closed set. This makes switch statements on subclasses more error-prone, since adding a new subclass does not break the switch at compile-time (whereas adding a new case in an enum would).\r\n\r\nThis request is for Swift's compiler to be enhanced so that it can figure out if a given class's subclass hierarchy can be completely known at compile time because of finality and access control, and allow total matching in the cases where this is true.\r\n\r\nOptimally, a Swift file with the following code should work:\r\n\r\nprivate class Foo { }\r\n\r\nprivate class Foo1 : Foo { }\r\nprivate class Foo2 : Foo { }\r\nprivate class Foo3 : Foo { }\r\n\r\nprivate func buildFoo() -> Foo {\r\n  // Flip a coin and return one of the three subtypes...\r\n}\r\n\r\nprivate func test() {\r\n  let a : Foo = buildFoo()\r\n\r\n  switch a {\r\n  case is Foo1: println(\"foo1\")\r\n  case is Foo2: println(\"foo2\")\r\n  case is Foo3: println(\"foo3\")\r\n  // (no need for default:, since the compiler knows there can't be any other subclasses)\r\n  }\r\n}\r\n\r\nSteps to Reproduce:\r\nSee sample code in description.\r\n\r\nExpected Results:\r\nSwift compiler figures out subclasses are a closed set, allows switch statement to cover all cases without \"default:\".\r\n\r\nActual Results:\r\nSwift compiler complains unless the switch statement has an unused \"default:\" clause.\r\n\r\nVersion:\r\nXcode 6.3b3, OS X 10.10.2\r\n\r\nNotes:\r\nEven if checking for classes across multiple files is too difficult, this should be possible on a per-file basis for private classes (whose subclasses must necessarily live within the same file)."
+    email: AustinZheng@gmail.com
+    modified: "2018-09-05T15:13:05.34505Z"
+    number: "20247227"
+    number_intvalue: 20247227
+    originated: 20-Mar-2015 05:19 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Closed
+    title: '[Swift] Allow way to specify subclasses are a closed set, for pattern matching completeness'

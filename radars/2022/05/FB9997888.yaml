@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9997888
+    labels:
+        datastore_id: "5539466965942272"
+data:
+    classification: Crash
+    created: "2022-05-11T04:26:00.200721Z"
+    description: "Hi, there\r\n\r\nThis radar is similar to https://openradar.appspot.com/31811274 with some update about iOS system and sample image.\r\n\r\nI use Image I/O of extremely large size (35433 × 7323) pixels in application is terminates due to memory issue.\r\n\r\nSteps to Reproduce\r\n\r\n- (NSData *) combineImgData:(NSData *)imageData\r\n               withExifData:(NSDictionary *)exifData\r\n{\r\n    if (imageData == NULL || exifData == NULL) {\r\n        // Error loading image\r\n        return NULL;\r\n    }\r\n    CGImageSourceRef imageSource = CGImageSourceCreateWithData((CFDataRef)imageData, NULL);\r\n    if (imageSource == NULL) {\r\n        // Error loading image\r\n       return NULL;\r\n    }\r\n    \r\n    // this is the type of image (e.g., public.jpeg)\r\n    CFStringRef UTI = CGImageSourceGetType(imageSource);\r\n    \r\n    // create a new data object and write the new image into it\r\n    NSMutableData *dest_data = [NSMutableData data];\r\n       \r\n    CGImageDestinationRef destination =\r\n    CGImageDestinationCreateWithData((__bridge CFMutableDataRef)dest_data, UTI, 1, NULL);\r\n    \r\n    if (!destination) {\r\n        LoggerCameraRollHelper(4, @\"Error: Could not create image destination\");\r\n        return NULL;\r\n    }\r\n    CGImageDestinationSetProperties(destination, NULL);\r\n    // add the image contained in the image source to the destination, overidding the old metadata with our modified metadata\r\n    CGImageDestinationAddImageFromSource(destination, imageSource, 0, (__bridge CFDictionaryRef) exifData);\r\n\r\n    BOOL success = NO;\r\n    success = CGImageDestinationFinalize(destination);\r\n    if (!success) {\r\n        LoggerCameraRollHelper(4, @\"Error: Could not create data from image destination\");\r\n    }\r\n    \r\n    if (imageSource)\r\n        CFRelease(imageSource);\r\n    \r\n    if (UTI)\r\n        CFRelease(UTI);\r\n    if (destination)\r\n        CFRelease(destination);\r\n    \r\n    \r\n    return dest_data;\r\n    \r\n}\r\n\r\nExpected Results\r\nCGImageDestinationFinalize either succeeds and creates output image or returns nil in case of failure (for example, for large images).\r\n\r\n\r\nActual Results\r\nmemory issue always happen in CGImageDestinationFinalize \r\n\r\nI had uploaded the file to \r\nhttps://drive.google.com/file/d/16JlUmhNQZEl-I0tdupjDiNm4Ff-38EvO/view?usp=sharing\r\n\r\nBest regards,\r\nBunny"
+    email: bunny@maktar.com
+    modified: "2022-05-11T04:26:00.200886Z"
+    number: FB9997888
+    number_intvalue: 9997888
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone 12 mini
+    product_version: iOS 15.0.2
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: App terminated to memory issues when performing CGImageDestinationFinalize on large images

@@ -1,0 +1,72 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19961299"
+    labels:
+        datastore_id: "5875700816936960"
+data:
+    classification: Serious Bug
+    created: "2015-02-25T23:50:58.491182Z"
+    description: |-
+        Summary:
+        Cocoa (but not Foundation) declares the -value and -setValue: methods in Objective-C in an informal protocol. Note: methods, not property!
+
+        When you try to use a property named `value` in a Swift subclass of `NSObject`, Swift 1.2 prevents you with unhelpful errors.
+
+
+        Steps to Reproduce:
+        1. Compile this:
+        import Cocoa
+
+        final class C: NSObject {
+        	var value: AnyObject?
+        }
+
+
+        Expected Results:
+        I expected it to compile; why shouldn’t it?
+
+
+        Actual Results:
+        ./boom.swift:6:6: error: getter for 'value' overrides Objective-C method 'value' from superclass 'NSObject'
+        <unknown>:0: note: Objective-C method 'value' defined by method 'value()' here
+        ./boom.swift:6:6: error: setter for 'value' overrides Objective-C method 'setValue:' from superclass 'NSObject'
+        <unknown>:0: note: Objective-C method 'setValue:' defined by method 'setValue' here
+
+        Note the <unknown>:0: bits—it took me ages to figure out it was being defined in Cocoa, and only tracked it down from there with Jordan Rose’s help (thank you Jordan!).
+
+
+        Regression:
+        This is a regression since Swift 1.1.
+        If you import Foundation instead, it works fine.
+
+
+        Notes:
+        I understand the intent here, but there are a few bugs:
+
+        1. If any new informal protocol introduced by anyone anywhere can break any property in any class descending from NSObject, things are fundamentally broken. I realize that that’s a good description of Objective-C, but note that there is no additional safety granted by these errors in this case; these are in response to method _declarations_, rather than, say, implemented methods; further, this worked _perfectly fine_ prior to Swift 1.2.
+        2. Obviously it ought to tell me where the things are instead of this <unknown>:0 nonsense.
+        3. If you use the override keyword, you get an extra error on top of the others:
+        ./boom.swift:6:15: error: property does not override any property from its superclass
+        This makes no reference to the fact that the _property_ would be overriding _methods_, which is pretty bad.
+        4. You can’t fix it with another informal protocol in the same module; Swift ignores it, giving you the same errors for the property and for override.
+        5. You also can’t fix it by inheriting from an ObjC superclass with a property named `value`.
+        6. You can’t conform to a protocol requiring a property named `value` even if your superclass implements that property.
+
+        The only way to work around this is to rename the property in the protocol and all conforming implementations, and the program is still no safer! One might refer to this as type safety theatre as opposed to actual type safety.
+
+        Obviously it would be great if Cocoa Bindings would not use informal protocols, or if it would use properties, but it doesn’t, and we can’t reasonably wait for it. Even if it changed tomorrow, the next informal protocol could break us again.
+
+        This is blocking ReactiveCocoa: https://github.com/ReactiveCocoa/ReactiveCocoa/pull/1775
+    email: rix.rob@gmail.com
+    modified: "2015-02-25T23:50:58.491346Z"
+    number: "19961299"
+    number_intvalue: 19961299
+    originated: 25-Feb-2015 06:50 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (6D532l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2: Can neither declare nor override methods declared in informal protocol with a property'

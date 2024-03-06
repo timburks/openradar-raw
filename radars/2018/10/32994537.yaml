@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32994537"
+    labels:
+        datastore_id: "5497366484353024"
+data:
+    classification: ""
+    created: "2018-10-31T23:22:36.845443Z"
+    description: "Summary:\r\nEvery few days, my APFS root volume starts refusing writes. dmesg shows lots of filesystem-related errors including some \"No space left on device\" messages, but my disk is nowhere near ull.\r\n\r\nSteps to Reproduce:\r\n1. Upgrade a Sierra system using a Fusion Drive to High Sierra.\r\n2. Use it for a few days.\r\n\r\nExpected Results:\r\nIt should not have filesystem problems\r\n\r\nObserved Results:\r\nAfter a few days apps get slow and report errors saving files.  dmesg gives me endless \"fs_tx_leave:15561: tx_leave failed: 5\" errors and occasionally other fs_* errors, e.g.,\r\n\r\nfusion_rc_allocate:178: spaceman_alloc (1) failed with 28 No space left on device\r\nfusion_rc_allocate:186: tx_leave failed with 5 Input/output error\r\nfusion_rc_promote_stream:490: Failed to promote LBA range (0x40000046c36c8, 1), err: 28 No space left on device\r\n\r\nThis despite the fact that the filesystem has lots and lots of free space:\r\n\r\nsequoia:~ tim$ df -h /\r\nFilesystem     Size   Used  Avail Capacity iused               ifree %iused  Mounted on\r\n/dev/disk2s1  2.8Ti  1.3Ti  1.6Ti    45% 4923927 9223372036849851880    0%   /\r\n\r\nI've tried booting into single user mode and running fsck_apfs on it, but that didn't find any problems.\r\n\r\n\r\nNote that when this occurs I _can_   usually create/modify files on the command line:\r\nsequoia:~ tim$ echo 'Hello, world!' > hello\r\nsequoia:~ tim$ cat hello\r\nHello, world!\r\nsequoia:~ tim$ ls -l hello\r\n-rw-r--r--  1 tim  staff  14 Jun 26 17:44 hello\r\n\r\nBut GUI apps can't save properly.  e.g., if I create a file in Pages it repeatedly tells me \"The document could not be autosaved. Y our most recent changes might be lost.\" and it never writes the file out to disk.\r\n\r\nI'm thinking it may be related to whatever mechanisms are used for things like autosave and local time machine, but I haven't really had time to dig into it. Hopefully the attached sysdiagnose will help.\r\n\r\nI've also had some problems with Time Machine (to an external Thunderbolt 2 drive) failing with \"unable to create folder\" ... I don't know whether it's an unrelated bug or whether it has something to do with my filesystem problem.  (When I find time I'll write a separate bug report for that.)\r\n\r\nVersion:\r\n10.13/17A291j (but it occurred on the previous developer seed as well)\r\n\r\nNotes:\r\nI've seen some weird problems on my iPhone 6 running iOS 11 (particularly in the first developer seed) that suggests to me that it might also have similar filesystem issues.\r\n\r\nConfiguration:\r\niMac (Retina 5K, 27-inch, Late 2014)\r\n3TB Fusion Drive"
+    email: tim1724@gmail.com
+    modified: "2018-10-31T23:22:36.845627Z"
+    number: "32994537"
+    number_intvalue: 32994537
+    originated: 6/26/2017
+    parent_number: "32862539"
+    product: macOS
+    product_version: "10.13"
+    reproducible: ""
+    resolved: ""
+    status: Duplicate/32862539
+    title: after a few days, APFS stops handling writes

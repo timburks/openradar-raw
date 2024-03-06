@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10425439"
+    labels:
+        datastore_id: "1432401"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2011-11-10T11:29:08.034832Z"
+    description: "Summary:\r\n\r\nNSData objects decoded from an NSKeyedUnarchiver are returned with a net retain count of 1. They should be returned with a net retain count of +0 (i.e. autoreleased exactly as many times as they are retained). On the simulator the behaviour is correct, on the device it fails.\r\n\r\nSteps to Reproduce:\r\n\r\n-(void)someFunction\r\n{\r\n    @autoreleasepool\r\n    {\r\n        NSData *fileData = [NSData dataWithContentsOfFile:storagePath options:NSDataReadingUncached error:&error];\r\n        MyThing *obj = [[NSKeyedUnarchiver unarchiveObjectWithData:fileData] retain];\r\n    }\r\n    [MyThing release];\r\n}\r\n…\r\n@implementation MyThing\r\n-(id)initWithCoder:(NSCoder *)aDecoder\r\n{\r\n    self = [super init];\r\n    if (self)\r\n    {\r\n        myData = [[aDecoder decodeObjectForKey:kDataKey] retain];\r\n    }\r\n    return self;\r\n}\r\n\r\n-(void)dealloc\r\n{\r\n    [myData release];\r\n    [super dealloc];\r\n}\r\n@end\r\n\r\nCall -someFunction and watch the heap growth/leaks instrument.\r\n\r\nExpected Results:\r\nNet heap growth is zero. Nothing is leaked.\r\n\r\nActual Results:\r\nNet heap growth is the size of the decoded data object. The NSData object decoded from the archive is leaked.\r\n\r\nRegression:\r\nUnknown. Needs fixing anyway.\r\n\r\nNotes:\r\nThere is no suitable workaround - if I insert an extra call to explicitly release it my app will explode if you fix this, or if it is run on a version of iOS before the problem was introduced."
+    email: philip.willoughby@dotankstudios.com
+    modified: "2011-11-10T11:29:08.035249Z"
+    number: "10425439"
+    number_intvalue: 10425439
+    originated: 10-Nov-2011 11:27 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iPad
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSData over-retained after decoding from NSKeyedUnarchiver

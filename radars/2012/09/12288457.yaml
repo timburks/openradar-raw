@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12288457"
+    labels:
+        datastore_id: "1956405"
+data:
+    classification: Serious Bug
+    created: "2012-09-12T23:04:12.603964Z"
+    description: "Summary: \r\nXcode duplicates its cache of precompiled headers whenever it builds with a new value of CONFIGURATION_BUILD_DIR.\r\n\r\nSteps to Reproduce:\r\n1. Delete the DerivedData directory for a project, creating a baseline of zero existing precompiled headers.\r\n\r\n2. Build the project, using a unique CONFIGURATION_BUILD_DIR, like so:\r\n\r\n  xcodebuild -scheme 'Release (AppStore)' -configuration 'Release (AppStore)' clean build CONFIGURATION_BUILD_DIR=/tmp/ndi-1\r\n\r\n3. Note the number of files inside DerivedData/unique-project-dir/Build/Intermediates/PrecompiledHeaders/. In my current project, it's 18.\r\n\r\n4. Build again, using a different CONFIGURATION_BUILD_DIR parameter, like so:\r\n\r\n  xcodebuild -scheme 'Release (AppStore)' -configuration 'Release (AppStore)' clean build CONFIGURATION_BUILD_DIR=/tmp/ndi-2\r\n\r\nExpected Results:\r\nXcode should re-use the contents of PrecompiledHeaders from the previous build. If it can't re-use them, it should eventually clean up after itself.\r\n\r\nActual Results:\r\nIn my current project, I go from 18 subdirectories of PrecompiledHeaders to 36, and the size on disk grows by 225 MB. On the third build I've got 54. I see the same thing in other, smaller projects. This disk usage is never automatically reclaimed.\r\n\r\nNotes:\r\nI noticed this while configuring a continuous integration server, which uses unique values of CONFIGURATION_BUILD_DIR to avoid collecting build artifacts from earlier runs. DerivedData dirs on these build nodes now grow by 225 MB every time someone commits code to our main SCM branch. \r\n\r\nIn the examples above, and on our CI server, we're performing clean builds, but this duplication occurs whether we clean or not. \r\n\r\nI'm using Xcode 4.4.1 on Mac OS X 10.7.4 and 10.8.1."
+    email: nathaniel@blackpixel.com
+    modified: "2012-09-12T23:04:12.605163Z"
+    number: "12288457"
+    number_intvalue: 12288457
+    originated: 12-Sep-2012 04:02 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 4.4.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Xcode duplicates precompiled headers once per build

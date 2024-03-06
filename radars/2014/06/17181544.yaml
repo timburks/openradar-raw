@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17181544"
+    labels:
+        datastore_id: "6622822524780544"
+data:
+    classification: ""
+    created: "2014-06-05T18:40:54.9855Z"
+    description: "The Array mutability and copying rules in Swift are confusing, error-prone, and make it difficult to correctly implement concurrency. The basic Array should be immutable, just like in ObjC.\r\n\r\nWe need an immutable array as a core language feature (not a bolt-on via bridging to NSArray bridging) that matches closely the patterns we've developed for NSArray. We should encourage immutability as much as possible. This seems a very hard thing to fix later, once mutable arrays are the norm.\r\n\r\nIn any case, the current \"sometimes it's shared but then it can suddenly become unshared if you extend it\" is far too confusing. Either it needs to be shared or not shared; mutable or immutable; it shouldn't suddenly change. The fact that it has different behaviors than Dictionary makes it incredibly confusing.\r\n\r\nAs a possible implemention, I suggest a base \"ForwardIterable\" protocol (based on the current ForwardIndex) that everything builds up from, such as:\r\n\r\n// Defines Swift methods that at a minimum match NSFastEnumeration\r\nprotocol ForwardIterable {\r\n  typealias Element\r\n  func succ() -> Element\r\n}\r\n\r\n// A collection of objects\r\nprotocol Collection : ForwardIterable {\r\n}\r\n\r\n// An ordered collection of objects\r\nprotocol Sequence : Collection {\r\n  subscript (i: Int) -> Element { get }\r\n}\r\n\r\n// An immutable array\r\nstruct Array<T> : Sequence {\r\n  typealias Element = T\r\n  func succ() -> T { ... }\r\n  subscript (i: Int) -> T { get { ... } }\r\n}\r\n\r\n// A mutable, ordered collection of objects\r\nprotocol MutableSequence : Sequence {\r\n  subscript (i: Int) -> Element { get set }\r\n}\r\n\r\n// A mutable array; can be passed anywhere that accepts a Sequence\r\nstruct MutableArray<T> : MutableSequence {\r\n  typealias Element = T\r\n  func succ() -> T { ... }\r\n  subscript (i: Int) -> T { get { ... } set { ... } }\r\n}\r\n\r\n\r\nI recommend that [1,2,3] return an immutable array (like in ObjC). Another syntax such as [[1,2,3]] should be used for literal mutable arrays. The easiest, most common form should be immutable.\r\n\r\nScala offers a rich collection hierarchy (starting at Traversable and working up). There seems to be a lot of Scala influence in the types already, so it would be nice to more closely follow the area already explored there. But it is also very reasonable to use more ObjC terms like \"Enumerator\" rather than \"Iterator.\" Swift does not need to look more like Scala, but their collection classes are a good place to look for inspiration."
+    email: robnapier@gmail.com
+    modified: "2014-06-05T18:40:54.985637Z"
+    number: "17181544"
+    number_intvalue: 17181544
+    originated: 05-Jun-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Swift
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Swift should have first-class immutable collections

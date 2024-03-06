@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10633166"
+    labels:
+        datastore_id: "1478404"
+data:
+    classification: Other bug
+    created: "2011-12-31T05:19:46.909315Z"
+    description: "30-Dec-2011 09:17 PM Chris DeSalvo:\r\nSummary:\r\nWhen a DTrace run completes it is supposed to dump the state of all declared aggregations.  This does not seem to be happening on Lion.\r\n\r\nSteps to Reproduce:\r\n\r\n0.  Save the following DTrace D script to a file called no-output.d\r\n\r\n/*   start of file  */\r\n\r\nsyscall::write:entry\r\n{\r\n    self->ts = timestamp;\r\n}\r\n\r\nsyscall::write:return\r\n/self->ts/\r\n{\r\n    @time[execname] = avg(timestamp - self->ts);\r\n    self->ts = 0;\r\n}\r\n\r\n/*   end of file  */\r\n\r\n1.  run it thusly:  sudo dtrace -s no-output.d\r\n\r\n2.  let it run for 10 seconds or so and then press ^C.\r\n\r\nExpected Results:\r\nYou should get some output showing the average time for calls to the 'write' syscall.\r\n\r\n  X11.bin                                                       20110\r\n  Terminal                                                      20408\r\n  socketfilterfw                                                23175\r\n  ssh                                                           32593\r\n  Google Chrome                                                147736\r\n  Google Chrome H                                              592872\r\n  Adium                                                       1886194\r\n\r\nActual Results:\r\nI get no output\r\n\r\nRegression:\r\nThis script works fine on 10.6.8 but doesn't work on 10.7.2.\r\n\r\nNotes:\r\n\r\nIf you enhance the script by adding explicit actions for the ending of the trace execution you find that they don't run at all.  Follow the same steps as above with the following D script:\r\n\r\n/*  start of file  */\r\n\r\nBEGIN\r\n{\r\n    printf(\"This prints\\n\");\r\n}\r\n\r\ndtrace:::BEGIN\r\n{\r\n    printf(\"This also prints.\\n\");\r\n}\r\n\r\nsyscall::write:entry\r\n{\r\n    self->ts = timestamp;\r\n}\r\n\r\nsyscall::write:return\r\n/self->ts/\r\n{\r\n    @time[execname] = avg(timestamp - self->ts);\r\n    self->ts = 0;\r\n}\r\n\r\ndtrace:::END\r\n{\r\n    printf(\"This doesn't\\n\");\r\n}\r\n\r\nEND\r\n{\r\n    printf(\"Neither does this\\n\");\r\n    printa(@time);\r\n}\r\n\r\n/*  end of file  */\r\n\r\nThe only output generated is the lines that are in the explicit BEGIN blocks.  The default ending action (dumping of all aggregations) and the two explicit END blocks do not run (or if they do they do their output is squelched)."
+    email: chris@desalvo.org
+    modified: "2011-12-31T05:19:46.90966Z"
+    number: "10633166"
+    number_intvalue: 10633166
+    originated: 12/30/2011
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.7.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: DTrace on Lion is not executing ending actions

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13031540"
+    labels:
+        datastore_id: "2573401"
+data:
+    classification: Serious Bug
+    created: "2013-01-17T09:29:13.359109Z"
+    description: "17-Jan-2013 01:23 AM Ryan Sleevi:\r\nSummary:\r\nWhen building with XCode, the DW_at_comp_dir DIE for DW_tag_compile_units is inappropriately set to the CWD of XCode, rather than the CWD of the compilation command.\r\n\r\nSteps to Reproduce:\r\n1) Extract attached tar.bz2 file, which contains two XCode projects to demonstrate the issue\r\n2) In a terminal, run the following commands:\r\n  3) cd xcode-bug/dummy/dir1/dir2\r\n  4) open ../../../dummy2/dir3/dummy2.xcodeproj\r\n5) In XCode, compile\r\n6) Navigate to the build results, and view the compilation steps. You should see something like:\r\n\r\n\"\"\"\r\ncd {some_path}/dummy2/dir3\r\nsetenv en_US.US-ASCII\r\n{some long build command} -o {base path to output}/xcode-bug/dummy2/dir3/DerivedData/dummy2/Build/Intermediates/dummy2.build/Debug/dummy2.build/Objects-normal/x86_64/main.o\r\n\"\"\"\r\n\r\n7) Run \"dwarfdump --debug-info {base path to output}/xcode-bug/dummy2/dir3/DerivedData/dummy2/Build/Intermediates/dummy2.build/Debug/dummy2.build/Objects-normal/x86_64/main.o | grep comp\" \r\n\r\nExpected Results:\r\n0x0000000b: TAG_compile_unit [1] *\r\n             AT_comp_dir( \"{some_path}/dummy2/dir3\" )\r\n\r\nActual Results:\r\n0x0000000b: TAG_compile_unit [1] *\r\n             AT_comp_dir( \"{some_path}/dummy/dir1/dir2\" )\r\n\r\nNotes:\r\n\r\nIn particular, this makes symbolicating files based on their dSYM impossible, because this does not preserve the compilation of the original file. You can see how this can create trouble by running dwarfdump with --debug-line and grepping for include_directories. The relative include path (\"dummy2/dir3/../include/foo/../bar/foo.h\" ) is instead treated as (\"dummy/dir1/dir2/../include/foo/../bar/foo.h\")\r\n\r\nThis is because the file_names entry (foo.h) is relative to the include_directories entry of \"../include/foo/../bar\" (DWARF 3, 6.2.4, Section 11), which itself is relative to the compilation dir of the current compilation unit (DWARF 3, 6.2.4 Section 10).\r\n\r\nExecuting the build commands manually (mod setenv) shows that Clang is setting the proper DW_at_comp_dir, as shown in http://llvm.org/viewvc/llvm-project/llvm/trunk/lib/Support/Unix/Path.inc?annotate=164676"
+    email: rsleevi@chromium.org
+    modified: "2013-01-17T09:29:13.359478Z"
+    number: "13031540"
+    number_intvalue: 13031540
+    originated: 17-Jan-2013 01:23 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 4.5.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Dwarf symbols in XCode-built projects have wrong compilation dir

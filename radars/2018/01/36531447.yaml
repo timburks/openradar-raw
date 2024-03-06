@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "36531447"
+    labels:
+        datastore_id: "4993859322904576"
+data:
+    classification: UI/Usability
+    created: "2018-01-16T03:44:03.78351Z"
+    description: "Summary:\r\nPresenting a UIAlertController on top of a view that has a UIButton with layer speed of zero causes all user interaction to be ignored until the app is put to background and back into foreground. The same can be replicated with other kinds of views: UISegmentedControl, UIImageView displaying an image with \"always template\" rendering mode, UIStepper, UISlider, and potentially more. UIProgressView and UISwitch don't seem to be affected.\r\n\r\nThis issue can be tracked down to animations that the aforementioned views automatically add into their layer hierarchies in response to tint colour change. Alert's presentation controller enables \"occlusion\" by (apparently) changing tint adjustment mode of the presenting view to \"dimmed\", which propagates as a tint colour change down to its subviews and eventually to the view (e.g. button) with a \"frozen\" layer. It responds to the tint change by creating automatic animations, and they're supposed to run alongside the alert appearance transition animation. Presentation controller (and/or other UIKit animation internals) also seems to \"track\" them, and doesn't report transition completion until all such animations are complete. But because layer speed is zero, automatic tint animations never actually complete (unless cancelled by moving the app to background), thus preventing the transition from completing, which stops user interaction for the whole window – even though the alert itself would have its animations complete normally since they're in a layer hierarchy separate from the \"frozen\" one.\r\n\r\nIt's understandable that modifying layer timing parameters like speed is an advanced technique that circumvents UIKit's own animation mechanism, thus opening up a possibility for such issues. However, I'd argue that such behaviour is surprising and confusing since it breaks the expectation of \"locality\" of layer customisations. It's also worth considering that prior to the addition of UIViewPropertyAnimator, using \"frozen\" layers was (and still is) a pretty common technique for implementing \"interactive\" CA animations, and many apps are likely to use it, oblivious to the consequences.\r\n\r\nThe workaround is to set affected views' tintAdjustmentMode to UIViewTintAdjustmentModeNormal: this way tint adjustment mode is not propagated to them, and no automatic animations are created as a result.\r\n\r\nNote that this issue has been introduced in iOS 10: iOS 9 is not affected by it. The attached project demonstrates the issue. A stack trace leading to the automatic tint colour animation being added to the \"frozen\" layer is also attached.\r\n\r\nSteps to Reproduce:\r\nMake a simple app with a UIButton (system or custom style). In code, set its layer's speed to zero. Present a UIAlertController.\r\n\r\nExpected Results:\r\nPresented alert is interactive and can be dismissed.\r\n\r\nActual Results:\r\nThe app becomes non-interactive after presenting the alert.\r\n\r\nVersion/Build:\r\nAffects iOS 10+, including iOS 11.2.\r\n\r\nConfiguration:\r\nAny iOS device or simulator."
+    email: argentumko@gmail.com
+    modified: "2018-10-01T12:26:29.420444Z"
+    number: "36531447"
+    number_intvalue: 36531447
+    originated: January 16 2018
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: iOS 10+
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 34179798 (Open)
+    title: Setting some views' layer speed to zero and presenting a UIAlertController prevents user interaction

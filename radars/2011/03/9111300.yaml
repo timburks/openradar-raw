@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9111300"
+    labels:
+        datastore_id: "1133403"
+data:
+    classification: Other Bug
+    created: "2011-03-09T23:29:16.300473Z"
+    description: "Summary:\r\nIn order to set up an environment for some acceptance tests, I would like to start and stop a server before and after my tests are run. In Xcode 3.x, I would do this by using Run Script build phases, which, because tests were executed by building the bundle and running a script, worked.\r\n\r\nDue to the way in which tests are run in Xcode 4.0 (separately from the act of building the test bundle), I can no longer use build phases. It appears that the logical place to do this is in the Test pre and post actions, using a Run Script action.\r\n\r\nHowever, it would appear that the post-action is actually run before the tests have finished running, making it essentially useless (in my case, the server I started in my pre-action would be terminated while the tests were still running causing them to fail).\r\n\r\nSteps to Reproduce:\r\nCreate a new Xcode 4 project with unit tests. Create a simple test - it doesn't matter if it passes or fails, and insert a sleep() to cause that test to ensure the test run lasts a certain duration.\r\n\r\nSomething as simple as:\r\n\r\n- (void)testPostActions\r\n{\r\n   sleep(3);\r\n   STAssertTrue(YES);\r\n}\r\n\r\nNow open the scheme editor and add a Run Script pre-action and post action. To make it clear when the scripts are being run, we'll use the built-in \"say\" command.\r\n\r\n\r\nMy pre-action shell script is:\r\n\r\nsay \"Running pre action\"\r\n\r\nMy post-action shell script is:\r\n\r\nsay \"Running post action\".\r\n\r\nNow select Product > Test. The test bundle and app target will be built, you will hear \"Running pre action\" and then almost immediately, \"Running post action\". If you look at the logs, you will see that, because of our sleep, the tests are still running and won't finish until the sleep times out.\r\n\r\nExpected Results:\r\nThe post action should not be run until the test run is completely, no matter how long it takes. We use sleep() here as a quick and dirty way to force a longer test run, but any larger test suite could easily take several minutes to run. If we need to do something important when those tests are finished, the post action should not be run until the tests have finished running.\r\n\r\nActual Results:\r\nPost action appears to be run as soon as the test bundle is executed."
+    email: ljredpath@gmail.com
+    modified: "2011-08-28T05:37:39.928707Z"
+    number: "9111300"
+    number_intvalue: 9111300
+    originated: 09/03/2011
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode 4
+    product_version: "4.0"
+    reproducible: Always
+    resolved: ""
+    status: Resolved
+    title: Test post-action is run before tests have finished running

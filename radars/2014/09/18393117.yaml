@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18393117"
+    labels:
+        datastore_id: "5772894399365120"
+data:
+    classification: Serious Bug
+    created: "2014-09-19T12:22:56.378658Z"
+    description: "Summary:\r\nI am preparing deployment of OS X and Xcode for our new Apple classroom.\r\nOur infrastructure uses NFS network user home folders. I am currently testing my deployment workflow with AFP and SMB network homes (OS X Server). My testing OS X instances run inside VMware Fusion (tested with bot version 6 and new 7)\r\n\r\nI run into serious problem with iOS Simulator which doesn't like to have its support files stored on AFP or SMB network volume (~/Library/Developer/CoreSimulator or ~/Library/Application Support/iPhone Simulator for older Xcode versions).\r\n\r\nI am able to reproduce issue with multiple versions of OS X, OS X Server and Xcode. I also found workaround (See additional notes).\r\n\r\nSteps to Reproduce:\r\n1. Setup OS X Server (Open Directory Master + File Share (AFP or SMB) for user home folders)\r\n2. Create few Local Network Users in Server.app with network homes\r\n3. Install clean OS X Client on different Mac or VM with latest stable Xcode version 4. Bind client OS X to OpenDirectory\r\n5. On client log in as a network user\r\n6. Launch Xcode, create new project, store it in network home folder - f.e. ~/Desktop (iOS single view app, Obj-c, iPhone only)\r\n7. Hit Build and run button -> iPhone app launches in iOS Simulator\r\n\r\n\r\nExpected Results:\r\nNo problems with iOS Simulator. Ability to repeatedly test apps in simulator with no issues.\r\n\r\nActual Results:\r\nNOTE: First launch of app in simulator sometimes work. Subsequent launches suffer from problem describet bellow.\r\n\r\nRESULT:\r\nXcode Alert: Unable to run app in Simulator\r\nAn error was encountered while running (Domain = FBSOpenApplicationErrorDomain, Code = 4)\r\n\r\nWhen I try again (Simulator still opened, black screen)\r\nXcode Alert: Unable to run app in Simulator\r\nAn error was encountered while running (Domain = LaunchServicesError, Code = 0)\r\n\r\nI Quit Simulator and build & run again\r\n-> iOS Simulator now gives me this error: \r\n“tmp” couldn’t be removed.\r\n\r\n+ Xcode alert\r\nUnable to run app in Simulator\r\nAn error was encountered while running (Domain = DTiPhoneSimulatorErrorDomain, Code = 2)\r\n\r\nVersion:\r\nXcode 5.1.1 stable & OS X 10.9.4 13E28 + Server 3.1.2 13S4517\r\nXcode 6.0.1 6A317 & OS X 10.9.4 13E28 + Server 3.1.2\r\nXcode 6.0.1 6A317 & OS X 10.9.5 13F34 + Server 3.1.2\r\nXcode 6.0.1 6A317 & OS X 10.9.5 13F34 + Server 3.2.1 13S5179\r\n\r\nNotes:\r\nWorkaround\r\nCreate symlink in nework users home Library: ~/Library/Developer/CoreSimulator pointing to CoreSimulator folder on local hard drive f.e. -> /Users/Shared/${USER}/CoreSimulator\r\n\r\nAfter applying this workaround, iOS Simulator stores its files on local HFS+ filesystem and work just fine. I have a hunch that this issue is somehow conneted to file locking.\r\n\r\nI had same problem with Xcode 5.1.1 where its simulator used ~/Library/Application Support/iPhone Simulator folder. This http://stackoverflow.com/questions/8328767/running-ios-simulator-on-network-user-accounts pointed me into right direction.\r\n\r\n+ I am going to test this with NFS in few weeks\r\n\r\nConfiguration:\r\n- Client OS X 10.9 Mavericks (in my case VM in VMware Fusion 6 and 7)\r\n- Server OS X 10.9 Mavericks with OS X Server 3 (OD + File Shares)  (VM in VMware Fusion 6 and 7)\r\n- Xcode 5.1.1 with bundled iOS 7 Simulator or Xcode  6.0.1 with bundled iOS 8 simulator\r\n- Logged in user has network home folder mounted via AFP or SMB protocol"
+    email: michalm.mac@gmail.com
+    modified: "2018-10-26T15:13:24.899264Z"
+    number: "18393117"
+    number_intvalue: 18393117
+    originated: 19.9.2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 5.1.1, 6.0.1
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: iOS Simulator doesn't work with network user homes (AFP or SMB)

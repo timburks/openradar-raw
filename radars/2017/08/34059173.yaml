@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34059173"
+    labels:
+        datastore_id: "4991912494759936"
+data:
+    classification: Other Bug
+    created: "2017-08-24T15:54:44.47647Z"
+    description: "Summary:\r\nSetting CLLocationManager.headingOrientation to its existing value will trigger all of the same behaviors (e.g., a new heading update in -[CLLocationManagerDelegate locationManager:didUpdateHeading:]) as if the value had changed. This negates CLLocationManager.headingFilter if a developer attempts to set CLLocationManager.headingOrientation rapidly.\r\n\r\nSteps to Reproduce:\r\n1. Enable heading updates in a location manager and configure its delegate.\r\n2. Set CLLocationManager.headingFilter to a large value, e.g., 10°. (Optional, makes it more obvious that the filter is ignored.)\r\n3. Set CLLocationManager.headingOrientation to its existing value rapidly — several times a second, perhaps.\r\n4. Observe heading updates in -[CLLocationManagerDelegate locationManager:didUpdateHeading:].\r\n\r\nSee attached demo project.\r\n\r\nExpected Results:\r\nCLLocationManager.headingOrientation would ignore being set to its existing value. No new heading event would be sent to its delegate.\r\n\r\nActual Results:\r\nCLLocationManager.headingOrientation’s setter accepts the existing value and triggers its update behaviors, such as sending a new heading update to its delegate.\r\n\r\nWhile sending a heading update when CLLocationManager.headingOrientation actually changes is desirable, doing this when there is effectively no change is not. If CLLocationManager.headingOrientation is set rapidly, heading updates will be sent/received at that same frequency and CLLocationManager.headingFilter will effectively be ignored.\r\n\r\nVersion:\r\n10.3.1\r\n\r\nNotes:\r\nWorkaround: check that you’re not setting CLLocationManager.headingOrientation to its existing value before you set it.\r\n\r\nIn the wild: https://github.com/mapbox/mapbox-gl-native/pull/9845"
+    email: jason@mapbox.com
+    modified: "2017-08-24T16:30:00.14497Z"
+    number: "34059173"
+    number_intvalue: 34059173
+    originated: 24-Aug-2017 11:54 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 10.3.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CLLocationManager.headingOrientation setter does not check if it's already set to the new value

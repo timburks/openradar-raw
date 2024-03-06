@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20001985"
+    labels:
+        datastore_id: "6446173405577216"
+data:
+    classification: Serious Bug
+    created: "2015-03-02T04:50:16.237861Z"
+    description: "Summary:\r\nWhen doing HTTP requests using range headers e.g. \"Range: bytes=0-65535\", if the request is successful (206, partial content) it's response get's cached. When performing a second request for the rest of the data e.g. \"Range: bytes=65536-\" the first chunk will be returned by NSURLCache, effectively the user will end up with malformed data. When having a server which sends request id's in the response header, this can be tracked down easily.\r\n\r\nSteps to Reproduce:\r\n1. Make http range request to a server which supports byte range requests, e.g. Amazon S3.\r\n2. Make a second request with a different range.\r\n3. The second response yields the the same results like the first response due to NSURLCache ignoring the byte range headers\r\n\r\nExpected Results:\r\nNSURLCache should check for the byte range headers and only return the specific range and, if necessary, request the new range from the server if it has not been yet cached\r\n\r\nActual Results:\r\nWhen doing a second http range request for a different range, the wrong response is returned if a previous request to the same request (even with a different range) has been made\r\n\r\nVersion:\r\nOS X 10.10, Xcode 6.1.1 (6A2008a)"
+    email: marcus.kida@gmail.com
+    modified: "2018-01-11T14:15:15.76726Z"
+    number: "20001985"
+    number_intvalue: 20001985
+    originated: 02.03.2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: "10.10"
+    reproducible: Always
+    resolved: macOS 10.13
+    status: Closed
+    title: NSURLCache ignores byte range request headers

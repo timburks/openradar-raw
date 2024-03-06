@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32865247"
+    labels:
+        datastore_id: "4946903418535936"
+data:
+    classification: Suggestion
+    created: "2017-06-20T03:34:56.01858Z"
+    description: "Area:\r\nUserNotifications Framework\r\n\r\nSummary:\r\nUNCalendarNotificationTrigger does not give accurate `next trigger date` calculations.\r\n\r\nSteps to Reproduce:\r\n0.\r\nlet us say that our current month is June (someday before 30).\r\n\r\n1. TriggerDate in UNCalendarNotificationTrigger\r\nlet components = DateComponents(day: 31)\r\nlet trigger = UNCalendarNotificationTrigger(dateMatching: target, repeats: true)\r\nprint(trigger.nextTriggerDate())\r\n\r\n2. NextDate in Date\r\nlet components = DateComponents(day: 31)\r\nlet next = Calendar.current.nextDate(after: Date(), matching: components, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)\r\nprint(next)\r\n\r\n3. Negative parameters in DateComponents\r\nlet components = DateComponents(day: 1, hour: -24)\r\nlet trigger = UNCalendarNotificationTrigger(dateMatching: target, repeats: true)\r\nprint(trigger.nextTriggerDate())\r\n\r\nExpected Results:\r\n1. Jul 31, 2017, 12:00 AM //since there is no '31' in June.\r\n2. Jul 31, 2017, 12:00 AM //since there is no '31' in June.\r\n3. Jun 30, 2017, 12:00 AM //since it's the last day of June.\r\n\r\nObserved Results:\r\n1. Jul 1, 2017, 12:00 AM\r\n2. Jul 1, 2017, 12:00 AM\r\n3. nil\r\n\r\nNotes:\r\nFor #3,\r\nTraditional date calculation method successfully calculates negative values as follows:\r\n\r\nlet components = DateComponents(year: 2017, month: 7, day: 1, hour: -24)\r\nlet date = Calendar.current.date(from: components)!  // gives: Jun 30, 2017, 12:00 AM\r\n\r\n, but not in new iOS10 methods."
+    email: schalin@gmail.com
+    modified: "2017-06-22T08:05:31.41021Z"
+    number: "32865247"
+    number_intvalue: 32865247
+    originated: June 20 2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "10.0"
+    reproducible: Yes
+    resolved: No
+    status: DUPLICATE OF 27389963 (OPEN)
+    title: Incorrect `nextTriggerDate()` calculations in UNCalendarNotificationTrigger & `nextDate()` in Date.

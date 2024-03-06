@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9155388"
+    labels:
+        datastore_id: "1404401"
+data:
+    classification: Serious Bug
+    created: "2011-10-18T21:18:48.971011Z"
+    description: "Summary:\r\n\r\nAfter a 802.1X re-authentication, Mac OS X does DHCP Requests to the previous DHCP Server and waits \r\none minute between attempts (doing a total of 3) before resorting back to a broadcasted DHCP Discove\r\nr.\r\n\r\nThis poses problem if the VLAN assigned by the switch changed after the re-authentication. A Mac wil\r\nl regain very slowly its network connectivity because it insists on doing the DHCP Requests where a \r\nDHCP Discover in the new VLAN would enable network connectivity in seconds.\r\n\r\nWindows' behavior is it'll try 3 DHCP Requests in a row wait 2-3 seconds and if nothing came back fr\r\nom the original server will issue broadcast a DHCP Discover.\r\n\r\nThe end result is that a Mac OS X machine will experience a loss of connectivity for 2-3 minutes whi\r\nle for Windows its a mere Note: 0000005 seconds.\r\n\r\nSteps to Reproduce:\r\n\r\n- Connect a Mac OS X station on a wired switch using 802.1X for access authorization with RADIUS VLA\r\nN assignment turned on\r\n- Mac OS X client successfully authenticate gets VLAN A, obtains an IP\r\n- We initiate a forced 802.1X re-authentication from the switch\r\n- Mac OS X client successfully re-authenticate gets VLAN B\r\n- Mac OS X client sends a DHCP Request on the server where it obtained it's last IP\r\n- No such DHCP Server exists in this new VLAN so no one will reply\r\n- After a couple of minutes the Mac OS X client abandon the DHCP Requests and will do a DHCP Discove\r\nr\r\n\r\nExpected Results:\r\n\r\nIf the DHCP Requests have no reply within a couple of seconds, the OS should do a DHCP Discover righ\r\nt away to obtain an IP.\r\n\r\nActual Results:\r\n\r\nIt does 3 DHCP Requests and wait for one minute each for a reply leading to a 3 minutes of no networ\r\nk connectivity even though it could work.\r\n\r\nRegression:\r\n\r\n10.5 and previous 10.6 are also affected but we made sure it was reproducible with 10.6.6\r\n\r\nNotes:\r\n\r\nA related problem existed for Wireless 802.1X and Wireless MAC Authentication in general but it has \r\nbeen fixed in 10.6.5."
+    email: mr.poche@gmail.com
+    modified: "2011-10-18T21:18:48.971254Z"
+    number: "9155388"
+    number_intvalue: 9155388
+    originated: 18/03/2011
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.6
+    reproducible: ""
+    resolved: ""
+    status: open
+    title: Mac OS X doesn't renew DHCP after a 802.1x re-authentication on Ethernet

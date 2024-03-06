@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17610722"
+    labels:
+        datastore_id: "5779521265467392"
+data:
+    classification: Other Bug
+    created: "2014-07-09T18:56:21.396429Z"
+    description: "Summary:\r\nMany macros of the XCTest framework, like those defined in XCTestAssertionsImpl.h make use of GNU extensions of the C language, mainly named variadic macros.\r\n\r\nThis can be very annoying with a project intended to be strictly compatible with the ISO-C standard, or simply with clang configured to a high error reporting level.\r\n\r\nIn such a context, the only way to have the unit test bundle pass compilation is to lower the warning levels by ignoring the corresponding flags.\r\nObviously, lowering the error reporting level is not something very fancy nor clever in the context of unit testing…\r\n\r\nISO-C supports (unnamed) variadic macros, with __VA_ARGS__, so there’s just no need for these fancy GNU named variadic macros stuff.\r\n\r\nCode like:\r\n\r\n#define _XCTPrimitiveFail(test, format...) \\\r\n({ \\\r\n    _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_Fail, 0), format); \\\r\n})\r\n\r\nCould (should) be simply replaced by:\r\n\r\n#define _XCTPrimitiveFail(test, ...) \\\r\n({ \\\r\n    _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_Fail, 0), __VA_ARGS__); \\\r\n})\r\n\r\nThe is not a big deal. Nothing complicated nor error-prone.\r\nAnd then everything would be fine and ISO-C compliant.\r\n\r\nSteps to Reproduce:\r\n1. Attached is a sample Xcode project which demonstrates the issue\r\n2. Open the Xcode project\r\n3. Runs the tests\r\n\r\nExpected Results:\r\nThe unit tests should pass.\r\n\r\nActual Results:\r\nThe build of the unit test bundle fails with more than 20 errors caused by the use of GNU named variadic macros in XCTest headers. \r\nThe compiler stops the compilation because too many errors occurred.\r\n\r\nVersion:\r\nXcode version 6.0 (6A254o) / OS X version 10.10 (14A283o)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'XCTestBug.zip' was successfully uploaded."
+    email: macmade@xs-labs.com
+    modified: "2017-02-28T19:53:51.3519Z"
+    number: "17610722"
+    number_intvalue: 17610722
+    originated: 09-Jul-2014 08:49 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.0 6A254o / OS X 10.10 14A283o
+    reproducible: Always
+    resolved: ""
+    status: Duplicate
+    title: Use of GNU C extensions in XCTest framework headers

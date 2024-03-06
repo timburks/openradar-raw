@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18233701"
+    labels:
+        datastore_id: "5211376817537024"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2014-09-04T19:38:39.567242Z"
+    description: "Summary:\r\nA Photos Extension that takes more than about a second to process an image during -finishContentEditingWithCompletionHandler: will sometimes present a \"Loading Image\" panel with a spinner and become unresponsive. After that spinner appears, loading the Photos Extension again can cause MobileSlideShow to crash.\r\n\r\nSteps to Reproduce:\r\n1) Download the Photo Editing Extension sample code from WWDC 2014:\r\n\r\nhttps://developer.apple.com/devcenter/download.action?path=/wwdc_2014/wwdc_2014_sample_code/samplephotoeditingextension.zip\r\n\r\n2) Add an artificial delay before calling the completionHandler in -finishContentEditingWithCompletionHandler:\r\n\r\n            NSError *error = nil;\r\n            BOOL success = [renderedJPEGData writeToURL:contentEditingOutput.renderedContentURL options:NSDataWritingAtomic error:&error];\r\n\r\n\t\t\t// DRAMA MINE\r\n\t\t\tsleep(2);\r\n\r\n            if (success) {\r\n                completionHandler(contentEditingOutput);\r\n            } else {\r\n                NSLog(@\"An error occured: %@\", error);\r\n                completionHandler(nil);\r\n            }\r\n            break;\r\n\r\n\r\nExpected Results:\r\nThe image should take longer to render without any side effects in the Photos user interface.\r\n\r\n\r\nActual Results:\r\nFrequently, a \"Loading Image\" spinner will appear and the Photos app becomes unresponsive. Note that you may have to run the Photos Extension several times before seeing the spinner.\r\n\r\nWhen the spinner appears, the following message is logged in the device console after 30 seconds:\r\n\r\nSep  4 11:22:05 PUNY MobileSlideShow[13094] <Warning>: Disabled user interaction timed out.\r\n\r\nAfter that message, the processed image is not displayed in the Photos image editing user interface, but it you tap \"Done\", you'll see the changes have been applied to the file.\r\n\r\nIf you try to run the Photos Extension again after the timeout, you'll either see this message in the device console:\r\n\r\nSep  4 11:22:09 PUNY MobileSlideShow[13094] <Warning>: Ignore unbalanaced call to reenable disabled user interaction\r\n\r\nOr MobileSlideShow will crash with the following assertion:\r\n\r\nSep  4 11:23:55 PUNY MobileSlideShow[13094] <Warning>: *** Assertion failure in -[PLPhotoEditRenderer createEditedImageWithCompletion:], /SourceCache/PhotoLibraryServices/MobileSlideShow-2341.4/Sources/PLPhotoEditRenderer.m:359\r\nSep  4 11:23:55 PUNY MobileSlideShow[13094] <Error>: *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'originalImage cannot be nil while rendering'\r\n\t*** First throw call stack:\r\n\t(0x181ec6084 0x191d7c0e4 0x181ec5f44 0x182da9e20 0x18c9b965c 0x185c2d778 0x185c636e0 0x1923cd294 0x1923cd254 0x1923d103c 0x181e7d8dc 0x181e7b984 0x181da9664 0x18ad975a4 0x186562164 0x10002d488 0x1923f2a08)\r\n\r\nThe attached Assertion.txt file shows the crash in context. The Photos Extension takes 1.023 seconds to process the image, the user interface times out, and then the assertion fired causing the app to generate a crash report and tear down the XPC connection.\r\n\r\nThe crash report is attache as CrashReport.txt\r\n\r\n\r\nVersion:\r\niOS 8.0 [12A4345d]\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPad Mini Retina [ME281LL/A]"
+    email: craig.hockenberry@gmail.com
+    modified: "2014-09-04T19:38:39.567519Z"
+    number: "18233701"
+    number_intvalue: 18233701
+    originated: 9/4/14
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 8.0 [12A4345d]
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: Photos Extension can cause MobileSlideShow to become unresponsive or crash after "Loading Image"

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24496368"
+    labels:
+        datastore_id: "4941298955976704"
+data:
+    classification: Bug
+    created: "2016-09-22T00:59:36.32058Z"
+    description: "Summary:\r\nYou can insert a key into the keychain with a kSecAttrApplicationLabel which is documented to take a string, but when you read it back, you get a CFDataRef.\r\n\r\nSteps to Reproduce:\r\nInsert a key, e.g.:\r\n\r\nSecItemAdd({\r\n    atag = <50424b44 46322473 68613124 2fca980b c1ed8c4d 2a7eb032 2e313f75 f44d8b56>;\r\n    class = keys;\r\n    kcls = 2;\r\n    klbl = blah123;\r\n    pdmn = cku;\r\n    perm = 1;\r\n    sync = 0;\r\n    unwp = 1;\r\n    \"v_Data\" = <4acc7099 28a7c9b5 106020cb e7966c72>;\r\n    wrap = 1;\r\n})\r\n\r\nThen read it back using SecItemCopyMatching and a matching class, keyclass, tag, and label.\r\n\r\nExpected Results:\r\nkSecAttrApplicationLabel is documented to be a CFString (docs say: \"Application label attribute key. The corresponding value is of type CFStringRef and contains a label for this item.\"), so I expect it to be a CFString.\r\n\r\nActual Results:\r\nIt is actually a CFData:\r\n\r\nAfter insert, readback = (\r\n        {\r\n        agrp = \"34YW5XSRB7.com.omnigroup.TestApp.Debug\";\r\n        atag = <50424b44 46322473 68613124 2fca980b c1ed8c4d 2a7eb032 2e313f75 f44d8b56>;\r\n        bsiz = 0;\r\n        cdat = \"2016-02-04 02:52:14 +0000\";\r\n        class = keys;\r\n        crtr = 0;\r\n        edat = \"2001-01-01 00:00:00 +0000\";\r\n        esiz = 0;\r\n        kcls = 2;\r\n        klbl = <626c6168 313233>;\r\n        mdat = \"2016-02-04 02:52:14 +0000\";\r\n        pdmn = cku;\r\n        perm = 1;\r\n        sdat = \"2001-01-01 00:00:00 +0000\";\r\n        sync = 0;\r\n        tomb = 0;\r\n        type = 0;\r\n        unwp = 1;\r\n        \"v_Data\" = <4acc7099 28a7c9b5 106020cb e7966c72>;\r\n        wrap = 1;\r\n    }\r\n)\r\n\r\nVersion:\r\niOS 9.2 (13C75)\r\n\r\nNotes:\r\nSame behavior on the device and in the simulator.\r\n\r\nIt actually makes more sense for this to be a CFData than a CFString, if it is used to look up keypairs by key hash; in which case perhaps this is a documentation bug.\r\n\r\nSee also RADAR 19804744.\r\n\r\n\r\nConfiguration:\r\niPhone 6"
+    email: wiml@omnigroup.com
+    modified: "2016-09-22T00:59:36.32082Z"
+    number: "24496368"
+    number_intvalue: 24496368
+    originated: 03-Feb-2016 06:58 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 9.2 (13C75)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Value of kSecAttrApplicationLabel is CFDataRef, but documented to be CFStringRef

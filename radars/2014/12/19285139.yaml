@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19285139"
+    labels:
+        datastore_id: "6099495188168704"
+data:
+    classification: ""
+    created: "2014-12-17T22:53:48.887793Z"
+    description: "Summary:\r\nWhen the filesystem is full, calling -[NSFileHandle writeData:] on a valid NSFileHandle sometimes (not always) calls dispatch_data_apply() with a block which internally throws an unhandled exception. GCD requires blocks to catch exceptions; this situation leads to an exception that cannot be caught by user code and leads to an unpreventable crash.\r\n\r\nSteps to Reproduce:\r\n1. Create a new file (e.g. using NSFileManager)\r\n2. Open an NSFileHandle using NSFileHandle *fh = [NSFileHandle fileHandleForWritingAtPath:filePath]\r\n3. Completely fill up the disk, for example by creating lots of useless files on the filesystem\r\n4. Call [fh writeData:data] to write some bytes\r\n\r\nExpected Results:\r\nwriteData: throws an NSException that can be caught at the call site of [fh writeData:data]. In most cases (maybe 75%), this expected behavior is the actual behavior.\r\n\r\nActual Results:\r\nIn about 25% of cases, the app crashes and the catch block is not executed. In these cases, writeData: calls dispatch_data_apply, which calls a block that eventually throws an exception. Because GCD requires all blocks to catch exceptions, and this block does not catch its own exception, the app crashes. Furthermore, because this is entirely within the Foundation framework, user code cannot catch the exception and is forced to crash.\r\n\r\nVersion:\r\niOS 8.1 (12B411)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 5c\r\n\r\nAttachments:\r\n'writedata.txt' was successfully uploaded."
+    email: davidz@dropbox.com
+    modified: "2015-06-18T18:57:34.39793Z"
+    number: "19285139"
+    number_intvalue: 19285139
+    originated: "2014-12-17"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "8.1"
+    reproducible: Rarely
+    resolved: iOS9.0b1
+    status: Fixed
+    title: -[NSConcreteFileHandle writeData:] uses GCD to run a block but does not catch exceptions, leading to crash

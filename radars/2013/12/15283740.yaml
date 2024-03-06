@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15283740"
+    labels:
+        datastore_id: "5331783675543552"
+data:
+    classification: Serious Bug
+    created: "2013-12-08T18:23:58.631755Z"
+    description: "Summary:\r\nThe storeagent process in Mavericks is now caching receipts that are downloaded from iTunes. This makes it harder for developers to test the installer packages they upload to iTunes Connect.\r\n\r\nSteps to Reproduce:\r\n1. Install an app with CFBundleIdentifier of com.example.MyApp and a CFBundleShortVersionString of \"1.0\" using the following command:\r\n\r\n$ sudo installer -store -pkg MyApp-1.0.pkg -target /\r\n\r\n2. Launch the app using the Finder. Enter an Apple ID to generate a receipt file in /Contents/_MASReceipt\r\n\r\n3. Install another version of the app with the same bundle identifier but a different CFBundleShortVersionString of \"1.0.1\" using the following command:\r\n\r\n$ sudo installer -store -pkg MyApp-1.0.1.pkg -target /\r\n\r\n4. Launch the new version of the app using the Finder.\r\n\r\nExpected Results:\r\nThe new version of the app should launch an a new receipt with a value of \"1.0.1\" for attribute type 3 (\"Application version\"). \r\n\r\nActual Results:\r\nThe receipt that is placed in the /Contents/_MASReceipt/receipt has a value of \"1.0\" for attribute type 3 (\"Application version\").\r\n\r\nAn app that tries to verify this receipt will correctly exit with code 173 since the version number can't be verified against the current one (\"1.0\" doesn't match \"1.0.1\").\r\n\r\nA user then sees a dialog that says:\r\n\r\n\"MyApp\" is damaged and can't be opened. Delete \"MyApp\" and download it again from the App Store.\r\n\r\nVersion:\r\nOS X 10.9/13A598\r\n\r\nNotes:\r\nI have no way of testing this with an actual download from the App Store, but this behavior would also be a big problem if two releases were downloaded by a user within a short period of time.\r\n\r\nAlso: a workaround for this problem is to kill storeagent (and remove its in-memory cache)."
+    email: craig.hockenberry@gmail.com
+    modified: "2013-12-08T18:23:58.631881Z"
+    number: "15283740"
+    number_intvalue: 15283740
+    originated: 21-Oct-2013
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: OS X 10.9/13A598
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: storeagent caches receipt data, preventing developers from checking .pkg files

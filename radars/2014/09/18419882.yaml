@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18419882"
+    labels:
+        datastore_id: "5804853251014656"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2014-09-22T23:32:50.972092Z"
+    description: "Summary:\r\nAFNetworking 2, a very popular networking library for iOS and OS X, watches each of its NSURLSessionTasks' states, in order to activate the network activity indicator on iOS, among other reasons. It does so with Key-Value Observing, which makes perfect sense.\r\n\r\nHere's the problem: When you watch `state`, there is an occasional crash when the state changes.\r\n\r\nRelated:\r\n\r\n- Possibly rdar://problem/15513481 (I can't tell, because I can't read the bug.)\r\n- https://devforums.apple.com/message/920269#920269\r\n- https://github.com/AFNetworking/AFNetworking/issues/1477\r\n- https://github.com/AFNetworking/AFNetworking/blob/5732fab409a85ca1f4dc55f013b4d5522d92eed2/AFNetworking/AFURLSessionManager.m#L351\r\n\r\nSteps to Reproduce:\r\nUse the following code:\r\n\r\nstatic void * AFTaskStateChangedContext = &AFTaskStateChangedContext;\r\nNSURLSessionTask *task;\r\n\r\n[task addObserver:self forKeyPath:NSStringFromSelector(@selector(state)) options:(NSKeyValueObservingOptions)(NSKeyValueObservingOptionOld |NSKeyValueObservingOptionNew) context:AFTaskStateChangedContext];\r\n\r\nThen, release it in a widely-used production app.\r\nThen, receive crash reports.\r\n\r\nExpected Results:\r\nKVO should not generate a crash.\r\n\r\nActual Results:\r\nKVO crashes.\r\n\r\nVersion:\r\niOS 7.0.4, 7.1.1, 7.1.2, 8.0\r\n\r\nNotes:\r\nAttached are four partial crash reports. Crashlytics won't give us full crash reports, or I'd send them up too.\r\n\r\nConfiguration:\r\niPhone 4S, 5, 5c, 5s; iPad 2, 3, mini, mini w/Retina display, Air\r\n\r\nAttachments:\r\n'four-crash-reports.txt' was successfully uploaded."
+    email: tangphillip@gmail.com
+    modified: "2015-01-14T01:41:45.684042Z"
+    number: "18419882"
+    number_intvalue: 18419882
+    originated: 22-Sep-2014 07:17 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 7.0.4, 7.1.1, 7.1.2, 8.0
+    reproducible: Unable
+    resolved: 24-Sep-2014 07:03 PM
+    status: Duplicate of 15513481 (Open)
+    title: Crash when watching -[NSURLSessionTask state] with KVO

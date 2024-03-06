@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "46390751"
+    labels:
+        datastore_id: "5022091107631104"
+data:
+    classification: Other bug
+    created: "2018-12-01T02:08:36.859163Z"
+    description: "Summary:\r\n\r\nI was having a hard time with the error in the attached screenshot. I could build-and-run on a simulator, but if I quit the simulator and build-and-ran again, it would fail. I could fix it only by deleting the app from the simulator. \r\n\r\nOn the suggestion of Russ Bishop ( https://twitter.com/xenadu02/status/1068629603684573184 ) I ran an xcrun simctl diagnose (attached). It was a good suggestion, becuase I checked CoreSimulator.log and found the following line:\r\n\r\n> Nov 30 20:04:00 Open-Source-by-Detente com.apple.CoreSimulator.simctl[81038] <Warning>: Unable to determine how to handle launch_sim_unregister_endpoint for runtime com.apple.CoreSimulator.SimRuntime.iOS-8-1 (handle=0x7f898046b660)\r\n\r\nLooks like it was trying to do something with the 8.1 simulator even though it's not installed, which is why I think it was failing. Xcode was still listing 8.1 as being installed in its settings' Components pane, but I think I had deleted it from the Device Support folder to reclaim disk space. This may have been around when this started, I can't remember.\r\n\r\nI eventually tracked down this file and deleted it:\r\n\r\n/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\\ 8.1.simruntime\r\n\r\nEverything is working now, thanks!\r\n\r\nSteps to Reproduce:\r\n\r\n- Build and run a project, wait for simulator to launch\r\n- Quit the simulator app\r\n- Build and run again, and get the error\r\n\r\nVersion/Build:\r\n\r\nXcode Version 10.1 (10B61)"
+    email: ash@ashfurrow.com
+    modified: "2018-12-01T02:08:36.859313Z"
+    number: "46390751"
+    number_intvalue: 46390751
+    originated: November 30, 2018
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: Version 10.1 (10B61)
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Xcode failing to re-install app in simulator

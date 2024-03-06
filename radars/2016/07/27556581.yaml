@@ -1,0 +1,52 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27556581"
+    labels:
+        datastore_id: "4929661154885632"
+data:
+    classification: Serious Bug
+    created: "2016-07-26T22:42:06.18534Z"
+    description: |-
+        Summary:
+        Using XCTAssertEqual in Swift with NSObject subclasses can yield different results than using the == operator. This is very confusing.
+
+        Steps to Reproduce:
+        1. Consider the following Objective-C code:
+
+            @import Foundation;
+            NSMeasurement *a = [[NSMeasurement alloc] initWithDoubleValue:1 unit:[NSUnitLength kilometers]];
+            NSMeasurement *b = [[NSMeasurement alloc] initWithDoubleValue:1000 unit:[NSUnitLength meters]];
+            XCTAssertEqual(a, b);
+
+        2. And the equivalent Swift code:
+
+                import Foundation
+                let a = Measurement(value: 1, unit: UnitLength.kilometers)
+                let b = Measurement(value: 1000, unit: UnitLength.meters)
+                XCTAssertTrue(a == b)
+                XCTAssertEqual(a, b) // fails!!!
+
+        Expected Results:
+        All assertions pass. Specifically, both assertions in the Swift code snippet should have the same result.
+
+        Actual Results:
+        The second assertion in the Swift code snippet, XCTAssertEqual(a, b), fails. This is very unintuitive to me because it has a different result than a == b although XCTAssertEqual has a overload for T: Equatable, so I would assume that it uses a == b internally. For some reason, it XCTAssertEqual seems to fall back on the -isEqual implementation of NSObject that compares object pointers, at least that is the only explanation I have for this behavior.
+
+        Regression:
+        ---
+
+        Notes:
+        Is this intended behavior? To me it looks like a bug.
+    email: ole.begemann@gmail.com
+    modified: "2016-07-26T22:42:06.18552Z"
+    number: "27556581"
+    number_intvalue: 27556581
+    originated: 27-Jul-2016 12:41 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: iOS 10 beta 3, Xcode 8 beta 3 (8S174q)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: XCTAssertEqual with NSObject subclasses'

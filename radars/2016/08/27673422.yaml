@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27673422"
+    labels:
+        datastore_id: "5055229137518592"
+data:
+    classification: Serious Bug
+    created: "2016-08-03T06:11:25.48276Z"
+    description: "Area:\r\nPhotos\r\n\r\nSummary:\r\nCalling -[PHImageManager requestImageDataForAsset:] may return a thumbnail image in cases where:\r\n\r\n- Asset is a newly taken picture with filter applied\r\n- Version specified as PHImageRequestOptionsVersionCurrent\r\n- synchronous set to YES\r\n\r\nThe image returned may be a thumbnail even if delivery mode is set to PHImageRequestOptionsDeliveryModeHighQualityFormat. The info dictionary is not marked as degraded either.\r\n\r\nSteps to Reproduce:\r\n1. Use the Camera app to take a photo with filter applied\r\n2. From an iOS app, make a requestImageDataForAsset: call to the Photos framework with options set as the following:\r\n\r\n```\r\n    PHImageRequestOptions *requestOptions = [[PHImageRequestOptions alloc] init];\r\n    requestOptions.version = PHImageRequestOptionsVersionCurrent;\r\n    requestOptions.networkAccessAllowed = YES;\r\n    requestOptions.synchronous = YES;\r\n    requestOptions.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;\r\n```\r\n\r\n\r\nExpected Results:\r\nAs explained by the documentations for requestImageDataForAsset:, we expect that the resultHandler will be invoked with data containing the \"full-sized image data for the specified asset\".\r\n\r\nActual Results:\r\nWe receive a thumbnail of the rendered image, with an info dict containing the following:\r\n\r\n```\r\n{\r\n    PHImageFileDataKey = <PLXPCShMemData: 0x14587310> bufferLength=139264 dataLength=138423;\r\n    PHImageFileOrientationKey = 0;\r\n    PHImageFileSandboxExtensionTokenKey = \"44b49d95b5b2768fd4af97cdd4463ffc29d95f51;00000000;00000000;0000001a;com.apple.app-sandbox.read;00000001;01000003;0000000000039b31;/private/var/mobile/Media/PhotoData/Mutations/DCIM/100APPLE/IMG_0019/Adjustments/SubstandardFullSizeRender.jpg\";\r\n    PHImageFileURLKey = \"file:///var/mobile/Media/PhotoData/Mutations/DCIM/100APPLE/IMG_0019/Adjustments/SubstandardFullSizeRender.jpg\";\r\n    PHImageFileUTIKey = \"public.jpeg\";\r\n    PHImageResultDeliveredImageFormatKey = 9988;\r\n    PHImageResultIsDegradedKey = 0;\r\n    PHImageResultIsInCloudKey = 0;\r\n    PHImageResultIsPlaceholderKey = 0;\r\n    PHImageResultOptimizedForSharing = 0;\r\n    PHImageResultWantedImageFormatKey = 9998;\r\n}\r\n```\r\n\r\nThe size of the image received is 138423 bytes vs the actual size of 1314598 bytes. The dimensions received is 640x852, vs the actual dimension of 2448x3264.\r\n\r\nVersion:\r\niOS 8.0, iOS 9.3.1\r\n\r\nNotes:\r\nThe attached project contains a sample project that fetches the newest asset in the Photos library twice -- once synchronously and once asynchronously after the synchronous request finishes -- and compares the results.\r\n\r\nWhen a new filtered photo is taken, opening the app will show a alert regarding the mismatch sizes.\r\n\r\nConfiguration:\r\niPhone 5"
+    email: RichWChan@gmail.com
+    modified: "2016-08-03T06:11:25.48293Z"
+    number: "27673422"
+    number_intvalue: 27673422
+    originated: 02-Aug-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 8.0 and above
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: requestImageDataForAsset returning thumbnail for filtered images

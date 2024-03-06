@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15085064"
+    labels:
+        datastore_id: "5725612312363008"
+data:
+    classification: ""
+    created: "2013-09-26T07:32:12.127331Z"
+    description: "Edit: Added a Sample Project. Details at the bottom of this description.\r\n\r\nSummary:\r\nThe tableView(cells) receives to much retains in the process of animated insertion or deletion.\r\nThis causes the tableView (and its cells) to stay alive after the containing ViewController gets deallocated.\r\n\r\nSteps to Reproduce:\r\n1. Create a basic project with ViewController in a NavigationController.\r\n2. Add a TableViewController which gets pushed.\r\n3. in this TableViewController add a custom TableView with some custom TableViewCells and a deleteRowsAtIndexPaths:withRowAnimation: \r\n4. Set a breakpoint in the dealloc method of the CustomTableView and the CustomTableViewCell.\r\n5. Run it an watch the CustomTableView and CustomTableViewCells gets deallocated if deleteRowsAtIndexPaths:withRowAnimation: was NOT called and popped from ViewController stack.\r\n6. Do the same after a deleteRowsAtIndexPaths:withRowAnimation: on the tableView and you will see the CustomTableView and the CustomTableViewCells does not get removed.\r\n\r\nExpected Results:\r\nbalanced retain and release count after the animation of the insertion / deletion of Cells.\r\n\r\nActual Results:\r\nafter the animation the retain count is to high, so the tableView will not get released.\r\n\r\nVersion:\r\niOS 7.0\r\n\r\nNotes:\r\nSomebody provided a kind of workaround as a answer in that stack overflow article: http://stackoverflow.com/questions/18919870/ios-7-0-and-arc-uitableview-never-deallocated-after-rows-animation\r\n\r\nAnother issue on stack overflow with the same problem:\r\nhttp://stackoverflow.com/questions/18903234/updating-a-uitable-inside-didselectrowatindexpath-causes-leak-in-ios7-but-not-i\r\n\r\nEDIT:\r\nAdded a Sample Project on github:\r\nhttps://github.com/jschuster/RadarSamples/tree/master/TableViewCellAnimationBug\r\n\r\nOpen the Project in Xcode 5\r\nOpen the Classes CustomTableView and CustomTableViewCell and set a breakpoint in dealloc.\r\n\r\nRun the App in iOS 7.0 environment.\r\n - tap \"Show me the TableView\" button and navigate back directly.\r\n    -> dealloc will be called.\r\n - tab \"Show me the TableView\" button\r\n    - delete a cell (swipe or edit) -> deletion of the cell is animated. See TableViewController:tableView:commitEditingStyle:forRowAtIndexPath:\r\n    - navigate back\r\n    -> dealloc will not be called.\r\n \r\n Run the App in iOS 6.x environment will release all objects as expected, no memory leak."
+    email: joachim.schuster@catchingtales.com
+    modified: "2013-10-24T08:49:40.805525Z"
+    number: "15085064"
+    number_intvalue: 15085064
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.0"
+    reproducible: Always
+    resolved: iOS 7.0.3
+    status: Closed
+    title: 'calling deleteRowsAtIndexPaths:withRowAnimation: or insertRowsAtIndexPaths:withRowAnimation: UITableView causes memory leak in iOS 7.0'

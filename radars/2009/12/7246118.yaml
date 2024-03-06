@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7246118"
+    labels:
+        datastore_id: "136407"
+data:
+    classification: Other Bug
+    created: "2009-12-27T10:50:35.062657Z"
+    description: "Summary:\r\nAttempting to override certain built-ins of stdio can causes copious amounts of warning messages, with no way to override the cause: _FORTIFY_SOURCE.\r\n\r\nSteps to Reproduce:\r\nI'll give a rhetorical example. Say I override snprintf because I feel it's not portable, and I want to include my own version of it in my app, and deter anyone who might be building my source from using it in my source. I might do this in a common header.\r\n\r\nIn common.h I would have\r\n1. #define snprintf DO_NOT_USE_SNPRINTF\r\n\r\n2. Using this in my source, I would receive redefinition warnings from /usr/include/secure/_stdio.h\r\n\r\n2. Looking in /usr/include/stdio.h of the 10.6 SDK, I would see:\r\n\r\n#if defined (__GNUC__) && _FORTIFY_SOURCE > 0 && !defined (__cplusplus)\r\n/* Security checking functions.  */\r\n#include <secure/_stdio.h>\r\n#endif \r\n\r\nwhich seems great. All I have to do is just define _FORTIFY_SOURCE to be 0\r\n\r\n3. So in my common.h, I might have\r\n#define _FORTIFY_SOURCE 0\r\n\r\n4. However, then I would get another redefinition warning, this time insisting that I'm redefining _FORTIFY_SOURCE, this time it's in /usr/include/_types.h\r\n\r\n5. So, if I take a look at this, I'd see:\r\n#ifndef _FORTIFY_SOURCE\r\n#  if defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) && ((__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__-0) < 1050)\r\n#    define _FORTIFY_SOURCE 0\r\n#  else\r\n#    define _FORTIFY_SOURCE 2   /* on by default */\r\n#  endif\r\n#endif\r\n\r\nWhich, for some reason, the ifndef seems to be failing.\r\n\r\n6. Defining this at compile time using the compiler flag -D_FORTIFY_SOURCE=0 doesn't work either.\r\n\r\nExpected Results:\r\nThat I'd be allowed to redefine this, or that it doesn't default to 2, or that I'm not locked into the copious amounts of warnings wherever I use an overridden portion of stdio.\r\n\r\nActual Results:\r\nCopious warnings.\r\n\r\nRegression: \r\nFrom what I can tell looking at the 10.5.sdk, I didn't see these definitions anywhere in the /usr/includes/ headers. I also used the same code compilation techniques on 10.5 and 10.6, and I only receive the warnings on 10.6\r\n\r\nNotes:\r\nThe compiler I was using was:\r\n/Developer/usr/bin/i686-apple-darwin10-gcc-4.2.1\r\n\r\nIf the source code is necessary, I can provide it; or simply the relevant headers. Unfortunately, this isn't in a xcodeproj yet, so all I can do is provide makefiles and the source tree. My theoretical example is fairly close to what the project is doing."
+    email: jesse.m.pearson@gmail.com
+    modified: "2011-08-28T05:44:25.163635Z"
+    number: "7246118"
+    number_intvalue: 7246118
+    originated: 23-Sep-2009 03:57 AM CST
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 10.6.0
+    reproducible: No
+    resolved: Yes
+    status: Closed
+    title: There appears to be no way to override _FORTIFY_SOURCE

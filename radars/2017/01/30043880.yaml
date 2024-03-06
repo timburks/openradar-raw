@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30043880"
+    labels:
+        datastore_id: "6121687368073216"
+data:
+    classification: UI/Usability
+    created: "2017-01-16T23:00:47.68884Z"
+    description: "Summary:\r\nWhen implementing a custom collection view layout and invalidating this layout, the collection view calls `-layoutAttributesForElementsInRect:` and after that calls `-prepareLayout`. According to the documentation: “During each layout update, the collection view calls this method first to give your layout object a chance to prepare for the upcoming layout operation.” this should actually be the other way around. The collection view should first let the layout know that it should `-prepareLayout` which would then update the layout to the new truth, and after that, the collection view should ask for this new layout e.g. by calling `-layoutAttributesForElementsInRect:`.\r\n\r\nSteps to Reproduce:\r\n- Open the attached sample\r\n- Run this sample in an iPad Air 2 Simulator that launches the app in portrait orientation\r\n- After the initial layout is done, clear the console in Xcode (there are shared breakpoints in the project that log what is called in which order)\r\n- Rotate the device\r\n- Have a look at the console output\r\n\r\nExpected Results:\r\n- The layout should adopt the the new width of the view controller\r\n- Console should contain this:\r\n-invalidateLayoutWithContext: 100 indexes\r\n-prepareLayout\r\n-layoutAttributesForElementsInRect: (origin = (x = 0, y = 0), size = (width = 1024, height = 1024))\r\n\r\nActual Results:\r\n- The layout did not update properly\r\n- Console actually contains this:\r\n-invalidateLayoutWithContext: 100 indexes\r\n-layoutAttributesForElementsInRect: (origin = (x = 0, y = 0), size = (width = 1024, height = 1024))\r\n-prepareLayout\r\n\r\nRegression:\r\n\r\n\r\nNotes:\r\n- I tried to make the layout in the sample as small and easy to understand as possible.\r\n- If you launch the app in landscape and rotate to portrait instead, you will see another layout issue where only part of the items updated"
+    email: michaelhochs@googlemail.com
+    modified: "2017-01-18T09:17:30.75139Z"
+    number: "30043880"
+    number_intvalue: 30043880
+    originated: 17-Jan-2017 12:00 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "10.2"
+    reproducible: Always
+    resolved: ""
+    status: 3rd party to Resolve
+    title: Custom collection view layout calls prepareLayout after actually asking for the layout

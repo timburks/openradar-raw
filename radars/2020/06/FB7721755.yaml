@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7721755
+    labels:
+        datastore_id: "4975650712584192"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2020-06-02T04:06:19.378316Z"
+    description: "Summary:  We have a UITextView with a NSAttributedString that contains two links. We are unable to use voice over to select the 2nd link in iOS 13.\r\n\r\nIn iOS 13, setting `UITextView.editable = NO`, `selectable = YES`, and `dataDetectorTypes = UIDataDetectorTypeLink`, voice over detects the links, but will not allow individual selection.  The “swipe up and down” gesture is non responsive, not allowing switching between links.  Therefore the first link is always the current link, so when double tapping to select a link, the first link is always selected.\r\n\r\nIt seems that in iOS 12, setting `UITextView.editable = NO`, `selectable = YES`, and `dataDetectorTypes = UIDataDetectorTypeLink`, correctly renders the links and allows individual link selection.\r\n\r\nWe set:\r\n    textView.editable = NO;\r\n    textView.scrollEnabled = NO;\r\n    textView.selectable = YES; \r\n    textView.dataDetectorTypes = UIDataDetectorTypeLink;\r\n    textView.delegate = self;\r\n\r\nand implement the relevant method:\r\n\r\n@interface MyViewController () <UITextViewDelegate>\r\n// …\r\n@end\r\n\r\n@implementation MyViewController\r\n// …\r\n\r\n- (BOOL)textView:(UITextView *)textView\r\n    shouldInteractWithURL:(NSURL *)URL\r\n                  inRange:(NSRange)characterRange\r\n              interaction:(UITextItemInteraction)interaction {\r\n   if (someCondition) {\r\n      return NO;\r\n   }  else {\r\n      return YES;\r\n   }\r\n}\r\n\r\nWe then use the following attributed text:\r\n\r\n  var attributedText: NSAttributedString {\r\n    typealias AttrDict = [NSAttributedString.Key: Any]\r\n    let urlAttr: AttrDict = [.link: \"https://www.google.com/search?q=lorem+ipsum\"]\r\n    let customLinkAttr: AttrDict = [.link: \"catalog://\"]  // A custom link.\r\n\r\n    let attributedText = NSMutableAttributedString()\r\n    attributedText.append(NSAttributedString(string: \"Lorem ipsum\", attributes: urlAttr))\r\n    attributedText.append(NSAttributedString(string: \" dolor sit amet, \", attributes: nil))\r\n    attributedText.append(NSAttributedString(string: \"consectetur adipiscing elit, sed do eiusmod\", attributes: nil))\r\n    attributedText.append(NSAttributedString(string: \" tempor \", attributes: customLinkAttr))\r\n    attributedText.append(NSAttributedString(string: \"incididunt ut labore magna aliqua.\", attributes: nil))\r\n    return attributedText\r\n  }"
+    email: galiak@google.com
+    modified: "2020-06-02T04:06:19.378473Z"
+    number: FB7721755
+    number_intvalue: 7721755
+    originated: June 1st, 2020
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: iOS 13
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: UITextView with two links doesn't allow selecting the last link in voice over.

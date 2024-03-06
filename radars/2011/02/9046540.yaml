@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9046540"
+    labels:
+        datastore_id: "1122401"
+data:
+    classification: bug
+    created: "2011-02-24T06:13:05.166534Z"
+    description: "Summary:\r\n\r\n        Reading from the pseudoterminal master sometimes hangs.  This\r\n        was noticed because it leaves the test suite for the git version\r\n        control system hanging.\r\n\r\nSteps to Reproduce:\r\n\r\n        \r\n        perl -MIO::Pty -MFile::Copy -e '\r\n                for (my $i = 0;; $i++) {\r\n                        my $master = new IO::Pty;\r\n                        my $slave = $master->slave;\r\n                        if (fork == 0) {\r\n                                close $master or die \"close: $!\";\r\n                                open STDOUT, \">&\", $slave or die \"dup2: $!\";\r\n                                close $slave or die \"close: $!\";\r\n                                exec(\"echo\", \"hi\", $i) or die \"exec: $!\";\r\n                        }\r\n                        close $slave or die \"close: $!\";\r\n                        copy($master, \\*STDOUT) or die \"copy: $!\";\r\n                        close $master or die \"close: $!\";\r\n                        wait;\r\n                }\r\n        '\r\n\r\nExpected Results:\r\n\r\n        ...\r\n        hi 1001\r\n        hi 1002\r\n        hi 1003\r\n        ...\r\n\r\nActual Results:\r\n\r\n        Darwin 10.5.0 Darwin Kernel Version 10.5.0: Fri Nov  5 23:19:13 PDT 2010; root:xnu-1504.9.17~1/RELEASE_X86_64 i386\r\nRegression:\r\n        hi 0\r\n        ...\r\n        hi 44\r\n<and it sits there>\r\n\r\nNotes:\r\n\r\nDebugging reveals that it is blocking in read() after having read all\r\noutput from the child.  I would expect a read from pty master to return\r\n0 (representing end of file) or -1 (with errno set to EIO in the latter\r\ncase) in that case.\r\n\r\nperl is standard Apple perl.  Perl 5.10.1 and 5.8.9 behave the same way.\r\n\r\nThe number of iterations before the hang varies from run to run but it\r\nalways happens within a minute or so.\r\n\r\nSee also https://rt.cpan.org/Public/Bug/Display.html?id=65692"
+    email: jrnieder@gmail.com
+    modified: "2011-08-28T05:37:48.924805Z"
+    number: "9046540"
+    number_intvalue: 9046540
+    originated: February 24, 2011
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X Server
+    product_version: 10H575
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: Read from pty master sometimes hangs

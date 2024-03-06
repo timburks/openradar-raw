@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39237693"
+    labels:
+        datastore_id: "5041691232829440"
+data:
+    classification: Serious
+    created: "2018-04-06T14:38:16.55258Z"
+    description: "Summary:\r\n\r\nInitializing a class from protocol associated type fails with \"Use of unimplemented initializer\".\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nCreate a macOS playground with the following code:\r\n\r\nimport Cocoa\r\n\r\nprotocol Component: class {\r\n    static func createView() -> NSView\r\n}\r\n\r\nprotocol GenericComponent: Component {\r\n    associatedtype CoreClassAlias: NSView\r\n}\r\n\r\nclass ParentView: NSView {\r\n    \r\n    init(custom: Int) {\r\n        super.init(frame: .zero)\r\n    }\r\n    \r\n    required init?(coder aDecoder: NSCoder) {\r\n        fatalError(\"Not implemented\")\r\n    }\r\n}\r\n\r\nclass CustomView: ParentView {\r\n    init() {\r\n        super.init(custom: 0)\r\n    }\r\n    \r\n    required init?(coder aDecoder: NSCoder) {\r\n        fatalError(\"Not implemented\")\r\n    }\r\n}\r\n\r\nclass ConcreteComponent: Component, GenericComponent {\r\n    typealias CoreClassAlias = CustomView\r\n}\r\n\r\nextension GenericComponent {\r\n    static func createTypedView() -> CoreClassAlias {\r\n        return CoreClassAlias.init()\r\n    }\r\n    \r\n    static func createView() -> NSView {\r\n        return createTypedView()\r\n    }\r\n}\r\n\r\nvar components: [Component.Type] = [\r\n    ConcreteComponent.self\r\n]\r\n\r\nlet generic = components[0]\r\nlet normalInitWorks = CustomView()\r\nlet thisDoesntWork = generic.createView()\r\n\r\nExpected Results:\r\nEither compiles and works, or doesn't compile and gives a reason.\r\n\r\nActual Results:\r\nCompiles, doesn't work.\r\nInitFailWithMetatype_macOS.playground: 11: 7: Fatal error: Use of unimplemented initializer 'init(frame:)' for class '__lldb_expr_48.ParentView'\r\n\r\n\r\nVersion/Build:\r\nSwift 4.1, Xcode 9.3\r\n\r\nConfiguration:\r\nDefault"
+    email: acapulco1988@gmail.com
+    modified: "2018-04-06T14:38:16.55277Z"
+    number: "39237693"
+    number_intvalue: 39237693
+    originated: April 6 2018
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Swift 4.1, Xcode 9.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 4.1: Init class fails when used from a protocol associated type'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22044453"
+    labels:
+        datastore_id: "4903878164217856"
+data:
+    classification: Other Bug
+    created: "2015-07-29T02:22:38.32621Z"
+    description: "Summary:\r\nThe ObjectiveGit (https://github.com/libgit2/objective-git) project builds frameworks for both Mac and iOS platforms. This framework is an interface for the libgit2 static library whose headers are exposed through the ObjectiveGit module, but inside libgit2, all #imports use the local project style:\r\n#import “git2/filter.h\r\n\r\nThis works well enough for the ObjectiveGit frameworks to build. The problem manifests when building an app that links against ObjectiveGit.framework:\r\n\r\n…ObjectiveGit.framework/Headers/git2/sys/filter.h:10:10: Include of non-modular header inside framework module 'ObjectiveGit'\r\n#include \"git2/filter.h\"\r\n         ^\r\n\r\nThese errors do not go away when the application sets CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES to YES, even after purging the ModuleCache, DerivedData, restarting Xcode and sacrificing a few gummy bears.\r\n\r\nIf this is to be an error, it should be an error in the framework build, not the application that is consuming it.\r\n\r\nSteps to Reproduce:\r\n1. Create a Mac or iOS application project using Swift\r\n2. Add ObjectiveGit.framework to the project (linker and embed frameworks phase)\r\n3. import ObjectiveGit in at least one swift file\r\n4. Set CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES to YES in the app target\r\n5. Build the app target\r\n\r\nExpected Results:\r\nThe app target build will succeed.\r\n\r\nActual Results:\r\nThe app target build fails with numerous messages like the following\r\n   error: include of non-modular header inside framework module 'ObjectiveGit'\r\n\r\nRegression:\r\nIn Xcode 6 it was possible to work around this issue by setting \r\nCLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES to YES in the application target. In Xcode 7 beta 4 this no longer works.\r\n\r\nNotes:\r\nI’m aware that the framework’s module map (https://github.com/libgit2/objective-git/blob/master/ObjectiveGit.modulemap) is not correct and these libgit2 headers would actually need to be imported like so:\r\n#import <ObjectiveGit/git2/filter.h>"
+    email: benchatelain@gmail.com
+    modified: "2015-08-04T23:11:49.13878Z"
+    number: "22044453"
+    number_intvalue: 22044453
+    originated: 28-Jul-2015 08:22 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode7-beta4 (7A165t)
+    reproducible: Always
+    resolved: ""
+    status: Dup of 16346423
+    title: 'Xcode7-beta4 (7A165t): App fails to build with error: Include of non-modular header inside framework module ''ObjectiveGit'''

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6459008"
+    labels:
+        datastore_id: "1804"
+data:
+    classification: New Feature
+    created: "2008-12-19T19:12:13.459767Z"
+    description: "Summary:\r\n\r\nThere is currently no public API to append text to UITextViews.\r\n\r\nIt is possible to take the text from a text view, append a string, and then set that to be the text view's text, but that is inefficient and suffers from a significant scrolling problem, as described here:\r\n\r\nhttp://discussions.apple.com/thread.jspa?threadID=1709767&tstart=0\r\n\r\nThe problem is that the text view scrolls back to the start of the inserted text whenever new text is appended to the view. This causes the view to scroll up and down as new text is appended to the view.\r\n\r\nClearly there is another interface that is being used internally by the keyboard editing feature of UITextView.\r\n\r\nCurrently the following code appears to provide smooth scrolling using a pair of undocumented methods:\r\n\r\n    [textView setContentToHTMLString:[NSString stringWithFormat:@\"%@<br/>%@\",\r\n                                       [textView contentAsHTMLString], \r\n                                       lineToAppend]];\r\n    [textView scrollRangeToVisible:NSMakeRange([[textView text] length],0)];\r\n\r\nbut this requires \"lineToAppend\" be an HTML string and undesirably requires an undocumented interface.\r\n\r\nHow can this be done with a public API?\r\n\r\nSteps to Reproduce:\r\n\r\nWrite a simple iPhone application with a button and a text view. On button presses, attempt to append text to the text view using the following methods:\r\n\r\n    [textView setText:[NSString stringWithFormat:@\"%@\\n%@\", [textView text], lineToAppend]];\r\n    [textView scrollRangeToVisible:NSMakeRange([[textView text] length],0)];\r\n\r\nNotice the undesirable scrolling. Repeat using the private API calls described above.\r\n\r\nExpected Results:\r\n\r\nAn instance method on UITextView called appendText: that efficiently appends text and leaves the selection point and scroll position unchanged.\r\n\r\nActual Results:\r\n\r\nAwkward workarounds.\r\n\r\nRegression:\r\n\r\nIf you have instrumented UITextView to tell you when it scrolls, a unit test could detect this undesired scrolling when text is appended."
+    email: timburks@gmail.com
+    modified: "2011-08-28T05:48:43.255168Z"
+    number: "6459008"
+    number_intvalue: 6459008
+    originated: 19-Dec-2008 11:10 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "2.1"
+    reproducible: N/A
+    resolved: ""
+    status: Open
+    title: 'Wanted: Public API for smoothly appending to UITextViews'

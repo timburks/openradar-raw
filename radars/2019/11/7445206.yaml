@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7445206"
+    labels:
+        datastore_id: "4981335873552384"
+data:
+    classification: App crash
+    created: "2019-11-13T22:46:23.930939Z"
+    description: "We have 32 crash reports in the GeoServices API on iOS 13.1.2-13.2.\r\nMost events (logs) in the reports are finished on the Terminate function call. Here is the events pattern:\r\nApp Activated on 0 sec -> ... -> Resign on 38 sec -> Background on 39 sec -> Terminate on 39 sec -> App crashed.\r\nI found the doc description that the terminate delegate function (applicationWillTerminate:) is called in a case if a user manually killed the active app or the system needs to terminate the background app for some reason. Also, a crash event will never call this func. The func itself doesn't have special processes that will crash the app, only logging. That why I dropped this case.\r\n\r\nI have another clue about the CoreLocation framework. It looks like the code inside the background delegate (applicationDidEnterBackground:) can initiate the crash, I can not repro. We will call the CoreLocation func startUpdatingLocation that can do something bad in the Apple code in the background app before to be suspended. The crash stack trace involves only Apple's code from the GeoServices API.\r\n\r\nPlease validate our crash files and provide any feedback."
+    email: anatoli.macarov@climate.com
+    modified: "2019-11-13T22:46:23.931105Z"
+    number: "7445206"
+    number_intvalue: 7445206
+    originated: Nov 13, 2019 at 1:32 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK + CoreLocation
+    product_version: iOS 13.1.2-13.2
+    reproducible: NO
+    resolved: NO
+    status: Open
+    title: GeoServices crashes on iOS 13

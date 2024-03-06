@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22870806"
+    labels:
+        datastore_id: "6131399413202944"
+data:
+    classification: Enhancement
+    created: "2015-09-26T20:58:16.18346Z"
+    description: "I love the work the Swift team has done. Swift is one of the closest languages to being perfect that I see out there right now (maybe it's the novelty). But I think that this particular language feature--the forced general throwing annotations--puts a major stopper in the attempts of myself and countless other programmers attempting to write code the way it is intended to be written. Whenever I use a throwing function I find myself doing something like this:\r\n\r\n```do {\r\n  let result = try searchForQuery(query) // function I wrote, it only ever throws an error of type `SearchError`\r\n} catch let error as SearchError {\r\n  // do something helpful with the error, because I know its type\r\n} catch let error {\r\n  // this is required by the compiler for completeness. But it confuses me a bit.\r\n  // On the one hand, it feels wrong to swallow because, since throws is not typed, a teammate could just change my function to throw a different type of error without remembering to add handling code here. But what am I supposed to do with this error? Literally all I know about it is that it conforms to ErrorType. So maybe I should just swallow it.\r\n  // Regardless, this section is, at best, useless, and at worst, dangerous to error handling.\r\n}```\r\n\r\n99% of the time I know what kind of error I am going to throw. The other 1%, I should either figure out which error I'm going to throw, or use `rethrows` instead. (In this situation, I think it would be prudent to keep `rethrows` generic, unless you decide you want developers to type-annotate the throwing closures they pass into a rethrowing function, which would also make sense.)\r\n\r\n\r\nSome caveats/benefits if you decide to move forward with this proposal:\r\n- I would consider it part of the base functionality to be able to annotate with multiple ErrorTypes. Something like `func searchForQuery(query: String) throws SearchError, NetworkError -> [Item]` or `func searchForQuery(query: String) -> [Item] throws SearchError, NetworkError`.\r\n\r\n- One other potential benefit of type-annotating `throws` would be that you could provide intelligent autocompletion for `catch` statements, since you would be able to statically collect the potential ErrorTypes that can be thrown by each throwing expression in the `do` block. \r\n\r\n- To migrate from existing swift code... One way would be to assume `throws` is equivalent `throws ErrorType` and add a compiler warning to anything that is marked with just `throws` implicitly with a suggested auto-fix that either replaces `throws` with `throws ErrorType` or statically analyzes the function's body to see what it throws at each `try`/`throw` statement (probably not in the scope of this feature, realistically). Another way would be to just stick a compiler error on every instance of a naked `throws` saying \"Needs to throw one or more types that implements ErrorType\", and have a suggested auto-fix similar to the first way I described.\r\n- In the vein of the previous bullet point, I will warn that it may be disingenuous to have a code style migrator like you had for the transition to Swift 2. An automatic migration would encourage people not to put thought into reannotating their existing throwing code. Personally, I think the best option would be the compiler warning I described with no code migration helper."
+    email: dennis@riffdigital.com
+    modified: "2015-09-26T20:58:16.18365Z"
+    number: "22870806"
+    number_intvalue: 22870806
+    originated: 26-Sep-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: N/A
+    resolved: ""
+    status: Open
+    title: 'Swift: `throws` keyword annotated with types'

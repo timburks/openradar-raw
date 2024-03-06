@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB11582939
+    labels:
+        datastore_id: "5497722702397440"
+data:
+    classification: Crash
+    created: "2022-09-24T13:06:03.779802Z"
+    description: "Apple clang emits a call to ____chkstk_darwin in functions that use more than a page of stack space. This is to prevent skipping over the guard page.\r\n\r\nWhen using an altstack, ____chkstk_darwin probes an unexpectedly far away location. It correctly probes a location every 0x1000 bytes from %rsp to %rsp-stack_size, but it then *incorrectly* probes a location near %rsp-stack_size*2 (which is the last probed location less stack_size).\r\n\r\nThis last probing may cause an invalid memory access. As a result, functions that use N stack space may cause the program to crash if there is less than N*2 available stack space.\r\n\r\nHow to reproduce:\r\n\r\n- https://gist.github.com/arnaud-lb/495b5e22810e3dfe951fb42a65063e36\r\n- cc -o test test.c\r\n- ./test\r\n\r\nExpected result: the program terminates normally\r\n\r\nActual result: zsh: bus error  ./test\r\n\r\nThe culprit seems to be that after probing every page, ___chkstk_darwin subtracts %rax (the requested stack size) from the last probed location, and probes the resulting address: https://github.com/apple-oss-distributions/libpthread/blob/e42795c13eaf5eb32ae06103b1b50caae3c01d27/src/pthread_asm.s#L99-L101\r\n\r\n```\r\nLloop:\r\n\tsubq   $0x1000, %rcx\r\n\ttestq  %rcx, (%rcx)\r\n\tsubq   $0x1000, %rax\r\n\tcmpq   $0x1000, %rax\r\n\tja     Lloop\r\n\tpopq   %rax           // %rax: requested stack size\r\nLend:\r\n\tsubq   %rax, %rcx     // %rcx: last probed location\r\n\ttestq  %rcx, (%rcx)   // invalid memory access \r\n\r\n\tpopq   %rcx\r\n\tretq\r\n```\r\n\r\n____chkstk_darwin is emitted by clang (Apple version only) when -fstack-check is enabled (the default)."
+    email: arnaud.lb@gmail.com
+    modified: "2022-09-28T18:51:30.031948Z"
+    number: FB11582939
+    number_intvalue: 11582939
+    originated: "2022-09-24"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: "12.5"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ____chkstk_darwin incorrectly probes twice the requested stack size, results in invalid memory access

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7812696"
+    labels:
+        datastore_id: "232401"
+data:
+    classification: Serious Bug
+    created: "2010-03-31T12:48:24.668572Z"
+    description: "30-Mar-2010 08:45 PM Daniel Jalkut:\r\nIf a Cocoa application links to some framework, e.g. Automator, that in turn brings in AppleScriptKit.framework, it can have nasty effects on the scriptability of an application.\r\n\r\nIn particular, AppleScriptKit defines its own category methods for \"objectSpecifier\" on a number of standard classes such as NSWindow.  Their implementation of objectSpecifier does not work correctly in some instances, e.g. when the implementation class is a subclass, e.g. of NSWindow. Something about the way that it sneaks _ask to the end of the key for the to-many specifier doesn't work right. I end up getting object specifiers to my windows that have 0x0000000 for the 'want' entry.\r\n\r\nIt seems that AppleScriptKit was designed in such a way that it should never be linked to an application that is also relying on the standard Cocoa Scripting category implementations of \"objectSpecifier\" to behave as expected.\r\n\r\nWhatever ASK is trying to achieve with its tricky objectSpecifier implementations, it doesn't seem right to have two frameworks, from Apple, each implementing objectSpecifier on standard AppKit classes, in differing ways. As Apple itself documents, when two category methods of the same name are implemented on a class, the selection of which will be run is undefined.\r\n\r\nPossible solutions:\r\n\r\n1. Apple could eliminate the use of these category methods in ASK, so that it is safe to link with arbitrary Cocoa host applications, without interfering with standard objectSpecifiers.\r\n\r\n2. Apple could take pains to ensure that AppleScriptKit is never implicitly linked to a Cocoa application, e.g. by way of a framework such as Automator.framework. I suspect this bug affects relatively few apps because it's very uncommon to link from a standalone Cocoa app to ASK directly, and also rare to link to Automator.\r\n\r\n3. The least desirable, but still acceptable solution, would be to take pains in ASK's objectSpecifier implementations to make sure that whatever specifiers it creates are compatible with standard scripting runtime in the rest of a Cocoa app. I.e. that they shouldn't have the weird \"_ask\" suffixes, or they should do some magic to make sure that the relationships with \"_ask\" suffixes are always evaluated as expected.\r\n\r\nIn summary: the ASK team needs to evaluate what it means for their framework to be loaded into a Cocoa application where objectSpecifier is already implemented by Cocoa Scripting on many standard objects."
+    email: jalkut@gmail.com
+    modified: "2011-08-28T05:42:05.592119Z"
+    number: "7812696"
+    number_intvalue: 7812696
+    originated: 3/31/2010
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AppleScriptKit brings in troublesome objectSpecifier implementations

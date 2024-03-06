@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21676036"
+    labels:
+        datastore_id: "4956720757473280"
+data:
+    classification: ""
+    created: "2015-07-05T08:33:14.07304Z"
+    description: "Summary:\r\nFrom Oracle DTrace User Guide, chapter \"DTrace Built-in Variables\" [0]:\r\n\r\n> uint64_t walltimestamp\r\n> The current number of nanoseconds since 00:00 Universal Coordinated Time, January 1, 1970\r\n\r\nBut it appears that `walltimestamp` is int64_t instead of uint64_t in Apple implementation of dtrace.\r\n\r\n[0]:http://docs.oracle.com/cd/E18752_01/html/819-5488/gcfpz.html\r\n\r\nSteps to Reproduce:\r\nTry to, for example, printf `walltimestamp` with %llu format specifier:\r\n\r\n$ sudo dtrace -n \"dtrace:::BEGIN { printf(\\\"%llu\\n\\\", walltimestamp);}\"\r\n\r\nYou'll get the following error:\r\n\r\ndtrace: invalid probe specifier dtrace:::BEGIN { printf(\"%llu\\n\", walltimestamp);}: printf( ) argument #2 is incompatible with conversion #1 prototype:\r\n\tconversion: %llu\r\n\t prototype: unsigned long long\r\n\t  argument: int64_t\r\n\r\nExpected Results:\r\nThere's no error since `walltimestamp` should be uint64_t (i.e. unsigned 64 bit integer)\r\n\r\nActual Results:\r\nwalltimestamp's type is int64_t, i.e. signed 64-bit integer\r\n\r\nVersion:\r\nOS X 10.10.4, Xcode 6.4"
+    email: i.am.rodionovd@gmail.com
+    modified: "2015-07-05T08:33:14.07326Z"
+    number: "21676036"
+    number_intvalue: 21676036
+    originated: 05-Jul-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: OS X 10.10, Xcode 6.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: dtrace's walltimestamp built-in variable should be unsigned

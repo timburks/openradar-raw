@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7641639
+    labels:
+        datastore_id: "4976084370063360"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2020-03-27T10:05:53.929549Z"
+    description: "After MLUpdateTask ended its work a completionHandler is not released.\r\n\r\nSteps to reproduce:\r\n- create MLUpdateTask and pass there a completion handler block\r\n- waiting until MLUpdateTask ends its work and calls completion handler. \r\n- remove/release reference to the MLUpdateTask object to be released by ARC\r\n- Observe that objects you passed to completion handler are released (deinit) and Debug Memory Graph doesn’t have them also\r\n\r\nExpected: objects passed to the completion handler are released as MLUpdateTask ended its work and there no more references for these objects\r\nUnexpected: MLUpdateTask ended its work, but objects passed to the completion handler still in the memory (Debug Memory Graph) and not released with ARC (deinit)\r\n\r\nDebug Memory Graph shows that objects are hold by closure that is hold by MLUpdateProgressHandlers instance.\r\n\r\nI’ve tried use MLUpdateProgressHandlers object instead of simple completion handler for MLUpdateTask initialisation, but I’ve seen the same behaviour.\r\n\r\nModel used for training is just K Nearest Neighbors Classifier\r\n\r\nThe same problem was found in Apple sample project https://developer.apple.com/documentation/coreml/core_ml_api/personalizing_a_model_with_on-device_updates"
+    email: Mike.house.nsk@gmail.com
+    modified: "2020-03-27T10:05:53.929748Z"
+    number: FB7641639
+    number_intvalue: 7641639
+    originated: 03/27/2020
+    parent_number: '&{NULL_VALUE}'
+    product: CoreML API
+    product_version: iOS 13+
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: MLUpdateTask leaking completionHandler

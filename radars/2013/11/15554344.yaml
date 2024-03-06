@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15554344"
+    labels:
+        datastore_id: "5778483896647680"
+data:
+    classification: Serious Issue
+    created: "2013-11-27T15:44:59.012329Z"
+    description: "Summary:\r\nWhen setUserTrackMode:animated: is called with MKUserTrackingModeFollow and YES, and the user's location is far away, then annotations do not render after the map view has animated the visible region to the user's location.\r\n\r\nThe annotations appear after an unacceptably long delay (Usually more than 10s), or when the user tries to interact with the map.\r\n\r\nIt also seems that these animations do not trigger  mapView:regionWillChangeAnimated:/regionDidChangeAnimated:.  We're not relying on this, but it does seem a little inconsistent with other methods that animate the visible region of the map.\r\n\r\nSteps to Reproduce:\r\n1. Run the attached simple MKMapView based app.\r\n2. Tap the button at the top to start following the user location.\r\n3. Swipe to scroll really, really far away.\r\n4. Tap the button again to start following the user location.\r\n5. Observe that the map view scrolls to the user location but no annotations are visible.\r\n\r\nNB: Also seems that the animation that occurs here does not trigger mapView:regionWillChangeAnimated:/regionDidChangeAnimated:.  Could this be related?\r\n\r\nExpected Results:\r\nAnnotations near the user location (and including the user location) should render immediately when the region comes into view.\r\n\r\nActual Results:\r\nThe MKMapView scrolls to the user location, but the user location (and any annotations near the user that should appear on the map) do not appear.  They usually appear after a significant delay (>10 seconds), or when the user touches the map.\r\n\r\nIf you had difficulty reproducing this bug, then you probably need to scroll further in steps to reproduce #3.\r\n\r\nVersion:\r\n7.0.4/11B554a\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n- Tested on iPhone Simulator, iOS 7, bug does not occur\r\n- Tested on iPhone 4S running iOS 7.0.4 and is broken there\r\n- Tested on iPhone 5S running iOS 7.0.4 and is broken there\r\n\r\n\r\n------------------------------------------------------------------------\r\n\r\n\r\n#import \"ViewController.h\"\r\n#import <MapKit/MapKit.h>\r\n\r\n@interface ViewController ()\r\n\r\n@property (weak, nonatomic) IBOutlet MKMapView *mapView;\r\n\r\n@end\r\n\r\n@implementation ViewController\r\n\r\n- (IBAction)justDoIt:(id)sender\r\n{\r\n    [self.mapView setUserTrackingMode:MKUserTrackingModeFollow animated:YES];\r\n}\r\n\r\n- (void)viewDidLoad\r\n{\r\n    [super viewDidLoad];\r\n\r\n    self.mapView.delegate = self;\r\n    self.mapView.showsUserLocation = YES;\r\n}\r\n\r\n@end"
+    email: joseph.masilotti@gmail.com
+    modified: "2015-07-16T15:05:45.43077Z"
+    number: "15554344"
+    number_intvalue: 15554344
+    originated: 11/27/13
+    parent_number: "15554337"
+    product: iOS
+    product_version: iOS 7.0.4
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/15554337
+    title: 'MKMapView setUserTrackingMode:animated: fails to redraw annotations'

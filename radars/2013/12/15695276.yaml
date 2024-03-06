@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15695276"
+    labels:
+        datastore_id: "5503878720126976"
+data:
+    classification: Crash/Hang
+    created: "2013-12-19T02:26:45.507092Z"
+    description: "Summary:\r\nI've found a reproducible situation that was causing my computer to freeze completely from what looks like runaway memory consumption by the system.\r\n\r\nThe machine, a 2010 iMac, is running Mavericks Server, but I've been able to reproduce, though less consistently, on a Retina MBP running Mavericks (the MBP has 16GB of RAM, while the iMac has 8GB)\r\n\r\nAfter debugging, I was able to see the following pattern consistently:\r\n\r\n- Leave Time Machine or Spotlight running.\r\n- After some time, memory pressure graph in Activity Monitor goes red, and Swap starts growing larger and larger. \r\n- largest process is kernel_task, ranging around ~4.8GB per Activity Monitor. Several mdworker processes show hundreds of MB RAM used, which is unusual AFAICT.\r\n- After a few minutes (5-10), swap will be 10s of GB, and the computer will just freeze.\r\n\r\nAfter doing a bunch of debugging with opensnoop and Activity Monitor, determine that largest mdworker processes were processing .emlx and .partial.emlx files at the time of the freeze.\r\n\r\nNarrowed this down to very large email messages - the culprits were around 30MB on disk, but I was able to reproduce with emails down to about 26-28MB or so.\r\n\r\nOne email is attached.\r\n\r\nI can reproduce the runaway memory condition by running\r\n\r\nmdimport -d4 /path/to/email/file\r\n\r\nIt doesn't always crash, sometimes it goes crazy with RAM usage, but then recovers. On the iMac, it usually freezes. On the 16GB RAM MBP, i've only had one or two freezes, but do notice the slowness when the RAM usage goes crazy.\r\n\r\nPlease let me know if you need additional information. I've attached a sample email file that caused the behavior on my iMac.\r\n\r\nSteps to Reproduce:\r\n1. Put the email file below on disk where spotlight will access it.\r\n2. run mdimport -d4 /path/to/emlx/file\r\n3. Watch RAM usage go crazy, possibly crash system.\r\n\r\nExpected Results:\r\nShouldn't crash system. :)\r\n\r\nActual Results:\r\nRunaway RAM usage and system freeze.\r\n\r\nVersion:\r\nMail 7.1 (1827) & OS X 10.9.1 13B42\r\n\r\nNotes:\r\nI documented more of my debugging process here: http://fatmixx.com/2013/12/10/need-mavericks-troubleshooting-ideas/\r\n\r\nConfiguration:\r\nMy iMac running Mavericks 10.9.1 with Server installed.\r\n\r\n \r\niMac.spx - configuration file has been successfully uploaded \r\niMac.spx - configuration file has been successfully uploaded\r\n\r\nAttachments:"
+    email: codesujal@gmail.com
+    modified: "2013-12-19T02:26:45.507287Z"
+    number: "15695276"
+    number_intvalue: 15695276
+    originated: 12/18/2013
+    parent_number: '&{NULL_VALUE}'
+    product: Mail.app
+    product_version: 7.1 (1827)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: mdimporter uses all memory, causes computer to become unresponsive when importing large email messages

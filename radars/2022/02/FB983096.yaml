@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB983096
+    labels:
+        datastore_id: "5506765219168256"
+data:
+    classification: ""
+    created: "2022-02-25T13:56:59.340185Z"
+    description: "Making a local network request from a test inside a UI Testing Bundle (using URLSession) fails with the following error:\r\n\r\n```\r\nError Domain=NSURLErrorDomain Code=-1009 \"The Internet connection appears to be offline.\" UserInfo={_kCFStreamErrorCodeKey=50, NSUnderlyingError=0x2824fa670 {Error Domain=kCFErrorDomainCFNetwork Code=-1009 \"(null)\" UserInfo={_NSURLErrorNWPathKey=unsatisfied (Local network prohibited), interface: en0, ipv4, _kCFStreamErrorCodeKey=50, _kCFStreamErrorDomainKey=1}}, _NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <5E125442-C766-46B1-A172-6CF9DA76DC85>.<1>, _NSURLErrorRelatedURLSessionTaskErrorKey=(\r\n\"LocalDataTask <5E125442-C766-46B1-A172-6CF9DA76DC85>.<1>\r\n```\r\n\r\nThe same code works from a Unit Testing Bundle or from the main iOS app target.\r\n\r\nRunning the unit test for the first time (clean install) triggers the local network privacy prompt, while running the UI test does not trigger the privacy prompt and the request fails with the error above. \r\n\r\nSTEPS TO REPRODUCE \r\n1. Start a local server using `python -m http.server`;\r\n2. From a test inside a UI Testing Bundle, make a call to the local server using URLSession:\r\n\r\n```\r\nfunc testLocalNetworkRequest() throws {\r\n  var localNetworkUrlComponents = URLComponents()\r\n  localNetworkUrlComponents.scheme = \"http\"\r\n  localNetworkUrlComponents.host = \"[YOUR_IP_HERE]\"\r\n  localNetworkUrlComponents.port = 8000 // this is the default port, change it if needed\r\n\r\n  let localNetworkURL = localNetworkUrlComponents.url!\r\n  let localNetworkRequestExpectation = XCTestExpectation(description: \"Local network request.\")\r\n\r\n  URLSession.shared.dataTask(with: localNetworkURL) { data, response, error in\r\n    if let error = error {\r\n      XCTFail(\"Failed local network call: \\(String(describing: error)).\")\r\n    } \r\n\r\n    if let data = data, let html = String(data: data, encoding: .utf8) {\r\n      dump(html)\r\n      XCTAssert(!html.isEmpty)\r\n    }\r\n\r\n    localNetworkRequestExpectation.fulfill()\r\n  }.resume()\r\n\r\n  wait(for: [localNetworkRequestExpectation], timeout: 100)\r\n}\r\n```"
+    email: aciobanu@google.com
+    modified: "2022-02-25T14:00:50.13848Z"
+    number: FB983096
+    number_intvalue: 983096
+    originated: 5/1/2022
+    parent_number: '&{NULL_VALUE}'
+    product: Network Framework
+    product_version: Xcode 13.2.1
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Local Network access permission is not taken into account inside a UI Testing Bundle

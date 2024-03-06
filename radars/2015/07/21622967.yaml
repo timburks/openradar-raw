@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21622967"
+    labels:
+        datastore_id: "5815954734841856"
+data:
+    classification: Security
+    created: "2015-07-01T00:04:40.97716Z"
+    description: "Summary:\r\n\r\nA recent paper titled \"A Glance through the VPN Looking Glass\" discusses several VPN client vulnerabilities, including novel new DNS hijacking attacks. After investigation, we believe that iOS <= 8.4 is vulnerable to the DNS hijacking attack described in section 5.3.2 of the paper. (We suspect iOS 9 is similarly vulnerable, but we have not yet tested.) This attack requires an adversary to control the DHCP host that the victim is connected to, which is to say, the attack does not require particularly complex network vantage. The attack assigns the victim an IP address within a small bogus subnet that includes the VPN provider's DNS server, thereby binding all traffic on the subnet toward the non-virtual network interface with sufficiently high priority in the routing table that DNS requests will be routed outside of the tunnel. This in turn can be leveraged to proxy all non-HTTPS traffic -- aka, to turn the VPN into an effective no-op from a security perspective. It should be noted that this attack is described as related to PPTP and L2TP in the paper, but after investigation we believe does indeed apply to the iOS IPSec implementation too. (A simple look at the device's network interfaces and routing tables should confirm this is the case; see notes below for a link to the paper and our suggested mitigation.)\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n1. Set up a IPSec VPN endpoint\r\n2. Have that VPN endpoint push DNS servers with a well-known IP address (for example, 8.8.8.8)\r\n3. Run a 'malicious' DHCP server as described in the \"Looking Glass\" paper, section 5.3.2\r\n4. Connect an iOS device to the VPN endpoint\r\n5. Examine the routing table to verify that a malicious DHCP server can successfully convince the iOS device to route DNS requests outside the IPSec VPN tunnel\r\n\r\n\r\nExpected Results:\r\n\r\niOS device running built-in IPSec client is not vulnerable to DNS hijacking attack\r\n\r\n\r\nActual Results:\r\n\r\niOS device running built-in IPSec client *is* vulnerable to DNS hijacking attack\r\n\r\n\r\nVersion:\r\n\r\niOS 8.4\r\n\r\n\r\nNotes:\r\n\r\nTo fix this problem, iOS should insert static routes into the routing table that explicitly route traffic to the DNS servers pushed through the tunnel.\r\n\r\nYou can download a copy of \"A Glance through the VPN Looking Glass\" at http://www.eecs.qmul.ac.uk/~hamed/papers/PETS2015VPN.pdf\r\n\r\nIt appears that anyone who takes advantage of iOS 9's packet tunnel provider extension point will be able to provide their own routes, and therefore mitigate this attack. But the default IPSec client should certainly do so too!\r\n\r\nTo be perfectly clear, while the paper suggests mitigations against the DNS hijacking attack in section 5.3.2, *none* of these (including the VPN-gateway-IP-is-DNS-IP) work successfully given the default IPSec stack's routing table configuration."
+    email: davepeck@getcloak.com
+    modified: "2015-07-01T20:36:17.51315Z"
+    number: "21622967"
+    number_intvalue: 21622967
+    originated: 30-Jun-2015 05:01 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "8.4"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: iOS IPSec client is vulnerable to DNS hijacking

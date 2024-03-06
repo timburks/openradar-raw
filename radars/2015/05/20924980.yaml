@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20924980"
+    labels:
+        datastore_id: "4935382823075840"
+data:
+    classification: Performance
+    created: "2015-05-13T11:00:12.71967Z"
+    description: "Summary:\r\nWhen using the @count of a relationship in a fetch request predicate, querying one direction of the many-to-many relationship can result in large performance degradation due to not being able to use the compound index of the join table.\r\n\r\nSteps to Reproduce:\r\nSample project is provided to demonstrate the different fetch requests.\r\n\r\nOverview:\r\n1. Create a Core Data model with many-to-many relationship A<<->>B.\r\n2. Populate with a significant number of records. (5,000+ works pretty well)\r\n3. Write a fetch request to find entities A which have to related B, and a request to find entities B which have no A. Common recommendations is for A:\"manyBs.@count == 0\" and for B:\"manyAs.@count == 0\"\r\n4. Observe performance of each.\r\n\r\nExpected Results:\r\nExpect to see equivalent query performance regardless of A->B or B->A direction.\r\n\r\nActual Results:\r\nActually see dramatic differences depending on query direction: 0.0634sec for A->B on an iPhone 5 vs. 48.7783sec for B->A\r\n\r\nVersion:\r\nXcode 6.3.1 (6D1002), iOS 8.3 (12F70)\r\n\r\nNotes:\r\nGenerating a secondary index solely on Z_2MANYBS column would help correct this, but add overhead and not fix any deployed apps. Seems it would be preferable if you could change the query generation to generate query matching what a predicate of \"NONE manyAs != nil\" generates, since it enables the existing compound index to be used.\r\n\r\nConfiguration:\r\niPhone 5 (Model A1428), but also Simulator\r\n\r\nAttachments:\r\n'ManyAToManyB.zip' was successfully uploaded.\r\n(project at <https://github.com/pgor/ManyAToManyB>)"
+    email: pcgoracke@gmail.com
+    modified: "2015-05-13T11:00:12.71992Z"
+    number: "20924980"
+    number_intvalue: 20924980
+    originated: 12-May-2015 02:48 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 8.3 (12F70)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'iOS 8.3: Core Data performance issue with @count in many-to-many relationships'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21459831"
+    labels:
+        datastore_id: "5122084514562048"
+data:
+    classification: Serious Bug
+    created: "2015-06-19T13:34:20.71904Z"
+    description: "Summary:\n* In a mixed Swift/Objective-C project, when Objective-C code is brought to Swift as implicitly unwrapped optional by default [1]\n* E.g. the Objective-C method signature:\n    - (NSString *)giveMeAString  \n    will be seen by Swift like this:\n    func giveMeAString() -> NSString!  \n* The method giveMeAString might return nil\n* As Swift unwraps the method result implicitly, it might crash when `nil` is encountered.\n* The bad thing is that the compiler does not give any warnings in this case\n* Of course the Objective-C code could be annotated with nullability annotations to avoid these issues, but it is unrealistic to do it at once for a large code base (as also seen for Apple SDKs)\n* This issue makes a mixed Swift/Objective-C app much more error prone than a pure Objective-C or a pure Swift app\n* To avoid this issue, I would like to suggest changing Swift compiler behavior for importing Objective-C code, assuming `nullable` as default for return types\n\nSteps to Reproduce:\nE.g. the following code will crash:\n\n// Objective-C  \n- (NSString *)giveMeAString { return nil; }  \n  \n// Swift  \nfunc thisWillCrash() {  \n    let string = someObjectiveCObject.giveMeAString()  \n    let length = string.length // crash  \n} \n\nExpected Results:\nThe compiler should import Objective-C code as *nullable* by default, if not otherwise annotated.\nAt least there should be a compiler option to enable that behavior.\n\nActual Results:\nSwift imports Objective-C code as *implicitly unwrapped* by default.\n\nNotes:\nAlso see original thread in Apple Developer Forums: https://forums.developer.apple.com/message/10042"
+    email: fabian.ehrentraud@willhaben.at
+    modified: "2015-06-19T13:34:20.7193Z"
+    number: "21459831"
+    number_intvalue: 21459831
+    originated: 19-Jun-2015 03:34 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7 beta 1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Avoid Swift importing Objective-C as Implicitly Unwrapped by Default

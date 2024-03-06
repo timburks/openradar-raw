@@ -1,0 +1,80 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18435051"
+    labels:
+        datastore_id: "5775745183907840"
+data:
+    classification: Enhancement
+    created: "2014-09-24T01:23:59.100411Z"
+    description: |-
+        Summary:
+        I would like to be able to add custom attributes to my programs for tasks like automemoizing, autoboxing, fixpoints, etc.
+
+        @autoclosure is super useful, but it has a couple of limitations—it doesn’t memoize, it doesn’t always feel like converting from the un-autoclosure’d () -> T type, etc. I propose an `attribute` keyword to allow syntactic niceties like this with similar positive effect to macros in C, but without most of the problems associated with those. Here’s how one might write an automemoize attribute:
+
+        attribute func automemoize<T>(f: () -> T) -> () -> T {
+        	var v: T!
+        	return {
+        		switch v {
+        		case .None:
+        			let x = f()
+        			v = x
+        			return x
+        		case let .Some(x):
+        			return x
+        		}
+        	}
+        }
+
+        Using it is analogous to @autoclosure:
+
+        enum Stream<T> {
+        	case Nil
+        	case Cons(Box<T>, @automemoize () -> Stream<T>)
+        }
+
+        Similarly, I could define autobox to wrap T in Box<T> and not have to deal with manually boxing enum constructor parameters.
+
+
+        One might also apply attributes to other syntactic features, in which case distinguishing between parameter attributes, property attributes, type attributes, func attributes, etc. might be useful. For example, an observable attribute might wrap T in an Observable:
+
+        property attribute func observable(x: T) -> Observable<T> {
+        	return Observable(x)
+        }
+
+        class Doorbell<T> {
+        	@observable var sample: T
+        }
+
+        (Presumably Observable would conform to some standard protocol with set/get methods for the language to call.)
+
+        This would be a great start at metaprogramming in Swift.
+
+
+        Steps to Reproduce:
+        N/A
+
+        Expected Results:
+        N/A
+
+        Actual Results:
+        N/A
+
+        Regression:
+        N/A
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2014-09-24T01:23:59.100602Z"
+    number: "18435051"
+    number_intvalue: 18435051
+    originated: 23-Sep-2014 09:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-6.1 (6A1030)
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: 'Swift: metaprogramming with attributes'

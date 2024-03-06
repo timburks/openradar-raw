@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15359322"
+    labels:
+        datastore_id: "5534728933343232"
+data:
+    classification: Other Bug
+    created: "2013-10-31T05:29:04.437508Z"
+    description: "Summary:\r\nIf you add an observer on a non-autonotifying object twice, call -willChangeValueForKey:, call -removeObserver:forKeyPath: once, change the value and then call -didChangeValueForKey:, the observer receives -observeValueForKeyPath:... messages twice instead of once.\r\n\r\nSteps to Reproduce:\r\n1. Compile and run the following code with Xcode 5.0.1, iOS 6.1 Simulator target\r\n\r\n@interface Observer : NSObject\r\n@end\r\n\r\n@implementation Observer\r\n{\r\n    NSMutableDictionary *_observationCounts;\r\n    NSMutableSet *_priorNotificationValues;\r\n}\r\n\r\n+ (instancetype)observer\r\n{\r\n    return [[[self alloc] init] autorelease];\r\n}\r\n\r\n- (id)init\r\n{\r\n    self = [super init];\r\n    if (self != nil)\r\n    {\r\n        _observationCounts = [NSMutableDictionary dictionary];\r\n        _priorNotificationValues = [NSMutableSet set];\r\n    }\r\n    return self;\r\n}\r\n\r\n- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context\r\n{\r\n    NSNumber *count = [_observationCounts objectForKey:keyPath];\r\n    if (count == nil)\r\n    {\r\n        count = @(0);\r\n    }\r\n    [_observationCounts setObject:@([count integerValue] + 1) forKey:keyPath];\r\n\r\n    if ([change objectForKey:NSKeyValueChangeNotificationIsPriorKey] != nil)\r\n    {\r\n        [_priorNotificationValues addObject:keyPath];\r\n    }\r\n}\r\n\r\n- (NSUInteger)observationCountForKeyPath:(NSString *)keyPath\r\n{\r\n    NSNumber *count = [_observationCounts objectForKey:keyPath];\r\n    if (count == nil)\r\n    {\r\n        count = @(0);\r\n    }\r\n\r\n    return [count unsignedIntegerValue];\r\n}\r\n\r\n- (BOOL)priorObservationMadeForKeyPath:(NSString *)keyPath\r\n{\r\n    return [_priorNotificationValues containsObject:keyPath];\r\n}\r\n\r\n@end\r\n\r\n@interface Observable : NSObject {\r\n    int _anInt;\r\n}\r\n@property int anInt;\r\n@property Class someClass;\r\n@property union foo { int a; float b; } someUnion;\r\n@end\r\n\r\n@implementation Observable\r\n@synthesize anInt=_anInt;\r\n+ (instancetype)observable\r\n{\r\n    return [[[self alloc] init] autorelease];\r\n}\r\n@end\r\n@interface ReallyBadObservable : Observable\r\n@end\r\n\r\n@implementation ReallyBadObservable\r\n- (void)setAnInt:(int)anInt\r\n{\r\n    _anInt = anInt;\r\n}\r\n+ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key\r\n{\r\n    return NO;\r\n}\r\n@end\r\n\r\n-(BOOL)testMidCyclePartialUnregister\r\n{\r\n    @autoreleasepool\r\n    {\r\n        ReallyBadObservable *badObservable = [ReallyBadObservable observable];\r\n        Observer *observer = [Observer observer];\r\n        [badObservable addObserver:observer forKeyPath:@\"anInt\" options:0 context:NULL];\r\n        [badObservable addObserver:observer forKeyPath:@\"anInt\" options:0 context:NULL];\r\n        [badObservable willChangeValueForKey:@\"anInt\"];\r\n        [badObservable setAnInt:50]; //this line and the following line can be rearranged without affecting the result.\r\n        [badObservable removeObserver:observer forKeyPath:@\"anInt\"];\r\n        [badObservable didChangeValueForKey:@\"anInt\"];\r\n        testassert([observer observationCountForKeyPath:@\"anInt\"] == 1);\r\n        [badObservable removeObserver:observer forKeyPath:@\"anInt\"];\r\n        return YES;\r\n    }\r\n}\r\n\r\n\r\nExpected Results:\r\nThis test should pass.\r\n\r\nActual Results:\r\nThis test fails. The call to [observer observationCountForKeyPath:@\"anInt\"] returns 2. \r\n\r\nVersion:\r\n6.1 Simulator"
+    email: chaos42@gmail.com
+    modified: "2013-10-31T05:29:04.437744Z"
+    number: "15359322"
+    number_intvalue: 15359322
+    originated: 30-Oct-2013 10:26 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 6.1/10B141
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'KVO: Observation of non-autonotifying can send wrong number of -observeValue... notifications'

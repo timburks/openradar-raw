@@ -1,0 +1,51 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21783819"
+    labels:
+        datastore_id: "5039119168176128"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-07-12T01:02:44.78777Z"
+    description: |-
+        Summary:
+        See below.
+
+        Steps to Reproduce:
+        1. This code:
+        struct S {}
+        enum E<F> {
+        	case C
+        }
+        extension E where F == S {
+        	var C: S { return S(.C) }
+        }
+
+        Expected Results:
+        should not crash swiftc
+
+        Actual Results:
+        but totally does, without even logging an assertion failure.
+
+        Regression:
+        If the name of the variable differs, it doesn’t crash.
+        If the type isn’t generic, it doesn’t crash.
+        If S doesn’t exist, it doesn’t crash.
+        If the variable is defined in the enum body and not the extension, it doesn’t crash.
+
+        Notes:
+        If the variable is static, you get an assertion failure in a different stack trace:
+        Assertion failed: (nominal), function validatePatternBindingDecl, file /Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-700.0.45/src/swift/lib/Sema/TypeCheckDecl.cpp, line 1470.
+        Filed separately.
+    email: rix.rob@gmail.com
+    modified: "2015-07-12T01:02:44.78804Z"
+    number: "21783819"
+    number_intvalue: 21783819
+    originated: 11-Jul-2015 09:02 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A152u)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2b3: Crash with generic enum extension, same-type constraint, and variable shadowing case'

@@ -1,0 +1,67 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23250756"
+    labels:
+        datastore_id: "6148270950711296"
+data:
+    classification: Serious Bug
+    created: "2015-10-25T17:55:31.34267Z"
+    description: |-
+        Summary:
+        In protocol extensions can use `Self` as a parameter type, return type, type parameter, and typealias value, but not as a parameter in an expression chain like Optional<Self>.Some(…)
+
+
+        Steps to Reproduce:
+        1. This code:
+
+        protocol P {}
+
+        extension P {
+        	func f() -> Optional<Self> {
+        		return Optional<Self>.Some(self)
+        	}
+        }
+
+
+        Expected Results:
+        should compile without error
+
+
+        Actual Results:
+        but totally doesn’t:
+
+        boom.swift:7:23: error: '>' is not a postfix unary operator
+                        return Optional<Self>.Some(self)
+                                            ^
+
+
+        Regression:
+        You can make a typealias whose value is Optional<Self> and use that on the left-hand side.
+
+
+        Notes:
+        I was trying to use this in a method returning Either<A, B<Self>> via a static function `with` with a trailing closure. There was some ill-typed expression in there and Swift decided to tell me I needed to disambiguate the type:
+
+        return .with { … }
+
+        so I wrote:
+
+        return Either<A, B<Self>>.with { … }
+
+        and got the stupid error above instead. Then I tried this:
+
+        typealias Result = Either<A, B<Self>>
+        return Result.with { … }
+    email: rix.rob@gmail.com
+    modified: "2015-10-25T17:55:31.34296Z"
+    number: "23250756"
+    number_intvalue: 23250756
+    originated: 25-Oct-2015 01:55 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.1 (7B91b)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: swiftc rejects `Self` in type parameters of expression chain in protocol extension

@@ -1,0 +1,62 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21448659"
+    labels:
+        datastore_id: "5509722593558528"
+data:
+    classification: Enhancement
+    created: "2015-06-18T21:06:36.90361Z"
+    description: |-
+        Given the following code, Swift issues warnings on copy() that “Parameter ‘src’ (and ‘dst’) was never mutated.” However, the function calls src.read and dst.write, which are both mutating methods. If ‘var’ is removed, the compiler correctly emits an error that “Immutable value of type ‘ReaderType’ only has mutating members called ‘read’” (and similarly for write). The warning and the error cannot both be correct. (The program appears to work despite the warning.)
+
+        protocol ReaderType {
+            mutating func read(buffer: UnsafeMutablePointer<UInt8>, maxLength: Int) throws -> Int
+        }
+
+        extension ReaderType {
+            mutating func read(inout buffer: [UInt8]) throws -> Int {
+                return try self.read(&buffer, maxLength: buffer.count)
+            }
+        }
+
+        protocol WriterType {
+            mutating func write(buffer: UnsafePointer<UInt8>, maxLength: Int) throws -> Int
+        }
+
+        enum WriterError: ErrorType {
+            case ShortWrite(Int)
+        }
+
+        func copy(var to dst: WriterType, var from src: ReaderType) throws -> Int {
+            var buf = [UInt8](count: 32*1024, repeatedValue: 0)
+            var written = 0
+            while true {
+                let nr = try src.read(&buf)
+                precondition(nr >= 0)
+                if nr > 0 {
+                    let nw = try dst.write(buf, maxLength: nr)
+                    precondition(nw >= 0)
+                    if nw > 0 {
+                        written += nw
+                    }
+                    guard nr == nw else { throw WriterError.ShortWrite(written) }
+                }
+                if nr == 0 {
+                    break
+                }
+            }
+            return written
+        }
+    email: robnapier@gmail.com
+    modified: "2015-06-18T21:06:36.90381Z"
+    number: "21448659"
+    number_intvalue: 21448659
+    originated: 18-Jun-2015 05:06 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Swift 2beta1
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: Mutating protocol func not registered as mutating

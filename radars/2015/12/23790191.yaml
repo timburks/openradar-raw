@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23790191"
+    labels:
+        datastore_id: "4958146518843392"
+data:
+    classification: Other Bug
+    created: "2015-12-07T22:11:48.81613Z"
+    description: "Summary:\r\nI have an OS X framework which I'm slowly migrating to Swift. As it stands, the framework contains both Objective-C and Swift, which works fine. The framework Xcode project also contains a unit test target, implemented entirely in Objective-C.\r\n\r\nWhen tests are run, the test fails with the following error:\r\n\r\n\"Test target MixedFrameworkTests encountered an error (Early unexpected exit, operation never finished bootstrapping - no restart will be attempted)\".\r\n\r\nConsole reveals that the error is actually that libSwiftCore.dylib can't be loaded when loading the test bundle.\r\n\r\nAdding an (empty) Swift class to the test target convinces Xcode to copy libSwiftCore.dylib, etc. into the test bundle, and the problem goes away.\r\n\r\nSteps to Reproduce:\r\n1. Create a new OS X framework project. Select Objective-C for the language, and check the \"include unit tests\" option.\r\n2. Add a Swift file which defines a public class with public methods to the framework.\r\n3. Import the framework into the test target's test case using @import MyFramework;\r\n4. Add a simple unit test that exercises the framework's API.\r\n5. Run the unit tests.\r\n\r\nExpected Results:\r\nThe unit test bundle builds successfully and the test succeeds.\r\n\r\nActual Results:\r\nBuilding the test target succeeds, but running the tests fails with:\r\n\r\nTest target MixedFrameworkTests encountered an error (Early unexpected exit, operation never finished bootstrapping - no restart will be attempted)\r\n\r\n\r\n\r\nVersion:\r\nXcode 7.1.1 (7B1005), OS X 10.11.1 (15B42)\r\n\r\nNotes:\r\nAs mentioned in the summary, this problem can be worked around by adding an (empty) Swift class to the test target. This causes the test target build to include a 'Copy Swift standard libraries' build phase, and the test succeeds.\r\n\r\nTwo very simple example projects that demonstrate bug are available:\r\n\r\nhttps://www.dropbox.com/s/asz4uh7bh3ozly5/MixedFrameworkBroken.zip?dl=0\r\nhttps://www.dropbox.com/s/0txyyuyyvieqvap/MixedFrameworkWorks.zip?dl=0\r\n\r\nMixedFrameworkBroken.zip is a project with a mixed Objective-C / Swift framework and a pure-Objective-C test target. Running the test fails. MixedFrameworkWorks.zip contains the same project with only one change: the addition of a Swift file (DummySwiftClass.swift) to the test target. This addition causes the tests to succeed."
+    email: armadsen@gmail.com
+    modified: "2017-08-02T01:43:47.93828Z"
+    number: "23790191"
+    number_intvalue: 23790191
+    originated: 07-Dec-2015 03:09 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 7.1.1 (7B1005)
+    reproducible: Always
+    resolved: 20-Nov-2016 9:08 AM
+    status: Resolved
+    title: Unit testing a mixed Swift/Objective-C OS X framework fails when test target contains only ObjC

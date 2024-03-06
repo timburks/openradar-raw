@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17126888"
+    labels:
+        datastore_id: "5287980646268928"
+data:
+    classification: ""
+    created: "2014-06-03T20:17:51.66388Z"
+    description: "Summary:\r\nSwift tests do not have access to the XCTAssertThrows family of macros. In addition, Swift does not provide a try-catch mechanism. This makes testing any code that raises a runtime exception impossible.\r\n\r\nSteps to Reproduce:\r\n1. Define a function that asserts a user is logged in:\r\n\r\nfunc assertUserIsLoggedIn(isLoggedIn: Bool) {\r\n\tif(!isLoggedIn) {\r\n\t\tNSException.raise(NSInternalInconsistencyException,\r\n\t\t\tformat: \"Programmer error. This function should only be called after authentication.\",\r\n\t\t\targuments: CVaListPointer(fromUnsafePointer: UnsafePointer()))\r\n\t}\r\n}\r\n\r\n2. Attempt to write a unit test that confirms that the function behaves as expected. That is, the test should pass if the function raises when given a false value as a parameter.\r\n\r\nExpected Results:\r\nExpected (1):\r\n\r\nUsing XCTAssertThrows, I am able to test the function:\r\n\r\nXCTAssertThrows(assertUserIsLoggedIn(false), \"expected function to raise\")\r\n\r\nExpected (2):\r\n\r\nUsing try-catch, I am able to test the function:\r\n\r\nvar raised = false\r\n@try {\r\n    assertUserIsLoggedIn(false)\r\n} @catch {\r\n    raised = true\r\n}\r\nXCTAssertTrue(raised, \"excpected function to raise\")\r\n\r\nActual Results:\r\nThere is no way to test the function. The following test will fail:\r\n\r\nclass UserAssertionTests: XCTestCase {\r\n    func testAssertUserIsLoggedInRaisesWhenNotLoggedIn() {\r\n\t\tassertUserIsLoggedIn(false) // Exception causes test failure.\r\n    }\r\n}\r\n\r\nVersion:\r\nXcode Version 6.0 (6A215l), OS X 10.10 (14A238x)\r\n\r\nNotes:\r\nIn WWDC 2013, Apple developers appeared to be enthusiastic about improving unit testing and continuous integration in Xcode. But without a way to test runtime errors, developers writing in Swift are severely limited in how they can test their applications.\r\n\r\nRelated thread on the Apple Developer Forums: https://devforums.apple.com/message/970961\r\n\r\nConfiguration:\r\nThis problem does not exist when writing tests in Objective-C."
+    email: B.Gesiak@gmail.com
+    modified: "2014-06-13T09:16:59.077142Z"
+    number: "17126888"
+    number_intvalue: 17126888
+    originated: 04-Jun-2014 05:16 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: 'Closed: Duplicate of 16453199 (Open)'
+    title: It is impossible to test runtime exceptions in Swift

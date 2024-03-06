@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34790589"
+    labels:
+        datastore_id: "5029285286903808"
+data:
+    classification: Bug
+    created: "2017-11-26T23:06:39.25576Z"
+    description: "Summary:\r\nAs documented, SSLSetALPNProtocols should be available since macOS 10.13 (High Sierra). This is not the case, the Security Framework is missing the function even though the header contains it.\r\n\r\nSteps to Reproduce:\r\nCompile + link the attached program.\r\n\r\nExpected Results:\r\nThe program should compile and link fine on macOS 10.13.\r\n\r\nActual Results:\r\nLinking fails due to the missing symbol in the Security framework:\r\n\r\nUndefined symbols for architecture x86_64:\r\n  \"_SSLSetALPNProtocols\", referenced from:\r\n      _main in main.o\r\nld: symbol(s) not found for architecture x86_64\r\n\r\n\r\nVersion/Build:\r\nmacOS High Sierra 10.13.1 Beta (17B25c)\r\n\r\nNotes:\r\nDumping the Security framework symbols with nm clearly shows it is missing.\r\n(The other ALPN functions are private API)\r\n\r\n$ nm /System/Library/Frameworks/Security.framework/Versions/Current/Security | grep ALPN\r\n000000000022c8b5 T _SSLGetALPNData\r\n000000000022c880 T _SSLSetALPNData\r\n000000000022c84b T _SSLSetALPNFunc\r\n\r\nDuplicate of 33907676\r\n\r\nExample program code:\r\n\r\n#include <CoreFoundation/CoreFoundation.h>\r\n#include <Security/Security.h>\r\n\r\nint main(int argc, const char * argv[]) {\r\n    CFMutableArrayRef alpnValues =\r\n    CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks);\r\n    \r\n    SSLSetALPNProtocols((SSLContextRef)0x001, alpnValues);\r\n    CFRelease(alpnValues);\r\n    \r\n    return 0;\r\n}"
+    email: ePirat07@gmail.com
+    modified: "2017-11-26T23:07:34.43862Z"
+    number: "34790589"
+    number_intvalue: 34790589
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Security Framework
+    product_version: macOS 10.13
+    reproducible: Always
+    resolved: ""
+    status: Duplicate
+    title: SSLSetALPNProtocols missing

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35764251"
+    labels:
+        datastore_id: "5007709518692352"
+data:
+    classification: Crash
+    created: "2017-11-30T03:11:57.45285Z"
+    description: "Summary:\r\n\r\nWe are receiving many crash reports for crashes on the com.apple.expirationHandlerExecutionQueue thread in Twitter for iOS.\r\n\r\nWe call [UIApplication beginBackgroundTaskWithName:expirationHandler:] with non-null expiration handler block in all places like below.\r\n\r\n__block UIBackgroundTaskIdentifier taskId = [[UIApplication sharedApplication] beginBackgroundTaskWithName:@\"name\" expirationHandler:^{\r\n    if (taskId != UIBackgroundTaskInvalid) {\r\n        [[UIApplication sharedApplication] endBackgroundTask:taskId];\r\n        taskId = UIBackgroundTaskInvalid;\r\n    }\r\n}];\r\n\r\nAs you can see in the attached report, seems like the app crashed due to EXC_BAD_ACCESS KERN_INVALID_ADDRESS 0x0000000000000010 on the com.apple.expirationHandlerExecutionQueue when the thread tried to invoke some expiration handler when the task is expired. The access violarion address 0x10 indicates Apple's code is trying to access a NULL pointer in some way.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n1. Call [UIApplication beginBackgroundTaskWithName:expirationHandler:].\r\n2. Enter background.\r\n3. Wait for the task expiration.\r\n4. Sometime crash when the task expiration handler is invoked.\r\n\r\nExpected Results:\r\n\r\nDo not crash the on com.apple.expirationHandlerExecutionQueue thread.\r\n\r\nActual Results:\r\n\r\nSometimes crashes when the com.apple.expirationHandlerExecutionQueue thread invokes expiration handler.\r\n\r\nVersion/Build:\r\n\r\nOS Version: 11.1.2 (15B202)\r\n\r\nConfiguration:\r\n\r\nI think this bug has no dependencies on system configurations."
+    email: satoshi@twitter.com
+    modified: "2017-11-30T03:11:57.45306Z"
+    number: "35764251"
+    number_intvalue: 35764251
+    originated: 11/29/2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 11.1.2 (15B202)
+    reproducible: Sometimes
+    resolved: ""
+    status: ""
+    title: Many crashes on com.apple.expirationHandlerExecutionQueue thread

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21698360"
+    labels:
+        datastore_id: "5523053098303488"
+data:
+    classification: ""
+    created: "2015-07-07T05:08:49.30259Z"
+    description: "Summary:\r\nLSGetApplicationForInfo is deprecated in 10.10 and missing from headers in the 10.11 SDK. The deprecation notice says \"Use LSCopyDefaultApplicationURLForContentType instead.\"\r\n\r\nHowever, the replacement APIs (and all other LaunchServices APIs) return different results when determining the application for a given content type.\r\n\r\nSteps to Reproduce:\r\n1. Obtain a Keynote .key presentation and a .m4v video.\r\n2. Download VLC and make sure it's your default player for m4v files.\r\n3. Run the following code in a Swift playground (Xcode 6):\r\n\r\nimport AppKit\r\n\r\nfunc getApplicationForInfo(inType: Int, inCreator: Int, inExtension: String, inRoleMask: LSRolesMask) -> NSURL?\r\n{\r\n    var val: Unmanaged<CFURL>?\r\n    withUnsafeMutablePointer(&val) { LSGetApplicationForInfo(OSType(inType), OSType(inCreator), inExtension, inRoleMask, nil, $0) }\r\n    return val?.takeRetainedValue()\r\n}\r\n\r\nNSWorkspace.sharedWorkspace().URLForApplicationToOpenURL(NSURL(fileURLWithPath: \"/path/to/existing/file.key\")!) // VLC\r\n\r\ngetApplicationForInfo(kLSUnknownType, kLSUnknownCreator, \"key\", kLSRolesAll) // Keynote\r\nLSCopyDefaultRoleHandlerForContentType(   \"com.apple.iwork.keynote.key\", kLSRolesAll)?.takeRetainedValue() // Keynote\r\nLSCopyDefaultApplicationURLForContentType(\"com.apple.iwork.keynote.key\", kLSRolesAll, nil)?.takeRetainedValue() // Keynote\r\n\r\ngetApplicationForInfo(kLSUnknownType, kLSUnknownCreator, \"key\", kLSRolesViewer) // Preview\r\nLSCopyDefaultRoleHandlerForContentType(   \"com.apple.iwork.keynote.key\", kLSRolesViewer)?.takeRetainedValue() // Preview\r\nLSCopyDefaultApplicationURLForContentType(\"com.apple.iwork.keynote.key\", kLSRolesViewer, nil)?.takeRetainedValue() // Preview\r\n\r\n\r\nNSWorkspace.sharedWorkspace().URLForApplicationToOpenURL(NSURL(fileURLWithPath: \"/path/to/existing/file.m4v\")!) // VLC\r\n\r\ngetApplicationForInfo(kLSUnknownType, kLSUnknownCreator, \"m4v\", kLSRolesAll) // VLC\r\nLSCopyDefaultRoleHandlerForContentType(   \"com.apple.m4v-video\", kLSRolesAll)?.takeRetainedValue() // com.apple.system-library !??!\r\nLSCopyDefaultApplicationURLForContentType(\"com.apple.m4v-video\", kLSRolesAll, nil)?.takeRetainedValue() // CoreMedia.mdimporter !??!\r\n\r\ngetApplicationForInfo(kLSUnknownType, kLSUnknownCreator, \"m4v\", kLSRolesViewer) // VLC\r\nLSCopyDefaultRoleHandlerForContentType(   \"com.apple.m4v-video\", kLSRolesViewer)?.takeRetainedValue() // nil !??!\r\nLSCopyDefaultApplicationURLForContentType(\"com.apple.m4v-video\", kLSRolesViewer, nil)?.takeRetainedValue() // VLC\r\n\r\nExpected Results:\r\nGoal: determine which application would be used to open a given file type, if the user double-clicked it from Finder.\r\n\r\nLSGetApplicationForInfo does this, but its replacements do not. The desired output for \"key\" or \"com.apple.iwork.keynote.key\" would be Keynote.app itself, and for \"m4v\" or \"com.apple.m4v-video\" we would expect to get VLC.app.\r\n\r\nActual Results:\r\nLSCopyDefaultApplicationURLForContentType :: com.apple.m4v-video :: kLSRolesAll :: returns /System/Library/Spotlight/CoreMedia.mdimporter?!\r\nLSCopyDefaultApplicationURLForContentType :: com.apple.m4v-video :: kLSRolesViewer :: returns VLC as expected\r\n\r\nSo I thought maybe kLSRolesViewer is the correct value to use, however,\r\n\r\nLSCopyDefaultApplicationURLForContentType :: com.apple.iwork.keynote.key :: kLSRolesAll :: returns Keynote.app as expected\r\nLSCopyDefaultApplicationURLForContentType :: com.apple.iwork.keynote.key :: kLSRolesViewer :: returns Preview.app?!\r\n\r\nNote that LSCopyDefaultRoleHandlerForContentType also returns incorrect values as seen in the playground. It seems there is no alternative to LSGetApplicationForInfo."
+    email: jtbandes@gmail.com
+    modified: "2015-07-07T05:08:49.30283Z"
+    number: "21698360"
+    number_intvalue: 21698360
+    originated: 7/6/2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.10.4 (14E46)
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: LSGetApplicationForInfo is gone, but its replacements do not provide the same functionality

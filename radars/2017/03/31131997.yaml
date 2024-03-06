@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31131997"
+    labels:
+        datastore_id: "5015863681875968"
+data:
+    classification: ""
+    created: "2017-03-18T19:15:29.71688Z"
+    description: "Area:\r\nPerformance (slow, hung)\r\n\r\nSummary:\r\nExecuting pthread_cancel shortly after pthread_create might lead to the cancel request being lost. This is in violation of POSIX, as by the time pthread_create returns, use of the pthread_t in pthread_cancel should be valid.\r\n\r\nSteps to Reproduce:\r\n1. Compile the attached cancel.c file\r\n2. Run following shell command \r\nfor i in `seq 100000`; do ./a.out $i ; done && echo ' All is well!'\r\n\r\n\r\nExpected Results:\r\nShell command will count to 100000 and finish with a \"100000 All is well!\"\r\n\r\nActual Results:\r\nThe command will hang, usually before $i reached 1000, because the cancellation request was lost.\r\n\r\nLLDB inspection shows that the thread is blocking on read as expected. If the user call pthread_cancel(pthread) manually on main's frame, the thread is cancelled. So it seems, there's a race between pthread_create and pthread_cancel.\r\n\r\nVersion:\r\nmacOS Sierrra v10.12.3\r\n/usr/lib/system/libsystem_pthread.dylib (compatibility version 1.0.0, current version 218.30.1)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nmacOS Sierrra v10.12.3\r\n/usr/lib/system/libsystem_pthread.dylib (compatibility version 1.0.0, current version 218.30.1)\r\n\r\nAttachments:\r\n'cancel.c' was successfully uploaded.\r\n\r\nSee https://gist.github.com/a3f/0fe444521feca3096fc91e0bfddc1a2c"
+    email: Ahmed.Fatoum@gmail.com
+    modified: "2017-03-18T19:15:29.71719Z"
+    number: "31131997"
+    number_intvalue: 31131997
+    originated: "2017-03-18"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.12.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Possible race condition leading to pthread_cancels being lost

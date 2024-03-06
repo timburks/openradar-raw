@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35025731"
+    labels:
+        datastore_id: "5034508772442112"
+data:
+    classification: Serious Bug
+    created: "2017-10-17T09:34:08.48045Z"
+    description: "Summary:\r\nIf we configure an NFS share to automount on a 10.13-client the Finder can't access files on it. Manually mounting the NFS share works.\r\n\r\nSteps to Reproduce:\r\n* Share a volume with r/w access over NFS.\r\n* Mount it over NFS on a test machine to verify that access works.\r\n* Browse to it using the Finder and create a new folder.\r\n* Unmount it.\r\n* Create an automount map for the same share:\r\nbash-3.2$ cat /etc/auto_master \r\n#\r\n# Automounter master map\r\n#\r\n+auto_master\t\t# Use directory service\r\n/net\t\t\t-hosts\t\t-nobrowse,hidefromfinder,nosuid\r\n/home\t\t\tauto_home\t-nobrowse,hidefromfinder\r\n/Network/Servers\t-fstab\r\n/-\t\t\t-static\r\n/-\tauto_maclab\t-nobrowse,nosuid\r\n\r\nbash-3.2$ cat /etc/auto_maclab \r\n/Labusers\t-fstype=nfs,hard,bg,intr,rw,nfc,locallocks\tshared.example.com:/vol/maclabb/flov/home\r\n\r\n* Reboot.\r\n* Try to browse the same share after it has been automounted.\r\n\r\nExpected Results:\r\nFile access from the Finder should work as usual.\r\n\r\nActual Results:\r\n* The Finder doesn't show the mount.\r\n* Using Go to Folder… you can navigate to the mount, but no content is shown.\r\n* The share can be access from Terminal, but `open /path/to/mount` results in an error message: \"LSOpenURLsWithRole() failed with error 5 for the file /path/to/mount.\"\r\n\r\nVersion/Build:\r\n10.13/17A405\r\n\r\nConfiguration:"
+    email: niclas.siberg@gmail.com
+    modified: "2017-10-17T09:34:08.4807Z"
+    number: "35025731"
+    number_intvalue: 35025731
+    originated: "2017-10-17"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.13/17A405
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: Finder can't access automounted NFS shares

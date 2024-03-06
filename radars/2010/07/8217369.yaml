@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8217369"
+    labels:
+        datastore_id: "536401"
+data:
+    classification: Other bug
+    created: "2010-07-21T18:12:08.030497Z"
+    description: "Summary:\r\n\r\nThe Mac OS X Server Network Services Administration Manual, page 90 (in the middle) states: \"By default, the IPv6Mode key has the string set to DenyAllExceptLocal. This setting applies the following rules, which denies all IPv6 traffic but permits local network traffic (...)\". This is wrong - the only traffic getting allowed is ff02::/16 which is link-local multicast network! Local traffic comes either from fc80::/10 (link-local unicast) or fc00::/7 (Unique Local unicast, formerly site-local). Therefore, the firewall does not allow meaningful local traffic.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n1. Check Mac OS X Server Network Services Administration Manual, page 90 (in the middle)\r\n2. It states correctly that when IPv6Mode in /etc/ipfilter/ip_address_groups.plist is set to DenyAllExceptLocal, the file cat /etc/ipfilter/ip6fw.conf.apple contains after a restart the line \"add 1100 allow all from any to ff02::/16\"\r\n3. This is supposed to allow local traffic, but ff02::/16 is a link-local multicast-address (see http://www.iana.org/assignments/ipv6-multicast-addresses/)\r\n4. Real local traffic is unicast, not multicast and will most probably come from fc00::/7 (Unique Local Address, ULA)\r\n\r\nExpected Results:\r\n\r\nLocal IPv6 unicast traffic should be allowed.\r\n\r\nActual Results:\r\n\r\nLink-local IPv6 multicast traffic is allowed.\r\n\r\nRegression:\r\n\r\nUnknown\r\n\r\nNotes:"
+    email: mdwoernhard@gmail.com
+    modified: "2011-08-28T05:40:33.132412Z"
+    number: "8217369"
+    number_intvalue: 8217369
+    originated: 2010-07-21 20:08
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X Server
+    product_version: 10F569
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ipfilter in IPv6Mode DenyAllButLocal allows only link-local multicast

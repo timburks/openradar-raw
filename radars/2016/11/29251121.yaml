@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29251121"
+    labels:
+        datastore_id: "6159185385357312"
+data:
+    classification: Serious Bug
+    created: "2016-11-14T19:36:03.0228Z"
+    description: "This is a duplicate of rdar://28524119\n\nSummary:\r\nOur build server uses the security command line tools to create a new keychain for each build. On Mac OS 10.11.x (and older), it could create a keychain, import the signing identity (specifying /usr/bin/codesign as an allowed application), and then use that identity to codesign an application without any UI interaction required.\r\n\r\nThe same approach on macOS 10.12 results in a UI prompt:\r\ncodesign wants to access key \"key name\" in your keychain. Do you want to allow access to this item?\r\n\r\nThis prompt occurs even if the private key has it's access control set to \"Allow all application to access this item\"\r\n\r\nSteps to Reproduce:\r\n1. Execute the following commands in Terminal (requires a signing identity to be available to import)\r\nsecurity create-keychain -p test test\r\nsecurity unlock-keychain -p test test\r\nsecurity import identity.p12 -k test -P password -T /usr/bin/codesign\r\nsecurity list-keychains -s test\r\n\r\n2. Use /usr/bin/codesign to sign an application.\r\n\r\nExpected Results:\r\nThe system should not prompt for access to the key because codesign is already specified as an allowed application.\r\n\r\nActual Results:\r\nThe system will prompt you to allow codesign to access the key despite codesign already having access (see screenshot).\r\n\r\nVersion:\r\nmacOS 10.12\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:"
+    email: tim@synthist.net
+    modified: "2016-11-14T19:36:03.02297Z"
+    number: "29251121"
+    number_intvalue: 29251121
+    originated: 14-Nov-2016 02:35 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: "10.12"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Keychain prompts for permission to use private key regardless of access control settings

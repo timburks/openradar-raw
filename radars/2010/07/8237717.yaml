@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8237717"
+    labels:
+        datastore_id: "549401"
+data:
+    classification: ""
+    created: "2010-07-27T01:18:33.847075Z"
+    description: "Summary:\r\n\r\nWebDAV defines an HTTP response code, 207, for returning multiple error codes for a single request. The MacOSX webdav client implementation interprets response 207 as success, even if the error codes it contains indicate failure.\r\n\r\nSteps to Reproduce:\r\n\r\nPresumably there are many ways to do this, but here's a simple way:\r\n\r\n1. Set up an apache2 server with mod_dav (e.g., use the server that ships with OSX)\r\n2. Create a small directory hierarchy on the DAV server, perhaps a/b/c, so that you can mount 'a' in the Finder\r\n3. Issue a LOCK request against a/b by hand (e.g., using curl)\r\n4. Mount 'a' in the finder\r\n5. Attempt to create files in 'a' or in 'a/b'\r\n\r\nExpected Results:\r\n\r\nWebdavfs should notice that DAV operations are failing and respond accordingly (e.g. translating them to EBUSY or EACCESS or something).\r\n\r\nActual Results:\r\n\r\nWebdavfs misinterprets failure indications as success, leading to file creation silently failing. \"echo blah > foo\" \"succeeds\", but 'foo' does not exist afterwards.\r\n\r\nWebdavfs emits the following error text to the console, which is also indirectly indicative of the bug:\r\n\r\n26 Jul 10 5:23:41 PM\twebdavfs_agent[18526]\terror parsing lock token; file: /SourceCache/webdavfs/webdavfs-293/mount.tproj/webdav_parse.c; line: 1744\r\n\r\nNotes:\r\n\r\nThe multistatus response occurs because lock contention results in two errors from Apache: one for the actual resource in the request, and one indicating the resource on which the lock was placed (for a lock with Depth: inifinity these can be different resources).\r\n\r\nIf you look at the source code to webdavfs-293 from opensource.apple.com, the error is pretty straightforward. In translate_status_to_error() in webdav_network.c, all error codes starting with '2' are interpreted as an unquallified success, which is wrong. In order to conform to the DAV spec, error code 207 needs to be interpreted with more care. For instructions, see RFC 4918 sections 11.1 and 13."
+    email: wiml@omnigroup.com
+    modified: "2012-03-27T20:25:06.29331Z"
+    number: "8237717"
+    number_intvalue: 8237717
+    originated: 26-Jul-2010 06:15 PM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: 10.6.4/10F569
+    reproducible: Always
+    resolved: 24-Feb-2011 05:10 PM
+    status: Closed
+    title: webdavfs does not correctly interpret 207 Multistatus response

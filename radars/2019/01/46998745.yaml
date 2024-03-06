@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "46998745"
+    labels:
+        datastore_id: "4931161214156800"
+data:
+    classification: Feature (New)
+    created: "2019-01-02T11:22:52.231051Z"
+    description: "Summary:\r\nI already opened rdar://46998451, but I think the use-case of \"only wanting a path you can write to\" such a common use-case that it should be handled by `NSOpenPanel`.\r\n\r\nMy use-case: I use `NSOpenPanel` to let the user select a directory where my app can output some files. I want to inform the user early, while the open panel is still shown, if the user tries to select a read-only directory, as I wouldn't be able to write to that.\r\n\r\nEven if rdar://46998451 is fixed, I still think this feature has merits on its own.\r\n\r\nSteps to Reproduce:\r\nI have this code to open the panel:\r\n\r\n```swift\r\n@NSApplicationMain\r\nfinal class AppDelegate: NSObject, NSApplicationDelegate {\r\n\tfunc convert() {\r\n\t\tlet panel = NSOpenPanel()\r\n\t\tpanel.delegate = self\r\n\t\tpanel.canChooseFiles = false\r\n\t\tpanel.canChooseDirectories = true\r\n\t\tpanel.canCreateDirectories = true\r\n\t\tpanel.allowsMultipleSelection = false\r\n\t\tpanel.prompt = \"Convert\"\r\n\t\tpanel.message = \"Choose where to save the converted images\"\r\n\r\n\t\tpanel.beginSheetModal(for: window) {\r\n\t\t\tif $0 == .OK {\r\n\t\t\t\tself.startConversion(urls, outputDirectory: panel.urls.first!)\r\n\t\t\t}\r\n\t\t}\r\n\t}\r\n}\r\n```\r\n\r\nExpected Results:\r\nI expected to be able to set a property, let's call it `panel.allowReadOnlyPaths = false`, to make NSOpenPanel show an error if the user tries to select a read-only file or directory.\r\n\r\nActual Results:\r\nBecause of rdar://46998451, I can't even implement this manually, so I have to end up with a user unfriendly workaround that only shows an error after the open panel is dismissed, and then I have to show the open panel again.\r\n\r\nVersion:\r\nmacOS 10.14.2\r\n\r\nNotes:"
+    email: sindresorhus@gmail.com
+    modified: "2019-01-11T02:31:06.1544Z"
+    number: "46998745"
+    number_intvalue: 46998745
+    originated: 02-Jan-2019 12:22 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: macOS 10.14.2
+    reproducible: Always
+    resolved: ""
+    status: Open (Duplicate of 3300000)
+    title: NSOpenPanel should have a setting to only allow the user to select writable paths

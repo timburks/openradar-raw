@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18879087"
+    labels:
+        datastore_id: "5341372794011648"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2014-11-05T11:26:10.542126Z"
+    description: "Summary:\r\n\r\nI have an DataModel with Generic type array. \r\nWhen I select cell I want to pass this item to delegate. \r\nDelegate has a method with protocol type, not an class type.\r\nApp crash. If I change method type of a delegate from protocol to class, it works \r\n\r\nApp crashes in strange place\r\n\r\n///// code\r\n\r\n// View controller\r\nclass ArmaturListViewController: UITableViewController {\r\n\r\noverride func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {\r\n    let cell = tableView.dequeueReusableCellWithIdentifier(\"ArmaturTupeCell\", forIndexPath: indexPath) as UITableViewCell\r\n    let armatur = viewModel.tableModel[indexPath]\r\n    cell.textLabel.text =  armatur.name // CRASH HERE!\r\n\r\n    return cell\r\n  }\r\n\r\n override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {\r\n    let armatur = viewModel.tableModel[indexPath]\r\n    if let armatruSetupVC = targetViewControllerForAction(\"selectArmatur:\", sender: self) as? ArmaturDrillingSetupViewController {\r\n      armatruSetupVC.selectArmatur(armatur) \r\n// Change this method type to fix\r\n    }\r\n  }\r\n}\r\n\r\n\r\n// ArmaturDrillingSetupViewController \r\n\r\n  func selectArmatur(armatur: ArmaturType) {\r\n    Swell.debug(\"Select armatur\")\r\n  }\r\n\r\nFIX!! \r\nIf I change type of that method app works!! \r\n\r\nfunc selectArmatur(armatur: Armatur) {\r\n    Swell.debug(\"Select armatur\")\r\n }\r\n\r\n\r\nSteps to Reproduce:\r\nRun code. Crash every time."
+    email: konstantin.koval1@gmail.com
+    modified: "2014-11-05T11:27:59.56607Z"
+    number: "18879087"
+    number_intvalue: 18879087
+    originated: 05-Nov-2014 12:25 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1 (6A1052d)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: App crash. Generic type and Protocol

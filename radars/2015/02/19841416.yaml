@@ -1,0 +1,60 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19841416"
+    labels:
+        datastore_id: "5037373129752576"
+data:
+    classification: Enhancement
+    created: "2015-02-15T23:23:29.500241Z"
+    description: |-
+        Summary:
+        Sets have union as well as unionInPlace. Arrays have + as well as +=. Both Sets and Arrays are super convenient to construct in folds:
+
+        let unionOfElementThings = reduce(things, []) { $0.union($1.things) }
+        let flattened = reduce(arrayOfArrays, [], +)
+
+        Dictionaries, by contrast, have only mutating methods for this, so it gets tedious:
+
+        let thingValuesIndexedByKeys = reduce(things, [:]) { (var dict, each) in // you might need to give a complete type for the empty dictionary literal
+            dict[each.key] = each.value
+            return dict
+        }
+
+        This would be much nicer if Dictionary conformed to ExtensibleCollectionType, because then you’d get + for free:
+
+        let thingValuesIndexedByKeys = reduce(things, [:]) { $0 + $1.key, $1.value }
+
+        Taking it a step further, give Dictionary a constructor taking a sequence of (Key, Value) pairs. (Sort of like the existing DictionaryLiteralConvertible constructor, but not a variadic method which there’s still no splat operator for, argh, argh.) Then you can just + (Key, Value) tuples together into a dictionary:
+
+        let thingValuesIndexedByKeys = reduce(things, [:], +)
+
+        You can implement these in an extension, which is great, but extensions mean I have to re-do that everywhere because I can’t share those extensions between modules. I can’t do ExtensibleCollectionType conformance in an extension, either, because Dictionary is defined in a different module; so the only remaining option is duplication.
+
+
+        Steps to Reproduce:
+        N/A
+
+        Expected Results:
+        N/A
+
+        Actual Results:
+        N/A
+
+        Regression:
+        N/A
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-02-15T23:23:29.500397Z"
+    number: "19841416"
+    number_intvalue: 19841416
+    originated: 15-Feb-2015 06:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-Beta (6D520o)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Please add pure methods to construct dictionaries in folds'

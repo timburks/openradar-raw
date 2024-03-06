@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22277918"
+    labels:
+        datastore_id: "5529331434520576"
+data:
+    classification: crasher / data loss
+    created: "2015-08-13T23:54:48.12883Z"
+    description: "This bug affects SceneKit and SpriteKit.\r\n\r\nFor example, if I create an SCNView with \r\n\r\n         let sceneKitView = SCNView(frame: CGRect.zeroRect, options: [SCNPreferredRenderingAPIKey : SCNRenderingAPI.OpenGLCore32.rawValue])\r\n\r\nAnd then I set the contents of one of its objects to be a test CALayer, like so:\r\n\r\n        let floor = SCNPlane(width: 10, height: 10)\r\n        let layer = CALayer()\r\n        layer.bounds = CGRect(x: 0, y: 0, width: 10, height: 10)\r\n        layer.backgroundColor = NSColor.yellowColor().CGColor\r\n        floor.firstMaterial?.diffuse.contents = layer\r\n\r\nThen CoreAnimation reports the following:\r\n\r\n> CoreAnimation: unsupported graphics hardware; need three or more texture units; need ARB_texture_rectangle extension; need EXT_framebuffer_object extension; need ARB shader extensions\r\n> CoreAnimation: rendering error 500\r\n\r\nThis is nuts because of course OpenGL 3.2+ supports rectangular textures and and frame buffers and shaders. It appears that someone is just making a simple existence call and testing only the for the ancient ARB_texture_rectangle (which is from 2005!) and ignoring that rectangular textures are built into every machine going back to 10.7.5.\r\n\r\nCheck this page, for instance: https://developer.apple.com/opengl/capabilities/GLInfo_1075_Core.html\r\n\r\nWhile I appreciate that Metal is coming and that CoreImage and CoreAnimation will work with Metal buffers, it's not clear that all machines running Yosemite will be able to run Metal. So, we'll end up with a HUGE gap in capabilities, where some machines run Metal and can use CoreAnimation and CoreImage with SceneKit and SpriteKit, and older machines will be stuck on OpenGL 3.2 and cannot.\r\n\r\nThis makes programmers' jobs a nightmare. It's bad enough to have to support both OpenGL and Metal, but having to write workarounds to get CoreAnimation and CoreImage working as well is crazy (and will be very slow, on machines that are already slow).\r\n\r\nI'd like to point out OpenGL 3.2 was released in 2009, so this bug has existed for 6 years now. It's much worse for us now than it was then, since back then we didn't have SceneKit and SpriteKit, which integrate so nicely (sort of!) with CoreAnimation and CoreImage.\r\n\r\nSteps to Reproduce:\r\n1. Create a OpenGL 3.2 or OpenGl 4.1 SCNView.\r\n2. Add an object with a valid, drawing CALayer as its material contents.\r\n\r\n\r\nExpected Results:\r\nShould work!\r\n\r\nActual Results:\r\nCoreAnimation: unsupported graphics hardware; need three or more texture units; need ARB_texture_rectangle extension; need EXT_framebuffer_object extension; need ARB shader extensions\r\nCoreAnimation: rendering error 500\r\n\r\n\r\nVersion:\r\n[true on ALL OS X versions]\r\nOS X 10.11 Beta (15A244d)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nMacBook Pro (13-inch, Early 2015)\r\n3.1 GHz Intel Core i7\r\n16 GB 1867 MHz DDR3\r\nIntel Iris Graphics 6100 1536 MB\r\n\r\nAttachments:"
+    email: wil.shipley@gmail.com
+    modified: "2015-08-13T23:54:48.12928Z"
+    number: "22277918"
+    number_intvalue: 22277918
+    originated: August 13, 2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: all
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: CALayer doesn't draw in OpenGL 3.2 or OpenGL 4.1

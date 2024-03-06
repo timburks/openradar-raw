@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8060378"
+    labels:
+        datastore_id: "396401"
+data:
+    classification: Data Loss
+    created: "2010-06-04T06:38:45.679098Z"
+    description: "Summary: \r\nAudioConverterFillComplexBuffer, while converting from an uncompressed audio source to a packetized compressed audio format such as AAC, does not recover from a temporary disruption in the input stream before the conversion is complete.\r\n\r\nSteps to Reproduce:\r\n1. Build a code on Mac OS X 10.5 or later that repeatedly calls AudioConverterFillComplexBuffer to call a AudioConverterComplexInputDataProc to get uncompressed input audio data, a chunk at a time, for conversion into any AAC format.\r\n2. Call AudioConverterFillComplexBuffer with much more room pointed to by both outOutputData and outPacketDescription than what could be generated from the input data available with these conversion settings.\r\n3. After exhausting the presently available input data, indicate to AudioConverterFillComplexBuffer, via the AudioConverterComplexInputDataProc, that no more input data is available but later there is more to come, by having the AudioConverterComplexInputDataProc return a negative number and set ioNumberDataPackets to 0, as described by Case 3 of QA1317.\r\n4. Observe that the AudioConverterFillComplexBuffer call correctly returns the negative number reported by the AudioConverterComplexInputDataProc and whatever data it converted.\r\n5. Make additional data available to the AudioConverterComplexInputDataProc.\r\n6. Call AudioConverterFillComplexBuffer, to continue the conversion, again for the new chunk of input data.\r\n\r\nExpected Results:\r\nI expected AudioConverterFillComplexBuffer to pick up the conversion from where it had to stop and continue to produce output packets of compressed audio data.\r\n\r\nActual Results:\r\nAudioConverterFillComplexBuffer returns paramErr and no output data for this conversion and provides no way to recover this audio conversion session, losing or corrupting data bordering the interruption. \r\n\r\nRegression:\r\nThis was definitively observed on Mac OS X 10.5.8 9L31a on a MacBook Pro 2.4 and on a Mac Pro 8-core/3GHz running Snow Leopard 10.6.3 10D573.  I believe I first encountered the error on Tiger, but only recently have I figured out the pattern of this problem.  \r\n\r\nThis issue occurs only for certain output codecs, most importantly AAC, but also IMA 4:1 and MPEG 4 High Efficiency AAC (Snow Leopard).  It does not occur when the output is Lossless, AMR Narrowband, Qualcomm Purevoice, iLBC, or any uncompressed (PCM) audio format. \r\n\r\nAs long as there is much more input data to AudioConverterFillComplexBuffer than could fit, once converted, into outOutputData and outPacketDescription, the problem does not occur. This means that the AudioConverterComplexInputDataProc could provide more data, if called, but AudioConverterFillComplexBuffer does not because its output buffers are filled. As long as that condition is maintained for every call to AudioConverterFillComplexBuffer, no problem occurs, and the audio data is successfully converted through to Case 1 of QA1317.\r\n\r\nNotes:\r\nThe Workaround: Maintain conditions such that Case 3 of QA1317 is not allowed to occur, especially for AAC output. In my present implementation, I keep running statistics on AudioConverterFillComplexBuffer's behavior about how many AAC packets it produces corresponding to amount of input data it consumed.  Using that ratio, I predict whether or not Case 3 of QA1317 will occur for the amount of input data I have and my output buffers.  If I predict it will come close to Case 3, I either chop down the ioOutputDataPacketSize argument to a value below my prediction in the call to AudioConverterFillComplexBuffer or simply don't call AudioConverterFillComplexBuffer until I have more input data."
+    email: drdauger@gmail.com
+    modified: "2011-08-28T05:41:23.600586Z"
+    number: "8060378"
+    number_intvalue: 8060378
+    originated: June 3, 2010
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.8 9L31a
+    reproducible: Always
+    resolved: Yes
+    status: Closed
+    title: AudioConverterFillComplexBuffer not recovering from input stream interruption

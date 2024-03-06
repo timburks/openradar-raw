@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23549463"
+    labels:
+        datastore_id: "6173583474688000"
+data:
+    classification: Other Bug
+    created: "2015-11-15T18:39:10.20108Z"
+    description: "Summary:\r\nWhen using IBDesignable properties, as a workaround for not having sizing class support, a common approach is to use traitCollection with IBDesignable variables one per sizing class. However Xcode doesn’t interpret traitCollection and always uses any / any when showing interface builder.. This works as expected in the similar and device, however in interface builder only any / any is used.\r\n\r\nSteps to Reproduce:\r\nSetup IBInspectable variables for each sizing class :-\r\n@property (nonatomic) IBInspectable CGFloat AaShadowHeight;\r\n@property (nonatomic) IBInspectable CGFloat RrShadowHeight;\r\n@property (nonatomic) IBInspectable CGFloat CcShadowHeight;\r\n@property (nonatomic) IBInspectable CGFloat RcShadowHeight;\r\n\r\nUse those variables in your drawRect method.\r\nSet a different value for each property.\r\n\r\nUse self.traitCollection in your drawRect method :-\r\n\r\n- (void)drawRect:(CGRect)rect {\r\n    // Drawing code\r\n    \r\n    CGFloat l_shadHeight = self.AaShadHeight; // 24.1\r\n    \r\n    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact)\r\n    {\r\n        if (self.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact)\r\n        {\r\n            //iphone3.5 / 4 / 4.7 landscape\r\n            l_shadHeight = self.CcShadHeight;\r\n        }\r\n    }\r\n    \r\n    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular)\r\n    {\r\n        if (self.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassRegular)\r\n        {\r\n            //ipad landscape\r\n            l_shadHeight = self.RrShadHeight;\r\n        }\r\n        if (self.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact)\r\n        {\r\n            //iphone6+\r\n            l_shadHeight = self.RcShadHeight;\r\n        }\r\n    }\r\n\r\nBuild your framework file (contains drawing class).\r\nOpen your storyboard.\r\nChange your sizing class to regular / regular.\r\nChange the IBDesignable value for regular / regular - see no change.\r\nChange the IBDesignable value for any / any see the change.\r\n\r\nExpected Results:\r\nTo have traitCollection work with the interface builder when using IBDesignable properties for each sizing class.\r\n\r\nActual Results:\r\nAny / any IBDesignable property is used in all cases\r\n\r\nRegression:\r\nAlways\r\n\r\nNotes:\r\nNone"
+    email: julesthecoder@gmail.com
+    modified: "2015-11-15T18:39:10.2015Z"
+    number: "23549463"
+    number_intvalue: 23549463
+    originated: 15 November 2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.1.1 (7B1005)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 7.1: fails to interpret traitCollection with Interface builder'

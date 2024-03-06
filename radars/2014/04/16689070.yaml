@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16689070"
+    labels:
+        datastore_id: "5873033575137280"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2014-04-22T18:14:10.905717Z"
+    description: "Summary:\nSubclassing XCTestLog to modify the information logged during a test run will result in Xcode displaying false information about the test run. \n\nSteps to Reproduce:\n1. Add a subclass of XCTestLog to your test target\n2. Override -testLogWithFormat:arguments: and change the format of the log data before writing to the log file handle.\nFor example:\n\n#import \"RedGreenXCTestLog.h\"\n\nNSString *const kXCTTestCaseArgsFormat = @\"%@|%s|%.3f\";\nNSString *const kRGArgsSeparator = @\"|\";\nNSString *const kRGTestCaseFinishFormat = @\"Test Case '%@' %s (%.3f seconds).\\n\";\nNSString *const kRGModifiedTestResultFormat = @\"%@: %@ (%@s)\\n\";\n\n@implementation RedGreenXCTestLog\n\n+ (void)load\n{\n    [[NSUserDefaults standardUserDefaults] setValue:NSStringFromClass(self)\n                                             forKey:XCTestObserverClassKey];\n}\n\n- (void)testLogWithFormat:(NSString *)format arguments:(va_list)arguments\n{\n    if (![format isEqualToString:kRGTestCaseFinishFormat]) {\n        return;\n    }\n    \n    // Produce output in the form \"<RESULT>: <test case> (duration)\"\n    NSArray *args = NSArrayFromArguments(arguments);\n    NSString *formattedLog = [NSString stringWithFormat:kRGModifiedTestResultFormat, [args[1] uppercaseString], args[0], args[2]];\n    \n    [self.logFileHandle writeData:[formattedLog dataUsingEncoding:NSUTF8StringEncoding]];\n}\n\nNSArray *NSArrayFromArguments(va_list arguments)\n{\n    NSString *s = [[NSString alloc] initWithFormat:kXCTTestCaseArgsFormat arguments:arguments];\n    NSArray *args = [s componentsSeparatedByString:kRGArgsSeparator];\n    \n    return args;\n}\n\n@end\n\n3. Write a few tests that will only succeed. \n4. Run the test suite\n\nExpected Results:\nXcode will display a Test Passed HUD, the Test Navigator & the Log Navigator will show that all tests passed. \n\nActual Results:\nXcode displays a Test Failed HUD and the Log Navigator displays a warning that the test target did not finish. The Test Navigator correctly shows all tests as having passed."
+    email: neilco@gmail.com
+    modified: "2014-04-22T18:14:10.905827Z"
+    number: "16689070"
+    number_intvalue: 16689070
+    originated: 22-Apr-2014 07:13 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 5.1.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Overriding log methods in XCTestLog subclasses causes Xcode to incorrectly report test results

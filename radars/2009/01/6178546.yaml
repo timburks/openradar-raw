@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6178546"
+    labels:
+        datastore_id: "2432"
+data:
+    classification: Other Bug
+    created: "2009-01-13T03:38:12.895329Z"
+    description: "26-Aug-2008 08:29 PM Dave Dribin:\r\nSummary: \r\nIf you have an NSCell subclass that's used just for drawing, you set the data cell of a table column programatically, and you try to bind to that cell programatically, you get a KVC error and exception.  The error message is:\r\n\r\n[<NSTableColumn 0x101fed0> valueForUndefinedKey:]: this class is not key value coding-compliant for the key value.\r\n\r\nAnd the backtrace is:\r\n\r\n#0  0x962daff4 in ___TERMINATING_DUE_TO_UNCAUGHT_EXCEPTION___ ()\r\n#1  0x901690fb in objc_exception_throw ()\r\n#2  0x962dac71 in -[NSException raise] ()\r\n#3  0x94d03ea3 in -[NSObject(NSKeyValueCoding) valueForUndefinedKey:] ()\r\n#4  0x94bfb69b in _NSGetUsingKeyValueGetter ()\r\n#5  0x94bfb1aa in -[NSObject(NSKeyValueCoding) valueForKey:] ()\r\n#6  0x94c28d2a in -[NSObject(NSKeyValueCoding) valueForKeyPath:] ()\r\n#7  0x90af02da in -[NSObjectParameterBinder _updateObject:observedController:observedKeyPath:context:] ()\r\n#8  0x90af0048 in -[NSObjectParameterBinder _observeValueForKeyPath:ofObject:context:] ()\r\n#9  0x90aefe77 in -[NSBinder _performConnectionEstablishedRefresh] ()\r\n#10 0x90ae80e8 in -[NSObject(NSKeyValueBindingCreation) bind:toObject:withKeyPath:options:] ()\r\n#11 0x000021e8 in -[CellBinder_AppDelegate awakeFromNib] (self=0x102fa40, _cmd=0x90232928) at /Users/dave/work/sandbox/CellBinder2/CellBinder_AppDelegate.m:11\r\n#12 0x962e9955 in -[NSSet makeObjectsPerformSelector:] ()\r\n#13 0x908fbbe6 in -[NSIBObjectData nibInstantiateWithOwner:topLevelObjects:] ()\r\n#14 0x908f1e12 in loadNib ()\r\n#15 0x908f1774 in +[NSBundle(NSNibLoading) _loadNibFile:nameTable:withZone:ownerBundle:] ()\r\n#16 0x908f13b7 in +[NSBundle(NSNibLoading) loadNibFile:externalNameTable:withZone:] ()\r\n#17 0x908f12f5 in +[NSBundle(NSNibLoading) loadNibNamed:owner:] ()\r\n#18 0x908f0fa4 in NSApplicationMain ()\r\n#19 0x00002114 in main (argc=1, argv=0xbffff100) at /Users/dave/work/sandbox/CellBinder2/main.m:5\r\n\r\n\r\nSteps to Reproduce:\r\n1. Create an NSCell subclass.\r\n2. Create a NSTableView.\r\n3. In awakeFromNib, change the data cell for a column to be an instance of\r\n   our custom NSCell subclass.\r\n4. Bind \"value\" of this same column to an array controller using\r\n   bind:toObject:withKeyPath:options:\r\n\r\nExpected Results:\r\nA binding should be established.\r\n\r\nActual Results:\r\nA KVC error message is displayed and an exception is thrown.\r\n\r\nRegression:\r\nN/A\r\n\r\nNotes:\r\nA workaround is to subclass NSActionCell instead of NSCell directly.  I don't understand why the cell's class affects the table column binding.  A table column clearly has a \"value\" binding according to the Cocoa Bindings Reference.  I'm attaching a sample project that demonstrates the issue.\r\n\r\n\r\n\r\n\r\n'CellBinder2.tbz2' was successfully uploaded\r\n\r\n29-Aug-2008 06:33 AM Dave Dribin:\r\nAlso, the Cocoa Bindings Reference has this to say about NSTableColumn's \"value\" binding:\r\n\r\nhttp://developer.apple.com/documentation/Cocoa/Reference/CocoaBindingsRef/BindingsText/NSTableColumn.html\r\n\r\n\"An object that specifies the value of the cell in the NSTableColumn. The object should be suitable for the passing to setObjectValue.\"\r\n\r\nSince NSCell implements setObjectValue:, it seems that this should be possible."
+    email: ddribin@gmail.com
+    modified: "2011-08-28T05:49:47.472756Z"
+    number: "6178546"
+    number_intvalue: 6178546
+    originated: 26-Aug-2008 08:29 PM
+    parent_number: "6178564"
+    product: Mac OS X
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Duplicate/6178564
+    title: Binding a table column to NSCell subclass results in a KVC error and exception

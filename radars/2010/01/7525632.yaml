@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7525632"
+    labels:
+        datastore_id: "137401"
+data:
+    classification: Enhancement
+    created: "2010-01-09T04:33:16.0217Z"
+    description: "08-Jan-2010 08:31 PM Karl Kuehn:\r\nSummary: \r\n\tDuring boot it would be nice if the network ports actually on the booting computer were discovered every time, rather than requiring prompting by the networksetup command or going to the network control panel.\r\n\r\nSteps to Reproduce:\r\n\t1) Take an image created from a desktop computer without AirPort and move it onto a MacBook Air, or an image that has never been booted and has the .AppleSetupDone flag in place (without MacBuddy having been run).\r\n\r\n\t2) Boot and run 'ifconfig' to list the network ports that the computer thinks are there.\r\n\r\n\t3) Open the Network Control Panel, or run '/usr/sbin/networksetup -detectnewhardware' with root priveleges.\r\n\r\n\t4) Run 'ifconfig' and compare the output to the run from #2.\r\n\r\nExpected Results:\r\n\tI would expect that all of the network ports available on the hardware would be listed.\r\n\r\nActual Results:\r\n\tOnly the ports that were already listed in the image will be available, and ports that the computer does not have hardware for can be listed if they were already enumerated in the image.\r\n\r\nRegression:\r\n\tIt is possible that this is new in 10.6 (someone reported to me that it used to work), but my observations have always been that this has been constant for a long time, certainly through 10.4.\r\n\r\nNotes:\r\n\tAs a presenter on the subject of imaging I have talked to a lot of people who have been bitten by this problem in one of three ways:\r\n\r\n1) The configurations on the imaged hardware don't work with the stubs in the image, so even though an AirPort connection is listed it does not work. Removing this port and re-adding it works, but this is not a step that is obvious to many people.\r\n\r\n\tAn obvious, simple solution to this one is to run the equivelent of 'networksetup -detectnewhardware' on every boot. It is not the most clean route (leaves the old ports in place), but does work.\r\n\r\n2) People who are applying images to MacBook Airs and then try to use MCX. This is a problem because MCX is keyed off of the \"primary MAC address\", and that is of en0. If the image comes from a computer that has a built-in ethernet port en0 will be pointing at the ethernet driver, and will point to nothing on a MacBook Air, so the computer cannot successfully apply MCX on some levels. Also some hardware-keyed software looks at this and will fail on them.\r\n\r\n\tThis problem would go away if there was no need to keep state information (like order, or network setup information) about the ports specifically. But I hope that a middle ground can be found.\r\n\r\n3) People who are creating images using SIU's new method of image creation (direct-to-ASR), or another similar method like InstaDMG and are setting the .AppleSetupDone flag to bypass MacBuddy (the setup routine) as they already have the users created (say for a lab).\r\n\r\n\tThis also works with the simple networksetup command, and is totally clean."
+    email: kuehn.karl@gmail.com
+    modified: "2011-08-28T05:43:03.174414Z"
+    number: "7525632"
+    number_intvalue: 7525632
+    originated: 1/8/2010
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'request: run networksetup -detectnewhardware at every boot'

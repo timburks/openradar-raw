@@ -1,0 +1,46 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23592852"
+    labels:
+        datastore_id: "5032777883844608"
+data:
+    classification: Serious Bug
+    created: "2015-11-18T13:57:05.96776Z"
+    description: |-
+        Summary:
+        The thumbnailURL property of CSSearchableItemAttributeSet is an absolute location of disk. However since the app directories can change location, these file URLs are becoming stale and search results are showing without artwork.
+
+        Steps to Reproduce:
+        1. Run the sample project at https://github.com/prendio2/CoreSpotlightSample/tree/thumbnailURL
+        2. Tap the button to create the index
+        3. Note the file path that’s logged
+        4. Build and run the app again but don’t reindex this time
+        5. Note the file path where the thumbnail is now stored
+
+        Expected Results:
+        These paths should match, or if they have to change there should be a mechanism to provide a URL/path relative to the app bundle for core spotlight.
+
+        Actual Results:
+        The app bundle has changed, the artwork is now stored at a different path, and the spotlight index is now out of date. Performing a spotlight search at this point will generally show search results without artwork (although sometimes the old path still seems to work for a while, I’m guessing until the system does a cleanup)
+
+        Regression:
+        iOS 9.1, Device and Simulator. Simulator seems to be more aggressive about removing the old paths so it’s easier to recreate the “search results without thumbnails” issue there.
+
+        Notes:
+
+        The steps to reproduce above are based on building and running the app again but the app’s container directories can change  at other times too and developers have been advised not to store absolute references to them but to call the system to get the locations at runtime: https://developer.apple.com/library/ios/technotes/tn2406/_index.html
+
+        Using thumbnailURL was a fallback option for us because thumbnailData was leading to memory issues related to rdar://23592687
+    email: poppoppop@gmail.com
+    modified: "2015-11-18T13:57:05.9681Z"
+    number: "23592852"
+    number_intvalue: 23592852
+    originated: 18-Nov-2015 01:56 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "9.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Data integrity issue with CSSearchableItemAttributeSet thumbnailURL

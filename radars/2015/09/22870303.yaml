@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22870303"
+    labels:
+        datastore_id: "6750561730822144"
+data:
+    classification: Crash
+    created: "2015-09-28T10:15:46.60857Z"
+    description: "Summary:\r\nWhen a method takes a parameter of generic type S that has a constraint to inherit from a generic class (e.g. \"S: GenericClass<U>\") and this parameter is used as a method argument, the swift compiler crashes with Segmentation fault: 11\r\n\r\nSteps to Reproduce:\r\nOpen the sample project and try to compile it\r\n\r\nExpected Results:\r\nThe code should compile fine\r\n\r\nActual Results:\r\nThe swift compiler crashes with Segmentation fault: 11\r\n\r\nVersion:\r\nXcode 7.0 (7A218) and 7.1 beta (7B75)\r\n\r\nNotes:\r\nAdding an explicit cast of newOperation to ResultOperation<S> (i.e. replacing the method argument \"newOperation\" in main.swift:22 by \"newOperation as! ResultOperation<S>\") circumvents the problem. \r\n\r\nI believe the root cause is the same as in rdar://22870249 which takes the same configuration and has the same workarounds but only results in a compiler error and not a segmentation fault\r\n\r\nConfiguration:\r\nThis issue does not occur if ResultOperation is not a generic class\r\n\r\nAttachments:\r\n'SampleProject.zip' was successfully uploaded.\r\n\r\nThis contains the following file:\r\n\r\nclass ResultOperation<ResultType> {\r\n}\r\n\r\nclass OperationChain<LastReturnType> {\r\n\tfunc chain<T, O: ResultOperation<T>>(newOperation: O) -> OperationChain<T>? {\r\n\t\treturn nil\r\n\t}\r\n}\r\n\r\nfunc chain<L, S, U: ResultOperation<S>>(operationChain: OperationChain<L>, newOperation: U) -> OperationChain<S>? {\r\n\tlet x: OperationChain<L>? = nil\r\n\tlet a = x?.chain(newOperation)\r\n\treturn nil\r\n}"
+    email: alex@hoppen-koeln.de
+    modified: "2015-09-28T10:18:04.74465Z"
+    number: "22870303"
+    number_intvalue: 22870303
+    originated: 26-Sep-2015 08:32 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xocde 7 & 7.1 beta 2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Calling a method with a parameter whose type is defined by a generic inheritance constraint crashes the compiler with a segmentation fault'

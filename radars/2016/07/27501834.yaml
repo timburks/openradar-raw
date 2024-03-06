@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27501834"
+    labels:
+        datastore_id: "5518388159840256"
+data:
+    classification: Security
+    created: "2016-07-22T21:54:58.36047Z"
+    description: "Summary:\r\nNSURLSession's dataTaskWithRequest:completionHandler: leaks when performing a request that invokes URLSession:didReceiveChallenge:completionHandler: for client certificate authentication. A delegate does not even need to be setup to handle the challenge, as seen in the following example. There are no issues with actually getting client authentication working, but the leaks are alarming for long running processes.\r\n\r\nChanging the URL to another site that does not require client authentication results in no leaks.\r\n\r\n  NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:@\"https://clientauth.exaple.com\"]];\r\n  NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration]];\r\n  [[session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {\r\n    NSLog(@\"%@\", response);\r\n  }] resume];\r\n  [session finishTasksAndInvalidate];\r\n\r\nSteps to Reproduce:\r\n1. Run the attached test app through Instruments.\r\n\r\nExpected Results:\r\nThere should be no leaks.\r\n\r\nActual Results:\r\nThe test program leaks:\r\nLeaked Object\t#\tAddress\tSize\tResponsible Library\tResponsible Frame\r\nMalloc 64 Bytes\t1\t0x600000269940\t64 Bytes\tSecurity\tDefaultAllocator::malloc(unsigned long)\r\nMalloc 16 Bytes\t1\t0x600000010430\t16 Bytes\tSecurity\tDefaultAllocator::malloc(unsigned long)"
+    email: bur@google.com
+    modified: "2016-07-22T21:54:58.36066Z"
+    number: "27501834"
+    number_intvalue: 27501834
+    originated: 22-Jul-2016 05:31 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11.6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSURLSession Leaks During client authentication

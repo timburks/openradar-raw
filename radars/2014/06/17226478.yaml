@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17226478"
+    labels:
+        datastore_id: "5898764053118976"
+data:
+    classification: Enhancement
+    created: "2014-06-09T02:11:00.245516Z"
+    description: "The Swift language supports supports strongly-typed arrays, using the type system and copying semantics to ensure code correctness.  At present, there is a gap in functionality when working with type hierarchies.  \r\n\r\n* There is no “+” operator that allows the creation of arrays from subtypes of a common base class.\r\n* The “+=“ operator does not support appending an array of a compatible subtype, even through the operator supports appending a single element of a subtype.\r\n\r\nUsing the type hierarchy from the Swift manual:\r\n\r\nclass MediaItem {\r\n    let name: String\r\n    init(name: String) {\r\n        self.name = name\r\n    }\r\n}\r\n\r\nclass Movie: MediaItem {\r\n    let director: String\r\n    init(name: String, director: String) {\r\n        self.director = director\r\n        super.init(name: name)\r\n    }\r\n}\r\n\r\nclass Song: MediaItem {\r\n    let artist: String\r\n    init(name: String, artist: String) {\r\n        self.artist = artist\r\n        super.init(name: name)\r\n    }\r\n}\r\n\r\nThese two arrays get the inferred type of Movie[] and Song[] respectively:\r\n\r\nlet movies = [\r\n    Movie(name: \"Casablanca\", director: \"Michael Curtiz\"),\r\n    Movie(name: \"Citizen Kane\", director: \"Orson Welles\")\r\n]\r\nlet songs = [\r\n    Song(name: \"Blue Suede Shoes\", artist: \"Elvis Presley\"),\r\n    Song(name: \"The One And Only\", artist: \"Chesney Hawkes\"),\r\n    Song(name: \"Never Gonna Give You Up\", artist: \"Rick Astley\")\r\n]\r\n\r\nHowever, the following line fails:\r\n\r\nlet mediaItems: MediaItem[] = movies + songs\r\n\r\n/Users/jay/Coding/Swift/TrySwift/TryArray/main.swift:42:38: error: could not find an overload for '+' that accepts the supplied arguments\r\nlet mediaItems: MediaItem[] = movies + songs\r\n                              ~~~~~~~^~~~~~~\r\nTrying that with a mutable array instead also fails:\r\n\r\nvar mediaItems: MediaItem[] = movies\r\nmediaItems += songs\r\n\r\n/Users/jay/Coding/Swift/TrySwift/TryArray/main.swift:45:12: error: could not find an overload for '+=' that accepts the supplied arguments\r\nmediaItems += songs\r\n~~~~~~~~~~~^~~~~~~~\r\n\r\nThe work around is to append the elements individually:\r\n\r\nvar mediaItems: MediaItem[] = movies\r\nfor song in songs { mediaItems += song }\r\n\r\nI have tried to define my own append function.  However, I have not yet found a way to express the type constraint that “Other” is a subtype of “Dest”. My attempt with the following fails to compile:\r\n\r\nfunc myConcat<Dest,Other where Other : Dest>(var dest: Dest[], other: Other[]) -> Dest[] {\r\n    for o in other { dest += o }\r\n    return dest\r\n}\r\n\r\n/Users/jay/Coding/Swift/TrySwift/TryArray/main.swift:48:26: error: type 'Other' constrained to non-protocol type 'Dest'\r\nfunc myConcat<Dest,Other where Other : Dest>(var dest: Dest[], other: Other[]) -> Dest[] {\r\n                         ^\r\n\r\nIn general, I notice that arrays do not behave covariantly.  This is sound typing in the face of mutation, but for a read-only operation like append, I would expect covariant behavior."
+    email: jlieske@gmail.com
+    modified: "2014-06-09T02:11:00.245719Z"
+    number: "17226478"
+    number_intvalue: 17226478
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 'Xcode6 beta: Version 6.0 (6A215l)'
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift lacks append for arrays of compatible types

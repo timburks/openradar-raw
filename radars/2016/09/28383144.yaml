@@ -1,0 +1,79 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28383144"
+    labels:
+        datastore_id: "5594357323268096"
+data:
+    classification: Other Bug
+    created: "2016-09-20T08:53:43.89863Z"
+    description: |-
+        Summary:
+
+        We build Genius Scan (http://dl.tglapp.com/genius-scan), an app used by million of users every day. We also develop a couple other apps among them Pyfl (https://getpyfl.com/download). Lately we've seen rejections again for methods that seemingly just randomly clash with internal API that Apple uses.
+
+        This is a problem. This results in:
+        - us having to make critical changes in a rush (we had to submit an iOS 10 update quickly); it’s time-consuming, risky
+        - us updating our CoreData schema to fix one of the conflicts (followersCount:). We prefer to avoid making data migration for unnecessary reasons.
+        - spending a lot of time doing unjustified work: one of the rejected methods was just named “import:”. This degrades the developer experience.
+
+        Some customers argue with the review team. Some simply re-submit and pass - without any binary changes. The system seems very arbitrary. The methods flagged here was in our app for months and never got flagged. I assume that these methods have recently been added somewhere inside iOS 10 and thus now are on a list.
+
+        Steps to Reproduce:
+
+        We submitted our app Pyfl and received the following email:
+
+        Performance - 2.5.1
+
+
+        Your app uses or references the following non-public APIs:
+
+        import:, followersCount:
+
+        The use of non-public APIs is not permitted on the App Store because it can lead to a poor user experience should these APIs change.
+
+        Next Steps
+
+        Please revise your app to remove any non-public APIs. If you have defined methods in your source code with the same names as the above-mentioned APIs, we suggest altering your method names so that they no longer collide with Apple's private APIs to avoid your application being flagged in future submissions.
+
+        Additionally, if you are using third party libraries, please update to the most recent version of those libraries. If you do not have access to the libraries' source, you may be able to search the compiled binary using the "strings" or "otool" command line tools. The "strings" tool can output a list of the methods that the library calls and "otool -ov" will output the Objective-C class structures and their defined methods. These tools can help you narrow down where the problematic code resides. You could also use the "nm" tool to verify if any third-party libraries are calling these APIs.
+
+        Resources
+
+        For information on the "nm" tool, please see the "nm tool" Xcode manual page.
+
+        If there are no alternatives for providing the functionality your app requires, you may wish to file an enhancement request.
+
+        If you have difficulty reproducing a reported issue, please try testing the workflow described in Technical Q&A QA1764: How to reproduce bugs reported against App Store submissions.
+
+        If you have code-level questions after utilizing the above resources, you may wish to consult with Apple Developer Technical Support. When the DTS engineer follows up with you, please be ready to provide:
+        - complete details of your rejection issue(s)
+        - screenshots
+        - steps to reproduce the issue(s)
+        - symbolicated crash logs - if your issue results in a crash log
+
+        Expected Results:
+        All private methods (and functions, for that matter) implemented by Apple should start with an underscore. This, combined with a clearly-defined precedence for original versus category-defined methods, would make adding methods to framework classes by category or by subclass much safer.
+
+        This would also fix the problem with the name clashers here.
+
+        Actual Results:
+        Apps are rejected for unsound reasons.
+
+        Regression:
+        It just happened on submitting an almost unchanged build of our app, Pyfl. So this check used to pass originally.
+
+        Notes:
+        Thanks for your help!
+    email: bruno@thegrizzlylabs.com
+    modified: "2016-09-20T08:53:43.89883Z"
+    number: "28383144"
+    number_intvalue: 28383144
+    originated: 20-Sep-2016 10:53 AM
+    parent_number: '&{NULL_VALUE}'
+    product: App Store
+    product_version: ""
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: Incorrect App Store rejections for name clashes on methods that happen to be named like private API

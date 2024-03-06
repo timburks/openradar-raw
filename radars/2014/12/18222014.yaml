@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18222014"
+    labels:
+        datastore_id: "6457783507484672"
+data:
+    classification: Serious
+    created: "2014-12-29T23:28:32.102705Z"
+    description: "Summary:\r\nThe CCCryptorReset() function is documented to allow changing the IV of a cipher without changing its key. When applied to a CTR-mode cryptor (which takes its initial counter state from the IV parameter of CCCryptorCreateWithMode etc.), it has no effect.\r\n\r\nSteps to Reproduce:\r\nCreate a CTR-mode cryptor. Encrypt a few blocks. Use CCCryptorReset() to attempt to jump to another point in the keystream. Encrypt a few more.\r\n\r\nThe attached program does this; its output is:\r\n\r\nInitial CTR output values:\r\n  1:  3247184B3C4F69A44DBCD22887BBB418\r\n  2:  9BB22CE7D9F372C1EE2B28722B25F206\r\n  3:  650D887C3936533A1B8D4E1EA39D2B5C\r\n\r\nAfter resetting CTR to initial state:\r\n  1:  3DE91827C10E9A4F5240647EE5221F20\r\n  2:  AAC9E6CCC0074AC0873B9BA85D908BD0\r\n  3:  DDA867C4CEF2B1F1B8A9FF49CA208B61\r\n\r\nImplementing CTR using ECB for reference:\r\n  1:  3247184B3C4F69A44DBCD22887BBB418\r\n  2:  9BB22CE7D9F372C1EE2B28722B25F206\r\n  3:  650D887C3936533A1B8D4E1EA39D2B5C\r\n  4:  3DE91827C10E9A4F5240647EE5221F20\r\n  5:  AAC9E6CCC0074AC0873B9BA85D908BD0\r\n  6:  DDA867C4CEF2B1F1B8A9FF49CA208B61\r\n\r\n\r\nExpected Results:\r\nThe output data under \"After resetting CTR\" should be the same as \"Initial CTR output\".\r\n\r\nActual Results:\r\nThe data differs. In fact, you can tell from the kCCOptionECBMode-based CTR implementation output that the \"After resetting...\" output is simply the continuation of the cryptor's state as if CCCryptorReset() had never been called at all.\r\n\r\nVersion:\r\nXcode: 6.0 (6A280n)\r\n\r\nOSX:\r\n10.9.4/13E28\r\n10.10/14A343f\r\n\r\n(same behavior on both versions of OSX)\r\n\r\nNotes:\r\nThis can be worked around by creating a new cryptor, but that's an expensive operation (key schedule setup).\r\n\r\nThis can be worked around by only using CommonCrypto in ECB mode and doing the CTR stuff myself, but that's kind of ridiculous.\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: wiml@omnigroup.com
+    modified: "2014-12-29T23:28:32.102993Z"
+    number: "18222014"
+    number_intvalue: 18222014
+    originated: 03-Sep-2014
+    parent_number: "12680772"
+    product: OS X
+    product_version: 10.10/14A343f
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/12680772
+    title: CCCryptorReset() has no effect for a CTR-mode cryptor, but returns kCCSuccess

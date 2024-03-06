@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13218454"
+    labels:
+        datastore_id: "2719401"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2013-02-14T20:53:42.958034Z"
+    description: "14-Feb-2013 02:51 PM Matthew Morris:\r\nSummary: I believe that OS X (64-bit) is using an ABI for GSS-API that uses an incorrect structure alignment.\r\n\r\nSteps to Reproduce:\r\n- In a 64-bit Mac application, call OM_uint32 gss_indicate_mechs(OM_uint32* minor_status,  gss_OID_set* mech_set);\r\n- Observe that no error is returned.\r\n- Attempt to access the |elements| member of the gss_OID_set structure.\r\n- Crash.\r\n\r\nExpected Results: No crash.\r\n\r\nActual Results: Crash.\r\n\r\nRegression: Unknown.\r\n\r\nNotes:\r\nI have worked around this issue by doing the following in the header where I declare the GSS types.\r\n\r\n#if defined(__APPLE__) && defined(__x86_64__)\r\n#    pragma pack(push, 2)\r\n#endif\r\n\r\n// GSS typedefs and structs here\r\n\r\n#if defined(__APPLE__) && defined(__x86_64__)\r\n#    pragma pack(pop)\r\n#endif\r\n\r\n// end header file\r\n\r\n14-Feb-2013 02:51 PM Matthew Morris:\r\n'MacBook Pro.spx' was successfully uploaded\r\n\r\n\r\n=========================================\r\n21-Feb-2013 09:51 AM Apple Developer Bug Reporting Team :\r\nEngineering has determined that this issue behaves as intended based on the following information:\r\n\r\nThat is how the ABI is defined, we forgot to fix this issue when we went to 64 bit platform.. You need to use our header.\r\n\r\nBTW, the correct ABI is.\r\n\r\n/* Compatiblity with MIT Kerberos on the Mac */\r\n#if defined(__APPLE__) && (defined(__ppc__) || defined(__ppc64__) || defined(__i386__) || defined(__x86_64__))\r\n#pragma pack(push,2)\r\n#endif\r\n\r\nIf this is still an issue, or you have questions regarding the resolution of this issue, please update your bug report with that information.\r\n\r\nWe are now closing this bug report.\r\n\r\nPlease be sure to regularly check new Apple releases for any updates that might affect this issue."
+    email: matt@mattmorr.is
+    modified: "2013-02-21T17:21:31.252532Z"
+    number: "13218454"
+    number_intvalue: 13218454
+    originated: 14-Feb-2013
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.8.2
+    reproducible: always
+    resolved: Behaves Correctly
+    status: Closed
+    title: Problem with Generic Security Services ABI

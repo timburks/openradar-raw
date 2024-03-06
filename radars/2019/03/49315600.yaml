@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "49315600"
+    labels:
+        datastore_id: "4960371869745152"
+data:
+    classification: Suggestion
+    created: "2019-03-27T06:27:50.229329Z"
+    description: "We are trying to achieve the following:\r\n\r\nUse AVAudioRecorder to record far-field speech in kAudioFormatOpus format, with 16000 Hz sample rate and resulting bitrate >= 32 kb/s. The bitrate is important for speech recognition, as the quality of recognition depends on it (https://www.researchgate.net/figure/Clean-speech-MOS-scores-with-increasing-bitrate-in-kbit-s_fig3_282605143).\r\n\r\nUnfrotunately, there is no way to control the bitrate when format is kAudioFormatOpus. AVEncoderBitRateKey, AVEncoderBitRateStrategyKey don't seem to have any effect on bitrate at all. Constant bitrate is not supported and I was not able to find a way to increase quality of Variable Bit Rate so that ffprobe bitrate is reported as >=32kb/s.\r\n\r\nMy request to Apple Developer Technical Support ended up in confirming that there is no way to control bitrate for Opus (DTS ticket #711096424).\r\n\r\nSTEPS TO REPRODUCE\r\n1. Initialize AVAudioRecorder\r\n\r\nlet recordSettings =\r\n    [AVEncoderBitRateKey: 32000,\r\n     AVFormatIDKey: kAudioFormatOpus,\r\n     AVSampleRateKey: 16000.0] as [String: Any]\r\nlet recordingFormat = AVAudioFormat(settings: recordSettings)!\r\nlet recorder = try AVAudioRecorder(url: url, format: recordingFormat)\r\n\r\n2. Record audio and stop recording\r\n3. Run `ffprobe` on the resulting file:\r\n\r\nInput #0, caf, from '/Users/ivanparfenchuk/Downloads/EF962693-6997-4851-9FA6-F6C8F4D8ED8E.caf':\r\n  Duration: 00:02:14.34, start: 0.000000, bitrate: 16 kb/s\r\n    Stream #0:0: Audio: opus (opus / 0x7375706F), 48000 Hz, mono, fltp\r\n\r\n4. bitrate is 16 kb/s, when AVEncoderBitRateKey is 32000\r\n\r\nIt would be great to have more control over resulting bitrate value, be it CBR or VBR."
+    email: uson1x@gmail.com
+    modified: "2019-05-08T06:31:19.593793Z"
+    number: "49315600"
+    number_intvalue: 49315600
+    originated: March 27 2019
+    parent_number: '&{NULL_VALUE}'
+    product: AVFoundation
+    product_version: iOS 12.1, Xcode 10.1
+    reproducible: ""
+    resolved: ""
+    status: Closed
+    title: Allow to control Opus bitrate

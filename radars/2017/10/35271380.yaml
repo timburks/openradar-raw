@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35271380"
+    labels:
+        datastore_id: "4963880988049408"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2017-10-31T14:16:15.38855Z"
+    description: "Summary:\r\nWe’ve noticed an instability in our CI setup and sporadic crashes mostly around testing a new custom lock implementation. The crashes are sporadic over-releases in the com.apple.dt.async-test-expectation on XCTWaiter. \r\n\r\nSteps to Reproduce:\r\nRun tests on sample app.\r\nRe-run until crash is triggered.\r\n\r\nEnsure Zombies are enabled (they are in the provided sample) to correctly break.\r\n\r\nExpected Results:\r\nXCT* should be well-tested and thread safe.\r\n\r\nActual Results:\r\nWhen enabling Zombies it sometimes crashes on *** -[XCTWaiter release]: message sent to deallocated instance 0x61800001ab30\r\n\r\nNote that several test run attempts will be needed as it is a race condition.\r\nUse iPad Air, iOS 10.3.1 for best results.\r\n\r\nVersion:\r\n9.0.1 (9A1004)\r\n\r\nNotes:\r\nMy kingdom for a workaround! \r\n\r\nIf you have trouble reproducing, you can also run it in the console via xcodebuild test -scheme XCTThreadSafety -destination \"platform=iOS Simulator,name=iPad Air,OS=10.3.1\" - eventually after enough launches you’ll see the “Restarting after unexpected exit or crash in PSPDFRecursiveReadWriteLockTests/testDeniesConcurrentWriters; summary will include totals from previous launches.” and it yields a crash report. I found Xcode more convenient though. Screenshot of crash state is included as well.\r\n\r\nThe sample is slightly messy because I already spent half a day getting it into a state where it can be relatively easily reproduced - afraid that removing further tests might make it harder to repro. In theory the testDeniesConcurrentWriters alone should be all you need.\r\n\r\nAnd yes, we know that the lock is a… discussable workaround. Let’s focus on the crash :)\r\n\r\nI was able to reproduce this in Xcode 9.1b2 (9B46) as well."
+    email: steipete@gmail.com
+    modified: "2018-01-26T13:03:50.98674Z"
+    number: "35271380"
+    number_intvalue: 35271380
+    originated: 31-Oct-2017 03:16 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 9.0.1 (9A1004)
+    reproducible: Sometimes
+    resolved: ""
+    status: Fixed
+    title: 'XCTTest is not thread safe. Reproducible -[XCTWaiter release]: message sent to deallocated instance'

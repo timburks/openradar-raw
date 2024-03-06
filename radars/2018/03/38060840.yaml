@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "38060840"
+    labels:
+        datastore_id: "5003415289593856"
+data:
+    classification: Enhancement
+    created: "2018-03-02T10:02:54.06371Z"
+    description: "Summary:\r\nThis is a duplicate of radar #38059230\n\nA common pattern in our Objective-C++ code is\n\nif (auto const pointerThatWontBeNull = pointerThatMightBeNull) {\n   // use pointerThatWontBeNull\n}\n\nThis is effectively the same as the ‘if let’ construct in Swift: it gives you a nonnull pointer from a nullable one if that pointer is not null. Note that pointerThatMightBeNull is often not a variable but some other expression.\n\nHowever this results in an analyser warning with an NSNumber pointer:\n\nif (auto const nonnullNSNumber = nullableNSNumber) {\n   ...\n}\n\nThe analyser wants us to explicitly check for nil to confirm we didn’t forget to call -boolValue. However we can’t do that in this construct.\n\r\n\r\nSteps to Reproduce:\r\nRun the analyser in the attached sample project.\r\n\r\nExpected Results:\r\nThere should be no analyser warnings. It should be clear in this context that the code’s intent is to check for nil. There is no way we’d want to go into the conditional only if the result of calling -boolValue was true like this:\n\nif (auto const value = [someNSNumber boolValue]) {\n   ...\n}\n\nbecause value would always be YES, so is pointless.\r\n\r\nActual Results:\r\nThere is an analyser warning:\n\nmain.mm:5:20: Converting a pointer value of type 'NSNumber *' to a primitive boolean value; instead, either compare the pointer to nil or call -boolValue\n\nWe have to have the assignment as its own statement, then check for nil separately, which is not so nice because the variable remains in scope:\n\nauto const theNSNumber = somethingThatReturnsANullableNSNumber();\nif (theNSNumber != nil) {\n   // use theNSNumber\n}\n// theNSNumber is still in scope but please don’t use it.\r\n\r\nVersion:\r\n9.2 (9C40b)\r\n\r\nNotes:\r\nThis assignment in condition syntax is not possible in Objective-C without the ++."
+    email: steipete@gmail.com
+    modified: "2018-03-02T10:02:54.06404Z"
+    number: "38060840"
+    number_intvalue: 38060840
+    originated: 02-Mar-2018 11:02 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 9.2 (9C40b)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Analyser warns about NSNumber assignment in condition

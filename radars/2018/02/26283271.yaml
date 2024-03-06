@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26283271"
+    labels:
+        datastore_id: "5066148991205376"
+data:
+    classification: Defect
+    created: "2018-02-11T16:27:56.40129Z"
+    description: "Summary:\r\nIf using a \"whose\" array on the object selectors from Application(\"iTunes\").sources, filter by name works, but not by kind.\r\n\r\nSteps to Reproduce:\r\n1. Open test script (attached) in ScriptEditor\r\n2. Run script and review results.\r\n\r\nExpected Results:\r\nScript iterates over the full list of sources to select a sample source's name and kind. It then uses that name and kind as whose filters, again iterating for each of name and kind over the filtered list of sources. Therefore, the results reported to the console should include the string \"Found source via name.\" and \"Found source via kind.\"\r\n\r\nActual Results:\r\nOnly the \"name\" whose filter works, and the console report includes \"Found Source via name.\". The \"kind\" whose filter is empty\r\n\r\nVersion:\r\n12.3.3.17 on OS X 10.11.4 (15E65)\r\nUPDATE 2016/05/17: Reproduced this issue on new iTunes version 12.4.0.119\r\nUPDATE 2018/02/12: Reproduced this issue on new iTunes version 12.7.3\r\n\r\nNotes:\r\nUPDATE 2016/05/14: Identified work around: Specify AppleEvent 4 char code instead of kind \"text\", e.g. use \"kLIB\" rather than \"Library\" works in \"whose\" filter. \r\ni.e. .whose({ kind: \"kLIB\"})\r\n\r\nI note same issue with .playlists.whose({ specialKind: \"Music\"}). Can use \"kSpZ\". Suggests general issue with handling Enum properties in JXA?\r\n\r\nConfiguration:\r\n2011 Mac Mini. The hardware configuration is unlikely to be significant.\r\n\r\nSample Code:\r\n\r\n8K------\r\n\r\n// Demonstrate JXA issues with iTunes sources whose filter using kind.\r\n\r\nvar iTunes = Application(\"iTunes\");\r\n\r\nvar sourcesSpec = iTunes.sources;\r\n//console.log(Automation.getDisplayString(sourcesSpec()));\r\nvar testName = \"\";\r\nvar testKind = \"\";\r\nsourcesSpec().map(function (source) {\r\n\tconsole.log(\"Name:\", source.name(), \", Kind: \", source.kind());\r\n\ttestName = source.name();\r\n\ttestKind = source.kind();\r\n});\r\nvar testNameSourcesSpec = sourcesSpec.whose({ name: testName});\r\ntestNameSourcesSpec().map(function (source) {\r\n\tconsole.log(\"Found source via name.\");\r\n\tconsole.log(\"Name:\", source.name(), \", Kind: \", source.kind());\r\n});\r\nvar testKindSourcesSpec = sourcesSpec.whose({ kind: testKind});\r\ntestKindSourcesSpec().map(function (source) {\r\n\tconsole.log(\"Found source via kind.\");\r\n\tconsole.log(\"Name:\", source.name(), \", Kind: \", source.kind());\r\n});\r\n\r\n8K------"
+    email: jrandomha@gmail.com
+    modified: "2018-02-11T16:27:56.40159Z"
+    number: "26283271"
+    number_intvalue: 26283271
+    originated: 2016/05/14
+    parent_number: '&{NULL_VALUE}'
+    product: iTunes
+    product_version: 12.3.3.17
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: 'JXA: "whose" queries on "kind" for iTunes list of tracks returns no results'

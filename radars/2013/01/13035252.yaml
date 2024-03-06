@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13035252"
+    labels:
+        datastore_id: "2577401"
+data:
+    classification: Serious Bug
+    created: "2013-01-17T20:32:11.808587Z"
+    description: "Summary:\r\n\r\nWhen using -[NSURLConnection sendSynchronousRequest:returningResponse:error] to send a request to an HTTP server that closes the connection without replying, it returns a non-nil NSData return value, does not set the passed in error, and sets a passed in NSHTTPURLResponse to have a 200 status code. Therefore it is not possible to detect if a request to an HTTP server simply responded with a minimal successful response (i.e. only the status line \"HTTP/1.1 200 OK<CRLF><CRLF>\" or the server has dropped the connection without responding, possibly due to crashing, which should not in most cases be considered a success.\r\n\r\nSteps to Reproduce:\r\n\r\nUse -[NSURLConnection sendSynchronousRequest:returningResponse:error] to send an HTTP request to a server that receives requests but closes the connection without replying.\r\n\r\nExpected Results:\r\n\r\n-[NSURLConnection sendSynchronousRequest:returningResponse:error] returning nil and setting the passed in NSError parameter to a descriptive error.\r\n\r\nThe curl command line program, for example, exits with a failure status and prints the error message \"curl: (52) Empty reply from server\" when it is used to make requests against a server that drops connections in this way.\r\n\r\nActual Results:\r\n\r\n-[NSURLConnection sendSynchronousRequest:returningResponse:error] returns an NSData object (with zero length) and sets the statusCode property of the passed in NSURLHTTPResponse to 200.\r\n\r\nRegression:\r\n\r\nI have not tried on any other versions of OS X, nor on iOS.\r\n\r\nNotes:\r\n\r\nI've attached a simple program (upload.m) that sends a GET request to the URL specified on the command line.  It can be compiled, then run against a simple python server that disconnects upon receiving requests as follows:\r\n\r\n    python -c 'import BaseHTTPServer; h=BaseHTTPServer.BaseHTTPRequestHandler; h.do_GET=lambda x: None; BaseHTTPServer.HTTPServer((\"127.0.0.1\", 8080), h).serve_forever()' &\r\n    clang -framework Foundation -o upload upload.m\r\n    ./upload http://localhost:8080"
+    email: nick.barkas@gmail.com
+    modified: "2013-01-17T20:36:50.897617Z"
+    number: "13035252"
+    number_intvalue: 13035252
+    originated: 17-Jan-2013 03:26 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X SDK
+    product_version: 10.8.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSURLConnection sendSynchronousRequest doesn't fail on empty replies

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28134633"
+    labels:
+        datastore_id: "4945174090219520"
+data:
+    classification: Crash
+    created: "2016-09-02T15:01:42.70156Z"
+    description: "Summary:\r\nWhen a protocol is defined with a static function that returns an optional self (`Optional<Self>`) and is implemented by a `final` class, SourceKit will crash when trying to call that method and assign it's return value to a variable.\r\n\r\nSteps to Reproduce:\r\n1. Open radar.playground\r\n2. See SourceKit crash almost immediately\r\n\r\nExpected Results:\r\nSourceKit would not crash but be able to interpret code.\r\n\r\nActual Results:\r\nSourceKit crashes.\r\n\r\nVersion:\r\n- OS X 10.11.6 (15G1004)\r\n- Xcode 7.3.1 (7D1014)\r\n- Swift 2.2\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nThis will occur in both Swift Playgrounds as well as an Xcode project when implementing the same pattern as in the example playground.\r\n\r\n----------------------------------------------------------------------\r\n// radar.playground\r\n\r\nimport UIKit\r\n\r\nprotocol Foo {\r\n    var name: String { get }\r\n    static func fooObject() -> Optional<Self>\r\n//    static func fooObject() -> Self? // works\r\n}\r\n\r\nfinal class Kung: Foo {\r\n    var name = \"Kung\"\r\n    static func fooObject() -> Kung? {\r\n        return Kung()\r\n    }\r\n}\r\n\r\nfinal class Bar: Foo {\r\n    var name = \"Bar\"\r\n    static func fooObject() -> Bar? {\r\n        return Bar()\r\n    }\r\n}\r\n\r\n// a helper function for one of the work arounds\r\nfunc getInstance(forType type: Foo.Type) -> Foo? {\r\n    return type.fooObject()\r\n}\r\n\r\n// works\r\n//func printName(forType type: Foo.Type) {\r\n//    let instance = getInstance(forType: type)\r\n//    print(instance?.name)\r\n//}\r\n\r\n// works\r\n//func printName(forType type: Foo.Type) {\r\n//    print(type.fooObject()?.name)\r\n//}\r\n\r\n// doesn't work\r\nfunc printName(forType type: Foo.Type) {\r\n    let fooObject = type.fooObject() // crashes on this line\r\n    print(fooObject?.name)\r\n}\r\n\r\nprintName(forType: Kung.self)\r\nprintName(forType: Bar.self)"
+    email: addison.f.webb@gmail.com
+    modified: "2016-09-02T15:02:40.235Z"
+    number: "28134633"
+    number_intvalue: 28134633
+    originated: 9/2/16
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SourceKit crashing when assigning result of static function that returns Optional<Self> to variable

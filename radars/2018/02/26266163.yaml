@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26266163"
+    labels:
+        datastore_id: "5027579580907520"
+data:
+    classification: Defect
+    created: "2018-02-11T16:22:01.41271Z"
+    description: "Summary:\r\nIn a JXA script for iTunes where file track location is to be updated, assigning a Path object (with valid, existing file) to the track's location fails with error -1728. The equivalent AppleScript works.\r\n\r\nSteps to Reproduce:\r\n1. Create a JXA script for iTunes with track location assignment (see sample at bottom of this report) and open in ScriptEditor\r\n3. Open iTunes and select a track.\r\n4. Invoke the sample script. Select a replacement track as prompted. Click OK.\r\n\r\nExpected Results:\r\nThe track's location will now be that of the replacement selected.\r\n\r\nActual Results:\r\nScript exception raised, \"Error -1728: Can't get object\" on the line where \"track.location\" is updated.\r\n\r\nVersion:\r\n12.3.3.17 on OS X El Capitan 10.11.4 (15E65)\r\nUPDATE 2016/05/17: Reproduced this issue on new iTunes version 12.4.0.119\r\nUPDATE 2018/02/12: Reproduced this issue on new iTunes version 12.7.3\r\n\r\nNotes:\r\nThe iTunes.sdef suggests the type of the location property is \"file\", but this is not defined elsewhere. Logging in the script suggests that the type of object returned by track.location() is a JXA \"Path\" object, as is the object returned from the \"chooseFile\" call. The property is not marked read only, and assignment with the same syntax works for other properties such as track name.\r\n\r\nAn equivalent AppleScript, where the result returned from the \"choose file\" call is used to \"tell track to set the location to newPath\" works without issue.\r\n\r\nConfiguration:\r\nTested on 2011 Mac Mini. Don't expect hardware platform to be an issue\r\n\r\nSample Code:\r\n\r\n8K------\r\n\r\n// Sample of iTunes issue: force a replacement of the media file.\r\n\r\nvar iTunes = Application(\"iTunes\");\r\niTunes.includeStandardAdditions = true;\r\n\r\nvar selection = iTunes.selection();\r\nselection.forEach(function(track) {\r\n\tconsole.log(\"Location:\", track.location());\r\n\tvar newPath = iTunes.chooseFile({ withPrompt: \"Choose replacement\"});\r\n\tconsole.log(newPath);\r\n\ttrack.location = newPath;\r\n});\r\n\r\n8K------"
+    email: jrandomha@gmail.com
+    modified: "2018-02-11T16:22:01.41299Z"
+    number: "26266163"
+    number_intvalue: 26266163
+    originated: 2016/05/13
+    parent_number: '&{NULL_VALUE}'
+    product: iTunes
+    product_version: 12.3.3.17
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: 'JXA: Assigning Path object to track.location fails with "Error -1728: Can''t get object"'

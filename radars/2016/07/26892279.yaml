@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26892279"
+    labels:
+        datastore_id: "5004021802729472"
+data:
+    classification: ""
+    created: "2016-07-04T13:40:57.12548Z"
+    description: "I was thrilled to see the announcement about Xcode Source Editor Extensions. I'm the author of a plugin called CoPilot that allows collaborative editing (sort of like Google docs for Xcode, see http://finestructure.co/copilot for more details) and my hope was that I could turn what is essentially a hack into an officially supported extension.\r\n\r\nUnfortunately, upon further inspection of the extension mechanism I found that I cannot port CoPilot to this new mechanism as it stands. At the same time I also learned that the old loading mechanism will not work anymore, either :(\r\n\r\nIt would be great if a future version of the plugin extension mechanism could be extended to allow my use case. For this to work I would essentially require a callback/notification whenever the source document changes. Whether it's just the changes or the whole document - that does not really matter.\r\n\r\nI'm currently listening to the following notifications to track changes in text and selection:\r\n\r\n- NSTextStorageDidProcessEditingNotification: upon receiving this I diff against the previous version and send the changes to any subscribed remote documents\r\n- NSTextViewDidChangeSelectionNotification: upon receiving this I send the new selection 'coordinates' to any subscribed documents (in order for the remote observers to be able to display the local user's selection)\r\n\r\nThis would need be a continuous event stream to the plugin. The actions that are explicitly user triggered are the following:\r\n\r\n- display a browser window (essentially a list of discovered shared documents)\r\n- publish a document to make it available for other editors to connect to\r\n- subscribe to a document, one previously published via publish above, picked from the list in the browser window\r\n\r\nOnly after a published document has been subsriced by one or more observers will the callback or notification mechanism be required to send changes to the extension, until the point when the connection is dropped. During that time the extension would need to be able to receive and apply changes to the editor without user intervention.\r\n\r\nThis is conceptually quite different from the blocking, synchronous approach that seems to be underlying the current mechanism. However, I still hope there is some way to allow for a plugin like CoPilot, because I believe it could be a very useful plugin for teaching, code review, or interviewing, just to name a few examples that spring to mind.\r\n\r\nAlso, while CoPilot currently only works on the local network via Bonjour discovery, I had already started to write a server component to allow ICE/STUN brokering of the connection across any internet connection. I'm still hopeful that this wasn't entirely in vain and could be made to work thanks to a further opening up of the extension mechanism.\r\n\r\nSteps to Reproduce:\r\nn/a\r\n\r\nExpected Results:\r\nSupport of CoPilot-like extension functionality\r\n\r\nActual Results:\r\nI can neither port CoPilot to Xcode 8 with the current extension mechanism nor can I continue to run it with the existing implementation, due to library validation.\r\n\r\nVersion:\r\n8S128d\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nXcode 8\r\n\r\nAttachments:"
+    email: sven.a.schmidt@gmail.com
+    modified: "2016-07-04T13:40:57.12568Z"
+    number: "26892279"
+    number_intvalue: 26892279
+    originated: 20-Jun-2016 04:05 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.0(8S128d)
+    reproducible: ""
+    resolved: 27-Jun-2016 10:41 PM
+    status: Closed
+    title: Allow continuous change monitoring for Xcode Extensions

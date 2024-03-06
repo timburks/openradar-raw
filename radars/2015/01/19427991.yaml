@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19427991"
+    labels:
+        datastore_id: "5863515457847296"
+data:
+    classification: Other Bug
+    created: "2015-01-09T18:53:29.534818Z"
+    description: "Summary:\r\nSometimes when the user picks a file from the iOS 8 document picker, access to the returned URL is denied by the iOS sandbox. This results in an error message \"The operation could not be completed (Cocoa Error 256)\" when trying to open it using a UIDocument subclass.\r\n\r\nSteps to Reproduce:\r\n- Use the \"Open…\" menu in my app \"Textastic Code Editor\" - This opens a UIDocumentMenuViewController in Open mode\r\n- From the popover, choose a storage provider like \"Transmit\" or \"Working Copy\"\r\n- Choose a file to open\r\n\r\n\r\nExpected Results:\r\nIt should open the file without problems.\r\n\r\n\r\nActual Results:\r\nMost of the time this works, but sometimes this error comes up: \"The operation could not be completed (Cocoa Error 256)\"\r\n\r\nIn this case, I see a message like this on the console:\r\n\r\nkernel[0] <Notice>: Sandbox: Textastic(279) deny file-read-data /private/var/mobile/Containers/Shared/AppGroup/BE887E37-0BF9-42FF-B6FC-1DF144991B91/File Provider Storage/RemoteDocuments/65FFA056-36DC-4F5E-BC38-8F20EE112FAD/home/blachio/public_html/atom.xml\r\n\r\n\r\nRegression:\r\nI haven't found a pattern when exactly it happens. It happens with different file providers (at least Transmit and Working Copy). \r\n\r\n\r\nNotes:\r\nIn my app, I'm just creating a new UIDocument with the URL I get in documentPicker:didPickDocumentAtURL: - this should handle security-scoped bookmarks correctly. The sandbox should not deny access.\r\n\r\nI've attached two log files:\r\n\r\nnot_working.log: This log shows the failure case. In line 25 you see the sandbox deny file-read-data notice from the kernel.\r\nworking.log: This is a console log that shows the case where the same file is opened successfully.\r\n\r\nThe log files also contain NSLayoutConstraint warnings - those only seem to happen on iPad and seem to be cause by the document picker UI."
+    email: lextar@gmail.com
+    modified: "2015-10-28T11:35:02.39034Z"
+    number: "19427991"
+    number_intvalue: 19427991
+    originated: 09-Jan-2015 07:45 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 8.1.2
+    reproducible: Sometimes
+    resolved: ""
+    status: Duplicate of 18359795 (Closed)
+    title: Document Picker sometimes returns an URL that is not accessible because access is denied by the sandbox

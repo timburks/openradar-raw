@@ -1,0 +1,85 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13030082"
+    labels:
+        datastore_id: "2570401"
+data:
+    classification: Other Bug
+    created: "2013-01-17T02:28:56.63356Z"
+    description: |-
+        Summary:
+
+        When showing an NSPopover I occasionally get an exception:
+
+        NSWindow: -_newFirstResponderAfterResigining is not a valid message outside of a responder's implementation of -resignFirstResponder.
+
+        That seems very odd because the stack trace shows that it is inside resignFirstResponder.
+
+        The NSPopover is displayed, but cannot be interacted with. It can be made to disappear by showing another NSPopover (which works fine), but the application also crashes on exit.
+
+        Steps to Reproduce:
+
+        1. Show an NSPopover as normal.
+
+        Expected Results:
+
+        The NSPopover will display and work as advertised.
+
+        Actual Results:
+
+        Sometimes this odd exception is generated.
+
+        Regression:
+
+        Unknown.
+
+        Notes:
+
+        2013-01-17 13:18:29.410 GDTv3[88091:303] NSWindow: -_newFirstResponderAfterResigining is not a valid message outside of a responder's implementation of -resignFirstResponder.
+        2013-01-17 13:18:29.414 GDTv3[88091:303] (
+        	0   CoreFoundation                      0x00007fff8ff1e0a6 __exceptionPreprocess + 198
+        	1   libobjc.A.dylib                     0x00007fff90a123f0 objc_exception_throw + 43
+        	2   CoreFoundation                      0x00007fff8ff1de7c +[NSException raise:format:] + 204
+        	3   AppKit                              0x00007fff8bc01cf9 -[NSWindow _newFirstResponderAfterResigning] + 117
+        	4   AppKit                              0x00007fff8bc018cf -[NSTextView(NSSharing) resignFirstResponder] + 53
+        	5   AppKit                              0x00007fff8bacb7d8 -[NSWindow makeFirstResponder:] + 430
+        	6   AppKit                              0x00007fff8bffe0a2 -[NSWindow _makeParentWindowHaveFirstResponder:] + 51
+        	7   AppKit                              0x00007fff8bacb67a -[NSWindow makeFirstResponder:] + 80
+        	8   AppKit                              0x00007fff8baf1ad8 -[NSWindow _selectFirstKeyView] + 812
+        	9   AppKit                              0x00007fff8baf178b -[NSWindow _setUpFirstResponder] + 182
+        	10  AppKit                              0x00007fff8baefabf -[NSWindow _reallyDoOrderWindow:relativeTo:findKey:forCounter:force:isModal:] + 1288
+        	11  AppKit                              0x00007fff8baeef7c -[NSWindow _doOrderWindow:relativeTo:findKey:forCounter:force:isModal:] + 496
+        	12  AppKit                              0x00007fff8baeed1f -[NSWindow orderWindow:relativeTo:] + 159
+        	13  AppKit                              0x00007fff8bbbc2b1 -[NSWindow addChildWindow:ordered:] + 924
+        	14  AppKit                              0x00007fff8c1901a4 -[NSPopover showRelativeToRect:ofView:preferredEdge:] + 1693
+        	15  EFCUIFoundation                     0x0000000100082390 -[EFCUIPopoverController positionPopover] + 288
+        	16  EFCUIFoundation                     0x00000001000821f8 -[EFCUIPopoverController show] + 648
+        	17  GDTv3                               0x0000000100031fff -[GDTLabelLayerWithInspector didClick:] + 303
+        	18  EFCUIFoundation                     0x000000010007ec58 -[EFCUIPlotLabelLayer mouseUp:] + 72
+        	19  GDTv3                               0x0000000100031dbe -[GDTLabelLayerWithInspector mouseUp:] + 110
+        	20  EFCUIFoundation                     0x000000010007b175 -[EFCUILayerResponderView mouseUp:] + 133
+        	21  AppKit                              0x00007fff8bb146d6 -[NSWindow sendEvent:] + 7053
+        	22  AppKit                              0x00007fff8bb10744 -[NSApplication sendEvent:] + 5761
+        	23  AppKit                              0x00007fff8ba262fa -[NSApplication run] + 636
+        	24  AppKit                              0x00007fff8b9cacb6 NSApplicationMain + 869
+        	25  GDTv3                               0x0000000100001302 main + 34
+        	26  libdyld.dylib                       0x00007fff8d73c7e1 start + 0
+        	27  ???                                 0x0000000000000003 0x0 + 3
+        )
+
+        In lldb I can confirm that the view passed into NSPopover showRelativeToRect:ofView:preferredEdge: is valid as is the rect.
+
+        It happens fairly rarely.
+    email: aufflick@gmail.com
+    modified: "2013-01-17T02:28:56.633892Z"
+    number: "13030082"
+    number_intvalue: 13030082
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode46-DP4 (4H112f)
+    reproducible: Sometimes
+    resolved: ""
+    status: ""
+    title: showing NSPopover results in exception that seems to be invalid

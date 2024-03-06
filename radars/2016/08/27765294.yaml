@@ -1,0 +1,111 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27765294"
+    labels:
+        datastore_id: "5060637524754432"
+data:
+    classification: Serious Bug
+    created: "2016-08-09T14:33:38.46255Z"
+    description: |-
+        Summary:
+        The Thread Sanitizer reports an issue in NSXPCConnection during normal use.
+
+        Steps to Reproduce:
+        1) Create project using NSXPCConnection.
+        2) Turn on Thread Sanitizer.
+        3) Build and Run.
+
+        Expected Results:
+        No message from Thread Sanitizer.
+
+        Actual Results:
+        Thread Sanitizer breaks and a "thread info -s" unveils this:
+        thread #3: tid = 0x13792f, 0x0000000106c272a0 libclang_rt.tsan_osx_dynamic.dylib`__tsan_on_report, queue = 'com.apple.NSXPCConnection.user.32952', stop reason = Use of an uninitialized or destroyed mutex detected
+
+        {
+          "all_addresses_are_same" : true,
+          "description" : "Use of an uninitialized or destroyed mutex",
+          "global_address" : 140735264319824,
+          "global_name" : "sModesLock",
+          "instrumentation_class" : "ThreadSanitizer",
+          "issue_type" : "mutex-invalid-access",
+          "location_description" : "'sModesLock' is a global variable (0x7fff7b6fe950)",
+          "locs" : [
+            {
+              "address" : 140735264319824,
+              "file_descriptor" : 0,
+              "index" : 0,
+              "size" : 0,
+              "start" : 0,
+              "suppressable" : 1,
+              "thread_id" : 0,
+              "trace" : [
+
+              ],
+              "type" : "global"
+            }
+          ],
+          "memory_address" : 0,
+          "mops" : [
+
+          ],
+          "mutexes" : [
+            {
+              "address" : 140735264319824,
+              "destroyed" : 0,
+              "index" : 0,
+              "mutex_id" : 1297,
+              "trace" : [
+                4408230431,
+                140735806956101,
+                4407928661,
+                4407929659,
+                140735575779948
+              ]
+            }
+          ],
+          "report_count" : 0,
+          "sleep_trace" : [
+
+          ],
+          "stacks" : [
+            {
+              "index" : 0,
+              "thread_id" : 3,
+              "trace" : [
+                4408230431,
+                140735806956101,
+                4407928661,
+                4407929659,
+                140735575779948
+              ]
+            }
+          ],
+          "stop_description" : "Use of an uninitialized or destroyed mutex detected",
+          "summary" : "Use of an uninitialized or destroyed mutex in AdjustCGSSourceInRunLoop(void (*)(__CFRunLoop*, __CFRunLoopSource*, __CFString const*), __CFRunLoop*, __CFRunLoopSource*) at sModesLock",
+          "threads" : [
+
+          ],
+          "unique_tids" : [
+
+          ]
+        }
+
+        Regression:
+        -
+
+        Notes:
+        -
+    email: iospiritongt@googlemail.com
+    modified: "2016-08-09T14:33:38.46271Z"
+    number: "27765294"
+    number_intvalue: 27765294
+    originated: 09-Aug-2016 04:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: Mac OS X 10.11.6 (15G31)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Mac OS X 10.11.6: Use of an unitialized or destroyed mutex in NSXPCConnection'

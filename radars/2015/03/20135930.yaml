@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20135930"
+    labels:
+        datastore_id: "5019964016689152"
+data:
+    classification: Other Bug
+    created: "2015-03-12T13:46:20.246956Z"
+    description: "Summary:\r\nFrameworks that contain Objective-C fail to import on the Swift REPL. That makes it hard to interactively work with own and 3rd-party libraries we use.\r\n\r\nIn particular:\r\n\r\n- BUG: Cannot import into the REPL a mixed-source framework \"Foo.framework\" created with the standard Cocoa Framework template. The REPL (run as \"swift -F path/to/framework\") clearly finds the framework but fails and soon crashes when trying to \"import Foo\".\r\n\r\n- EXPECTED: Can import the above framework into a Swift script (run as \"swift -F path/to/framework Test.swift\").\r\n\r\n- EXPECTED: Can import and dynamically link the framework in a Swift file compiled with \"swiftc -F path/to/framework Test.swift -o Test\" and run with \"DYLD_FRAMEWORK_PATH=path/to/framework ./Test\".\r\n\r\n- EXPECTED: Can import and dynamically link the framework in a compiled Swift project.\r\n\r\n- SURPRISINGLY: Can import the same framework as soon as all C headers are removed from the target!\r\n\r\nSteps to Reproduce:\r\nGrab and build the attached files. In Terminal.app, \"cd\" to the project directory and run the commands:\r\n\r\n```\r\n# (1) Succeeds:\r\necho 'import Foo; foo()' | xcrun -sdk macosx swiftc -F Mixed - -o Test && DYLD_FRAMEWORK_PATH=Mixed ./Test\r\n\r\n# (2) Fails:\r\necho 'import Foo; foo()' | swift -F Mixed\r\n\r\n# (3) Fails likewise:\r\necho 'import Foo; foo()' | xcrun -sdk macosx swift -F Mixed\r\n\r\n# (4) Succeeds, but contains no C headers:\r\necho 'import Foo; foo()' | swift -F Swift\r\n```\r\n\r\nTO RECREATE THE ATTACHMENT:\r\n\r\n1. In Xcode (e.g. 6.3 beta 2), create a new project.\r\n2. Choose \"Cocoa Framework\" under OS X / Framework & Library.\r\n3. Language option Swift. (But happens with Objective-C as well.)\r\n4. Add a Swift file to the project, and a public function.\r\n5. Check that Defines Module is set in Build Settings.\r\n6. Build.\r\n\r\nTO RECREATE THE SWIFT-ONLY FRAMEWORK:\r\n\r\n1. Uncheck \"Target Membership\" for the file \"Foo.h\".\r\n2. Build.\r\n\r\nExpected Results:\r\nExpected the import to work when the C header was present.\r\n\r\nActual Results:\r\n(1) prints:\r\n\r\n```\r\nIt works!\r\n```\r\n\r\n(2) and (3) fail with the error:\r\n\r\n```\r\nWelcome to Swift version 1.2. Type :help for assistance.\r\nrepl.swift:1:8: error: cannot load underlying module for 'Foo'\r\nimport Foo; foo()\r\n       ^\r\nA fatal parse error has occurred.  LLDB may become unstable; please restart your debug session as soon as possible.\r\n```\r\n\r\n(4) prints:\r\n\r\n```\r\nWelcome to Swift version 1.2. Type :help for assistance.\r\nIt works!\r\n```\r\n\r\nVersion:\r\nHappens in both:\r\n- Xcode 6.2 (6C131e)\r\n- Xcode 6.3 beta 2 (6D532l)\r\n\r\nNotes:\r\nI asked about this bug in the Developer Forums, https://devforums.apple.com/message/1108998#1108998\r\n\r\nConfiguration:\r\nHappens in all OS X & Xcode configurations I've tested.\r\n\r\nAttachments:\r\n'Foo.zip' was successfully uploaded."
+    email: pyry.jahkola@gmail.com
+    modified: "2015-06-08T11:39:59.02638Z"
+    number: "20135930"
+    number_intvalue: 20135930
+    originated: "2015-03-12"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.3 beta 2 (6D532l)
+    reproducible: Always
+    resolved: "2015-06-08"
+    status: Closed
+    title: REPL fails to import mixed frameworks with a C header

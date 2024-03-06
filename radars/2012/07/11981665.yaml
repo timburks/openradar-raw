@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11981665"
+    labels:
+        datastore_id: "1856401"
+data:
+    classification: Serious Bug
+    created: "2012-07-29T03:03:30.809002Z"
+    description: "Summary:\r\nUSB driver / Audio Class 1.0 driver services ISO IN endpoint at a wrong rate - exactly double the rate as specified in endpoint descriptor's bRefresh field.\r\nOur USB Audio Class 1.0 device utilizes asynchronous sink method for audio playback. The streaming data rate is controlled via isochronous sync endpoint, which is supposed to be polled every 32ms as per the endpoint descriptor's bRefresh = 5 value (2^5=32ms). Our device calculates the feedback number every 31st frame since last polling of the sync endpoint. This event will never happen because OS X 10.8 polls the endpoint every 16ms, contrary to the descriptor specification. The net result is broken playback with periodic buffer under/overruns.\r\n\r\nSteps to Reproduce:\r\nHave a USB Audio 1.0 Full Speed device with one asynchronous iso OUT endpoint and one associated iso IN sync endpoint. Set bRefresh field in sync endpoint descriptor to N, requesting servicing every 2^N ms/frames.\r\n\r\nExpected Results:\r\nSync endpoint should receive iso IN transfer request every 2^N ms/frames.\r\n\r\nActual Results:\r\nSync endpoint actually receives iso IN transfer request every 2^(N-1) ms/frames.\r\n\r\nRegression:\r\nIt has been reported by our customers that they experience the same symptoms when using our product with their new Macs featuring USB 3.0 ports, even when running the OS X 10.7 build that shipped with their machines.\r\nOn machines without USB 3.0 ports, there was no problem in any OS X version prior to 10.8 Mountain Lion."
+    email: dom.peklo@gmail.com
+    modified: "2012-07-29T03:11:45.086148Z"
+    number: "11981665"
+    number_intvalue: 11981665
+    originated: 29-Jul-2012 10:39 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: "10.8"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: USB / Audio Class 1.0 driver - miscalculates bRefresh of endpoint

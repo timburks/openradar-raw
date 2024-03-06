@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8625525"
+    labels:
+        datastore_id: "823401"
+data:
+    classification: Serious bug
+    created: "2010-11-03T14:48:29.766491Z"
+    description: "Summary:\r\nWhen the user duplicates a target in an Xcode project, and the target is linking to a library in the SRCROOT, the duplicate target will have a LIBRARY_SEARCH_PATHS that has extra backslash escapes.\r\n\r\nMore concretely, if the original target has the following search paths (copied from project.pbxproj):\r\n\r\n\t\t\t\tLIBRARY_SEARCH_PATHS = (\r\n\t\t\t\t\t\"$(inherited)\",\r\n\t\t\t\t\t\"\\\"$(SRCROOT)/FlurryLib\\\"\",\r\n\t\t\t\t);\r\n\r\nThen the duplicate will have these search paths:\r\n\r\n\t\t\t\tLIBRARY_SEARCH_PATHS = (\r\n\t\t\t\t\t\"$(inherited)\",\r\n\t\t\t\t\t\"\\\\\\\"$(SRCROOT)/FlurryLib\\\\\\\"\",\r\n\t\t\t\t);\r\n\r\nBecause of the added backslashes, the duplicated target will fail to link. Instead it will give errors like these:\r\n\r\nld: warning: directory '\"/Users/rbeef/Desktop/Test' following -L not found\r\nld: warning: directory 'project/FlurryLib\"' following -L not found\r\n\r\nSteps to Reproduce:\r\n1. Create a new project in Xcode.\r\n2. Using the Project -> Add to project menu, add a folder containing a .a file.\r\n3. Control-click the target and choose Duplicate.\r\n4. Attempt to build the new target.\r\n\r\nExpected Results:\r\nCompiles and links.\r\n\r\nActual Results:\r\nIf path to library contains spaces, linker returns errors about not being able to find the paths."
+    email: jay@tamboli.cx
+    modified: "2011-08-28T05:39:13.879196Z"
+    number: "8625525"
+    number_intvalue: 8625525
+    originated: 11/3/2010
+    parent_number: "3553386"
+    product: Developer tools
+    product_version: 3.2.5
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/3553386
+    title: Duplicate target command over-escapes LIBRARY_SEARCH_PATHS

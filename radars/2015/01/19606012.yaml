@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19606012"
+    labels:
+        datastore_id: "6084622521729024"
+data:
+    classification: Serious Bug
+    created: "2015-01-27T00:00:21.56406Z"
+    description: "12-Apr-2015:\r\nI can still reproduce this on 10.10.3 (14D131). If the duplicate was closed as fixed, then I respectfully disagree that this is a duplicate bug.\r\n\r\nSummary:\r\nThe GameKit OS X in-app login dialog leaves Secure Input enabled when dismissed. This deprives apps which use Core Event Taps from filtering input after the in-app GameKit dialog has been presented. The only workaround is to kill the GameKit process. This violates Apple's own guidelines on the use of secure input: https://developer.apple.com/library/mac/technotes/tn2150/_index.html\r\n\r\nSteps to Reproduce:\r\n1. Download TextExpander:\r\nhttp://smilesoftware.com/TextExpander/download.html\r\n\r\n(Apple employees and contractors can grab a self-serve NFR license here: http://smilesoftware.com/apple)\r\n2. Launch TextExpander\r\n\r\nIf you're new to TextExpander, you'll need to enable Accessibility access in the Security & Privacy system preferences, as prompted.\r\n\r\n3. Install Hero Academy from the Mac App Store:\r\nhttps://itunes.apple.com/us/app/hero-academy/id597247087?mt=12\r\n\r\n4. Launch Game Center\r\n5. Choose Account -> Sign Out from the menu\r\n6. Launch Hero Academy\r\n7. Enter your AppleID\r\n8. Enter your password\r\n9. Press Return\r\n\r\n*. You'll be logged in and will receive the GameKit welcome banner at the top of the window.\r\n\r\n10. Wait 15 seconds.\r\n11. You'll see the TextExpander menu bar icon will indicate it is disabled. If you click anywhere, it will show a warning badge to indicate that Secure Input is enabled. If you click and hold the TextExpander menu bar icon, it will note that secure input has been enabled by GameKit.\r\n12. Switch to a text editor and attempt to expand a TextExpander abbreviation, such as ddate. You'll find that it does not expand. This is because Secure Input is enabled and that deprives TextExpander of its ability to filter input.\r\n\r\nIt does not matter whether you use Return or the Sign In button.\r\nQuitting Hero Academy does not disable Secure Input.\r\nThe problem also affects Jigsaw Puzzle Epic <https://itunes.apple.com/us/app/jigsaw-puzzles-epic/id796885130?mt=12>, which I chose at random, so I'm figuring it affects any or most all GameKit apps.\r\n\r\nExpected Results:\r\nI would expect Secure Input to be disabled as soon as focus is lost on the secure input field, whether because the Return key functions as the keyboard shortcut for the default button or because the user clicks the Sign In button.\r\n\r\nActual Results:\r\nSecure Input remains enabled until one force quits GameKit via Activity Monitor.\r\n\r\nDetails on Secure Input are found here:\r\nhttps://developer.apple.com/library/mac/technotes/tn2150/_index.html\r\n\r\nDetails on how Secure Input impacts TextExpander are found here:\r\nhttp://smilesoftware.com/TextExpander/secureinput.html\r\n\r\nForce quitting the GameKit process via Activity Monitor releases Secure Input, as does the following:\r\n\r\n1. Launch Game Center\r\n2. Choose Account -> Sign Out from the menu\r\n3. Launch Hero Academy\r\n4. Cancel the GameKit login window\r\n5. Quit Hero Academy\r\n\r\nThis works because a new GameKit process is launched before Hero Academy presents the login and the old one, which was holding Secure Input, quits.\r\n\r\nVersion:\r\nOS X 10.10.1 (14B17)\r\n\r\nConfiguration:\r\nMacBook Pro (Retina, 15-inch, Late 2013)\r\n2.6 GHz Intel Core i7\r\n16 GB 1600 MHz DDR3\r\nNVIDIA GeForce GT 750M 2048 MB"
+    email: greg@smilesoftware.com
+    modified: "2015-04-12T21:09:19.31293Z"
+    number: "19606012"
+    number_intvalue: 19606012
+    originated: 26-Jan-2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.1 (14B17)
+    reproducible: Always
+    resolved: Duplicate of 19784790
+    status: Open
+    title: GameKit OS X in-app login leaves secure input enabled when dismissed

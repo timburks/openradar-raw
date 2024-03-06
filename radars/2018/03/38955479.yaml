@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "38955479"
+    labels:
+        datastore_id: "6187902845321216"
+data:
+    classification: UI/Usability
+    created: "2018-03-28T13:56:27.96695Z"
+    description: "Summary:\r\nWhen an UISwipeActionPullView is being added to the UITableView it’s added above all the other subviews. This may result in overlapping the pinned header view of an UITableView in certain scenarios.\r\n\r\nSteps to Reproduce:\r\n1) Create a table view with headers and editActions for cells\n2) Populate it with enough rows to span the whole screen\n3) Scroll it up, so at least one of the cells is hidden partially behind a header view.\n4) Swipe the partially covered cell to the left\r\n\r\nExpected Results:\r\n5) UISwipeActionPullView should be added below the UITableViewHeaderFooterView\r\n\r\nActual Results:\r\n5) UISwipeActionPullView is added above the UITableViewHeaderFooterView\r\n\r\nVersion:\r\n11.2\r\n\r\nNotes:\r\nI’ve fixed this by overriding UITableView’s addSubview method:\n\nclass FixedTableView: UITableView {\n    override func addSubview(_ view: UIView) {\n        if String(describing: type(of: view)) == \"UISwipeActionPullView\" {\n            let header = subviews.first { $0 is UITableViewHeaderFooterView }\n            if let firstHeader = header {\n                self.insertSubview(view, belowSubview: firstHeader)\n            } else {\n                super.addSubview(view)\n            }\n        } else {\n            super.addSubview(view)\n        }\n    }\n}"
+    email: MichalKaluzny@gmail.com
+    modified: "2018-03-28T13:56:27.9672Z"
+    number: "38955479"
+    number_intvalue: 38955479
+    originated: 28-Mar-2018 03:56 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "11.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UISwipeActionPullView overlaps UITableViewHeaderFooterView

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16119172"
+    labels:
+        datastore_id: "5012278642475008"
+data:
+    classification: Other bug
+    created: "2014-02-20T08:11:53.935156Z"
+    description: "Summary:\r\nxcodebuild expects its arguments to be encoded as UTF-8 (composed form), and does not accept arguments encoded as UTF-8-MAC (decomposed form).\r\n\r\nNSTask encodes its arguments by invoking -[NSString fileSystemRepresentation], which encodes using UTF-8-MAC (decomposed form), which makes it extremely difficult to successfully invoke xcodebuild via NSTask when some arguments contain non-ASCII code points.\r\n\r\nSteps to Reproduce:\r\n1. Install Xcode\r\n2. Create a new Xcode project called \"EncodingBugTest\"\r\n3. Rename the main app target to \"Ä\" (that is the A-umlaut)\r\n4. Open Terminal\r\n5. Ensure that Terminal is using the \"Unicode (UTF-8)\" character encoding: (Preferences > Settings > (Selected profile) > Advanced > Character encoding)\r\n6. Use the `cd` command to change the Terminal working directory to the one where you saved the Xcode project\r\n7. Run: xcodebuild -project EncodingBugTest.xcodeproj -target $(iconv -f UTF-8 -t UTF-8-MAC /dev/stdin <<< \"Ä\")\r\n\r\nExpected Results:\r\nExpected xcodebuild to successfully build the project target.\r\n\r\nActual Results:\r\nInstead we see the following:\r\n\r\nxcodebuild: error: The project 'EncodingBugTest.xcodeproj' does not contain a target named 'Ä'.\r\n\r\nVersion:\r\nXcode Version 5.0.2 (5A3005)"
+    email: ali.rantakari@gmail.com
+    modified: "2014-02-20T08:11:53.935413Z"
+    number: "16119172"
+    number_intvalue: 16119172
+    originated: 20-Feb-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 5.0.2 (5A3005)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: xcodebuild doesn't accept UTF-8-MAC -encoded arguments

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "42800843"
+    labels:
+        datastore_id: "4976793069027328"
+data:
+    classification: Feature (New)
+    created: "2018-08-01T05:26:26.2178Z"
+    description: "Summary:\r\nIt would be nice if `UIApplicationDelegate#application(_:open:options:)`* could be supported on macOS as `NSApplicationDelegate#application(_:open:options:)`. To accept a custom URL scheme on macOS, we currently have to use some very archaic APIs and it would be beneficial to have consistency between platforms.\r\n\r\n* https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623112-application\r\n\r\nSteps to Reproduce:\r\n \r\n\r\nExpected Results:\r\nI expected it to work like on iOS:\r\n\r\n```swift\r\n@NSApplicationMain\r\nfinal class AppDelegate: NSObject, NSApplicationDelegate {\r\n\tfunc application(_ app: NSApplication, open url: URL, options: [NSApplicationOpenURLOptionsKey: Any] = [:]) -> Bool {\r\n\t\tprint(url)\r\n\t}\r\n}\r\n```\r\n\r\nActual Results:\r\nBut we currently have to do this ugly archaic boilerplate:\r\n\r\n```swift\r\n@NSApplicationMain\r\nfinal class AppDelegate: NSObject, NSApplicationDelegate {\r\n\tfunc applicationDidFinishLaunching(_ notification: Notification) {\r\n\t\tNSAppleEventManager.shared().setEventHandler(self, andSelector:#selector(AppDelegate.handleGetURL(event:withReplyEvent:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))\r\n\t}\r\n\r\n\tfunc handleGetURL(event: NSAppleEventDescriptor!, withReplyEvent: NSAppleEventDescriptor!) {\r\n\t\tif let urlString = event.paramDescriptor(forKeyword: AEKeyword(keyDirectObject))?.stringValue, let url = URL(string: urlString) {\r\n\t\t\tprint(url)\r\n\t\t}\r\n\t}\r\n}\r\n```\r\n\r\nVersion:\r\nmacOS 10.13\r\n\r\nNotes:"
+    email: sindresorhus@gmail.com
+    modified: "2018-09-20T06:23:46.686704Z"
+    number: "42800843"
+    number_intvalue: 42800843
+    originated: 01-Aug-2018 12:26 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: macOS 10.13
+    reproducible: Always
+    resolved: Yes
+    status: Closed
+    title: Support `UIApplicationDelegate#application(_:open:options:)` on macOS for easier listening to custom URL schemes

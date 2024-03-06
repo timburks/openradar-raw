@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB11380612
+    labels:
+        datastore_id: "5502644600700928"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2022-08-26T18:15:48.622336Z"
+    description: "At the macOS Setup Assistant sometimes an end-user will type in a “Full Name” which contains ASCII control characters. Usually this is U+0010/0x10/^P characters. But we’ve also seen U+0017/0x17/^W as well. When that user’s MDM channel provides its TokenUpdate to the MDM server it includes, verbatim, that typed-in name in the `UserLongName` field of the TokenUpdate XML plist. However, control characters are invalid XML 1.0 of which Plist declares its DOCTYPE. This means that common parsers (such as Python or Go built-in parsers) will fail parsing this XML. Here’s an example (note the three ^Ps):\r\n\r\n```\r\n        <key>UserLongName</key>\r\n        <string>Firstname Lastname                                                                                                                                                                   ^P^P^P                                                                                                                  </string>\r\n        <key>UserShortName</key>\r\n        <string>firstnamel</string>\r\n```\r\n\r\nAnd a hexdump -C of the relevant section (where you can see the three 0x10s):\r\n\r\n```\r\n00000290  69 6e 67 3e 0a 09 3c 6b  65 79 3e 55 73 65 72 4c  |ing>..<key>UserL|\r\n000002a0  6f 6e 67 4e 61 6d 65 3c  2f 6b 65 79 3e 0a 09 3c  |ongName</key>..<|\r\n000002b0  73 74 72 69 6e 67 3e 46  69 72 73 74 6e 61 6d 65  |string>Firstname|\r\n000002c0  20 4c 61 73 74 6e 61 6d  65 20 20 20 20 20 20 20  | Lastname       |\r\n000002d0  20 20 20 20 20 20 20 20  20 20 20 20 20 20 20 20  |                |\r\n*\r\n00000360  20 20 20 20 20 20 20 20  20 20 20 20 10 10 10 20  |            ... |\r\n00000370  20 20 20 20 20 20 20 20  20 20 20 20 20 20 20 20  |                |\r\n*\r\n000003e0  20 3c 2f 73 74 72 69 6e  67 3e 0a 09 3c 6b 65 79  | </string>..<key|\r\n000003f0  3e 55 73 65 72 53 68 6f  72 74 4e 61 6d 65 3c 2f  |>UserShortName</|\r\n00000400  6b 65 79 3e 0a 09 3c 73  74 72 69 6e 67 3e 66 69  |key>..<string>fi|\r\n00000410  72 73 74 6e 61 6d 65 6c  3c 2f 73 74 72 69 6e 67  |rstnamel</string|\r\n```\r\n\r\n(Example also attached as `TokenUpdate-redacted.plist`)\r\n\r\nSo, in other words: `mdmclient` is generating invalid XML when it sends us a TokenUpdate for the MDM user-channel sometimes.  This causes our parsers (which happen to be Go’s built-in XML parser — though Python’s fails as well — by way of a plist module). I’ve attached a (redacted) \r\n\r\nI’m sure you’re asking: why are users generating control characters when they input their name? We’re still working on that one to find more, but we were able to duplicate this “mashing on the keyboard while holding option” when DEP-enrolling a Mac at setup assistant."
+    email: jesse.c.peterson@gmail.com
+    modified: "2022-08-26T18:15:48.622479Z"
+    number: FB11380612
+    number_intvalue: 11380612
+    originated: "2022-08-26"
+    parent_number: '&{NULL_VALUE}'
+    product: MDM
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: User channel TokenUpdate Check-in Message can contain invalid XML

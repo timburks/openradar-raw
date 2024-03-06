@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB12050037
+    labels:
+        datastore_id: "5598911435636736"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2023-03-11T04:14:58.339747Z"
+    description: "mouseDown/mouseUp events are not correctly forwarded up the responder chain for views nested inside an NSPopover when the Reduced Transparency accessibility setting is enabled prior to app startup.\r\n\r\n## Overview\r\nThe linked repro app includes an NSViewController subclass, MyViewController, that simply embeds an NSView and adds a mouseDown:(NSEvent*) handler that logs a string to the console.\r\n\r\nhttps://github.com/cbracken/PopoverRepro\r\n\r\n## Expected behaviour\r\nIn all cases, clicking within the bounds of the view managed by MyViewController should trigger a mouseDown: call on the view controller.\r\n\r\n## Actual behaviour\r\nWhen the Reduce Transparency accessibility setting is enabled and the view is the content view of an NSPopover, mouseDown: is not called on clicks in the view managed by MyViewController.\r\n\r\nWhen the Reduced Transparency accessibility setting is disabled, mouseDown: is called regardless of whether the view is the content view of an NSPopover or an NSWindow.\r\n\r\nWhen the view is the content view of an NSWindow, mouseDown: is called regardless of whether the Reduce Transparency accessibility setting is enabled.\r\n\r\n## Repro steps\r\n1. Open macOS System Settings > Accessibility > Display.\r\n2. Enable the Reduce Transparency setting.\r\n3. From Xcode, build and launch the app.\r\n4. Click the main window one or more times. \"MyViewController got mouseDown!\" will be logged in the debug console.\r\n5. Click the heart status bar icon in the menu bar to open a view of the same type in an NSPopover.\r\n6. Click the contents of the popover that appears. Note that nothing is logged to the debug console.\r\n\r\nRepeat these steps with the _Reduce Transparency_ setting disabled to see that mouse clicks are logged for clicks in both the main window and the popover.\r\n\r\n## Notes\r\nNo notable differences are noted between the working and non-working scenario when probing the responder chain. In both cases, the responder chain appears to be:\r\n```\r\n<PopoverRepro.MyView: 0x11a204e10>\r\n<PopoverRepro.MyViewController: 0x600002e36a00>\r\n<NSPopover: 0x600003714630, animates=1, behavior=0>\r\n<_NSPopoverWindow: 0x11a205040>\r\n<NSStatusBarWindow: 0x14b89bb60>\r\n```\r\n\r\n`MyView`, an `NSView` subclass, does have its `mouseDown:` method called, and probing self.nextResponder during that call shows that the next responder is indeed `MyViewController`; however, the default implementation of calling `mouseDown:` on `super` results in no call to the view controller's `mouseDown:` method. This bug repros even if you use a plain `NSView`, but `MyView` exists to demonstrate that the first responder's `mouseDown:` is called, but that the view controller's is not under the above conditions.\r\n\r\nAdding a breakpoint on all `mouseDown:` methods suggests that `NSView` itself may not have a `mouseDown:` implementation, but its superclass `NSResponder` does, and that implementation appears to be walking a responder chain and triggering `forwardMethod` calls which presumably send the `mouseDown:` message on each responder. It does seem to iterate over the correct number of items in the responder chain, before hitting `_NSPopoverWindow`'s `mouseDown:` implementation, which _does_ get called.\r\n\r\nOne notable difference in the view hierarchy is that when reduced transparency is enabled, an `_NSPopoverFrameAXBackgroundView` appears in the view hierarchy as a peer of `MyViewController`. This has no effect on the responder chain, however."
+    email: chris.bracken@gmail.com
+    modified: "2024-01-24T20:50:52.77958Z"
+    number: FB12050037
+    number_intvalue: 12050037
+    originated: "2023-03-10"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS / AppKit
+    product_version: 13.2.1
+    reproducible: Always
+    resolved: ""
+    status: Potential fix identified - macOS 13.3.1
+    title: NSPopover content view controller does not receive mouseDown/Up when reduced transparency accessibility setting is enabled

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30725266"
+    labels:
+        datastore_id: "5041675160256512"
+data:
+    classification: UI/Usability
+    created: "2017-02-27T00:00:29.72806Z"
+    description: "Summary:\r\nWhen you fire a build of your app in Interface Builder by clicking \"Refresh All Views\" the resulting binary is passed extra build flags that cause issues for some configurations.\n\nIn this case LD_RUNPATH_SEARCH_PATHS is set to more than what our project is configured to, which ends up in Interface Builder finding multiple frameworks, and picking one that has not been codesigned thus failing the designables refresh.\r\n\r\nSteps to Reproduce:\r\n1. Create a project that depends on one dynamic framework\n2. Build the project by clicking \"Refresh All Views\" in IB\n3. otool -l path/to/binary | grep -C 2 RPATH\r\n\r\nExpected Results:\r\nThe RPATH of the binary should be set to only whatever is set in the project\r\n\r\nActual Results:\r\nThe RPATH contains `$(inherited) @loader_path/Frameworks $(BUILT_PRODUCTS_DIR)`\r\n\r\nVersion:\r\nXcode 8.2.1\r\n\r\nNotes:\r\n- This behavior is defined in `-[IBLiveViewsManager _additionalBuildSettingsForWorkspace:]`\n- See https://github.com/CocoaPods/CocoaPods/issues/5678 for the side effects of this issue.\n- I think that at the very least it would be ideal if users could have control over these flags in the case the defaults didn't work for their configuration."
+    email: keithbsmiley@gmail.com
+    modified: "2017-02-27T00:00:29.72832Z"
+    number: "30725266"
+    number_intvalue: 30725266
+    originated: 26-Feb-2017 16:00
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.2.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Interface builder adds custom RPATH to binary for IBDesignables

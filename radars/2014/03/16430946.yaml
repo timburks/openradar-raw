@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16430946"
+    labels:
+        datastore_id: "5817349861015552"
+data:
+    classification: ""
+    created: "2014-03-26T12:59:47.655731Z"
+    description: "Summary:\r\nI have a minimal test case that causes a crash on iOS 5.1 when compiled with the iOS SDK 7.1, LLVM 5.1, and libstdc++.\r\n\r\nThe crash does not happen with -O0 or -O1, but -Os and -O2 and above all trigger the crash. It is occurring somewhere in the std::string implementation.\r\n\r\nThe same build runs fine on iOS 6 and 7 devices.\r\n\r\nSteps to Reproduce:\r\n1. Open the attached project in XCode 5.1\r\n2. Run it on an iOS 5.1 device\r\n3. See it crash with a message similar to this:\r\n\r\nCrashTest(1014) malloc: *** error for object 0x2fee4c80: pointer being freed was not allocated\r\n*** set a breakpoint in malloc_error_break to debug\r\n\r\nExpected Results:\r\nIt should print out \"base/path\".\r\n\r\nActual Results:\r\nThere is a crash, XCode reports it as being in the line:\r\nreturn directory + \"/\" + path;\r\n\r\nCommenting out the comparison with the global string makes the code work as expected.\r\n\r\nVersion:\r\nTested on iOS 5.1 (9B176) on both iPhone 4 (MC603B) and iPod touch 4G (MC540BT)\r\n\r\nNotes:\r\nWhen built with XCode 5.0.2, iOS SDK 7.0 and LLVM 5.0 the crash does not happen.\r\n\r\nI'd like to understand if the optimizer in LLVM 5.1 is producing invalid code or if it is simply optimizing something differently and triggering a bug in the version of libstdc++ shipped with iOS 5.1.\r\n\r\nOur ways forward: Stick to XCode 5.0.2 for a bit, drop support for iOS 5, and/or switch to libc++. I'd like to get to the cause of this bug so we can make the right choice on that.\r\n\r\nConfiguration:\r\nOccurs on iOS 5.1 device, when code is built with XCode 5.1, LLVM 5.1, and with C++ standard library set to libstdc++, and with optimisation set to -Os -O2 -O3.\r\n\r\nDoes not crash on later iOS releases."
+    email: simon@zappar.com
+    modified: "2014-04-23T07:44:53.663642Z"
+    number: "16430946"
+    number_intvalue: 16430946
+    originated: "2014-03-26"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "5.1"
+    reproducible: ""
+    resolved: No
+    status: Fixed
+    title: Global/static std::string leads to crash

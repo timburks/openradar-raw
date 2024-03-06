@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28849031"
+    labels:
+        datastore_id: "5001998520811520"
+data:
+    classification: Security
+    created: "2016-10-19T17:12:52.357Z"
+    description: "Summary:\r\nI have set a local password policy to lock an account if the password is mistyped 5 times and then unlock after 30 minutes.  This worked properly in 10.11.  It does not work properly in 10.12.\r\n\r\nSteps to Reproduce:\r\n1. Create a test user account on a 10.12 system.\r\n2. Apply the attached pwpolicy.plist to the account with 'pwpolicy setaccountpolicies -u <testaccount> /path/to/pwpolicy.plist\r\n3. Logout of admin account\r\n4. Attempt to login to test account with the wrong password 5 times.\r\n5. Wait 30 minutes.\r\n6. Attempt to login to test account with the right password.\r\n\r\nExpected Results:\r\nThe test account should be able to log in.\r\n\r\nActual Results:\r\nSee a message on the login window that \"Your account does not have a valid home directory.  Contact your system administrator for more information.\"\r\nIf instead of waiting 30 minutes, you clear out the failed logins, the user will be able to log in properly. \r\n'dscl . createpl /Users/<testaccount> accountPolicyData failedLoginCount 0'\r\n'dscl . createpl /Users/<testaccount> accountPolicyData failedLoginTimestamp 0'\r\n\r\n\r\npwpolicy.plist-\r\n\r\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\r\n<plist version=\"1.0\">\r\n<dict>\r\n\t<key>policyCategoryAuthentication</key>\r\n\t<array>\r\n\t\t<dict>\r\n\t\t\t<key>policyContent</key>\r\n\t\t\t<string>(policyAttributeFailedAuthentications &lt; policyAttributeMaximumFailedAuthentications) OR (policyAttributeCurrentTime &gt; (policyAttributeLastFailedAuthenticationTime + autoEnableInSeconds))</string>\r\n\t\t\t<key>policyIdentifier</key>\r\n\t\t\t<string>ProfilePayload:610F4E80-ABAE-4754-9CD9-CEA09733B088:maxFailedAttempts</string>\r\n\t\t\t<key>policyParameters</key>\r\n\t\t\t<dict>\r\n\t\t\t\t<key>policyAttributeMaximumFailedAuthentications</key>\r\n\t\t\t\t<integer>5</integer>\r\n\t\t\t\t<key>autoEnableInSeconds</key>\r\n\t\t\t\t<integer>1800</integer>\r\n\t\t\t</dict>\r\n\t\t</dict>\r\n\t</array>\r\n</dict>\r\n</plist>"
+    email: eric@sneakypockets.com
+    modified: "2016-10-19T17:12:52.35729Z"
+    number: "28849031"
+    number_intvalue: 28849031
+    originated: 10/19/2016
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.12/16A323
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Local password policy lockout timeout not working

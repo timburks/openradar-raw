@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "49888068"
+    labels:
+        datastore_id: "5015960457052160"
+data:
+    classification: iCloud
+    created: "2019-04-14T21:10:35.948506Z"
+    description: "Note: This is purely an iCloud services issue, it has *nothing* to do with iOS or macOS.\r\n\r\nSummary:\r\nIf a DKIM signed message is forwarded through iCloud, the DKIM signature no longer matches, breaking DMARC authentication.\r\n\r\nBack in 2017 I opened issue 35953200, which was about messages being forwarded through iCloud mail breaking the DMARC authentication. The problem was fixed sometime in 2018, but now I'm seeing the same problem again (albeit possibly for different reasons).\r\n\r\nI'm seeing the current problem in messages as early as February 3rd.\r\n\r\nSteps to Reproduce:\r\n1. Set iCloud to forward messages to another mail provider, preferably one that does strong SPF/DKIM/DMARC authentication: iCloud.com > Mail > Preferences > Forwarding > Forward my mail to: (external email address)\r\n\r\n2. Receive an email to your iCloud (or mac.com, or me.com) email address, sent from a sender that signs the message with DKIM and has DMARC rules established.\r\n\r\nNOTE: Many emails from Apple are an example of emails that fulfill step #2: almost every email from Apple has a DMARC failure when forwarded through iCloud. This does not, however, mean that only Apple emails are affected.\r\n\r\nExpected Results:\r\nEmails that are forwarded by iCloud should still pass DKIM and DMARC authentication.\r\n\r\nActual Results:\r\nEmails that are forwarded by iCloud do NOT pass DMARC authentication\r\n\r\nAttached case:\r\nAn especially good example is marketing emails from Apple, because Apple sends the SAME email to two of my addresses: directly to <external address>, and the 2nd one to <icloud address>.\r\n\r\nI have iCloud set to forward emails sent to <icloud address> to <external address>. Therefore, we can compare the emails to see exactly what changes resulted from being forwarded through iCloud.  Attached are two such email pairs.\r\n\r\nThe emails that are sent directly to <external address> has an insideapple.apple.com DKIM signature.  When FastMail checked the authentication, it passes DKIM and DMARC.\r\n\r\nOn the messages that are forwarded through iCloud (sent to <iCloud address., forwarded to <external address>), the message fails DKIM because the message or body has been altered:\r\n\r\nAuthentication-Results: mx4.messagingengine.com;\r\n    arc=none (no signatures found);\r\n    dkim=fail (message has been altered, 2048-bit rsa key sha256)\r\n\r\nComparison of the message shows that that the message is in fact altered by iCloud.\r\n\r\nImpact:\r\nSince failing DMARC indicates the message is forged, it gets a very high probability of Spam score. The result is that many messages that are routed through iCloud.com are considered to be SPAM. Ironically it is the messages that are sent from the most security conscious senders (banks, major companies, etc.) are the ones that are almost always considered (falsely) to be SPAM, because those are the senders that publish DMARC rules in their DNS records.\r\n\r\nComparison to other mail systems:\r\nFrom what I've seen, ONLY iCloud.com is breaking DMARC on forwarding email. Gmail for example is fine."
+    email: msschmitt@gmail.com
+    modified: "2019-04-14T21:10:35.948687Z"
+    number: "49888068"
+    number_intvalue: 49888068
+    originated: 4/14/2019
+    parent_number: '&{NULL_VALUE}'
+    product: Web App + Web SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: iCloud mail forwarding destructive to DMARC authentication

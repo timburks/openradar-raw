@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10174620"
+    labels:
+        datastore_id: "1356401"
+data:
+    classification: Crash/Hang/Data loss
+    created: "2011-09-23T13:05:45.001442Z"
+    description: "23-Sep-2011 02:49 AM Thierry Monney:\r\n'AtomicIntegerArray.java' was successfully uploaded\r\n\r\n23-Sep-2011 02:49 AM Thierry Monney:\r\nSummary:\r\n\r\nThe attached JUnit test case systematically hangs when run with the current OSX Lion Java VM (1.6.0_26-b03-383-11A511) and JIT compilation enabled.\r\n\r\nSteps to Reproduce:\r\n\r\nCompile the attached source files with the command\r\n> javac *.java\r\n\r\nRun with\r\n> java -cp . AtomicIntegerArrayTest\r\n\r\nExpected Results:\r\n\r\nThe program ends normally with the following output:\r\n> Running test\r\n> Test done\r\n\r\nActual Results:\r\n\r\nThe program hangs with the following output:\r\n> Running test\r\n\r\nAt this point, the process freezes and cannot even be killed with Ctrl-C. One has to \"kill -9\" it. It is also impossible to run it in debug mode, e.g. in Eclipse, or to get a thread dump with jstack or attach to the process with JVisualVM.\r\n\r\nRegression:\r\n\r\nThe program terminates normally when the SIZE constant is set to a smaller number (on my machine, 10000 runs fine but 30000 hangs).\r\nThe program also runs fine with greater numbers if JIT is disabled, running it with the command\r\n> java -cp . -Djava.compiler=NONE AtomicIntegerArrayTest\r\nIt also runs normally with the same JVM version on Windows 7 and with prior JVM versions on OS X Lion (tested with 1.4.2_21-b01-324 and 1.5.0_19-b02-304).\r\n\r\nNotes:\r\n\r\nThe problem is most likely related to JIT compilation for the following reasons:\r\n- Normal Java diagnostic tools are useless, which indicates the VM itself may be corrupted\r\n- The program runs fine with smaller numbers, probably because JIT has not run yet\r\n- The program runs fine when JIT is disabled\r\n\r\n\r\n\r\n\r\n23-Sep-2011 02:50 AM Thierry Monney:\r\n'AtomicIntegerArrayTest.java' was successfully uploaded\r\n\r\n23-Sep-2011 03:04 PM Thierry Monney:\r\nActually the test case does not use JUnit, but the point remains the same."
+    email: thierry.monney@gmail.com
+    modified: "2011-09-23T13:05:45.001882Z"
+    number: "10174620"
+    number_intvalue: 10174620
+    originated: 23-Sep-2011 02:49 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Java
+    product_version: 1.6.0_26-b03-383-11A511
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Multithreaded code hangs when JIT compiler kicks in

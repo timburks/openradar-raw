@@ -1,0 +1,93 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19237339"
+    labels:
+        datastore_id: "5797851045036032"
+data:
+    classification: Serious Bug
+    created: "2014-12-12T22:05:36.318216Z"
+    description: |-
+        Summary:
+        You can’t use optional functions as the operands to ??
+
+
+        Steps to Reproduce:
+        1. This:
+        let f: (() -> ())? = nil
+        let g: (() -> ()) = {}
+        let h: (() -> ()) = f ?? g
+
+
+        Expected Results:
+        Compilation.
+
+
+        Actual Results:
+        Nope.
+        ./nil-coalescing-with-function-types.swift:6:23: error: cannot invoke '??' with an argument list of type '((() -> ())?, (() -> ()))'
+
+
+        Regression:
+        Works fine with non-function types:
+        let a: String? = nil
+        let b: String = ""
+        let c: String = a ?? b
+        (Also tested explicitly with tuples, they were fine too.)
+
+        Works fine with the optional-on-both-sides version:
+        let i = f ?? f // no error, but now i is optional, which is what I was trying to avoid.
+
+        Notes:
+        Xcode gives these as the ?? operator definitions in Swift:
+
+        func ??<T>(optional: T?, defaultValue: @autoclosure () -> T) -> T
+        func ??<T>(optional: T?, defaultValue: @autoclosure () -> T?) -> T?
+
+        The former should totally apply to this. I wonder if maybe it’s the “function produces expected type Blargh, did you forget to call it maybe?” machinery going haywire with the autoclosure, because if I leave the type annotation off h I get that error.
+
+
+        I can define ???? thus:
+
+        infix operator ???? {}
+        func ???? <T> (left: T?, right: @autoclosure () -> T) -> T {
+        	return left != nil ? left! : right()
+        }
+
+        and then when I do this:
+
+        let j: (() -> ()) = f ???? g
+
+        I get:
+
+        ./nil-coalescing-with-function-types.swift:13:23: error: cannot convert the expression's type '((() -> ())?, (() -> ()))' to type '() -> ()'
+
+        But if I define it like so:
+
+        func ???? <T> (left: T?, right: T) -> T {
+        	return left != nil ? left! : right
+        }
+
+        Likewise if I declare it as:
+
+        func ???? <T> (left: T?, right: () -> T) -> T {
+        	return left != nil ? left! : right()
+        }
+
+        and use it as:
+
+        let j: (() -> ()) = f ???? { g }
+
+        —so I think it’s @autoclosure. Boo.
+    email: rix.rob@gmail.com
+    modified: "2014-12-12T22:05:36.318375Z"
+    number: "19237339"
+    number_intvalue: 19237339
+    originated: 12-Dec-2014 05:05 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swit: Nil coalescing operator does not accept functions as operands'

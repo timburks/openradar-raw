@@ -1,0 +1,52 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18505884"
+    labels:
+        datastore_id: "5231542762733568"
+data:
+    classification: Serious Bug
+    created: "2014-09-30T21:07:42.411355Z"
+    description: |-
+        Summary:
+        NSLayoutManagers with their delegates set to some NSLayoutManagerDelegate-conformant object are prone to a race condition between background layout and the delegate being deallocated.
+
+        1. The layout manager posts its background layout notification.
+        2. The delegate object deallocates, nil’ing out the layout manager’s delegate.
+        3. The layout manager’s background layout is performed.
+
+        At this point the layout manager still holds an unowned reference to the delegate instance. I’m not clear on how; the object in question was the text view’s superview in this case, but the reference to the superview is nil by the time the background layout is performed, so it’s unclear whether it’s copying an unowned reference to the delegate for the sake of the background layout or if something weirder is going on.
+
+
+        Steps to Reproduce:
+        1. Instantiate an object owning a text view.
+        2. Set the textView.textContainer.layoutManager.delegate to this object.
+        3. Make sure it’ll display and kick off background layout.
+        4. Release the reference to the root object, causing it all to be freed.
+        5. In the object’s dealloc, nil out the layout manager’s delegate.
+        6. Ensure background layout is enabled.
+        7. Do 1 through 3 repeatedly on the main thread’s run loop, e.g. in a recursive dispatch_async to the main queue.
+
+        Expected Results:
+        I expected everything to be fine.
+
+        Actual Results:
+        Crashes.
+
+        Regression:
+        Doesn’t happen without background layout. Doesn’t happen if you don’t set the layout manager’s delegate AFAICS. Probably doesn’t happen if the layout manager’s delegate is simply never deallocated.
+
+        Notes:
+        Backtrace to follow.
+    email: rix.rob@gmail.com
+    modified: "2014-09-30T21:07:42.411501Z"
+    number: "18505884"
+    number_intvalue: 18505884
+    originated: 30-Sep-2014 05:07 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: Mac OS X 10.9.5 (13F34)
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: NSLayoutManager background layout races its delegate

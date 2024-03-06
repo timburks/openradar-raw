@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33833796"
+    labels:
+        datastore_id: "5595336340930560"
+data:
+    classification: Bug
+    created: "2017-08-10T20:08:11.75397Z"
+    description: "Summary:\r\nFor authorizing third-party apps, Dropbox has a “dAuth” flow, which allows a third-party app to make an `openURL` call to the official Dropbox app, then have the official app authenticate on behalf of the third-party app, then make an `openURL` call back to the third-party app with an authorization token.\r\n\r\nThe issue\r\n\r\nWhen the first `openURL` call is made to the official app, the official app presents a view controller that allows the user to either authorize, cancel, or “Use a different [Dropbox] account”\r\n\r\nCurrently, this “Use a different account” button initiates another `openURL` call which opens a Dropbox login page in the Safari app.\r\n\r\nIn iOS 11 beta 4 & 5, however, the redirect back from the Safari app fails when choosing to use a different account, due to security restrictions in Safari:\r\n\r\n    \"Safari cannot open the page because it cannot redirect to locations starting with \"db-<appkey>:\"\r\n\r\n`db-<appkey>` is the custom URL scheme that we require third-party apps to register to listen to so that they can handle redirects back from the official Dropbox app.\r\n\r\nThis is not an issue when the redirect occurs from `SFSafariViewController` – which is the standard third-party auth flow – nor when the user directly taps “Allow” from the official app view.\r\n\r\nOur confusion\r\n\r\nStrangely, this doesn’t happen for all inter-app redirects from Safari app. For example, Dropbox shared links when opened from Safari app on iOS 11 beta 5 redirect successfully to the official app.\r\n\r\nOur question is why this would be happening for our `db-<appkey>` prefaced links.\r\n\r\nThe problem with `SFSafariViewController`\r\n\r\n`SFSafariViewController` works reasonably well, but it is problematic for two reason:\r\n\r\n- No inter-app redirect listener\r\n- No option to disable the Safari app button\r\n\r\nBecause we are unable to “listen” to redirect events, when the controller is launched, we have no idea when/if the user redirects successfully, meaning that we are unable to dismiss the controller in the official app, upon successful redirect.\r\n\r\nAlso, `SFSafariViewController`s have a button on the bottom right of the screen that allows the user to open the content they’re viewing in the full-fledged Safari app. This button is problematic because of the aforementioned issue with trying to progress through the auth flow using the Safari app.\r\n\r\nOur asks\r\n\r\n- A way to use Safari app to launch a custom redirect OR\r\n- A way to listen for redirect events and disable the Safari button in `SFSafariViewController`\r\n\r\nSteps to Reproduce:\r\n1. Run an app using the API v2 Objective-C SDK on a device or simulator running iOS 11 with the official Dropbox iOS app installed.\r\n2. Call authorizeFromController.\r\n3. After being sent to the official Dropbox iOS app, tap 'Use a different account'.\r\n4. Now in Safari, sign in and tap 'Allow'.\r\n\r\nExpected Results:\r\n5. You're redirected back to the third party app, completing the app authorization flow.\r\n\r\nObserved Results:\r\n5. Safari displays the prompt:\r\n> This form is not secure. Are you sure you want to submit it?\r\n6. Tap \"Submit\".\r\n7. Safari displays the error:\r\n> Safari cannot open the page because it cannot redirect to locations starting with \"db-<appkey>:\".\r\n\r\nVersion:\r\niOS 11 beta 4 & iOS 11 Beta 5"
+    email: henriqueponde90@gmail.com
+    modified: "2018-04-13T00:40:17.29956Z"
+    number: "33833796"
+    number_intvalue: 33833796
+    originated: 08/10/2017
+    parent_number: '&{NULL_VALUE}'
+    product: Safari
+    product_version: iOS 11 Beta 4/5
+    reproducible: Always
+    resolved: No
+    status: DUPLICATE | OPEN
+    title: Can't perform authentication From Safari for the Dropbox SDK

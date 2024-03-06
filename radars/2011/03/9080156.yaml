@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9080156"
+    labels:
+        datastore_id: "1129405"
+data:
+    classification: Serious Bug
+    created: "2011-03-03T10:47:03.935645Z"
+    description: "Summary:\r\nCalling setDateFormat on an NSDateFormatter cannot (always) override user's individual preference for 12 or 24 hour clock. I filed bug 8988715, and was told it works as designed. I request the documentation is updated to explain this. \r\n\r\nSteps to Reproduce:\r\n1. Set iPhone region format to United Kingdom\r\n2. Set iPhone 12/24 hour setting to 12 hour clock\r\n3. Run the following code:\r\n\r\n\tNSDateComponents *comps = [[NSDateComponents alloc] init];\r\n\t[comps setDay:6];\r\n\t[comps setMonth:5];\r\n\t[comps setYear:2004];\r\n\t[comps setHour:14];\r\n\t[comps setMinute:49];\r\n\t[comps setSecond:2];\r\n\tNSCalendar *gregorian = [[NSCalendar alloc]\r\n\t\t\t\t\t\t\t initWithCalendarIdentifier:NSGregorianCalendar];\r\n\t[gregorian setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@\"GMT\"]];\r\n\tNSDate *date = [gregorian dateFromComponents:comps];\t\r\n\tNSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];\r\n\t[dateFormatter setTimeZone: [NSTimeZone timeZoneWithAbbreviation:@\"GMT\"]];\r\n\t[dateFormatter setDateFormat: @\"yyyy-MM-dd HH:mm:ss\"];  \t\r\n\tNSString *dateOut = [dateFormatter stringFromDate:date];\t\r\n\tNSLog(@\"Date: %@\", dateOut);\r\n\r\n\r\nExpected Results:\r\nDate: 2004-05-06 14:49:02\r\n\r\nActual Results:\r\nDate: 2004-05-06 02:49:02 PM\r\n\r\nNotes:\r\n* In the unicode \"Locale Data Markup Language\", the character \"H\" is described as \"Hour [0-23]\".\r\n* In the NSDateFormatter documentation for method \"setDateFormat\", we're told to \"See Data Formatting Guide for a list of the conversion specifiers permitted in date format strings\".\r\n* In the Data Formatting Guide, under \"Date Formatters\" ->\"Formatter Styles\", we're told that \"If you specify your own format string, you lose user-configurability\"\r\n* My test case shows that user configurability is not lost when I specify my own format string, at least for the 12/24 hour clock setting\r\n* Apple's response to bug 8988715 suggests that this behaviour is by design\r\n* Hence the documentation is wrong: there should be a note both in the NSDateFormatter documentation and the Data Formatting Guide that \"The format string uses the format patterns from the Unicode standard, except for the character H, which if no locale is set on the NSDateFormatter, is interpreted as the hour in either [0-23] or [1-12] depending on user's 12/24 hour clock preference. If a locale is set on the NSDateFormatter, this character behaves as in the Unicode standard.\""
+    email: amorya@gmail.com
+    modified: "2011-08-28T05:37:43.94714Z"
+    number: "9080156"
+    number_intvalue: 9080156
+    originated: 3/3/2011
+    parent_number: '&{NULL_VALUE}'
+    product: Documentation
+    product_version: ""
+    reproducible: n/a
+    resolved: ""
+    status: Open
+    title: NSDateFormatter documentation does not explain exceptions to dateFormat

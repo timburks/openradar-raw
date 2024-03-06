@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16042338"
+    labels:
+        datastore_id: "4521595003469824"
+data:
+    classification: ""
+    created: "2014-02-11T23:45:20.186713Z"
+    description: "Summary:\r\nI'm using a segmented controller in a UINavigationController's navigationBar to switch between several view controllers using the UIViewControllerContainment API. The contentInsets and scrollViewIndicatorInsets are correctly set for the first view controller, but not the second view controller after I switch to it.\r\n\r\n\r\nThere is a workaround that requires manually setting the tableview insets based on the parent's top and bottom layout guides.\r\n\r\nSteps to Reproduce:\r\nI've created a sample project which is the simplest and easiest way to see the problem. I've made the code very concise and simple so you can see what is going wrong.\r\n\r\n1. Build and run the sample project on the simulator or device.\r\n2. While on the \"GREEN\" tab, scroll up and down and see that at the contentInsets and scrollViewIndicatorInsets are not clipped by any view and content appears behind the tabbar and navigation bar.\r\n3. Switch to the \"RED\" tab via the segmented controller button.\r\n4. Scroll up and down on the tableview and see that the contentInsets and scrollViewIndicatorInsets are incorrectly set and cause content to be inaccessible behind the tabbar and navigationcontroller.\r\n\r\nExpected Results:\r\nScrolling up and down on the \"RED\" tableview and seeing that at the contentInsets and scrollViewIndicatorInsets are not clipped by any view and content appears behind the tabbar and navigation bar.\r\n\r\nActual Results:\r\nThe content and scrollViewIndicatorInsets are clipped by the navigation bar and tabbar.\r\n\r\nVersion:\r\niOS 7.0.4\r\n\r\nNotes:\r\nAdding this code to the view controllers which are presented will fix the issue.\r\n\r\n- (void)didMoveToParentViewController:(UIViewController *)parent\r\n{\r\n    if (parent) {\r\n        CGFloat top = parent.topLayoutGuide.length;\r\n        CGFloat bottom = parent.bottomLayoutGuide.length;\r\n        \r\n        if (self.tableView.contentInset.top != top) {\r\n            UIEdgeInsets newInsets = UIEdgeInsetsMake(top, 0, bottom, 0);\r\n            self.tableView.contentInset = newInsets;\r\n            self.tableView.scrollIndicatorInsets = newInsets;\r\n        }\r\n    }\r\n    \r\n    [super didMoveToParentViewController:parent];\r\n}\r\n\r\nConfiguration:\r\niOS 7\r\niPhone 5s\r\nXcode 5.0.2 and Xcode 5.1 Beta 4\r\nOSX Mavericks\r\n\r\n\r\nHere is the sample project:\r\nhttps://www.dropbox.com/s/xlsy8z2ozaixjlx/SegmentedController.zip"
+    email: bryn.bodayle@gmail.com
+    modified: "2017-10-31T16:42:03.69116Z"
+    number: "16042338"
+    number_intvalue: 16042338
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "7.0"
+    reproducible: Always
+    resolved: 10/31/17
+    status: Closed
+    title: ContentInset isn't set when using a UITableView in a UIViewController that is displayed using UIViewControllerContainment

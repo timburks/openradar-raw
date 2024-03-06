@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21220820"
+    labels:
+        datastore_id: "5058257274011648"
+data:
+    classification: Serious Bug
+    created: "2015-06-03T15:38:02.57625Z"
+    description: "Summary:\r\nThe documentation for `CFURLCreateStringByAddingPercentEscapes` states:\r\n\r\n> The characters escaped are all characters that are not legal URL characters (based on RFC 3986), plus any characters in legalURLCharactersToBeEscaped, less any characters in charactersToLeaveUnescaped. To simply correct any non-URL characters in an otherwise correct URL string, pass NULL for the allocator, charactersToLeaveEscaped, and legalURLCharactersToBeEscaped parameters, and kCFStringEncodingUTF8 as the encoding parameter.\r\n\r\n- https://developer.apple.com/library/mac/documentation/CoreFoundation/Reference/CFURLRef/#//apple_ref/c/func/CFURLCreateStringByAddingPercentEscapes\r\n\r\nThe header documentation states the following:\r\n\r\n> Creates a copy or originalString, replacing certain characters with the equivalent percent escape sequence based on the encoding specified. If the originalString does not need to be modified (no percent escape sequences are missing), may retain and return originalString. If you are uncertain of the correct encoding, you should use UTF-8, which is the encoding designated by RFC 2396 as the correct encoding for use in URLs.  The characters so escaped are all characters that are not legal URL characters (based on RFC 2396), plus any characters in legalURLCharactersToBeEscaped, less any characters in charactersToLeaveUnescaped.\r\n\r\nAs you can see, the public documentation believes the percent escaping follows RFC 3986 while the header claims to follow RFC 2396. Though various tests, it has been observed that `CFURLCreateStringByAddingPercentEscapes` does follow RFC 2396 as stated in the header. The documentation should be updated to reflect this fact.\r\n\r\nHere is a chunk of Swift code to demonstrate the issue.\r\n\r\n```\r\nfunc escape(string: String) -> String {\r\n    return CFURLCreateStringByAddingPercentEscapes(nil, string, nil, nil, CFStringBuiltInEncodings.UTF8.rawValue) as String\r\n}\r\n\r\nlet asciiCharacters = [\r\n    \" \", \"!\", \"\\\"\", \"#\", \"$\", \"%\", \"&\", \"'\", \"(\", \")\", \"*\", \"+\", \",\", \"-\", \".\", \"/\", \":\",\r\n    \";\", \"<\", \"=\", \">\", \"?\", \"@\", \"[\", \"\\\\\", \"]\", \"^\", \"_\", \"`\", \"{\", \"|\", \"}\", \"~\",\r\n    \"0123456789\", \"abcdefghijklmnopqrstuvwxyz\", \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\"\r\n]\r\n\r\nasciiCharacters.map { println(\"\\\"\\($0)\\\" = \\\"\\(escape($0))\\\"\") }\r\n\r\nlet nonLegalCharacters = \" \\\"#%<>[]\\\\^`{}|\"\r\n```\r\n\r\nThe following characters are considered \"legal\" in RFC 3986.\r\n\r\n- \"[]#\"\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\n\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n\r\nResolved in new documentation: \r\n\r\n* https://developer.apple.com/reference/corefoundation/1542665-cfurlcreatestringbyaddingpercent"
+    email: christian.noon@gmail.com
+    modified: "2016-07-14T02:58:34.99841Z"
+    number: "21220820"
+    number_intvalue: 21220820
+    originated: 03-Jun-2015 08:35 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Documentation
+    product_version: Xcode 6.3.2
+    reproducible: Always
+    resolved: 13-Jul-2016 07:56 PM
+    status: Closed
+    title: CFURLCreateStringByAddingPercentEscapes documentation states incorrect RFC spec

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10934217"
+    labels:
+        datastore_id: "1532404"
+data:
+    classification: Serious Bug
+    created: "2012-02-26T13:49:01.431361Z"
+    description: "Summary: A sandboxed application cannot properly register Apple Help Book located in its own bundle or at other places to which it has access. The issue affect sandboxed applications both on Mac OS X 10.7.3 and 10.8DP1/12A128p.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a sandboxed application \"A.app\", which contains a bundle \"B.bundle\" in its resources. The \"B.bundle\" bundle contains an Apple help book directory called \"AppSandBoxTestHelp\" for an Apple help book of the same name in its Resources directory and has correct Info.plist keys configured (CFBundleHelpBookName, CFBundleHelpBookFolder both set to \"AppSandBoxTestHelp\").\r\n\r\n2. Add the following code to \"A.app\":\r\n\r\n\tFSRef\t\tbundleRef;\r\n    NSURL*\t\tbundleURL\t= [NSURL fileURLWithPath: [[NSBundle bundleForClass:[self class]] pathForResource:@\"B\" ofType:@\"bundle\" ]];\r\n\tif( ! bundleURL)\r\n\t\tNSLog(@\"Cannot get bundle URL\");\r\n\t\r\n\tif( ! CFURLGetFSRef( (__bridge CFURLRef) bundleURL, &bundleRef ) )\r\n\t\tNSLog(@\"Cannot get bundle fsref\");\r\n\t\r\n\tOSStatus err = AHRegisterHelpBook( &bundleRef );\r\n\tif(err != noErr)\r\n\t\tNSLog(@\"AHRegisterHelpBook error %li.\",(long)err);\r\n\r\n\terr = AHGotoPage((CFStringRef)@\"AppSandBoxTestHelp\", NULL, NULL);\r\n\tif(err != noErr){\r\n\t\tNSLog(@\"AHGotoPage error %li.\",(long)err);\r\n\r\n\r\nExpected Results: Calls to AHRegisterHelpBook AHGotoPage should be successful and should result in opening the help book in the help viewer.\r\n\r\nActual Results: AHRegisterHelpBook() returns successfully but registers the helpbook only in the preferences file inside the sandboxed application's container.\r\n\r\nNotes: This actually happens no matter where the help book is located. Unless the help book is registered automatically, a sandboxed application cannot register it: not even for viewing from within the sandboxed application, which does not make sense."
+    email: adamnhjl@gmail.com
+    modified: "2012-05-21T07:25:33.883989Z"
+    number: "10934217"
+    number_intvalue: 10934217
+    originated: 26-Feb-2012 02:48 PM
+    parent_number: "9330882"
+    product: Mac OS X
+    product_version: 10.8DP1/12A128p
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/9330882
+    title: Sandboxed application cannot register Apple Help Book

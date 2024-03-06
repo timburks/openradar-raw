@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7128141"
+    labels:
+        datastore_id: "65404"
+data:
+    classification: Serious
+    created: "2009-08-08T00:40:38.586458Z"
+    description: "Summary:\r\n========\r\n\r\nUsing NSOperationQueue results in a memory leak.\r\n\r\nSteps to Reproduce:\r\n===================\r\n\r\nThe following code reproduces the problem. The flow is as follows:\r\n1) Queue up a batch of 1000 trivial NSOperations\r\n2) Wait for the queue to empty\r\n3) Sleep for a second to ensure there is no CPU load\r\n4) Force a collection4\r\n5) Rinse and repeat\r\n\r\nCompile the following code with:\r\ngcc -x objective-c main.m -o test -fobjc-gc-only -framework Cocoa -g\r\n\r\n#import <Cocoa/Cocoa.h>\r\n#include <libkern/OSAtomic.h>\r\n\r\nvolatile int64_t globalCounter;\r\n\r\n@interface Operation : NSOperation\r\n+ (Operation*) operation;\r\n@end\r\n\r\n@implementation Operation\r\n+ (Operation*) operation\r\n{\r\n        return [[[Operation alloc] init] autorelease];\r\n}\r\n\r\n- (void) main\r\n{\r\n        OSAtomicIncrement64(&globalCounter);\r\n}\r\n@end\r\n\r\nint main(int argc, char **argv)\r\n{\r\n        NSOperationQueue *queue = [[NSOperationQueue alloc] init];\r\n        int64_t counter = 0;\r\n\r\n        [queue setMaxConcurrentOperationCount:4];\r\n\r\n        while (1) {\r\n                [queue addOperation:[Operation operation]];\r\n                counter++;\r\n\r\n                if (counter % 1000 == 0) {\r\n                        while ([[queue operations] count]) {\r\n                                usleep(100);\r\n                        }\r\n\r\n                        usleep(1000 * 1000);\r\n                        [[NSGarbageCollector defaultCollector] collectExhaustively];\r\n                }\r\n        }\r\n}\r\n\r\nExpected Results:\r\n=================\r\n\r\nNo memory leak\r\n\r\nActual Results:\r\n===============\r\n\r\nMemory leak... a pretty quick one too!\r\n\r\nNotes:\r\n======\r\nPlease note, I have tried this on 10.5.7 and Snow Leopard 10A421, both platforms reproduce the problem. It is not reproducible with retain/release code."
+    email: tim.murison@gmail.com
+    modified: "2011-08-28T05:45:29.713725Z"
+    number: "7128141"
+    number_intvalue: 7128141
+    originated: 08/07/2009
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.7 and 10.6A421
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Memory leak in NSOperationQueue

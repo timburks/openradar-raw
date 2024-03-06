@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23443090"
+    labels:
+        datastore_id: "4870873186041856"
+data:
+    classification: Crash
+    created: "2015-11-07T01:19:51.48988Z"
+    description: "Summary:\r\nI have a situation where I can reliably cause an app to crash by using Undo. It's caused by the fact that in this specific scenario, NSTextView is failing to call the undo manager's removeAllActionsWithTarget: with the TextStorage as the target. NSTextView is responsible for this clean up when it gets removed from the window and/or deallocated, and in this case it's failing to do so. So when I hit 'Undo', the invocation gets sent to the now-deallocated NSTextStorage object, resulting in a crash.\r\n\r\nSteps to Reproduce:\r\n1. Build/Run sample app\r\n2. Notice in the bottom left corner there's a white text view. Put your cursor in it. Paste in the word \"contentView\"\r\n3. Click the text field in the upper right to take focus away from the text view.\r\n4. Click the 'Remove' button, which will remove the text view and all references to it.\r\n5. Hit cmd-z to Undo.\r\n\r\nExpected Results:\r\nThere should be nothing in the undo stack, so it should NSBeep at us.\r\n\r\nActual Results:\r\nCrash with backtrace:\r\n\r\n(lldb) bt\r\n* thread #1: tid = 0x51ed89, 0x00007fff8e38d0dd libobjc.A.dylib`objc_msgSend + 29, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=1, address=0x10032310)\r\n    frame #0: 0x00007fff8e38d0dd libobjc.A.dylib`objc_msgSend + 29\r\n    frame #1: 0x00007fff9012082f Foundation`-[_NSUndoStack popAndInvoke] + 218\r\n    frame #2: 0x00007fff901205c8 Foundation`-[NSUndoManager undoNestedGroup] + 424\r\n    frame #3: 0x00007fff980f0e0e AppKit`-[NSCellUndoManager undo] + 104\r\n    frame #4: 0x00007fff8e174cd7 libsystem_trace.dylib`_os_activity_initiate + 75\r\n    frame #5: 0x00007fff97e5deb1 AppKit`-[NSApplication sendAction:to:from:] + 452\r\n    frame #6: 0x00007fff97e5dc4e AppKit`-[NSMenuItem _corePerformAction] + 382\r\n    frame #7: 0x00007fff97e5d97c AppKit`-[NSCarbonMenuImpl performActionWithHighlightingForItemAtIndex:] + 114\r\n    frame #8: 0x00007fff8e174cd7 libsystem_trace.dylib`_os_activity_initiate + 75\r\n    frame #9: 0x00007fff97e5c8ad AppKit`-[NSMenu performKeyEquivalent:] + 359\r\n    frame #10: 0x00007fff97e5ba6f AppKit`-[NSApplication _handleKeyEquivalent:] + 920\r\n    frame #11: 0x00007fff97d6683a AppKit`-[NSApplication sendEvent:] + 4080\r\n    frame #12: 0x00007fff97c8fb68 AppKit`-[NSApplication run] + 711\r\n    frame #13: 0x00007fff97c0c244 AppKit`NSApplicationMain + 1832\r\n  * frame #14: 0x00000001000016e2 TextViewStorageUndoCrash`main(argc=3, argv=0x00007fff5fbff688) + 34 at main.m:12\r\n    frame #15: 0x00007fff91a775c9 libdyld.dylib`start + 1\r\n    frame #16: 0x00007fff91a775c9 libdyld.dylib`start + 1\r\n\r\nVersion:\r\n10.10.5. Also reproduces on 10.11.\r\n\r\nNotes:\r\nWorkaround is to invoke something along the lines of \r\n\r\n        [[self.textView undoManager] removeAllActionsWithTarget:self.textView.textStorage];\r\n\r\nwhen I'm sure this object is going away, on the textview's behalf.\r\n\r\nConfiguration:\r\nNothing specific to report for configuration.\r\n\r\nAttachments:\r\nhttp://cl.ly/3A3O2F321Q1t"
+    email: rick@agilebits.com
+    modified: "2015-11-07T01:19:51.49027Z"
+    number: "23443090"
+    number_intvalue: 23443090
+    originated: "2015-11-06"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSTextView can fail to unregister its text storage's undo actions upon deallocation, resulting in crash on next undo.

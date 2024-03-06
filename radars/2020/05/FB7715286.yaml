@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7715286
+    labels:
+        datastore_id: "4941075252772864"
+data:
+    classification: Bug
+    created: "2020-05-26T15:11:14.559264Z"
+    description: "I have already discussed this with a DTS engineer via \"Apple Developer Technical Support\". Repro steps are as follows:\r\n\r\n- Set up app for content-available notifications which download a reasonably large payload (In our case content for our app as a tar.gz) using URLSession background downloads.\r\n- Run app, without attaching to debugger and launch to fetch push token.\r\n- Make sure app is terminated by the system, the easiest way to do this is to restart your device.\r\n- Send content-available push notification to the app.\r\n- Note that `applicationDidFinishLaunching` is called rather than the `performFetchWithCompletionHandler` app delegate method.\r\n- Witness that when the `handleEventsForBackgroundURLSession` is called, and we get a response from the original background download session (Which is still alive in memory) it errors with \"Lost Connection to Background Transfer Service\".\r\n\r\nOur logic works flawlessly if the update is NOT from a cold-launch, and the exact same code-path is taken by the app, so this is something caused by the fact it's a cold launch.\r\n\r\nAttached are:\r\n- Example project, with a README describing the problem again with additional repro steps. The example project uses logging and local notifications to help any testers know when content-available stuff happens in the background!\r\n- A sysdiagnose taken ~9 minutes before the issue, and one ~3 minutes after it (It was really difficult to time these properly as content-available delivery is really flaky). Issue occurred at 13:42.\r\n- Our own diagnostic logs taken from the application."
+    email: simonmitchell.dev@gmail.com
+    modified: "2020-05-26T15:11:14.559437Z"
+    number: FB7715286
+    number_intvalue: 7715286
+    originated: 26/05/2020
+    parent_number: '&{NULL_VALUE}'
+    product: Foundation
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: 'Content-Available background download using URLSession from cold launch fails with error: "Lost Connection to Background Transfer Service"'

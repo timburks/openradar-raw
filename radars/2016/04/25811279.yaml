@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25811279"
+    labels:
+        datastore_id: "4959527954808832"
+data:
+    classification: Other Bug
+    created: "2016-04-19T20:13:51.41913Z"
+    description: "Summary:\r\nIn looking at Apple Configurator 2's interface for creating a Restrictions profile, the interface has a nested view for these three options:\r\n\r\nparent: Allow installing apps using Apple Configurator and iTunes (allowAppInstallation)\r\nchild: Allow installing apps using App Store (allowUIAppInstallation)\r\ngrandchild: Allow automatic app downloads (allowAutomaticAppDownloads)\r\n\r\nI will refer to the options with the above labels.\r\n\r\nI did some testing where I turned off each option one at a time and watched what happened on an iPad. I notice that when the parent is unchecked, it also implements the grandchild - it effectively unchecks the grandchild. This makes sense, why have options for automatic downloading if the App Store has been disabled?\r\n\r\nThe bug is this: when the child is unchecked to remove the App Store, it does NOT implement the grandchild. Based on the nested structure of these Restrictions, it appears that this is NOT intended behavior (unchecking the child grays out the grandchild in the Configurator 2 interface thus it is not supposed to matter what it is set to). It should effectively uncheck the grandchild.\r\n\r\nIn addition, this is confusing to MDM administrators. The setting of the grandchild now makes a difference even though it has been hidden from view by unchecking the child.\r\n\r\nSteps to Reproduce:\r\n1. Create Restrictions profile with 'Allow installing apps using App Store' unchecked. Leave the other two checked.\r\n2. Deploy to iPad.\r\n3. Undeploy from iPad.\r\n4. Create Restrictions profile with 'Allow installing apps using App Store' unchecked, but first also uncheck 'Allow automatic app downloads'.\r\n5. Deploy to iPad.\r\n\r\n\r\nExpected Results:\r\nIn step 2 I expect to see the options for Settings -> iTunes & App Store -> Automatic Downloads -> Apps and Updates to both disappear from view. They are not necessary with a disabled App Store.\r\n\r\nIn step 5 I still expect the behavior of step 2, since it is a grayed out setting and it shouldn't matter what it is set to.\r\n\r\nActual Results:\r\nIn step 2 those options are still visible.\r\n\r\nIn step 5 I do see those options disappear."
+    email: cdenesha@gmail.com
+    modified: "2017-12-15T16:30:20.98238Z"
+    number: "25811279"
+    number_intvalue: 25811279
+    originated: 4/19/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 9.2.1 (13D15)
+    reproducible: Always
+    resolved: yes iOS 10.0.1
+    status: Closed
+    title: In MDM Framework, fix allowUIAppInstallation so it also implements allowAutomaticAppDownloads

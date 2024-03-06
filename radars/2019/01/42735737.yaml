@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "42735737"
+    labels:
+        datastore_id: "4951914361913344"
+data:
+    classification: Bug
+    created: "2019-01-30T13:07:52.258449Z"
+    description: "[NSWindow dealloc] causes a NSWindowDidChangeOcclusionStateNotification to be posted:\r\n\r\n#6\t0x00000001099d0d1d in ::-[QNSWindow retain]() \r\n#7\t0x00007fff42ddd964 in +[NSConcreteNotification newTempNotificationWithName:object:userInfo:] ()\r\n#8\t0x00007fff42ddd8af in -[NSNotificationCenter postNotificationName:object:userInfo:] ()\r\n#9\t0x00007fff3e2a8a15 in -[NSWindow _setWindowNumber:] ()\r\n#10\t0x00007fff3e4e5754 in -[NSWindow _termWindowIfOwner] ()\r\n#11\t0x00007fff3e4e41f0 in -[NSWindow dealloc] ()\r\n\r\nWhich will retain an object that is in the process of being dealloced. \r\n\r\nIn some corner-cases, the NSConcreteNotification outlives the dealloc call by being retained, and will be destroyed at a laster runloop pass:\r\n\r\n    frame #8: 0x00007fff42ddda54 Foundation`-[NSConcreteNotification dealloc] + 64\r\n    frame #9: 0x00007fff6297bee0 SkyLight`(anonymous namespace)::notify_datagram_handler(unsigned int, CGSDatagramType, void*, unsigned long, void*) + 630\r\n    frame #10: 0x00007fff6297fd9e SkyLight`CGSDatagramReadStream::dispatch_next_main_queue_datagram() + 270\r\n    frame #11: 0x00007fff62bc45aa SkyLight`___ZN21CGSDatagramReadStream35dispatch_main_queue_datagrams_asyncEP16dispatch_queue_sPS__block_invoke + 55\r\n    frame #12: 0x0000000103355cae libdispatch.dylib`_dispatch_call_block_and_release + 12\r\n    frame #13: 0x000000010334dd8f libdispatch.dylib`_dispatch_client_callout + 8\r\n    frame #14: 0x0000000103359e09 libdispatch.dylib`_dispatch_main_queue_callback_4CF + 549\r\n    frame #15: 0x00007fff40d39c19 CoreFoundation`__CFRUNLOOP_IS_SERVICING_THE_MAIN_DISPATCH_QUEUE__ + 9\r\n    frame #16: 0x00007fff40cfbdfa CoreFoundation`__CFRunLoopRun + 2586\r\n    frame #17: 0x00007fff40cfb153 CoreFoundation`CFRunLoopRunSpecific + 483\r\n    frame #18: 0x00007fff3ffe5d96 HIToolbox`RunCurrentEventLoopInMode + 286\r\n    frame #19: 0x00007fff3ffe5b06 HIToolbox`ReceiveNextEventCommon + 613\r\n    frame #20: 0x00007fff3ffe5884 HIToolbox`_BlockUntilNextEventMatchingListInModeWithFilter + 64\r\n    frame #21: 0x00007fff3e296a73 AppKit`_DPSNextEvent + 2085\r\n\r\nBut at this point the NSWindow it was retaining is gone, causing a crash."
+    email: torarnv@gmail.com
+    modified: "2019-01-30T13:07:52.258659Z"
+    number: "42735737"
+    number_intvalue: 42735737
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: AppKit
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: '[NSWindow dealloc] posts notification, causing retain of deallocing object, and subsequent crash on release'

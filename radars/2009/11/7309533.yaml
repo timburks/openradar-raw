@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7309533"
+    labels:
+        datastore_id: "113414"
+data:
+    classification: Other Bug
+    created: "2009-11-15T08:56:01.068901Z"
+    description: "16-Oct-2009 03:19 PM Paul Sargent:\r\nSummary: \r\nThe OpenCL specification states that casts between vector types should produce compile time errors. They do not.\r\n\r\nSteps to Reproduce:\r\ncompile the following kernel with the OpenCL compiler:\r\nkernel void loki(void) {\r\n    float4 f = (float4) 1.0;\r\n    int4 i = (int4)f;\r\n    printf(\"f - %3.1f %3.1f %3.1f %3.1f\", f.x, f.y, f.z, f.w);\r\n    printf(\"i - %3d %3d %3d %3d\", i.x, i.y, i.z, i.w);\r\n}\r\n\r\n\r\nExpected Results:\r\nThe kernel should fail compilation.\r\n\r\nThus spoke the spec: \r\n\"Explicit casts between vector types are not legal. The example below will generate a compilation error.\r\nfloat4 f; int4\ti = (int4) f;\"\r\n\r\nActual Results:\r\nThis compiles without error. On the CPU the result is to fill the integer vector with the bit pattern representing the floating point vector. No type conversion takes place.\r\n\r\nRegression:\r\nThis has only been tested on Mac OS X 10.6.1 compiling for an Intel Core 2 Duo. I'm not currently set-up to target a GPU.\r\n\r\nNotes:\r\nWhilst I realise this code is invalid, it does mean the OpenCL implementation is non-conformant.\r\n\r\n23-Oct-2009 10:30 PM YVONNE  VILLA  :\r\nEngineering has determined that this issue behaves as intended based on the following information:\r\n\r\nThe OpenCL implementation is conformant as it passes all the conformance tests.  The behavior of\r\n\r\n    float4 f = (float4) 1.0;\r\n    int4 i = (int4)f;\r\n\r\nThe spec does state that Explicit casts between vector types are not legal and that it should generate a\r\ncompilation error.   Apple's implementation has extended this behavior in OpenCL to match what is already precedence in C using vector types such as gcc's support for Altivec."
+    email: psarge@gmail.com
+    modified: "2011-08-28T05:44:02.575859Z"
+    number: "7309533"
+    number_intvalue: 7309533
+    originated: 16-Oct-2009 03:19 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.1
+    reproducible: Always
+    resolved: ""
+    status: Behaves correctly
+    title: OpenCL - float4 to int4 cast doesn't error

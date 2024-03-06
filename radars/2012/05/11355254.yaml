@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11355254"
+    labels:
+        datastore_id: "1668403"
+data:
+    classification: ""
+    created: "2012-05-01T17:39:51.126262Z"
+    description: "01-May-2012 06:38 PM Jonathan del Strother:\r\nSummary:\r\nWhen using nested NSManagedObjectContexts, trying to issue a fetch request with propertiesToFetch set will result in a crash inside the child context.\r\n\r\nSteps to Reproduce:\r\n\r\nCreate an NSMainQueueConcurrencyType parent context\r\nCreate an NSPrivateQueueConcurrencyType context as its child\r\nRun the following:\r\n\t[child performBlockAndWait:^{\r\n\t\tNSFetchRequest* fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@\"Event\"];\r\n\t\tfetchRequest.propertiesToFetch = [NSArray arrayWithObject:@\"timeStamp\"];\r\n\t\tNSError* error=nil;\r\n\t\tNSLog(@\"%@\", [child executeFetchRequest:fetchRequest error:&error]);\r\n\t}];\r\n\r\n\r\nExpected Results:\r\nThe child fetches some results\r\n\r\nActual Results:\r\nA crash with the following stack trace:\r\n\r\n* thread #1: tid = 0x1f03, 0x01838caa libobjc.A.dylib`objc_exception_throw, stop reason = breakpoint 1.3\r\n    frame #0: 0x01838caa libobjc.A.dylib`objc_exception_throw\r\n    frame #1: 0x00fc943d CoreData`-[NSSQLiteConnection handleCorruptedDB:] + 253\r\n    frame #2: 0x00ed827c CoreData`-[NSSQLiteConnection fetchResultSet:usingFetchPlan:] + 156\r\n    frame #3: 0x00ee0da3 CoreData`newFetchedRowsForFetchPlan_MT + 1571\r\n    frame #4: 0x00ecc084 CoreData`-[NSSQLCore newRowsForFetchPlan:] + 356\r\n    frame #5: 0x00ecb619 CoreData`-[NSSQLCore objectsForFetchRequest:inContext:] + 713\r\n    frame #6: 0x00ecb0b0 CoreData`-[NSSQLCore executeRequest:withContext:error:] + 224\r\n    frame #7: 0x00eca45d CoreData`-[NSPersistentStoreCoordinator executeRequest:withContext:error:] + 1837\r\n    frame #8: 0x00ec82fd CoreData`-[NSManagedObjectContext executeFetchRequest:error:] + 605\r\n    frame #9: 0x00f1b32b CoreData`-[NSManagedObjectContext(_NestedContextSupport) _parentObjectsForFetchRequest:inContext:error:] + 203\r\n    frame #10: 0x00f1b1fc CoreData`__-[NSManagedObjectContext(_NestedContextSupport) executeRequest:withContext:error:]_block_invoke_1 + 412\r\n    frame #11: 0x00f1afd4 CoreData`_perform + 84\r\n    frame #12: 0x00f1ae6d CoreData`-[NSManagedObjectContext(_NestedContextSupport) executeRequest:withContext:error:] + 237\r\n    frame #13: 0x00ec82fd CoreData`-[NSManagedObjectContext executeFetchRequest:error:] + 605\r\n    frame #14: 0x000024d6 CoreData`__59-[ABAppDelegate application:didFinishLaunchingWithOptions:]_block_invoke_0 + 326 at ABAppDelegate.m:42\r\n    frame #15: 0x00f1ad03 CoreData`developerSubmittedBlockToNSManagedObjectContextPerform + 99\r\n    frame #16: 0x0406f951 libdispatch.dylib`_dispatch_barrier_sync_f_invoke + 61\r\n    frame #17: 0x0406fe00 libdispatch.dylib`dispatch_barrier_sync_f + 62\r\n    frame #18: 0x00f1ac58 CoreData`-[NSManagedObjectContext performBlockAndWait:] + 136\r\n\r\n\r\n- followed by \"CoreData: error: The database appears corrupt.  (invalid primary key)\" in the console.\r\n\r\nWith com.apple.CoreData.SQLDebug enabled, that fetch request results in this SQL from the parent context:\r\n  SELECT t0.Z_ENT, t0.Z_PK, t0.ZTIMESTAMP FROM ZEVENT t0\r\nbut this SQL from the child :\r\n  SELECT t0.ZTIMESTAMP FROM ZEVENT t0\r\n\r\nSeems like it's not fetching the primary key?"
+    email: jdelStrother@gmail.com
+    modified: "2012-05-01T17:39:51.127517Z"
+    number: "11355254"
+    number_intvalue: 11355254
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: Using propertiesToFetch in a nested MOContext causes crash

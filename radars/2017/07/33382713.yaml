@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33382713"
+    labels:
+        datastore_id: "4990639741599744"
+data:
+    classification: Security
+    created: "2017-07-18T19:33:00.76075Z"
+    description: "Summary:\r\nThe rootless-init tool that ships with SIP-protected versions up to and including macOS 10.12 runs as a daemon from /System/Library/LaunchDaemons/com.apple.rootless.init.plist which watches for the presence of /System/Library/Sandbox/Compatibility.bundle/Contents/Resources/paths with the purpose of updating rootless rules when the filesystem trigger is created by entitled Apple tools. A user (regular or root) should not have the ability to force reloading the ruleset. We have determined that when running `/usr/libexec/rootless-init -b` after modifying /System/Library/Sandbox/rootless.conf (more on this in a moment) instead of performing a NOP, rootless-init will actually reapply the rules in /System/Library/Sandbox/rootless.conf and change SIP protection based on any changes it finds like removed entries, modified exceptions or new additions.\n\nIn order to modify /System/Library/Sandbox/rootless.conf it is necessary to boot into Recovery mode or NetInstall, make the change and reboot into normal macOS. One can then run `sudo /usr/libexec/rootless-init -b` and have the changes applied. In addition during our testing we noticed that it is also possible to replace /System/Library/Sandbox/rootless.conf with a symlink to a non-SIP protected location on the filesystem, again while SIP is disabled. After rebooting to normal SIP-protected mode the OS does not appear to stat /System/Library/Sandbox/rootless.conf to determine whether it is an actual file or something else. Because of this one can gain (with a one-time setup in Recovery or NetInstall) on-the-fly SIP filesystem protection modification by:\n\n- Making changes to the target of the /System/Library/Sandbox/rootless.conf symlink, which SIP does not block\n- Running `sudo /usr/libexec/rootless-init -b` to have those changes take effect\n\nWhile not a SIP bypass in a strict sense it does allow those meaning to bypass SIP protection on some or all of the filesystem while not changing the overall SIP status to do so. It appears that rootless-init should perform stricter file stat and option flag checking in order to prevent arbitrary reloading of SIP filesystem protection rules.\r\n\r\nSteps to Reproduce:\r\n1. Boot into Recovery or NetInstall\n2. Launch Terminal.app\n3a. Make changes to /System/Library/Sandbox/rootless.conf by removing an entry, creating an exception, etc\nor\n3b. Copy /System/Library/Sandbox/rootless.conf to a non-SIP protected filesystem location, create a symlink to it at /System/Library/Sandbox/rootless.conf and make some changes\n4. Reboot into normal SIP-protected mode\n5. Launch Terminal.app\n6. Run `sudo /usr/libexec/rootless-init -b`\n7. Instead of no output \"repairing filesystem\" will be seen\n8. Paths that were modified or removed from rootless.conf will be mutable whereas previously they were not\n\nAdditionally, if 3b was performed:\n9. Make changes to the symlink target of /System/Library/Sandbox/rootless.conf\n10. Run `sudo /usr/libexec/rootless-init -b` again\n11. Changes are picked up an applied to the filesystem\r\n\r\nExpected Results:\r\nExpected behavior is for rootless-init to never reload rootless.conf entries when run by a user. Only entitled Apple tools should have this ability.\r\n\r\nActual Results:\r\nA privileged user is able to force reloading rootless.conf and change filesystem protection status on files and folders.\r\n\r\nVersion:\r\n10.12.5\r\n\r\nNotes:\r\nThis issue was found by Michael Lynn of Facebook and Pepijn Bruienne of Duo Security."
+    email: bruienne@gmail.com
+    modified: "2017-07-18T19:33:00.76123Z"
+    number: "33382713"
+    number_intvalue: 33382713
+    originated: 18-Jul-2017 03:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.12.5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: The rootless-init tool allows reloading of rootless.conf rules without presence of filesystem trigger

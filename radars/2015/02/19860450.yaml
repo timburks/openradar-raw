@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19860450"
+    labels:
+        datastore_id: "5792159408062464"
+data:
+    classification: Bug
+    created: "2015-02-17T17:02:19.664269Z"
+    description: "Summary:\r\nPer documentation, when the URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler: callback is called, the completion handler is to be called with an unchanged newRequest (complete the redirect), a modified request (modify the redirect) or nil (cancel redirect and complete the task).\r\n\r\nHowever, it is very common when nil is provided for the task to instead just go on until it times out and not actually cancel the redirect.\r\n\r\nEnumeration of Repro:\r\niOS 7 + w/o Custom NSURLProtocol + https://google.com\r\nNo Repro\r\niOS 7 + w/o Custom NSURLProtocol + https://www.twitter.com\r\nRepro\r\niOS 7 + Custom NSURLProtocol + https://google.com\r\nRepro\r\niOS 7 + Custom NSURLProtocol + https://www.twitter.com\r\nRepro\r\niOS 8 + w/o Custom NSURLProtocol + https://google.com\r\nRepro\r\niOS 8 + w/o Custom NSURLProtocol + https://www.twitter.com\r\nRepro\r\niOS 8 + Custom NSURLProtocol + https://google.com\r\nRepro\r\niOS 8 + Custom NSURLProtocol + https://www.twitter.com\r\nRepro\r\n\r\nSteps to Reproduce:\r\n1) set up an NSURLSession with defaults (in some cases, with any custom NSURLProtocol)\r\n2) implement URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler: so that it always calls the completionHandler with nil\r\n3) run a request against https://google.com or https://www.twitter.com (two very common redirects)\r\n\r\nExpected Results:\r\nRedirect to cancel and task to complete\r\n\r\nActual Results:\r\nTask doesn't complete and a timeout must be hit first (see \"Enumeration of Repro\" for further details)\r\n\r\nVersion:\r\niOS 7 or iOS 8\r\n\r\nConfiguration:\r\nSimulator"
+    email: nolan.d.obrien@gmail.com
+    modified: "2015-02-17T17:02:19.664524Z"
+    number: "19860450"
+    number_intvalue: 19860450
+    originated: February 17th, 2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 7+
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Providing nil NSURLRequest to redirect completion handler hangs the NSURLSessionTask

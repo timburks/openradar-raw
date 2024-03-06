@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19017096"
+    labels:
+        datastore_id: "5266790150045696"
+data:
+    classification: Serious Bug
+    created: "2014-11-18T18:28:58.100475Z"
+    description: "Summary:\r\nGiven a set of argument types, Swift should always chose the same overloaded method in the set of methods that accept those arguments. This is not the case.\r\n\r\nSteps to Reproduce:\r\nRun the following code in a Playground:\r\n\r\nimport Foundation\r\n\r\nprotocol P1: Printable { }\r\nprotocol P2: Printable { }\r\n\r\nclass Container {\r\n    let type: String\r\n    init(type: String) {\r\n        self.type = type\r\n        println(type)\r\n    }\r\n    convenience init(_ o:AnyObject?)          { self.init(type: \"AnyObject(\\(o))\") }\r\n    convenience init(_ o:P1)                  { self.init(type: \"P1(\\(o.description))\") }\r\n    convenience init(_ o:P2)                  { self.init(type: \"P2(\\(o.description))\") }\r\n    convenience init(_ o:protocol<P1,P2>)     { self.init(type: \"P1,P2(\\(o.description))\") }\r\n    convenience init(_ d:[String: Container]) { self.init(type: \"Dictionary\") }\r\n}\r\n\r\nclass O1: P1 { let description = \"O1\" }\r\nclass O2: P2 { let description = \"O2\" }\r\nclass O12: P1, P2 { let description = \"O12\" }\r\n\r\nContainer([\r\n    \"a\": Container([\r\n        \"o1\": Container(O1()),\r\n        \"o2\": Container(O2()),\r\n        \"o12\": Container(O12()),\r\n        \"any\": Container(\"string\"),\r\n        ]),\r\n    \"b\": Container([\r\n        \"o1\": Container(O1()),\r\n        \"o2\": Container(O2()),\r\n        \"o12\": Container(O12()),\r\n        \"any\": Container(\"string\"),\r\n        ]),\r\n])\r\n\r\n\r\nExpected Results:\r\nThe `Container(O1())` expressions should *always* trigger the same Container.init(_ o:P1) constructor, and the program outputs:\r\n\r\nP1(O1)\r\nP2(O2)\r\nP1,P2(O12)\r\nAnyObject(Optional(string))\r\nDictionary\r\nP1(O1)\r\nP2(O2)\r\nP1,P2(O12)\r\nAnyObject(Optional(string))\r\nDictionary\r\nDictionary\r\n\r\n\r\nActual Results:\r\nThe `Container(O1())` expressions sometimes trigger the Container.init(_ o:P1) constructor, and sometimes trigger the convenience init(_ o:AnyObject?) constructor, and outputs:\r\n\r\nAnyObject(Optional(__lldb_expr_1511.O1))\r\nAnyObject(Optional(__lldb_expr_1511.O2))\r\nAnyObject(Optional(__lldb_expr_1511.O12))\r\nAnyObject(Optional(string))\r\nDictionary\r\nP1(O1)\r\nP2(O2)\r\nP1,P2(O12)\r\nAnyObject(Optional(string))\r\nDictionary\r\nDictionary\r\n\r\n\r\nVersion:\r\nXcode 6.1 (6A1052d)\r\n\r\nNotes:\r\nThis bug is particularly painful when you want to implement an API that relies on method overloading in order to avoid to explicitly give a name to initial parameters. The goal is to be nicer to the API user (who does not have to remember which method to use), and this is better for future compatibility (since newly introduced types or refactored types don't need API change).\r\n\r\nSee for instance the consequences of this bug in the \"TODO: avoid this `as [String: Value]` cast\" comments in https://github.com/groue/GRMustache.swift/blob/5be90ab67ada61bc8c0222b2df3edb07cf8889f0/GRMustacheTests/Public/FilterTests/VariadicFilterTests.swift\r\n\r\nConfiguration:\r\nOSX 10.10 (14A389)"
+    email: gwendal.roue@gmail.com
+    modified: "2014-11-18T18:28:58.100675Z"
+    number: "19017096"
+    number_intvalue: 19017096
+    originated: "2014-11-18"
+    parent_number: '&{NULL_VALUE}'
+    product: Developper Tools
+    product_version: Xcode 6.1 (6A1052d)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: method overloading is not reliable'

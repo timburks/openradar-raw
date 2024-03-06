@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28120349"
+    labels:
+        datastore_id: "5061068095225856"
+data:
+    classification: HomeKit
+    created: "2016-10-04T21:40:29.77597Z"
+    description: "Summary:\r\nWe are experiencing an issue with how rules are being executed in HomeKit. Each rule consists of a Trigger, a Condition, and a Scene. If the Trigger happens, while the Condition is met, then execute the Scene. The problem we are experiencing is when we have multiple rules with the same Trigger and different Conditions. The rules seem to be executed in sequence and the Condition is checked for every rule individually in sequence rather than being checked initially, at the time of the Trigger, before any rules have been executed. Therefore, if the Scene in rule 1 changes the status of the Condition checked in rule 2, it will affect the execution of rule 2.\r\n\r\nSteps to Reproduce:\r\n1. Add a stateless programmable switch (button)\r\n2. Add a Light\r\n3. Set rule one as follows\r\nTrigger - Button Pressed\r\nCondition - Light Off\r\nScene - Turn Light On\r\n4. Set rule two as follows\r\nTrigger - Button Pressed\r\nCondition - Light On\r\nScene - Turn Light Off\r\n5. Press the button once and see results\r\n6. Press the button again and see results\r\n\r\nExpected Results:\r\nIf the Light is off and the button is pressed, the following happens.\r\n1 – Check Rule 1\r\n\t1a – Condition is True (Light was off at time of trigger)\r\n\t1b – Turn Light On\r\n2 – Check Rule 2\r\n\t2a – Condition is False (Light was off at time of trigger)\r\n\r\nIf the Light is on and the button is pressed, the following happens.\r\n1 – Check Rule 1\r\n\t1a – Condition is False (Light was on at time of trigger)\r\n2 – Check Rule 2\r\n\t2a – Condition is True (Light was on at time of trigger)\r\n\t2b – Turn Light Off\r\n\r\nActual Results:\r\nIf the Light is off and the button is pressed, the following happens.\r\n1 – Check Rule 1\r\n\t1a – Condition is True (Light is off)\r\n\t1b – Turn Light On\r\n2 – Check Rule 2\r\n\t2a – Condition is True (Light is on from Scene 1)\r\n\t2b – Turn Light Off\r\n\r\nIf the Light is on and the button is pressed, the following happens.\r\n1 – Check Rule 1\r\n\t1a – Condition is False (Light is on)\r\n2 – Check Rule 2\r\n\t2a – Condition is True (Light is on)\r\n\t2b – Turn Light Off\r\n\r\nVersion:\r\niOS 9.3.5\r\n\r\nNotes:\r\nI expect, with the rules set up as explained, for the button to toggle the light state once regardless of the light condition. Instead, in one direction, the light is being toggled twice, because the rules are being evaluated and executed in sequence, therefore allowing the first rule to effect the evaluation of the second rule. When the button is pressed once, the light turns on and then off again, because Rule 2 is not parsed until the first scene has already executed. I would suggest reading all applicable Conditions once, at the time of Trigger, and then going through the rules, rather than reading the Conditions separately, in sequence after previous rules have already executed.\r\n\r\nConfiguration:\r\nThis problem happens when the Scene in rule one affects the Condition of rule two."
+    email: jonw@gridconnect.com
+    modified: "2016-10-04T21:40:29.77624Z"
+    number: "28120349"
+    number_intvalue: 28120349
+    originated: 9/1/2016
+    parent_number: '&{NULL_VALUE}'
+    product: HomeKit Accessory Certification
+    product_version: 9.3.5
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: How HomeKit Rules Opperate - Same Trigger, Differnt Conditions

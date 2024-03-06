@@ -1,0 +1,42 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20936007"
+    labels:
+        datastore_id: "6061282729918464"
+data:
+    classification: Performance
+    created: "2015-05-13T16:08:42.82826Z"
+    description: |-
+        Summary:
+        When called from a bundled executable (e.g. from a Cocoa app), SecCodeCopySigningInformation() will leak 3 objects for each call when the kSecCSContentInformation flag is passed.
+        I have created a sample project that demonstrates this.
+
+        Since we are using this information to verify the integrity of the peer end for IPC communication, this may end up producing quite a noticeable number of leaks over the runtime of our app (which in fact is a bundled launchd job that is always running in the background).
+
+
+        Steps to Reproduce:
+        Build and run the „yambaapp“ target of the attached sample project. Notice how memory usage goes up.
+        Now build and profile the „yambaapp“ target -> Instruments will show the continuously growing leaks.
+        For each call to SecCodeCopySigningInformation(kSecCSContentInformation), an NSArray, a NSURL and a NSCFString object is leaked. All three object together occupy 288 bytes (according to Instruments) for each call to  SecCodeCopySigningInformation(kSecCSContentInformation)
+
+        Expected Results:
+        SecCodeCopySigningInformation(kSecCSContentInformation) should not leak any memory as long as the output dictionary is correctly released.
+
+        Actual Results:
+        Leaks as described above even though the output dictionary is released correctly.
+
+        Regression:
+        The same call, when done from a standalone tool does not leak any memory. Build and run the „yamba“ tool in the attached process to see this.
+    email: jum@mac.com
+    modified: "2015-05-13T16:08:42.82846Z"
+    number: "20936007"
+    number_intvalue: 20936007
+    originated: 13-May-2015 06:08 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.3 (14D136)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SecCodeCopySigningInformation(kSecCSContentInformation) is leaking 3 objects, totalling 288 Bytes per call when called from bundled executable

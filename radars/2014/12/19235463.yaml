@@ -1,0 +1,77 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19235463"
+    labels:
+        datastore_id: "5207829912748032"
+data:
+    classification: Enhancement
+    created: "2014-12-12T19:30:49.591592Z"
+    description: |-
+        Summary:
+        In Madness[1], the parse trees of concatenated parsers are tuples[2]. For example, if x and y are parsers whose parse trees are of types X and Y respectively, then x ++ y is a parser whose parse trees are of type (X, Y). The ++ operator is right-associative, so repeated concatenations build right-recursive parse trees:
+
+        	let result: (A, (B, (C, (D, E))))? = parse(a ++ b ++ c ++ d ++ e, "…")
+
+        Retrieving elements is awful:
+
+        	let e = result?.1.1.1.1
+
+        Nobody reading this would want to read it again. Currently my workaround is to map the parse trees into a flattened tuple or some model type in the client code, but that requires increasingly unreadable definitions for each arity:
+
+        	func flatten<T, U, V>(x: (T, (U, V))) -> (T, U, V) {
+        		return (x.0, x.1.0, x.1.1)
+        	}
+
+        	func flatten<T, U, V, W>(x: (T, (U, (V, W)))) -> (T, U, V, W) {
+        		return (x.0, x.1.0, x.1.1.0, x.1.1.1) // still unreadable, but at least not the user’s problem
+        	}
+
+        I can‘t define just one function for all such trees[3]: there’s no way to operate generically over all heterogenously typed product types. If I could express this as appending onto a tuple, I could avoid recursive tuples altogether:
+
+        	func ++ <T, U>(left: Parser<T>.Function, right: Parser<T>.Function) -> Parser<(T, *U)>.Function { // “*U” is “the elements of U”, i.e. produce a flat tuple; it’s splat for types
+        		return { input in …blah blah… return (leftTree, *rightTree) } // “*x” is splat for terms
+        	}
+
+        You could do the same for left-associative trees by splatting the left type/term instead.
+
+        Madness also uses () as a stand-in for ignored terms. Input that you don’t care about can be omitted from the parse tree by returning (). The concatenation operator (and others) drops () trees using four definitions:
+
+        1. T ++ U -> (T, U) (pair up the parse trees)
+        2. () ++ T -> T (drop on the left)
+        3. T ++ () -> T (drop on the right)
+        4. () ++ () -> () (drop both)
+
+        I want to support a reasonable number of arities, let’s say 6. () can occur at any combination of positions or none, so that’s 2^6 for the 6-tuple case, and 126 functions all told—2^6 + 2^5 + 2^4 + 2^3 + 2^2 + 2^1 (there’s no unary case for concatenation). And then I get to write another 126 for alternation! Ow, my RSI :( Note that the splatting definition above *already* handles () occurring at the left for arbitrary arities, meaning (I think) just two cases for each operator.
+
+        Defining these sorts of types and operations recursively is natural, but leads to the potential for infinite loops. However, I think guarded recursion—structural induction and coinduction—would ensure totality (i.e. that the typechecker will halt).
+
+
+        Steps to Reproduce:
+        N/A
+
+        Expected Results:
+        N/A
+
+        Actual Results:
+        N/A
+
+        Regression:
+        N/A
+
+        Notes:
+        1: https://github.com/robrix/Madness
+        2: All of this applies to structs as well.
+        3: It would be great to use arrays, obviously. But parse trees are heterogenous.
+    email: rix.rob@gmail.com
+    modified: "2014-12-12T19:30:49.591834Z"
+    number: "19235463"
+    number_intvalue: 19235463
+    originated: 12-Dec-2014 02:30 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: inductively-defined tuple types'

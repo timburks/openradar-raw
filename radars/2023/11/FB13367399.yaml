@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13367399
+    labels:
+        datastore_id: "5521537826291712"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2023-11-13T08:28:02.777874Z"
+    description: "Given the lack of documentation, I have been exploring the real-world behavior of `ModelContext.transaction`. The method name “transaction” implies “database transaction”, which Wikipedia says should be atomic (as well as consistent, isolated, and durable—ACID). However, the method does not behave atomically.\r\n\r\nI took a look at the disassembly of the method implementation. The implementation looks like the following:\r\n```\r\nfunc transaction(block: () throws -> Void) throws {\r\n  try block()\r\n  try save()\r\n}\r\n```\r\n\r\nThe method executes the closure specified by the caller. If no error is thrown, then it saves the changes.\r\n\r\nHowever, if an error is thrown by the closure, the method simply propagates the error to the caller without calling the `rollback` method. This is not atomic if the closure makes multiple changes because the changes after the error point would not be executed while the changes before the error point are kept intact.\r\n\r\nInstead, I think the method should be implemented as follows:\r\n```\r\nfunc transaction(block: () throws -> Void) throws {\r\n  // Save any previous changes so that we only roll back the changes that\r\n  // are made in `block`.\r\n  try save()\r\n\r\n  do {\r\n     try block()\r\n     try save()\r\n  } catch {\r\n     rollback()\r\n     throw error\r\n  }\r\n}\r\n```\r\n\r\nHere, any errors thrown by `block` or `save` would cause `rollback` to be called, guaranteeing that the transaction is ACID-compliant."
+    email: darren.mo@me.com
+    modified: "2023-11-13T08:28:02.778024Z"
+    number: FB13367399
+    number_intvalue: 13367399
+    originated: "2023-11-13"
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftData
+    product_version: iOS 17.2 Beta 2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '`ModelContext.transaction` should roll back changes upon error'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35646895"
+    labels:
+        datastore_id: "4962823352352768"
+data:
+    classification: ""
+    created: "2017-11-20T17:05:47.12534Z"
+    description: "I use CoreServices.framework to get a conservative estimate of the number of\r\nrecoverable bytes on the specified volume. I have a timer and constantly call CSDiskSpaceGetRecoveryEstimate to do it.\r\nEvery call of CSDiskSpaceGetRecoveryEstimate leads to adding several entries to \"var/log/install.log\".\r\nThe entries are:\r\n...\r\n2017-11-20 18:48:13+02 Sergiis-MacBook-Pro deleted[388]: diskmanagement: [DMManager(PrivateMethods) clientConforms:error:]: currentThread=88223=0x1589f expectedThread=11531=0x2d0b\r\n...\r\nSo my log is growing very fast is size.\r\n\r\nI've debugged a lot and found out that the message came from private DiskManagement.framework from DMManager class.\r\n\r\nPlease see the attached source code.\r\n\r\nSteps to Reproduce:\r\n\r\nCall following code:\r\nNSURL *url = [NSURL fileURLWithPath:@\"/\"];\r\nlong long size = CSDiskSpaceGetRecoveryEstimate((__bridge CFURLRef)(url));\r\nNSLog(@\"%lld\", size);\r\n\r\nExpected Results:\r\nNew warning entry is added to the /var/log/install.log.\r\n\r\nActual Results:\r\nNo warnings.\r\n\r\nVersion/Build:\r\nmacOS High Sierra 10.13 Beta (17A362a)\r\n\r\nConfiguration:\r\nMacBook Pro (15-inch, 2017)\r\n2.9 GHz Intel Core i7\r\n16 GB 2133 MHz LPDDR3\r\nntel HD Graphics 630 1536 MB"
+    email: krivoblotsky@macpaw.com
+    modified: "2017-11-20T17:05:47.12562Z"
+    number: "35646895"
+    number_intvalue: 35646895
+    originated: November 20 2017, 7:03 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS High Sierra 10.13 Beta (17A362a)
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CSDiskSpaceGetRecoveryEstimate is logging excessively to install.log

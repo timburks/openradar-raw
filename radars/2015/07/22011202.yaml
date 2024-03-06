@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22011202"
+    labels:
+        datastore_id: "4593008968204288"
+data:
+    classification: Serious Bug
+    created: "2015-07-27T16:36:16.66602Z"
+    description: "Summary:\r\n\r\nSwift treats all NSNumber instances as Bool, Int, and Double, regardless of actual numerical type. e.g. *All* of the following always test as *true:*\r\n\r\nimport Cocoa\r\n\r\nlet b:AnyObject = NSNumber(bool:true)\r\nlet n:AnyObject = NSNumber(int:100)\r\nlet f:AnyObject = NSNumber(double:1.1)\r\n\r\nb is Bool // true\r\nb is Int // true\r\nb is Double // true\r\n\r\nn is Bool // true\r\nn is Int // true\r\nn is Double // true\r\n\r\nf is Bool // true\r\nf is Int // true\r\nf is Double // true\r\n\r\nAside from being wrong and unhelpful, this is also inconsistent with behaviors of native Swift Bools, Ints, and Doubles:\r\n\r\nimport Cocoa\r\n\r\nlet b:Any = true\r\nlet n:Any = 100\r\nlet f:Any = 1.1\r\n\r\nb is Bool // true\r\nb is Int // false\r\nb is Double // false\r\n\r\nn is Bool // true\r\nn is Int // false\r\nn is Double // false\r\n\r\nf is Bool // true\r\nf is Int // false\r\nf is Double // false\r\n\r\nThis creates further confusion when native Swift Bools, Ints, and Doubles are stored in variables of type AnyObject, at which point Swift's not-so-seamless-after-all Cocoa bridging kicks in, transmogrifying them into Cocoa objects and destroying their own Type information in the process:\r\n\r\nimport Cocoa\r\n\r\nlet b:AnyObject = true\r\nlet n:AnyObject = 100\r\nlet f:AnyObject = 1.1\r\n\r\nb is Bool // true\r\nb is Int // true\r\nb is Double // true\r\n\r\nn is Bool // true\r\nn is Int // true\r\nn is Double // true\r\n\r\nf is Bool // true\r\nf is Int // true\r\nf is Double // true\r\n\r\nb.dynamicType // __NSCFBoolean.Type\r\nn.dynamicType // __NSCFNumber.Type\r\nf.dynamicType // __NSCFNumber.Type\r\n\r\n(This gets especially irritating in Swift code that creates the correct Swift Bool/Int/Double representation of a particular value, only to have that representation summarily trashed the moment that value passes through a Cocoa-friendly API.)\r\n\r\nJust to round things out, storing NSNumber instances in variables of type Any does not produce the converse effect (i.e. NSNumbers are not transmogrified to Bools/Ints/Doubles):\r\n\r\nimport Cocoa\r\n\r\nlet b:Any = NSNumber(bool:true)\r\nlet n:Any = NSNumber(int:100)\r\nlet f:Any = NSNumber(double:1.1)\r\n\r\nb is Bool // true\r\nb is Int // true\r\nb is Double // true\r\n\r\nn is Bool // true\r\nn is Int // true\r\nn is Double // true\r\n\r\nf is Bool // true\r\nf is Int // true\r\nf is Double // true\r\n\r\nb.dynamicType // __NSCFBoolean.Type\r\nn.dynamicType // __NSCFNumber.Type\r\nf.dynamicType // __NSCFNumber.Type\r\n\r\nObviously, the NSNumber class cluster is a dead loss as far as compile-time type checking is concerned, but between their private __NSCFBoolean and __NSCFNumber representations and NSNumber's objCType property there is sufficient runtime information available for Swift to handle them correctly during execution.\r\n\r\n(The alternative would be not to bridge NSNumber instances automatically, UNLESS the variable's type is totally unambiguous, i.e. Bool OR Int OR Double, NOT Any/AnyObject. Though this would be the less desirable choice, and would no doubt cause irritations of its own.)\r\n\r\n\r\n\r\n\r\nVersion:\r\nXcode Version 7.0 beta 4 (7A165t)\r\nOS X 10.10.4 (14E46)\r\n\r\n\r\nNotes:\r\nNo doubt this is a dupe, but hopefully this issue gets enough pile-on for it to be fixed before Swift 2.0 final ships, because it's damnably annoying and clearly lends the lie to Swift's ostensibly \"seamless\" Cocoa bridging."
+    email: automate.mantasystems@gmail.com
+    modified: "2015-07-27T16:36:16.66638Z"
+    number: "22011202"
+    number_intvalue: 22011202
+    originated: "2015-07-27"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode Version 7.0 beta 4 (7A165t)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift's NSNumber bridging is properly broken

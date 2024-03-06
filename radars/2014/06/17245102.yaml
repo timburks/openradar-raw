@@ -1,0 +1,80 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17245102"
+    labels:
+        datastore_id: "6155216550363136"
+data:
+    classification: Other Bug
+    created: "2014-06-10T03:52:05.138873Z"
+    description: |-
+        Summary:
+        Printable protocol doesn't appear to affect println in playgrounds
+
+        Steps to Reproduce:
+        Use attached playground code
+
+        Expected Results:
+        Console output would reflect the description given
+
+        Actual Results:
+        V11lldb_expr_08MyStruct (has 1 child)
+
+        Regression:
+
+
+        Notes:
+        // Playground - noun: a place where people can play
+
+        import UIKit
+
+        var array = Array(count: 7, repeatedValue:NSObject())
+
+        var names = array.map{$0.description}.reduce("Hi", combine: {$0 + $1})
+
+        names
+
+        // names is ~:
+        //["<NSObject: 0x10d015930>", "<NSObject: 0x10d015930>", "<NSObject: 0x10d015930>", "<NSObject: 0x10d015930>", "<NSObject: 0x10d015930>", "<NSObject: 0x10d015930>", "<NSObject: 0x10d015930>"]
+
+        struct MyStruct: Comparable, Printable {
+            var variable: Int?
+            var description: String {
+                return "This is my struct (\(variable))"
+            }
+        }
+
+        operator infix ~ {}
+
+        func == (lhs: MyStruct, rhs: MyStruct) -> Bool {
+            return lhs.variable == rhs.variable
+        }
+
+        func ~ (lhs: MyStruct, rhs: MyStruct) -> MyStruct? {
+            return MyStruct(variable:lhs.variable! % rhs.variable!)
+        }
+
+        func < (lhs: MyStruct, rhs: MyStruct) -> Bool {
+            return lhs.variable < rhs.variable
+        }
+
+        var sta = MyStruct(variable:0)
+        var stb = MyStruct(variable:9)
+
+        sta == stb
+        sta ~ stb
+        sta >= stb
+
+        println(sta)
+    email: adam@iredale.com.au
+    modified: "2014-06-10T03:52:05.139049Z"
+    number: "17245102"
+    number_intvalue: 17245102
+    originated: 10-Jun-2014 01:51 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta (6A215l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode6-Beta (6A215l): Printable protocol doesn''t appear to affect println in playgrounds'

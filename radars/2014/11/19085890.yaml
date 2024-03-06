@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19085890"
+    labels:
+        datastore_id: "5319266060468224"
+data:
+    classification: Other bug
+    created: "2014-11-26T16:37:24.461007Z"
+    description: "Summary:\r\nIn swift, when defining an inout parameter to a function, the purpose is to directly access and modify that original variable. However, if the assignment isn't instant, in a case were you're waiting for a network request or such, the original variable will be left with it's original value.\r\n\r\nRun the attached example project and read the line comments. I have provided two different scenarios, the first were the inout parameter works as expected, and the other were it doesn't.\r\n\r\nPseudo code explaining the problem:\r\n\r\nvar string: String?\r\n\r\nfunc randomize(inout randomizedString: String?) {\r\n    randomizedString = \"4\" // guaranteed to be random\r\n\r\n    print(self.string) // prints 4\r\n}\r\n\r\nfunc asyncRandomize(inout randomizedString: String?) {\r\n    dispatch_after(seconds: 2) {\r\n        randomizedString = \"4\" // guaranteed to be random\r\n\r\n        print(self.string) // prints nil\r\n    }\r\n}\r\n\r\nrandomize(&string)\r\n\r\nstring = nil // resetting it\r\nasyncRandomize(&string)\r\n\r\nSteps to Reproduce:\r\nRun the attached project and see the comments and prints\r\n\r\nExpected Results:\r\nBoth scenarios will set the &string, even after a async call\r\n\r\nActual Results:\r\nThe first scenario sets the variable, the second leaves it untouched\r\n\r\nVersion:\r\nXcode 6.1.1 6A2006\r\n\r\nNotes:\r\nA workaround is to use a closure instead, but that's not what I was looking for."
+    email: s@simonwesterlund.se
+    modified: "2014-11-26T16:37:24.461162Z"
+    number: "19085890"
+    number_intvalue: 19085890
+    originated: 26/11/2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: an inout parameter will not be assigned if the assignment isn''t instant'

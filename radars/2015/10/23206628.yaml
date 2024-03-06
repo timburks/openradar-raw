@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23206628"
+    labels:
+        datastore_id: "5609318724403200"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-10-21T20:23:08.38025Z"
+    description: "Summary:\r\nThe vast majority of the crashes we're seeing in our app (2.5–5% of users impacted daily) are on the com.apple.NSURLConnectionLoader thread inside of SHTTP2ConnectionCacheEntry.\r\n\r\nThe majority of the API usage in our app hits a Google Compute Engine load balancer which handles TLS and supports http/2.\r\n\r\nThe crashes are iOS 9-only.\r\n\r\nHere's a sample call stack for the crashed thread:\r\n\r\nEXC_BAD_ACCESS KERN_INVALID_ADDRESS at 0x0000000015126980\r\nThread : Crashed: com.apple.NSURLConnectionLoader\r\n0  libobjc.A.dylib                0x000000019a541bd0 objc_msgSend + 16\r\n1  CFNetwork                      0x00000001851e64a8 HTTPProtocol::useNetStreamInfoForRequest(MetaNetStreamInfo*, HTTPRequestMessage const*, unsigned char) + 240\r\n2  CFNetwork                      0x0000000185176b20 SHTTP2ConnectionCacheEntry::enqueueRequestForProtocol(MetaConnectionCacheClient*, HTTPRequestMessage const*, MetaConnectionOptions) + 384\r\n3  CFNetwork                      0x000000018514cbe8 SHTTP2ConnectionCache::enqueueRequestForProtocol(MetaConnectionCacheClient*, HTTPRequestMessage const*, MetaConnectionOptions) + 96\r\n4  CFNetwork                      0x00000001852aa4a8 STubeManager::_onqueue_enqueueRequestForProtocol(MetaConnectionCacheClient*, HTTPRequestMessage const*, MetaConnectionOptions, SAwaitingTube*) + 304\r\n5  CFNetwork                      0x00000001852aa338 ___ZN12STubeManager25enqueueRequestForProtocolEP25MetaConnectionCacheClientPK18HTTPRequestMessage21MetaConnectionOptions_block_invoke + 60\r\n6  libdispatch.dylib              0x000000019ad29770 _dispatch_client_callout + 16\r\n7  libdispatch.dylib              0x000000019ad32a54 _dispatch_block_invoke + 540\r\n8  CFNetwork                      0x0000000185117c70 RunloopBlockContext::_invoke_block(void const*, void*) + 36\r\n9  CoreFoundation                 0x000000018590c7ec CFArrayApplyFunction + 68\r\n10 CFNetwork                      0x0000000185117b54 RunloopBlockContext::perform() + 136\r\n11 CFNetwork                      0x0000000185117a14 MultiplexerSource::perform() + 312\r\n12 CFNetwork                      0x0000000185117840 MultiplexerSource::_perform(void*) + 68\r\n13 CoreFoundation                 0x00000001859e05a4 __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE0_PERFORM_FUNCTION__ + 24\r\n14 CoreFoundation                 0x00000001859e0038 __CFRunLoopDoSources0 + 540\r\n15 CoreFoundation                 0x00000001859ddd38 __CFRunLoopRun + 724\r\n16 CoreFoundation                 0x000000018590cdc0 CFRunLoopRunSpecific + 384\r\n17 CFNetwork                      0x00000001851aa074 +[NSURLConnection(Loader) _resourceLoadLoop:] + 412\r\n18 Foundation                     0x0000000186967138 __NSThread__start__ + 1000\r\n19 libsystem_pthread.dylib        0x000000019af3fb3c _pthread_body + 156\r\n20 libsystem_pthread.dylib        0x000000019af3faa0 _pthread_body + 154\r\n21 libsystem_pthread.dylib        0x000000019af3d030 thread_start + 4\r\n\r\nThere is actually a whole class of crashes that I suspect are related, but all of the crashes are EXC_BAD_ACCESS KERN_INVALID_ADDRESS somewhere within SHTTP2ConnectionCacheEntry.\r\n\r\nSteps to Reproduce:\r\nI can't reproduce the issue, but as evidenced by the crash reports, it's happening on a consistent basis.\r\n\r\nExpected Results:\r\nNo crashes in the networking stack.\r\n\r\nActual Results:\r\nCrashes in the networking stack.\r\n\r\nVersion:\r\niOS 9.x"
+    email: andrew.d.hershberger@gmail.com
+    modified: "2015-11-09T21:23:39.67728Z"
+    number: "23206628"
+    number_intvalue: 23206628
+    originated: 21-Oct-2015 04:03 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9 SDK
+    reproducible: Sometimes
+    resolved: Duplicate
+    status: Open
+    title: App crashes inside of SHTTP2ConnectionCacheEntry

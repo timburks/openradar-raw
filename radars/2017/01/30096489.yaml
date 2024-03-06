@@ -1,0 +1,72 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30096489"
+    labels:
+        datastore_id: "4966687044534272"
+data:
+    classification: UI/Usability
+    created: "2017-01-19T15:27:23.39841Z"
+    description: |-
+        # Summary:
+        Safari, Chrome and cURL cannot connect to certain websites because of an invalid SSL certificate chain in the CRL and OCSP caches.
+
+        # Steps to Reproduce:
+
+        1. Open a URL to site where the certificate chain is invalid. On my mac, Safari and cURL cannot connect to https://files.pythonhosted.org
+
+        $ /usr/bin/curl --remote-time --location --user-agent Homebrew/1.1.7 (Macintosh; Intel macOS 10.12.2) curl/7.51.0 --fail https://files.pythonhosted.org/packages/05/25/7b5484aca5d46915493f1fd4ecb63c38c333bd32aa9ad6e19da8d08895ae/docutils-0.13.1.tar.gz -C 0 -o /Users/king/Library/Caches/Homebrew/mpv--docutils-0.13.1.tar.gz.incomplete
+          % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                         Dload  Upload   Total   Spent    Left  Speed
+          0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+        curl: (60) SSL certificate problem: Invalid certificate chain
+        More details here: https://curl.haxx.se/docs/sslcerts.html
+
+        curl performs SSL certificate verification by default, using a "bundle"
+         of Certificate Authority (CA) public keys (CA certs). If the default
+         bundle file isn't adequate, you can specify an alternate file
+         using the --cacert option.
+        If this HTTPS server uses a certificate signed by a CA represented in
+         the bundle, the certificate verification probably failed due to a
+         problem with the certificate (it might be expired, or the name might
+         not match the domain name in the URL).
+        If you'd like to turn off curl's verification of the certificate, use
+         the -k (or --insecure) option.
+
+        # Expected Results:
+        Safari and cURL should be able to connect to the website using the system certificates.
+
+        # Actual Results:
+        curl: (60) SSL certificate problem: Invalid certificate chain
+        Safari: Can’t connect to website
+
+        # Workaround:
+        Delete the CRL and OCSP caches:
+
+        OS X (through 10.11)
+
+        To delete both OCSP and CRL cache, in a terminal, enter the following command:
+        sudo rm /var/db/crls/*cache?.db
+
+        OS X 10.12 Sierra
+
+        To delete both OCSP and CRL cache in OS X 10.12, open a terminal and run the following command:
+        sqlite3 ~/Library/Keychains/*/ocspcache.sqlite3 'DELETE FROM ocsp;'
+
+        # Solution
+
+        Please add a menu option to the Keychain.app (and a command line option) for the user to easily delete the CRL and OCSP certificate caches, so the user does not have to resort to manually deleting files in the /var/db/crls and modifying the local keychain using sqlite3.
+
+        Thank you.
+    email: king7532@gmail.com
+    modified: "2017-01-19T15:27:23.39862Z"
+    number: "30096489"
+    number_intvalue: 30096489
+    originated: 19-Jan-2017 10:27 AM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.12.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '[Keychain] Add an option to clear the CRL and OCSP certicate caches'

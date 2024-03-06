@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35797160"
+    labels:
+        datastore_id: "4957637112233984"
+data:
+    classification: ""
+    created: "2018-02-28T16:45:24.08438Z"
+    description: "Area:\r\nCore Bluetooth\r\nSummary:\r\nI am able to currently get a phone into a state where we are unable to get the didDiscoverServices callback from all bluetooth devices.\r\n\r\nSteps to Reproduce:\r\nPrerequisite iOS 11.1 device.\r\n1) Within our app we have been performing a device firmware update to a BLE-Device.  While writing data to the BLE-Device, throw the BLE-Device into a faraday bag and wait for the didDisconnectPeripheral callback.  --  I have not been able to yet isolate this step to a sample application with a generic bluetooth device.\r\nAfter this step we have been describing the phone as \"wedged\" and the following steps are reproducible from a sample app or within our own app.\r\n2) Successfully find the peripheral and observe the didDiscoverPeripheral, then try to connect it.\r\n3) Successfully observe the didConnectPeripheral callback, set the delegate, observe that the services property is nil, store the instance, then call discoverServices.  This can be done with nil or the specific services we care about.\r\nExpected Results:\r\nperipheral:didDiscoverServices: is called on the delegate, hopefully without an error and the appropriate services.\r\n\r\nActual Results:\r\nperipheral:didDiscoverServices: is never called on the delegate.  Similarly, there is no callback with the error property set.  There is no callback with a peripheral property being nil, or set.  The method is simply never called.\r\nApplications like LightBlue are able to \"connect\" to the BLE-Device, but fail to \"interrogate\" the BLE-Device.  Once the phone is wedged, the phone is also unable to interrogate other bluetooth devices (e.x. Bose BLE Headphones).  Using LightBlue on other iOS phones we are able to interrogate the same BLE-Device and headphones, so we know it's not a peripheral issue, and is isolated to the \"wedged\" phone.\r\n\r\nWorkaround:\r\nTurn the phone off and on, skip step 1, and observe that the results are fine.  Unfortunately, this isn't a very acceptable experience for our app to have to tell users to turn their phone off and back on again.\r\n\r\nVersion/Build:\r\nReproducible on: iOS 11.1.1, 11.1.2, 11.2 beta 3, 11.2 beta 4\r\nNot reproducible on 10.3.3 nor on 10.2.1 (14D27)\r\n\r\nConfiguration:\r\nThe central manager being initialized with the CBCentralManagerOptionRestoreIdentifierKey set or not doesn't seem to have any effect.\r\n<Additional comments about attached logs redacted>"
+    email: BenWu00@gmail.com
+    modified: "2018-02-28T16:45:24.08461Z"
+    number: "35797160"
+    number_intvalue: 35797160
+    originated: December 1 2017
+    parent_number: '&{NULL_VALUE}'
+    product: Core Bluetooth
+    product_version: ""
+    reproducible: 11.1.1, 11.1.2, 11.2, 11.2.5, 11.2.6
+    resolved: ""
+    status: Open
+    title: Able to get the phone into a state where discoverServices does not callback.

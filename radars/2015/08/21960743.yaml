@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21960743"
+    labels:
+        datastore_id: "6655231341363200"
+data:
+    classification: Serious bug
+    created: "2015-08-17T20:48:32.62526Z"
+    description: "Summary:\r\nStarting in El Capitan beta 2, [NSString sizeWithAttributes:] does not respect a font's fontDescriptor's NSFontFixedAdvanceAttribute setting in El Capitan. As of beta 4, the bug still exists.\r\n\r\nSteps to Reproduce:\r\n1. Install Xcode on 10.11.\r\n2. Compile included program foo.m from terminal with \"clang -fobjc-arc -framework Cocoa foo.m -o foo\".\r\n3. Execute foo executable.\r\n\r\nExpected Results:\r\nThe output from the program \"foo\" should show:\r\n\r\n1) maxAdvance=8.000000\r\n2) charWidth=8.000000\r\n\r\nwhich it does on any version of OS X prior to 10.11 beta 2.\r\n\r\nActual Results:\r\nThe output instead shows when run on 10.11:\r\n\r\n1) maxAdvance=8.000000\r\n2) charWidth=7.224609\r\n\r\nVersion:\r\nOS X El Capitan/15A226f\r\n\r\nNotes:\r\nAlthough I can code around this problem in the current release of my application, I can't make changes to much earlier releases of my application that many users still use and would use in 10.11. This affects output in my application because I draw text with fixed width fonts using integer coordinates and integer advancement.\r\n\r\nConfiguration:\r\nI get the correct output on any version of OS X prior to 10.11 beta 2. I get the incorrect result on 10.11 beta2 to beta 4.\r\n\r\nfoo.m:\r\n\r\n#import <Cocoa/Cocoa.h>\r\n\r\nint main(int argc, char *argv[])\r\n{\r\n        NSString *system = [[NSDictionary dictionaryWithContentsOfFile:@\"/System/Library/CoreServices/SystemVersion.plist\"] objectForKey:@\"ProductVersion\"] ;\r\n        NSLog(@\"ProductVersion=%@\", system) ;\r\n\r\n        NSString *string = @\"Wg\" ;\r\n\r\n        NSFont *font = [NSFont userFixedPitchFontOfSize:12.] ;\r\n        CGFloat maxAdvance = ceilf(font.maximumAdvancement.width) ;\r\n        printf(\"1) maxAdvance=%f\\n\", maxAdvance) ;\r\n\r\n        NSFontDescriptor *descriptor = [font.fontDescriptor fontDescriptorByAddingAttributes:@{NSFontFixedAdvanceAttribute: [NSNumber numberWithDouble:maxAdvance]}] ;\r\n        font = [NSFont fontWithDescriptor:descriptor size:font.pointSize] ;\r\n        printf(\"2) charWidth=%f\\n\", [string sizeWithAttributes:@{NSFontAttributeName: font}].width/2.) ;\r\n\r\n        return(0) ;\r\n}"
+    email: chinhster2@gmail.com
+    modified: "2015-08-19T21:42:00.57123Z"
+    number: "21960743"
+    number_intvalue: 21960743
+    originated: 23-Jul-2015 08:52 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: "10.11"
+    reproducible: Always
+    resolved: beta 7
+    status: Closed
+    title: '[NSString sizeWithAttributes:] does not respect a font''s NSFontFixedAdvanceAttribute setting in 10.11'

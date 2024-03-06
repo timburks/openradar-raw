@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6618025"
+    labels:
+        datastore_id: "70431"
+data:
+    classification: ""
+    created: "2009-09-01T06:28:32.74989Z"
+    description: "24-Feb-2009 01:03 PM W Lewis:\r\nSummary: \r\n\r\nThe kevent() system call has a (const struct timespec *) parameter. Under some circumstances, the syscall will segfault if that parameter points to read-only memory. \r\n\r\nSteps to Reproduce:\r\n\r\nRun the attached C program. Under i386 or x86_64, it behaves correctly. When compiled for ppc (32) and running under Rosetta, it will segfault (SIGBUS). Changing the declaration of 'zeroTimeout' so that it is not 'const static' allows the program to execute without a segfault. Running it in the debugger (using the OAH_GDB hook) indicates that the segfault occurs during the kevent system call (the 'sc' opcode).\r\n\r\nExpected Results:\r\n\r\nSince the parameter is a (const *), I should be able to pass a const * in there without causing a crash.\r\n\r\nActual Results:\r\n\r\nInstead, it crashes.\r\n\r\nRegression:\r\n\r\nDoes not happen on native i386 or x86_64. I haven't tried running it under native ppc, so this may be a rosetta-specific bug.\r\n\r\nNotes:\r\n\r\nThere are actually two bugs here:\r\n  1. kevent() is trying to write to an argument it's not supposed to.\r\n  2. A system call is failing with SIGBUS instead of the more appropriate EFAULT.\r\n\r\nProgram which demonstrates the bug:\r\n\r\n#define KBUFSIZE 5\r\n\r\n#include <sys/types.h>\r\n#include <sys/event.h>\r\n#include <sys/pipe.h>\r\n#include <sys/time.h>\r\n#include <stdio.h>\r\n#include <libc.h>\r\n\r\nint main()\r\n{\r\n    int kevent_fd = kqueue();\r\n    struct kevent ievents[KBUFSIZE];\r\n    int nevents;\r\n    static const struct timespec zeroTimeout = { 0, 0 };\r\n\r\n    int num_pending_changes = 0;\r\n\r\n    int endpoints[2];\r\n    if (pipe(endpoints)) { perror(\"pipe\"); exit(1); }\r\n\r\n    EV_SET(&(ievents[num_pending_changes++]), endpoints[1], EVFILT_WRITE, EV_ADD|EV_ENABLE, 0, 0, NULL);\r\n\r\n    nevents = kevent(kevent_fd, ievents, num_pending_changes, NULL, 0, &zeroTimeout);\r\n\r\n    printf(\"kevent() returns %d\\n\", nevents);\r\n    if (nevents < 0) { perror(\"kevent\"); }\r\n\r\n    return 0;\r\n}"
+    email: wiml@omnigroup.com
+    modified: "2011-08-28T05:47:58.002609Z"
+    number: "6618025"
+    number_intvalue: 6618025
+    originated: 24-Feb-2009 01:03 PM
+    parent_number: "6460269"
+    product: Mac OS X
+    product_version: "10.5"
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/6460269
+    title: kevent() writes to (const *) timeout parameter

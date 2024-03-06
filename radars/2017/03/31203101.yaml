@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31203101"
+    labels:
+        datastore_id: "6132577526087680"
+data:
+    classification: Bug
+    created: "2017-03-22T20:33:51.81589Z"
+    description: "Summary:\r\nWe are working on building an iOS SDK that will include a few of our internal frameworks as dependencies.  The structure is:\r\n\r\nSDK.framework/\r\n    SDK (executable)\r\n    Resources.bundle\r\n    Frameworks/\r\n        InternalDependency1.framework\r\n        InternalDependency2.framework\r\n\r\nWhen a developer pulls SDK.framework into their iOS app, Xcode will re-sign SDK.framework with the certificate used to sign their app, but InternalDependency1.framework and InternalDependency2.framework will not be re-signed.  This results in a crash at runtime with a \"dyld: Library not loaded\" error because the code signatures do not match.  The dependencies are not meant for individual consumption, so we want to ship the SDK as an umbrella framework to hide the complexity from the developers that will use the SDK.\r\n\r\nSince Xcode supports re-signing frameworks when they are copied into an app, it should also code-sign all the nested frameworks within that framework. \r\n\r\nSteps to Reproduce:\r\n1. Build a framework that includes other frameworks as dependencies.  Xcode will code-sign the framework at build time, but not the dependent frameworks, so you will need an additional build step that runs a script like this:\r\n\r\nfor filename in \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.framework/Frameworks/*.framework\"; do\r\n    codesign --force --sign \"${CODE_SIGN_IDENTITY}\" $filename\r\ndone\r\n\r\n2. Drag the built framework into the \"Embedded Binaries\" section of a new iOS app.\r\n3. Build and run the app on device, signing it with a different certificate from the one used to code-sign the original framework. \r\n\r\nExpected Results:\r\nI expected the new app to run normally.\r\n\r\nActual Results:\r\nThe app crashes immediately after launch with a message like:\r\n\r\ndyld: Library not loaded: @rpath/InternalDependency1.framework/InternalDependency1\r\n  Referenced from: /private/var/containers/Bundle/Application/8CD981C1-F929-4A21-A59C-71F0607B09B6/TestProject.app/Frameworks/SDK.framework/SDK.framework\r\n\r\n  Reason: no suitable image found.  Did find:\r\n\r\n       /private/var/containers/Bundle/Application/8CD981C1-F929-4A21-A59C-71F0607B09B6/TestProject.app/Frameworks/SDK.framework/Frameworks/InternalDependency1.framework/InternalDependency1: code signature invalid for '/private/var/containers/Bundle/Application/8CD981C1-F929-4A21-A59C-71F0607B09B6/TestProject.app/Frameworks/SDK.framework/Frameworks/InternalDependency1.framework/InternalDependency1'\r\n\r\nVersion:\r\nXcode Version 8.2.1 (8C1002), macOS Sierra 10.12.3 (16D32)\r\n\r\nNotes:\r\nThe only workaround we've found so far is to ship a shell script within the framework that will re-sign the dependencies with the same cert the developer uses to sign their app, then instruct the developers to add a Run Script phase to their build that calls that shell script.  Needless to say, this workflow is less than ideal.\r\n\r\nConfiguration:\r\nThis occurs when building for device (iPad or iPhone).  \r\n\r\nAttachments:"
+    email: jhankin@squareup.com
+    modified: "2017-03-22T20:33:51.81608Z"
+    number: "31203101"
+    number_intvalue: 31203101
+    originated: 3/22/2016
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 8.2.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Frameworks included in an umbrella framework are not re-signed when copied

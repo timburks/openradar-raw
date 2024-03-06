@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23201555"
+    labels:
+        datastore_id: "4943165404479488"
+data:
+    classification: ""
+    created: "2015-10-21T15:43:28.0994Z"
+    description: "Summary:\r\nWhen background  NSURLSession has downloaded file and the application isn't running, when you start application, URLSession:downloadTask:didFinishDownloadingToURL: method is called with 'location' pointing to a missing file.\r\n\r\nHere is the code (https://gist.github.com/andreysm/732aee1bc54a4664b967):\r\n\r\nNSURLSessionConfiguration * config = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@\"DownloadAsyncSession\"];\r\nconfig.sessionSendsLaunchEvents = NO;\r\ndownload_async_session = [NSURLSession sessionWithConfiguration:config delegate:delegate delegateQueue:nil];\r\n\r\n...\r\n\r\n- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location\r\n{\r\n\tif (![[NSFileManager defaultManager] fileExistsAtPath: [location path]]) {\r\n\t\tNSLog(@\"Error. File not found\");\r\n\t}\r\n\t\r\n\tNSError * error = nil;\r\n\tBOOL ok = [[NSFileManager defaultManager] moveItemAtPath:[location path] toPath:dest_path error:&error];\r\n\tif (ok) {\r\n\t\tres.info = [dest_path UTF8String];\r\n\t} else {\r\n\t  NSLog(@\"Error: %@\", error);\r\n\t}\r\n}\r\n\r\nIt prints:\r\nError. File not found\r\nError Domain=NSCocoaErrorDomain Code=4 \"The operation couldn't be completed. (Cocoa, error 4)\"{NSSourceFilePathErrorKey=/private/var/mobile/Containers/Data/Application/7C039B25-95DC-4CC9-B73D-477E55A53A66/Library/Caches/com.apple.nsurlsessiond/Downloads/bundle.id/CFNetworkDownload_CZizB9.tmp, NSUserStringVariant=(\r\n    Move\r\n), NSDestinationFilePath=/var/mobile/Containers/Data/Application/13E0352D-4C4F-4257-8595-F27CD874756D/Library/Caches/File.zip.tmp, NSFilePath=/private/var/mobile/Containers/Data/Application/7C039B25-95DC-4CC9-B73D-477E55A53A66/Library/Caches/com.apple.nsurlsessiond/Downloads/bundle.id/CFNetworkDownload_CZizB9.tmp, NSUnderlyingError=0x17424b5e0 \"The operation couldn't be completed. No such file or directory\"}\r\n\r\nSteps to Reproduce:\r\n1. Run the application. It starts downloading file.\r\n2. Close the application completely (force it to close by swiping out its preview). File is still being downloaded in the background.\r\n3. Wait enough time for the file to be downloaded completely.\r\n4. Run the application.\r\n5. URLSession:downloadTask:didFinishDownloadingToURL: method is called. \"location\" parameter points to file that doesn't exists.\r\n\r\n\r\nExpected Results:\r\nExpected that method URLSession:downloadTask:didFinishDownloadingToURL: is called with a 'locaton' that points to an *existing* temporary file that I could move to a permanent location before it is deleted.\r\nIt is documented at https://developer.apple.com/library/watchos/documentation/Foundation/Reference/NSURLSessionDownloadDelegate_protocol/index.html#//apple_ref/occ/intfm/NSURLSessionDownloadDelegate/URLSession:downloadTask:didFinishDownloadingToURL:\r\n\r\nActual Results:\r\nURLSession:downloadTask:didFinishDownloadingToURL: is called with a 'locaton' that points to a nonexisting file.\r\n\r\n'location' looks like a correct url, example:\r\nfile:///private/var/mobile/Containers/Data/Application/7C039B25-95DC-4CC9-B73D-477E55A53A66/Library/Caches/com.apple.nsurlsessiond/Downloads/bundle.id/CFNetworkDownload_CZizB9.tmp\r\n\r\nNSFileManager:fileExistsAtPath: shows that the file doesn't exist.\r\n\r\n[[NSFileManager defaultManager] moveItemAtURL:location toURL:[NSURL fileURLWithPath:dest_path] error:&error] returns false and the error saying that \"The operation couldn't be completed. No such file or directory\"\r\n\r\nVersion:\r\niOS 9\r\n\r\nNotes:\r\nThe same problem was raised by Guilherme Gusman (not me) at stackoverflow.com:\r\nhttp://stackoverflow.com/questions/28860112/nsurlsession-didfinishdownloadingtourl-temporary-downloaded-file-not-found\r\n\r\nConfiguration:\r\niPhone 6"
+    email: andreysmachev@playrix.com
+    modified: "2015-10-21T15:43:28.09961Z"
+    number: "23201555"
+    number_intvalue: 23201555
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Background NSURLSession didFinishDownloadingToURL temporary downloaded file not found when app was closed

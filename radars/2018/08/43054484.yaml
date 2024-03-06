@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "43054484"
+    labels:
+        datastore_id: "5021299667632128"
+data:
+    classification: ""
+    created: "2018-08-29T09:19:36.23319Z"
+    description: "Area:\r\nFoundation\r\n\r\nSummary:\r\nURLSession.getTasksWithCompletionHandler(_ completionHandler:) do not recover URLSessionDataTask's priority after reboot of application\r\n\r\nSteps to Reproduce:\r\nAfter creation instance of URLSession with custom URLSessionConfiguration, delegate and queue, create URLSessionDownloadTask through URLSession.downloadTask(with request:)(but not resume()) stop running application on Xcode (for example). Run application again and call URLSession.getTasksWithCompletionHandler(_ completionHandler:) and print all downloadTasks priority.\r\n\r\nExpected Results:\r\nPriority of downloadTasks should be equal to task priorities on task creation.\r\n\r\nActual Results:\r\nPriorities of all downloadTasks are 0.5.\r\n\r\nVersion/Build:\r\niOS 12(beta), 11 and maybe earlier versions too.\r\n\r\nConfiguration:\r\nAt attached Xcode project.\r\n\r\nCode:\r\nimport UIKit\r\n\r\nclass ViewController: UIViewController, URLSessionDelegate {\r\n\r\n\tprivate lazy var operationQueue: OperationQueue = {\r\n\t\tlet queue = OperationQueue()\r\n\t\tqueue.maxConcurrentOperationCount = 1\r\n\r\n\t\treturn queue\r\n\t}()\r\n\r\n\tprivate lazy var backgroundCfgUnrestricted: URLSessionConfiguration = {\r\n\t\tlet cfg = URLSessionConfiguration.background(withIdentifier: \"com.2gis.v4ios.session.unrestricted\")\r\n\r\n\t\tcfg.httpMaximumConnectionsPerHost = 24\r\n\t\tcfg.isDiscretionary = false\r\n\t\tcfg.allowsCellularAccess = true\r\n\t\tcfg.timeoutIntervalForRequest = 300\r\n\r\n\t\t// https://github.com/dropbox/dropbox-sdk-obj-c/issues/60\r\n\t\tcfg.sharedContainerIdentifier = Bundle.main.bundleIdentifier\r\n\r\n\t\treturn cfg\r\n\t}()\r\n\tinternal lazy var backgroundSessionUnrestricted: URLSession = {\r\n\t\t[unowned self] in\r\n\r\n\t\treturn URLSession(configuration: self.backgroundCfgUnrestricted,\r\n\t\t\t\t\t\t  delegate: self,\r\n\t\t\t\t\t\t  delegateQueue: self.operationQueue)\r\n\t}()\r\n\r\n\toverride func viewDidLoad() {\r\n\t\tsuper.viewDidLoad()\r\n\r\n\t\tself.backgroundSessionUnrestricted.getTasksWithCompletionHandler {\r\n\t\t\tdataTasks, uploadTasks, downloadTasks in\r\n\r\n\t\t\tfor task in downloadTasks {\r\n\t\t\t\tprint(\"[HTTP Network] Background session unrestricted task priority: \\(task.priority)\")\r\n\t\t\t}\r\n\t\t}\r\n\r\n\t\tlet url = URL(string: \"https://vk.com\")!\r\n\t\tlet request = URLRequest(url: url)\r\n\t\tlet task = self.backgroundSessionUnrestricted.downloadTask(with: request)\r\n\t\ttask.priority = 0.899880\r\n\r\n\t\ttask.resume()\r\n\t}\r\n\r\n}"
+    email: vanujkee@gmail.com
+    modified: "2018-08-29T09:24:22.74919Z"
+    number: "43054484"
+    number_intvalue: 43054484
+    originated: August 9 2018
+    parent_number: '&{NULL_VALUE}'
+    product: Foundation
+    product_version: iOS 11, iOS 12, may be earlier
+    reproducible: ""
+    resolved: ""
+    status: DUPLICATE OF 16946572
+    title: URLSession.getTasksWithCompletionHandler(_ completionHandler:) do not recover URLSessionDataTask's priority after reboot application

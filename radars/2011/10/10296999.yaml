@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10296999"
+    labels:
+        datastore_id: "1399401"
+data:
+    classification: Other Bug
+    created: "2011-10-17T18:12:57.645748Z"
+    description: "17-Oct-2011 11:08 AM Steven Fisher:\r\nSummary:\r\nWith GCC_WARN_SHADOW set, MIN and MAX macros cause a warning when nested.\r\n\r\nSteps to Reproduce:\r\n1. Create a new Mac command line project.\r\n2. Turn on GCC_WARN_SHADOW = YES.\r\n3. Replace the hello world with code:\r\n\t\tCGFloat wantedScale = 1.5;\r\n\t\tCGFloat actualScale = MIN(2.0, MAX(1.0, wantedScale));\r\n\t\tNSLog(@\"Scale is %f\", actualScale);\r\n\r\nExpected Results:\r\nCode should compile without warning.\r\n\r\nActual Results:\r\n\"Declaration shadows a local variable.\"\r\n\r\nRegression:\r\n\r\nNotes:\r\nThe cause of the warning is the macro's expansion:\r\n\r\n  CGFloat actualScale = ({ __typeof__(2.0) __a = (2.0); __typeof__(({ __typeof__(1.0) __a = (1.0); __typeof__(wantedScale) __b = (wantedScale); __a < __b ? __b : __a; })) __b = (({ __typeof__(1.0) __a = (1.0); __typeof__(wantedScale) __b = (wantedScale); __a < __b ? __b : __a; })); __a < __b ? __a : __b; });\r\n\r\nSimplified a bit for readability, this is:\r\n\r\n  CGFloat actualScale = ({ CGFloat __a = (2.0); CGFloat __b = (({ CGFloat __a = (1.0); CGFloat __b = (wantedScale); __a < __b ? __b : __a; })); __a < __b ? __a : __b; });\r\n\r\nOf course, this makes sense. But it also fills my build with warnings when I do something completely valid. I want GCC_WARN_SHADOW to catch index and offset, not MIN(MAX()), MAX(MAX(),MAX()), etc.\r\n\r\nSuggested fix: Don't show GCC_WARN_SHADOW warnings for identifiers prefixed with __."
+    email: s.fisher.ca@gmail.com
+    modified: "2011-10-17T18:12:57.646081Z"
+    number: "10296999"
+    number_intvalue: 10296999
+    originated: 17-Oct-2011 11:08 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 4.2 / 4D199
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: MAX() spurious compiler warning

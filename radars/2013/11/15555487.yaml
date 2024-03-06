@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15555487"
+    labels:
+        datastore_id: "5893537480572928"
+data:
+    classification: ""
+    created: "2013-11-28T00:13:42.84309Z"
+    description: "Summary:\r\nIt appears that on 10.9, the WAL journal mode has become the default for SQLite files created by Core Data. In this mode, SQLite creates a -wal file (and a -shm file). If the main DB file is migrated, but the existing wal (and shm) files are left in place, adding the migrated DB to the persistent store coordinator fails with an exception.\r\n\r\nSteps to Reproduce:\r\nWhen trying to migrate a store created using WAL mode to a new data model version we do the following:\r\n\r\n1. Determine if migration is needed.\r\n2. Load the source and destination models, mapping model, and create a migration model.\r\n3. Migrate from the existing store to a new store in a temporary location using NSMigrationManager's -migrateStoreFromURL:type:... method.\r\n4. Backup the existing store file temporarily.\r\n5. Copy the new (migrated) store from its temporary location to the same path the original store file had been at.\r\n6. Delete the temporary back from step 4.\r\n7. Add a persistent store for the new, migrated store file.\r\n\r\nExpected Results:\r\nAssuming all previous steps are successful, step 7 should also succeed.\r\n\r\nActual Results:\r\nIf the original store was created or has been saved with WAL mode enabled, step 7 above throws an exception and the following errors are logged to the console:\r\n\r\nCoreData: error: failure reading metadata plist with data bytes: <33>\r\nUnable to open database. Error: The file couldn’t be opened because it isn’t in the correct format.\r\nInfo: {\r\n    NSUnderlyingException = \"An error <null> occurred converting the metadata plist data: <33>\";\r\n}\r\n\r\nThe exception has the following stack trace (truncated to fit):\r\n\r\n* thread #1: tid = 0x3b9627, 0x00007fff8e44ee4a libobjc.A.dylib`objc_exception_throw, queue = 'com.apple.main-thread, stop reason = breakpoint 3.1\r\n    frame #0: 0x00007fff8e44ee4a libobjc.A.dylib`objc_exception_throw\r\n    frame #1: 0x00007fff8e00535f CoreData`-[NSSQLConnection fetchMetadata] + 719\r\n    frame #2: 0x00007fff8e00257f CoreData`-[NSSQLCore _loadAndSetMetadata] + 175\r\n    frame #3: 0x00007fff8e00236d CoreData`-[NSSQLCore loadMetadata:] + 77\r\n    frame #4: 0x00007fff8dff99b6 CoreData`-[NSPersistentStoreCoordinator addPersistentStoreWithType:configuration:URL:options:error:] + 1078\r\n\r\n\r\nVersion:\r\nXcode 5.0.1\r\nOS X 10.9\r\n\r\nNotes:\r\nLooking for and deleting the -wal and -shm file after step 6 will prevent the exception from being thrown.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: armadsen@gmail.com
+    modified: "2013-11-28T00:13:42.843285Z"
+    number: "15555487"
+    number_intvalue: 15555487
+    originated: 11/27/13
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: "10.9"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Manually initiated Core Data migration fails if existing store was created with WAL journaling on, as is default on 10.9

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17220522"
+    labels:
+        datastore_id: "6031809255047168"
+data:
+    classification: ""
+    created: "2014-06-08T05:56:18.820299Z"
+    description: "Summary:\r\nWhen using the OSAtomic functions, I expect to be able to write code that uses output pointers as follows:\r\n\r\nvar count: CInt = 0\r\nOSAtomicIncrement(&count) // Convert to CMutablePointer<CInt>\r\n\r\nHowever, since the generated(?) Swift bridge definitions make use of UnsafePointer<T>, the calling code instead is:\r\n\r\nvar count: Int32 = 0\r\nwithUnsafePointer(&count, OSAtomicIncrement32)\r\n\r\nThis seems unnecessary. The reason for this conclusion is because the objc runtime has bridge definitions which are typed as CMutablePointer<CType>, and do allow code to be called as shown in the first example above.\r\n\r\nSteps to Reproduce:\r\n1. Install Xcode6-Beta\r\n2. Create a New Swift File\r\n3. Add the following code:\r\n\r\nimport Darwin\r\n\r\nfunc foo() {\r\n  var count: Int32 = 0\r\n  OSAtomicIncrement32(&count)\r\n}\r\n\r\nExpected Results:\r\nThe above code is expected to compile and run properly.\r\n\r\nActual Results:\r\nCompiler error: inout Int32' is not convertible to 'UnsafePointer<Int32>'\r\n\r\nVersion:\r\nVersion 6.0 (6A215l)"
+    email: davelee.com@gmail.com
+    modified: "2014-06-08T05:56:18.820417Z"
+    number: "17220522"
+    number_intvalue: 17220522
+    originated: "2014-06-07"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'Swift: OSAtomic functions take UnsafePointer<CType> instead CMutablePointer<CType>'

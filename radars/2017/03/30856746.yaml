@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30856746"
+    labels:
+        datastore_id: "4972068772773888"
+data:
+    classification: Serious Bug
+    created: "2017-03-05T12:45:37.21395Z"
+    description: "Summary:\r\nThe UIViewPropertyAnimator does not update the view when `fractionComplete` is set while it's in an `inactive` state, or even in `active` state.\r\n\r\nSteps to Reproduce:\r\nRun this Swift Playground code.\r\n\r\nlet liveView = UIView(frame: CGRect(x: 0, y: 0, width: 400, height: 50))\r\nliveView.backgroundColor = .white\r\n\r\nPlaygroundPage.current.needsIndefiniteExecution = true\r\nPlaygroundPage.current.liveView = liveView\r\n\r\nlet square = UIView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))\r\nsquare.backgroundColor = .red\r\n\r\nliveView.addSubview(square)\r\n\r\nlet animator = UIViewPropertyAnimator.init(duration: 5, curve: .easeIn)\r\n\r\nanimator.addAnimations {\r\n\r\n    square.frame.origin.x = 350\r\n}\r\n\r\n// State: inactive\r\n// Does nothing, position is at 0.0\r\nDispatchQueue.main.async {\r\n\r\n    animator.fractionComplete = 0.5\r\n}\r\n\r\n// State: active\r\n// Stil does nothing, position is at 0.0\r\nDispatchQueue.main.async {\r\n\r\n    animator.fractionComplete = 0.5\r\n}\r\n\r\n// Updates from 0.0 to 0.75 - Why now?\r\nDispatchQueue.main.asyncAfter(deadline: .now() + 5) { \r\n\r\n    animator.fractionComplete = 0.75\r\n}\r\n\r\nExpected Results:\r\nThe view is expected to change its position on each call of `fractionComplete`.\r\n\r\nActual Results:\r\nThe animator does nothing for the first two calls, except changing the state to from `inactive` to `active`. The view changes it's position after the third call of `fractionComplete` after 5 seconds.\r\n\r\nCURRENT WORKAROUND:\r\nPut these two lines before the first call:\r\n\r\nanimator.startAnimation()\r\nanimator.pauseAnimation()\r\n\r\n\r\nConfiguration:\r\nThe issue was testen in Swift Playground, in iOS simulator and on and iPhone 6 Plus and had always the same results"
+    email: let.adrian.know@gmail.com
+    modified: "2017-03-05T12:45:37.21416Z"
+    number: "30856746"
+    number_intvalue: 30856746
+    originated: 05/03/2017
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode Version 8.2.1 (8C1002)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIViewPropertyAnimator does not update the view when expected

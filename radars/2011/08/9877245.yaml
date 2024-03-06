@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9877245"
+    labels:
+        datastore_id: "1281412"
+data:
+    classification: ""
+    created: "2011-08-01T22:14:26.880612Z"
+    description: "Summary:\r\nWhen a java application (or applet, I suppose) attempts to access a private key from the system keychain, only one private key is accessible.  Any other private keys do not appear to exist when using this API.\r\n\r\nThis seems to be a bug in the \"KeychainStore\" keystore which adapts the java KeyStore API to the OS X system keychain API.\r\n\r\n\r\nSteps to Reproduce:\r\nRun the following code on a machine with more than one private key in the default keychain:\r\nimport java.security.*;\r\nimport java.util.*;\r\nimport java.security.cert.*;\r\n\r\nclass keystore {\r\n\tprivate static void listEntries(KeyStore keyStore) throws Exception {\r\n\t\tEnumeration<String> aliases = keyStore.aliases();\r\n\t\twhile(aliases.hasMoreElements()) {\r\n\t\t\tString alias = aliases.nextElement();\r\n\t\t\tif (keyStore.isKeyEntry(alias)) {\r\n\t\t\t\tSystem.out.println(\"key \"+alias);\r\n\t\t\t} else if (keyStore.isCertificateEntry(alias)) {\r\n\t\t\t\tSystem.out.println(\"   cert \"+alias);\r\n\t\t\t} else {\r\n\t\t\t\tSystem.err.println(\"????  \"+alias);\r\n\t\t\t\t\r\n\t\t\t}\r\n\t\t}\r\n\t}\r\n\r\n\r\n\tpublic static void main(String[] args) throws Exception {\r\n\t\tKeyStore keyStore = KeyStore.getInstance(\"KeychainStore\");\r\n\t\tkeyStore.load(null, null);\r\n\t\tlistEntries(keyStore);\r\n\t\t\r\n\t\t//System.out.println(\"key: \"+keyStore.getKey(\"200/0\", \"-\".toCharArray()));\r\n\t\t//System.out.println(\"cert: \"+keyStore.getCertificate(\"200/0\"));\r\n\t}\r\n}\r\n\r\n\r\n\r\nExpected Results:\r\nIt should display a list of all certificates and private keys (secret keys are not supported in this API) in the user's keychains.\r\n\r\nActual Results:\r\nIt displays a list of certificates and only the first private key that is encountered.\r\n\r\nRegression:\r\n\r\nNotes:"
+    email: seandreilly@gmail.com
+    modified: "2011-08-28T05:35:14.552856Z"
+    number: "9877245"
+    number_intvalue: 9877245
+    originated: 01-Aug-2011
+    parent_number: '&{NULL_VALUE}'
+    product: Java
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Java KeychainStore only exposes one PrivateKey from keychain

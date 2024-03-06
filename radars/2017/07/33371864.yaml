@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33371864"
+    labels:
+        datastore_id: "5063116878512128"
+data:
+    classification: Bug
+    created: "2017-07-18T08:54:33.1969Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nXcode’s project template for “Master-Detail Application” has a mis-configured storyboard that triggers a bug in either `UINavigationController` or `UISplitViewController`.\r\n\r\nThe bug causes certain callbacks on the detail view controller to not be fired on dismissal/pop-back. This bug affects both iPhone (without split-view) and iPad (with split-view).\r\n\r\nSteps to Reproduce:\r\n1. Create new Xcode Project.\r\n2. Choose Master-Detail iOS Application\r\n3. Add the following to `DetailViewController`:\r\n\r\n```\r\noverride func viewDidDisappear(_ animated: Bool) {\r\n    super.viewDidDisappear(animated)\r\n\r\n    if self.isMovingFromParentViewController || self.isBeingDismissed {\r\n        print(type(of: self), #function)\r\n    }\r\n}\r\n\r\noverride func willMove(toParentViewController parent: UIViewController?) {\r\n    super.willMove(toParentViewController: parent)\r\n\r\n    if parent == nil {\r\n        print(type(of: self), #function)\r\n    }\r\n}\r\n\r\noverride func didMove(toParentViewController parent: UIViewController?) {\r\n    super.didMove(toParentViewController: parent)\r\n\r\n    if parent == nil {\r\n        print(type(of: self), #function)\r\n    }\r\n}\r\n```\r\n\r\n4. Launch app\r\n5. Create entry in `MasterViewController` by tapping '+'.\r\n6. Tap on entry to open `DetailViewController`.\r\n7. Tap back-button\r\n8. Check console.\r\n9. Realize that none of the expected logs are printed.\r\n\r\nWorkaround/Fix:\r\n\r\n1. Open Main.storyboard.\r\n2. Remove \"showDetail\"-Segue from `MasterViewController` to `DetailViewController`.\r\n3. Add a `detailNavigationController` property to `MasterViewController`:\r\n\r\n```\r\nvar detailNavigationController: UINavigationController? = nil\r\n```\r\n\r\n4. Replace:\r\n\r\n```\r\ndetailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController\r\n```\r\n\r\nwith:\r\n\r\n```\r\ndetailNavigationController = controllers[controllers.count-1] as? UINavigationController\r\ndetailViewController = detailNavigationController!.topViewController as? DetailViewController\r\n```\r\n\r\nin `MasterViewController`.\r\n\r\n5. Replace:\r\n\r\n```\r\nlet controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController\r\n```\r\n\r\nwith:\r\n\r\n```\r\nlet controller = segue.destination as! DetailViewController\r\n```\r\n\r\nin `MasterViewController`.\r\n\r\n6. Add this:\r\n\r\n```\r\noverride func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {\r\n    let storyboard = UIStoryboard(name: \"Main\", bundle: nil)\r\n    let detailViewController = storyboard.instantiateViewController(withIdentifier: \"detailViewController\") as! DetailViewController\r\n\r\n    let object = objects[indexPath.row] as! NSDate\r\n    detailViewController.detailItem = object\r\n    detailViewController.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem\r\n    detailViewController.navigationItem.leftItemsSupplementBackButton = true\r\n\r\n    if let split = splitViewController {\r\n        split.showDetailViewController(detailViewController, sender: nil)\r\n    } else {\r\n        navigationController?.pushViewController(detailViewController, animated: true)\r\n    }\r\n}\r\n```\r\n\r\nin `MasterViewController`.\r\n\r\nExpected Results:\r\nConsole:\r\n```\r\nDetailViewController … willMove(toParentViewController:)\r\nDetailViewController … viewDidDisappear\r\nDetailViewController … didMove(toParentViewController:)\r\n```\r\n\r\nObserved Results:\r\nNo such output.\r\n\r\nVersion:\r\n10.x"
+    email: regexident@gmail.com
+    modified: "2017-07-18T08:54:33.19723Z"
+    number: "33371864"
+    number_intvalue: 33371864
+    originated: July 18 2017
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: 10.x
+    reproducible: Always
+    resolved: no
+    status: open
+    title: '`DetailViewController` in "Master-Detail Application" missing `will/didMove(toParentViewController:)`'

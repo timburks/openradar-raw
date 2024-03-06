@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "46305914"
+    labels:
+        datastore_id: "5052498041634816"
+data:
+    classification: Bug
+    created: "2018-11-28T14:13:19.936835Z"
+    description: "I found that some of PF firewall rules work incorrectly on wired Ethernet interface, but work correctly when WiFi is the only network adapter. For example, action \"return-rst\" does not return TCP RST packets.\r\nThis bug affects any wired ethernet connection. Even built-in iMac ethernet adapter vs built-in WiFi adapter. Tested on old and newer iMac's and macbook's with Thunderbolt Ethernet adapters.\r\n\r\nSteps to Reproduce: \r\nIn the first step let's try correct behaviour. To do so, we need macbook/iMac with WiFi only connection, no Thunderbolt Ethernet connected.\r\n\r\nFlush all PF rules\r\n$ sudo pfctl -F all\r\n\r\nCreate simple rule to block TCP connection to port 81, that should return TCP RST packet to abort connection instantly.\r\n$ echo \"block return-rst out proto tcp from any to any port 81\" | sudo pfctl -e -f -\r\n\r\nCheck if the new rule was added correctly.\r\nHere we can see the counter of packets that match firewall rule.\r\n$ sudo pfctl -vsr\r\nPackets: 0         Bytes: 0\r\n\r\nNow trying to test firewall rule using curl that connects to port 81\r\n$ curl http://example.com:81\r\ncurl: (7) Failed to connect to example.com port 81: Connection refused\r\n\r\nSee that connection refused immediately by firewall rule as expected. It's a correct behaviour.\r\n\r\nNow test the incorrect behaviour. To do so we need to connect genuine Apple Thunderbolt Ethernet with active wired connection. WiFi connection can be disabled or stay enabled, this does not matter, bug will appear in both cases.\r\n\r\nLeave firewall rules the same\r\n\r\nTrying to use curl again\r\n$ curl http://example.com:81\r\n .....waiting....\r\n curl: (28) Connection timed out\r\nNow connection is hanging and closes after a while by timeout. But the firewall rule is still active and working.\r\n\r\nWe can look at the packet counters  pfctl -vsr and see that rule is matching and still blocking the connection. But without TCP RST reply."
+    email: pavel@zhovner.com
+    modified: "2018-11-28T14:22:32.696051Z"
+    number: "46305914"
+    number_intvalue: 46305914
+    originated: "2015"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.10 and newer
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: PF firewall rules works incorrectly on wired Ethernet interface. Action return-rst does not return TCP RST packet.

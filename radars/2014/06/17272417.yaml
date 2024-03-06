@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17272417"
+    labels:
+        datastore_id: "5232857291161600"
+data:
+    classification: ""
+    created: "2014-06-11T18:31:59.369Z"
+    description: "Instance properties support @lazy to avoid immediate initialization, but a problem with this is that there is no way to suppress executing the initialization expression by supplying another value for the property. And yet, cases where we want to either manually initialize a property or use a default initialization expression are common.\r\n\r\nIf you look at the Earthquakes sample code for instance (https://developer.apple.com/library/prerelease/mac/samplecode/Earthquakes/Introduction/Intro.html#//apple_ref/doc/uid/TP40014547), properties like persistentStoreCoordinator and storeURL are implemented by combining a backing stored property (prefixed with an underscore) with a computed property and manually checking whether the backing property has been initialized. It has to resort to this because it still wants to allow setting a non-default value, and initialization expressions for properties are always executed.\r\n\r\nOne alternative that occurred to me would be to allow specifying a default block to a property definition instead of an initialization expression:\r\n\r\nvar someValue: String {\r\n  default {\r\n    return ...\r\n  }\r\n}\r\n\r\n(Maybe don't require a return if there is only one line, similar to closures.)\r\n\r\nThe default block would only be executed if a value hadn't been set before the first access. This could work both for properties and local variables I think. Of course, this would imply lazy initialization, so supporting both might be redundant.\r\n\r\nThis also avoids having to use an explicit closure and calling it immediately after, which also seems like a pretty common pattern if initialization requires complex logic like branching:\r\n\r\n@lazy var someValue: String = {\r\n  switch ... {\r\n    case [...]:\r\n      return ...\r\n    case [...]:\r\n      return ...\r\n  }\r\n}()\r\n\r\nWithin functions/methods, @lazy is not supported at all right now. So it seems we would have to use an explicit nested function and backing variable to lazily initialize a variable:\r\n\r\n  func doSomething() {    \r\n    var possibleValue: String?\r\n\r\n    func lazilyGenerateSomeValue() -> String {\r\n      if (!possibleValue) {\r\n        possibleValue = ...\r\n      }\r\n      return possibleValue!\r\n    }\r\n\r\n    ... lazilyGenerateSomeValue()\r\n    ... lazilyGenerateSomeValue()\r\n  }\r\n  \r\nI would want to suggest allowing @lazy here as well:\r\n  \r\n  func doSomething() {    \r\n    @lazy var someValue: String = {\r\n      return ...\r\n    }()\r\n\r\n    ... someValue\r\n    ... someValue\r\n  }\r\n  \r\nOr/and if default blocks are supported:\r\n     \r\n    var someValue: String {\r\n      default {\r\n        return ...\r\n      }\r\n    }\r\n  \r\nThis avoids boilerplate and also keeps access uniform, so we don't have to remember to call a function instead of accessing a property to get a lazily initialized value."
+    email: martijn@martijnwalraven.com
+    modified: "2014-06-11T18:31:59.369132Z"
+    number: "17272417"
+    number_intvalue: 17272417
+    originated: 6/11/2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: '[Swift] Extend @lazy to allow for optional initialization and support local variables'

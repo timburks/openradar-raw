@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "42848466"
+    labels:
+        datastore_id: "4946373157847040"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2018-08-02T09:24:22.46581Z"
+    description: "Summary:\r\nThis is the most common crash users of our app experience.\nOnce I was able to reproduce it in our app I made a minimal sample project that exposes the issue.\n\nThe trick is to quickly “brush” a table view cell with your finger. If the cell has swipe actions (swipe-to-delete being the most common example of this) there’s a good that this will happen:\n\n    Fatal Exception: NSInternalInconsistencyException\n    No occurrence for index path (null)\n\n    *** Assertion failure in -[UISwipeActionController swipeHandlerDidBeginSwipe:], /BuildRoot/Library/Caches/com.apple.xbs/Sources/UIKit/UIKit-3698.54.4/SwipeActions/UISwipeActionController.m:268\r\n    *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'No occurrence for index path (null)'\n\nI was able to reproduce this with the older `tableView:titleForDeleteConfirmationButtonForRowAtIndexPath:`/`tableView:commitEditingStyle:forRowAtIndexPath:` API as well as the newer `tableView:trailingSwipeActionsConfigurationForRowAtIndexPath:` API in iOS 11.\n\n* I could not reproduce this crash in iOS 10.\n* I could reproduce this crash in the iOS 12 beta.\n* I have only been able to trigger this crash on an actual iPad (not in the simulator, not on iPhone) so far.\r\n\r\nSteps to Reproduce:\r\n1. Run the attached “crashme” Xcode project on an actual iPad\n2. Quickly “brush” the table view cell. Most likely it will take multiple tries to trigger the crash\r\n\r\nExpected Results:\r\nEither nothing should happen (it’s a very light touch), or the cell should reveal its Delete button\r\n\r\nActual Results:\r\nThe app crashes:\n\n\n    *** Assertion failure in -[UISwipeActionController swipeHandlerDidBeginSwipe:], /BuildRoot/Library/Caches/com.apple.xbs/Sources/UIKit/UIKit-3698.54.4/SwipeActions/UISwipeActionController.m:268\r\n    *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'No occurrence for index path (null)'\r\n\r\nVersion:\r\niOS 11 and up\r\n\r\nNotes:\r\nAttachments:\n* crash-reports.zip: contains App Store crash reports exported from Xcode.\n* crashme.zip: contains a sample project demonstrating the bug\n* crashme.MOV: video showing how to reproduce the crash with the sample project"
+    email: tim.viaene@lightspeedhq.com
+    modified: "2018-08-02T09:24:22.46605Z"
+    number: "42848466"
+    number_intvalue: 42848466
+    originated: 02-Aug-2018 11:24 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 11 and up
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: App crashes when "brushing" a table view cell with swipe actions ('No occurrence for index path (null)')

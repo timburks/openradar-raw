@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6394788"
+    labels:
+        datastore_id: "675"
+data:
+    classification: Other Bug
+    created: "2008-11-22T05:39:58.573441Z"
+    description: "Summary:\r\nICAImportImage returns the array of image data/path objects in its own storage, not caller-supplied storage, but the API declaration implies that it uses caller-supplied storage, and no documentation contradicts this implication.\r\n\r\nSteps to Reproduce:\r\n1. Declare a CFArrayRef or NSArray *variable and initialize it to NULL or nil.\r\n2. Set your ICAImportImagePB's importedImages member to a pointer to the CFArrayRef or NSArray *variable.\r\n3. Call ICAImportImage with a pointer to the parameter block and NULL as the completion function.\r\n\r\nExpected Result:\r\nimportedImages is unchanged, and the variable contains the CF/NSArray pointer.\r\n\r\nActual Result:\r\nThe variable is unchanged, and importedImages contains a pointer to some other storage containing the CF/NSArray pointer.\r\n\r\nRegression:\r\nICAImportImage was introduced in Mac OS X 10.3, so this problem didn't exist previously.\r\n\r\nNotes:\r\nNormally, a declaration like “CFArrayRef *importedImages” (or its Cocoa counterpart, “NSArray **importedImages”) implies to the reader that he should create his own storage for a CF/NSArray pointer, then pass a pointer to that storage. ICAImportImage does not work this way, and the documentation says nothing to the contrary.\r\n\r\nWhat I would prefer is that the function works as I expected: If importedImages is not NULL, ICAImportImage dereferences that pointer and stores the CFArray pointer at that location. (If it is NULL, it could perform its current behavior.) This may cause some applications to crash, but they should have zeroed the structure anyway.\r\n\r\nThe other (sub-optimal, in my opinion) solution is simply to codify the current behavior with a statement in the header and documentation saying that ICAImportImage will give you a pointer to its own storage, regardless of what you set the importedImages member to before calling the function. Then, the behavior would still be surprising, but at least the surprise would occur when reading the documentation, and not when running the application.\r\n\r\nThere may be other functions in the Image Capture API with the same problem."
+    email: boredzo@gmail.com
+    modified: "2011-08-28T05:49:16.089555Z"
+    number: "6394788"
+    number_intvalue: 6394788
+    originated: 2008-11-21T21:37-0800
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.5/9F33 (OS) and 2008-11-12 (docs)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ICAImportImage's mode of returning arrays is surprising and not documented

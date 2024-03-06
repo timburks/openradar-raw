@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29251128"
+    labels:
+        datastore_id: "5000956991242240"
+data:
+    classification: Security
+    created: "2016-11-14T19:36:29.03424Z"
+    description: "This is a duplicate of rdar://29144482\n\nThis is a duplicate of rdar://28981392\r\n\r\nSummary:\r\nWhen importing a private key into a keychain applications that were explicitly whitelisted with the \"-T\" flag require additional authorization to use the imported key.\r\n\r\nSteps to Reproduce:\r\n1. Use `/usr/bin/security import key.p12 -T \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" -k ~/Library/Keychains/login.keychain` to import a private key into the user's keychain, using the documented \"-T\" flag to allow Google Chrome to use the private key without further authorization\r\n2. Also import the matching certificate into the user's keychain, forming a valid identity\r\n3. Confirm that the identity is present in the user's keychain using Keychain Access.app and is valid\r\n4. Launch Google Chrome and navigate to a URL requiring the just imported client identity (cert + private key in Keychain)\r\n\r\nExpected Results:\r\nGoogle Chrome should use the client certificate and private key without further authorization requirements.\r\n\r\nActual Results:\r\nGoogle Chrome (via SecurityAgent) asks whether the user wants to Allow, Always Allow or Deny accessing the private key from the identity in the user's keychain.\r\n\r\nRegression:\r\nThis issue does not exist prior to macOS 10.12 Sierra and in testing has been verified to not occur on either OS X 10.11 or 10.10.\r\n\r\nNotes:\r\nIt has been determined that by running security with the \"set-key-partition-list\" verb which appears to be new in macOS 10.12 like so: `security set-key-partition-list -l \"Imported Private Key\" -S teamid:EQHXZ8M8AV -s ~/Library/Keychains/login.keychain` a \"second layer\" ACL can be applied to whitelist all of Google Inc.'s applications via its Team ID (EQHXZ8M8AV). This requirement is not documented anywhere and is complicated by the fact that the \"set-key-partition-list\" verb requires the user's password either interactively or as part of the command line invocation. This requirement makes the verb impossible to automate without compromising security by supplying a plaintext password as part of the automation."
+    email: tim@synthist.net
+    modified: "2016-11-14T19:36:29.03442Z"
+    number: "29251128"
+    number_intvalue: 29251128
+    originated: 14-Nov-2016 02:36 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: "10.12"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: macOS 10.12 Sierra doesn't respect keychain Access Control settings

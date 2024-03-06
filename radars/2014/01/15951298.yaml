@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15951298"
+    labels:
+        datastore_id: "5884409601327104"
+data:
+    classification: Security
+    created: "2014-01-30T22:41:52.042923Z"
+    description: "Summary:\r\nWhen attempting to request a receipt in iOS 7 to test out receipt validation code I wrote, I discovered that I was unable to retrieve a receipt using valid sandbox credentials. It appears that sandboxed app store accounts are not being recognized properly by the server when these requests are made.\r\n\r\nSteps to Reproduce:\r\n1. Sign out of any normal or sandboxed App Store account\r\n2. Restart device. \r\n3. Launch developer-signed application which makes an SKReceiptRefreshRequest. \r\n4. Attempt to sign in with sandboxed iTunes Connect account. \r\n5. Screenshot IMG_4042, indicating the account is not recognized as a sandboxed account. \r\n6. Open a different application, also developer signed, and attempt to make an In-App purchase using the same credentials. \r\n7. Screenshot IMG_4043, indicating the account is successfully recognized as a sandboxed account.\r\n8. Finish sandboxed transaction in IAP app.  \r\n8. Go back to SKReceiptRefreshRequest app, have it make another request. \r\n9. Sign in with same credentials. \r\n10. SKRequest delegate method requestDidFinish: fires regardless of error state. \r\n11. Observe lines similar to this in the console for the phone (attaching full console log as a .txt file):\r\n\r\nJan 30 16:17:22 Portable-Series-Of-Tubes storebookkeeperd[93] <Warning>: [StoreBookkeeper] [SBKTransactionController.m:457] Transaction Failed: <SBKSyncTransaction: 0x15df7be0> SYNC: anchor=0 -- Error: <SBKStoreError:0x15e1d080> \"Error Code = SBKStoreErrorCodeStoreAccountSessionExpired (-1004)\"\r\nJan 30 16:17:22 Portable-Series-Of-Tubes storebookkeeperd[93] <Warning>: [UPP-SBDJobScheduler]  Could not synchronize domain 'com.apple.upp' (<SBKStoreError:0x15e23470> \"Error Code = SBKStoreErrorCodeStoreAccountSessionExpired (-1004)\").  Synchronization will be re-attempted when the network connectivity, or account status has changed.\r\n\r\n12. Bang head on desk.\r\n\r\nExpected Results:\r\nSame credentials that allow IAP should allow downloading of a receipt. \r\n\r\nActual Results:\r\nReceipt will not download. \r\n\r\nVersion:\r\niOS 7.0.4\r\n\r\nNotes:\r\nI have also attached the sample SKReceiptRequest application I was working on - you can see that if you throw a breakpoint on line 94 in [Sample App] you get the non-error delegate method even if the phone is in airplane mode, so it looks like errors are not being handled properly, compounding the above issue. \r\n\r\nConfiguration:\r\niPhone 5, iOS 7.0.4, my signing credentials for the developer stuff. \r\n\r\nAttachments:\r\n'IMG_4042.PNG', 'IMG_4043.PNG', 'SandboxIssues.txt' and '[Sample App]' were successfully uploaded."
+    email: designatednerd@gmail.com
+    modified: "2014-01-30T22:41:52.043095Z"
+    number: "15951298"
+    number_intvalue: 15951298
+    originated: 1/30/14
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 7.0.4
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: SKReceiptRefreshRequest fails with a sandboxed Apple ID

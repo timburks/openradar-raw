@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9721923"
+    labels:
+        datastore_id: "1227414"
+data:
+    classification: Other bug
+    created: "2011-07-05T12:58:19.518185Z"
+    description: "05-Jul-2011 02:56 AM A Roest:\r\n'symbolicatecrash_with_fix' was successfully uploaded\r\n\r\n05-Jul-2011 02:56 AM A Roest:\r\nSummary:\r\nI'm using a copy of symbolicatecrash from \r\n\"/Applications/Utilities/iPhone Configuration Utility.app/Contents/Frameworks/DTDeviceKit.framework/Versions/A/Resources/symbolicatecrash\"\r\nbut the bug is also in \r\n\"/Developer/Platforms/iPhoneOS.platform/Developer/Library/PrivateFrameworks/DTDeviceKit.framework/Versions/A/Resources/symbolicatecrash\"\r\n(XCode 4.0.2)\r\n\r\nThe program fails to find an application binary if there is a name in the application. \r\n\r\n\r\nSteps to Reproduce:\r\n1. Have an (iPhone) app with a space in the name, e.g. \"Apple Rulez.app\"\r\n2. Get a crash report. \r\n3. Run symbolicatecrash\r\n4. Somewhere in the output is the error message:\r\nRunning find \"/Users/axel/Library/Developer/Xcode/Archives/2011-07-02/appletest 02-07-11 15.22.xcarchive/Products\" -name Apple Rulez.app\r\nfind: Rulez.app: unknown option\r\nDid not find executable for dsym\r\n## Warning: Can't find any unstripped binary that matches version of /var/mobile/Applications/ ... etc.\r\n\r\nExpected Results:\r\nApple has allowed spaces in application names since about 1984. How long ago was that? Exactly. \r\n\r\nActual Results:\r\nYou cannot symbolize your crash reports, at least not with the handy tool, so you have to resort to manual labor, digging, searching etc.\r\n\r\nRegression:\r\nThe fix is luckily TERRIBLY EASY. \r\nJust replace the following find command in the perl script (line 251)\r\n            my $cmd = \"find \\\"$archive_path/Products\\\" -name $exec_name.app\";\r\nwith\r\n            my $cmd = \"find \\\"$archive_path/Products\\\" -name \\\"$exec_name.app\\\"\";\r\n\r\nNotes:\r\nI think this bug was first mentioned in 2008, it could be a duplicate of \r\nrdar://6150458 or rdar://6438643"
+    email: axello@gmail.com
+    modified: "2011-08-28T05:35:53.876185Z"
+    number: "9721923"
+    number_intvalue: 9721923
+    originated: "2011-07-05"
+    parent_number: '&{NULL_VALUE}'
+    product: XCode
+    product_version: "4.02"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Missing quotes in symbolicatecrash

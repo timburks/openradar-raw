@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27878679"
+    labels:
+        datastore_id: "5047848773091328"
+data:
+    classification: Working as intended
+    created: "2016-08-17T02:09:32.83284Z"
+    description: "Summary:\r\nWhen an app handles a Universal Link, it receives an NSUserActivity with an activityType of NSUserActivityTypeBrowsingWeb[1]. There is no indication provided of the application that the Universal Link was opened in, such as the app's Bundle ID. This request is to have the Bundle ID of the originating app be provided to the app opening the Universal Link.\r\n\r\nWhy?\r\nUniversal Links solves the security problem inherent with custom URL schemes[1] (e.g. \"com.myapp://\"), wherein any app can declare it handles any custom URL scheme and how iOS picks the app that handles a URL with a custom scheme is undefined[2].\r\n\r\nHowever, it creates a new security issue that custom URL schemes do not have, which is the inability to trust the identity of the caller. When handling custom URL schemes, the bundle ID of the calling application is returned to the UIApplicationDelegate methods. This does not appear to exist for the Universal Links callback provided today.\r\n\r\nFor example, consider the follow scenario using only custom URL schemes and not Universal Links:\r\nApp A provides a secure feature that any other app can call and receive a response from. In order to ensure that the app is not malicious, App A will only handle a request if it is valid for the calling app's Bundle ID. When the calling app has been validated, the feature will run and return some (sensitive) data back to the calling app.\r\n\r\nWhile the above is possible today using custom URL schemes because the Bundle ID is provided, App A will not be able to validate that the request is from a malicious client or not.\r\n\r\n[1] https://developer.apple.com/library/ios/documentation/General/Conceptual/AppSearch/UniversalLinks.html\r\n[2] https://developer.apple.com/library/ios/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/Inter-AppCommunication/Inter-AppCommunication.html#//apple_ref/doc/uid/TP40007072-CH6-SW11\r\n\r\nSteps to Reproduce:\r\n1. Set up an app to handle Universal Links\r\n2. Open a Universal Link with the app.\r\n3. Inspect the input values provided to -[UIApplicationDelegate application:continueUserActivity:restorationHandler:]\r\n\r\nExpected Results:\r\nI expect to be able to retrieve the Bundle ID of the application that the Universal Link was opened from. Because it comes from the OS, I expect that I can trust the validity of it.\r\n\r\nActual Results:\r\n-[UIApplicationDelegate application:continueUserActivity:restorationHandler:] does not provide any (documented) way to retrieve the Bundle ID of the application that the Universal Link was opened from.\r\n\r\nVersion:\r\nN/A\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nN/A\r\n\r\nAttachments:"
+    email: Footpad01@gmail.com
+    modified: "2016-09-27T18:31:32.6202Z"
+    number: "27878679"
+    number_intvalue: 27878679
+    originated: 16-Aug-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: ""
+    resolved: No
+    status: Closed
+    title: Universal Links should provide bundle ID of originating app

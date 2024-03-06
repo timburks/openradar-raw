@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25704040"
+    labels:
+        datastore_id: "6076972144787456"
+data:
+    classification: Crash
+    created: "2016-04-13T15:34:57.92099Z"
+    description: "Summary:\r\nThe new clang compiler included in Xcode 7.3 (APPLE LLVM version 7.3.0 (clang-703.0.29))\r\ngenerates invalid SSE instructions (alignment requirements are not satisfied).\r\nIt is a regression since Xcode 7.2 (APPLE LLVM version 7.0.2 (clang-700.1.81)),\r\nthe attached code works well with previous versions.\r\n\r\nFor the attached code it generates wrong code for the move-constructor of the map.\r\nIt calls movaps instruction with a not aligned memory address if the original map is not empty.\r\n\r\nWhen compiling Without optimizations (-O0), it works.\r\nIf the g() function is inlined into main (explicitly calling the move constructor) then it\r\nworks with -O0 and -O1 but still crashes with -O2 and -O3.\r\n\r\nIf the alignment requirement of struct X is decreased to 8 then it works as well.\r\nIf X is replaced with std::function<void()> then it crashes as well.\r\n\r\nThe same code works on Linux with upstream Clang 3.7.0 and 3.8.0 as well. (In this example it generates movups instruction instead of movaps)\r\n\r\nSteps to Reproduce:\r\n1. Download the attached bug.cpp file\r\n2. Compile it: \"clang++ -std=c++11 -O1 -o bug bug.cpp\"\r\n3. Run the compiled program: \"./bug\"\r\n\r\nExpected Results:\r\nIt does not crash.\r\n\r\nActual Results:\r\nIt does crash with Segmentation Fault 11 (#GP).\r\n\r\nVersion:\r\nXcode 7.3 (7D175), OS X El Capitan (10.11.4)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nThe clang in Xcode 7.3 always generates wrong code for x64 architecture.\r\n\r\nAttachments:\r\n'bug.cpp' was successfully uploaded.\r\n\r\n---------------\r\nbug.cpp:\r\n\r\n#include <map>\r\n\r\nstruct alignas(16) X\r\n{\r\n};\r\n\r\nstd::map<int, X> g()\r\n{\r\n    std::map<int, X> x{{0, {}}};\r\n    return std::move(x);\r\n}\r\n\r\nint main(void)\r\n{\r\n    g();\r\n    return 0;\r\n}\r\n\r\n\r\nMarked as duplicate of 24866513 (Open)"
+    email: laszlo.agardi.t@gmail.com
+    modified: "2016-05-05T06:21:58.20746Z"
+    number: "25704040"
+    number_intvalue: 25704040
+    originated: 13-Apr-2016 05:31 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: "7.3"
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: Clang in Xcode 7.3 generates illegal SSE instructions

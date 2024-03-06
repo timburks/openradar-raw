@@ -1,0 +1,63 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21404405"
+    labels:
+        datastore_id: "4951822347272192"
+data:
+    classification: Enhancement
+    created: "2015-06-16T17:33:14.39187Z"
+    description: |-
+        This code compiles:
+
+        extension Array {
+            func withUnsafeBufferPointer<R>(@noescape body: (UnsafeBufferPointer<T>) throws -> R) throws -> R {
+                return try self.withUnsafeBufferPointer { buf in
+                    return Result{try body(buf)}}.value()
+            }
+        }
+
+        This code, which should be identical, returns an error “Closure use of @noescape parameter 'body' may allow it to escape” (also “could not find member ‘value’, but I believe that comes from the first):
+
+        extension Array {
+            func withUnsafeBufferPointer<R>(@noescape body: (UnsafeBufferPointer<T>) throws -> R) throws -> R {
+                return try self.withUnsafeBufferPointer {
+                    return Result{try body($0)}}.value()
+            }
+        }
+
+        The code should be treated the same whether we name the closure parameter or use $0.
+
+        Additional code that this calls:
+
+        enum Result<T> {
+            case Success(T)
+            case Failure(ErrorType)
+
+            func value() throws -> T {
+                switch self {
+                case .Success(let value): return value
+                case .Failure(let err): throw err
+                }
+            }
+
+            init(@noescape f: () throws -> T) {
+                do {
+                    self = .Success(try f())
+                } catch {
+                    self = .Failure(error)
+                }
+            }
+        }
+    email: robnapier@gmail.com
+    modified: "2015-06-16T17:33:14.39208Z"
+    number: "21404405"
+    number_intvalue: 21404405
+    originated: 16-Jun-2015 01:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: $0 treated differently than "x in" regarding @noescape

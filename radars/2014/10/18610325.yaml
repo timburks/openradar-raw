@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18610325"
+    labels:
+        datastore_id: "5873514947018752"
+data:
+    classification: ""
+    created: "2014-10-31T13:48:27.354979Z"
+    description: "Summary:\r\nI noticed recentsd consuming an increasing amount of real memory while my system is up. I attached Instruments and used the Allocation instrument. In the 15 minutes and 30 seconds I was recording, 43MB of new, persistent allocations were made. Most interesting was a set of 5,471 590-byte mallocs. A look with lldb shows that all of these are variants on this query:\r\n\r\nSELECT recents.ROWID,\\n       recents.bundle_identifier,\\n       recents.dates,\\n       recents.display_name,\\n       recents.sending_address,\\n       recents.original_source,\\n       recents.weight,\\n       recents.group_kind,\\n       contacts.ROWID,\\n       contacts.kind,\\n       contacts.display_name,\\n       contacts.address\\n  FROM recents\\n  JOIN contacts ON contacts.recent_id = recents.ROWID\\n WHERE     recents.count = 1\\n\\n AND (kind IN (?)\\n AND (cpsearch(contacts.display_name, ?, 5)\\n OR icusearch(contacts.address, ?, 2))) AND bundle_identifier IN (?) AND last_date > 1349878830843\r\n\r\nThe last_date condition changes with each query, but otherwise it's the same.\r\n\r\nMost of the other allocations seem related to query processing in sqlite. For example, there are 131,000 32 byte allocations triggered during yy_reduce in sqlite3Parser.\r\n\r\nMy guess is that because the last_date condition is being hard coded in the query rather than taking a parameter, recentsd is unintentionally creating more and more unique statement objects without releasing them.\r\n\r\nAlso significant: The queries/allocations only show up while Mail.app is running. So the bug may be on the Mail.app side.\r\n\r\nSteps to Reproduce:\r\nWatch recentsd memory allocation over an extended period of time.\r\n\r\nExpected Results:\r\nMemory usage by recentsd should be stable.\r\n\r\nActual Results:\r\nMemory usage by recentsd grows.\r\n\r\nVersion:\r\nOS X 10.10 (14A386a)"
+    email: twoodfin@gmail.com
+    modified: "2014-10-31T13:49:08.485436Z"
+    number: "18610325"
+    number_intvalue: 18610325
+    originated: 10-Oct-2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.0
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: recentsd apparently leaking sqlite queries

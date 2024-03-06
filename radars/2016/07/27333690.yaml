@@ -1,0 +1,78 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27333690"
+    labels:
+        datastore_id: "5001377981923328"
+data:
+    classification: Serious Bug
+    created: "2016-07-13T22:17:24.59389Z"
+    description: |-
+        Summary:
+
+        Edited metadata is not available to apps that are using the iCloud Photo Library. This includes Apple’s Photos apps on macOS and iOS.
+
+        Customers who create titles, descriptions, and keywords using Photos on the Mac cannot view the IPTC metadata on iOS. Likewise, customers who use a Photos editing extension on iOS to add new metadata to a FullSizeRender.jpg won’t see that information on macOS when they view the image in Photos.
+
+        This presents a confusing situation for the customer: when they add a watermark (with their copyright) and update the kCGImagePropertyTIFFCopyright property in the image metadata, only one of those changes will appear in the iCloud Photo Library. It’s not clear how or why this is happening since they know that metadata is a part of the image file format.
+
+        Steps to Reproduce:
+
+        1) Using the Photos app on the Mac, edit the title, description, and keywords for an image.
+        2) On iOS, download the current version of the image using this code:
+
+            PHAsset *asset = ...;
+
+            PHImageRequestOptions *options = [PHImageRequestOptions new];
+            options.networkAccessAllowed = YES;
+            options.version = PHImageRequestOptionsVersionCurrent;
+            options.resizeMode = PHImageRequestOptionsResizeModeNone;
+            options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat; // ignored by requestImageDataForAsset
+
+            self.requestID = [self.imageManager requestImageDataForAsset:asset options:options resultHandler:^(NSData *imageData, NSString *dataUTI, UIImageOrientation orientation, NSDictionary *info) {
+                if (imageData) {
+                    NSDictionary *metadata = nil;
+
+                    CGImageSourceRef sourceRef = CGImageSourceCreateWithData((CFDataRef)self, NULL);
+                    if (sourceRef) {
+                        CFDictionaryRef dictionaryRef = CGImageSourceCopyPropertiesAtIndex(sourceRef, 0, NULL);
+                        if (dictionaryRef) {
+                            metadata = (__bridge NSDictionary *)dictionaryRef;
+                            CFRelease (dictionaryRef);
+                        }
+                        CFRelease (sourceRef);
+                    }
+
+                    NSLog("metadata = %@", metadata);
+
+                    self.requestID = PHInvalidAssetResourceDataRequestID;
+                }
+            }];
+
+        Expected Results:
+
+        The metadata variable should contain some IPTC data.
+
+        Actual Results:
+
+        The metadata returned is from the original file, not the edit.
+
+        Regression:
+
+        N/A
+
+        Notes:
+
+        The header documentation for -requestImageDataForAsset:options:resultHandler states that PHImageRequestOptionsVersionCurrent can be used to retrieve the adjusted rendered image but this doesn't seem to apply to adjustments to the metadata.
+    email: craig.hockenberry@gmail.com
+    modified: "2016-07-13T22:17:24.59406Z"
+    number: "27333690"
+    number_intvalue: 27333690
+    originated: 13-Jul-2016 03:17 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 10.0 (14A5297c)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Edited metadata is not available in iCloud Photo Library

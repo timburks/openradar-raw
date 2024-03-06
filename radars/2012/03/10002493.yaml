@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10002493"
+    labels:
+        datastore_id: "1571405"
+data:
+    classification: ""
+    created: "2012-03-01T21:34:41.514765Z"
+    description: "22-Aug-2011 05:46 PM Rob Napier:\r\n'main.m' was successfully uploaded\r\n\r\n22-Aug-2011 05:46 PM Rob Napier:\r\nSummary:\r\n\r\nWhen calling an IMP in a void context, ARC injects an extra _objc_retainAutoreleasedReturnValue and _objc_release, even though the result is thrown away. When using normal ObjC [foo bar], ARC correctly avoids this.\r\n\r\nSteps to Reproduce:\r\n\r\nSee attached test program. Starred assembly should not be needed since the result is a void.\r\n\r\n    for (count = 0; count < kTotalCount; ++count) {\r\n      setStringMethod(string, selector, @\"stuff\");\r\n    }\r\n\r\nLBB0_5:                                 ## =>This Inner Loop Header: Depth=1\r\n\tcmpq\t$100000000, -48(%rbp)   ## imm = 0x5F5E100\r\n\tjae\tLBB0_8\r\n## BB#6:                                ##   in Loop: Header=BB0_5 Depth=1\r\n\tleaq\tL__unnamed_cfstring_(%rip), %rax\r\n\t.loc\t1 35 7                  ## /Users/rnapier/src/TestIMP/TestIMP/main.m:35:7\r\nLtmp11:\r\n\tmovq\t-64(%rbp), %rcx\r\n\tmovq\t-24(%rbp), %rdx\r\n\tmovq\t-56(%rbp), %rsi\r\n\tmovq\t%rdx, %rdi\r\n\tmovq\t%rax, %rdx\r\n\tmovb\t$0, %al\r\n\tcallq\t*%rcx\r\n*\tmovq\t%rax, %rdi\r\n*\tcallq\t_objc_retainAutoreleasedReturnValue\r\n*\tmovq\t%rax, %rdi\r\n*\tcallq\t_objc_release\r\nLtmp12:\r\n## BB#7:                                ##   in Loop: Header=BB0_5 Depth=1\r\n\t.loc\t1 34 42                 ## /Users/rnapier/src/TestIMP/TestIMP/main.m:34:42\r\n\tmovq\t-48(%rbp), %rax\r\n\taddq\t$1, %rax\r\n\tmovq\t%rax, -48(%rbp)\r\n\tjmp\tLBB0_5\r\n\r\n\r\n\r\nExpected Results:\r\n\r\nThe starred assembly should be optimized out as it is for the objc_msgSend case:\r\n\r\n  for (count = 0; count < kTotalCount; ++count) {\r\n    [string setString:@\"stuff\"];\r\n  }\r\n\r\nLBB0_1:                                 ## =>This Inner Loop Header: Depth=1\r\n\tcmpq\t$100000000, -48(%rbp)   ## imm = 0x5F5E100\r\n\tjae\tLBB0_4\r\n## BB#2:                                ##   in Loop: Header=BB0_1 Depth=1\r\n\tleaq\tL__unnamed_cfstring_(%rip), %rax\r\n\t.loc\t1 23 7                  ## /Users/rnapier/src/TestIMP/TestIMP/main.m:23:7\r\nLtmp8:\r\n\tmovq\t-24(%rbp), %rcx\r\n\tmovq\tL_OBJC_SELECTOR_REFERENCES_5(%rip), %rsi\r\n\tmovq\t%rcx, %rdi\r\n\tmovq\t%rax, %rdx\r\n\tcallq\t_objc_msgSend\r\nLtmp9:\r\n## BB#3:                                ##   in Loop: Header=BB0_1 Depth=1\r\n\t.loc\t1 22 42                 ## /Users/rnapier/src/TestIMP/TestIMP/main.m:22:42\r\n\tmovq\t-48(%rbp), %rax\r\n\taddq\t$1, %rax\r\n\tmovq\t%rax, -48(%rbp)\r\n\tjmp\tLBB0_1\r\n\r\n\r\nActual Results:\r\n\r\nRegression:\r\n\r\nNotes:"
+    email: robnapier@gmail.com
+    modified: "2012-03-01T21:34:41.515027Z"
+    number: "10002493"
+    number_intvalue: 10002493
+    originated: 22-Aug-2011 05:46 PM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: 30-Jan-2012 03:28 PM
+    status: Behaves correctly
+    title: ARC injects unneeded retain/release on void function

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB11966380
+    labels:
+        datastore_id: "5548908621070336"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2023-02-12T12:24:30.175856Z"
+    description: "After iOS 16+ the first time a label is printed it have correct print size. Although next labels get about 4 times lager size. Problem seems to be that `cutLengthFor:` is only called the first time (therefore correct size).\r\n\r\nREPRODUCE:\r\n\r\nclass MyTestPrint {\r\n    func print() {\r\n        let printerController = UIPrintInteractionController.init()\r\n        let printer = UIPrinter(url: URL(string: \"ipp://BRN038097D514A9.local.:631/ipp/print\")!)\r\n        let printInfo = UIPrintInfo(dictionary: nil)\r\n        printInfo.orientation = .portrait\r\n        printInfo.outputType = .grayscale\r\n        printInfo.jobName = \"Print job\"\r\n        printerController.printInfo = printInfo\r\n        printerController.printingItem = UIImage(named: \"label_image\")\r\n        printerController.delegate = self\r\n        printerController.print(to: printer)\r\n    }\r\n}\r\n\r\nextension MyTestPrint: UIPrintInteractionControllerDelegate {\r\n    func printInteractionController(_ printInteractionController: UIPrintInteractionController, cutLengthFor paper: UIPrintPaper) -> CGFloat {\r\n        return 15 // Triggered only for the first print job in iOS 16.0+\r\n    }\r\n}\r\n\r\n\r\nTested with different vendors (Brother 820, Brother 710 and Leitz)"
+    email: Drojden@gmail.com
+    modified: "2023-02-12T12:26:59.112758Z"
+    number: FB11966380
+    number_intvalue: 11966380
+    originated: 2023/01/24
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit (Printing)
+    product_version: iOS 16+
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Printing to LabelWriters only works for first label

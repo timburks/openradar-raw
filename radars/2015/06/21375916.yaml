@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21375916"
+    labels:
+        datastore_id: "5914409343909888"
+data:
+    classification: Enhancement
+    created: "2015-06-14T19:08:13.35648Z"
+    description: "Summary:\nEither and Result should be included in the standard library in order to aid better error handling for Swift-only APIs. The error handling syntax added in Swift 2.0 is effective for many general cases but does seem to leave a few scenarios without an optimal solution. Most of these involve wanting to return a value representing the success or failure of an operation which can be used to decide consequent operations. \n\nWhile developers can create their own Either/Result types to address this issue, the fact that–without all agreeing on a single source for this type–we would need to convert from one module’s Either to another make this a non starter.\n\nSteps to Reproduce:\nSee standard lib\n\nExpected Results:\n\n\nenum Either<L, R> {\n    case Left(L)\n    case Right(R)\n\n    init(left: L) {\n        self = .Left(left)\n    }\n    init(right: R) {\n        self = .Right(right)\n    }\n\n    var left:L? {\n        if case let .Left(value) = self {\n            return value\n        } else {\n            return nil\n        }\n    }\n\n    var right:R? {\n        if case let .Right(value) = self {\n            return value\n        } else {\n            return nil\n        }\n    }\n}\n\nenum Result<T> {\n    case Error(ErrorType)\n    case Success(T)\n\n    init(error: ErrorType) {\n        self = .Error(error)\n    }\n    init(right: T) {\n        self = .Success(right)\n    }\n\n    var error:ErrorType? {\n        if case let .Error(value) = self {\n            return value\n        } else {\n            return nil\n        }\n    }\n\n    var Success:T? {\n        if case let .Success(value) = self {\n            return value\n        } else {\n            return nil\n        }\n    }\n\n    typealias ThrowingClosure = () throws -> T\n\n    init (closure: ThrowingClosure) {\n        do {\n            let theValue:T = try closure()\n            self = .Success(theValue)\n        } catch {\n            self = .Error(error)\n        }\n    }\n}\n\nenum MyError : ErrorType {\n    case One\n}\n\nfunc theOp(input: Int) throws -> Int {\n    if input % 3 == 0 {\n        return input\n    } else {\n        throw MyError.One\n    }\n}\n\nlet something = Result<Int> {\n    do {\n        return try theOp(2)\n    }\n}\n\nswitch something {\ncase let .Success(value):\n    print(\"success: \\(value)\")\ncase let .Error(value):\n    print(\"err: \\(value)\")\n}"
+    email: GriotSpeak@gmail.com
+    modified: "2015-06-14T19:08:13.35673Z"
+    number: "21375916"
+    number_intvalue: 21375916
+    originated: 14-Jun-2015 03:08 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A120f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Standard library needs Either/Result

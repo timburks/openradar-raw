@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33892951"
+    labels:
+        datastore_id: "4985453400817664"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2017-08-15T09:13:21.09841Z"
+    description: "Area:\r\nSomething not on this list\r\n\r\nSummary:\r\n`[[MFMailComposeViewController alloc] init]` (or `MFMailComposeViewController()` in Swift) returns nil when no email is set. In Swift, the returned type is actually `MFMailComposeViewController`, not `MFMailComposeViewController?` or `MFMailComposeViewController!`, which can cause a crash when no email is set, without an option to prevent this.\r\n\r\nSteps to Reproduce:\r\n1. Initialize `MFMailComposeViewController`: `MFMailComposeViewController()`\r\n2. Try printing the object either in lddb or directly: `print(MFMailComposeViewController())` or `po object`\r\n\r\nExpected Results:\r\n`MFMailComposeViewController()` should return a nil-object when no mail is set (and thus, should be nullable), and should print a warning telling the developer to call `MFMailComposeViewController.canSendMail()` before initializing the `MFMailComposeViewController`.\r\n\r\nThere should not be a `UIAlertController` being popped up by the framework, unless it is documented.\r\n\r\nObserved Results:\r\niOS 10:\r\n\r\n1. Accessing the object crashes the app, with lldb reporting `<uninitialized>` when inspecting the object.\r\n2. An undocumented `UIAlertController` pops up (when not interacting with the object). See attached screenshot.\r\n\r\niOS 11:\r\n\r\n1. Accessing the object *does not* the app, while lldb reports `<uninitialized>` when inspecting the object.\r\n2. An undocumented `UIAlertController` pops up (when not interacting with the object). See attached screenshot.\r\n3. Testing if the returned `MFMailComposeViewController` is nil (`MFMailComposeViewController() == nil`) returns `true`, while a warning shows up that says `Comparing non-optional value of type 'MFMailComposeViewController' to nil`.\r\n\r\nVersion:\r\niOS 10.3.1 (simulator), iOS 10.3.3 (device), iOS 11.0 (15A5341e, simulator)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:"
+    email: bas@basbroek.nl
+    modified: "2017-08-15T09:13:21.09881Z"
+    number: "33892951"
+    number_intvalue: 33892951
+    originated: August 15 2017, 11:10 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 10, iOS 11
+    reproducible: always
+    resolved: ""
+    status: open
+    title: '`[[MFMailComposeViewController alloc] init]` returns nil when no email is set'

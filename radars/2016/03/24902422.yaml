@@ -1,0 +1,68 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24902422"
+    labels:
+        datastore_id: "6152005290557440"
+data:
+    classification: Serious Bug
+    created: "2016-03-01T05:48:55.67038Z"
+    description: |-
+        This was resolved in 10.11.0 and 10.11.1, but is now reproduce-able in 10.11.2 and 10.11.3
+
+        Summary:
+
+        Attempting to bind to Active Directory when in a AD site that contains a RODC as the primary DNS server for the site results in a failure to bind to active directory with an unknown error being reported by directory utility.
+
+
+        Steps to Reproduce:
+
+        1. Install OS X and update to latest shipping version (10.11.3)
+        2. Attempt to bind to AD from a AD site that has a RODC as primary DNS server
+        3. Directory Utility fails with unknown error (10001) If using the CLI and dsconfigad to bind, the output is dsconfigad: The plugin encountered an error processing request. (10001)
+        The exit code for dsconfigad is 70
+
+
+        Expected Results:
+
+        As per previous OS version 10.11.0 and 10.11.1 and 10.8.5, AD Plugin should attempt to locate a RWDC in the DNS service records and bind to that RWDC
+
+
+        Actual Results:
+
+        Directory Utility reports an unknown error and the bind is unsuccessful
+        dsconfigad also reports an error and returns error code 70 and the following error message to stdout: dsconfigad: The plugin encountered an error processing request. (10001)
+
+
+        Regression:
+
+        10.7.0 - > 10.7.2 exhibited this issue, however 10.7.3 resolved the issue. https://support.apple.com/en-us/HT202278
+        10.8.x does NOT exhibit this issue at all.
+        10.9.0 -> 10.9.5 DOES exhibit this issue
+        10.10.0 -> 10.10.5 (14F25a) DOES exhibit this issue
+        10.11 beta’s do NOT exhibit this issue
+        10.11.0 does NOT exhibit this issue
+        10.11.1 does NOT exhibit this issue
+        10.11.2 and 10.11.3 DOES exhibit this issue
+
+
+        Notes:
+
+        Attached open directory debug log for the period of time during a bind attempt
+        Note the site this machine is binding in to is called Mount Warrigal PS and the RODC server for this site is 4395dip000dc001.detnsw.win with IP address 10.158.176.34
+
+        We have some 2235 sites (each site is a school)
+        We manage these schools centrally (Department of Education New South Wales, Australia)
+        We have approximately 50,000 Mac devices across our environment. This is impacting our ability to deliver El Capitan
+    email: calum.h@gmail.com
+    modified: "2016-03-01T05:48:55.67053Z"
+    number: "24902422"
+    number_intvalue: 24902422
+    originated: 01-Mar-2016 04:48 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11.3 15D21
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Unable to bind to Active Directory in a site with a RODC

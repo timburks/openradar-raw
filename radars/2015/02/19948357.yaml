@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19948357"
+    labels:
+        datastore_id: "5208494827372544"
+data:
+    classification: Serious Bug
+    created: "2015-02-25T03:03:32.822176Z"
+    description: "Summary:\r\nAccessing a member of an object cast inside an if {} conditional that checks the object is not of some type crashes the swift compiler when optimizations are enabled.\r\nThis only occurs inside an application target, I cannot reproduce it via swiftc or in a playground.\r\n\r\nSteps to Reproduce:\r\nCompile the following code in an iOS target with optimizations enabled:\r\n\r\nclass A { var d = \"\" }\r\nfunc t() {\r\n    let o: AnyObject = A()\r\n    if !(o is A) {\r\n        _ = (o as! A).d\r\n    }\r\n}\r\n\r\nExpected Results:\r\nThe code compiles\r\n\r\nActual Results:\r\nThe compiler crashes with the following error:\r\n0  swift                    0x00000001048a1508 llvm::sys::PrintStackTrace(__sFILE*) + 40\r\n1  swift                    0x00000001048a19e4 SignalHandler(int) + 452\r\n2  libsystem_platform.dylib 0x00007fff97c49f1a _sigtramp + 26\r\n3  libsystem_platform.dylib 0x00007fff5ba78650 _sigtramp + 3286427472\r\n4  swift                    0x00000001043e0eda (anonymous namespace)::DCE::markControllingTerminatorsLive(swift::SILBasicBlock*) + 346\r\n5  swift                    0x00000001043e0c69 (anonymous namespace)::DCE::markValueLive(swift::ValueBase*) + 201\r\n6  swift                    0x00000001043e047f (anonymous namespace)::DCE::run() + 1983\r\n7  swift                    0x000000010438814e swift::SILPassManager::runFunctionPasses(llvm::ArrayRef<swift::SILFunctionTransform*>) + 1310\r\n8  swift                    0x0000000104388bd9 swift::SILPassManager::runOneIteration() + 633\r\n9  swift                    0x0000000104387646 swift::runSILOptimizationPasses(swift::SILModule&) + 790\r\n10 swift                    0x000000010418b478 frontend_main(llvm::ArrayRef<char const*>, char const*, void*) + 4584\r\n11 swift                    0x000000010418a0e6 main + 1814\r\n12 libdyld.dylib            0x00007fff8e5a15c9 start + 1\r\n13 libdyld.dylib            0x000000000000003c start + 1906698868\r\n\r\n\r\nRegression:\r\nThis does not occur with Swift 1.1 and Xcode 6.1.1\r\n\r\nNotes:\r\nThe test given is a meaningless trivial example, but this error happens in less tautological code. Removing either the ! in the if check, or the member access inside the body, causes the crash to go away."
+    email: wetzeal@gmail.com
+    modified: "2016-08-29T18:46:26.60863Z"
+    number: "19948357"
+    number_intvalue: 19948357
+    originated: 24-Feb-2015 09:03 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (6D532l)
+    reproducible: Always
+    resolved: 23-Mar-2015
+    status: Closed
+    title: 'Swift 1.2b2: swiftc -O Crash When Accessing Members of Cast Object In Conditional'

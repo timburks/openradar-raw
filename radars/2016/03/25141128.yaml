@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25141128"
+    labels:
+        datastore_id: "6157270048047104"
+data:
+    classification: ""
+    created: "2016-03-14T14:31:39.90464Z"
+    description: "Summary:\r\nOn OS X 10.9.5, with Clang “Apple LLVM version 5.1 (clang-503.0.40) (based on LLVM 3.4svn)” version installed, the attached program produces when compiled:\r\n\r\n$ clang t.c &&./a.out \r\n0x1p-1023\r\n0x1p-1024\r\n0x1p-1070\r\n0\r\n0x1p-1023\r\n0x1p-1024\r\n0x1p-1070\r\n0 (ERANGE is 34)\r\n0x1p-1023\r\n0x1p-1024\r\n0x1p-1070\r\n34\r\n\r\nThis is not what is described on the man page, that is:\r\n\r\n“If the correct value would cause underflow, zero is returned and ERANGE is stored in errno.”\r\n\r\nIt is good that the behavior is not that of the man page, because the behavior described in the man page is undesirable. The man page should be fixed to indicate that the closest representable value is returned on underflow (and ERANGE is stored in errno).\r\n\r\nA second problem appears to be that ERANGE is not stored in errno for hexadecimal representations.\r\nThe behavior obtained on Linux is the following:\r\n\r\n0x0.8p-1022\r\n0x0.4p-1022\r\n0x0.000000000001p-1022\r\n0\r\n0x0.8p-1022\r\n0x0.4p-1022\r\n0x0.000000000001p-1022\r\n34 (ERANGE is 34)\r\n0x0.8p-1022\r\n0x0.4p-1022\r\n0x0.000000000001p-1022\r\n34\r\n\r\nAlthough Linux has the same documentation bug, the above seems like the ideal behavior, and OS X's strtod should provide the same one.\r\n\r\n(Note that the first three calls to strtod do not cause underflow, because the conversions are not inexact. It is correct not to set errno to ERANGE for the first three calls to strtod in t.c.)\r\n\r\nSteps to Reproduce:\r\nInstall the command-line compilation tools.\r\nType:\r\nclang t.c && ./a.out\r\nType:\r\nman strtod\r\n\r\nExpected Results:\r\n0x0.8p-1022\r\n0x0.4p-1022\r\n0x0.000000000001p-1022\r\n0\r\n0x0.8p-1022\r\n0x0.4p-1022\r\n0x0.000000000001p-1022\r\n34 (ERANGE is 34)\r\n0x0.8p-1022\r\n0x0.4p-1022\r\n0x0.000000000001p-1022\r\n34\r\n\r\nThe man page does not say that 0 is returned on underflow\r\n\r\nActual Results:\r\n0x1p-1023\r\n0x1p-1024\r\n0x1p-1070\r\n0\r\n0x1p-1023\r\n0x1p-1024\r\n0x1p-1070\r\n0 (ERANGE is 34)\r\n0x1p-1023\r\n0x1p-1024\r\n0x1p-1070\r\n34\r\n\r\nThe man page says that 0 is returned on underflow\r\n\r\nVersion:\r\nOS X 10.9.5\r\nXCode 5.1.1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachment t.c:\r\n#include <stdio.h>\r\n#include <stdlib.h>\r\n#include <errno.h>\r\n\r\nint main(void) {\r\n\r\nprintf(\"%a\\n%a\\n%a\\n\", strtod(\"0x1.0p-1023\",0), strtod(\"0x1.0p-1024\",0),\r\n   strtod(\"0x1.0p-1070\",0) );\r\nprintf(\"%d\\n\", (int) errno);\r\n\r\nprintf(\"%a\\n%a\\n%a\\n\", strtod(\"0x1.fffffffffffffp-1024\",0),\r\n   strtod(\"0x1.fffffffffffffp-1025\",0), strtod(\"0x1.fffffffffffffp-1071\",0) );\r\nprintf(\"%d (ERANGE is %d)\\n\", (int) errno, (int)ERANGE);\r\n\r\nerrno=0;\r\n\r\nprintf(\"%a\\n%a\\n%a\\n\", strtod(\"1.1125369292536007e-308\",0),\r\n   strtod(\"5.5626846462680035e-309\",0), strtod(\"7.9050503334599447e-323\",0) );\r\nprintf(\"%d\\n\", (int) errno);\r\n\r\n   \r\nreturn 0;\r\n}"
+    email: pascal.cuoq@gmail.com
+    modified: "2016-03-14T14:31:39.90482Z"
+    number: "25141128"
+    number_intvalue: 25141128
+    originated: "2016-03-14"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: ""
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: strtod does not behave as documented on underflow. Function and documentation should converge to proper behavior

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18945659"
+    labels:
+        datastore_id: "5320531465207808"
+data:
+    classification: ""
+    created: "2014-11-11T22:54:23.540776Z"
+    description: "Summary:\r\nIn past versions of OSX, setting PATH was effective from the EnvironmentVariables section of a launchd plist configuration script.\r\n\r\nIn 10.10, setting PATH from EnvironmentVariables appears to result in the path being set twice, so that there are two \"PATH\" environment variables (as shown for example by a ruby script - see below). \r\n\r\nThis results in the PATH EnvironmentVariable setting being ignored by - for example - Python scripts (see below).\r\n\r\nSteps to Reproduce:\r\nTo run example launchd configuration script and review output environment variables:\r\n\r\ncp envvars.plist py_env_out /tmp\r\ncd /tmp\r\nrm -rf /tmp/*env_vars && launchctl load envvars.plist && sleep 1 && launchctl unload envvars.plist && cat /tmp/*env_vars\r\n\r\nThe envvars.plist script uses EnvironmentVariables to set the PATH to:\r\n\r\nPATH : /a/funny/path:/bin:/usr/bin:/usr/sbin:/sbin\r\n\r\nThe script then runs a trivial Python file to print out the environment variables.\r\n\r\nExpected Results:\r\nOn OSX 10.9 the output of the commands above is:\r\n\r\nPATH : /a/funny/path:/bin:/usr/bin:/usr/sbin:/sbin\r\nVERSIONER_PYTHON_PREFER_32_BIT : no\r\nANOTHER_VAR : some value\r\nVERSIONER_PYTHON_VERSION : 2.6\r\n\r\nThis is what I was expecting. \r\n\r\nIf I edit envvars.plist to run a ruby file to print out the environment variables:\r\n\r\n       <key>Program</key>\r\n        <string>/tmp/rb_env_out</string>\r\n\r\nThen I get this output, also expected:\r\n\r\nPATH : /a/funny/path:/bin:/usr/bin:/usr/sbin:/sbin\r\nANOTHER_VAR : some value\r\n\r\n\r\nActual Results:\r\nOn OSX 10.10, the output is:\r\n\r\nVERSIONER_PYTHON_PREFER_32_BIT : no\r\nVERSIONER_PYTHON_VERSION : 2.7\r\nXPC_SERVICE_NAME : edu.berkeley.envvars\r\nXPC_FLAGS : 0x0\r\nPATH : /usr/bin:/bin:/usr/sbin:/sbin\r\nANOTHER_VAR : some value\r\n\r\nNote that ANOTHER_VAR is correctly set, but the PATH is not correctly set.\r\n\r\nRunning the ruby program to output the environment variables (see above), I get this:\r\n\r\nPATH : /usr/bin:/bin:/usr/sbin:/sbin\r\nANOTHER_VAR : some value\r\nPATH : /a/funny/path:/bin:/usr/bin:/usr/sbin:/sbin\r\nXPC_SERVICE_NAME : edu.berkeley.envvars\r\nXPC_FLAGS : 0x0\r\n\r\nNote there are two \"PATH\" variables here, one that appears to be the default, and the other from EnvironmentVariables.\r\n\r\nIf I switch to a bash program to output the environment variables:\r\n\r\n       <key>Program</key>\r\n        <string>/tmp/sh_env_out</string>\r\n\r\nThen the PATH is echoed as expected.\r\n\r\nbash-4.3# cat envvars.plist \r\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<!DOCTYPE plist PUBLIC -//Apple Computer//DTD PLIST 1.0//EN http://www.apple.com/DTDs/PropertyList-1.0.dtd>\r\n<plist version=\"1.0\">\r\n    <dict>\r\n        <key>Label</key>\r\n        <string>edu.berkeley.envvars</string>\r\n\r\n        <key>EnvironmentVariables</key>\r\n        <dict>\r\n            <key>PATH</key>\r\n            <string>/a/funny/path:/bin:/usr/bin:/usr/sbin:/sbin</string>\r\n            <key>ANOTHER_VAR</key>\r\n            <string>some value</string>\r\n        </dict>\r\n        <key>Program</key>\r\n        <string>/tmp/py_env_out</string>\r\n        <key>RunAtLoad</key>\r\n        <true/>\r\n</dict>\r\n</plist>\r\nbash-4.3# cat py_env_out \r\n#!/usr/bin/env python\r\nimport os\r\n\r\nwith open('/tmp/py_env_vars', 'wt') as fobj:\r\n    for key, value in os.environ.items():\r\n        fobj.write('{0} : {1}\\n'.format(key, value))\r\nbash-4.3# cat rb_env_out \r\n#!/usr/bin/env ruby\r\nFile.open('/tmp/rb_env_vars', 'w') { |file|\r\n    ENV.each do |k,v|\r\n       file.write(\"#{k} : #{v}\\n\")\r\n    end\r\n}"
+    email: matthew.brett@gmail.com
+    modified: "2014-11-11T22:54:23.540956Z"
+    number: "18945659"
+    number_intvalue: 18945659
+    originated: 10/11/2014
+    parent_number: '&{NULL_VALUE}'
+    product: OSX
+    product_version: 10.10 / 14A389
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: PATH environment variable incorrectly set from launchd configuration file in 10.10

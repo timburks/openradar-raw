@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31316134"
+    labels:
+        datastore_id: "5001815716265984"
+data:
+    classification: Other Bug
+    created: "2017-03-29T06:29:37.17595Z"
+    description: "Summary:\r\nThe Realm Objective-C iOS framework compiled with Xcode 8.2 weighs in at 55MB with all architecture slices and bitcode included.\r\n\r\nThe same codebase compiled with Xcode 8.3 produces a binary about three times larger at 158MB, including 70MB for bitcode alone.\r\n\r\nSteps to Reproduce:\r\n\r\nWith Xcode 8.2.1 and 8.3 installed:\r\n\r\n1. git clone https://github.com/realm/realm-cocoa.git\r\n2. cd realm-cocoa\r\n3. git checkout v2.4.4\r\n4. git submodule update --init --recursive\r\n5. REALM_XCODE_VERSION=8.2.1 ./build.sh ios-dynamic\r\n6. mv build/ios/Realm.framework Realm_Xcode821.framework\r\n7. REALM_XCODE_VERSION=8.3 ./build.sh ios-dynamic\r\n8. mv build/ios/Realm.framework Realm_Xcode83.framework\r\n\r\nCompare Realm_Xcode821.framework with Realm_Xcode83.framework. For example:\r\n\r\n1. size Realm_Xcode821.framework/Realm\r\n55M Realm_Xcode821.framework/Realm\r\n2. size Realm_Xcode83.framework/Realm\r\n158M  Realm_Xcode83.framework/Realm\r\n\r\nAnd:\r\n\r\n1. otool -l -arch arm64 Realm_Xcode821.framework/Realm > Realm_Xcode821_otool_arm64.txt\r\n2. otool -l -arch arm64 Realm_Xcode83.framework/Realm > Realm_Xcode83_otool_arm64.txt\r\n3. git diff --no-index Realm_Xcode821_otool_arm64.txt Realm_Xcode83_otool_arm64.txt\r\n\r\nwhich indicates that the __LLVM (bitcode) slice grew from 15MB to 67MB.\r\n\r\nAnd:\r\n\r\n1. otool -l Realm_Xcode821.framework/Realm > Realm_Xcode821_otool.txt\r\n2. otool -l Realm_Xcode83.framework/Realm > Realm_Xcode83_otool.txt\r\n3. git diff --no-index Realm_Xcode821_otool.txt Realm_Xcode83_otool.txt\r\n\r\nAlthough there's not much difference in the outputs for that one.\r\n\r\nExpected Results:\r\nCompiling with Xcode 8.3 should produce binaries of similar size as with Xcode 8.2.\r\n\r\nActual Results:\r\nCompiling with Xcode 8.3 produces binaries approximately three times as large as with Xcode 8.2.\r\n\r\nRegression:\r\nDescribe circumstances where the problem occurs or does not occur, such as software versions and/or hardware configurations.\r\n\r\nNotes:\r\nSee https://github.com/realm/realm-cocoa/issues/4785\n\nThis is a duplicate of rdar://31302382.  Can confirm that we see similar increases in PSPDFKit. Our binary framework download is huge now."
+    email: steipete@gmail.com
+    modified: "2017-03-29T06:29:37.17626Z"
+    number: "31316134"
+    number_intvalue: 31316134
+    originated: 29-Mar-2017 08:29 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.3 (8E162)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Xcode 8.3 produces binaries 3x larger than Xcode 8.2 due to a 4x increase in bitcode

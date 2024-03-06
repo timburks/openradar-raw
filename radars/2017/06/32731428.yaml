@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32731428"
+    labels:
+        datastore_id: "5498641225613312"
+data:
+    classification: Bug
+    created: "2017-06-13T05:42:33.88041Z"
+    description: "Area:\r\nCFNetwork Framework\r\n\r\nSummary:\r\nContrary to what its prototype and documentation state, +[NSHTTPURLResponse localizedStringForStatusCode:] only returns messages in English. All localized messages exist in the CFNetwork bundle, which suggests the implementation is incorrect.\r\n\r\nSteps to Reproduce:\r\nCall for example [NSHTTPURLResponse localizedStringForStatusCode:502] on a device whose language has been set to French.\r\n\r\nExpected Results:\r\nThe returned value is \"passerelle incorrecte\".\r\n\r\nObserved Results:\r\nThe returned value is \"bad gateway\".\r\n\r\nVersion:\r\nTested on iOS 9.3 and above, iOS 11 beta 1 included.\r\n\r\nNotes:\r\nAll strings have been already properly localized and are available from the CFNetwork bundle, though. Currently, we can therefore fix the implementation by using the value in English returned by +localizedStringForStatusCode: as localization key to retrieve the properly localized variant:\r\n\r\n+ (NSString *)workaround_localizedStringForStatusCode:(NSInteger)statusCode\r\n{\r\n    NSString *localizationKey = [NSHTTPURLResponse localizedStringForStatusCode:statusCode];\r\n    NSBundle *bundle = [NSBundle bundleWithIdentifier:@\"com.apple.CFNetwork\"];\r\n    return [bundle localizedStringForKey:localizationKey value:localizationKey table:nil];\r\n}"
+    email: defagos@gmail.com
+    modified: "2017-06-13T05:42:33.88068Z"
+    number: "32731428"
+    number_intvalue: 32731428
+    originated: June 13 2017, 7:39 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: All
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: +[NSHTTPURLResponse localizedStringForStatusCode:] does not return localized messages

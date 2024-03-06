@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15525179"
+    labels:
+        datastore_id: "5889752003772416"
+data:
+    classification: Serious Bug
+    created: "2013-11-21T17:04:48.490918Z"
+    description: "Summary:\r\nWhen designing a user interface in Interface Builder, it is impossible to relate the content of a box precisely to the conceptual borders of the box's content.\r\n\r\nBecause constraints added to subviews of a box will relate to the box itself and not to its dynamically created contentView, they will be off by an unpredictable amount depending on the size of the box's title area, border width, etc.\r\n\r\nTo alleviate this I think one of two approaches should be taken (possibly both):\r\n\r\n1. IB should expose the contentView of an NSBox as a visual component of the view hierarchy. This would be comparable to the manner in which IB shows e.g. the NSClipView that is a necessary component of a scroll view's hierarchy. By exposing the contentView to IB designers, the constraints for box subviews could be appropriately designated between the view and its ultimate superview.\r\n\r\n2. NSBox should arrange that when it creates the contentView and transfers the box's subviews into the contentView, any pertinent constraints linking the subviews to the box itself should be replaced with constraints that link the subviews to the contentView. Obviously there is some risk here of undoing an constraint that was intentionally meant to link to the box itself, but I think that would be uncommon in practice.\r\n\r\nTo workaround the bug, constraints on an NSBox's subviews must be removed at runtime and replaced manually with constraints that relate the views to the contentView.\r\n\r\nSteps to Reproduce:\r\n1. Open the attached sample project.\r\n2. Build and run.\r\n\r\nIn each of the two boxes that appear in the sample project window, the subview of the box as been constrained to completely fill the superview.\r\n\r\nExpected Results:\r\nEach of the two boxes should show a colored content view whose 8-point border is completely visible within the contentView of the box.\r\n\r\n\r\nActual Results:\r\nThe top box exhibits the problematic behavior: the constraint between the subview and the box causes the top of the subview to be clipped behind the title area of the box.\r\n\r\nThe bottom box exhibits the corrected behavior, having removed the constraints dynamically at runtime and reinstalled constraints that link the subview to the contentView instead."
+    email: jalkut@gmail.com
+    modified: "2013-11-21T17:04:48.491069Z"
+    number: "15525179"
+    number_intvalue: 15525179
+    originated: 11/21/2013
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 5.0.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Constraints relating an NSBox's subviews to itself should transfer to the contentView

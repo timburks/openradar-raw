@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15231363"
+    labels:
+        datastore_id: "5560496589635584"
+data:
+    classification: Serious Bug
+    created: "2013-10-15T18:58:52.262006Z"
+    description: "When executing an Xcode Server bot for the first time on a newly set-up environment, the bot will try to request access to the code signing identity from the keychain.\r\n\r\nSince the bot is running within the context of its own user and has no user interface or interactive user session, the prompt to request access is never shown, and the error is logged to the console: \"User interaction is not allowed. Command /user/bin/codesign failed with exit code 1\".\r\n\r\nWhen building the project in Xcode manually, I am prompted for access to the keychain item which I allow. This is expected, and only happens once. But it appears that this access is not shared with the bot, since it still fails to access the keychain item, with the \"user interaction not allowed\" error.\r\n\r\nSome people stated that copying the signing identities to the System keychain would allow the bots to access the items, but this did not work for me. Same error.\r\n\r\nThe only work around I have found to work is to specify that `codesign` is allowed access to the keychain item in the Keychain Access GUI using the Access Control tab for the keychain item, as described here: http://stackoverflow.com/a/14761060/76559\r\n\r\nThe process of setting up an Xcode bot to work with code signing is unintuitive at best and not documented anywhere.\r\n\r\nSteps to Reproduce:\r\n1. Setup an Xcode Server bot to build a project that requires code signing.\r\n\r\n2. Attempt to integrate\r\n\r\nExpected Results:\r\n1. Setup an Xcode Server bot to build a project that requires code signing.\r\n\r\n2. Attempt to integrate\r\n\r\n3. Be properly prompted for access to the code signing identity from the keychain.\r\n\r\n4. Build successfully.\r\n\r\nActual Results:\r\n1. Setup an Xcode Server bot to build a project that requires code signing.\r\n\r\n2. Attempt to integrate\r\n\r\n3. Observe that integration fails thanks to `code sign` being unable to access the keychain item for the code signing identity. The logged error is \"User interaction is not allowed. Command /usr/bin/codesign failed with exit code 1\"."
+    email: jaddyman@gmail.com
+    modified: "2013-10-15T18:58:52.262199Z"
+    number: "15231363"
+    number_intvalue: 15231363
+    originated: 15/10/2013
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: OS X 10.9 Mavericks (13A598) OS X Server 2.2.67 (13S411) Xcode 5.0.1 (5A2034a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Xcode server bots are unable to access code signing identities without specifically allowing access from Keychain Access

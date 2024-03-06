@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6394766"
+    labels:
+        datastore_id: "673"
+data:
+    classification: Other Bug
+    created: "2008-11-22T04:57:20.661991Z"
+    description: "Summary:\r\nThe string named kICADevicesArrayKey in the Image Capture framework is @\"kICADevicesArrayKey\", not @\"devices\", which is the actual key in the device list object's properties dictionary.\r\n\r\nSteps to Reproduce:\r\n1.\r\n\tNSDictionary *deviceListProperties = nil;\r\n\tstruct ICACopyObjectPropertyDictionaryPB copyPropertiesPB = {\r\n\t\t.header = {\r\n\t\t\t.err = noErr,\r\n\t\t\t.refcon = (unsigned long)self\r\n\t\t},\r\n\t\t.object = getDeviceListPB.object,\r\n\t\t.theDict = (CFDictionaryRef *)&deviceListProperties\r\n\t};\r\n\terr = ICACopyObjectPropertyDictionary(&copyPropertiesPB, /*completion*/ NULL);\r\n2.\r\n\tdeviceListProperties = [deviceListProperties autorelease];\r\n\tNSArray *devices = [deviceListProperties objectForKey:(NSString *)kICADevicesArrayKey];\r\n3.\r\n\tNSLog(@\"Device list array (object for key %@): %@\", (NSString *)kICADevicesArrayKey, devices);\r\n\r\nExpected Result:\r\n2008-11-21 20:44:57.198 Acorn[1109:10b] Device list array (object for key devices): ( [zero or more device dictionaries] )\r\nor:\r\n2008-11-21 20:44:57.198 Acorn[1109:10b] Device list array (object for key ICADevicesArrayKey): ( [zero or more device dictionaries] )\r\n\r\nActual Result:\r\n2008-11-21 20:44:57.198 Acorn[1109:10b] Device list array (object for key ICADevicesArrayKey): (null)\r\n\r\nRegression:\r\nThe ICACopyObjectPropertyDictionary is new in Leopard. Previously, access to the device list's devices was by ICAGetChildCount and ICAGetNthChild.\r\n\r\nWorkaround:\r\nHard-code the string @\"devices\" as the key to access.\r\n\r\nNotes:\r\nThere are, of course, two possible fixes:\r\n1. Change the key in the dictionary to @\"ICADevicesArrayKey\", matching the current value of the key string object.\r\n2. Change the key string object to @\"devices\", matching the current key in the dictionary."
+    email: boredzo@gmail.com
+    modified: "2011-08-28T05:49:16.363079Z"
+    number: "6394766"
+    number_intvalue: 6394766
+    originated: 2008-11-21T20:55-0800
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.5/9F33
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Value of kICADevicesArrayKey does not match the actual key of the devices array

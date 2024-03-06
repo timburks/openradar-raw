@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7333955"
+    labels:
+        datastore_id: "100407"
+data:
+    classification: Other Bug
+    created: "2009-10-24T23:51:51.218017Z"
+    description: "Summary:\r\nKVC will claim that a class is not KVC-compliant for a key if the accessors for that key return and take a CGImageRef.\r\n\r\nSteps to Reproduce:\r\n1. Create a new project.\r\n2. In the project, create a class with a property whose value is a CGImageRef. (It does not matter whether it's an Objective-C 2.0 property.)\r\n3. Create a second class with a matching property and expose it as a binding.\r\n4. Bind an instance of the second class to the property of an instance of the first class.\r\n\r\nExpected Results:\r\nThe binding goes through and the instance of the second class receives change notifications any time the value of the property of the instance of the first class changes.\r\n\r\nActual Results:\r\nvalueForUndefinedKey: is sent to the instance of the first class, with the name of the property.\r\n\r\nRegression:\r\nNo idea.\r\n\r\nWorkaround:\r\nType the accessors as returning and taking an NSObject pointer.\r\n\r\nNotes:\r\nI'm including a test app. It has two build configurations: One defines the accessors' type as CGImageRef, and the other defines their type as NSObject *. Simply switch the configuration back and forth to see the difference: With the type as NSObject *, the image observer receives the image from the image owner and puts it in the image view. With the type as CGImageRef, you get a KVC error (which I present as an alert in this test app).\r\n\r\n[Test app: http://boredzo.org/radar-attachments/7333955/ObservingCGImagePropertiesTest-r1.tbz ]\r\n\r\n------\r\nClosed by Apple with message:\r\n\r\nPlease try to use NSImages instead."
+    email: boredzo@gmail.com
+    modified: "2011-08-28T05:43:53.254491Z"
+    number: "7333955"
+    number_intvalue: 7333955
+    originated: 2009-10-24T16:49-0700
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.1
+    reproducible: Always
+    resolved: 2010-06-18T10:34-0700
+    status: Closed
+    title: KVC thinks properties with CGImage values are not KVC-compliant

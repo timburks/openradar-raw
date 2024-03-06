@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30516088"
+    labels:
+        datastore_id: "6083703147069440"
+data:
+    classification: Crash
+    created: "2017-02-14T19:05:08.72951Z"
+    description: "Summary:\r\nIf certain corrupted style data is put into the Pasteboard, trying to paste it may lead to a crash.\r\n\r\nThe problem is not just academic because I ran into this crash several times while having copied styled text from a Carbon-based text field, so the bad style data may also have been caused by the OSX framework code, though I have no way to reproduce that part reliably. What I, as well as others, can reproduce, though, is that such bad data leads to a crash when processed by the Cocoa pasteboard conversion handler.\r\n\r\nSteps to Reproduce:\r\nRun this Applescript code to fill the pasteboard with the bogus data:\r\n\r\nset the clipboard to ({string:\"ListBoxTVPrivate\"} & {uniform styles:«data ustl02000000D000000000000000140000002000000001000000240000000000000001000000AC0000000800000003000000000000000001000001000000000000000101000001000000000000000201000001000000000000000301000001000000000000000401000001000000000000000501000030000000646D616E2800000001000000040000000100000000000000000000000D0000004C7563696461204772616E6465000000060100000400000000000B000701000006000000000000000000000001000000010003001B000000»} )\r\n\r\nOpen Pages, create a new document and paste (cmd+V). This should lead to a crash.\r\n\r\nTry the same with TextEdit (make sure to start a rich text, not plain text, document). While this may not crash TextEdit, nothing is pasted, and Console.app will show that there was an internal exception.\r\n\r\nOr try Finder's menu: Edit -> Show Clipboard. Again, no crash but also no clipboard window - and the same exception report in the Console.\r\n\r\nOther apps may actually crash because they have not wrapped the conversion code into a try block. One example is Chrome (whom I already reported the bug to, and they confirmed it), which crashes.\r\n\r\nThus, any app may crash (one of my own did, that's how I noticed this issue) - it all depends on whether they use a try block. 10.10's TextEdit and Finder did not use a try wrapper, and they actually do crash, but 10.11 and later do not crash here.\r\n\r\nCuriously, pasting into Script Editor won't crash, and it will even paste the text. That's because it's using the older Carbon based pasteboard functions that are not affected by this bug. Only apps that use NSPasteboard crash (or run into the exception, at least).\r\n\r\nSo, it appears to me that there's a bug here in the Carbon-Cocoa pasteboard conversion code, not properly dealing with invalid data, it seems. There may also be a bug generating the bad style data from a Carbon based edit field, but I can't prove that, yet.\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\n10.10.5, 10.11.6, 10.12.3\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nI've had several people on different OSX versions try it, and everyone can confirm it. So you should not need specific config data from my computer, but instead should be able to reproduce it easily by yourself."
+    email: tempelmann@gmail.com
+    modified: "2017-02-14T19:05:08.72967Z"
+    number: "30516088"
+    number_intvalue: 30516088
+    originated: 14-Feb-2017
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.12.3
+    reproducible: Always
+    resolved: ""
+    status: open
+    title: Bogus style data in pasteboard can lead to crash

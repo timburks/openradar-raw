@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10898970"
+    labels:
+        datastore_id: "1513405"
+data:
+    classification: Serious Bug
+    created: "2012-02-20T23:39:27.200592Z"
+    description: "Summary:\r\nAddressBook: Newly created and added personRef is not returned by ABAddressBookCopyArrayOfAllPeople until after the addressbook is saved.\r\n\r\nThis behaviour diverges from the what happens with adding a group to the default source\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n-(void)testABBug{\r\n    ABAddressBookRef ab = ABAddressBookCreate();\r\n    CFArrayRef peopleRefs = ABAddressBookCopyArrayOfAllPeople(ab);\r\n    NSUInteger preAddCount = CFArrayGetCount(peopleRefs);\r\n    CFRelease(peopleRefs);\r\n    \r\n    ABRecordRef newPersonRef = ABPersonCreate();\r\n    ABAddressBookAddRecord(ab, newPersonRef, NULL);\r\n    \r\n    peopleRefs = ABAddressBookCopyArrayOfAllPeople(ab);\r\n    NSUInteger postAddCount = CFArrayGetCount(peopleRefs);\r\n    CFRelease(peopleRefs);\r\n    \r\n    NSAssert(preAddCount + 1 == postAddCount, @\"peopleRefs count should be == previous count + 1 after adding a person to the addressbook\");\r\n    \r\n    CFRelease(newPersonRef);\r\n    CFRelease(ab);\r\n\r\n}\r\n\r\n\r\nExpected Results:\r\nNo assert\r\n\r\nActual Results:\r\nassert\r\n\r\nRegression:\r\nrepros on 4.3 & 5.0"
+    email: heardrwt@gmail.com
+    modified: "2012-02-20T23:39:27.200799Z"
+    number: "10898970"
+    number_intvalue: 10898970
+    originated: 20 Feb 12
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 5.0.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople'

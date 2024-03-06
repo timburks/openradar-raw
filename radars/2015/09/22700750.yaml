@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22700750"
+    labels:
+        datastore_id: "5013964618465280"
+data:
+    classification: Other
+    created: "2015-09-15T12:07:09.45343Z"
+    description: "Summary:\r\nConsider the following closure that would create a retain cycle if there wasn't used a capture list:\r\n\r\nlet object = SomeObject(callback: { [unowned self] in event\r\n    \r\n    switch event {\r\n        .case SomeCase:\r\n            self?.doSomething()\r\n        .case SomeOtherCase:\r\n            self?.doSomethingOther()\r\n    }\r\n}\r\n\r\nThis is all fine. [unowned self] prevents a retain cycle that would otherwise exist because self owns SomeObject and at the same time self is referenced within the SomeObject's callback closure.\r\n\r\nUnfortunately, the capture list doesn't work anymore when referring to self within a nested function inside the closure as the following example shows:\r\n\r\nlet object = SomeObject(callback: { [unowned self] in event\r\n                \r\n                func innerFunction() {\r\n                    self.doSomething()\r\n                }\r\n\r\n                switch event {\r\n                .case SomeCase:\r\n                    innerFunction()\r\n                .case SomeOtherCase:\r\n                    self?.doSomethingOther()\r\n                }\r\n            }\r\n\r\nThe obvious fix here is of course to spare the nested innerFunction(). But sometimes, for matters of code clarity, it is nice to outsource parts of switch cases into local functions. This isn't possible here because, despite of using a capture list, self isn't unowned in the inner function's scope and therefore still creates a retain cycle.\r\n\r\nVersion:\r\nXcode Version 7.0 (7A218) / Swift 2\r\n\r\nNotes:\r\n@inline-ing the nested function doesn't work, either."
+    email: kastansn@gmail.com
+    modified: "2015-09-15T12:07:09.45364Z"
+    number: "22700750"
+    number_intvalue: 22700750
+    originated: 2015/09/15
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Capture lists don''t work with nested functions'

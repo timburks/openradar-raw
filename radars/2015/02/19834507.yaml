@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19834507"
+    labels:
+        datastore_id: "6466068230963200"
+data:
+    classification: Enhancement
+    created: "2015-02-13T23:56:42.042395Z"
+    description: "Summary:\r\nWhen writing higher-order generic functions, it’s nice to be able to tag the closure argument @noescape, but that precludes passing the closure on to map() or other stdlib HOGFs.\r\n\r\nSteps to Reproduce:\r\n1. Write a higher-order generic function. For example, map_with_index() which takes a CollectionType and a closure that takes an index and an element of the collection, and works by constructing a sequence of (index, element) pairs and passing it to map().\r\n2. Notice that calling the new function requires adding “self.” prefixes and [unowned self] at the top, unless you never refer to self, which is OK but kind of a bummer.\r\n3. Read about the new @noescape attribute and get excited because it apparently eliminates all that extra typing AND enables new optimizations, as long as you can guarantee that the closure is only being called or passed as a @noescape parameter, which *should* be the case for map(), right?\r\n4. Add @noescape to your function’s closure argument.\r\n\r\nExpected Results:\r\nNew function compiles.\r\n\r\nActual Results:\r\nGet an error like: “Cannot find an overload for 'map' that accepts an argument list of type '(PairSequence<[C.Index], C>, @noescape (C.Index, C.Generator.Element) -> Bool)’”\r\n\r\n(Removing the @noescape in this case cures the error.) So @noescape can’t be used unless you never pass your closure argument to any of the generics in the standard library, because their parameters aren’t declared @noescape despite being eligible for it. Which stinks. \r\n\r\nRegression:\r\n@noescape introduced in Swift 1.2.\r\n\r\nNotes:"
+    email: dwineman@gmail.com
+    modified: "2015-08-19T23:04:29.20266Z"
+    number: "19834507"
+    number_intvalue: 19834507
+    originated: 13-Feb-2015 03:56 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.3 (6D520o)
+    reproducible: Always
+    resolved: Yes
+    status: Closed
+    title: Closure arguments to map(), find(), etc. should be tagged @noescape

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14251387"
+    labels:
+        datastore_id: "3140407"
+data:
+    classification: Other bug
+    created: "2013-06-24T21:29:36.561199Z"
+    description: "Summary:\r\n\r\nUsing __attribute__((objc_requires_super)) on a method flagged with IBAction triggers the warning \"mismatched-method-attributes\"\r\n\r\nSteps to Reproduce:\r\n\r\nGiven the ViewController.h:\r\n\r\n@interface ViewController : UIViewController\r\n- (void) someMethodRequiringSuper __attribute__((objc_requires_super));\r\n- (IBAction) someAction;\r\n- (IBAction) someActionRequiringSuper __attribute__((objc_requires_super));\r\n@end\r\n\r\nand implementation:\r\n\r\n@implementation ViewController\r\n- (void) someMethodRequiringSuper\r\n{\r\n}\r\n- (IBAction) someAction\r\n{\r\n}\r\n- (IBAction) someActionRequiringSuper\r\n{\r\n}\r\n@end\r\n\r\nExpected Results:\r\n\r\nShould compile without a word.\r\n\r\nActual Results:\r\n\r\nThe first two methods do not pose a problem, but clang issues the following warning for the last method (edited for clarity):\r\n\r\n>ViewController.m:23:1: warning: attributes on method implementation and its declaration must match [-Wmismatched-method-attributes]\r\n>{\r\n>^\r\n>In file included from ViewController.m:9:\r\n>ViewController.h:14:1: note: method 'someActionRequiringSuper' declared here\r\n>- (IBAction) someActionRequiringSuper __attribute__((objc_requires_super));\r\n>^\r\n>1 warning generated.\r\n\r\nRegression:\r\n\r\nNever worked correctly.\r\n\r\nNotes:"
+    email: nicolas.bouilleaud@gmail.com
+    modified: "2013-12-19T09:47:58.526172Z"
+    number: "14251387"
+    number_intvalue: 14251387
+    originated: "2013-06-24"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "5.0"
+    reproducible: Always
+    resolved: "2013-12-19"
+    status: Closed (Resolved)
+    title: Mixing __attribute__((objc_requires_super)) and IBAction triggers a warning

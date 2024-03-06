@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21333464"
+    labels:
+        datastore_id: "6155406669774848"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-06-11T02:30:43.06276Z"
+    description: "Summary:\nI don’t even know what that means.\n\n\nSteps to Reproduce:\n1. This:\nprotocol FixpointType {\n\ttypealias Algebra : AlgebraicType\n\tinit(_ : Algebra)\n\tvar out: Algebra { get }\n}\nprotocol AlgebraicType {\n\ttypealias Recur\n}\nenum Expr<T>: AlgebraicType {\n\ttypealias Recur = T\n\tcase Null // this is quite a dull language\n\n\tfunc map<U>(transform: T -> U) -> Expr<U> {\n\t\treturn .Null\n\t}\n}\n\nfunc out<Fix: FixpointType>(v: Fix) -> Fix.Algebra {\n\treturn v.out\n}\n\nfunc cata<T, Fix: FixpointType where Fix.Algebra == Expr<Fix>>(f: Expr<T> -> T)(_ term: Fix) -> T {\n\treturn f({ $0.map(cata(f)) }(out(term)))\n}\n\n\nstruct Term: FixpointType, CustomDebugStringConvertible {\n\tinit(_ expression: Expr<Term>) {\n\t\tout = expression\n\t}\n\tlet out: Expr<Term>\n\ttypealias Algebra = Expr<Term>\n\n\tvar debugDescription: String {\n\t\treturn cata(Term.toDebugString)(self)\n\t}\n\n\tstatic func toDebugString(expression: Expr<String>) -> String {\n\t\treturn \"\"\n\t}\n}\n\n\nExpected Results:\nshould not crash\n\n\nActual Results:\nbut totally does:\nAssertion failed: (typeVar != TypeVar && \"Cannot be adjacent to oneself\"), function getAdjacency, file /Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-700.0.38.1/src/swift/lib/Sema/ConstraintGraph.cpp, line 126.\n0  swift                    0x000000010e2f8e0b llvm::sys::PrintStackTrace(__sFILE*) + 43\n1  swift                    0x000000010e2f954b SignalHandler(int) + 379\n2  libsystem_platform.dylib 0x00007fff88493f1a _sigtramp + 26\n3  swift                    0x000000010cad63e6 swift::Type::transform(std::__1::function<swift::Type (swift::Type)> const&) const + 54\n4  libsystem_c.dylib        0x00007fff86f90b53 abort + 129\n5  libsystem_c.dylib        0x00007fff86f58c39 basename + 0\n6  swift                    0x000000010c8ce3bd swift::constraints::ConstraintGraphNode::getAdjacency(swift::TypeVariableType*) + 317\n7  swift                    0x000000010c8cdd6d swift::constraints::ConstraintGraph::bindTypeVariable(swift::TypeVariableType*, swift::Type) + 301\n8  swift                    0x000000010c8da412 swift::constraints::ConstraintSystem::assignFixedType(swift::TypeVariableType*, swift::Type, bool) + 306\n9  swift                    0x000000010c927139 swift::constraints::ConstraintSystem::matchTypes(swift::Type, swift::Type, swift::constraints::TypeMatchKind, unsigned int, swift::constraints::ConstraintLocatorBuilder) + 4249\n…\nStack dump:\n0.\tProgram arguments: /Applications/Xcode-7-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift -frontend -c -primary-file recur.swift -target x86_64-apple-darwin14.3.0 -enable-objc-interop -module-name recur -o /var/folders/9y/f7n4rvx901nctm_5d16c1wm40000gn/T/recur-2afe3d.o \n1.\tWhile type-checking 'cata' at recur.swift:22:1\n2.\tWhile type-checking expression at [recur.swift:23:9 - line:23:41] RangeText=\"f({ $0.map(cata(f)) }(out(term)))\"\n<unknown>:0: error: unable to execute command: Abort trap: 6\n<unknown>:0: error: swift frontend command failed due to signal (use -v to see invocation)"
+    email: rix.rob@gmail.com
+    modified: "2015-06-11T02:30:43.06296Z"
+    number: "21333464"
+    number_intvalue: 21333464
+    originated: 10-Jun-2015 10:30 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-7-beta (7A120f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2: Compiler crash with type variable apparently considered to be adjacent to itself'

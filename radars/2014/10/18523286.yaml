@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18523286"
+    labels:
+        datastore_id: "6705575538720768"
+data:
+    classification: Bug
+    created: "2014-10-02T03:57:40.032717Z"
+    description: "Summary:\r\nMany times, when using NSString and String, they can be used pretty much interchangeably. However, when putting them in infix functions, some of this implicit bridging is lost, and compiler errors are thrown.\r\n\r\nThe code produced below illustrates the problem.\r\n\r\nSample Code: \r\n\r\nfunc getMaybeString() -> String? {\r\n    return \"awesome\"\r\n}\r\n\r\ninfix operator =?= {}\r\nfunc =?=<A>(inout lhs: A, rhs: A?) {\r\n    lhs = rhs ?? lhs\r\n}\r\n\r\nfunc setOptional<A>(inout lhs: A, rhs: A?) {\r\n    lhs = rhs ?? lhs\r\n}\r\n\r\nvar nsstring: NSString = \"\"\r\n\r\n// Works as expected\r\n// nsstring is now \"awesome\"\r\nnsstring = getMaybeString() ?? nsstring\r\n\r\nnsstring = \"\"\r\n// Works as expected,\r\n// nsstring now equals \"awesome\"\r\nsetOptional(&nsstring, getMaybeString())\r\n\r\nnsstring = \"\"\r\n// error: 'String' is not identical to 'NSString'\r\nnsstring =?= getMaybeString()\r\n\r\nExpected Results:\r\nThe infix operator `=?=` is basically used as an 'optional setter' that only sets the value on the LHS to the RHS's value's unwrapped value if it exists.\r\n\r\nUnwrapping function and doing it manually works.\r\nCreating another, equivalent normal (not infix) function works.\r\nI would expect the infix function to work just the same. \r\n\r\n\r\nActual Results:\r\nIt throws a compiler error at me. \r\n 'String' is not identical to 'NSString'\r\n\r\nVersion:\r\nVersion 6.1 (6A1042b) (GM Seed)\r\nVersion 6.1 (6A1030) (Beta 2?)"
+    email: wirth_caesar@cyberagent.co.jp
+    modified: "2015-07-27T06:18:57.92694Z"
+    number: "18523286"
+    number_intvalue: 18523286
+    originated: 02-Oct-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Swift
+    product_version: Xcode 6.1 GM Seed
+    reproducible: Always
+    resolved: ""
+    status: Closed (Resolved)
+    title: 'Swift: NSString to String bridging lost when using generic infix operator'

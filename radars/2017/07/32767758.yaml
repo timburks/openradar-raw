@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32767758"
+    labels:
+        datastore_id: "4953434151190528"
+data:
+    classification: On Demand Resources
+    created: "2017-07-17T10:30:59.68745Z"
+    description: "Area:\r\nFoundation\r\n\r\nSummary:\r\nAfter updating an application version that adds new ODR (new resources with new tags or changed tags to existing resources),\r\nnew ODR is not being downloaded, but the ODR's API accessing completion block is invoked without error.\r\n\r\nThe issue only happens when the update is done via TestFlight (and potentially via AppStore).\r\nWith Xcode, on a device / simulator the application downloads the new resources normally.\r\n\r\nIn a case of installing the application without having any previous version installed, ODR works as expected.\r\n\r\nSteps to Reproduce:\r\nLet's say you have 2 version of the app.\r\nVersion 1.0 - with any ODR.\r\nVersion 1.1 - with additional ODR (new resource and new tag).\r\n\r\n0. Uninstall the app if installed before.\r\n1. Install version 1.0 of the app.\r\n2. Run the app and let it download the ODR.\r\n3. Update to app version 1.1.\r\n4. Run the app and let it download the new ODR.\r\n5. Try to access the resource of version 1.1.\r\n\r\nExpected Results:\r\nAfter updating / adding new ODR, we will expect the new resources to be downloaded (step 4), or to get an appropriate error in a case of failure, so that accessing the content (step 5) will not fail.\r\n\r\nObserved Results:\r\n1. The completion block of the method beginAccessingResourcesWithCompletionHandler is invoked without error, but the resource is not there.\r\n2. The new resources are never downloaded, also after restart or after initiating a new resource request.\r\n3. In our logs, we can see that beginAccessingResourcesWithCompletionHandler is invoked, but the resource is unavailable through the app bundle.\r\n4. The app folder file:///private/var/mobile/Library/OnDemandResources/AssetPacks/<bundleID>/ does not include the new content as well, except for the previously downloaded files from version 1.0.\r\n5. Only deleting and reinstalling the app can solve this issue and downloading the updated content - which causes On-Demand Resources to lead to a very bad user experience and actually to an unusable API.\r\n\r\nVersion:\r\n10.0 / 10.3\r\n\r\nNotes:\r\nThere is a demo project in the attachments, with a simple beginAccessingResourcesWithCompletionHandler on startup, with two resources and two different tags:\r\n1. testImage - tagA\r\n2. testImage2 - tagB\r\n\r\nTo reproduce the issue with the demo project:\r\n1. Remove testImage2 and its tag from the project, also remove the line that invokes the downloading (line 19).\r\n2. Upload to TestFlight, Install and run and let the ODR to be downloaded - the image should appear on the screen.\r\n3. Add back testImage2 and the deleted line, and tag the new image with tagB .\r\n4. Upload a new version to TestFlight, Update the app to the new version.\r\n5. Run and let the ODR to be downloaded - two images should appear on the screen, but you will see only the first one.\r\n6. After deleting and reinstalling, the ODR works as expected.\r\n\r\nBy the logs, you can see that beginAccessingResourcesWithCompletionHandler invoked and the unavailable content.\r\n\r\nSee another related radar: \r\nhttps://openradar.appspot.com/29218750"
+    email: neria@lightricks.com
+    modified: "2017-07-17T10:30:59.68776Z"
+    number: "32767758"
+    number_intvalue: 32767758
+    originated: 14.6.17
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 10.3.2
+    reproducible: 100%
+    resolved: No
+    status: Open
+    title: Downloading On-Demand Resources after updating application version fails.

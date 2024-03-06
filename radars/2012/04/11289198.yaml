@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11289198"
+    labels:
+        datastore_id: "1666403"
+data:
+    classification: Enhancement
+    created: "2012-04-20T15:17:56.314624Z"
+    description: "Summary:\r\nThe Objective-C @encode() directive silently produces incorrect descriptions for vector types. For example, \r\n\r\nSteps to Reproduce:\r\nCompile and run the following:\r\n\r\ntypedef struct { int a; __m128 v; int b; } Test1;\r\ntypedef struct { int a; int b; } Test2;\r\n\r\nint main(void)\r\n{\r\n    printf(\"%s   %zi\\n\", @encode(Test1), sizeof(Test1));\r\n    printf(\"%s   %zi\\n\", @encode(Test2), sizeof(Test2));\r\n}\r\n\r\n\r\nExpected Results:\r\nThe two types, which have different sizes and layouts, should have different encodings.\r\n\r\nIdeally, an encoding using the already-defined _C_VECTOR token (\"!\") would be used. For example, this might take the form \"!16[4f]\", where 16 is the alignment requirement in bytes and [4f] is the existing encoding for an array of four floats.\r\n\r\nAlternatively, a complete failure to encode the type would be preferable to the status quo. Simply skipping fields can lead to undesirable hilarity if, for instance, an object pointer type follows a vector type.\r\n\r\nActual Results:\r\nBoth types encode as \"{?=ii}\".\r\n\r\nRegression:\r\nNone known.\r\n\r\nNotes:\r\nThis also happens with Clang ext_vector_type types, e.g. typedef float fv4 __attribute__((ext_vector_type(4)));.\r\n\r\nIn an ideal world, it would be sufficient to encode vector types as an array or struct using existing notation, but it isn’t because of the extra alignment constraints on vectors."
+    email: google.j@ayton.se
+    modified: "2012-04-20T15:17:56.314986Z"
+    number: "11289198"
+    number_intvalue: 11289198
+    originated: "2012-04-20"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: tags/Apple/clang-318.0.54
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Clang: @encode fails for vector types'

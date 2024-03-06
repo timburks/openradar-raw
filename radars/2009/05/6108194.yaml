@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6108194"
+    labels:
+        datastore_id: "39405"
+data:
+    classification: ""
+    created: "2009-05-09T20:11:39.453844Z"
+    description: "28-Jul-2008 10:38 PM Alexander Strange:\r\nSummary:\r\nThe documentation for QT's CodecDecompressParams says:\r\ndata\r\nDiscussion\r\nPoints to the compressed image data. This must be a 32-bit clean address. The bufferSize field indicates the size of this data buffer. If the entire compressed image does not fit in memory, the application should provide a data-loading function, identified by the dataProc field of the data-loading function structure stored in the dataProcRecord field. This field is used only by ImageCodecBandDecompress.\r\n\r\nDespite what the last sentence claims, data and bufferSize are filled in with the first frame before calling the codec's Preflight:\r\n(gdb) print *p\r\n$1 = {\r\n  sequenceID = 10830848, \r\n  imageDescription = 0x1607b0a0, \r\n  data = 0x86aa10 \"\", \r\n  bufferSize = 726, \r\n  frameNumber = 0, \r\n...\r\n\r\nSince some codecs* store their output pixel formats in the first frame data, instead of having extradata, this is necessary to decode them in QT. So I'd rather see it properly documented instead of disappearing someday after it's not in the spec.\r\n\r\n* for instance, Fraps's RGB/YUVness depends on the version number in the frame header"
+    email: astrange@gmail.com
+    modified: "2011-08-28T05:49:52.990787Z"
+    number: "6108194"
+    number_intvalue: 6108194
+    originated: 28-Jul-2008 10:38 PM
+    parent_number: '&{NULL_VALUE}'
+    product: QuickTime
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: CodecDecompressParams.data passed to ImageCodecPreflight is not documented

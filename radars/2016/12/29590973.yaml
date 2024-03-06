@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29590973"
+    labels:
+        datastore_id: "5037983098994688"
+data:
+    classification: Usability
+    created: "2016-12-09T05:56:43.26576Z"
+    description: "Summary:\r\nOn TouchBar Macs (or Macs running TouchBar Server), if an application has a key window, and it is closed while the application is in the background, the window is not dealloc'ed until a new key window is created in the application.\r\n\r\nSteps to Reproduce:\r\nRun the attached application on a TouchBar MacBook (or on a Mac running TouchBar Server).  Click the button.  The Mac will switch to the Finder, and the window will close one second later.  But the NSPanel will not be dealloced.  Switch back to the application and open the About box and only then is the NSPanel dealloced.  The consequence of this is that cleanup done in dealloc will be arbitrarily delayed which can have negative user visible consequences.\r\n\r\nIf the window is not \"key\", then the bug does not happen.\r\n\r\nIf the window/app is in the foreground when it closes, then the bug does not happen.\r\n\r\nThe bug will happen if you simply close a window in the background by clicking on the red close icon, so it potentially affects *all* applications with unpredictable consequences.\r\n\r\nExpected Results:\r\nWhen the window is closed, it should be dealloced promptly regardless of the circumstanced.\r\n\r\nActual Results:\r\ndealloc is deferred arbitrarily (perhaps forever).  This could lead to data loss (if saving user data is not done until the window dealloc for example) or other resource wastage, including battery drain consequences or other issues that might arise when an expected deallocation does not happen until a later window creation.\r\n\r\nVersion:\r\n10.12.1 (16B2657)\r\n\r\nNotes:\r\nTouchBar server (https://github.com/zydeco/TouchBarServer) duplicates causing this issue which makes testing it easier, but it happens specifically on the TouchBar MacBook Pro.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'TestWindowCloseDeallocation.zip' was successfully uploaded.\r\n\r\nThe attachment simply shows when the dealloc happen, but it should apply to any key window closed in the background."
+    email: peter@stairways.com.au
+    modified: "2016-12-09T05:56:43.2661Z"
+    number: "29590973"
+    number_intvalue: 29590973
+    originated: 09-Dec-2016 01:54 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.12.1 / TouchBar
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Windows are not promptly dealloc'ed with TouchBar in specific circumstances

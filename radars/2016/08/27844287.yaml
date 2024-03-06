@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27844287"
+    labels:
+        datastore_id: "5009740014813184"
+data:
+    classification: Bug
+    created: "2016-08-15T09:31:50.72856Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nWhen animating the multiple values of a frame of some view with a very small duration (for example 0.00001) - the animation does not take place and all subsequent animations to that view complete instantly.\r\n\r\nSteps to Reproduce:\r\n- (void)reproduceBug\r\n{\r\n    CGRect initialFrame = CGRectMake(0, 0, 0, 0);\r\n    CGRect frame2 = CGRectMake(100, 100, 100, 100);\r\n    CGRect finalFrame = CGRectMake(200, 200, 200, 200);\r\n    \r\n    \r\n    __block UIView *view = [[UIView alloc] initWithFrame:initialFrame];\r\n    view.backgroundColor = [UIColor greenColor];\r\n    [self.view addSubview:view];\r\n    \r\n    NSLog(@\"Initial frame is: %@\", NSStringFromCGRect(view.frame));\r\n    NSLog(@\"Final frame should be: %@\", NSStringFromCGRect(finalFrame));\r\n\r\n    [UIView animateWithDuration:0.00000001 delay:0.0\r\n                        options:UIViewAnimationOptionBeginFromCurrentState\r\n                     animations:^{\r\n                         view.frame = frame2;\r\n                     } completion:^(BOOL finished) {\r\n                             NSLog(@\"After first animation frame is: %@\", NSStringFromCGRect(view.frame));\r\n\r\n                             [UIView animateWithDuration:.1 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{\r\n                                 view.frame = finalFrame;\r\n                             }completion:^(BOOL finished) {\r\n                                 NSLog(@\"After second animation frame is: %@\", NSStringFromCGRect(view.frame));\r\n                                 [self doFurtherAnimationOnView:view];\r\n                             }];\r\n                     }];\r\n    \r\n}\r\n\r\nExpected Results:\r\nInitial frame is: {{0, 0}, {0, 0}}\r\nFinal frame should be: {{200, 200}, {200, 200}}\r\nAfter first animation frame is: {{150, 150}, {0, 0}}\r\nAfter second animation frame is: {{300, 300}, {0, 0}}\r\n\r\n\r\nActual Results:\r\nA green square view appears on screen with no animation.\r\n\r\nVersion:\r\niOS 9.3\r\n\r\nNotes:\r\nA tiny project that reproduces the bug:\r\nhttps://github.com/alexgo84/UIViewAnimationBug\r\n\r\nConfiguration:\r\niPhone simulator 6s Plus\r\n\r\n\r\n\r\nReproduces on iOS 8.4 and iOS 9.3."
+    email: Gordonsniff@gmail.com
+    modified: "2016-08-15T09:31:50.72875Z"
+    number: "27844287"
+    number_intvalue: 27844287
+    originated: 15.08.2016
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: Xcode 7.3.1
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: '[UIView animateWithDuration:...] with very small duration and certain frame values corrupts view'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17569045"
+    labels:
+        datastore_id: "5300501415460864"
+data:
+    classification: Serious Bug
+    created: "2014-07-06T10:51:24.026614Z"
+    description: "If I have a protocol, and an object that conforms to that protocol, and I have another object that has an unowned reference to an object conforming to that protocol, after setting that reference in init, accessing it crashes my app. \r\n\r\nSo.\r\n\r\nThat's a protocol:\r\n\r\n@objc protocol MyProtocol: NSObjectProtocol {\r\n    func method() -> ()\r\n}\r\n\r\nAnd an object conforming to that protocol:\r\n\r\nclass DelegateClass: NSObject, MyProtocol {\r\n    func method () {\r\n        for i in 1...10 {\r\n            \"Hello!\"\r\n        }\r\n    }\r\n}\r\n\r\nSo far so good. Then I have an object that has a reference to an object conforming to that protocol which is unowned. \r\n\r\nclass MyObject : NSObject {\r\n    unowned let delegate: MyProtocol\r\n    \r\n    init(delegate: MyProtocol) {\r\n        self.delegate = delegate\r\n        super.init()\r\n    }\r\n    \r\n    func doSomethingWithDelegate() {\r\n        delegate.method()\r\n    }\r\n}\r\n\r\nOK, cool. Now let's set some instances up:\r\n\r\nlet delegate = DelegateClass()\r\nlet object = MyObject(delegate: delegate)\r\n\r\nAnd try and access the delegate:\r\n\r\nobject.doSomethingWithDelegate()\r\n\r\nCrash. \r\n\r\n* thread #1: tid = 0x8f817d, 0x001ba570 libswift_stdlib_core.dylib`_swift_release_slow, queue = 'com.apple.main-thread', stop reason = EXC_BREAKPOINT (code=EXC_I386_BPT, subcode=0x0)\r\n    frame #0: 0x001ba570 libswift_stdlib_core.dylib`_swift_release_slow\r\n    frame #1: 0xbfffcf98\r\n    frame #2: 0x001c8f7e libswift_stdlib_core.dylib`swift_unknownRetainUnowned + 318\r\n    frame #3: 0x00003470 Bug`@objc Bug.MyObject.delegate.getter : @unowned Bug.MyProtocol + 64 at AppDelegate.swift:0\r\n  * frame #4: 0x0000364c Bug`Bug.MyObject.doSomethingWithDelegate (self=0x0b20ff70)() -> () + 60 at AppDelegate.swift:29\r\n    frame #5: 0x000036c2 Bug`@objc Bug.MyObject.doSomethingWithDelegate (Bug.MyObject)() -> () + 34 at AppDelegate.swift:0\r\n    frame #6: 0x00003e95 Bug`Bug.AppDelegate.application (application=0x018fe804, launchOptions=None, self=0x0b500040)(ObjectiveC.UIApplication, didFinishLaunchingWithOptions : Swift.Optional<ObjectiveC.NSDictionary>) -> Swift.Bool + 149 at AppDelegate.swift:56\r\n    frame #7: 0x00003f55 Bug`@objc Bug.AppDelegate.application (Bug.AppDelegate)(ObjectiveC.UIApplication, didFinishLaunchingWithOptions : Swift.Optional<ObjectiveC.NSDictionary>) -> Swift.Bool + 101 at AppDelegate.swift:0\r\n    frame #8: 0x00c44b37 UIKit`-[UIApplication _handleDelegateCallbacksWithOptions:isSuspended:restoreState:] + 291\r\n    frame #9: 0x00c45875 UIKit`-[UIApplication _callInitializationDelegatesForMainScene:transitionContext:] + 2920\r\n    frame #10: 0x00c48a33 UIKit`-[UIApplication _runWithMainScene:transitionContext:completion:] + 1507\r\n    frame #11: 0x00c60eb8 UIKit`__84-[UIApplication _handleApplicationActivationWithScene:transitionContext:completion:]_block_invoke + 59\r\n    frame #12: 0x00c4777e UIKit`-[UIApplication workspaceDidEndTransaction:] + 29\r\n    frame #13: 0x03404f1f FrontBoardServices`-[FBSWorkspace clientEndTransaction:] + 87\r\n    frame #14: 0x0340c4ed FrontBoar\r\n\r\n\r\nSource: http://cloud.ashfurrow.com/1h05282t000X"
+    email: ash.furrow@gmail.com
+    modified: "2014-07-06T10:51:24.026736Z"
+    number: "17569045"
+    number_intvalue: 17569045
+    originated: July 6, 2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6 Beta 2
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: Cannot reference unowned object conforming to protocol

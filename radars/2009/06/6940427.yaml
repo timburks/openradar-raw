@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6940427"
+    labels:
+        datastore_id: "39441"
+data:
+    classification: Crash
+    created: "2009-06-02T15:35:11.938358Z"
+    description: "1. Create a CGPathRef having a frame with a small width (less than 12 seems to cause the crash)\r\n2. Create a CFAttributedStringRef with a truncation line break mode set (e.g. NSLineBreakByTruncatingHead)\r\n3. Create a framesetter based upon this string using CTFramesetterCreateWithAttributedString\r\n4. Attempting to create a frame using CTFramesetterCreateFrame will cause a crash\r\n\r\nBuilding & running the attached sample will demonstrate the crash, running under gdb and checking the stack will display the attached backtrace.\r\n\r\n-- test.m --\r\n\r\n#import <Cocoa/Cocoa.h>\r\n\r\n// gcc test.m -framework Cocoa\r\n\r\nint main (int argc, char const* argv[])\r\n{\r\n\tNSAutoreleasePool* pool = [NSAutoreleasePool new];\r\n\r\n\tCGMutablePathRef path = CGPathCreateMutable();\r\n\tCGPathAddRect(path, NULL, NSRectToCGRect(NSMakeRect(0, 0, 11, 300))); // widths of < 12 cause a crash\r\n\r\n\tNSMutableParagraphStyle* paragraphStyle = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];\r\n\t[paragraphStyle setLineBreakMode:NSLineBreakByTruncatingHead];\r\n\tNSDictionary* attributes = [NSDictionary dictionaryWithObject:paragraphStyle forKey:NSParagraphStyleAttributeName];\r\n\tNSString* string         = @\"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\";\r\n\tCFAttributedStringRef attrString = (CFAttributedStringRef)[[[NSAttributedString alloc] initWithString:string attributes:attributes] autorelease];\r\n\r\n\tCTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString(attrString);\r\n\tCTFrameRef frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, NULL);\r\n\tCFRelease(framesetter);\r\n\tCFRelease(frame);\r\n\tCFRelease(path);\r\n\r\n\t[pool drain];\r\n\treturn 0;\r\n}\r\n\r\n-- backtrace.txt --\r\n\r\nProgram received signal EXC_BAD_ACCESS, Could not access memory.\r\nReason: KERN_PROTECTION_FAILURE at address: 0x00000005\r\n0x917302b4 in CFRetain ()\r\n(gdb) bt\r\n#0  0x917302b4 in CFRetain ()\r\n#1  0x916c04e4 in _CFArrayReplaceValues ()\r\n#2  0x916c104d in CFArrayAppendValue ()\r\n#3  0x96d559fa in TFramesetter::FrameInRect ()\r\n#4  0x96d55c1f in TFramesetter::CreateFrame ()\r\n#5  0x00001e5d in main ()"
+    email: ciawal@gmail.com
+    modified: "2011-08-28T05:46:39.075532Z"
+    number: "6940427"
+    number_intvalue: 6940427
+    originated: 02-Jun-2009 04:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.7
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CoreText crash when creating a small frame with a truncation line break mode set

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "5695926"
+    labels:
+        datastore_id: "19"
+data:
+    classification: '&{NULL_VALUE}'
+    created: "2008-11-16T09:43:02.514574Z"
+    description: "18-Jan-2008 06:44 PM Peter Hosey:\r\nSummary:\r\nASL escapes every message it writes to a file, providing no option to not escape messages sent to the file.\r\n\r\nSteps to Reproduce:\r\n1. Create a client connection with asl_open.\r\n2. Add one or more files to the connection with asl_add_log_file.\r\n3. ???\r\n4. Log messages using asl_log, asl_vlog, or asl_send.\r\n\r\nExpected Results:\r\nThe message is written to the log.\r\n\r\nActual Results:\r\nThe message is escaped using strvis(3), then written to the log.\r\n\r\nRegression:\r\nNone. Tiger's ASL worked like this, too.\r\n\r\nNotes:\r\nI understand that the escaping is intended to be a feature, so that logs can be loaded and parsed. However, we don't always want that. In particular, when I log to stderr, I sometimes create log messages that span multiple lines on purpose. Also, NSCFDictionary and NSCFArray often return descriptions with one pair or one element per line. For example:\r\n\r\n\t(\r\n\t\t\"foo\r\n\t\tbar\",\r\n\t\t\"bar\r\n\t\tbaz\",\r\n\t\t\"baz\r\n\t\tqux\",\r\n\t)\r\n\r\nbecomes:\r\n\r\n\t(\\n\\t\"foo\\n\\tbar\",\\n\\t\"bar\\n\\tbaz\",\\n\\t\"baz\\n\\tqux\",\\n)\r\n\r\nYou can see how this is harder to read. It's now much harder to tell where each string begins and ends. This makes reading ASL messages in the Xcode Run Log almost useless.\r\n\r\nSo, I'm asking for a function that would enable or disable this escaping on a per-file basis. Something like:\r\n\r\n\tint asl_set_escaping_enabled(aslclient asl, int fd, bool enable);\r\n\r\nThe default would be to have it enabled, except that if you pass ASL_OPT_STDERR to asl_open, asl_open would call asl_set_escaping_enabled(result, STDERR_FILENO, false) for you.\r\n\r\nA more general solution would be some sort of message transformation system. The API would look like:\r\n\r\n\tint asl_add_transform_function(aslclient asl, asltransformfunc xform, int priority);\r\n\tint asl_remove_transform_function(aslclient asl, asltransformfunc xform);\r\n\ttypedef void (*asltransformfunc)(aslmsg msg);\r\n\tvoid asl_transform_strvis(aslmsg msg);\r\n\r\nThus, you could disable the escaping by calling:\r\n\r\n\tasl_remove_transform_function(my_asl, asl_transform_strvis);\r\n\r\nI included the priority argument so that clients could specify the order of their custom transformations.\r\n\r\nIn keeping with the existing behavior, asl_add_log_file would add the strvis transformation automatically (with, I imagine, a priority of 0). And, as above, stderr when added with ASL_OPT_STDERR would not have this transformation added to it."
+    email: boredzo@gmail.com
+    modified: "2011-08-28T05:50:41.665691Z"
+    number: "5695926"
+    number_intvalue: 5695926
+    originated: '&{NULL_VALUE}'
+    parent_number: '&{NULL_VALUE}'
+    product: '&{NULL_VALUE}'
+    product_version: '&{NULL_VALUE}'
+    reproducible: '&{NULL_VALUE}'
+    resolved: '&{NULL_VALUE}'
+    status: Open
+    title: ASL provides no way to not escape messages written to a file

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34994629"
+    labels:
+        datastore_id: "4942821958090752"
+data:
+    classification: other bug
+    created: "2017-10-14T18:39:17.94354Z"
+    description: "Area:\r\nCore Graphics\r\n\r\nSummary:\r\nIt turns out that CGDisplayPixelsWide() and CGDisplayPixelsHigh() from Quartz Display Services do not in fact return the display/framebuffer dimensions in pixels, but in points. While this is probably a concession to backwards-compatibility, and I don't expect the functionality to change at this stage, the header and documentation should probably make it abundantly clear that the name no longer reflects the functionality.\r\n\r\nYet the documentation states:\r\n\r\n\"Returns the display width in pixel units.\"\r\n\r\nand\r\n\r\n\"Return Value\r\nThe display width in pixel units.\"\r\n\r\nSee https://developer.apple.com/documentation/coregraphics/1456361-cgdisplaypixelswide?language=objc\r\n\r\nThe comments in CGDirectDisplay.h are similarly misleading and should be fixed.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n1. Save the following code as e.g. cgdisplaypixels.c, and build it with\r\nclang -Wextra -framework CoreGraphics cgdisplaypixels.c -o cgdisplaypixels\r\n\r\n/**************************************************************/\r\n#include  \r\n#include  \r\n\r\nint main()\r\n{\r\n        uint32_t num_displays = 32;\r\n        CGDirectDisplayID displays[num_displays];\r\n        CGError err = CGGetActiveDisplayList(num_displays, displays, &num_displays);\r\n        if (err != 0)\r\n                return 1;\r\n        for (unsigned i = 0; i < num_displays; ++i)\r\n        {\r\n                size_t w = CGDisplayPixelsWide(displays[i]);\r\n                size_t h = CGDisplayPixelsHigh(displays[i]);\r\n                printf(\"%u - 0x%x: %4zu x %4zu\\n\", i, displays[i], w, h);\r\n        }\r\n        return 0;\r\n}\r\n/**************************************************************/\r\n\r\n2. Run on a Mac with at least one \"Retina\" display.\r\n\r\nExpected Results:\r\nAn output listing the dimensions of the attached displays, in pixels, as described in the documentation.\r\n\r\nActual Results:\r\nAn output listing the dimensions of the attached displays, in points.\r\n\r\nVersion/Build:\r\nConfirmed on OS X 10.11.6 and 10.13.1 Beta 2, but probably (hopefully!) all versions of macOS/OS X which support retina mode."
+    email: phil@philjordan.eu
+    modified: "2017-10-14T18:39:17.94384Z"
+    number: "34994629"
+    number_intvalue: 34994629
+    originated: October 14 2017
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.11.6+10.13.1b2+others
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: CGDisplayPixelsWide/High does not in fact return pixels, docs don't mention this

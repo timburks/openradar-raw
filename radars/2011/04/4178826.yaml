@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "4178826"
+    labels:
+        datastore_id: "1161404"
+data:
+    classification: Other Bug
+    created: "2011-04-06T17:06:44.612664Z"
+    description: "13-Jul-2005 08:23 AM Dair Grant:\r\nWe have an Xcode 2.1 project which contains a set of source files that were specified relative to a source tree.\r\n\r\nI built the project, then changed the relative-to setting for these files to be \"to enclosing group\" (to avoid seeing a full path in the build window, as the path pushes the file name out of view).\r\n\r\nI hit build again, not expecting anything to have changed, however all of the files whose relative-to setting was changed were rebuilt.\r\n\r\nSince the files in question did not change, nor did their location on disk, I would not have expected a rebuild - the files are in the same place, they're already built, so changing how the project locates the files shouldn't invalidate any existing object code.\r\n\r\n14-Jul-2005 09:20 AM Dair Grant:\r\nUnfortunately Radar won't let me attach files (rdar://4175463), but you can reproduce this by:\r\n\r\n1. File->New Project, \"Carbon Application\".\r\n2. Call the project \"Test\", save it to \"~/Desktop/Test\".\r\n3. Build->Build to build the project.\r\n4. Build->Build a second time, no source will be built (as expected).\r\n5. Select main.c, File->Get Info.\r\n6. Change the \"Path Type:\" pop-up to be relative to a source tree which does not encompass your desktop.\r\n7. Build->Build to build the project, main.c will be rebuilt (not expected).\r\n\r\nAt step 7, what I see is that main.c is recompiled for a second time - even though it is up to date.\r\n\r\nThe main.c file exists at:\r\n\r\n  /Volumes/Zonic/Users/dair/Desktop/Test/main.c\r\n\r\nThe source tree selected at step 6 pointed to:\r\n\r\n  /Volumes/ZonicData/Development/Companies/Zonic/Development\r\n\r\nAnd the final path passed to gcc at step 7 was:\r\n\r\n/Volumes/ZonicData/Development/Companies/Zonic/Development/Products/../../../../../../Zonic/Users/dair/Desktop/Test/main.c\r\n\r\nAll on one line obviously - I'm not sure where Safari will wrap it.\r\n\r\n\r\nIn the case which prompted the original bug, the source files were already under the source tree in question so that's probably not relevant.\r\n\r\nSwitching between \"relative to project\" and \"absolute path\" does not produce the bug, switching between either of them and \"relative to source tree\" does."
+    email: dairgrant@gmail.com
+    modified: "2011-08-28T05:51:34.150583Z"
+    number: "4178826"
+    number_intvalue: 4178826
+    originated: 13-Jul-2005
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Changing "relative to" causes rebuild

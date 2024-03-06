@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20275440"
+    labels:
+        datastore_id: "6055723297406976"
+data:
+    classification: ""
+    created: "2015-03-24T20:08:09.668835Z"
+    description: "Summary:\r\nWe have an OSX app built with latest XCode and the 10.9 SDK.  We animate a zoom animation when user users command +/-, these are triggered via View->Zoom In and Zoom Out menu items.  The command +/- are actually the key equivalents assigned to these menu items.\r\n\r\nThe problem is after switching to 10.10 SDK:\r\n1. We receive the zoom actions much less often than we have with previous SDK when the user * holds down * the command + or - keys.  \r\n2. All of a sudden now, beyond the performance of the menu action dispatching, menu action dispatch now BLOCKS our CVDisplayLink threads.  We use Facebook Pop animation library which uses a CVDisplayLink thread to feed us animation updates but now with 10.10 SDK their animation updates block which is holding down menu accelerator keys.\r\n\r\nSteps to Reproduce:\r\nI've attached a sample to show you how the performance has degraded with menu actions.\r\n\r\n1. Build and run the app with the 10.9 SDK configured in 'Base SDK' setting. Make sure you run from XCode.\r\n\r\n2. Resize the width of the app to about 3/4 of your screen.\r\n\r\n3. ** Hold down ** command + to grow the rectangle and note the average rate reported to Output console that we're receiving menu actions.  On my Macbook AIR I get them about every 80ms (timeDelta). \r\n\r\n4. Now rebuild the app with 10.10 SDK.  Note that timeDelta between menu actions is now greater.\r\n\r\nExpected Results:\r\nThere should not have been a regression with 10.10 SDK nor should the act of triggering a menu action with keyboard block animations on a CVDisplayLink thread.\r\n\r\nActual Results:\r\nPerformance has degraded with 10.10 SDK.\r\n\r\nVersion:\r\nXCode 6.2 (6C131e), OSX 10.10.2.   \r\n\r\nNotes:\r\nNote that the worst of this issue is not captured here, I wanted to keep the test case simple for now, hopefully you see the clear discrepancy in menu action dispatch time, just by simply switching the SDK.\r\n\r\nThe bigger problem for us, is that whatever is making menu action dispatch slower is really slowing down the Pop animation library when the menu item key is held down.  \r\n\r\nThis is a very bad regression and is affecting the production quality of our app that is pending release.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'SDKBug.zip' was successfully uploaded."
+    email: corey.lucier@gmail.com
+    modified: "2015-09-02T11:48:14.20648Z"
+    number: "20275440"
+    number_intvalue: 20275440
+    originated: 3/24/2015
+    parent_number: '&{NULL_VALUE}'
+    product: OSX SDK
+    product_version: "10.10"
+    reproducible: Always
+    resolved: ""
+    status: Fixed
+    title: Serious regression in OSX 10.10 SDK with menu action performance.

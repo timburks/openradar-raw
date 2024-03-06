@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17588949"
+    labels:
+        datastore_id: "6464265753985024"
+data:
+    classification: Serious Bug
+    created: "2014-07-08T12:48:20.180986Z"
+    description: "Summary:\r\niOS 8 beta 3 introduces the new SKActionTimingFunction type and the corresponding timingFunction property on SKAction. Great, I've wished for that since the first beta of iOS 7 and Sprite Kit. So thanks for that! :-)\r\n\r\nHowever, the current implementation is severely limited. According to the comments in the header:\r\n\r\n\"Input time will be linear 0.0-1.0 over the duration of the action. Return values must be 0.0-1.0 and increasing and the function must return 1.0 when the input time reaches 1.0.\"\r\n\r\nThat makes these timing functions unusable for anything but the simplest of timing curves.\r\n\r\n1) It does not allow overshoot or undershoot because that requires that the intermediate timing values can become less than 0.0 or greater than 1.0.\r\n\r\n2) Having the requirement that the values are always increasing prevents bouncing effects.\r\n\r\nTo overcome the absence of custom timing functions in iOS 7's Sprite Kit, I had to create my own classes that basically replicate what SKAction does, but allowed for custom timing. That's a bit silly but the only usable solution for now. You can see that work here: https://github.com/raywenderlich/SKTUtils\r\n\r\nI'd love to delete my own classes, but I can't do that until SKActionTimingFunction drops these restrictions.\r\n\r\nSteps to Reproduce:\r\nThis is a very common timing function:\r\n\r\nfunc backEaseIn(t: Float) -> Float {\r\n  let s: Float = 1.70158\r\n  return ((s + 1.0) * t - s) * t * t\r\n}\r\n\r\nIf you plot this curve, it drops briefly below 0.0 and then climbs up towards 1.0.\r\n\r\nTry to use it like this:\r\n\r\nlet action = SKAction.rotateByAngle(CGFloat(M_PI), duration:1)\r\naction.timingFunction = backEaseIn\r\nsprite.runAction(action)\r\n\r\n\r\nExpected Results:\r\nBefore the sprite rotates 180 degrees counterclockwise, it first rotates clockwise, as if it is gearing up for the big movement. This is anticipation, one of the 12 basic principles of animation.\r\n\r\nActual Results:\r\nThe sprite sits still while the output of the backEaseIn() function is less than 0.0 and only moves as soon as it becomes greater than 0. There is no sense of anticipation."
+    email: mail@hollance.com
+    modified: "2014-07-08T12:48:20.181111Z"
+    number: "17588949"
+    number_intvalue: 17588949
+    originated: "2014-07-08"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 8 beta 3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SKActionTimingFunction should allow values to go outside of the 0.0-1.0 range.

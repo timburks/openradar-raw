@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14943849"
+    labels:
+        datastore_id: "5683633302011904"
+data:
+    classification: ""
+    created: "2013-09-09T14:53:28.157583Z"
+    description: "NSFilesPromisePboardType has a note in the documentation:\r\n\r\n> On OS X v10.6 and later, use (NSString *)kPasteboardTypeFileURLPromise instead.\r\n\r\nIn Google Chrome 29 I switched from NSFilesPromisePboardType to kPasteboardTypeFileURLPromise. The complaints about how drag-and-drop broke came pouring in, and I had to revert.\r\n\r\nThere are four issues I am reporting; this is one of them. I will update this radar with links to the other three when I am done filing them all.\r\n\r\n---\r\n\r\nThere is no documentation for kPasteboardTypeFileURLPromise, but when we look in the header file HIServices/Pasteboard.h we see a list explaining how to use it:\r\n\r\n *    Order of operations on paste or drop\r\n[…]\r\n *    6) The sender's promise callback for kPasteboardTypeFileURLPromise is called.\r\n *    7) The sender uses PasteboardCopyPasteLocation to retrieve the paste location, creates the file\r\n *          and keeps its kPasteboardTypeFileURLPromise promise.\r\n\r\nPasteboardCopyPasteLocation takes a PasteboardRef. How do you create one from Cocoa, where you have an NSPasteboard*? NSPasteboard isn't bridged with PasteboardRef, so it takes a ton of boilerplate code. An email from cocoa-dev explained the amount of boilerplate required:\r\n\r\nhttp://lists.apple.com/archives/cocoa-dev/2012/Feb/msg00706.html\r\n\r\nThe equivalent code in Chrome was twenty lines. Requiring twenty lines of boilerplate code to properly do drag-and-drop is unacceptable. If you want people to use kPasteboardTypeFileURLPromise, you need to provide a Cocoa API, something like:\r\n\r\n- (NSURL*)pasteLocation;"
+    email: motownavi@gmail.com
+    modified: "2013-09-09T14:53:28.157796Z"
+    number: "14943849"
+    number_intvalue: 14943849
+    originated: 09-Sep-2013
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'kPasteboardTypeFileURLPromise broken: No way to get drop location in Cocoa'

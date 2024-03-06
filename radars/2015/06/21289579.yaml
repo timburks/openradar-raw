@@ -1,0 +1,62 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21289579"
+    labels:
+        datastore_id: "6114350808956928"
+data:
+    classification: Other Bug
+    created: "2015-06-08T21:46:25.23763Z"
+    description: |-
+        Summary:
+        SequenceType has Problems with partial application (rdar://21289273) so let’s take it out of the equation.
+
+
+        Steps to Reproduce:
+        1. Write this code:
+
+        protocol P {
+        	func f(x: Int) -> Int
+        }
+        extension P {
+        	func f(x: Int) -> Int { return x }
+        }
+
+        struct S: P {}
+
+        let f: P.f
+        let g: S -> Int -> Int = P.f
+
+
+        Expected Results:
+        Like before, f is wishful thinking.
+        g should compile tho.
+
+
+        Actual Results:
+        ./partial.swift:14:10: error: 'f' is not a member type of 'P'
+        let g: P.f
+               ~ ^
+        ./partial.swift:15:28: error: could not find an overload for 'f' that accepts the supplied arguments
+        let f: S -> Int -> Int = P.f
+                                 ~~^
+
+
+        Regression:
+        If these were free functions we could partially apply them, but nooooo.
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-06-08T21:46:25.23782Z"
+    number: "21289579"
+    number_intvalue: 21289579
+    originated: 08-Jun-2015 05:46 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-7-beta (7A120f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2: Protocol extension methods cannot be partially applied, full stop?'

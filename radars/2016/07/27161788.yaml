@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27161788"
+    labels:
+        datastore_id: "4958377574662144"
+data:
+    classification: Enhancement
+    created: "2016-07-04T16:22:30.93624Z"
+    description: "Summary:\r\nMy reading of the intended use of UICollectionViewLayout's invalidation workflow (as it exists starting in iOS 7) is to use `invalidateDataSourceCounts` as a indication to throw away or set-needs-update the data for the layout.\r\n\r\nNormally, my layout would do a naïve diff based on the counts of the old data structure and new data source to add and remove elements from my layout's data structures, but I emphasize this is a naïve pass. \r\n\r\nRebuilding the layout isn't suitable when implemented using self-sizing elements in iOS 8. An update animation would then cause all elements to animatedly shrink to their estimate, before cutting to their self-sizing height at the end of the animation as another layout pass is applied.\r\n\r\nThe only way to get properly incremental information is `UICollectionViewLayout.prepareForCollectionViewUpdates(_:)`, but that's only called after a full invalidation and rect-query, counter to its documentation.\r\n\r\nSteps to Reproduce:\r\n1. Implement `UICollectionViewLayout.prepareForCollectionViewUpdates(_:)`.\r\n2. Set up a deleteItemsAtIndexPaths(_:) or deleteSections(_:) batch update.\r\n3. Notice incorrect information is recorded.\r\n4. Add logging throughout your layout.\r\n5. Notice a full pass of `invalidateLayoutWithContext(_:)` and `layoutAttributesForElementsInRect(_:)` is triggered before getting to `prepareForCollectionViewUpdates(_:)`\r\n\r\nExpected Results:\r\nMy layout is able to record information about deleted elements in its layout data prior to having its information thrown away by `invalidateLayoutWithContext(_:)`.\r\n\r\nActual Results:\r\nIn debugging, notice that the invalidation that happens during directly during the processing of batch updates has an `_updateItems` ivar in LLDB. Become very sad.\r\n\r\nVersion:\r\niOS 10.0 (14A5261v)\r\n\r\nNotes:\r\nI was able to create a workable solution by having UICollectionViewLayoutInvalidationContext.invalidateDataSourceCounts set a \"ignore\" flag in my layout, which ignores all requests to `layoutAttributesForElementsInRect(_:)` et. al. until `prepareForCollectionViewUpdates(_:)` is reached, at which point I do a more appropriate incremental layout invalidation.\r\n\r\nThis solution is suboptimal; the `prepareFor` workflows in `UICollectionViewLayout` are outdated. Invalidation contexts should be the only mechanism by which changes occur to the layout for maximum performance. It seems you folks already realize this, because updates already go through that.\r\n\r\nIt would seem UICollectionViewFlowLayout is spared from this pain by using the default update-prep logic defined in the superclass. That logic isn't suitable for every kind of layout. :-/\r\n\r\nConfiguration:\r\niPhone 6s Plus 64GB T-Mobile, using Wi-Fi\r\n\r\nAttachments:"
+    email: zach@waldowski.me
+    modified: "2016-07-04T16:22:30.93643Z"
+    number: "27161788"
+    number_intvalue: 27161788
+    originated: 04-Jul-2016 12:22 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 10.0 (14A5261v)
+    reproducible: Sometimes
+    resolved: "false"
+    status: Open
+    title: Expose UICollectionViewLayoutInvalidationContext.updateItems

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9952691
+    labels:
+        datastore_id: "5523009431404544"
+data:
+    classification: ""
+    created: "2022-03-11T13:31:33.531867Z"
+    description: "Run the code below. Press the button once (or twice at most) is almost certain to crash the app. \r\n\r\nThe app shows a list containing two sections, each of which have four items. When button is pressed, it inserts a new item into each section and also changes the section order.\r\n\r\nimport SwiftUI\r\n\r\nlet groupNames = (1...2).map { \"\\($0)\" }\r\nlet groupNumber = groupNames.count\r\n\r\nlet itemValues = (1...4)\r\nlet itemNumber = itemValues.count\r\n\r\nstruct Item: Identifiable {\r\n    var value: Int\r\n    var id = UUID()\r\n}\r\n\r\nstruct Group: Identifiable {\r\n    var name: String\r\n    var items: [Item]\r\n    var id = UUID()\r\n    \r\n    // insert a random item to the group\r\n    mutating func insertItem() {\r\n        let index = (0..<itemNumber).randomElement()!\r\n        items.insert(Item(value: 100), at: index)\r\n    }\r\n}\r\n\r\nstruct Data {\r\n    var groups: [Group]\r\n\r\n    // initial data: 2 sections, each having 4 items.\r\n    init() {\r\n        groups = groupNames.map { name in\r\n            let items = itemValues.map{ Item(value: $0) }\r\n            return Group(name: name, items: items)\r\n        }\r\n    }\r\n    \r\n    // multiple changes: 1) reverse group order 2) insert a random item to each group\r\n    mutating func change() {\r\n        groups.reverse()\r\n        for index in groups.indices {\r\n            groups[index].insertItem()\r\n        }\r\n    }\r\n}\r\n\r\nstruct ContentView: View {\r\n    @State var data = Data()\r\n    \r\n    var body: some View {\r\n        VStack {\r\n            List {\r\n                ForEach(data.groups) { group in\r\n                    Section {\r\n                        ForEach(group.items) { item in\r\n                            Text(\"\\(group.name): \\(item.value)\")\r\n                        }\r\n                    }\r\n                header: {\r\n                        Text(\"Section \\(group.name)\")\r\n                    }\r\n                }\r\n            }\r\n            Button(\"Press to crash the app!\") {\r\n                withAnimation {\r\n                    data.change()\r\n                }\r\n            }\r\n            .padding()\r\n        }\r\n    }\r\n}"
+    email: huan.xiong@gmail.com
+    modified: "2022-03-11T13:31:33.532037Z"
+    number: FB9952691
+    number_intvalue: 9952691
+    originated: Mar 10, 2022
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "15.3"
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: 'SwiftUI List: changing section order + changing item = app crash'

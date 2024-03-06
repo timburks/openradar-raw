@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6426140"
+    labels:
+        datastore_id: "331"
+data:
+    classification: Enhancement
+    created: "2008-12-08T01:31:55.435041Z"
+    description: "Summary:\r\nThe KVO notifications that NSTreeController issues when the arrangedObjects key is modified are not sufficient to efficiently implement a custom tree view similar to NSOutlineView.\r\n\r\nDetail:\r\nAt present, if you want to implement a custom control that observes an NSTreeController via KVO you must observe the arrangedObjects key of NSTreeController to be notified when objects are added, moved or removed from the tree.\r\n\r\nThe problem with this is that the change dictionary passed in the - observeValueForKeyPath:ofObject:change:context: method does not contain information about which objects/tree nodes have been added or removed from the tree.\r\n\r\nThis requires any custom control to iterate through the entire tree to discover which objects have changed whenever a KVO notification for the arrangedObjects key is received. This is very inefficient and for large data sets will become a significant performance issue. Sample code similar to what is required at present is appended at the end of this report.\r\n\r\nEnhancement request:\r\nThe change dictionary that is passed when the arrangedObjects key is updated should contain the NSTreeNode objects that are being added or removed, as well as their key paths. This would allow for efficient handling of tree changes without expensive iteration.\r\n\r\nThe code I am using to handle arrangedObjects changes at present is similar to the code below:\r\n\r\n@implementation NSTreeController (Additions)\r\n//returns a flattened array of all the \"real\" objects in the tree.\r\n//We use this to handle registration and deregistration of observers of the objects that are being managed\r\n-(NSArray *) treeNodesAsArray:(NSArray*)nodes\r\n{\r\n\tNSMutableArray* theObjectArray=[NSMutableArray array];\r\n\tfor(NSTreeNode *node in nodes)\r\n\t{\r\n\t\t[theObjectArray addObject:[node representedObject]];\r\n\t\tif([[node childNodes] count])\r\n\t\t{\r\n\t\t\t[theObjectArray addObjectsFromArray:[self treeNodesAsArray:[node childNodes]]];\r\n\t\t}\r\n\t}\r\n\treturn theObjectArray;\r\n}\r\n\r\n-(NSArray*) representedObjects\r\n{\r\n\tif([self childrenKeyPath]==nil)\r\n\t\treturn nil;\r\n\tNSArray* arrangedObjects=[self arrangedObjects];\r\n\tif(arrangedObjects==nil)\r\n\t\treturn nil;\r\n\tNSArray* childNodes=[[self arrangedObjects]childNodes];\r\n\tif(childNodes==nil)\r\n\t\treturn nil;\r\n\treturn [self treeNodesAsArray:childNodes];\r\n}\r\n@end\r\n\r\nThen, in your controller:\r\n\r\n- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context\r\n{\r\n\tif (context == MyObservationContext)\r\n\t{\r\n\t\tNSArray *items = [treeController representedObjects];\r\n\t\t\r\n\t\t//if there has been no change, don't do anything\r\n\t\tif([items isEqualToArray:self.oldItems])\r\n\t\t\treturn;\r\n\t\t\r\n\t\t//get the items that have been added to the array\r\n\t\tNSMutableArray *newItems = [items mutableCopy];\r\n\t\t[newItems removeObjectsInArray: self.oldItems];\r\n\t\t\r\n\t\tNSMutableArray *removedItems = [self.oldItems mutableCopy];\r\n\t\t[removedItems removeObjectsInArray:items];\r\n\t\t\r\n\t\t//stop observing the removed items\r\n\t\t[self stopObservingOldItemProperties:removedItems];\r\n\t\t\r\n\t\t//start observing the new items\r\n\t\t[self startObservingNewItemProperties:newItems];\r\n\t\t\r\n\t\t//store the current array of items as the old array so we can compare it next time\r\n\t\tself.oldItems=items;\r\n\t\t\r\n\t\t//do whatever UI adjustments you need to do\r\n   }\r\n}"
+    email: rob.keniger@gmail.com
+    modified: "2011-08-28T05:48:56.598724Z"
+    number: "6426140"
+    number_intvalue: 6426140
+    originated: 07-Dec-2008 05:28 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.5/9F33
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: NSTreeController's KVO notifications not sufficient for custom controls

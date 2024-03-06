@@ -1,0 +1,46 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28289870"
+    labels:
+        datastore_id: "5578687084756992"
+data:
+    classification: Serious Bug
+    created: "2016-09-13T23:17:55.21673Z"
+    description: |-
+        Summary:
+        My company develops and maintains several iPhone applications for third-party OEMs that connect to an external accessory using the ExternalAccessory framework. As of Xcode 8 (all betas and GM) we cannot code sign our applications due to two conflicting requirements.
+
+        Using the ExternalAccessory framework now enforces the inclusion of the Wireless Accessory Configuration capability. This causes codesign to fail due to the WAC not being included in the default wildcard provisioning profile.
+
+        Now, I know what you're about to say. Use a custom AppID + provisioning profile with WAC enabled. The problem with this is that we must develop and codesign these apps for a bundle ID that is already in use; it is owned by the third-party OEM that we are working with. They do *not* share access to their certificates/IDs, so using their provisioning profile will not work. We provide a signed (with our Enterprise certificate) .ipa for testing and eventual resigning and submission to the app store.
+
+        So, we cannot just create a non-willard AppID because the portal will refuse to create one (app identifier in use).
+
+        Steps to Reproduce:
+        1. Create a new iOS project.
+        2. Link with the ExternalAccessory framework.
+
+        Expected Results:
+        Build and codesign without the need for the Wireless Accessory Configuration capability and entitlement.
+
+        Actual Results:
+        Codesign fails due to Wireless Accessory Configuration requirement. Xcode cannot generate appropriate appID+Profile due to bundle ID limitation.
+
+        Regression:
+        Xcode 7.x (and earlier) did not require the Wireless Accessory Configuration capability for using the ExternalAccessory framework.
+
+        Notes:
+        This issue has been noted in 27854513 and 19565319 but, now that Xcode 8 is live, it has become a blocking issue for building and releasing with Xcode.
+    email: logan.b.jones@gmail.com
+    modified: "2016-09-13T23:17:55.21702Z"
+    number: "28289870"
+    number_intvalue: 28289870
+    originated: 13-Sep-2016 04:17 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.0 (8A218a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Cannot codesign External Accessory app due to needless Wireless Acceessory Configuration requirement

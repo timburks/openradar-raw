@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "44727935"
+    labels:
+        datastore_id: "4999954644860928"
+data:
+    classification: Other Bug
+    created: "2018-09-24T15:59:03.644979Z"
+    description: "Summary:\r\nDocumentation for NSUserActivity states that the developer can use `-becomeCurrent` and `-resignCurrent` to manually manage which activity is broadcast for handoff or donated for Siri Shortcuts. The documentation, however, recommends that this should be left up to UIKit. The documentation states that by assigning the user activity to your view controller, UIKit will manage this automatically as view controllers are presented and dismissed. However, this does not appear to work correctly.\r\n\r\nSteps to Reproduce:\r\n0) See attached Xcode 10 Sample Project\n1) Create a new project with two NSUserActivity types in the info.plist\n2) Assign a user activity to the root view controller\n3) Assign a different user activity to the presented view controller\n4) Override `-updateUserActivityState:` in both view controllers so that we can monitor whether the system is managing the user activities\n5) Present and dismiss the view controller.\r\n\r\nExpected Results:\r\nWhen the root view controller appears on screen, the `-updateUserActivityState:` method on the root view controller should be called and a print statement should go to the console. When the presented view controller is presented, its `-updateUserActivityState:` method should be called and a print statement goes to the console. When dismissing the presented view controller, the  `-updateUserActivityState:` method of the root view controller should be called.\n\nAll of this activity should be managed for the developer by UIKit, at least according to the documentation.\r\n\r\nActual Results:\r\nDepending on where the user activity is assigned to the view controllers, there are different results:\n\nIn the sample project, the user activity is assigned during INIT. In this case, the root view controller’s activity is read correctly on launch. But the presented view controller’s activity is not read. Also, when the presented vc is dismissed, the root vc user activity is not made current again.\n\nIf the user activity is assigned in viewDidLoad, then the root view controller’s activity is not make current on launch but the presented view controller’s activity is. But still, when the presented view controller is dismissed, the root view controller’s activity is not updated again.\n\nIn this case, it is the developer’s responsibility to track when an activity becomes current or not, which the documentation said should be managed automatically.\r\n\r\nVersion:\r\n12.0\r\n\r\nNotes:\r\nDocumentation for this can be found here: https://developer.apple.com/documentation/sirikit/donating_shortcuts?changes=_4#2985637\n\n“Next, call the becomeCurrent() method on the user activity object to mark it as current, which donates the activity to Siri. Alternatively, you can attach the object to a UIViewController or UIResponder object, which also marks the activity as current.”"
+    email: googleaccount@jeffburg.com
+    modified: "2018-09-24T15:59:03.645128Z"
+    number: "44727935"
+    number_intvalue: 44727935
+    originated: 24-Sep-2018 08:58 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "12.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSUserActivity's 'Current' State not Properly Managed by UIKit

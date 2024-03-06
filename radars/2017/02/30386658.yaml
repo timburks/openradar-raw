@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30386658"
+    labels:
+        datastore_id: "6122935525834752"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2017-02-07T00:06:54.24967Z"
+    description: "Summary:\r\nIn Xcode 8.2, an enum inheriting from OSStatus can also be conformed to RawRepresentable in an extension. In Xcode 8.3 beta 2, this throws a compiler error.\r\n\r\nSteps to Reproduce:\r\n1. Paste this code into a macOS or iOS playground:\r\n\r\nenum Status: OSStatus {\r\n    case myStatus\r\n}\r\n\r\nextension Status: RawRepresentable {\r\n\r\n    var description: String {\r\n        switch self {\r\n        case .myStatus: return \"foo\"\r\n        }\r\n    }\r\n\r\n}\r\n\r\nStatus.myStatus.description\r\n\r\n// END CODE SAMPLE\r\n\r\nExpected Results:\r\nThe code builds and runs, outputting “foo”.\r\n\r\nActual Results:\r\nThe code fails to compile with the error:\r\nPlayground execution failed: error: 8.playground:1:14: error: use of undeclared type 'OSStatus'\r\nenum Status: OSStatus {\r\n             ^~~~~~~~\r\n\r\nerror: 8.playground:1:6: error: type 'Status' does not conform to protocol 'RawRepresentable'\r\nenum Status: OSStatus {\r\n     ^\r\n\r\nSwift.RawRepresentable:96:20: note: protocol requires nested type 'RawValue'; do you want to add it?\r\n    associatedtype RawValue\r\n                   ^\r\n\r\nerror: 8.playground:5:19: error: redundant conformance of 'Status' to protocol 'RawRepresentable'\r\nextension Status: RawRepresentable {\r\n                  ^\r\n\r\n8.playground:1:6: note: 'Status' declares conformance to protocol 'RawRepresentable' here\r\nenum Status: OSStatus {\r\n     ^\r\n// END COMPILATION ERROR SAMPLE\r\n\r\nRegression:\r\nThe code compiles and runs correctly in Xcode 8.2.1\r\n\r\nNotes:\r\nI encountered this when trying to build a project in Xcode 8.3 beta 2. The project has a dependency on the KeychainAccess library, which has an enum that inherits from OSStatus and then conforms to RawRepresentable in an extension. I filed a bug on that library to track this bug there as well: https://github.com/kishikawakatsumi/KeychainAccess/issues/306"
+    email: igeek1@gmail.com
+    modified: "2017-03-09T16:55:57.65234Z"
+    number: "30386658"
+    number_intvalue: 30386658
+    originated: 06-Feb-2017 07:06 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.3 beta 2 (8W120l)
+    reproducible: Always
+    resolved: 09-Mar-2017 11:51 AM
+    status: Resolved
+    title: 'Xcode 8.3 beta 2 Regression: enum inheriting from OSStatus can''t also conform to RawRepresentable'

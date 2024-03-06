@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14204574"
+    labels:
+        datastore_id: "3141401"
+data:
+    classification: Other Bug
+    created: "2013-06-19T17:23:59.658468Z"
+    description: "Summary:\r\nWe’re receiving crash reports from an app that uses AVCaptureDevice’s torch functionality as a flashlight. The code we call is as follows:\r\n\r\n[[self torchDevice] setTorchModeOnWithLevel:AVCaptureMaxAvailableTorchLevel error:error];\r\n\r\nThe problem is that in this case, error is NULL. I assume what’s happening is that the capture device encounters an error and tries to set the error parameter, but in dereferencing the NULL passed in, crashes. The crash is an EXC_BAD_ACCESS with the code “KERN_INVALID_ADDRESS at 0x0” which would support this hypothesis.\r\n\r\n\r\nSteps to Reproduce:\r\n1. Create an app that calls -[AVCaptureDevice setTorchModeOnWithLevel:error:]\r\n2. Pass NULL for the error parameter\r\n3. Create a condition such that the call encounters an error.\r\n\r\nExpected Results:\r\nThe call to -[AVCaptureDevice setTorchModeOnWithLevel:error:] will return NO.\r\n\r\nActual Results:\r\nThe call to -[AVCaptureDevice setTorchModeOnWithLevel:error:] crashes.\r\n\r\nRegression:\r\n-[AVCaptureDevice setTorchModeOnWithLevel:error:] is new in iOS 6. I’ve seen it on 6.0.x and 6.1.x builds.\r\n\r\nNotes:\r\nOther APIs that use error parameters work just fine when you pass NULL, which I use to signify that I don’t need an error returned to me. This could just be a case where the documentation is not clear."
+    email: SlaunchaMan@gmail.com
+    modified: "2015-01-13T05:27:33.437677Z"
+    number: "14204574"
+    number_intvalue: 14204574
+    originated: 19-Jun-2013 01:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 6.1.4
+    reproducible: Unable
+    resolved: ""
+    status: Insufficient information
+    title: Crash in -[AVCaptureDevice setTorchModeOnWithLevel:error:]

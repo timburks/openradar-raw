@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9109868
+    labels:
+        datastore_id: "4927835646984192"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2021-05-18T08:52:07.283245Z"
+    description: "Summary:\r\nScreen presented via NavigationLink gets popped out when it's observed object changes.\r\n\r\nSteps to reproduce:\r\n1. Create SwiftUI iOS app with following implementation\r\n```\r\nimport SwiftUI\r\n\r\n@main\r\nstruct PopBug2App: App {\r\n    var body: some Scene {\r\n        WindowGroup {\r\n            FirstView()\r\n        }\r\n    }\r\n}\r\n\r\nclass FirstViewModel: ObservableObject {\r\n    @Published var showDetails = false\r\n    let id = UUID()\r\n}\r\n\r\nclass SecondViewModel: ObservableObject {\r\n    @Published var value = false\r\n    let id = UUID()\r\n}\r\n\r\nstruct FirstView: View {\r\n\r\n    @StateObject private var viewModel = FirstViewModel()\r\n    @StateObject private var secondViewModel = SecondViewModel()\r\n\r\n    var body: some View {\r\n        NavigationView {\r\n            VStack {\r\n                NavigationLink(destination: Text(\"About\")) { Text(\"About\") }\r\n\r\n                NavigationLink(\r\n                    destination: SecondView(viewModel: secondViewModel),\r\n                    isActive: $viewModel.showDetails\r\n                ) { EmptyView() }\r\n\r\n                Button(\"Details\") {\r\n                    viewModel.showDetails = true\r\n                }\r\n            }\r\n        }\r\n    }\r\n}\r\n\r\nstruct SecondView: View {\r\n    @ObservedObject var viewModel: SecondViewModel\r\n\r\n    var body: some View {\r\n        VStack {\r\n            Text(\"Details\")\r\n\r\n            Button(\"Toggle view model value\") {\r\n                viewModel.value.toggle()\r\n            }\r\n        }\r\n    }\r\n}\r\n```\r\n2. Run the app\r\n3. Tap on 'Details' button\r\n4. Tap on 'Toggle view model value' button\r\n\r\nObserved behavior:\r\nScreen gets popped out after value in the view model changed\r\n\r\nExpected behavior:\r\nScreen stays open\r\n\r\nNote:\r\nBelieve issue was introduced in iOS 14.5, because I can’t reproduce it on previous versions.\r\nChanging view hierarchy by adding another NavigationLink fixes the issue.\r\n\r\nVersions:\r\nXcode 12.5 (12E262)\r\niOS 14.5.1 (18E212)\r\nmacOS 11.2.3 (20D91)"
+    email: azeffin@gmail.com
+    modified: "2021-05-18T08:52:07.283394Z"
+    number: FB9109868
+    number_intvalue: 9109868
+    originated: 18 May 2021
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Screen presented via NavigationLink gets popped out when it's observed object changes.

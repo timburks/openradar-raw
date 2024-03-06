@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7721292
+    labels:
+        datastore_id: "4969554308497408"
+data:
+    classification: ""
+    created: "2020-06-01T17:45:51.613073Z"
+    description: "We are seeing negative distance values from `CMPedometer` object sent to the updated handler of `-[CMPedometer startPedometerUpdatesFromDate:withHandler:]`. This seems to start at a negative value and then work its way forward as the users accrues distance:\r\n```\r\n2020-06-01 06:44:17.310\tnegative_pedometer_update\terror\t\t\"{ \"cumulative_distance\": -1.4304558401927352 }\"\r\n2020-06-01 06:44:17.302\tnegative_pedometer_update\terror\t\t\"{ \"cumulative_distance\": -3.0058954493142664 }\"\r\n2020-06-01 06:44:17.294\tnegative_pedometer_update\terror\t\t\"{ \"cumulative_distance\": -4.581335058435798 }\"\r\n2020-06-01 06:44:17.286\tnegative_pedometer_update\terror\t\t\"{ \"cumulative_distance\": -4.581335058435798 }\"\r\n2020-06-01 06:44:17.279\tnegative_pedometer_update\terror\t\t\"{ \"cumulative_distance\": -4.581335058435798 }\"\r\n2020-06-01 06:44:17.272\tnegative_pedometer_update\terror\t\t\"{ \"cumulative_distance\": -14.033972713630646 }\"\r\n2020-06-01 06:44:17.264\tnegative_pedometer_update\terror\t\t\"{ \"cumulative_distance\": -14.033972713630646 }\"\r\n2020-06-01 06:44:17.257\tnegative_pedometer_update\terror\t\t\"{ \"cumulative_distance\": -14.033972713630646 }\"\r\n2020-06-01 06:44:17.249\tnegative_pedometer_update\terror\t\t\"{ \"cumulative_distance\": -14.033972713630646 }\"\r\n2020-06-01 06:44:17.240\tnegative_pedometer_update\terror\t\t\"{ \"cumulative_distance\": -20.21515619382262 }\"\r\n2020-06-01 06:44:17.230\tnegative_pedometer_update\terror\t\t\"{ \"cumulative_distance\": -31.243233458604664 }\"\r\n2020-06-01 06:44:17.220\tnegative_pedometer_update\terror\t\t\"{ \"cumulative_distance\": -31.243233458604664 }\"\r\n2020-06-01 06:44:17.209\tnegative_pedometer_update\terror\t\t\"{ \"cumulative_distance\": -31.243233458604664 }\"\r\n```\r\nThese are all from a single app user's session. The timestamps aren't super relevant as they're related to when these messages were transferred from watchOS to iOS. Extra events from a timeframe of `2020-05-28` to `2020-06-01` are included for reference. This illustrates the start from a negative value and work its way forward for multiple users.\r\n\r\nThe system does something like this when the issue seems to occur:\r\n\r\n1. User says they want to start a workout within our application.\r\n2. `-[HKHealthStore startWorkoutSession:]`\r\n3. `-[CLLocationManager startUpdatingLocation]`\r\n4. `-[CMPedometer startPedometerUpdatesFromDate:[NSDate date] withHandler:...]`\r\n  - Started from `+[NSDate date]`, this handler dispatches to another object that moves the distance update to the main queue and then we log it on the main queue.\r\n5. `-[CMMotionManager startAccelerometerUpdatesToQueue:withHandler:]`\r\n\r\nShould we save the initial value from the `CMPedometer` update handler and then consider that our local `0` value? It seems like the API _should not_ return a negative value at any point especially for a series of values moving toward `0`."
+    email: SirAnaxagoras@gmail.com
+    modified: "2020-06-01T17:45:51.613233Z"
+    number: FB7721292
+    number_intvalue: 7721292
+    originated: Jun 1, 2020 at 11:39 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Core Motion API (watchOS)
+    product_version: ""
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: CMPedometer `startPedometerUpdatesFromDate:withHandler:` has negative `CMPedometerData.distance` value

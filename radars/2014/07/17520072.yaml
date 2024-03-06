@@ -1,0 +1,76 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17520072"
+    labels:
+        datastore_id: "6466864209199104"
+data:
+    classification: Serious Bug
+    created: "2014-07-01T13:32:02.353124Z"
+    description: |-
+        Summary:
+        The context-free grammar parser framework I’m writing makes use of an indirectly recursive enum Language. Terminal languages have no children, and nonterminals have one or two children via a Recur type parameter (because recursive enums cannot currently be compiled):
+
+        enum Language<Recur> {
+            case Literal(Character)
+            case Alternation(Recur, Recur)
+            case Concatenation(Recur, Recur)
+            case Repetition(Recur)
+            case Reduction(Recur, Character -> SyntaxTree)
+        }
+
+        However, the compiler does not currently support this.
+
+
+        Steps to Reproduce:
+        1. Write a type-parameterized enum with cases which have different numbers of elements of the parameterized type, e.g.:
+
+        enum NonFixedMultiPayloadEnum<T> {
+        	case Zero
+        	case One(T)
+        	case Two(T, T)
+        }
+
+        2. Try to compile it.
+
+
+        Expected Results:
+        I expected it to compile.
+
+
+        Actual Results:
+        It did not compile:
+
+        LLVM ERROR: unimplemented IRGen feature! non-fixed multi-payload enum layout
+
+
+        Regression:
+        As a workaround, I’ve defined Language using a class, Delay, which is parameterized by Recur:
+
+        enum Language<Recur> {
+            case Literal(Character)
+            case Alternation(Delay<Recur>, Delay<Recur>)
+            case Concatenation(Delay<Recur>, Delay<Recur>)
+            case Repetition(Delay<Recur>)
+            case Reduction(Delay<Recur>, Character -> SyntaxTree)
+        }
+
+        Delay is used for lazy evaluation, and while it is necessary in some contexts for the correctness of the algorithm, it would be vastly preferable to include it in the parameterized type Recur rather than directly in Language, as several uses of it do not require laziness and shouldn’t incur the cost of the indirection.
+
+        Note that if you remove the Repetition/Reduction cases, or the One case from the example above, the code compiles just fine—it doesn’t like mixing one instance of the parameterized type with two instances of it in the same enum, but doesn’t mind mixing two with zero.
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2014-07-01T13:32:02.353322Z"
+    number: "17520072"
+    number_intvalue: 17520072
+    originated: 01-Jul-2014 09:31 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta2 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Enums can’t have different numbers of fields of parameterized type'

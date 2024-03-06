@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34874069"
+    labels:
+        datastore_id: "5542256048078848"
+data:
+    classification: Security
+    created: "2017-10-08T01:20:52.18435Z"
+    description: "Summary:\r\nWhen automating the creation of an account, either via sysadminctl or createmobileaccount, the resulting account does not contain a SecureToken and therefore cannot enable FileVault. \r\n\r\nSteps to Reproduce:\r\n1. Log in as a user which contains SecureToken (i.e user with uid 501 created during setup assistant)\n\n2. Optional, but instructive: Bind the Mac to an Active Directory domain via System Preferences > Users > Login Options\n\n3. Create a user via one of these methods (whether bound or not):\n  a. sudo sysadminctl -addUser createdviacli -password foo -admin\n  b. sudo /System/Library/CoreServices/ManagedClient.app/Contents/Resources/createmobileaccount -n <domainusername>  \n  c. (Simply log out and log in with a domain account, which caches the account.\n\n4. Log in as the newly created user and attempt to enable FileVault.\r\n\r\nExpected Results:\r\n$ sudo sysadminctl -secureTokenStatus createdviacli\n2017-10-07 17:51:56.505 sysadminctl[674:9389] Secure token is ENABLED for user createdviacli\n\nbash-3.2$ sudo fdesetup enable\nPassword:\nEnter the user name:createdviacli\nEnter the password for user 'createdviacli':\nRecovery key = 'recovery key displayed here'\r\n\r\nActual Results:\r\n$ sudo sysadminctl -secureTokenStatus createdviacli\n2017-10-07 17:51:56.505 sysadminctl[672:9236] Secure token is DISABLED for user createdviacli\n\nbash-3.2$ sudo fdesetup enable\nPassword:\nEnter the user name:createdviacli\nEnter the password for user 'createdviacli':\nError: A problem occurred while trying to enable FileVault. (-69594)\r\n\r\nVersion:\r\nmacOS 10.3 (17A405)\r\n\r\nNotes:\r\nFor IT shops who deploy macs in a managed environment, and either script the creation of the user or bind those macs to Active Directory, this removes the ability to automate FileVault enablement for the given user. \n\nBefore you suggest a workaround to run `sysadminctl -adminUser <admin user> -adminPassword <plaintext password> -secureTokenOn createdviacli -password -`, please note that this is not a solution that will be taken seriously.  No self respecting admin would ever pass a plaintext password in that manner. \n\nEnabling FileVault via System Preferences also fails for users without SecureToken (e.g. any user created via cli). See attached screenshot."
+    email: chilcote@gmail.com
+    modified: "2017-10-08T01:20:52.18458Z"
+    number: "34874069"
+    number_intvalue: 34874069
+    originated: 07-Oct-2017 06:20 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: macOS 10.3 (17A405)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Users created via cli tools do not receive SecureToken

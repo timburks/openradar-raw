@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17255477"
+    labels:
+        datastore_id: "6385690937917440"
+data:
+    classification: Performance
+    created: "2014-06-10T19:37:06.826023Z"
+    description: "toInt() is far slower than creating an NSScanner and scanning. There is no toDouble(), so I wrote one, then in timing it discovered this. All of these would be blown away by low-level scanning without alloc/release of an NSScanner.\r\n\r\nimport Cocoa\r\n\r\nextension String {\r\n\r\nfunc parseDouble() -> Double? {\r\n\tif self == \"\" {\r\n\t\treturn nil\r\n\t}\r\n\tvar scanner = NSScanner(string:self)\r\n\tvar n = 0.0\r\n\tif scanner.scanDouble(&n) {\r\n\t\treturn n\r\n\t} else {\r\n\t\t//NSLog(\"Invalid double \\(self)\")\r\n\t\treturn nil\r\n\t}\r\n}\r\n\r\nfunc parseInt() -> Int? {\r\n\tif self == \"\" {\r\n\t\treturn nil\r\n\t}\r\n\tvar scanner = NSScanner(string:self)\r\n\tvar n = 0\r\n\tif scanner.scanInteger(&n) {\r\n\t\treturn n\r\n\t} else {\r\n\t\t//NSLog(\"Invalid integer \\(self)\")\r\n\t\treturn nil\r\n\t}\r\n}\r\n\r\nfunc parseHexInt() -> Int? {\r\n\tif self == \"\" {\r\n\t\treturn nil\r\n\t}\r\n\tvar scanner = NSScanner(string:self)\r\n\tvar n:CUnsignedInt = 0\r\n\tif scanner.scanHexInt(&n) {\r\n\t\treturn Int(n)\r\n\t} else {\r\n\t\t//NSLog(\"Invalid hex integer \\(self)\")\r\n\t\treturn nil\r\n\t}\r\n}\r\n\r\n}\r\n\r\nlet count = 10000\r\nlet s = \"1234\"\r\nvar t1 = CFAbsoluteTimeGetCurrent()\r\nfor var i = 0; i < count; ++i {\r\n\tvar n = s.toInt()\r\n}\r\nvar t2 = CFAbsoluteTimeGetCurrent()\r\nNSLog(\"toInt took \\(t2-t1) s\")\r\n\r\nt1 = CFAbsoluteTimeGetCurrent()\r\nfor var i = 0; i < count; ++i {\r\n\tvar n = s.parseInt()\r\n}\r\nt2 = CFAbsoluteTimeGetCurrent()\r\nNSLog(\"parseInt took \\(t2-t1) s\")\r\n\r\nt1 = CFAbsoluteTimeGetCurrent()\r\nfor var i = 0; i < count; ++i {\r\n\tvar n = s.parseDouble()\r\n}\r\nt2 = CFAbsoluteTimeGetCurrent()\r\nNSLog(\"parseDouble took \\(t2-t1) s\")\r\n\r\n// toInt took 4.900514960289 s\r\n// parseInt took 0.793006002902985 s\r\n// parseDouble took 0.780673027038574 s"
+    email: kamikaze.mark@gmail.com
+    modified: "2014-06-10T19:37:06.826152Z"
+    number: "17255477"
+    number_intvalue: 17255477
+    originated: "2014-06-10"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: Xcode6-beta
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift toInt() is excruciatingly slow

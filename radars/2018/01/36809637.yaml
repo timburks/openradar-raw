@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "36809637"
+    labels:
+        datastore_id: "5046741309063168"
+data:
+    classification: Security
+    created: "2018-01-24T05:59:20.056Z"
+    description: "Summary:\r\n\r\nI have the following code in a framework target for my app:\r\n\r\n---------------\r\nlet access = SecAccessControlCreateWithFlags(kCFAllocatorDefault,                                            \r\n                                             kSecAttrAccessibleWhenUnlockedThisDeviceOnly,\r\n                                             .privateKeyUsage,\r\n                                             nil)!\r\n\r\nvar attributes: [String: Any] = [\r\n    kSecAttrKeyType as String: encryptionType,\r\n    kSecAttrKeySizeInBits as String: encryptionBits,\r\n    kSecPrivateKeyAttrs as String: [\r\n       kSecAttrIsPermanent as String: true,\r\n       kSecAttrApplicationTag as String: \"abc\".data(using: .utf8) as Any,\r\n       kSecAttrAccessControl as String: access,\r\n    ],\r\n]\r\n\r\nif Device.hasSecureEnclave {\r\n    attributes[kSecAttrTokenID as String] = kSecAttrTokenIDSecureEnclave\r\n}\r\n\r\nvar error: Unmanaged<CFError>?\r\nSecKeyCreateRandomKey(attributes as CFDictionary, &error)\r\n---------------\r\n\r\nWhen I run this code on the device or in the simulator it works fine. When I run this code from a unit test it fails, reporting: Error Domain=NSOSStatusErrorDomain Code=-50 \r\n\"Key generation failed, error -50\" UserInfo={NSDescription=Key generation failed, error -50}\r\n\r\nSteps to Reproduce:\r\n\r\n1. Cut and paste the above code into a method in an app. Run the app in the simulator to verify a key pair is created and errSecSuccess (0) is returned from the call to SecKeyCreateRandomKey.\r\n\r\n2. Setup a unit test totes the framework containing this test. ie. No host application.\r\n\r\n3. Run the test. \r\n\r\nExpected Results:\r\n\r\nCode should succeed, returning a key and a success code of errSecSuccess (0)\r\n\r\nActual Results:\r\n\r\nInstead, a nil is returned and a success code of errSecParam(-50)\r\n\r\nVersion/Build:\r\n\r\nXcode Version 9.2 (9C40b)"
+    email: d4rkf1br3@gmail.com
+    modified: "2018-01-24T05:59:20.05622Z"
+    number: "36809637"
+    number_intvalue: 36809637
+    originated: 24/08/2018
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: "9.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 9.2: Keychain error when running unit test'

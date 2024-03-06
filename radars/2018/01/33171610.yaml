@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33171610"
+    labels:
+        datastore_id: "4989638108250112"
+data:
+    classification: ""
+    created: "2018-01-03T02:22:12.33808Z"
+    description: "Area:\r\nSomething not on this list\r\n\r\nSummary:\r\nWhen renaming a file within a directory from two filenames that differ only in case (e.g. from \"dir/test\" to \"dir/Test\"), `renameatx_np(2)` fails with `EEXIST`.  See the attached code for a repro.\r\n\r\nWe could work around this by excluding `RENAME_EXCL` in this case (same directory, filenames only differ in case), but `EEXIST` was surprising to me and felt like a bug.\r\n\r\nIn general, we would like to perform renames against the local filesystem without 1) accidentally clobbering files we don't know about yet (hence `RENAME_EXCL`) and 2) accidentally losing case changes the user has performed that we haven't discovered yet.\r\n\r\nTo fully achieve this, we'd like a version of `renameatx_np(dirfd, from, dirfd, to)` that...\r\n1) Fails with `ENOENT` if `from` does not exist _exactly_ within `dirfd` (in case we're requesting with a stale casing), modulo Unicode normalization on HFS+\r\n2) Succeeds within `dirfd` if `from` matches exactly and `to` differs from `from` only in case \r\n3) Fails with `EEXIST` otherwise with the current `RENAME_EXCL` behavior\r\n\r\nSteps to Reproduce:\r\n```\r\nsujayakar-mbp: sujayakar$ cat renameatx_np.c \r\n#include <stdio.h>\r\n#include <fcntl.h>\r\n\r\nint main(int argc, char** argv) {\r\n  if (argc != 3) {\r\n    printf(\"USAGE: %s <src> <dst>\\n\", argv[0]);\r\n    return 1;\r\n  }\r\n\r\n  int dir = open(\".\", O_DIRECTORY | O_RDONLY);\r\n  if (dir < 0) {\r\n    perror(\"open failed\");\r\n    return 1;\r\n  }\r\n\r\n  if (renameatx_np(dir, argv[1], dir, argv[2], RENAME_EXCL) < 0) {\r\n    perror(\"renameatx_np failed\");\r\n    return 1;\r\n  }\r\n\r\n  return 0;\r\n}\r\nsujayakar-mbp: sujayakar$ touch test\r\nsujayakar-mbp: sujayakar$ clang -g -O3 renameatx_np.c -o renameatx_np.out && ./renameatx_np.out test Test\r\nrenameatx_np failed: File exists\r\n```\r\n\r\nExpected Results:\r\nI expected this to succeed to rename \"test\" to \"Test\"\r\n\r\nObserved Results:\r\n```\r\nrenameatx_np failed: File exists\r\n```\r\n\r\nVersion:\r\n10.12.3\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nI'm testing this on an HFS+ filesystem"
+    email: sujayakar@dropbox.com
+    modified: "2018-01-03T02:22:12.33834Z"
+    number: "33171610"
+    number_intvalue: 33171610
+    originated: July 6 2017
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.12.3
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: '`renameatx_np(2)` with `RENAME_EXCL` fails with case-changes within the same directory'

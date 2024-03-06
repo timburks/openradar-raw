@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "36824755"
+    labels:
+        datastore_id: "6175897874857984"
+data:
+    classification: Bug
+    created: "2018-01-24T16:02:32.63383Z"
+    description: "Summary:\r\nTLS traffic is severely constrained on macOS 10.13, limited to around ~30-40 MB/s rather than using the full available bandwidth (typically ~110 MB/s when using gigabit ethernet). This affects most of Apple's own apps including Safari, built in classes like NSURLSession, and even curl. This is a regression from 10.12, where transfers where able to use the full available bandwidth (to the best of my memory), and seems to stem from the version of LibreSSL/BoringSSL used internally by different tools.\r\n\r\nThis is unfortunate as it limits our ability to use the built in networking libraries to deliver high performance transfers on gigabit and faster networks. Worse, we have tried using curl to perform comparison transfers, and have noticed that building the same version of curl from scratch with openssl alleviates all of these issues, something we can't do with NSURLSession. This affects services running on the same machine using TLS over TCP, or other servers on the same gigabit network. \r\n\r\nSee also https://github.com/h2o/h2o/issues/1091#issuecomment-262706102 for some speed comparisons between library versions.\r\n\r\nSteps to Reproduce:\r\nSetup an nginx or other HTTPS server on the local machine. Connect to it using curl ($ curl -vk https://localhost/hugefile.bin > ./hugedownload.bin). Notice HTTPS speeds are strangely low considering we are connecting to ourselves.\r\n\r\nExpected Results:\r\nFaster than gigabit speeds since we are connecting to ourself.\r\n\r\nActual Results:\r\n~30-40 MB/s, or roughly a 3rd of a gigabit connection.\r\n\r\nVersion/Build:\r\nmacOS 10.13.2\r\n\r\nConfiguration:\r\nMac mini latest generation, 10.13.2\r\n\r\nnginx sample configuration:\r\n```\r\n    server {\r\n        listen       8081;\r\n        server_name  localhost;\r\n\troot /Users/localadmin/nginxtest;\r\n\r\n\tssl on;\r\n\r\n        ssl_certificate      /usr/local/etc/nginx/ssl/cert.crt;\r\n        ssl_certificate_key  /usr/local/etc/nginx/ssl/key.key;\r\n\r\n\tssl_protocols TLSv1.2;\r\n\r\n        ssl_session_cache    shared:SSL:1m;\r\n        ssl_session_timeout  5m;\r\n\r\n        ssl_ciphers  HIGH:!aNULL:!MD5;\r\n        ssl_prefer_server_ciphers  on;\r\n\r\n    }\r\n```"
+    email: dimitribouniol@gmail.com
+    modified: "2018-01-24T16:02:32.6341Z"
+    number: "36824755"
+    number_intvalue: 36824755
+    originated: "2018-01-24"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS > Networking
+    product_version: 10.13.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SSL client traffic severely limited to ~30 MB/s when using NSURLSession, curl

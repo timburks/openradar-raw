@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18317629"
+    labels:
+        datastore_id: "4985893181980672"
+data:
+    classification: Serious Bug
+    created: "2014-09-12T07:39:40.391542Z"
+    description: "Summary:\r\nThe following NSXML methods:\r\n\r\n    * objectsForXQuery:constants:error:\r\n    * objectsForXQuery:error:\r\n    * nodesForXPath:error:\r\n\r\nepically fail to handle the descendant selector, running past the end of the element.\r\n\r\nSteps to Reproduce:\r\n1.  Use NSXML to read the DocBook RNG file.\r\n2.  Issue the following queries:\r\n\r\n    /grammar[1]/div[29]/define[4]/element[1]\r\n\r\n    /grammar[1]/div[29]/define[4]/element[1]//ref\r\n\r\n\r\nExpected Results:\r\nThe first query should return this element:\r\n\r\n<element name=\"para\"><a:documentation>A paragraph</a:documentation><s:pattern name=\"Root must have version\"><s:rule context=\"/db:para\"><s:assert test=\"@version\">The root element must have a version attribute.</s:assert></s:rule></s:pattern><ref name=\"db.para.attlist\"></ref><ref name=\"db.para.info\"></ref><zeroOrMore><choice><ref name=\"db.all.inlines\"></ref><ref name=\"db.nopara.blocks\"></ref></choice></zeroOrMore></element>\r\n\r\nand does.\r\n\r\nThe second query should return all of the <ref> elements within that blob.\r\n\r\nActual Results:\r\nThe second query returns all of the <ref> elements within that blob, plus every <ref> element from there to the end of the document.  Thus, searching for descendants is completely broken to the point of being unusable.\r\n\r\n\r\nVersion:\r\nOS X 10.9.4\r\n\r\n\r\nNotes:\r\nI'm not the only one running into this:\r\n\r\nhttp://stackoverflow.com/questions/24781425/nsxmlelement-nodesforxpath-name-returns-more-matches-than-descendants\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: dgatwood42@gmail.com
+    modified: "2014-09-12T07:39:40.391783Z"
+    number: "18317629"
+    number_intvalue: 18317629
+    originated: 12-Sep-2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSXML XQuery/XPath descendant support broken to the point of being useless

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16325626"
+    labels:
+        datastore_id: "5854210344091648"
+data:
+    classification: Critical
+    created: "2014-03-14T14:43:51.906306Z"
+    description: "File Coordination is *not* mutual exlusive, if:\r\n\r\n- coordinating the same file\r\n- both coordinators run on different threads simultaneously\r\n- both coordinators are initialized with the same file presenter\r\n\r\nThis **should** be either fixed or at least documented. Developers may mistakenly rely on mutual exclusion of file access within the same process on different threads.\r\n\r\n\r\nYou can verify this issue using the following example. It spawns two threads simultaneously locking the same file. The expected behavior is a deadlock, since one presenter locks the file forever (\"while(1);\"). However, due to this bug, no deadlock occurs: The first coordinator will lock the file forever by intend. The second coordinator will still succeed to lock the file, because it uses the same presenter. If you're using 'nil' as presenters, the program works correctly.\r\n\r\n------\r\n#import <Foundation/Foundation.h>\r\n\r\n@interface MyPresenter : NSObject <NSFilePresenter>\r\n{\r\n\tNSURL *_url;\r\n\tNSOperationQueue *_queue;\r\n}\r\n\r\n- (id)initWithURL:(NSURL *)url;\r\n\r\n@end\r\n\r\n@implementation MyPresenter\r\n\r\n- (id)initWithURL:(NSURL *)url\r\n{\r\n\tself = [self init];\r\n\t\r\n\tif (self) {\r\n\t\t_url = url;\r\n\t\t_queue = [NSOperationQueue new];\r\n\t\t_queue.maxConcurrentOperationCount = 1;\r\n\t\t\r\n\t\t[NSFileCoordinator addFilePresenter: self];\r\n\t}\r\n\t\r\n\treturn self;\r\n}\r\n\r\n- (NSURL *)presentedItemURL\r\n{\r\n\treturn _url;\r\n}\r\n\r\n- (NSOperationQueue *)presentedItemOperationQueue\r\n{\r\n\treturn _queue;\r\n}\r\n\r\n@end\r\n\r\nint main(int argc, const char * argv[])\r\n{\r\n\t@autoreleasepool {\r\n\t\t// Create a new file\r\n\t\tNSURL *url = [NSURL fileURLWithPath: @\"test.txt\"];\r\n\t\t[@\"foo\" writeToURL:url atomically:YES encoding:NSUTF8StringEncoding error:NULL];\r\n\t\t\r\n\t\t// Setup a presenter on it\r\n\t\tMyPresenter *presenter = [[MyPresenter alloc] initWithURL: url];\r\n\t\t\r\n\t\t// Coordinate file access after two seconds. Should block forever, since the file is locked.\r\n\t\tdispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{\r\n\t\t\t[[[NSFileCoordinator alloc] initWithFilePresenter:presenter] coordinateWritingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newURL) {\r\n\t\t\t\t// This should never be reached, since the file is already locked\r\n\t\t\t\tNSLog(@\"This should never be reached!\");\r\n\t\t\t\texit(-1);\r\n\t\t\t}];\r\n\t\t});\r\n\r\n\t\t// Coordinate the file and block it forever. Thus other coordinators should *never* proceed\r\n\t\t[[[NSFileCoordinator alloc] initWithFilePresenter:presenter] coordinateWritingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newURL) {\r\n\t\t\twhile(1);\r\n\t\t}];\r\n\t}\r\n\t\r\n    return 0;\r\n}"
+    email: graeter@hydrixos.net
+    modified: "2014-03-14T14:46:50.861303Z"
+    number: "16325626"
+    number_intvalue: 16325626
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: File coordination is not mutual exclusive using the same presenter

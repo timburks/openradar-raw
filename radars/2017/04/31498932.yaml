@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31498932"
+    labels:
+        datastore_id: "6051893813968896"
+data:
+    classification: Serious Bug
+    created: "2017-04-07T12:59:11.10472Z"
+    description: "## Summary:\r\n\r\nSince Xcode 8.3, I've a strange XCTest behaviour that happens only on iOS 10.3 devices / simulator.\r\n\r\nI create a simple app:\r\n\r\n- a UITableViewController that create a static UITableView (in IB)\r\n- I add one cell in this tableview that only contains a UIButon with accessibilityIdentifier equal to \"button1\".\r\n\r\nIf I launch an UI test and log the buttons element\r\n\r\n    po XCUIApplication().buttons =>\r\n    \r\n    Find: Target Application 0x6000000bafa0\r\n        Output: {\r\n            Application 0x60000016ce40: {{0.0, 0.0}, {414.0, 736.0}}, label: 'TestXC'\r\n        }\r\n        ↪︎Find: Descendants matching type Button\r\n            Output: {\r\n                Button 0x60000016ccc0: traits: 8589934593, {{19.0, 71.0}, {46.0, 30.0}}, identifier: 'button1', label: 'Button'\r\n            }\r\n\r\nThere is only one button seen by the XCTest framework as expected and I can tap this button with a subscript:\r\nlet button = XCUIApplication().buttons[\"button1\"]\r\nbutton.tap()\r\n\r\nThis usecase is working perfectly on iOS 10.3, 10.2, 10.0 and 9.x.\r\n\r\nIf in this cell, I add a UISwitch, the buttons query is now:\r\n\r\n    po XCUIApplication().buttons =>\r\n    \r\n    Find: Target Application 0x6000002a1560\r\n        Output: {\r\n            Application 0x600000175600: {{0.0, 0.0}, {414.0, 736.0}}, label: 'TestXC'\r\n        }\r\n        ↪︎Find: Descendants matching type Button\r\n            Output: {\r\n                Button 0x6080001735c0: traits: 8589934593, {{19.0, 71.0}, {46.0, 30.0}}, identifier: 'button1', label: 'Button'\r\n                Button 0x608000173a40: traits: 8589934593, {{19.0, 71.0}, {46.0, 30.0}}, identifier: 'button1', label: 'Button'\r\n            }\r\n\r\nThere are now 2 buttons for the identifier 'button1' !\r\nIf I try to target the button, I've now an error \"Multiple matches found for \"button1\" Button\", whereas there is still only one button, and only one UI element with accessibility identifier equal to \"button1\"\r\n\r\n## Steps to Reproduce:\r\n\r\n1. Install Xcode 8.3\r\n2. Create a simple app with a UITableViewController and a static UITableView with one cell (you can use the sample provided)\r\n3. In this cell, add a UIButton with accessibilityIdentifier set to \"button1\" and one UISwitch element\r\n4. Add a UI test to tap this button: create a testSample method with this code\r\n\r\n    func testExample() {\r\n        let button = XCUIApplication().buttons[\"button1\"]\r\n        button.tap()\r\n    }\r\n\r\n## Expected Results:\r\n\r\nThe button should be tapped and the test should succeed.\r\n\r\n## Actual Results:\r\n\r\nThe test fails because \"Multiple matches found for \"button1\" Button\"\r\n\r\n## Version:\r\n\r\nXcode Version 8.3 (8E162)\r\n\r\n## Notes:\r\n\r\n\r\n##Configuration:\r\n\r\nThis test case is working with Xcode 8.3 on 10.2/10.1/10.0/9.x simulator. It fails only with 10.3 devices/simulator."
+    email: contact@manbolo.com
+    modified: "2017-04-07T12:59:59.57369Z"
+    number: "31498932"
+    number_intvalue: 31498932
+    originated: 07-Apr-2017 01:00 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "8.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'XCTest : Multiples Matches Found with Only One Button in UI'

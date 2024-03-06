@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21936501"
+    labels:
+        datastore_id: "6106676239269888"
+data:
+    classification: Other Bug
+    created: "2015-07-22T06:36:23.62832Z"
+    description: "Summary:\r\nA generic function that is declared to take a value that conforms to a protocol and the Type of the same protocol fails to take said arguments.\r\nIf I pass in a concrete struct that conforms, and that struct's dynamicType, no error is emitted.\r\n\r\nSteps to Reproduce:\r\nCompile the attached sample with Xcode 7.0 beta 4:\r\n\r\nxcrun -sdk macosx swiftc -c struct-conforming-protocol-dynamic-type-as-type-argument.swift\r\n\r\n\r\nExpected Results:\r\nSeems like it should compile *or* it should fail in the case that `value` is typed as Value instead of ValueProtocol.\r\n\r\n\r\nActual Results:\r\nThe to() function fails to match the passed arguments, with the errors\r\n\r\nstruct-conforming-protocol-dynamic-type-as-type-argument.swift:34:1: error: cannot invoke 'to' with an argument list of type '(ValueProtocol, t: ValueProtocol.Type)'\r\nto(value, t:value.dynamicType)\r\n^\r\nstruct-conforming-protocol-dynamic-type-as-type-argument.swift:34:1: note: expected an argument list of type '(T, t: T.Type)'\r\nto(value, t:value.dynamicType)\r\n^\r\n\r\nbut this seems like they do match with T=ValueProtocol.\r\n\r\n\r\nVersion:\r\nXcode 7.0 b4\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n\r\n/*\r\n\r\nxcrun -sdk macosx swiftc -c struct-conforming-protocol-dynamic-type-as-type-argument.swift\r\n\r\nThis results in errors, even though the second argument is supposed to be of ValueProtocol.Type. If `value` is not typed to ValueProtocol (so it is inferred as Value), then no error is emitted.\r\n\r\nstruct-conforming-protocol-dynamic-type-as-type-argument.swift:34:1: error: cannot invoke 'to' with an argument list of type '(ValueProtocol, t: ValueProtocol.Type)'\r\nto(value, t:value.dynamicType)\r\n^\r\nstruct-conforming-protocol-dynamic-type-as-type-argument.swift:34:1: note: expected an argument list of type '(T, t: T.Type)'\r\nto(value, t:value.dynamicType)\r\n^\r\n\r\n*/\r\n\r\npublic protocol ValueProtocol {\r\n    var value:Double { get }\r\n    init(_ value:Double)\r\n}\r\n\r\npublic struct Value : ValueProtocol {\r\n    public let value:Double\r\n    public init(_ value:Double) {\r\n        self.value = value\r\n    }\r\n}\r\n\r\npublic func to<T:ValueProtocol>(x:T, t: T.Type) -> T {\r\n    return t.init(x.value)\r\n}\r\n\r\nlet value:ValueProtocol = Value(10)\r\n\r\nto(value, t:value.dynamicType)"
+    email: twiomood@gmail.com
+    modified: "2015-07-22T06:36:23.62858Z"
+    number: "21936501"
+    number_intvalue: 21936501
+    originated: 21-Jul-2015 11:34 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0 b4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Spurious type mismatch calling generic function with protocol-conforming struct''s dynamic type'

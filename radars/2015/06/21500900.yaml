@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21500900"
+    labels:
+        datastore_id: "6140121686474752"
+data:
+    classification: Feature (New)
+    created: "2015-06-23T09:35:35.72621Z"
+    description: "Summary:\r\nWhen adding a method to a protocol using a protocol extension, swiftc segfaults if the method has a parameter with a default value, and that default value is calculated by calling another method in the protocol.\r\n\r\nSteps to Reproduce:\r\n1. Write this:\r\n\r\npublic extension SequenceType {\r\n    mutating func read(estimatedSize size: Int = underestimateCount()) -> [Generator.Element] {\r\n        var array: [Generator.Element] = []\r\n        array.reserveCapacity(size)\r\n        array.extend(self)\r\n        return array\r\n    }\r\n}\r\n\r\n2. Compile it\r\n\r\nExpected Results:\r\nThe code compiles correctly.\r\n\r\nActual Results:\r\nSegmentation fault with output like:\r\n\r\n1.\tWhile type-checking 'read' at [omitted]\r\n2.\tWhile type-checking expression at [omitted] RangeText=\"underestimateCount()\"\r\n\r\nThe full text of this error is attached, although the protocol extension was in this case embedded in a larger file within a project.\r\n\r\nRegression:\r\nNew feature in Swift 2.\r\n\r\nNotes:\r\nThis is easily worked around by making the parameter’s type optional, setting a default value of nil, and ??’ing to the default value you really wanted. That’s not how this feature is supposed to work, though!\r\n\r\n\r\n\r\n\r\n\r\nEngineering has provided the following feedback regarding this issue:\r\n\r\nWe correctly reject this now:\r\n\r\nt.swift:2:50: error: cannot invoke 'underestimateCount' with no arguments\r\n    mutating func read(estimatedSize size: Int = underestimateCount()) -> [Generator.Element] {\r\n                                                 ^\r\n\r\nbecause 'self' is not available within the default argument of a method. This appears fixed in Xcode 7 beta 2.\r\n\r\nPlease let us know whether the issue is resolved for you by updating your bug report."
+    email: brent@architechies.com
+    modified: "2015-07-03T01:14:39.18711Z"
+    number: "21500900"
+    number_intvalue: 21500900
+    originated: 23-Jun-2015 02:35 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A120f)
+    reproducible: Always
+    resolved: 25-Jun-2015 06:08 PM
+    status: Closed
+    title: 'Swift 2: Protocol extension method can''t use protocol method call as default parameter value'

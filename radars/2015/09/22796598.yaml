@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22796598"
+    labels:
+        datastore_id: "6118545213620224"
+data:
+    classification: Serious Bug
+    created: "2015-09-22T07:08:08.2652Z"
+    description: "This is a duplicate of rdar://21888197\n\nSummary:\r\nAn iOS app uses Core Data with the following configuration:\r\n– One entity with one string attribute (\"name\") and one boolean attribute (\"flag\").\r\n– Two managed object context connected to the same persistent store coordinator: the \"main\" context, created initially, and \"auxiliary\" context created on demand. Both contexts use main queue concurrency type for simplicity.\r\n– NSFetchedResultsController with a fetch request that fetches instances of that entity and orders them by \"name\", connected to \"main\" context.\r\n– Saves on \"auxiliary\" context are merged into the \"main\" context via mergeChangesFromContextDidSaveNotification method.\r\n\r\nWhen building this app using Xcode 7A152u (Xcode 7 beta 3) and running either iOS 9 beta 3 or iOS 8.4, changing the \"flag\" attribute on an object in \"auxiliary\" context, saving and merging this change into the \"main\" context results in fetch results controller reporting a NSFetchedResultsChangeMove with \"old\" index path equal to the \"new\" index path. This does not happen if building using Xcode 6.4 and running either iOS 8.4 or iOS 9 beta 3.\r\n\r\nSteps to Reproduce:\r\n1. Build an app using the description above (sample app attached).\r\n2. Create objects on \"main\" context with names: \"Object A\", \"Object B\", \"Object C\", and save the changes.\r\n3. Create an \"auxiliary\" context; fetch object with name \"Object A\" in that context, and change its \"flag\" attribute to anything.\r\n4. Save this \"auxiliary\" context.\r\n5. Save notification from \"auxiliary\" context is merged into \"main\" context.\r\n6. Fetched results controller responds to the merge.\r\n\r\nExpected Results:\r\nFetch results controller reports only update (NSFetchedResultsChangeUpdate) of the object with name \"Object A\", at index path (0,0).\r\n\r\nActual Results:\r\nFetch results controller reports an update of \"Object A\", but also a move (NSFetchedResultsChangeMove) from index path (0,0) to index path (0,0) of that same object, even though it didn't change its name (which affects the order in fetched results controller). A move from one index path to that same index path doesn't make sense.\r\n\r\nVersion:\r\niOS 9 beta 3 (13A4293g) or iOS 8.4 (12H143), this seems to be unrelated.\r\n\r\nNotes:\r\nNoting again: the issue seems to be caused either by Xcode 7 beta 3 (7A152u) or iOS 9 beta 3 SDK, since it also happens on iOS 8.4, while building the same app using Xcode 6.4 (6E35b) does not manifest the issue on either iOS 8.4 or iOS 9 beta 3.\r\n\r\nConfiguration:\r\nAny hardware or simulator.\r\n\r\nAttachments:\r\n'FRCUpdateDemo.zip' was successfully uploaded.\r\n(available on GitHub: https://github.com/vlas-voloshin/FRCUpdateBugDemo)"
+    email: Bernhard.Loibl@googlemail.com
+    modified: "2015-09-22T07:08:08.26547Z"
+    number: "22796598"
+    number_intvalue: 22796598
+    originated: 22-Sep-2015 09:07 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9 beta 3 (13A4293g)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSFetchedResultsController reports some updates incorrectly if app is built using Xcode 7A152u

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27626070"
+    labels:
+        datastore_id: "6161102635270144"
+data:
+    classification: UI/Usability
+    created: "2016-07-30T17:35:48.63338Z"
+    description: "Summary:\r\nHi!\r\n\r\nSo I'm looking at the Core Graphics grand renaming.  In CoreGraphics.apinotes there's:\r\n\r\n- Name: CGPDFContextBeginPage\r\n  SwiftName: CGContext.beginPDFPage(self:_:)\r\n\r\n- Name: CGBitmapContextGetWidth\r\n  SwiftName: getter:CGContext.width(self:)\r\n\r\nNotice that BitmapContext and PDFContext, essentially 'subclasses' of CGContext, have their calls placed up at CGContext.  The function calls themselves just take CGContextRefs because OOP in C.\r\n\r\nWith the C API, it's part of the name, and therefore in your face, that asking the context for a width requires a BitmapContext.\r\n\r\nBut with Swift 3 and the great renaming, these are now CGContext properties.  If you have a plain old context and bring up the completion window, it happily offers 'width' and 'beginPDFPage' on _any_ CGContext, and there's no hint that these only apply to context 'subclasses' until runtime, when you get errors like this:\r\n\r\n<Error>: CGBitmapContextGetWidth: invalid context 0x100e6c3c0.\r\nIf you want to see the backtrace, please set CG_CONTEXT_SHOW_BACKTRACE environmental varia\\\r\nble.\r\n\r\nSomeone who isn't extremely familiar with the API, doing Programming-by-completion (which is the vast majority of iOS / Mac developers) won't realize that they're completing the wrong thing until its too late.\r\n\r\nThis has effectively taken bug that can be found at coding time (the name has BitmapContext in it. Do I actually have a BitmapContext) to a runtime error.  Kind of the opposite of Swift's stated goals :-)\r\n\r\nAttached are two screenshots from a playground showing the completion suggestions for CGContext.\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\nVersion 8.0 beta 3 (8S174q)\r\n10.11.5 (15F34)\r\n\r\n\r\nNotes:\r\nOutside of this one wart, I _love_ _love_ _love_ the new CG API.  Wish I could have it in Objective-C land.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'Screen Shot 2016-07-30 at 1.27.39 PM.png' and 'Screen Shot 2016-07-30 at 1.27.47 PM.png' were successfully uploaded."
+    email: markd@badgertronics.com
+    modified: "2016-07-30T17:35:48.63366Z"
+    number: "27626070"
+    number_intvalue: 27626070
+    originated: 7/30/2016
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Version 8.0 beta 3 (8S174q)
+    reproducible: N/A
+    resolved: ""
+    status: Open
+    title: 'Core Graphics / Swift 3 : Core Graphics API changes hoist subclass features to CGContext, leading to unsafe calls'

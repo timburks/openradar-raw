@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25873955"
+    labels:
+        datastore_id: "4978660691935232"
+data:
+    classification: 2 - Important
+    created: "2016-04-22T09:20:11.94971Z"
+    description: "Summary:\r\nHi guys,\r\n\r\nI am currently experiencing a weird issue with AVAsset/AVURLAsset class.\r\nI am implementing a method to know if our video media format is compatible with the iOS device.\r\n\r\n- (void)checkVideoPlaybackSupport:(void (^)(BOOL isPlaybackSupported))result {\r\n  static NSString *const compatibilityVideo = @\"Medias/compatibility.mp4\";\r\n  NSString *const path = [[NSBundle mainBundle]\r\n       pathForResource:compatibilityVideo\r\n                 ofType:nil];\r\n  NSURL *const url = [NSURL fileURLWithPath:path];\r\n  __block AVAsset *asset = [AVAsset assetWithURL:url];\r\n  [asset loadValuesAsynchronouslyForKeys:@[@\"tracks\"]\r\n       completionHandler:^{\r\n            dispatch_async(dispatch_get_main_queue(),^{\r\n                 BOOL isPlayable = YES;\r\n                 for (AVAssetTrack *track in asset.tracks) {\r\n                      if(!track.isPlayable){\r\n                           isPlayable = NO;\r\n                      }\r\n                 }\r\n                 if (result) {\r\n                      result(isPlayable);\r\n                 }\r\n            });\r\n  }];\r\n}\r\n\r\nOn iPhone 5, the AVAsset isPlayable property returns NO, and it's video AVAssetTrack isPlayable property returns NO.\r\nBypassing the isPlayable property check, the media does not play at all in an AVPlayer either, on iPhone 5.\r\n\r\nOn iPhone 5S with iOS 9.2.1, the AVAsset isPlayable property returns NO, and it's video AVAssetTrack isPlayable property returns NO.\r\nBUT, bypassing the isPlayable property check, the media plays properly in an AVPlayer on iPhone 5S.\r\n\r\nOn iPhone 6Plus with iOS 9.3.1, the AVAsser isPlayable property returns YES, and it's video AVAssetTrack isPlayable property returns YES.\r\nThe media playes properly on iPhone 6Plus as expected.\r\n\r\nI was wondering why it plays on iPhone 5S when the isPlayable property says the opposite ?\r\nIf it's a bug from the iOS SDK, is there a workaround to know if a media is playable without playing it to see if it can play ?\r\nIs it related to the device ? the iOS version ? How could it be figured out ?\r\nShould I fill a radar about it ?\r\nI just read this one http://www.openradar.me/19703131‌ and it will never be addressed...\r\nOur biggest concern is to have to buy as many device as we may have to, to be able to check this behaviour on every device we want to target, just because the SDK does not seems to be accurate about this property check.\r\nAny help will be appreciated.\r\n\r\nBest regards\r\n\r\nSteps to Reproduce:\r\n1. Load the attached media as an AVAsset like in the code in the description\r\n2. Test it on iPhone 5S\r\n3. [AVAsset isPlayable] will return NO\r\n4. When an attempt to play with an AVPlayer, the asset plays properly\r\n\r\nExpected Results:\r\n[AVAsset isPlayable] should return YES\r\n[AVAssetTrack isPlayable] should return YES\r\n\r\nActual Results:\r\n[AVAsset isPlayable] returns NO\r\n[AVAssetTrack isPlayable] returns NO\r\n\r\nVersion:\r\niOS 9.2.1 (13D15)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 5S 16GB\r\n\r\nAttachments:"
+    email: maxime.chapelet@giroptic.com
+    modified: "2016-04-22T09:20:11.9499Z"
+    number: "25873955"
+    number_intvalue: 25873955
+    originated: 22-Apr-2016 11:17 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: AVAsset/AVURLAsset playable property not accurate on iPhone 5S

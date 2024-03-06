@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10969414"
+    labels:
+        datastore_id: "1568409"
+data:
+    classification: ""
+    created: "2012-03-02T04:52:39.201427Z"
+    description: "01-Mar-2012 11:50 PM Mark Rada:\r\nSummary:\r\n\r\nTrying to access the currently focused application through the system wide accessibility token does not work.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Get a reference to the system wide object (AXUIElementCreateSystemWide())\r\n2. Use AXUIElementCopyAttributeValue() to copy the kAXFocusedApplicationAttribute attribute\r\n3. Check the error code returned from AXUIElementCopyAttributeValue()\r\n4. CFShow() the pointer used in the AXUIElementCopyAttributeValue() call\r\n\r\nExpected Results:\r\n\r\nI expect that I will get an AXUIElementRef object placed in the pointer given to AXUIElementCopyAttributeValue().\r\n\r\nActual Results:\r\n\r\nThe pointer is never changed and the error code returned by AXUIElementCopyAttributeValue() tells me that there was some kind of error (kAXErrorCannotComplete).\r\n\r\nRegression:\r\n\r\nI do not know at what point this broke.\r\n\r\nNotes:\r\n\r\nI have included sample code to show the failure. It first shows that the role for the system wide object can be copied properly, and then it tries the same process to get the focused application but fails.\r\n\r\n{{{\r\n\r\n#import <Cocoa/Cocoa.h>\r\n\r\nint main() {\r\n  AXUIElementRef system = AXUIElementCreateSystemWide();\r\n  CFTypeRef       value = NULL;\r\n  AXError          code = 0;\r\n\r\n  code = AXUIElementCopyAttributeValue(system, kAXRoleAttribute, &value);\r\n  NSLog(@\"\\nAttr: %@\\nCode: %i\\nValue: %@\\n\\n\", kAXRoleAttribute, code, value);\r\n\r\n  code = AXUIElementCopyAttributeValue(system, kAXFocusedApplicationAttribute, &value);\r\n  NSLog(@\"\\nAttr: %@\\nCode: %i\\nValue: %@\\n\\n\", kAXFocusedApplicationAttribute, code, value);\r\n}\r\n\r\n}}}"
+    email: markrada26@gmail.com
+    modified: "2012-03-02T04:52:39.201696Z"
+    number: "10969414"
+    number_intvalue: 10969414
+    originated: 01-Mar-2012 11:50 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Accessibility
+    product_version: 10.7.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Accessibility SystemWide object does report the focused application

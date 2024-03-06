@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12418689"
+    labels:
+        datastore_id: "2094401"
+data:
+    classification: ""
+    created: "2012-10-03T01:28:45.927322Z"
+    description: "02-Oct-2012 09:25 PM Matthew Sibson:\r\nSummary:\r\n\r\nCalling the generated method to remove entities from an ordered relationship crashes at runtime.\r\n\r\nSteps to Reproduce:\r\n\r\n- (void)triggerBug\r\n{\r\n\t// Get all the books\r\n\tNSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];\r\n\tNSEntityDescription *entity = [NSEntityDescription entityForName:@\"Book\" inManagedObjectContext:self.managedObjectContext];\r\n\t[fetchRequest setEntity:entity];\r\n\tNSError *error = nil;\r\n\tNSArray *fetchedObjects = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];\r\n\t\r\n\t// Make a shelf\r\n\tShelf *shelf = [NSEntityDescription insertNewObjectForEntityForName:@\"Shelf\" inManagedObjectContext:self.managedObjectContext];\r\n\t\r\n\t// Add all books\r\n\tfor (Book *book in fetchedObjects) {\r\n\t\t[shelf addBooksObject:book];\r\n\t}\r\n\t\r\n\t// Remove a subset\r\n\tNSOrderedSet *booksToRemove = [NSOrderedSet orderedSetWithArray:fetchedObjects range:NSMakeRange(0, 3) copyItems:NO];\r\n\t[shelf removeBooks:booksToRemove];\r\n}\r\n\r\nExpected Results:\r\n\r\nThree of the books are removed from the relationship.\r\n\r\nActual Results:\r\n\r\nApplication crashes, with this log output:\r\n\r\n2012-10-02 21:04:53.476 CoreDataBooks[37705:c07] *** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '*** -[NSSet intersectsSet:]: set argument is not an NSSet'\r\n*** First throw call stack:\r\n(0x15c0012 0x13e5e7e 0x164ea4a 0x60e796 0x5910c9 0x60e603 0xf6768 0x87f8069 0x290c 0x25a3 0x93180f 0x931e01 0x932fab 0x944315 0x94524b 0x936cf8 0x240ddf9 0x240dad0 0x1535bf5 0x1535962 0x1566bb6 0x1565f44 0x1565e1b 0x9327da 0x93465c 0x241d 0x2345)\r\nlibc++abi.dylib: terminate called throwing an exception\r\n\r\nRegression:\r\n\r\niOS 5.1 and iOS 6.0 have this issue, you'll note I've used another approach to add books instead of the addBooks: method, as that fails with the same exception.\r\n\r\nThis issue can be worked around by looping around addBooksObject: or removeBooksObject: as appropriate.\r\n\r\nNotes:\r\n\r\nThe attached zip contains the above code snippet within the app delegate, the project is a modified copy of your own Core Data Books sample code. I added a model version in order to add the appropriate relationships in order to demonstrate this bug.\r\n\r\nThe project is for iPhone, we're seeing this bug in the wild on iPad, it seems to be platform agnostic.\r\n\r\n02-Oct-2012 09:25 PM Matthew Sibson:\r\n'CoreDataBooks.zip' was successfully uploaded"
+    email: yellowfruit@gmail.com
+    modified: "2012-10-03T01:28:45.927717Z"
+    number: "12418689"
+    number_intvalue: 12418689
+    originated: 02-Oct-2012 09:25 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Other
+    product_version: iOS 5.1/6.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Core Data crash when removing entities from an ordered relationship

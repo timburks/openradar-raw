@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28467897"
+    labels:
+        datastore_id: "5085991303905280"
+data:
+    classification: Significant bug
+    created: "2016-09-27T19:25:14.53504Z"
+    description: "Summary:\r\nOn macOS Sierra (but not on previous OSX versions), there is a runtime bug in MKMapKit. This bug impacts both MKPolylines and MKOverlays, both of which display only in the top-right quadrant of the map, when the mapType is .hybridFlyover.\r\n\r\nSwitching the mapType to .hybrid (or any of the other 2D map types) immediately fixes the bug.\r\n\r\nSteps to Reproduce:\r\n1. Create a new XCode project for macOS/Cocoa.\r\n2. Add a MKMapView to the main ViewController, and set the mapType property to .hybridFlyover\r\n3. Assign mapView.delegate = self, and alter the ViewController's declaration to add MKMapViewDelegate conformance.\r\n4. Create a track on the Map (MKPolyline). I suggest a circle or an elliptical shape for the track, so you can easily tell which portion of this track is being displayed correctly.\r\n5. Implement the mapView(rendererFor:overlay) method and make this simply return a MKPolylineRenderer with strokeColor set to NSColor.yellow and lineWidth set to 10.\r\n6. Pan the map so the track you created is in the center.\r\n\r\nExpected Results:\r\nYou would expect to see the entire track on the map. The \"2D\" screen snaps show successful results, which is what you get on OSX versions prior to macOS Sierra, and which is also what happens on macOS Sierra when the mapType is .hybrid, .satellite or .standard (i.e. a 2D map type).\r\n\r\nActual Results:\r\nWhat you actually see is only the portion of the track that's in the upper-right quadrant of the map. As you pan the map from side to side, any part of the track that's not in the upper-right quadrant disappears from the map. If you pan the map so the entire track is in the upper-right quadrant of the map, you can see the entire track. So you know that the track is capable of being rendered correctly by the MKPolylineRenderer(). Either that renderer isn't always being called by MapKit, or it's failing to render the portions of the track which lie outside the upper-right quadrant of the visible map.\r\n\r\nVersion:\r\nVersion 8.0 (8A218a), but has also been an issue with apps created using XCode v7.x, running on the macOS Sierra beta releases. So the issue would seem to be specific to the macOS Sierra MKMapKit runtime, rather than to the XCode IDE.\r\n\r\nThe same bug applies to MKOverlayRenderers for raster map tiles; they also are displayed only in the upper-right corner of the mapView.\r\n\r\nConfiguration:\r\nThere have been no variations in behaviour (tested with MacMini, iMac, MacBook, across a variety of languages and regional settings, using both retina and non-retina displays). This bug appears to be specific to macOS Sierra as it did not occur (and still does not occur) under OSX El Capitan."
+    email: paul.robin.manson@gmail.com
+    modified: "2016-09-27T19:25:14.53532Z"
+    number: "28467897"
+    number_intvalue: 28467897
+    originated: 9/26/2016
+    parent_number: '&{NULL_VALUE}'
+    product: MapKit SDK
+    product_version: macOS Sierra v10.12
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: MKMapKit on macOS Sierra only displays MKPolylines or MKOverlays in the top-right quadrant of the map, when the mapType is .hybridFlyover

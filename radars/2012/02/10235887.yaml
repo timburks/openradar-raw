@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10235887"
+    labels:
+        datastore_id: "1531402"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2012-02-23T10:51:04.083448Z"
+    description: "While a QCView is rendering, removing it from its superview causes the rendering thread to crash.\r\n\r\nBackground:\r\nI have a source list-style application, where one of the \"sources\" displays a QCView. When the source's view becomes visible, the source (an NSViewController subclass) sends -startRendering to its QCView. When the view is about to be removed, the source sends -stopRendering to the QCView, and then the source selection code swaps out that view hierarchy for another source's. \r\n\r\nWhen the source's view is swapped out, often the rendering thread will crash. It seems that if a frame is in progress, rendering continues until the frame has completed (that is, the -stopRendering call is asynchronous). But the view has already been removed, and the OpenGL context is now invalid, so the renderer crashes.\r\n\r\nUsing -pauseRendering instead of -stopRendering, I haven't seen any crashes.\r\n\r\n\r\nTo reproduce:\r\nHave a QCView running a composition.\r\n\r\n    [self.qcView startRendering];\r\n    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{\r\n        [self.qcView stopRendering]; // Omit this to crash every time; include this to crash most times\r\n        [self.qcView removeFromSuperview];\r\n    });\r\n\r\n\r\nDesired behavior:\r\nQC should handle its OpenGL context going away (btw that's speculation). Make it not crash like -pauseRendering. Or, make -stopRendering synchronous so it doesn't return until it's safe to remove the view."
+    email: me@JonathonMah.com
+    modified: "2012-02-23T10:51:04.084188Z"
+    number: "10235887"
+    number_intvalue: 10235887
+    originated: 04-Oct-2011 10:20 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.2
+    reproducible: Often
+    resolved: ""
+    status: Open
+    title: QCView race condition crash when removing from superview

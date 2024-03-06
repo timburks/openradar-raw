@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35772829"
+    labels:
+        datastore_id: "5620643227762688"
+data:
+    classification: Other Bug
+    created: "2017-11-30T16:26:47.63692Z"
+    description: "Summary:\r\n\r\nAs of iOS 11.1, [SKAction performSelector:onTarget:] fails to perform a selector on an unretained object in a simple test case.\r\n\r\nIn iOS 10.3.1, the selector is performed.\r\nAlternately, if either the action or the target are retained elsewhere in the app, the selector is performed.\r\n\r\n(Note that `performSelector:onTarget:` is documented to retain its target strongly, and it does, if the action itself is retained.  Perhaps [SKNode runAction] is the culprit?)\r\n\r\nSteps to Reproduce:\r\n\r\nStarting with the Xcode \"Game\" template for iOS:\r\n\r\n    @implementation GameScene\r\n\r\n    - (void)didMoveToView:(SKView *)view {\r\n      LifetimeLogger *lifetimeLogger = [[LifetimeLogger alloc] init];\r\n      SKAction *performSelectorAction = [SKAction performSelector:@selector(aLifetimeLoggerMethod) onTarget:lifetimeLogger];\r\n      [self runAction:performSelectorAction];\r\n    }\r\n\r\n    @end\r\n\r\nThe LifetimeLogger object is an NSObject with simple logging added to init and dealloc:\r\n\r\n    @interface LifetimeLogger : NSObject\r\n    - (void)aLifetimeLoggerMethod;\r\n    @end\r\n\r\n    @implementation LifetimeLogger\r\n\r\n    - (instancetype)init {\r\n      NSLog(@\"LifetimeLogger: init\");\r\n      return [super init];\r\n    }\r\n\r\n    - (void)dealloc {\r\n      NSLog(@\"LifetimeLogger: dealloc\");\r\n    }\r\n\r\n    - (void)aLifetimeLoggerMethod {\r\n      NSLog(@\"LifetimeLogger: aLifetimeLoggerMethod\");\r\n    }\r\n\r\n    @end\r\n\r\nExpected Results:\r\n\r\n(These results logged using iPhone 6 Simulator iOS 10.3.1.)\r\n\r\n  2017-11-30 11:05:57.651 TestPerformSelector[22086:2466019] LifetimeLogger: init\r\n  2017-11-30 11:05:57.654 TestPerformSelector[22086:2466019] LifetimeLogger: aLifetimeLoggerMethod\r\n  2017-11-30 11:05:57.655 TestPerformSelector[22086:2466019] LifetimeLogger: dealloc\r\n\r\nActual Results:\r\n\r\n(These results logged using iPhone 6 Simulator iOS 11.1.  The selector is not performed on the target by the action.)\r\n\r\n  2017-11-30 10:52:45.247456-0500 TestPerformSelector[21709:2445008] LifetimeLogger: init\r\n  2017-11-30 10:52:45.247737-0500 TestPerformSelector[21709:2445008] LifetimeLogger: dealloc\r\n\r\n\r\nVersion/Build:\r\n\r\nn/a\r\n\r\nConfiguration:\r\n\r\nn/a"
+    email: karlvoskuil@gmail.com
+    modified: "2017-11-30T16:26:47.63716Z"
+    number: "35772829"
+    number_intvalue: 35772829
+    originated: 11/30/2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK SpriteKit
+    product_version: "11.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '[SKAction performSelector:onTarget:] fails to perform selector in iOS 11'

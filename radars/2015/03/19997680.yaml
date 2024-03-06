@@ -1,0 +1,59 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19997680"
+    labels:
+        datastore_id: "6449978746601472"
+data:
+    classification: Other Bug
+    created: "2015-03-01T00:11:23.13548Z"
+    description: |-
+        Summary:
+        Trying to work around rdar://19997577 I figured I’d write a function which applies one operand to another operand. That doesn’t fly because @noescape can’t be applied to parameters of parameters.
+
+
+        Steps to Reproduce:
+        1. Write this:
+        func apply<T, U>(@noescape f: T -> U, @noescape g: (T -> U) -> U) -> U {
+        	return g(f)
+        }
+
+        2. Oops, g’s parameter would need to be @noescape too!
+        3. Write this:
+        func apply<T, U>(@noescape f: T -> U, @noescape g: (@noescape T -> U) -> U) -> U {
+        	return g(f)
+        }
+
+        4. Hm, that’s not valid.
+        5. Write this:
+        func apply<T, U>(@noescape f: T -> U, @noescape g: (@noescape f: T -> U) -> U) -> U {
+        	return g(f)
+        }
+
+
+        Expected Results:
+        I expected something in this chain to work.
+
+
+        Actual Results:
+        None of it worked.
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        This is Damien’s fault. https://twitter.com/launchz/status/571822195120340992
+    email: rix.rob@gmail.com
+    modified: "2015-03-01T00:11:23.135714Z"
+    number: "19997680"
+    number_intvalue: 19997680
+    originated: 28-Feb-2015 07:11 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (6D532l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2b2: Parameters which are of function type cannot have their parameters marked as @noescape'

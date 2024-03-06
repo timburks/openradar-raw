@@ -1,0 +1,75 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20253447"
+    labels:
+        datastore_id: "6450499511386112"
+data:
+    classification: Serious Bug
+    created: "2015-03-22T21:57:36.719067Z"
+    description: |-
+        Summary:
+
+
+
+        Steps to Reproduce:
+        1. Run this:
+
+        	enum Tree: Printable {
+        		case Leaf(Int)
+        		case Branch(Int, [Tree])
+
+        		var children: [Tree] {
+        			switch self {
+        			case let Leaf:
+        				return []
+        			case let Branch(_, children):
+        				return children
+        			}
+        		}
+
+        		var description: String {
+        			switch self {
+        			case let Leaf(x):
+        				return ".Leaf(\(x))"
+        			case let Branch(x, children):
+        				let c = ",\n\t".join(map(children, toString))
+        				return ".Branch(\(x), [\n\t\(c)\n])"
+        			}
+        		}
+        	}
+
+        	let branch = Tree.Branch(1, [Tree.Leaf(2), Tree.Leaf(3)])
+        	println(branch.children)
+
+
+        Expected Results:
+        [.Leaf(2), .Leaf(3)]
+
+
+        Actual Results:
+        []
+
+
+        Regression:
+        Workarounds:
+
+        1. Use a pattern after the constructor name:
+        	case let Leaf(_):
+        2. Remove `let`:
+        	case Leaf:
+
+        Notes:
+        This is incredibly serious. It’s trivial to accidentally use `let` when you’re not actually binding anything, and it will completely mask this error. I’m frankly astonished I haven’t encountered this before—I can only assume that’s because I usually bind all of the variables. Or maybe I _have_, and missed the bug. That’s pretty scary.
+    email: rix.rob@gmail.com
+    modified: "2015-03-22T21:57:36.719179Z"
+    number: "20253447"
+    number_intvalue: 20253447
+    originated: 22-Mar-2015 05:57 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (6D543q)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2b3: `case let Case` without bindings incorrectly matches other cases'

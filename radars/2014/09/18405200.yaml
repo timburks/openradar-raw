@@ -1,0 +1,56 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18405200"
+    labels:
+        datastore_id: "5833294524448768"
+data:
+    classification: Serious Bug
+    created: "2014-09-21T01:05:57.751697Z"
+    description: |-
+        Summary:
+        If you have a protocol with an associated type that isn’t used in a method or something, you have to explicitly specify it with typealias in your conforming type. You cannot for example specify it with a type parameter of the same name, i.e.:
+
+        protocol P { typealias T }
+        struct S<T> : P {}
+
+        does not compile because S does not provide the associated type T.
+
+        One obvious thing to try is just `typealias T`, which also doesn’t compile because it doesn’t have `= …` following it.
+
+        The next thing to try is `typealias T = T`, which crashes the compiler.
+
+
+        Steps to Reproduce:
+        1. Compile this code:
+        struct S<T> {
+        	typealias T = T
+        }
+
+
+        Expected Results:
+        I didn’t really expect it to work but I certainly didn’t expect the compiler to crash.
+
+
+        Actual Results:
+        Among Swift’s weaponry are such diverse elements as fear, surprise, ruthless efficiency, and compiler crashes.
+
+
+        Regression:
+        If you do typealias T = T at the top level it correctly informs you that it’s a circular reference.
+
+
+        Notes:
+        This crash occurred while I was trying to reduce another crash that was in the way of what I’m trying to do. The yaks have gone recursive here, people!
+    email: rix.rob@gmail.com
+    modified: "2014-09-21T01:05:57.751909Z"
+    number: "18405200"
+    number_intvalue: 18405200
+    originated: 20-Sep-2014 09:05 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-Beta (6A1030)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: frontend crashes with recursive typealias'

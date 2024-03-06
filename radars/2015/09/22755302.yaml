@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22755302"
+    labels:
+        datastore_id: "5625886057431040"
+data:
+    classification: Other Bug
+    created: "2015-09-18T09:33:17.36527Z"
+    description: "Summary:\n\nThere is a bug in the action extension template (it assumes that an image will be found when an NSURL is returned). This means that the image in the sample is not populated. This is confusing for developers who expect Xcode template code to run correctly.\n\nSteps to Reproduce:\n\n1. File -> New Target… -> iOS -> Application Extension -> Action Extension\n\n2. Run it and select a photo (e.g., from Photos app)\n\nExpected Results:\n\nThe photo should display in the UIImageView in the ActionViewController\n\nActual Results:\n\nThe photo does not display.\n\nThe error is at:\n\n                    itemProvider.loadItemForTypeIdentifier(kUTTypeImage as String, options: nil, completionHandler: { (image, error) in\n                        NSOperationQueue.mainQueue().addOperationWithBlock {\n                            if let strongImageView = weakImageView {\n                                strongImageView.image = image as? UIImage\n                            }\n                        }\n                    })\n\n\nSample correct code:\n\n                    itemProvider.loadItemForTypeIdentifier(kUTTypeImage as String, options: nil, completionHandler: { (imageURL, error) in\n                        NSOperationQueue.mainQueue().addOperationWithBlock {\n                            \n                            if let strongImageView = weakImageView\n                            {\n                                if let imageURL = imageURL as? NSURL\n                                {\n                                    strongImageView.image = UIImage(data: NSData(contentsOfURL: imageURL)!)\n                                }\n                            }\n                        }\n                    })"
+    email: aralbalkan@gmail.com
+    modified: "2015-09-18T09:33:17.36548Z"
+    number: "22755302"
+    number_intvalue: 22755302
+    originated: 18-Sep-2015 12:32 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0 (7A218)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 7.0: iOS Action Extension template does not work (image is not shown in extension)'

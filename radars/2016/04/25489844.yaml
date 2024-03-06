@@ -1,0 +1,59 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25489844"
+    labels:
+        datastore_id: "4946887396294656"
+data:
+    classification: Serious Bug
+    created: "2016-04-01T14:19:00.33541Z"
+    description: |-
+        Summary:
+        When a __block variable is passed to a parameter expecting an __autoreleasing pointer, ARC doesn’t retain that variable after assignment. This leads to the variable unexpectedly being released at the end of the autorelease pool. Instead, there should be an error emitted saying that the variable isn’t __autoreleasing as expected.
+
+        Steps to Reproduce:
+        Compile the code below:
+
+        void (^blockWithOutPointerThatDispatchesLater)(NSObject * __autoreleasing *,
+                                                       dispatch_block_t) = ^(NSObject * __autoreleasing * outPointer,
+                                                                             dispatch_block_t block) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW,
+                                         (int64_t)(1 * NSEC_PER_SEC)),
+                           dispatch_get_main_queue(),
+                           block);
+            *outPointer = [NSObject new];
+        };
+
+        {
+            NSObject * __block blockVar2;
+            blockWithOutPointerThatDispatchesLater(&blockVar2,
+                                                   ^{
+                                                       NSLog(@"blockVar2: %@",
+                                                             blockVar2);
+                                                   });
+            // prints nil
+        }
+
+        Expected Results:
+        Clang should emit an error when we pass &blockVar2 to blockWithOutPointerThatDispatchesLater because the developer expects that blockVar2 would be retained.
+
+        Actual Results:
+        No error is emitted. blockVar2 is not retained, and the NSLog prints nil.
+
+        Regression:
+        Describe circumstances where the problem occurs or does not occur, such as software versions and/or hardware configurations.
+
+        Notes:
+        Provide additional information, such as references to related problems, workarounds and relevant attachments.
+    email: heath.borders@gmail.com
+    modified: "2016-04-01T14:19:00.3356Z"
+    number: "25489844"
+    number_intvalue: 25489844
+    originated: 01-Apr-2016 09:19 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Version 7.3 (7D175)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Clang should error when passing a non-__autoreleasing pointer to a parameter expecting an __autoreleasing pointer

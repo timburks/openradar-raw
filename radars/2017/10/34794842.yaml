@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34794842"
+    labels:
+        datastore_id: "4933669517000704"
+data:
+    classification: Bug
+    created: "2017-10-03T18:40:39.8131Z"
+    description: "(See https://stackoverflow.com/q/46225247/176304 for a formatted version w/ images)\r\n\r\nSummary:\r\n\r\nWhen using batch delete to delete a core data object, the object's external binary data is not deleted.\r\n\r\nSteps to Reproduce:\r\n\r\nI've set up a simple Core Data project. The data model defines an ImageProperty entity with a binary data attribute that \"Allows External Storage\".\r\n\r\nI don't make any changes to the implementation of the persistentContainer that is provided out-of-the-box:\r\n\r\n```swift\r\nlazy var persistentContainer: NSPersistentContainer = {\r\n    let container = NSPersistentContainer(name: \"ExternalStorage\")\r\n    container.loadPersistentStores(completionHandler: { (storeDescription, error) in\r\n        ...\r\n    })\r\n    return container\r\n}()\r\n```\r\n\r\nOn application launch, I create and save an instance of `ImageProperty` with data large enough to be stored externally. I then immediately delete that property using a batch delete:\r\n\r\n```swift\r\nlet entityName = String(describing: ImageProperty.self)\r\n\r\n// Create property\r\n\r\nlet entity = NSEntityDescription.entity(forEntityName: entityName, in: persistentContainer.viewContext)!\r\nlet property = ImageProperty(entity: entity, insertInto: persistentContainer.viewContext)\r\nproperty.data = NSData(contentsOfFile: Bundle.main.path(forResource: \"sample-house-a\", ofType: \"jpg\")!)\r\ntry! persistentContainer.viewContext.save()\r\n\r\n// Batch-delete property\r\n\r\nlet fetch: NSFetchRequest  = NSFetchRequest(entityName: entityName)\r\nlet request = NSBatchDeleteRequest(fetchRequest: fetch)\r\n_ = try! self.persistentContainer.viewContext.execute(request) as! NSBatchDeleteResult\r\ntry! self.persistentContainer.viewContext.save()\r\n```\r\n\r\nExpected Results:\r\n\r\nThe item has been deleted from the database, and the external file has been deleted from the _EXTERNAL_DATA folder.\r\n\r\nActual Results:\r\n\r\nThe item has been deleted from the database, but the external file has been deleted from the _EXTERNAL_DATA folder.\r\n\r\nVersion/Build:\r\n\r\niOS 11.0.1 (15A402)\r\n\r\nConfiguration:\r\n\r\nXcode 9.0 (9A235)\r\nDeployment Target: 11.0\r\nDefault \"Debug\" configuration"
+    email: RyanIPete@gmail.com
+    modified: "2017-10-03T18:40:39.81328Z"
+    number: "34794842"
+    number_intvalue: 34794842
+    originated: 10/3/17
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 11.0.1 (15A402)
+    reproducible: 100%
+    resolved: ""
+    status: Open
+    title: NSBatchDeleteRequest does not delete external files

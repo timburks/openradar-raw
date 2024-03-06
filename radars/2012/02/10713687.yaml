@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10713687"
+    labels:
+        datastore_id: "1538401"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2012-02-23T10:57:07.203484Z"
+    description: "In the attached code, a NSManagedObject subclass overrides -willTurnIntoFault and does a retain-autorelease on its managed object context. (Both ARC and non-ARC code are included; both trigger the same issue.)\r\n\r\nWhen the managed object context is released (with objects of this class registered), it enters the autorelease pool as a zombie, and is quickly sent -release, which crashes.\r\n\r\nThings that make this a bigger deal:\r\n1. With ARC, it's hard to control retain/autorelease behavior.\r\n2. With nested contexts, short-lived contexts will be more common.\r\n\r\nIn this case, calling -refreshObject:mergeChanges: on every registered object (#if'd out in the attached code) appears to force correct ordering.\r\n\r\nThis general pattern -- a master object is deallocating; children do a retain-autorelease, then master object gets a zombie release -- has come up other times too. (Notably when I had a rule editor's rows bound to a view controller; the binding was established in -awakeFromNib, but calling -unbind: in the view controller's -dealloc led to this same situation.)"
+    email: me@JonathonMah.com
+    modified: "2012-02-23T10:57:07.204066Z"
+    number: "10713687"
+    number_intvalue: 10713687
+    originated: 18-Jan-2012 01:23 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.3 (11D42)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSManagedObjectContext crash if autoreleased while deallocating

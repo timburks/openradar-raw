@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6910294"
+    labels:
+        datastore_id: "38415"
+data:
+    classification: Other Bug
+    created: "2009-05-21T11:15:40.759046Z"
+    description: "Summary:\r\nConforming to a protocol in a class extension does not cause the compiler to check that the protocol in question has been conformed to properly. I.e. no warnings are given for required methods in the protocol which are not present in the class. A little investigation demonstrates that the the protocol is not actually listed as being conformed to at runtime, either.\r\n\r\nOddly, it _does_ satisfy the type-checker, i.e. if you have a class extension declaring conformance to the RequireMe protocol and assign an instance of that class (in a scope where the class extension is visible) to a variable typed id<RequireMe>, no warning is generated—it is fine with the assignment, but doesn’t gripe about missing the required methods and doesn’t respond YES to [instance conformsToProtocol: @protocol(RequireMe)] (nor the class method version of the same).\r\n\r\n\r\nSteps to Reproduce:\r\n1. Make a protocol named RequireMe:\r\n\r\n\t@protocol RequireMe\r\n\t-(void)thisMethodIsRequired;\r\n\t@end\r\n\r\n2. Make a class.\r\n3. Make a class extension of that class, which adopts RequireMe:\r\n\r\n\t@interface TheClass () <RequireMe>\r\n\t@end\r\n\r\n4. Compile away.\r\n\r\n(Or, alternatively, build and run the attached project.)\r\n\r\n\r\nExpected Results:\r\nThe compiler should warn you that you have not implemented -thisMethodIsRequired even though it was adopted in the class extension.\r\n\r\n\r\nActual Results:\r\nNo such warning occurs; the compiler blithely ignores the issue, and you run into easily-avoidable runtime errors when required methods of the protocol are called on your instances.\r\n\r\n\r\nRegression:\r\nN/A\r\n\r\nNotes:\r\nI ran into this when setting up custom views with data sources (and attendant data source protocols). Rather than importing their headers in my controller class’ header, I imported them in the implementation file and adopted them in a class extension therein—and immediately noticed that the compiler was failing to note that I hadn’t implemented any of the required methods yet."
+    email: rix.rob@gmail.com
+    modified: "2011-08-28T05:46:47.660696Z"
+    number: "6910294"
+    number_intvalue: 6910294
+    originated: "2009-05-21"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: GCC 4.0, GCC 4.2, LLVM GCC 4.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Class extensions cannot adopt protocols correctly

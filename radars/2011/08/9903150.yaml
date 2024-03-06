@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9903150"
+    labels:
+        datastore_id: "1280420"
+data:
+    classification: Other Bug
+    created: "2011-08-05T10:41:03.891694Z"
+    description: "Summary:\r\n\r\nCoreData throws an Exception when removing NSCollectionView Items and saving while NSCollectionView is performing it's animation.\r\n\r\nProject setup/environment: CoreData model with two entities: \"Item\" and \"RelatedItem\". \"Item\" has a relation to \"RelatedItem\". Both entities each contain two attributes: \"foo\" and \"bar\" (NSString), which are bound to the view (NSCollectionViewItem).\r\n\r\nSteps to Reproduce:\r\n\r\nOpen attached Project or clone at https://github.com/artifacts/NSCollectionViewCoreDataBug\r\nHit \"Add\" button a couple of times. Some items will be added.\r\nSave document under an arbitrary name.\r\nStart clicking \"Remove\"-Button a couple of times and WHILE NSCollectionView IS ANIMATING hit Cmd-S to save.\r\nExpected Results:\r\n\r\nThe document should be saved without error.\r\n\r\nActual Results:\r\n\r\nCoreData could not fulfill a fault for '0x1001f40b0 x-coredata://64DE7FCC-8F74-4445-8F6F-173ECA2CB5C4/Item/p5'\r\n\r\nRegression:\r\n\r\nThis also happens in undo/redo scenarios. E.g.: Add some items, save, remove all items, save again, undo until no more undo possible, redo, CRASH:\r\n\r\n2011-08-05 12:28:01.942 CollectionViewCoreDataBug[73308:a0f] CoreData could not fulfill a fault for '0x1004e73a0 x-coredata://0F566CD9-715B-46EB-8E2F-66EF9CA08869/Item/p1' 2011-08-05 12:28:02.493 CollectionViewCoreDataBug[73308:a0f] CoreData could not fulfill a fault for '0x10047fc30 x-coredata://0F566CD9-715B-46EB-8E2F-66EF9CA08869/RelatedItem/p4' 2011-08-05 12:28:02.587 CollectionViewCoreDataBug[73308:a0f] Cannot remove an observer for the key path \"relatedItem.bar\" from , most likely because the value for the key \"relatedItem\" has changed without an appropriate KVO notification being sent. Check the KVO-compliance of the NSManagedObject class. 2011-08-05 12:28:02.598 CollectionViewCoreDataBug[73308:a0f] Serious application error. Exception was caught during Core Data change processing: CoreData could not fulfill a fault for '0x10047fc30 x-coredata://0F566CD9-715B-46EB-8E2F-66EF9CA08869/RelatedItem/p4' with userInfo { NSAffectedObjectsErrorKey = ( \" (entity: RelatedItem; id: 0x10047fc30 x-coredata://0F566CD9-715B-46EB-8E2F-66EF9CA08869/RelatedItem/p4 ; data: )\" ); }\r\n\r\nThis also happens on Lion.\r\n\r\nNotes:\r\n\r\nI'm not alone, see:\r\n\r\nhttp://stackoverflow.com/questions/4733911/is-nscollectionview-compatible-with-coredata/6951079#6951079"
+    email: michael.markowski@gmail.com
+    modified: "2011-08-28T05:35:07.150172Z"
+    number: "9903150"
+    number_intvalue: 9903150
+    originated: 2011/08/05
+    parent_number: '&{NULL_VALUE}'
+    product: OSX SDK
+    product_version: "10.6"
+    reproducible: Yes
+    resolved: No
+    status: Submitted
+    title: NSCollectionView not safely usable with CoreData

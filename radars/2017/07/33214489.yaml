@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33214489"
+    labels:
+        datastore_id: "5506444375883776"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2017-07-10T16:51:30.28827Z"
+    description: "Summary:\r\nWe’ve seen fork issues in our CI and started investigating what’s wrong here.\n\nThe open files on one of the machines with `lsof -u ci` shows about 70k lines of `/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS X.X.simruntime/Contents/Resources/RuntimeRoot/X`. A newly restarted machine doesn’t have any of those lines.\n\r\n\r\nSteps to Reproduce:\r\n`killall Simulator` and `killall com.apple.CoreSimulator.CoreSimulatorService` doesn’t remove those open files.\r\n\r\nExpected Results:\r\nKilling the Simulator should clean up all files opened by it.\r\n\r\nActual Results:\r\n`lsof -a -u ci +D /Library/Developer/CoreSimulator/Profiles/Runtimes | wc -l` returns 75033. This all looks way too much.\r\n\r\nVersion:\r\nXcode 8.3.3 / macOS 10.12.5\r\n\r\nNotes:\r\n`lsof -a -u ci +D /Library/Developer/CoreSimulator/Profiles/Runtimes -t | xargs kill -9` kills all of these processes. Will put that in the clean up script for now but this is a bug that should be fixed on the Simulator side. Many other people will run into that. We also increased the maxfiles limit of all machines from 512 to 65536 and added the above line to our clean up script.\n\nSysdiagnose of our CI is attached"
+    email: steipete@gmail.com
+    modified: "2017-07-10T16:51:30.28848Z"
+    number: "33214489"
+    number_intvalue: 33214489
+    originated: 10-Jul-2017 06:51 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.3.3 / macOS 10.12.5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: iPhone Simulator does not close opened files, leading to maxfiles issues and unusable system

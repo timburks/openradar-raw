@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "46784008"
+    labels:
+        datastore_id: "4928261977014272"
+data:
+    classification: ""
+    created: "2018-12-17T19:40:03.183507Z"
+    description: "Summary:\r\nWe are heavily using the MediaPlayer framework, and we are often setting queues. One of the cases in which we set a queue is in shuffling. We do not use the standard MediaPlayer shuffle because we then don't have visibility into what the shuffled queue looks like, so we manually shuffle the queue and set the new (shuffled) queue.\r\n\r\nA second use case also demonstrating this issue is attempting to add a new track to the end of the currently playing queue. \r\n\r\nHowever, when doing this, we are having an issue where the `currentPlaybackTime` is reset to 0 and the track starts playing from the beginning despite our attempts to move the playback time back to where the user was before she hit the shuffle or “add track to end of queue” button.\r\n\r\nA forum thread talking about this issue is here: https://forums.developer.apple.com/thread/85602 and seems to suggest the issue was created in iOS 11.3.\r\n\r\nWe have attempted to solve this issue in both of the suggested ways. First, by using the `prepareToPlay` with completionBlock, which simply did not work. Second, by using a modified version of the infinite while loop solution where we cap the attempts to move the playback position at 300 over 1.5 seconds. This seems to work about half the time, but also usually causes undesirable hitching in the playback when it works, and when it doesn't work, the position is set to 0 anyway.\r\n\r\nWe can solve this problem by simply accepting that we have to have the playback position reset to 0 anytime we set a new queue, but we would prefer to allow the user to resume playback where they were if it is possible to do so.\r\n\r\nSteps to Reproduce:\r\n1. Using the MediaPlayer framework, set a new queue of items.\r\n2. When the `MPMusicPlayerControllerNowPlayingItemDidChange` notification comes through, attempt to change the playbackPosition of the new now playing track to some time in the track's length.\r\n3. It will fail (9/10 times, in our experience) and the playback time will remain at 0.\r\n\r\nUsing code such as the following, the failure rate drops, but does not disappear:\r\n\r\n```\r\npauseAudio()\r\n// HAX: A new queue has been set. Set the saved playback position when the track starts playing\r\nDispatchQueue.global().async { [unowned self] in\r\nvar index = 0\r\nwhile true {\r\nusleep(5000)\r\nif index > 300 {\r\nself.playbackPositionManager.updatePlaybackPosition(0)\r\nself.playAudio()\r\nbreak\r\n}\r\n\r\nif self.musicPlayerController.currentPlaybackTime != newPosition {\r\nself.musicPlayerController.currentPlaybackTime = newPosition\r\nself.playAudio()\r\nbreak\r\n}\r\n\r\nindex += 1\r\n}\r\n}\r\n```\r\n\r\nExpected Results:\r\nThe `currentPlaybackPosition` should successfully change the location of the new currently playing track\r\n\r\nActual Results:\r\nThe `currentPlaybackPosition` silently fails change the location of the new currently playing track for a significant period of time\r\n\r\nVersion/Build:\r\niOS 12.0 - 12.1\r\n\r\nConfiguration:"
+    email: joel@livio.io
+    modified: "2018-12-17T19:40:03.183697Z"
+    number: "46784008"
+    number_intvalue: 46784008
+    originated: December 17, 2018
+    parent_number: '&{NULL_VALUE}'
+    product: MusicKit on iOS
+    product_version: 12.0-12.1
+    reproducible: Yes
+    resolved: ""
+    status: open
+    title: Setting `currentPlaybackTime` fails after setting a new queue

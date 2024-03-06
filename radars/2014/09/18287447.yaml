@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18287447"
+    labels:
+        datastore_id: "5339972433346560"
+data:
+    classification: Bug
+    created: "2014-09-10T06:02:09.829385Z"
+    description: "Summary:\r\nObjects that implements Class-Only protocols are de-initialise while having active references. This undefined behaviour does not manifest while using a normal protocol.\r\n\r\nSteps to Reproduce:\r\n1. Create a Single View Application for iOS in Xcode\r\n2. Replace the ViewController.swift with the attached file\r\n3. Run the code in the Simulator\r\n4. The console log will show the deinit message of the object that implements the Class-Only protocol\r\n\r\nExpected Results:\r\nObjects that have active references should not de-initialise.\r\n\r\nActual Results:\r\nClasses that implements Class-Only protocol should not be de-initialised while having active references.\r\n\r\nVersion:\r\niOS 8\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nXcode Version 6.0 (6A313)\r\n\r\nAttachments:\r\n'ViewController.swift' was successfully uploaded.\r\n\r\n-------- ViewController.swift ----------\r\n\r\n\r\nimport UIKit\r\n\r\nprotocol FooProtocol {\r\n    var name: String { get }\r\n}\r\n\r\nprotocol BarProtocol: class {\r\n    var name: String { get }\r\n}\r\n\r\nclass Foo: FooProtocol {\r\n    \r\n    let name: String = \"Foo\"\r\n    \r\n    deinit {\r\n        println(\"\\(name) deinit\")\r\n    }\r\n}\r\n\r\nclass Bar: BarProtocol {\r\n    \r\n    let name: String = \"Bar\"\r\n    \r\n    deinit {\r\n        println(\"\\(name) deinit\")\r\n    }\r\n}\r\n\r\nclass Container {\r\n    \r\n    let foo: FooProtocol = Foo()\r\n    let bar: BarProtocol = Bar()\r\n}\r\n\r\nclass ViewController: UIViewController {\r\n\r\n    let container = Container()\r\n    \r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n        test(container.foo)\r\n        test(container.bar)\r\n    }\r\n    \r\n    func test(bar: BarProtocol) {\r\n        println(\"Test: \\(bar.name)\")\r\n    }\r\n    \r\n    func test(foo: FooProtocol) {\r\n        println(\"Test: \\(foo.name)\")\r\n    }\r\n\r\n\r\n}"
+    email: ivanchoo.private@gmail.com
+    modified: "2014-09-10T06:02:09.829579Z"
+    number: "18287447"
+    number_intvalue: 18287447
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 8
+    reproducible: Yes
+    resolved: Open
+    status: Open
+    title: Using Class-Only protocols in Swift causes ARC to de-initialise objects incorrectly

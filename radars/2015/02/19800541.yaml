@@ -1,0 +1,68 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19800541"
+    labels:
+        datastore_id: "6501344944848896"
+data:
+    classification: Serious Bug
+    created: "2015-02-11T20:12:07.46453Z"
+    description: |-
+        Summary:
+
+        The StartCalendarInterval key in a launchd plist doesn’t run a job after waking from sleep. According to the documentation:
+
+        “If you schedule a launchd job by setting the StartCalendarInterval key and the computer is asleep when the job should have run, your job will run when the computer wakes up.”
+
+        Steps to Reproduce:
+
+        1) Create a job that looks like this:
+
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+          "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>Label</key>
+            <string>org.furbo.dim</string>
+            <key>ProgramArguments</key>
+            <array>
+                <string>/Users/craig/bin/dim</string>
+            </array>
+            <key>StartCalendarInterval</key>
+            <dict>
+                <key>Hour</key>
+                <integer>17</integer>
+                <key>Minute</key>
+                <integer>00</integer>
+            </dict>
+        </dict>
+        </plist>
+
+        2) Sleep the machine at 16:50.
+
+        3) Wake the machine at 17:10.
+
+        Expected Results:
+
+        The /Users/craig/bin/dim script should run at 17:10 or thereabouts.
+
+        Actual Results:
+
+        The /Users/craig/bin/dim script never runs.
+
+        Notes:
+
+        If the machine is awake at 17:00, the script runs fine.
+    email: craig.hockenberry@gmail.com
+    modified: "2015-02-11T20:12:07.464776Z"
+    number: "19800541"
+    number_intvalue: 19800541
+    originated: 11-Feb-2015 12:11 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: Mac OS X 10.10.2 (14C109)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Mac OS X 10.10.2: launchd StartCalendarInterval doesn''t run jobs after waking from sleep.'

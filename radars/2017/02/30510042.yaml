@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30510042"
+    labels:
+        datastore_id: "4941696374669312"
+data:
+    classification: Other Bug
+    created: "2017-02-14T10:32:57.02406Z"
+    description: "Summary:\r\nWe have a target that builds a command line binary which has an embedded Info.plist. This Info.plist is pre-processed to add some versioning to the Info.plist. The Xcode build settings are roughly as follows:\r\n\r\nCREATE_INFOPLIST_SECTION_IN_BINARY = YES\r\nINFOPLIST_FILE = src/...some-path.../Info.plist\r\nINFOPLIST_OUTPUT_FORMAT = binary\r\nINFOPLIST_PREFIX_HEADER = $(BUILT_PRODUCTS_DIR)/Info.plist.h\r\nINFOPLIST_PREPROCESS = YES\r\n\r\nEverything works as expected the first time the binary is built. However, when then content of the file Info.plist.h is changed, which also causes its last modification date timestamp to be updated, then Info.plist is *NOT* re-processed. Instead the version found in Derived Sources (Preprocessed-Info.plist) is used which still contains the old values. Only a clean build will cause the Info.plist to be re-processed.\r\n\r\nNot only is that behavior a bug, I might be wrong but I think in previous Xcode versions this used to be working correctly (don't take my word for it, though)\r\n\r\nSteps to Reproduce:\r\nSee above. Just make a very simple command line target with an embedded Info.plist; \"Hello World\" should be sufficient.\r\n\r\nExpected Results:\r\nEvery time a built is made Xcode compare the last modification date of the already pre-processed Info.plist with the last modification date of the pre-process prefix header. If the pre-fix header has a newer date, the cached pre-processed Info.plist is deleted and re-created just like in case of a clean build.\r\n\r\nActual Results:\r\nOnce it has been pre-processed, it's never pre-processed again until you build clean.\r\n\r\nVersion:\r\n8.3 beta 2 (8W120l)\r\n\r\nNotes:\r\nThis problem is also reproducible with Xcode 8.2.*, so it's not a new Xcode 8.3 bug!"
+    email: m.hanauska@gmail.com
+    modified: "2017-02-14T10:32:57.02428Z"
+    number: "30510042"
+    number_intvalue: 30510042
+    originated: 14-Feb-2017
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 8.3 beta 2 (8W120l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Pre-processed, embedded Info.plist files are not updated anymore

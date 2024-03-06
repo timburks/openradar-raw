@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15902302"
+    labels:
+        datastore_id: "6376174766784512"
+data:
+    classification: Serious Bug
+    created: "2014-01-24T16:16:43.62175Z"
+    description: "Summary:\r\nThere appears to be a pretty significant leak of NSPathStore2 elements in SKTextureAtlas through the findTextureNamedFromAtlas method which I'm assuming is always called internally via the textureNamed method.  In our tests, we've seen this climb as high as 1GB.  Additionally, all one needs to do to trigger the bug is simply call textureNamed.  You don't need to use the resulting SKTexture, and ARC does nothing to cleanup any resulting unused resources.\r\n\r\nThe attached repro project demonstrates what happens when you access this API.\r\n\r\nSteps to Reproduce:\r\n1. Open the attached project in Xcode 5.0.\r\n2. Run the project either in a simulator or on an actual device.\r\n3. In the debug session, transfer debugging to Instruments.\r\n4. Switch the Statistics to Call Trees.\r\n5. Select the \"Show Obj-C Only\" call tree.\r\n6. Begin clicking on the simulator view (or tapping the device's screen) repeatedly.  The more times you do it, the more evident the leak becomes.\r\n7. Expand the -[SKTextureAtlas textureNamed:] tree.\r\n7.1 Expand the -[SKTextureAtlas findTextureNamedFromAtlas:] tree.\r\n7.2 Expand the -[NSString(NSPathUtilities) stringByDeletingPathExtension] tree.\r\n8. Note the amount of memory that +[NSPathStore2 pathStoreWithCharacters:length:] method is using.\r\n\r\nExpected Results:\r\ntextureNamed should return the sprite we need without leaving any resources required during the loading process of the sprite lingering in memory afterwards.  Furthermore, ARC should be able to release any unused resources.\r\n\r\nActual Results:\r\ntextureNamed instead will leave NSPathStore2 objects lingering in memory.  We've made every attempt to try and reduce the chances of this happening, such as making use of autorelease pools, but thus far nothing has had an impact.  Additionally, the leak actually seems to be occurring with NSPathStore2 in general, and any objects that make use of that API (or APIs that use it) don't seem to be removed from memory when they're no longer accessible.\r\n\r\nVersion:\r\n7.0/11A465\r\n\r\nAttachments:\r\nhttp://cl.ly/3X1D0N1v2A2z"
+    email: geenz@geenzo.com
+    modified: "2014-01-24T16:16:43.621973Z"
+    number: "15902302"
+    number_intvalue: 15902302
+    originated: 24-Jan-2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SpriteKit - NSPathStore2 leak via [SKTextureAtlas textureNamed:]

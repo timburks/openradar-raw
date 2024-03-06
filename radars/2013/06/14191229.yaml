@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14191229"
+    labels:
+        datastore_id: "3127405"
+data:
+    classification: Other Bug
+    created: "2013-06-18T18:21:23.509307Z"
+    description: "Summary:\r\nIf you have a duplicate class file in your project's folder in Finder, Xcode will always take the one in the root file of the project, even if the file reference in the .pbxproj is set to the correct file. This can cause mysterious build failures, since the file you edit is the correct one. Xcode should not crawl the file system, but instead should rely on the file references in the .pbxproj to build.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a new Empty View application.\r\n2. Create a custom NSObject class in a subfolder of your project, let's call this Foo.\r\n3. Copy the empty Foo.h/.m to the root folder of your project (where the AppDelegate, main.m etc are located). Do not add the copied empty Foo files to the project. Make sure to remove the ' copy' added to the file name.\r\n3. Open the original Foo class file in Xcode and add a method, -(void)bar\r\n4. In the ViewController.m, #import \"Foo.h\", in viewDidLoad, alloc/init a Foo, then call -bar.\r\n5. Try to build. It will fail. If you look in the preprocessor output, it's loading the empty Foo files located in the root folder of the project.\r\n\r\nExpected Results:\r\nXcode should ignore the duplicated file in the root folder of the project and build using the one referenced in the .pbxproj\r\n\r\nActual Results:\r\nXcode will load the file in the root folder of the project instead of the one specified in the .pbxproj\r\n\r\nRegression:\r\nYes. This is not a problem in Xcode 4.6.2 or 4.6.1\r\n\r\nNotes:\r\nAttached is a sample project that demonstrates this issue. The User class has a property and a single method on it, yet when the project is compiled the wrong file is used."
+    email: michele.titolo@gmail.com
+    modified: "2013-06-18T18:21:23.5095Z"
+    number: "14191229"
+    number_intvalue: 14191229
+    originated: 18-Jun-2013 11:20 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 5.0 (5A11314m)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Xcode 5 compiles wrong file if duplicated

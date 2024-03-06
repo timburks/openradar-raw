@@ -1,0 +1,60 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19152922"
+    labels:
+        datastore_id: "4848129622933504"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2014-12-05T04:20:54.823532Z"
+    description: |-
+        Summary:
+        Swift doesn’t let you define recursive local functions ( ಠ_ಠ — seriously grumpymaking), and if you try to trick it, it crashes.
+
+
+        Steps to Reproduce:
+        1. Compile this elaborate code!
+
+        func f() {
+        	func g() {
+        		{ g() }()
+        	}
+        }
+
+
+        Expected Results:
+        I expected it to allow me to capture g, or at least to shout at me with the usual “local functions cannot reference themselves” error.
+
+
+        Actual Results:
+        Swift noticed my subterfuge and crashed just to spite me.
+
+
+        Regression:
+        If you don’t use the closure it just says:
+
+        ./spurious-local-nested-function-error-of-doom.swift:5:3: error: local functions cannot reference themselves
+
+        You can get a variation on this crash by returning the function from the closure instead of calling it and binding that to a constant, but it has a pretty similar stack trace. For completeness’ sake, the code:
+
+        func f() {
+        	func g() {
+        		let h = { g }()
+        	}
+        }
+
+
+        Notes:
+        I was delighted to encounter this one in the reduction of a spurious compiler error rather than in my actual code ✨
+    email: rix.rob@gmail.com
+    modified: "2014-12-05T04:20:54.823664Z"
+    number: "19152922"
+    number_intvalue: 19152922
+    originated: 04-Dec-2014 11:20 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2006)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Vindictive crash when capturing local function in a closure'

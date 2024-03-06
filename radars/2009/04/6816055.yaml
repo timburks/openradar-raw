@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6816055"
+    labels:
+        datastore_id: "34401"
+data:
+    classification: Serious Bug
+    created: "2009-04-22T14:03:02.979115Z"
+    description: "Summary:\r\nParts before the dot in dot notation accessor calls runs twice\r\n\r\nReduced case:\r\n#import <Foundation/Foundation.h>\r\n\r\n@interface Foo : NSObject\r\n{\r\n@public;\r\n\tint callNo;\r\n}\r\n@property (readonly) int blah;\r\n-(Foo*)mustNotRunTwice;\r\n@end\r\n@implementation Foo\r\n-(Foo*)mustNotRunTwice;\r\n{\r\n\tcallNo++;\r\n\tNSLog(@\"mustNotRunTwice called %d time%s.\", callNo, (callNo==1)?\"\":\"s\");\r\n\treturn self;\r\n}\r\n-(int)blah; { return 0; }\r\n@end\r\n\r\n\r\nint main (int argc, const char * argv[]) {\r\n\tFoo *foo = [Foo new];\r\n\t\r\n\tNSLog(@\"Method accessor:\");\r\n\tfoo->callNo = 0;\r\n\t[[foo mustNotRunTwice] blah];\r\n\t\r\n\tNSLog(@\"Dot accessor:\");\r\n\tfoo->callNo = 0;\r\n\t[foo mustNotRunTwice].blah;\r\n\t\r\n    return 0;\r\n}\r\n\r\n\r\nSteps to Reproduce:\r\n1. Compile the above as a Foundation tool\r\n\r\nExpected Results:\r\n2009-04-22 15:50:56.246 DotNotationBug[75608:10b] Method accessor:\r\n2009-04-22 15:50:56.249 DotNotationBug[75608:10b] mustNotRunTwice called 1 time.\r\n2009-04-22 15:50:56.250 DotNotationBug[75608:10b] Dot accessor:\r\n2009-04-22 15:50:56.250 DotNotationBug[75608:10b] mustNotRunTwice called 1 time.\r\n\r\nActual Results:\r\n2009-04-22 15:50:56.246 DotNotationBug[75608:10b] Method accessor:\r\n2009-04-22 15:50:56.249 DotNotationBug[75608:10b] mustNotRunTwice called 1 time.\r\n2009-04-22 15:50:56.250 DotNotationBug[75608:10b] Dot accessor:\r\n2009-04-22 15:50:56.250 DotNotationBug[75608:10b] mustNotRunTwice called 1 time.\r\n2009-04-22 15:50:56.251 DotNotationBug[75608:10b] mustNotRunTwice called 2 times.\r\n\r\n\r\nRegression:\r\nThe bug appears fixed in GCC 4.2. 4.0 is however default in MacOS and a lot of developers are affected by this bug without knowing (imagine for example [foo autorelease].bar or [foo retain].bar). Also, 4.2 doesn't work on the iPhone as far as I know (and I use dot notation *a lot* in my iPhone apps, probably enough that this would affect performance if immediate steps are expensive).\r\n\r\nNotes:\r\nSee also rdar://6671614"
+    email: joachimb@gmail.com
+    modified: "2011-08-28T05:47:01.757391Z"
+    number: "6816055"
+    number_intvalue: 6816055
+    originated: 22-Apr-2009 04:00 PM
+    parent_number: "6220490"
+    product: Developer Tools
+    product_version: gcc 4.0, Xcode 3.1.2
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/6220490
+    title: Dot notation runs intermediate parts multiple times

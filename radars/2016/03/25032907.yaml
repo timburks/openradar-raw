@@ -1,0 +1,50 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25032907"
+    labels:
+        datastore_id: "4954592768950272"
+data:
+    classification: UI/Usability
+    created: "2016-03-08T14:13:44.52392Z"
+    description: |-
+        Summary:
+        We try to position a view on top / just under of the keyboard by using the UIKeyboardWillChangeFrameNotification and UIKeyboardDidChangeFrameNotification-notifications (we can not do that with an inputAccessoryView because of 25032665). Let aside that most of the notifications are garbage itself (totally wrong endFrames or irritating UIKeyboardBoundsUserInfoKey), their frequency is absurd (12 notifications when the iPad gets rotated - really?) and their patterns (docking the keyboard produces willChangeFrame, didChangeFrame, willShow, willChangeFrame, willShow, didChangeFrame, didShow, didChangeFrame, didShow), with the iOS-keyboards there is at least one notification that contains the right informations and we adapted our code to the patterns in a way so that we can pick out the correct notification.
+        Though, when a thirdparty-keyboard is being used, there is no notification that contains the right endFrame when the keyboard is undocked and being shown. So we are not able to show the view above the keyboard.
+
+        Steps to Reproduce:
+        1. Open the attached project
+        2. Execute it on an iPad
+        3. Install a thirdparty-keyboard-app - tested with “Fleksy” and “SwiftKey”
+        4. Tap into the textview to show the virtual keyboard - the orange view should move together with the keyboard
+        5. Choose an iOS-keyboard to undock it
+        6. Choose now the thirdparty-keyboard
+        7. Hide the keyboard
+        8. Tap again into the textview to show the virtual keyboard
+        9. The orange view is now hidden by the keyboard instead of being on top
+
+        If you struggle to reproduce it, the attached zip also contains a video demonstrating it.
+
+        Expected Results:
+        iOS should send one UIKeyboardWillChangeFrameNotification with the correct endFrame and one UIKeyboardDidChangeFrameNotification with the correct endFrame.
+
+        Actual Results:
+        It sends two willChangeFrame and two didChangeFrame-notifications, all with the wrong endFrames.
+
+        Regression:
+        -
+
+        Notes:
+        -
+    email: raise.rescue@gmail.com
+    modified: "2016-03-08T14:13:44.52407Z"
+    number: "25032907"
+    number_intvalue: 25032907
+    originated: 08-Mar-2016 03:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9.3b6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: End-Frame in UIKeyboardWillChangeFrameNotification / UIKeyboardDidChangeFrameNotification is wrong for thirdparty keyboards

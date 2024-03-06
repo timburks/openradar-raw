@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33049097"
+    labels:
+        datastore_id: "5050470783516672"
+data:
+    classification: Serious Bug
+    created: "2017-06-29T07:14:47.25484Z"
+    description: "Area:\r\nAudio\r\n\r\nSummary:\r\nIf an Inter-App Audio node configures its Remote IO audio unit with an input callback (kAudioOutputUnitProperty_SetInputCallback) and also publishes it (AudioOutputUnitPublish), then when it is hosted within Inter-App Audio, the input callback is called twice for each time interval, once from a thread called AURemoteIO::IOThread, once from a thread called com.apple.coreaudio.auserver.io.\r\n\r\nSteps to Reproduce:\r\nSee attached sample app; this is derived from the InterAppAudioSampler sample project provided by Apple; diff also attached for reference. The sample app configures an input callback which prints out the name of the current thread on the console. Build and run, then host the app within an IAA host like GarageBand.\r\n\r\nExpected Results:\r\nUpon hosting, \"AURemoteIO::IOThread\" should be printed out for each render interval.\r\n\r\nObserved Results:\r\n\"AURemoteIO::IOThread\" and \"com.apple.coreaudio.auserver.io\" are printed out for each render interval.\r\n\r\nVersion:\r\nTested on iOS 10.3.3\r\n\r\nNotes:\r\nThis is a problem for many apps that both publish their audio units via IAA and take input from the microphone, as this can cause double processing of the input handling code. The only workaround I have found is to defer input handling to the audio unit's render callback instead, and only use the input callback to retrieve the AudioTimeStamp. If one uses the mSampleTime element of the AudioTimeStamp, however, this is still likely to lead to problems as the sample times for the two invocations are different: upon hosting, the com.apple.coreaudio.auserver.io thread reports sample times starting from zero.\r\n\r\nConfiguration:\r\nTested on an iPad Air 2\r\n\r\n\r\nInterAppAudioSuite.zip: http://ds.michael.tyson.id.au/eESgNWSgNl\r\npatch.diff: http://ds.michael.tyson.id.au/jq1CVqPh5q"
+    email: michael@tyson.id.au
+    modified: "2017-06-29T07:14:47.25506Z"
+    number: "33049097"
+    number_intvalue: 33049097
+    originated: June 29 2017, 5:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS Audio
+    product_version: 10.3.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Inter-App Audio node input callback run twice per render session, on 2 different threads, when hosted

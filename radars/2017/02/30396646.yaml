@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30396646"
+    labels:
+        datastore_id: "4935346265522176"
+data:
+    classification: Other Bug
+    created: "2017-02-07T14:27:15.43201Z"
+    description: "Area:\r\nNetworking\r\n\r\nSummary:\r\nNSURLSession APIs are convenience APIs made to help the developer, and from what I can understand, should avoid the developer having to manually handle proxy settings.\r\n\r\nNSURLSessionStreamTask was created to allow developers to use raw TCP/IP connections over URL based ones (such as HTTP). However, it seems like the API only looks for potential SOCKS proxies, and completely ignores any HTTP(S) proxy that might be set.\r\n\r\nI find this highly surprising, as it is absolutely possible to use an HTTP(S) proxy for raw TCP/IP connections, simply by using the HTTP CONNECT method (RFC 2817 <https://tools.ietf.org/html/rfc2817>)\r\n\r\nI believe NSURLSessionStreamTask should handle HTTP(S) proxy by using HTTP Tunnelling through the CONNECT method, without requiring developers to do it.\r\n\r\nSteps to Reproduce:\r\n1. Install an HTTP proxy server (for example \"tinyproxy\" which can be installed locally using brew)\r\n2. Configure proxy to have it run on 127.0.0.1 and port 8888. Ensure logging is enabled\r\n3. Configure proxy to allow connection to port 587\r\n4. Edit /etc/hosts to have tiny.proxy point to 127.0.0.1\r\n5. Configure system setting to have both HTTP and HTTPS proxies point to 127.0.0.1:8888\r\n6. Ensure no SOCKS proxy are set (must be disabled)\r\n7. On a new project (or the one attached here), create an NSURLSession with +[NSURLSessionConfiguration defaultSessionConfiguration]\r\n8. Ensure `connectionProxyDictionary' is `nil' to request the API to use the system's settings\r\n9. Create a stream task to a remote server (eg. smtp-relay.gmail.com on port 587)\r\n10. Resume the task\r\n11. Read data from SMTP server\r\n\r\nExpected Results:\r\n1. Little Snitch asks whether tinyproxy can access smtp-relay.gmail.com on port 587\r\n2. tinyproxy logs show a CONNECT request to smtp-relay.gmail.com\r\n\r\nActual Results:\r\n1. Little Snitch asks whether Xcode or the running binary can access theguardian.com on port 587\r\n2. tinyproxy logs show no request to smtp-relay.gmail.com\r\n\r\nVersion:\r\n10.12.3 (16D32)\r\n\r\nNotes:\r\nSetting a SOCKS proxy will actually work, in that NSURLSessionStreamTask will try to connect to it, but if none are set, it doesn't try the HTTP proxies.\r\n\r\nAttached files:\r\nhttps://www.dropbox.com/s/w9tkge4j2l47isk/NSURLSessionStreamTask_HTTPProxies.zip?dl=0"
+    email: thibault.ml@gmail.com
+    modified: "2017-09-14T10:07:13.34004Z"
+    number: "30396646"
+    number_intvalue: 30396646
+    originated: 07-Feb-2017
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.12.3 (16D32)
+    reproducible: Always
+    resolved: Yes
+    status: Closed (Dupe)
+    title: NSURLSessionStreamTask doesn't try to use HTTP Tunnelling

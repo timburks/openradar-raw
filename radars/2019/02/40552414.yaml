@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "40552414"
+    labels:
+        datastore_id: "4926791328202752"
+data:
+    classification: IOKit
+    created: "2019-02-10T04:42:11.089345Z"
+    description: "Area:\r\nSomething not on this list\r\n\r\nSummary:\r\nI have come upon an issue with IOKit kexts where the content of a report descriptor returned from \"newReportDescriptor\" will cause a kext to be retained after a match. For example, using two report descriptors from the USB HID specification, a \"mouse\" descriptor will unload normally after being matched to, but a \"game pad\" descriptor will be retained and becomes unable to be unloaded.\r\n\r\nSteps to Reproduce:\r\nCreate an IOKit driver subclassing IOHIDDevice (also happens with IOUSBHostHIDDevice). Implement \"newReportDescriptor\" in the subclass. Return a report descriptor that describes a gamepad. Load and match the driver to a USB device. Attempt to unload the driver with kextunload.\r\n\r\nExpected Results:\r\nThe content of a report descriptor should not cause a kext to be retained. A gamepad report descriptor should be able to be unloaded the same as a mouse report descriptor.\r\n\r\nActual Results:\r\nKexts providing a gamepad report descriptor are retained, while mouse report descriptors are unloaded properly.\r\n\r\nVersion/Build:\r\nmacOS 10.13.4\r\n\r\nConfiguration:\r\nAttached is an Xcode project that can be used to recreate the error. Adjusting the content of the \"newReportDescriptor\" method to swap between the two included report descriptors reproduces the bug. I have been using both an Xbox One controller and a Steel Series Rival 300 mouse to match to both report descriptor types. It does not seem to matter what type of device is connected, so you should be able to edit the .plist to match to whatever device you would like.\r\n\r\nThe attached sysdiagnose is from after a successful match, after the device has been disconnected from the computer.\r\n\r\nAttachments:\r\nhttps://github.com/360Controller/360Controller/files/2655393/MeamLeakXcodeProject.zip\r\n(Sysdiagnose omitted)"
+    email: FranticRain@gmail.com
+    modified: "2019-02-10T04:42:11.089549Z"
+    number: "40552414"
+    number_intvalue: 40552414
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 11.0+
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: HID Report Descriptor content prevents kext unload

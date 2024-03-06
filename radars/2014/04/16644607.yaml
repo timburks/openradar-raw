@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16644607"
+    labels:
+        datastore_id: "5287242985635840"
+data:
+    classification: Serious Bug
+    created: "2014-04-17T09:05:08.595735Z"
+    description: "Summary:\r\nIf CoreData persistent Store is set to NSInMemoryStoreType, a fetch request which uses an NSExpressionDescription with [NSExpression expressionForFunction] (e.g. with @\"sum:\" to calculate an sum for a field) Core Data crashes (with [__NSCFNumber count]: unrecognized selector sent to instance) or fails to return array as a result (on empty database).   \r\n\r\nThe same fetch request with the same expression works correctly (without crash and returns desired result) when Core Data uses persistent store with NSSQLiteStoreType.\r\n\r\nSteps to Reproduce:\r\nCode: \r\n\r\n// Init fetch\r\nNSFetchRequest *request = [Drink fetchRequest];\r\n[request setResultType:NSDictionaryResultType];\r\n\r\n// Set column for query result\r\nNSExpression *keyPathExpression = [NSExpression expressionForKeyPath:@\"numberOfDrinks\"];\r\n\r\n// Set query expression (SUM)\r\nNSExpression *expression = [NSExpression expressionForFunction:@\"sum:\" arguments:[NSArray arrayWithObject:keyPathExpression]];\r\n\r\n// Set expression result name and type\r\nNSExpressionDescription *expressionDescription = [[NSExpressionDescription alloc] init];\r\n[expressionDescription setName:@\"countOfDrinks\"];\r\n[expressionDescription setExpression:expression];\r\n[expressionDescription setExpressionResultType:NSDecimalAttributeType];\r\n\r\n[request setPropertiesToFetch:[NSArray arrayWithObject:expressionDescription]];\r\n\r\n// Execute fetch\r\nNSError *error;\r\nNSArray *result = [pContext executeFetchRequest:request error:&error];\r\n\r\n\r\nTrace:\r\n-[__NSCFNumber count]: unrecognized selector sent to instance 0xc436060\r\n0   CoreFoundation                      0x0154e1e4 __exceptionPreprocess + 180\r\n1   libobjc.A.dylib                     0x032868e5 objc_exception_throw + 44\r\n2   CoreFoundation                      0x015eb243 -[NSObject(NSObject) doesNotRecognizeSelector:] + 275\r\n3   CoreFoundation                      0x0153e50b ___forwarding___ + 1019\r\n4   CoreFoundation                      0x0153e0ee _CF_forwarding_prep_0 + 14\r\n5   Foundation                          0x01a7f3cf +[_NSPredicateUtilities _getCommonTypeFor:] + 64\r\n6   Foundation                          0x01a7f656 +[_NSPredicateUtilities sum:] + 155\r\n7   Foundation                          0x0194e465 -[NSFunctionExpression expressionValueWithObject:context:] + 1260\r\n8   CoreData                            0x011f93ba -[NSMappedObjectStore executeFetchRequest:withContext:] + 2602\r\n9   CoreData                            0x011f891e -[NSMappedObjectStore executeRequest:withContext:error:] + 222\r\n10  CoreData                            0x011807f2 -[NSPersistentStoreCoordinator executeRequest:withContext:error:] + 4466\r\n11  CoreData                            0x0117df56 -[NSManagedObjectContext executeFetchRequest:error:] + 566\r\n12 -- app method calling to perform fetch request (code mentioned above)\r\n\r\n\r\nExpected Results:\r\nApp should not crash if Core Data stack is set with persistent store of NSInMemoryStoreType\r\n\r\nResult of the request should not be nil and should return array with 1 member.\r\n\r\nActual Results:\r\nOn empty database (Core Data stack is set with persistent store of NSInMemoryStoreType) fetch request returns nil instead of array with 1 member.\r\n\r\nIf database contains data, Core Data crashes while performing [context executeFetchRequest:request error:&error] with exception: [__NSCFNumber count]: unrecognized selector sent to instance\r\n\r\nVersion:\r\niOS 7.1 (11D167)\r\n\r\nNotes:\r\nRelated radars:\r\nrdar://12795203\r\nrdar://12021880\r\n\r\nConfiguration:\r\nXcode 5.1.1, iPhone 5S, iOS 7.1 (11D167)\r\nor\r\nXcode 5.1.1, iPhone Simulator 7.1, iOS SDK 7.1"
+    email: jkirsakmens@gmail.com
+    modified: "2014-04-17T09:05:08.595928Z"
+    number: "16644607"
+    number_intvalue: 16644607
+    originated: 17/04/2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CoreData crash/incorrect result using NSInMemoryStoreType and NSExpressionDescription with [NSExpression expressionForFunction:@"sum:"]

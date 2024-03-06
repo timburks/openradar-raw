@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "41019421"
+    labels:
+        datastore_id: "4973250526314496"
+data:
+    classification: Other Bug
+    created: "2018-06-11T21:29:00.95119Z"
+    description: "Area:\r\nPhotos Framework\r\n\r\nSummary:\r\nWhen saving images or videos to the device's photo library using Photos.framework, the filenames of the saved files on disk (as seen by Image Capture.app and other importers) are not consistent. They depend on the API that was used to save the asset.\r\n\r\nPHAssetCreationRequest.addResource(with:data:options:) produces consistent file names (IMG_xxxx.JPG), whereas addResource(with:fileURL:options:) produces \"random\" (unordered) filenames like \"LQTI4681.JPG\".\r\n\r\nSteps to Reproduce:\r\nRun the attached demo app *on a device* and follow the instructions:\r\n\r\n• Run the app on a device. On my test devices, iCloud Photo Library was enabled. I don't know if this is significant.\r\n• Connect the device to the Mac via USB.\r\n• Open Image Capture on the Mac. Wait until Image Capture has loaded your device's Camera Roll.\r\n• Tap the two buttons in the app to save a photo to the Photo Library. You'll be asked to grant permission. The first button uses PHAssetCreationRequest.addResource(with:data:options:) to save the asset. The second button uses addResource(with:fileURL:options:).\r\n• Observe the filenames of the new items as they appear in Image Capture.\r\n\r\nExpected Results:\r\nPHAssetCreationRequest.addResource(with:data:options:) and addResource(with:fileURL:options:) behave the same: the asset filename on disk (as seen by Image Capture and other importers follows the IMG_xxxx pattern).\r\n\r\nActual Results:\r\nWhen using addResource(with:fileURL:options:), Photos.framework saves the asset with a \"random\" filename like \"HMTZ3319.JPG\" or \"LQTI4681.JPG\".\r\n\r\nVersion/Build:\r\nTested on iOS 11.4 (iPhone 7) and iOS 12.0 beta 1 (iPad Pro 10.5). This has been an issue since at least September 2016 (possibly since the introduction of Photos.framework).\r\n\r\nNotes:\r\n- The attached demo.mov is a video of me using the sample app and explaining the issue.\r\n\r\n- Note that we're not setting PHAssetResourceCreationRequest.originalFilename. It's about the filename of the asset on disk, not the originalFilename saved with the metadata.\r\n\r\n- The issue also exists for videos, and is even more severe there because there doesn't seem to be a workaround. For photos, we can simply use the imageData variant, but videos are too large to load into memory.\r\n\r\n- This issue may seem very unimportant because the filenames aren't visible anywhere on iOS, but many of our customers are advanced/pro photographers who care quite deeply about consistent (and ordered) filenames."
+    email: ole.begemann@gmail.com
+    modified: "2018-06-11T21:29:00.9514Z"
+    number: "41019421"
+    number_intvalue: 41019421
+    originated: "2018-06-11"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK (Photos.framework)
+    product_version: "11.4"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Creating asset from file URL creates weird filenames (not IMG_xxxx.yyy)

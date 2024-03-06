@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10094812"
+    labels:
+        datastore_id: "1326408"
+data:
+    classification: Serious bug / regression
+    created: "2011-09-08T19:19:47.279102Z"
+    description: "08-Sep-2011 12:07 PM Ben Poliakoff:\r\nSummary: Regression in Mac OS X Lion's GSS-API flag negotiation breaks kerberos utility\r\n\r\nSteps to Reproduce:\r\n\r\n1) Build and install \"remctl\" on OSX Lion (remctl, a well know software package in the Kerberos community, is \"a client/server protocol for running single commands on a remote host using Kerberos v5 authentication and returning the output\").\r\n\r\n2) Execute a remctl command which worked properly in Snow Leopard\r\n\r\nExpected Results:\r\n\r\nClient and server can communicate via GSSAPI authenticated channel, server returns results of commands to the client.\r\n\r\nActual Results:\r\n\r\nGSSAPI authenticated connection cannot be made.  Client reports this error:\r\n\r\n  remctl: server did not negotiate acceptable GSS-API flags\r\n\r\nRegression:\r\n\r\nThis is a regression in Lion, presumably due to the replacement of MIT krb5 with Heimdal.  remctl worked properly in previous versions of Mac OS X.\r\n\r\nNotes:\r\n\r\nComments from the maintainer of remctl (Russ Albery of Stanford University):\r\n\r\nThis is the first I've heard of it, I'm afraid.  It implies that something\r\nis broken about GSS-API flag negotiation.  remctld's use of GSS-API is\r\nfairly standard, so my guess is a bug on the Mac OS X side, although I'm\r\nnot sure.\r\n\r\nBoth the server and the client insist on:\r\n\r\n    static const OM_uint32 req_gss_flags\r\n        = (GSS_C_MUTUAL_FLAG | GSS_C_CONF_FLAG | GSS_C_INTEG_FLAG);\r\n\r\nAll those should be very standard.  The client also attempts to negotiate:\r\n\r\n    static const OM_uint32 wanted_gss_flags\r\n        = (GSS_C_MUTUAL_FLAG | GSS_C_CONF_FLAG | GSS_C_INTEG_FLAG\r\n           | GSS_C_REPLAY_FLAG | GSS_C_SEQUENCE_FLAG);\r\n\r\nbut it doesn't mind if the extra flags aren't supported.  I think Heimdal\r\ndoesn't support replay caching by default, but I checked the code and the\r\nclient only insists on the required ones.\r\n\r\n\r\n\r\nThe remctl software can be found here:\r\n\r\n  http://www.eyrie.org/~eagle/software/remctl/"
+    email: bpoliakoff@gmail.com
+    modified: "2011-09-08T19:19:47.279572Z"
+    number: "10094812"
+    number_intvalue: 10094812
+    originated: 08-Sep-2011 12:07 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OX X
+    product_version: 10.7.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: GSS-API flag negotiation in Lion

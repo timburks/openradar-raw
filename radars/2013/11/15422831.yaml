@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15422831"
+    labels:
+        datastore_id: "5230386477006848"
+data:
+    classification: Serious Bug
+    created: "2013-11-08T10:57:39.122563Z"
+    description: "Summary:\n\nSee this dev forum thread:\nhttps://devforums.apple.com/message/915208#915208\n\nxcodebuild, when run from Jenkins, launches otest but fails to communicate properly with it. This results in unit tests terminating prematurely or not running.\n\nThe output log will contain a line such as:\n\nerror: failed to launch '/Applications/Xcode.app/Contents/Developer/Tools/otest' -- failed to get the task for process 64298\n\n\n\nSteps to Reproduce:\n\nIn a shell, perform the following script:\n\ngit clone git@github.com:elegantchaos/ECIntegration.git\ncd ECIntegration\ngit submodule update --init --recursive\nScripts/eclogging-tests.sh\nls test-build/reports/*\n\nThis should work, and reports should contain some XML files.\n\nNow set up a Jenkins job to do the same thing. It should use the repo git@github.com:elegantchaos/ECIntegration.git and perform the last three lines of the above script.\n\nExpected Results:\n\nWhen you run the script from the command line, you should get this:\n\n  Setting up tests for ECIntegration\n  Building ECLogging Mac for macosx test\n  Building ECLogging iOS for iphonesimulator build TEST_AFTER_BUILD=YES\n  Building ECLogging Sample Mac for macosx test\n  Building ECLogging Sample iOS for iphonesimulator build TEST_AFTER_BUILD=YES\n  test-build/reports/iphonesimulator-ECLogging Sample iOS:\n\n  test-build/reports/iphonesimulator-ECLogging iOS:\n\n  test-build/reports/macosx-ECLogging Mac:\n  TEST-ECParameterisedTestCase.xml  TEST-StringTests.xml\n\n  test-build/reports/macosx-ECLogging Sample Mac:\n  TEST-ECParameterisedTestCase.xml   TEST-RunLoopExample.xml            TEST-category2.xml\n  TEST-Included.xml                  TEST-category1.xml                 TEST-parameterisedTestExample.xml\n\n\nActual Results:\n\nRunning from the shell works.\n\nRunning from Jenkins may appear to work, but xcodebuild is actually failing to connect to otest, and is terminating it. \n\nBecause there aren't many tests in this suite, they may complete before xcodebuild terminates otest, but for a longer suite of tests, it will terminate prematurely. If necessary, add some slow tests to ECLogging to verify this.\n\nExamine the logs in: test-build/logs/macosx-ECLogging\\ Mac/out.log \n\nThere will be a line:\n\nerror: failed to launch '/Applications/Xcode.app/Contents/Developer/Tools/otest' -- failed to get the task for process 64298\n\n\nRegression:\n\nThese tests have been working fine on an old Mac Mini running 10.7 and XC4.6. They do not appear to work on Mavericks + XC5."
+    email: sam@elegantchaos.com
+    modified: "2013-11-08T10:57:39.122699Z"
+    number: "15422831"
+    number_intvalue: 15422831
+    originated: 08-Nov-2013 10:57 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode501
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: xcodebuild failing to launch otest (running via Jenkins)

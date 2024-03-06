@@ -1,0 +1,57 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22189568"
+    labels:
+        datastore_id: "6665166137589760"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-08-07T17:04:09.24989Z"
+    description: |-
+        Summary:
+        I think the repro says it all, really.
+
+
+        Steps to Reproduce:
+        This code:
+        protocol Natural {}
+        enum Z : Natural {}
+        enum S<N : Natural> : Natural {}
+
+        enum Fin<N : Natural> {
+        	case FZ(Fin<S<N>>)
+        }
+
+
+        Expected Results:
+        should not cause swiftc to diverge and crash
+
+
+        Actual Results:
+        but totally does:
+
+        12  swift                         	0x00000001052fbd0a swift::Lowering::TypeLowering const* swift::CanTypeVisitor<(anonymous namespace)::LowerType, swift::Lowering::TypeLowering const*>::visit<>(swift::CanType) + 1482
+        13  swift                         	0x00000001052fb378 swift::Lowering::TypeConverter::getTypeLoweringForUncachedLoweredType(swift::Lowering::TypeConverter::TypeKey) + 312
+        14  swift                         	0x00000001052fa93c swift::Lowering::TypeConverter::getTypeLowering(swift::Lowering::AbstractionPattern, swift::Type, unsigned int) + 5388
+        15  swift                         	0x00000001052fed78 LoweredTypeKind swift::CanTypeVisitor<(anonymous namespace)::TypeClassifier, LoweredTypeKind>::visit<>(swift::CanType) + 184
+        16  swift                         	0x00000001052f8792 classifyType(swift::CanType, swift::SILModule&) + 66
+        17  swift                         	0x0000000105300bde (anonymous namespace)::LowerType::visitAnyEnumType(swift::CanType, swift::EnumDecl*) + 814
+
+
+        Regression:
+        N/A
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-08-07T17:04:09.2501Z"
+    number: "22189568"
+    number_intvalue: 22189568
+    originated: 07-Aug-2015 01:03 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A176x)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2b5: swiftc infinite loop & crash typechecking encoding of finite sets'

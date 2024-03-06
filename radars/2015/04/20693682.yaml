@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20693682"
+    labels:
+        datastore_id: "6160399837691904"
+data:
+    classification: Crash / Hang
+    created: "2015-04-24T23:10:18.93079Z"
+    description: "Summary:\r\nWe observed an issue where the iPod's Bluetooth (LE) controller was using an EDIV (0xcdc1) / Rand (0x9731f7bdf5e0b466) that had never been given to it. This caused the Bluetooth controller on the end of the accessory (Pebble Time) to disconnect with an Connection Failed Due to MIC Failure (0x3D).\r\n\r\nShortly after, we opened the Bluetooth Settings on iOS.\r\nThe Settings app hung for a while.\r\nThen Bluetooth appeared to get power-cycled.\r\nAfter this, the LE connection was getting set up correctly and the right EDIV (0xe2cb) / Rand (0x0x336039bb9d0bb724) were being used again.\r\n\r\nWe captured an air trace of the issue (see attachments).\r\nWhen opening the trace in Frontline's Viewer, look at the \"LE LL\" tab.\r\nThe first 2 LL_ENC_REQ have the bad EDIV / Rand.\r\nThe 3rd LL_ENC_REQ is after power cycling BT on the iPod and have the correct EDIV / Rand.\r\n\r\nI can't tell whether the EDIV / Rand were already bad when given to the iPod's BT controller or whether the controller itself somehow mangled them (there was no HCI trace captured on the iPod's side)\r\n\r\nSteps to Reproduce:\r\nWe currently don't have a way to reproduce.\r\n\r\nExpected Results:\r\nThe EDIV / Rand (and LTK) that is used by the Apple device should always match those that are given to it in the prior pairing procedure.\r\n\r\nActual Results:\r\nThe EDIV / Rand that were used in the LL_ENC_REQ were not the ones given to the Apple device in the prior pairing procedure.\r\n\r\nVersion:\r\niOS 8.3\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPod Touch ME643LL/A\r\n\r\nAttachments:"
+    email: martijn@pebble.com
+    modified: "2015-04-24T23:10:18.93103Z"
+    number: "20693682"
+    number_intvalue: 20693682
+    originated: 24-Apr-2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "8.3"
+    reproducible: Sometimes
+    resolved: No
+    status: Open
+    title: iPod's Bluetooth (LE) controller is using an EDIV / Rand that had never been given to it

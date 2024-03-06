@@ -1,0 +1,159 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14081923"
+    labels:
+        datastore_id: "3077401"
+data:
+    classification: Serious Bug
+    created: "2013-06-06T16:37:22.053265Z"
+    description: |-
+        Summary:
+        Wrong grouping level of NSUndoManager during the NSUndoManagerWillUndoChangeNotification and
+        NSUndoManagerDidUndoChangeNotification
+
+        Steps to Reproduce:
+        If I do [NSUndoManager undoNestedGroup] in a nested group, I get always 0 for grouping level if I listen to NSUndoManagerWillUndoChangeNotification or NSUndoManagerDidUndoChangeNotification. With that I cannot distinguish
+        between undo of a nested group or a complete action. Here is a little test case:
+
+        #import <Foundation/Foundation.h>
+
+        @interface TestObject : NSObject
+
+        @property (nonatomic) NSUInteger value;
+
+        @end
+
+        @implementation TestObject
+
+        - (void)test {
+        	
+        	NSUndoManager *undoManger = [[NSUndoManager alloc] init];
+        	undoManger.groupsByEvent = NO;
+        	
+        	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+        	[center addObserverForName:NSUndoManagerWillCloseUndoGroupNotification
+        						object:undoManger
+        						 queue:nil
+        					usingBlock:^(NSNotification *note) {
+        						NSLog(@"Will close group at level %li", undoManger.groupingLevel);
+        					}];
+        	[center addObserverForName:NSUndoManagerDidCloseUndoGroupNotification
+        						object:undoManger
+        						 queue:nil
+        					usingBlock:^(NSNotification *note) {
+        						NSLog(@"Did close group at level %li", undoManger.groupingLevel);
+        					}];
+        	[center addObserverForName:NSUndoManagerWillUndoChangeNotification
+        						object:undoManger
+        						 queue:nil
+        					usingBlock:^(NSNotification *note) {
+        						NSLog(@"Will undo at level %li", undoManger.groupingLevel);
+        					}];
+        	[center addObserverForName:NSUndoManagerDidUndoChangeNotification
+        						object:undoManger
+        						 queue:nil
+        					usingBlock:^(NSNotification *note) {
+        						NSLog(@"Did undo at level %li", undoManger.groupingLevel);
+        					}];
+        	
+        	NSLog(@"Set value to 1");
+        	self.value = 1;
+        	
+        	NSAssert(undoManger.groupingLevel == 0, @"Wrong grouping level: %li", undoManger.groupingLevel);
+        	
+        	NSLog(@"Begin group");
+        	[undoManger beginUndoGrouping];
+        	
+        	NSLog(@"Set value to 2");
+        	[[undoManger prepareWithInvocationTarget:self] setValue:self.value];
+        	self.value = 2;
+        	
+        	NSAssert(undoManger.groupingLevel == 1, @"Wrong grouping level: %li", undoManger.groupingLevel);
+        	NSAssert(self.value == 2, @"Wrong value: %li", self.value);
+        	
+        	NSLog(@"Begin group");
+        	[undoManger beginUndoGrouping];
+        	
+        	NSLog(@"Set value to 3");
+        	[[undoManger prepareWithInvocationTarget:self] setValue:self.value];
+        	self.value = 3;
+        	
+        	NSAssert(undoManger.groupingLevel == 2, @"Wrong grouping level: %li", undoManger.groupingLevel);
+        	NSAssert(self.value == 3, @"Wrong value: %li", self.value);
+        	
+        	NSLog(@"End group");
+        	[undoManger endUndoGrouping];
+        	
+        	NSAssert(undoManger.groupingLevel == 1, @"Wrong grouping level: %li", undoManger.groupingLevel);
+        	NSAssert(self.value == 3, @"Wrong value: %li", self.value);
+        	
+        	NSLog(@"Undo group");
+        	[undoManger undoNestedGroup];
+        	
+        	NSAssert(undoManger.groupingLevel == 1, @"Wrong grouping level: %li", undoManger.groupingLevel);
+        	NSAssert(self.value == 2, @"Wrong value: %li", self.value);
+        	
+        	NSLog(@"End group");
+        	[undoManger endUndoGrouping];
+        	
+        	NSAssert(undoManger.groupingLevel == 0, @"Wrong grouping level: %li", undoManger.groupingLevel);
+        	NSAssert(self.value == 2, @"Wrong value: %li", self.value);
+        	
+        	NSLog(@"Undo");
+        	[undoManger undo];
+        	
+        	NSAssert(undoManger.groupingLevel == 0, @"Wrong grouping level: %li", undoManger.groupingLevel);
+        	NSAssert(self.value == 1, @"Wrong value: %li", self.value);
+        }
+
+        @end
+
+        int main(int argc, const char * argv[])
+        {
+        	@autoreleasepool {
+        	    TestObject *object = [[TestObject alloc] init];
+        	    [object test];
+        	}
+            return 0;
+        }
+
+
+        Expected Results:
+        I would expect a output with "Will undo at level 1" and a output "Will undo at level 0"
+
+        Actual Results:
+        Both output are at level 0. See following output:
+
+        2013-06-06 17:51:22.452 TestUndoManager[68089:303] Set value to 1
+        2013-06-06 17:51:22.463 TestUndoManager[68089:303] Begin group
+        2013-06-06 17:51:22.467 TestUndoManager[68089:303] Set value to 2
+        2013-06-06 17:51:22.473 TestUndoManager[68089:303] Begin group
+        2013-06-06 17:51:22.476 TestUndoManager[68089:303] Set value to 3
+        2013-06-06 17:51:22.479 TestUndoManager[68089:303] End group
+        2013-06-06 17:51:22.482 TestUndoManager[68089:303] Will close group at level 2
+        2013-06-06 17:51:22.485 TestUndoManager[68089:303] Did close group at level 1
+        2013-06-06 17:51:22.489 TestUndoManager[68089:303] Undo group
+        2013-06-06 17:51:22.492 TestUndoManager[68089:303] Will undo at level 0
+        2013-06-06 17:51:22.494 TestUndoManager[68089:303] Did undo at level 0
+        2013-06-06 17:51:22.500 TestUndoManager[68089:303] End group
+        2013-06-06 17:51:22.502 TestUndoManager[68089:303] Will close group at level 1
+        2013-06-06 17:51:22.504 TestUndoManager[68089:303] Did close group at level 0
+        2013-06-06 17:51:22.505 TestUndoManager[68089:303] Undo
+        2013-06-06 17:51:22.506 TestUndoManager[68089:303] Will undo at level 0
+        2013-06-06 17:51:22.508 TestUndoManager[68089:303] Did undo at level 0
+
+        Notes:
+        At the moment I have no way to distinguish between an undo of a nested group and a normal undo.
+    email: stephan.michels@gmail.com
+    modified: "2013-06-06T16:37:22.053485Z"
+    number: "14081923"
+    number_intvalue: 14081923
+    originated: 06-Jun-2013 06:37 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.8.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Wrong grouping level of NSUndoManager during the NSUndoManagerWillUndoChangeNotification

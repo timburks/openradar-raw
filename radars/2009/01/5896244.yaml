@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "5896244"
+    labels:
+        datastore_id: "2228"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2009-01-09T04:36:10.958429Z"
+    description: "* SUMMARY\r\nThe docs for NSUserDefaultsController's save: method say: \"This method has no effect if appliesImmediately returns YES\".  This is provably false.\r\n\r\n* STEPS TO REPRODUCE\r\n- Create an app with a preferences nib\r\n- add an NSUserDefaultsController to the nib\r\n- create a window controller for the pref window\r\n- add an outlet to the NSUserDefaultsController, connect it, name it 'userDefaultsController'\r\n- make the win controller the delegate of the window\r\n- implement:\r\n\r\n- (void)windowWillClose:(NSNotification*)inNotification\r\n{\r\n\tassert ([userDefaultsController appliesImmediately]);\r\n\t[userDefaultsController save:self]; // try with and without this line\r\n}\r\n\r\n- use bindings to bind some UI controls to the NSUserDefaultsController\r\n- run your app, open prefs window\r\n- change a value\r\n- close the window\r\n- force quit the app\r\n\r\n* RESULTS\r\nIf you call 'save' in windowWillClose: the changed prefs are indeed written to disk and are not lost despite the force quit.  If you do not call save, when you next launch the app you'll see the prefs were not saved.  This despite the doc's comments \"This method has no effect if appliesImmediately returns YES\".  The assertion proves that appliesImmediately is YES and it does not fire.\r\n\r\n* REGRESSION\r\nno info\r\n\r\n* NOTES\r\nI don't know if this is a docs bug or a Cocoa bug.\r\n\r\nHowever, the docs imply that by setting appliesImmediately to YES that prefs will be written to disk and not lost.  Clearly, it is prudent to call save: despite the docs.  Not doing so may result in the user loosing data.\r\n\r\nEven if this is a Cocoa bug, please update the docs to say: \"previous to Mac OS X 10.x, the save: method flush prefs to disk regardless of appliesImmediately\" or something like that."
+    email: sean.mcbride42@gmail.com
+    modified: "2011-08-28T05:50:19.472682Z"
+    number: "5896244"
+    number_intvalue: 5896244
+    originated: 28-Apr-2008 04:04 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'NSUserDefaultsController save: does something even if appliesImmediately=YES'

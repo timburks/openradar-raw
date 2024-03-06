@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7446497"
+    labels:
+        datastore_id: "4965729942110208"
+data:
+    classification: ""
+    created: "2019-11-14T13:16:04.457691Z"
+    description: "I have a case where I have a generic view for both where I'd like to use a Measurement<Unit> without caring about the actual type of unit.   To do this, I'd like to downcast a Measurement<UnitMass> to a Measurement<Unit>.  UnitMass is a subclass of Unit, so it should be possible to downcast the type of Measurement<UnitMass> to Measurement<Unit>\r\n\r\nThe measurement class looks like this:\r\n\r\npublic struct Measurement<UnitType> : ReferenceConvertible, Comparable, Equatable where UnitType : Unit {\r\n...\r\n}\r\n\r\n\r\nMy goals is to be able to do this type of operation:\r\n\r\nlet kilograms = Measurement(value: 10, unit: UnitMass.kilograms)\r\nlet converted: Measurement<Unit> = kilograms.converted(to: UnitMass.pounds) \r\n// fails to compile with \"Cannot convert value of type 'Measurement<UnitMass>' to specified type 'Measurement<Unit>'\"\r\n\r\n\r\nLet's look at another interesting behavior:\r\n\r\nlet testUnit = kilograms.unit as? Unit // Conditional cast from 'UnitMass' to 'Unit' always succeeds\r\nlet kilogramAsUnit = kilograms as! Measurement<Unit> // Cast from 'Measurement<UnitMass>' to unrelated type 'Measurement<Unit>' always fails\r\n\r\nThe UnitType is always of type Unit, but casting from Measurement<UnitMass> to Measurement<Unit> always fails.\r\n\r\nI believe this is because the Measurement class has the conformance \"where UnitType : Unit\" rather than defining the conformance in the brackets, such as \"Measurement<Unit: UnitType>\""
+    email: joseph.elliott@fishbrain.com
+    modified: "2019-11-14T13:16:04.457854Z"
+    number: "7446497"
+    number_intvalue: 7446497
+    originated: 11/14/2019
+    parent_number: '&{NULL_VALUE}'
+    product: Swift SDK
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Foundation's Measurement<UnitMass> not convertible to Measurement<Unit>

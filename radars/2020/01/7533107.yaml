@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7533107"
+    labels:
+        datastore_id: "4930713610616832"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2020-01-13T07:04:23.626128Z"
+    description: "Area: Apple Filesystem (APFS)\r\n\r\nProblem: calling ftruncate does not hand space back to the operating system.\r\n\r\nSteps to produce: pre-allocate space using fcntl, then ftruncate to a lower value. The file will still occupy the pre-allocated space, and there is (AFAICT) no way to shrink the file back down without deleting it and recreating it from scratch.\r\n\r\nSee/run the minimal C++ test case.\r\n\r\nSee also bug reports on this issue e.g. here: https://github.com/bitcoin/bitcoin/pull/17887\r\n\r\n---attachment \"apfsbug.cpp\"---\r\n\r\n#include <assert.h>\r\n#include <cstdio>\r\n#include <unistd.h>\r\n#include <fcntl.h>\r\n\r\nint main(int argc, char** argv) {\r\n    FILE* file = fopen(\"myfile.dat\", \"wb\");\r\n\r\n    fstore_t fst = { F_ALLOCATECONTIG, F_PEOFPOSMODE, 0, 1024 * 1024 /* 1 MB */, 0 };\r\n    if (fcntl(fileno(file), F_PREALLOCATE, &fst) == -1) {\r\n        fst.fst_flags = F_ALLOCATEALL;\r\n        assert(fcntl(fileno(file), F_PREALLOCATE, &fst) != -1);\r\n    }\r\n    ftruncate(fileno(file), 128); // truncate file down to 128 bytes\r\n    fclose(file);\r\n    // $ ls -la myfile.dat\r\n    // -rw-r--r--  1 me  staff  128 Jan 13 13:43 myfile.dat\r\n    // $ du -ch myfile.dat\r\n    // 1.0M\tmyfile.dat\r\n    // 1.0M\ttotal\r\n}\r\n\r\n--- added info ---\r\n\r\nI understand that you should be able to deallocate pre-allocated regions using the `F_PUNCHHOLE` operation. I tried this, but the results are exactly the same:\r\n```C++\r\n    fpunchhole_t fph = { 0, 0, 4096, 1024 * 1024 - 4096 };\r\n    assert(-1 != fcntl(fileno(file), F_PUNCHHOLE, &fph));\r\n    ftruncate(fileno(file), 128); // truncate file down to 128 bytes\r\n    assert(-1 != fcntl(fileno(file), F_PUNCHHOLE, &fph));\r\n    fclose(file);\r\n```\r\n\r\n---- Apple investigation results ----\r\n\r\nEngineering has provided the following information regarding this issue:\r\n\r\nThanks for the note. Taking a look at your test program it seems that there are a few misunderstandings here about the APIs in question.\r\n\r\nFirst: You mention that you cannot pre-allocate space using fcntl(F_PREALLOCATE) and get that space back using ftruncate(). That is true, but this is the expected behavior. Unlike posix_fallocate(), fcntl(F_PREALLOCATE) does not increase the logical size of the file, just the physical blocks allocated for them. In the man page for the operation, we say the following:\r\n\r\n“ The position modes (fst_posmode) for the F_PREALLOCATE command indicate how to use the offset field.\r\n     The modes are as follows:\r\n\r\n           F_PEOFPOSMODE   Allocate from the physical end of file.\r\n\r\n           F_VOLPOSMODE    Allocate from the volume offset.”\r\n\r\nF_PEOFPOSMODE (as you are using it in the test) adds to the “physical end of file” - this is not the logical file size (meaning, it is not what fstat(2) would report in st_size - however, you’d notice this new size through an increase in st_blocks).\r\n\r\nIf you want to increase a file’s logical size after fcntl(F_PREALLOCATE), you must manually ftruncate() up to the size that you just allocated for the file. After doing this, an ftruncate() to a smaller size will deallocate that space.\r\n\r\nSecond: The reason fcntl(F_PUNCHHOLE) doesn’t work to do this either is that it operates on the logical file size. So, if you were to ftruncate() the logical size up to the size you preallocated, it should work just as well as another ftruncate().\r\n\r\nWe have a bug around here somewhere to eventually implement posix_fallocate(), which would work in the manner you’re expecting. So, if you’d like to track that feature, feel free to file a new bug for that."
+    email: kalle.alm@gmail.com
+    modified: "2020-09-02T03:59:32.076809Z"
+    number: "7533107"
+    number_intvalue: 7533107
+    originated: Jan 13, 2020 at 2:02 PM
+    parent_number: '&{NULL_VALUE}'
+    product: APFS
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Works as currently designed
+    title: ftruncate does not properly return space pre-allocated using fcntl/F_PREALLOCATE

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10826320"
+    labels:
+        datastore_id: "1518403"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2012-02-08T09:50:28.004828Z"
+    description: "08-Feb-2012 10:47 AM Ullrich Schäfer:\r\nSummary:\r\n\r\nAVAudioRecorder leaves a corrupted file when being interrupted while the app is in background.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nI've got an AVAudioRecorder I create like this:\r\nint numberOfChannels = [[AVAudioSession sharedInstance] currentHardwareInputNumberOfChannels];\r\nrecorder = [[AVAudioRecorder alloc] initWithURL:[NSURL fileURLWithPath:self.recordingFilePath]\r\n                                       settings:[NSDictionary dictionaryWithObjectsAndKeys:\r\n                                                 [NSNumber numberWithFloat:44100.0], AVSampleRateKey,\r\n                                                 [NSNumber numberWithInt:kAudioFormatMPEG4AAC], AVFormatIDKey,\r\n                                                 [NSNumber numberWithInt:numberOfChannels], AVNumberOfChannelsKey,\r\n                                                 [NSNumber numberWithInt:AVAudioQualityHigh], AVEncoderAudioQualityKey,\r\n                                                 nil]\r\n                                          error:&error];\r\nrecorder.delegate = self;\r\n\r\n \r\nI also implemented the interrupt delegate callbacks from AVAudioRecorderDelegate which get called correctly.\r\n \r\nWhen I now start recording, put the app in background and (for example) open the camera app in video mode the recording is interrupted. In the delegate I see that the recoder -isRecording property is NO.\r\nUnfortunetly the resulting file is corrupted and can't be played. Neither with AVAudioPlayer, nor in Quicktime or VLC on the Mac. I also tried calling an additional [recorder stop] to close the file, but this didn't have any effect (the recorder appears to be already stoped anyhow).\r\n\r\n\r\nExpected Results:\r\n\r\nThe recorder stops but the file is still playable.\r\n\r\n\r\nActual Results:\r\n\r\nA file that seems to not have the header written correctly (see enclosures).\r\n\r\n\r\nRegression:\r\n\r\nI don't remember having that problem in iOS pre 5.0\r\n\r\n\r\nNotes:\r\n\r\nDiscussion about the issue: https://devforums.apple.com/message/583855\r\n\r\nThanks!\r\n\r\n08-Feb-2012 10:47 AM Ullrich Schäfer:\r\n'broken recording.m4a' and 'iMac.spx' were successfully uploaded"
+    email: ullrich.schaefer@gmail.com
+    modified: "2012-02-08T09:50:28.005052Z"
+    number: "10826320"
+    number_intvalue: 10826320
+    originated: 08-Feb-2012 10:47 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "5.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AVAudioRecorder leaves a corrupted file on being interrupted

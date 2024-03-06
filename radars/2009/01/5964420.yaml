@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "5964420"
+    labels:
+        datastore_id: "2610"
+data:
+    classification: Other Bug
+    created: "2009-01-13T03:28:33.411401Z"
+    description: "27-May-2008 07:57 AM Dave Dribin:\r\nSummary: \r\nCalling the SBApplication applicationWithBundleIdentifier: may print warnings to standard error about issues it finds in the application's dictionary.  These warnings cannot be disabled, as far as I know.  This is annoying for GUI applications as it clutters the console output.  But for command line applications, this is very intrusive.\r\n\r\nThis application specific, but I have found that both Finder (com.apple.finder) and Mail (com.apple.Mail) with scripting bridge prints warnings.  I can understand sdef/sdp printing warnings, but having applicationWithBundleIdentifier: every time an SBApplication is instantiated does not seem helpful.\r\n\r\nSteps to Reproduce:\r\n1. Create a header file proxy for the application. e.g. the Finder:\r\n\r\n% sdsef /System/Library/CoreServices/Finder.app | sdp -fh --basename Finder \r\n\r\n2. Create a new Foundation application\r\n3. Change main() to look like:\r\n\r\nint main (int argc, const char * argv[])\r\n{\r\n    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];\r\n    \r\n    FinderApplication * finder =\r\n        [SBApplication applicationWithBundleIdentifier:@\"com.apple.finder\"];\r\n    \r\n    NSLog(@\"Hello\");\r\n    \r\n    [pool drain];\r\n    return 0;\r\n}\r\n\r\n4. Build and run this application\r\n\r\nExpected Results:\r\nOnly \"Hello\" should be printed to the console.\r\n\r\nActual Results:\r\nsb_test: unknown type name \"ICN#\".\r\nsb_test: unknown type name \"l8mk\".\r\nsb_test: unknown type name \"il32\".\r\nsb_test: unknown type name \"icl8\".\r\nsb_test: unknown type name \"icl4\".\r\nsb_test: unknown type name \"ics#\".\r\nsb_test: unknown type name \"s8mk\".\r\nsb_test: unknown type name \"is32\".\r\nsb_test: unknown type name \"ics8\".\r\nsb_test: unknown type name \"ics4\".\r\n2008-05-27 10:51:35.866 sb_test[70894:10b] Hello\r\n\r\nRegression:\r\nI'm testing on Mac OS X 10.5.2/Xcode 3.0.\r\n\r\nNotes:\r\nThe workaround is to temporarily redirect standard error to /dev/null before calling applicationWithBundleIdentifier:\r\n\r\nint main (int argc, const char * argv[])\r\n{\r\n    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];\r\n    \r\n    int old_stderr = dup(STDERR_FILENO);\r\n    close(STDERR_FILENO);\r\n    int fd = open(\"/dev/null\", O_WRONLY);\r\n    dup2(fd, STDERR_FILENO);\r\n    close(fd);\r\n    FinderApplication * finder =\r\n        [SBApplication applicationWithBundleIdentifier:@\"com.apple.finder\"];\r\n    close(STDERR_FILENO);\r\n    dup2(old_stderr, STDERR_FILENO);\r\n    close(old_stderr);\r\n\r\n    NSLog(@\"Hello\");\r\n    \r\n    [pool drain];\r\n    return 0;\r\n}\r\n\r\n\r\n\r\n27-May-2008 08:14 AM Dave Dribin:\r\nUploaded a sample project, with workarounds."
+    email: ddribin@gmail.com
+    modified: "2011-08-28T05:50:11.618425Z"
+    number: "5964420"
+    number_intvalue: 5964420
+    originated: 27-May-2008 07:57 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'SBApplication applicationWithBundleIdentifier: should not print warnings'

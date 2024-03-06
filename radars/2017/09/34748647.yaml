@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34748647"
+    labels:
+        datastore_id: "5001423699836928"
+data:
+    classification: UI/Usability
+    created: "2017-09-29T22:14:08.08468Z"
+    description: "Summary:\r\nApplications that only require write-access to a user’s Photo Library appear to have no method for determining permissions programatically. In the past, applications could use +authorizationStatus on PHPhotoLibrary to determine permissions. In cases where permission had been denied, it was useful to explain that an application, such as a camera app, would not perform as expected unless permission was granted.\n\nHowever, with the addition of NSPhotoLibraryAddUsageDescription in iOS 11, along with the new behavior of UIImageWriteToSavedPhotosAlbum() displaying a system dialog, it appears to be impossible for an application to check for write-only permissions to the Photos Library.\n\nThis causes a significant UX challenge in cases where the user launches the app, but is not looking at the screen when a photo is taken (like in camera apps with remote shutter control).\n\nA sample application that attempts to demonstrate this issue is attached.\r\n\r\nSteps to Reproduce:\r\n1. Create an application that requires write-only access to the Photos Library. Include NSPhotoLibraryAddUsageDescription in the app’s Info.plist.\n\n2. Use [PHPhotoLibrary authorizationStatus] to verify a freshly-installed application has a “not determined” authorization status.\n\n3. Attempt to write an image to the user’s Photo Library with UIImageWriteToSavedPhotosAlbum(). Observe the system will display a permissions prompt.\n\n4. Use [PHPhotoLibrary authorizationStatus] to observe the application still has a “not determined” authorization status, regardless of the user-provided permissions response.\r\n\r\nExpected Results:\r\n[PHPhotoLibrary authorizationStatus] should reflect the authorization status of applications requiring write-only access to Photos Library.\r\n\r\nActual Results:\r\n[PHPhotoLibrary authorizationStatus] does not reflect authorization status if [PHPhotoLibrary requestAuthorization:] is never sent.\r\n\r\nVersion:\r\nqua\r\n\r\nNotes:\r\nA few other notes related to this problem. If [PHPhotoLibrary requestAuthorization:] is sent without NSPhotoLibraryUsageDescription, the application crashes, even if NSPhotoLibraryAddUsageDescription is present.\n\nHowever, if +requestAuthorization is used and NSPhotoLibraryAddUsageDescription is present, then read-write access is requested. Then, +authorizationStatus correctly reflects the status, but write-only access has not been achieved, which my be adequate for the application’s needs."
+    email: tternes@gmail.com
+    modified: "2017-09-29T22:14:08.08487Z"
+    number: "34748647"
+    number_intvalue: 34748647
+    originated: 29-Sep-2017 05:14 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: qua
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: PHPhotoLibrary authorizationStatus does not reflect authorization status for write-only permissions

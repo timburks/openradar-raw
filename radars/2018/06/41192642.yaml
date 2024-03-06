@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "41192642"
+    labels:
+        datastore_id: "5013488732733440"
+data:
+    classification: UI/Usability
+    created: "2018-06-17T04:51:51.33194Z"
+    description: "Summary:\r\nAdding a multi-line UILabel as an arranged subview in a horizontal stack view with \"fill\" distribution causes the stack view to add an undocumented \"UISV-text-width-disambiguation\" constraint on that label. This constraint is present regardless of whether the layout is *actually* ambiguous or not: for example, if the other view in the stack view is a single-line label with both content hugging and compression resistance priorities *higher* than the multi-line label's, layout can be evaluated unambiguously even without this constraint, which can be tested experimentally by implementing a trivial layout that stacks these two labels horizontally.\r\n\r\nInternally, \"UISV-text-width-disambiguation\" constraint is \"width = SV_width * 1/N + C @(CRP+10)\" (where SV_width is stack view's width, N is number of arranged subviews in it, C is a constant calculated based on stack view spacing, and CRP is label's compression resistance priority). Because of this, the resulting layout often doesn't match the expected one, which confuses the developer of client code, and requires them to be aware of this constraint and know how to counteract it using higher priorities in other views or by applying extra constraints. This is of course suboptimal as it diminishes stack view's usability and predictability.\r\n\r\nSteps to Reproduce:\r\nIn a storyboard of a new project, create a horizontal stack view with default configuration (i.e. fill distribution) with two labels: one multi-line with long text, another – single-line with short text. Keep default hugging/compression priorities on the multi-line label, but increase those of single-line label (e.g. to 300/800) to make these two labels laid out unambiguously.\r\nConstraint this stack view to superview's leading/trailing/top edges, and keep it unconstrained vertically, so that it auto-sizes to hug content.\r\n\r\nExpected Results:\r\nAt runtime, single-line label hugs its content horizontally, and multi-line label fills the remaining horizontal space. Stack view grows and shrinks vertically to fit both labels. This matches a result one could get by implementing simple horizontal constraint-based stacking manually.\r\n\r\nActual Results:\r\nBoth labels occupy half of the stack view's width, which is unexpected and confusing.\r\n\r\nVersion/Build:\r\nAll iOS versions since 9.x; reproducible in iOS 12 beta 1.\r\n\r\nConfiguration:\r\nAny device or simulator.\r\n\r\nAdditional Notes:\r\nThe attached sample project demonstrates the issue. It displays additional labels to annotate the observed behaviour, potential workarounds, and debug description of the disambiguation constraint.\r\n\r\nUnderstandably, the described behaviour may be expected – at least in certain cases – but for those some additional documentation would be welcome. Because of its absence, some developers tend to implement hacky workarounds or stop using UIStackView altogether.\r\n\r\nThis issue together with the sample project has been shown to an Apple engineer at WWDC labs – and I've been asked to file this radar."
+    email: argentumko@gmail.com
+    modified: "2018-06-17T04:51:51.33214Z"
+    number: "41192642"
+    number_intvalue: 41192642
+    originated: 17 June 2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 9.0+
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIStackView behaviour of disambiguating multi-line label width is confusing

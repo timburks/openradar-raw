@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6146467"
+    labels:
+        datastore_id: "301"
+data:
+    classification: Enhancement
+    created: "2008-11-28T12:21:46.646166Z"
+    description: "* SUMMARY\r\nDuring fast enumeration, attempting to *replace* an object in an NSMutableDictionary triggers the error about mutating a dictionary during enumeration.\r\n\r\nIt's clear that adding or removing keys during enumeration should cause this error, but in this instance we're talking about merely altering an existing record in the dictionary.\r\n\r\n* STEPS TO REPRODUCE\r\nNSMutableDictionary *d = [NSMutableDictionary dictionaryWithObject:@\"Hello\" forKey:@\"Greeting\"];\r\nfor (NSString *key in d) {\r\n  [d setObject:@\"Hi\" forKey:key];\r\n}\r\n\r\n* RESULTS\r\nYou get the error\r\n\r\n  Collection <NSCFDictionary 0xnnnnnnnn> was mutated while being enumerated.\r\n\r\nI understand the purpose of this error, but with a dictionary it's only changes to the *keys* and not to the objects that should cause problems here. Even if you're using a tree with objects in interior nodes, the fact is that the enumeration is based solely on the keys and should easily be able to cope with this case.\r\n\r\nThat is, setting the object for an *existing* key should work IMO. Setting an object for a *new* key clearly should not.\r\n\r\n* REGRESSION\r\nThis only happens with fast enumeration.\r\n\r\n* NOTES\r\nWell a workaround would be to enumerate [dictionary allKeys] instead. But that shouldn't IMO be necessary. I can't think of a data structure that one would use to implement a dictionary that would be disturbed sufficiently by *replacing* existing objects to merit this error."
+    email: alastair@alastairs-place.net
+    modified: "2011-08-28T05:49:50.440933Z"
+    number: "6146467"
+    number_intvalue: 6146467
+    originated: 13-Aug-2008 06:58 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.5 (9F33)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSMutableDictionary doesn't allow replacement of objects during enumeration

@@ -1,0 +1,37 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19024346"
+    labels:
+        datastore_id: "5868476413509632"
+data:
+    classification: UI/Usability
+    created: "2014-11-19T01:23:32.96679Z"
+    description: |-
+        I believe the WKInterfaceTimer is intended to work both as a countdown and count up timer, but currently the timer only supports counting down. The control description in interface builder actually states "Timer - Displays a string that counts up or down to a specified time." But from the detailed class description online, it is clear that the control is currently implemented as a purely countdown timer.
+
+        The issue here is that really the only way to build a count up timer that starts from 00:00.0 and counts up is through this class, so it needs to support this.
+
+        The only attribute this class has so far for controlling it's behavior is the date. You can set a date (which the header states will be counted up/down toward). Here's how that actually seems to work now though.
+
+        If you specify a date with a positive time interval from the current date, say, 3600 seconds (one hour) from now, the timer will start at 59:59 and counts down like you would expect.
+
+        If you specify a date with a negative time interval from the current date, say, -3600 seconds (one hour earlier), the timer will start at 1:00:00 and begin counting up, sort of like you would expect. But this behavior isn't really defined. I haven't actually waited an hour to see if it would stop, but I'm still confused why it would start at 1:00:00 instead of 0:00:00 and count up towards 1:00:00.
+
+        Let's say I wanted to implement a count up timer that counted up to a maximum of 12 hours. Given the behavior above, I'd probably expect to input -(3600 * 12) as the time interval offset for the WKInterfaceTimer's date parameter. But that results in a timer starting at 12:00:00 and counting up. :(
+
+        The other alternative I could see is specify a date of zero, or possibly -1, as the offset to the date, in the hopes that those would result in a timer that counts up starting from 0:00:00. Unfortunately, neither of those result in the desired behavior either. In both cases the timer simply displays "1" and stays there. The same is true until you specify a negative offset greater than or equal to 60. In other words, the timer really doesn't feel like starting anything below a minute of precision. If you specify -60 as the time interval, you'll get a timer that starts at 1:00 and counts up from one minute.
+
+        I'd like to see a cleaner interface to the WKInterfaceTimer class that allows you to specify a boolean for "count up or down", for example. At the very least, I'd like to see a documented and working count up behavior that allows a 0 or -1 time interval that supports a count up timer starting at 0:00 or 0:01.
+    email: conrad.stoll@mutualmobile.com
+    modified: "2014-11-19T01:23:32.966925Z"
+    number: "19024346"
+    number_intvalue: 19024346
+    originated: 18-Nov-2014 07:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: Xcode 6.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: WKInterfaceTimer Does Not Support Counting Up

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12165613"
+    labels:
+        datastore_id: "1880403"
+data:
+    classification: Serious Bug
+    created: "2012-08-24T01:10:55.43Z"
+    description: "Summary: Xcode often interprets a recursive header search path (one suffixed with **) as if it were not recursive, until the setting is jiggled and/or the project is closed and reopened.\r\n\r\nSteps to Reproduce:\r\n\r\nI'm trying to build a project which has library dependencies under $(BUILT_PRODUCTS_DIR)/include/libraryname. In other words, \r\n\r\n$(BUILT_PRODUCTS_DIR)/include/myUtilsLib\r\n$(BUILT_PRODUCTS_DIR)/include/myCalendarLib\r\n\r\nEtc. I would like to use a single HEADER_SEARCH_PATH argument:\r\n\r\n$(BUILT_PRODUCTS_DIR)/include/**\r\n\r\nto search every directory found under include/, and the contents of that directory. I'm using the \"Unique\" build locations setting, and all the libraries are part of the current workspace, so they correctly share a single build dir under DerivedData.\r\n\r\nExpected Results:\r\nI expect the app to find its dependent libraries and build successfully. Sometimes it does.\r\n\r\nActual Results:\r\nWhen it fails, which is often, I'll bring up the log navigator, find the .m file that failed to compile because it couldn't find a header, expand the log to display the complete clang CompileC command, and break it up in a text editor to see what the -I arguments were. Invariably, there are no arguments for the library responsible for the compilation failure.\r\n\r\nHowever, that missing library's headers are right there in the workspace's DerivedData subfolder, and the library is properly set as a dependency of the app I'm building. If I close and reopen the project, that's sometimes enough to jog Xcode into remembering that it's supposed to perform a recursive header search, and the next build may succeed, even if I run \"Clean Build Folder\" immediately prior to remove any earlier artifacts.\r\n\r\nLikewise, if I toggle the unlabeled \"recursive\" checkbox, close the Header Search Paths popover, reopen the popover, re-check the recursivity box, and close it once again, this is sometimes enough to force the search to become recursive and allow the build to succeed, even with no other changes to the project, and with the build folder having been cleaned immediately prior to the successful build.\r\n\r\nNotes:\r\nI'm using Xcode 4.4.1 and 4.5 DP4 on 10.7.4. The problem is reproducible at about the same frequent-but-not-constant clip on both. I first tried getting it to work while using Xcode 4.4.0.\r\n\r\nAfter hardcoding all my header search paths, Xcode's sporadic I've-never-heard-of-that-header claims stopped, suggesting that there is no underlying problem other than Xcode failing to look for headers in the directories where it was directed."
+    email: nathaniel@blackpixel.com
+    modified: "2012-08-24T01:10:55.430249Z"
+    number: "12165613"
+    number_intvalue: 12165613
+    originated: 23-Aug-2012 06:07 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 4.4.1
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: Xcode often ignores "recursive" checkbox in Header Search Path build settings

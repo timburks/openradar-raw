@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10533738"
+    labels:
+        datastore_id: "1534402"
+data:
+    classification: Serious Bug
+    created: "2012-02-23T10:53:18.447241Z"
+    description: "06-Dec-2011 03:57 AM Jonathon Mah:\r\n'main.m' was successfully uploaded\r\n\r\n06-Dec-2011 03:57 AM Jonathon Mah:\r\nI had a random crasher in my app that I eventually determined was due to an unbalanced key-value observation of an NSArrayController. I mistakenly believed that my code was correct (or rather, figured that \"the view controller's autounbinder must be taking care of things\") because I never received the leaked KVO warning:\r\n\r\n\"An instance 0x10f617c30 of class NSObject was deallocated while key value observers were still registered with it. Observation info was leaked, and may even become mistakenly attached to some other object. Set a breakpoint on NSKVODeallocateBreak to stop here in the debugger. Here's the current observation info...\"\r\n\r\nI made a trivial tool which verified that this message is printed for classes using NSObject's -addObserver:... mechanism. Unfortunately this doesn't include NSDictionary, and particularly NSController and subclasses, which is explicitly designed to have a multitude of observers.\r\n\r\nYou can compile the attached code with:\r\n\r\n% clang -fobjc-arc -framework Cocoa main.m -o ObserveWarningTest\r\n% ./ObserveWarningTest \r\n2011-12-06 03:50:35.804 ObserveWarningTest[44968:707] --------\r\n2011-12-06 03:50:35.807 ObserveWarningTest[44968:707] Observing <NSObject 0x10f617c30>\r\n2011-12-06 03:50:35.817 ObserveWarningTest[44968:707] An instance 0x10f617c30 of class NSObject was deallocated while key value observers were still registered with it. Observation info was leaked, and may even become mistakenly attached to some other object. Set a breakpoint on NSKVODeallocateBreak to stop here in the debugger. Here's the current observation info:\r\n<NSKeyValueObservationInfo 0x7f8970d02aa0> (\r\n<NSKeyValueObservance 0x7f8970d02750: Observer: 0x10f617c20, Key path: self, Options: <New: NO, Old: NO, Prior: NO> Context: 0x0, Property: 0x7f8970d01ed0>\r\n)\r\n2011-12-06 03:50:35.818 ObserveWarningTest[44968:707] --------\r\n2011-12-06 03:50:35.819 ObserveWarningTest[44968:707] Observing <__NSCFDictionary 0x10f618b10>\r\n2011-12-06 03:50:35.819 ObserveWarningTest[44968:707] --------\r\n2011-12-06 03:50:35.820 ObserveWarningTest[44968:707] Observing <NSArrayController 0x10f619020>\r\n\r\n\r\nExpected output: A KVO warning after each of the three \"Observing\" lines."
+    email: me@JonathonMah.com
+    modified: "2012-02-23T10:53:18.447445Z"
+    number: "10533738"
+    number_intvalue: 10533738
+    originated: 06-Dec-2011 03:57 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Many objects don't report KVO leaks

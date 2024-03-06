@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28599032"
+    labels:
+        datastore_id: "6068967584038912"
+data:
+    classification: ""
+    created: "2016-10-03T22:43:25.1841Z"
+    description: "Summary:\r\nNeither Xcode console, not Console.app shows log entries in which static or dynamic strings as arguments was used.\r\n\r\nSame functionality manually bridged into Swift from ObjC code working as expected.\r\n\r\nSteps to Reproduce:\r\nWrite and execute the following code:\r\n\r\n      print(\"→ Swift\")\r\n\r\n      os_log(\"Message: %{public}s\", log: SelfClass.log, type: .fault, \"Swift: Test 1\")\r\n      os_log(\"Message: %{public}s\", log: SelfClass.log, type: .fault, StaticString(stringLiteral: \"Swift: Test 2\").utf8Start)\r\n      os_log(\"Message: %{public}s\", log: SelfClass.log, type: .fault, unsafeBitCast(StaticString(stringLiteral: \"Swift: Test 3\").utf8Start, to: UnsafePointer<Int8>.self))\r\n\r\n      print(\"→ ObjC\")\r\n\r\n      log_private(SelfClass.log, .fault, \"ObjC: Test \\(1)\")\r\n      log_public(SelfClass.log, .fault, \"ObjC: Test \\(1)\")\r\n      log_private(SelfClass.log, .fault, #file)\r\n      log_public(SelfClass.log, .fault, #file)\r\n      print(\"→ ObjC\")\r\n\r\n      log_private(SelfClass.log, .fault, \"ObjC: Test \\(1)\")\r\n      log_public(SelfClass.log, .fault, \"ObjC: Test \\(1)\")\r\n      log_private(SelfClass.log, .fault, #file)\r\n      log_public(SelfClass.log, .fault, #file)\r\n\r\nWhere log_private and log_public are functions bridged from ObjC:\r\n\r\n void log_private(os_log_t log, os_log_type_t type, NSString * message) {\r\n   os_log_with_type(log, type, \"%s\", [message cStringUsingEncoding:NSUTF8StringEncoding]);\r\n}\r\n\r\nvoid log_public(os_log_t log, os_log_type_t type, NSString * message) {\r\n   os_log_with_type(log, type, \"%{public}s\", [message cStringUsingEncoding:NSUTF8StringEncoding]);\r\n}\r\n\r\nExpected Results:\r\nXcode console and Console.app should show:\r\n\r\n→ Swift\r\n[REDACTED] Swift: Test 1\r\n[REDACTED] Swift: Test 2\r\n[REDACTED] Swift: Test 3\r\n→ ObjC\r\n[REDACTED] <private>\r\n[REDACTED] ObjC: Test 1\r\n[REDACTED] <private>\r\n[REDACTED] /[REDACTED]/ViewController.swift\r\n\r\nActual Results:\r\nXcode console and Console.app shows:\r\n\r\n→ Swift\r\n→ ObjC\r\n[REDACTED] <private>\r\n[REDACTED] ObjC: Test 1\r\n[REDACTED] <private>\r\n[REDACTED] /[REDACTED]/ViewController.swift\r\n\r\nVersion:\r\nXcode: 8.0 (8A218a)\r\nmacOS: 10.12 (16A323)"
+    email: volodymyr.gorlov@gmail.com
+    modified: "2016-10-03T22:43:25.18444Z"
+    number: "28599032"
+    number_intvalue: 28599032
+    originated: 04-Oct-2016
+    parent_number: '&{NULL_VALUE}'
+    product: macOS SDK
+    product_version: 10.12 (16A323)
+    reproducible: 100%
+    resolved: ""
+    status: Open
+    title: os_log does not log Strings even if log format set to %{public}s.

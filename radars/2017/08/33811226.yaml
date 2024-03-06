@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33811226"
+    labels:
+        datastore_id: "4935937528168448"
+data:
+    classification: ReplayKit
+    created: "2017-08-10T13:51:52.73067Z"
+    description: "Area:\r\nReplayKit\r\n\r\nSummary:\r\nIn beta 4 of the iOS 11 SDK, I am able to create and start an AVAssetWriter successfully in a broadcast upload extension (NSExtensionPointIdentifier: com.apple.broadcast-services-upload). With this, I was able to take audio and video sample buffers that were received by the extension and write them into a video file.\r\n\r\nIn beta 5 of the iOS 11 SDK, the AVAssetWriter fails when startWriting() is called. From what I can tell from console logs, it appears that CMSessionMgr is now running the extension with \"Background Running\". In beta 4, it the extension was run with \"Foreground Running\".\r\n\r\n(This difference between background vs foreground is my guess as to why the AVAssetWriter no longer works in a broadcast upload extension in beta 5.)\r\n\r\nWithout AVAssetWriter, broadcast upload extensions are effectively relegated to only do live broadcast. An entire category of 3rd-party upload extensions that could potentially offer some kind of interesting take on screen _recording_ are precluded.\r\n\r\nSteps to Reproduce:\r\n- Run the attached AssetWriterTest project to install the AssetWriterTest app and associated \"Broadcast\" extension on an iOS 11 beta device (beta 5 or later).\r\n- Install the Screen Recording button into your Control Center if it's not already installed.\r\n- Bring up the Control Center.\r\n- 3D touch the Screen Recording button.\r\n- Choose the \"Broadcast\" extension.\r\n- Leave your device attached to a Mac and open the Console app and select your device.\r\n- Filter the Console app down to \"Errors and Faults\"\r\n- Clear the log.\r\n- Tap \"Start Broadcast\".\r\n- Wait for the countdown. Let the recording occur for at least a second or so.\r\n- Stop the recording\r\n\r\nExpected Results:\r\nYou _don't_ see the following error in the Console log: Broadcast \"startWriting() failure: The operation could not be completed\".\r\n\r\nObserved Results:\r\nYou _do_ see the following error in the Console log: Broadcast \"startWriting() failure: The operation could not be completed\"\r\n\r\nVersion:\r\n- iOS 11 beta 5 (15A5341f)\r\n- Xcode 9 beta 5 (9M202q)\r\n\r\nNotes:\r\nnote: An equivalent test result can be achieved by attaching the Xcode debugger:\r\n\r\n- In Xcode select Debug -> Attach to Process by PID or Name ... -> Broadcast.\r\n- Set a break point inside the _testAssetWriter() method in SampleHandler.swift before doing the recording on the device.\r\n- Step through the code when the break point is trapped.\r\n\r\nThe extensions effected by the bug in the sysdiagnose are com.TechSmith.Capture.Recorder and com.TechSmith.Labs.AssetWriterTest.Broadcast. Last reproduced around 5pm eastern time on Aug 9, 2017.\r\n\r\nConfiguration:\r\nOnly a beta 5 device causes this problem (regardless of whether the test app is compiled with beta 4 or 5 of Xcode 9)."
+    email: o.schnurr@techsmith.com
+    modified: "2017-09-06T17:31:32.53204Z"
+    number: "33811226"
+    number_intvalue: 33811226
+    originated: 8/9/2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 11 beta 5 (15A5341f)
+    reproducible: Always
+    resolved: yes
+    status: closed
+    title: 'ReplayKit, Broadcast Upload Extension: Foreground Privileges Needed for AVAssetWriter?'

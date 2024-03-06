@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21559587"
+    labels:
+        datastore_id: "6055145490087936"
+data:
+    classification: Other Bug
+    created: "2015-06-26T04:21:06.76374Z"
+    description: "The code below causes an Abort 6 trap:\n\n— Code —\n\nimport Foundation\n\npublic enum TokenizerError<T> : ErrorType {\n    case Error(message: String, offset: T)\n}\n\npublic struct Token<ContentType, ContentIndexType> {\n    \n    public init(token: ContentType, startOffset: ContentIndexType, endOffset: ContentIndexType) {\n        self.token = token\n        self.startOffset = startOffset\n        self.endOffset = endOffset\n    }\n\n    public let token: ContentType\n    public let startOffset: ContentIndexType\n    public let endOffset: ContentIndexType\n}\n\npublic protocol TokenizerType {\n    typealias ContentType\n    typealias ContentIndexType\n    \n    var rules: [(content: ContentType, offset: ContentIndexType) -> ContentIndexType?] { get }\n    var content: ContentType { get }\n    \n    init(content: ContentType)\n    \n    func next(index: ContentIndexType?) throws -> (token: Token<ContentType, ContentIndexType>, nextIndex: ContentIndexType)?\n}\n\npublic struct StringTokenizer : TokenizerType {\n\n    public let rules: [(content: String, offset: String.Index) -> String.Index?] = []\n    public let content: String = \"\"\n    \n    public init(content: String) {\n        \n    }\n    \n    public func next(index: String.Index? = nil) throws -> (token: Token<String, String.Index>, nextIndex: String.Index)? {\n        precondition(rules.count > 0, \"There are no rules specified for your tokenizer.\")\n        \n        let startAt = index ?? content.characters.startIndex\n        \n        for rule in rules {\n            if let nextIndex = rule(content: content, offset: startAt) {\n                let tokenString = String(content.characters[startAt...nextIndex])\n                \n                let token = Token(token: tokenString, startOffset: startAt, endOffset: nextIndex)\n                return (token: token, nextIndex: nextIndex.successor())\n            }\n        }\n        \n        throw TokenizerError.Error(message: \"\", offset: self.content.characters.startIndex)\n    }\n}"
+    email: owensd@gmail.com
+    modified: "2015-06-26T04:21:06.76406Z"
+    number: "21559587"
+    number_intvalue: 21559587
+    originated: 25-Jun-2015 09:21 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A121l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode-beta (7A121l): Compiler Crash when attempting to implement a struct and a conform to a generic protocol'

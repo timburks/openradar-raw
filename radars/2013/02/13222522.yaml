@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13222522"
+    labels:
+        datastore_id: "2721402"
+data:
+    classification: Crash
+    created: "2013-02-15T07:15:00.620198Z"
+    description: "15-Feb-2013 04:12 PM Lee Hericks:\r\nSummary:\r\n\r\nIt appears that processing of an NSAttributedString in UITextView is not thread-safe.  When accessing the typingAttributes property WebCore crashes.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Programmatically create a UITextView.\r\n2. Set an attributed string to the attributedText iVar\r\n3. Try to get the typingAttributes\r\n\r\nExpected Results:\r\n\r\nA NSDictionary of attributes should be returned.\r\n\r\nActual Results:\r\n\r\nWebCore::Frame::styleAtSelectionStart() const crashes with EXC_BAD_ACCESS\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\nUITextView objects from nib files will not crash if the nib sets the text property.  In some cases, setting the text property before setting an attributed string can also avoid the crash.  So it seems that:\r\n\r\nProgrammer sets attributed string\r\nNSHTMLWriter transforms the attributed string to html\r\nThe text property gets set to a plain text version of the attributed string\r\n\r\n..but requesting the typingAttributes before this processing can complete doesn't do a safety check for the text being nil, and WebCore is C++ and doesn't have the joy of sending messages to nil.\r\n\r\nWork around:\r\n\r\nDelay access to the typing attributes for a small time, see example project.\r\n\r\n15-Feb-2013 04:12 PM Lee Hericks:\r\n'TypingAttributesBug.zip' and 'TypingAttributesBug  2-15-13 4-11 PM.crash' were successfully uploaded"
+    email: lee.hericks@me.com
+    modified: "2013-02-15T07:15:00.620954Z"
+    number: "13222522"
+    number_intvalue: 13222522
+    originated: 15-Feb-2013 04:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "6.1"
+    reproducible: YES
+    resolved: ""
+    status: Open
+    title: WebCore crash on accessing UITextView's typingAttributes property

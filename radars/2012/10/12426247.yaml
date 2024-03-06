@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12426247"
+    labels:
+        datastore_id: "2100402"
+data:
+    classification: Other Bug
+    created: "2012-10-03T23:37:56.428817Z"
+    description: "Summary:\r\nSince 10.8, /usr/bin/dscl cannot be used to write to any other directory than /private/var/db/dslocal/nodes/Default/*, which prevents the maintenance of Managed Preferences in custom nodes created for the LocalMCX delivery method, detailed here:\r\nhttp://managingosx.wordpress.com/2012/07/27/mountain-lion-and-mcx/\r\nThis behavior should be changed to allow for any subdirectory of /private/var/db/dslocal/nodes/ instead.\r\n\r\nSteps to Reproduce:\r\n1. create new folder structure in /private/var/db/dslocal/nodes/ MCX/groups, users, computers, and computer groups. with appropriate ownership and permissions\r\n2. deploy computer record (i.e. local_laptop.plist) to that folder from a template\r\n3. attempt to modify the template to associate management with the specific machine, using these commands:\r\n/usr/bin/dscl /Local/MCX -create /Computers/$computerRecordName ENetAddress $macAddress \r\n/usr/bin/dscl /Local/MCX -create /Computers/$computerRecordName hardwareuuid\r\n\r\nExpected Results: successful update of records\r\nActual Results: <dscl_cmd> DS Error: -14136 (eDSRecordNotFound)\r\n\r\nRegression:all versions from 10.8 on\r\n\r\nNotes: AS mentioned in this post by Joe Wollard, this behavior is able to be circumvented:\r\n\"open /System/Library/Sandbox/Profiles/com.apple.opendirectoryd.sb in your favorite text editor \r\nFind the line referencing \"/var/db/dslocal/nodes/Default\", should be line 43 (notice how this is under the \"allow file-write*\" container?) \r\nInsert a new line after that one with the following contents, making adjustments where needed for your local MCX path: #\"^(/private)?/var/db/dslocal/nodes/MCX(/|$)\" \r\nreload the daemon, effectively forcing sandboxd to reload the permissions: killall opendirectoryd \"\r\nhttps://groups.google.com/forum/?fromgroups=#!topic/macenterprise/h8qAyNxHxzw\r\n\r\nThis type of management is valuable while Configuration Profiles do not allow \"Once\" or \"Often\" frequency settings, which I will file a separate enhancement bug for."
+    email: arubdesu@gmail.com
+    modified: "2012-10-03T23:37:56.429056Z"
+    number: "12426247"
+    number_intvalue: 12426247
+    originated: 3 October 2012
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.8+
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: dscl cannot write due to improper sandbox restrictions

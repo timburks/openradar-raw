@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29636002"
+    labels:
+        datastore_id: "5008211191005184"
+data:
+    classification: ""
+    created: "2016-12-13T07:38:29.76302Z"
+    description: "SUMMARY:\r\n\r\nWhen adding a framework to a project in Xcode 8.1 (8B62), the CodeSignOnCopy attribute is automatically set, as is the (invisible) RemoveHeadersOnCopy attribute. Unchecking CodeSignOnCopy via GUI leaves RemoveHeadersOnCopy set, which then potentially breaks the signature for a pre-signed framework that includes headers.\r\n\r\n\r\nSTEPS TO REPRODUCE:\r\n\r\n1) Create a new Xcode project (e.g., a macOS app)\r\n\r\n2) Add a Frameworks copy build phase\r\n\r\n3) Drag a third-party framework (e.g., Sparkle) to your new copy build phase\r\n\r\n4) Note how \"Code Sign On Copy\" is checked by default\r\n\r\n5) Check your project.pbxproj file — you'll see something along these lines:\r\n\r\n\tD07EAE831DFFD780009942C2 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D07EAE821DFFD780009942C2 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); };\r\n\r\n6) Uncheck \"Code Sign On Copy\" for your framework\r\n\r\n7) Check your project.pbxproj file again:\r\n\r\n\tD07EAE831DFFD780009942C2 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D07EAE821DFFD780009942C2 /* Sparkle.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };\r\n\r\n\r\nEXPECTED RESULTS:\r\n\r\nRemoveHeadersOnCopy is disabled along with CodeSignOnCopy. (See Notes for an even better solution.)\r\n\r\n\r\nACTUAL RESULTS:\r\n\r\nRemoveHeadersOnCopy remains set. If you're using a framework that's already signed and comes with headers, your built product's signature will be invalid due to the framework's being tinkered with after signing.\r\n\r\n\r\nNOTES:\r\n\r\nIdeally, there should be a checkbox for RemoveHeadersOnCopy, similar to the one we have for CodeSignOnCopy.\r\n\r\nBy the way, the same problem occurs when adding frameworks to old pre-existing projects. Older Xcode versions that didn't auto-check \"Code Sign On Copy\", on the other hand, also didn't auto-set RemoveHeadersOnCopy, as far as I can tell. So toggling \"Code Sign On Copy\" for a framework that was added in an old Xcode version won't cause problems, as the framework's headers are never stripped."
+    email: peter.maurer@gmail.com
+    modified: "2016-12-17T11:19:22.16193Z"
+    number: "29636002"
+    number_intvalue: 29636002
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 8.1 (8B62)
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 21997191
+    title: Xcode insists on RemoveHeadersOnCopy for newly added frameworks, regardless of CodeSignOnCopy status

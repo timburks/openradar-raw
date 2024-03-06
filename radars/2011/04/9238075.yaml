@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9238075"
+    labels:
+        datastore_id: "1177401"
+data:
+    classification: Other Bug
+    created: "2011-04-16T21:39:43.534331Z"
+    description: "05-Apr-2011 04:18 PM Marc Hoyois:\r\nSummary:\r\nThe bug happens when attaching a listener to the 'message' event on the 'safari.self' object of an 'about:blank' document created by Safari just before the loading of an iframe's actual document. Sometimes the listener will be copied to the latter document (which also has its own), causing this document to handle every message from the global page twice. NB: I do mean the same document, not the same tab.\r\n\r\nSteps to Reproduce:\r\n1) Install the 'test' extension. Here's how the extension works:\r\nFor every document in the page that loads an external resource, the extension's injected script assigns a unique ID to the document and sends a message to the global page; the global page then sends a message back. The injected script and the global page show an alert box before sending their messages and the injected script does so again upon receiving the answer, each showing the document's unique ID.\r\n\r\n2) Now navigate to:\r\nhttp://www.glogger.mobi/userpub2.php?username=guest&i=2009_04_26_21_09_58_75441700\r\n\r\nExpected Results:\r\nTheoretically, on any webpage, this extension will produce a number of matching triples of alert boxes: 'Sending message from document i', 'Sending answer to document i', and 'Answer received by document i'.\r\nThis happens correctly with the 'test-fix' extension that uses a workaround (see note 1 below).\r\n\r\nActual Results:\r\nOn the above webpage, document 1 gives two notifications of reception of answer, even though the answer was sent once from the global page: the handler of the 'message' event is run twice.\r\n\r\nNotes:\r\n1) An easy workaroud is to not register the listener to the message event if window.location.href is 'about:blank'. That's what the test-fix extension does and it shows the source of the bug.\r\n2) This hasn't anything to do with the 'beforeload' event, I'm just using it as a convenient way to assign unique IDs to document, making the demonstration clearer. But using a simpler injected script that sends its message after a setTimeout (long enough for the tab to load completely and the about:blank pages to disappear) and alerts on every message sent and received and doing the math, the number of alerts upon reception is still more than it should be, i.e. it is\r\n\r\n(# of documents in the tab) * (# of documents in the tab + # of documents with duplicate listeners).\r\n\r\nThis is what the test2 extension demonstrates (in the above web page there are 4 documents whence 20 answers received instead of the expected 16).\r\n3) I'm not sure if the creation of all these about:blank documents is necessary, but I guess not since it happens far less often in the latest WebKit builds. If it is not necessary then it shouldn't happen.\r\n4) There should be a way to prevent an extension's scripts to run on about:blank pages. The internal whitelist does not allow it. I can imagine that an extension would want to inject scripts there, for example to build a default blank page, but for most extensions there would be no point. Currently these about:blank pages multiply roughly by two the amount of Javascript being interpreted!\r\n5) It took me a whole day to narrow this one down and produce those minimal extensions, so please give this some serious consideration :) I think that it's a pretty huge bug given note 4, and the fact that it can produce baffling results that will be very hard for a developer to debug (case in point)."
+    email: marc.hoyois@gmail.com
+    modified: "2011-08-28T05:37:16.290306Z"
+    number: "9238075"
+    number_intvalue: 9238075
+    originated: "2011-04-05"
+    parent_number: '&{NULL_VALUE}'
+    product: Safari
+    product_version: 5.0.5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Safari extensions: serious messaging issue involving about:blank pages'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10636309"
+    labels:
+        datastore_id: "1472409"
+data:
+    classification: Serious Bug
+    created: "2012-01-03T14:35:19.129993Z"
+    description: "03-Jan-2012 06:31 PM Sergei Cherepanov:\r\n'AppDelegate.m' was successfully uploaded\r\n\r\n03-Jan-2012 06:31 PM Sergei Cherepanov:\r\nSummary:\r\nAssociated objects assigned by objc_setAssociatedObject() call are not deallocated upon deallocation of their owned, if NSZombies are enabled and project is ARC-enabled.\r\n\r\nSteps to Reproduce:\r\n1. Create a new Single View Application iPhone project with Storyboard and ARC enabled.\r\n2. Replace AppDelegate.m source with the following code (I've attached a copy for your convenience):\r\n\r\n\r\n#import \"AppDelegate.h\"\r\n#import <objc/runtime.h>\r\n\r\nstatic char ASSOC_KEY;\r\n\r\n@interface DeallocTester : NSObject\r\n@end\r\n\r\n@implementation DeallocTester\r\n- (id) init\r\n{\r\n    if (!(self = [super init]))\r\n        return nil;\r\n    NSLog(@\"%@ inited\", self);\r\n    return self;\r\n}\r\n\r\n- (void) dealloc\r\n{\r\n    NSLog(@\"%@ deallocated\", self);\r\n}\r\n@end\r\n\r\n@implementation AppDelegate\r\n@synthesize window = _window;\r\n- (void) applicationDidFinishLaunching:(UIApplication *)application\r\n{\r\n    NSObject *test = [[DeallocTester alloc] init];\r\n    objc_setAssociatedObject(test, &ASSOC_KEY, [[DeallocTester alloc] init],\r\n                             OBJC_ASSOCIATION_RETAIN);\r\n}\r\n@end\r\n\r\n\r\n3. Run the project and see the following lines in Output:\r\n\r\n2012-01-03 18:16:02.805 testD[77569:f803] <DeallocTester: 0x6abbb40> inited\r\n2012-01-03 18:16:02.807 testD[77569:f803] <DeallocTester: 0x6ab0640> inited\r\n2012-01-03 18:16:02.808 testD[77569:f803] <DeallocTester: 0x6abbb40> deallocated\r\n2012-01-03 18:16:02.809 testD[77569:f803] <DeallocTester: 0x6ab0640> deallocated\r\n\r\n4. Turn NSZombie objects on in current Scheme.\r\n5. Run the project again\r\n\r\nExpected Results:\r\nYou should see the same output as in step 3, 2 objects inited and both deleted.\r\n\r\nActual Results:\r\nOnly one object is deallocated (the associated object owner). The associated object is leaking.\r\n\r\n2012-01-03 18:16:02.805 testD[77569:f803] <DeallocTester: 0x6abbb40> inited\r\n2012-01-03 18:16:02.807 testD[77569:f803] <DeallocTester: 0x6ab0640> inited\r\n2012-01-03 18:16:02.808 testD[77569:f803] <DeallocTester: 0x6abbb40> deallocated\r\n\r\n\r\nNotes:\r\nI'm not sure whether it is an ARC issue, I haven't tried to reproduce it without ARC. I'm also not sure whether the associated objects are actually leaking or their memory is just freed without call to -dealloc.\r\n\r\nI've marked this issue as serious, because it blocks me from implementing block-based KVO utility NSObject category able to automatically remove KVO observers upon deallocation. My code uses an associated object to store a list of observers and removes them on deallocation. But this issue makes doing things that way unreliable, as many people have NSZombie turned on by default, and I don't know any alternative solution."
+    email: cto@studio23.ru
+    modified: "2012-01-03T14:35:19.130253Z"
+    number: "10636309"
+    number_intvalue: 10636309
+    originated: 03-Jan-2012 06:31 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 4.2.1 (Build 4D502)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Associated objects leaking if NSZombie objects enabled in ARC-enabled project

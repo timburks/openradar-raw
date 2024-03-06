@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12830961"
+    labels:
+        datastore_id: "2397401"
+data:
+    classification: Serious Bug
+    created: "2012-12-07T00:31:33.532844Z"
+    description: "Summary:\r\nNSJSONSerialization does not properly decode keys containing escaped unicode characters when these keys appear in several different dictionaries.\r\n\r\nSteps to Reproduce:\r\n1. Run this code\r\nvoid test NSJSONSerialization(void)\r\n{\r\n    NSString *testFail1 = @\"[{\\\"key\\\":5, \\\"key\\\\u00a9\\\":6}, {\\\"key\\\":7, \\\"key\\\\u00a9\\\":8}]\";\r\n    NSString *testFail2 = @\"[{\\\"key\\\\u00a9\\\":6}, {\\\"key\\\\u00a9\\\":8}]\";\r\n    NSString *testOK = @\"[{\\\"key\\\":5, \\\"key\\u00a9\\\":6}, {\\\"key\\\":7, \\\"key\\u00a9\\\":8}]\";\r\n    NSLog(@\"testFail1: %@\", testFail1);\r\n    NSLog(@\"testFail2: %@\", testFail2);\r\n    NSLog(@\"testOK:    %@\", testOK);\r\n    int i = 1;\r\n    for (NSString *json in @[ testFail1, testFail2, testOK ])\r\n    {\r\n        NSData *data = [json dataUsingEncoding:NSUTF8StringEncoding];\r\n        NSError *error = nil;\r\n        NSDictionary *object = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves error:&error];\r\n        printf(\"%d. %s\\n\", i, [[(object ?: error) description] UTF8String]);\r\n        i++;\r\n    }\r\n}\r\n\r\nExpected Results:\r\nFor testFail1 the result should be exactly the same as testOK, i.e.\r\n(\r\n        {\r\n        key = 5;\r\n        \"key\\U00a9\" = 6;\r\n    },\r\n        {\r\n        key = 7;\r\n        \"key\\U00a9\" = 8;\r\n    }\r\n)\r\n\r\nFor testFail2 the result should be:\r\n(\r\n        {\r\n        \"key\\U00a9\" = 6;\r\n    },\r\n        {\r\n        \"key\\U00a9\" = 8;\r\n    }\r\n)\r\n\r\n\r\nActual Results:\r\nFor testFail1 the second element of the array is completely wrong:\r\n(\r\n        {\r\n        key = 5;\r\n        \"key\\U00a9\" = 6;\r\n    },\r\n        {\r\n        key = 8;\r\n    }\r\n)\r\n\r\nFor testFail2, the key of the second element of the array is empty:\r\n(\r\n        {\r\n        \"key\\U00a9\" = 6;\r\n    },\r\n        {\r\n        \"\" = 8;\r\n    }\r\n)\r\n\r\n\r\nRegression:\r\nThe exact same problem also occurs on OS X 10.8.2\r\n\r\nNotes:\r\nThe same problem was discussed here: http://stackoverflow.com/questions/12842481/nsjsonserialization-results-in-exc-bad-access"
+    email: cedric.luthi@gmail.com
+    modified: "2013-08-21T19:42:40.677652Z"
+    number: "12830961"
+    number_intvalue: 12830961
+    originated: 07-Dec-2012 01:31 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "6.0"
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: NSJSONSerialization does not properly decode keys containing escaped unicode characters

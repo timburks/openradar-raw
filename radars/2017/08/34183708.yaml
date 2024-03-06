@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34183708"
+    labels:
+        datastore_id: "6155276596019200"
+data:
+    classification: Bug
+    created: "2017-08-31T10:33:48.35656Z"
+    description: "There's two APIs to do cursor handling in AppKit today:\r\n\r\n - The legacy cursorRect approach https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/EventOverview/MouseTrackingEvents/MouseTrackingEvents.html\r\n - The new NSTrackingArea based approach https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/EventOverview/TrackingAreaObjects/TrackingAreaObjects.html\r\n\r\n-[NSApplication _handleCursorRectEvent:] calls [[NSCursor arrowCursor] set] when the cursor stack is emptied, instead of falling back to allowing the event to propagate into a -[NSView cursorUpdate:] .\r\n\r\nSteps to Reproduce:\r\nThis can be seen when for example putting a NSTextField (which still uses the legacy API), into a NSView with an NSTrackingArea and cursorUpdate overriden to set a hand cursor e.g.. \r\n\r\n-[NSView cursorUpdate:] is called when the cursor enters the root view, as expected, and NSDebugCursorRects shows that a cursor rect is pushed onto the stack when entering the text field and changing the cursor into an I-bream, but when the cursor then leaves the text field, the cursor rect is popped, and the arrow cursor is set, never calling -[NSView cursorUpdate:].\r\n\r\nExpected Results:\r\nMoving the mouse from the text field to the root view restores the root view's cursor via -[NSView cursorUpdate:]\r\n\r\nObserved Results:\r\nThe cursor is reset to the arrow cursor."
+    email: torarnv@gmail.com
+    modified: "2017-12-10T23:53:28.25718Z"
+    number: "34183708"
+    number_intvalue: 34183708
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: AppKit
+    product_version: 10.12.6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AppKit cursorRects does not fall back to NSTrackingArea based cursorUpdate when popping last cursor

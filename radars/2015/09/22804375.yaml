@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22804375"
+    labels:
+        datastore_id: "4941130663723008"
+data:
+    classification: ""
+    created: "2015-09-22T18:32:21.71843Z"
+    description: "Summary:\r\nI set up OS X Server on a 10.10.5 Mac, turned on Time Machine sharing, and tried to initiate a new Time Machine backup from a 10.11 machine.\r\n\r\nThe connection to the server worked fine, and it created a (password protected) disk image on the host, but the resulting sparse image bundle was identified as being only ~470GB while the amount of data determined to back up was ~600GB.\r\n\r\nAlthough the disk on which the sparse disk bundle resides had ~1.8TB free, there was no way to get Time Machine to accept the backup to the targeted volume, or to try growing the size of the sparse image bundle automatically. (I thought they are supposed to grow automatically?).\r\n\r\n-----\r\n9/22/15 12:07:20.703 PM com.apple.backupd[69588]: Disk image /Volumes/TimeMachine/Macho.sparsebundle mounted at: /Volumes/Time Machine Backups\r\n9/22/15 12:07:21.728 PM com.apple.backupd[69588]: Forcing deep traversal on source: \"Edge\" (device: /dev/disk1 mount: '/' fsUUID: xxx eventDBUUID: xxx)\r\n9/22/15 12:07:21.728 PM com.apple.backupd[69588]: Forcing deep traversal on source: \"Data\" (device: /dev/disk2 mount: '/Volumes/Data' fsUUID: xxx eventDBUUID: xxx)\r\n9/22/15 12:07:21.728 PM com.apple.backupd[69588]: Forcing deep traversal on source: \"Macintosh HD\" (device: /dev/disk3 mount: '/Volumes/Macintosh HD' fsUUID: xxx eventDBUUID: xxx)\r\n9/22/15 12:09:19.850 PM com.apple.backupd[69588]: Total content size: 150.4 GB excluded items size: 36.44 GB for volume Edge\r\n9/22/15 12:10:19.956 PM com.apple.backupd[69588]: Total content size: 489.58 GB excluded items size: 44.64 GB for volume Data\r\n9/22/15 12:10:20.762 PM com.apple.backupd[69588]: Total content size: 48.47 GB excluded items size: 7.51 GB for volume Macintosh HD\r\n9/22/15 12:10:20.763 PM com.apple.backupd[69588]: Found 6213982 files (599.86 GB) needing backup\r\n9/22/15 12:10:20.763 PM com.apple.backupd[69588]: 621.34 GB required (including padding), 497.35 GB available\r\n9/22/15 12:10:21.884 PM com.apple.backupd[69588]: Backup failed with error 7: Not enough available disk space on the target volume.\r\n9/22/15 12:10:24.502 PM com.apple.backupd[69588]: Ejected Time Machine disk image: /Volumes/TimeMachine/Macho.sparsebundle\r\n9/22/15 12:10:25.508 PM com.apple.backupd[69588]: Ejected Time Machine network volume.\r\n-----\r\n\r\nFinally to get things rolling I had to manually resize the sparse disk imagef bundle on the server machine using hdiutuil:\r\n\r\nhdituilt resize -size 1tb ./Macho.sparseimage\r\n\r\nThen it recognized and accepted that the target sparse image had enough room:\r\n\r\n9/22/15 12:44:18.873 PM com.apple.backupd[70061]: Total content size: 151.53 GB excluded items size: 38.32 GB for volume Edge\r\n9/22/15 12:45:17.448 PM com.apple.backupd[70061]: Total content size: 489.57 GB excluded items size: 44.64 GB for volume Data\r\n9/22/15 12:45:17.459 PM com.apple.backupd[70061]: Found 5466566 files (558.14 GB) needing backup\r\n9/22/15 12:45:17.477 PM com.apple.backupd[70061]: 579.62 GB required (including padding), 1.1 TB available\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\nServer Mac:\r\nOS X 10.10.5 (14F27)\r\nOS X Server 5.04 (15S2259)\r\n\r\nClient Mac:\r\n10.11 (15A282b)\r\n\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: jalkut@gmail.com
+    modified: "2015-09-22T18:34:31.82253Z"
+    number: "22804375"
+    number_intvalue: 22804375
+    originated: 22-Sep-2015 02:27 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Time Machine fails to backup because of "too little space" without growing sparse image

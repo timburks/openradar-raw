@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33811386"
+    labels:
+        datastore_id: "5034906014973952"
+data:
+    classification: DUPLICATE OF 11206497
+    created: "2018-11-16T00:24:28.624718Z"
+    description: "Summary:\r\ndtrace has a feature called \"ustack helpers\". It allows a tracing program to supply code to dtrace on how to interpret stack frames when generating symbols. The typical use is adding function names to traces of programs running in a dynamic language which JIT, like Java or modern JavaScript. Unfortunately, dtrace on macOS doesn't support ustack helpers. This feature would make dtrace and Instruments much more useful when debugging programs which are entirely or partially written in Java or JavaScript.\r\n\r\nExternal references:\r\n- https://www.joyent.com/blog/understanding-dtrace-ustack-helpers\r\n- https://stackoverflow.com/questions/9214948/is-it-possible-to-notify-dtrace-on-mac-os-x-of-dynamically-generated-code/9526623\r\n- https://www.mail-archive.com/dtrace-discuss@opensolaris.org/msg04668.html\r\n\r\nPossibly related radrs: 5273057, 11206497.\r\n\r\nSteps to Reproduce:\r\nAttempt to trace something which should have useful stacks with ustack helpers. For example,\r\n\r\nsudo dtrace -n 'profile-97 /pid == $target/ { ustack(); }' -c '/Library/Java/JavaVirtualMachines/jdk1.8.0_141.jdk/Contents/Home/bin/java -XX:+PreserveFramePointer foo'\r\n\r\nExpected Results:\r\nStack traces with names for every frame.\r\n\r\nObserved Results:\r\nStack traces where some frames are missing names, like\r\n\r\n```\r\n 2     28                      :profile-97 \r\n              libjvm.dylib`Method::is_final_method() const+0x1b\r\n              libjvm.dylib`ConstantPoolCacheEntry::set_direct_or_vtable_call(Bytecodes::Code, methodHandle, int, bool)+0x1f7\r\n              libjvm.dylib`ConstantPoolCacheEntry::set_direct_call(Bytecodes::Code, methodHandle, bool)+0x76\r\n              libjvm.dylib`InterpreterRuntime::resolve_invoke(JavaThread*, Bytecodes::Code)+0x667\r\n              0x1188989e8\r\n              0x1188757a7\r\n              libjvm.dylib`JavaCalls::call_helper(JavaValue*, methodHandle*, JavaCallArguments*, Thread*)+0x6ae\r\n              libjvm.dylib`InstanceKlass::call_class_initializer_impl(instanceKlassHandle, Thread*)+0xbf\r\n              libjvm.dylib`InstanceKlass::initialize_impl(instanceKlassHandle, Thread*)+0x4b5\r\n              libjvm.dylib`InstanceKlass::initialize(Thread*)+0x3d\r\n              libjvm.dylib`InterpreterRuntime::_new(JavaThread*, ConstantPool*, int)+0x5e\r\n              0x1188999e7\r\n              0x11887d2bd\r\n              0x11887d2bd\r\n              0x11887d2bd\r\n              0x11887d2bd\r\n              0x11887d2bd\r\n              0x11887d040\r\n              0x1188757a7\r\n              libjvm.dylib`JavaCalls::call_helper(JavaValue*, methodHandle*, JavaCallArguments*, Thread*)+0x6ae\r\n```\r\n\r\nVersion:\r\nDarwin karkat 16.7.0 Darwin Kernel Version 16.7.0: Thu Jun 15 17:36:27 PDT 2017; root:xnu-3789.70.16~2/RELEASE_X86_64 x86_64\r\n\r\nProductName:\tMac OS X\r\nProductVersion:\t10.12.6\r\nBuildVersion:\t16G29\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nSIP must be disabled to use dtrace from the command line. Disabling SIP is not necessary to repro with instruments."
+    email: jsailor@gmail.com
+    modified: "2018-11-16T00:24:28.62492Z"
+    number: "33811386"
+    number_intvalue: 33811386
+    originated: "2017-08-15"
+    parent_number: '&{NULL_VALUE}'
+    product: developer tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: dupe
+    title: dtrace (and Instruments) on macOS doesn't support ustack helpers

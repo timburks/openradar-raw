@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11164715"
+    labels:
+        datastore_id: "1639404"
+data:
+    classification: ""
+    created: "2012-04-02T09:32:50.142671Z"
+    description: "02-Apr-2012 01:27 PM Alexander Potapenko:\r\nSummary:\r\nCFStringCreateCopy() normally does not copy constant CFString instances. It however does if the default CFAllocator is replaced by any other.\r\n\r\nSteps to Reproduce:\r\n=================================================\r\n$ cat t.mm\r\n#import <Foundation/Foundation.h>\r\n#include <stdio.h>\r\n\r\nint main() {\r\n#ifdef REPLACE\r\n CFAllocatorSetDefault(kCFAllocatorMallocZone);\r\n#endif\r\n CFStringRef str = CFSTR(\"Hello world!\\n\");\r\n CFStringRef str2 = CFStringCreateCopy(0, str);\r\n fprintf(stderr, \"str: %p\\n\", str);\r\n fprintf(stderr, \"str2: %p\\n\", str2);\r\n return 0;\r\n}\r\n\r\n\r\n$ ../../../../build/Release+Asserts/bin/clang++   t.mm -framework Foundation -o t  && ./t\r\nstr: 0x100001060\r\nstr2: 0x100001060\r\n\r\n\r\n$ ../../../../build/Release+Asserts/bin/clang++   t.mm -framework Foundation -DREPLACE -o t  && ./t\r\nstr: 0x100001070\r\nstr2: 0x1001099d8\r\n=================================================\r\n\r\nExpected Results:\r\nThe string pointers are equal in both cases.\r\n\r\nActual Results:\r\nIf the allocator is replaced, CFStringCreateCopy copies the constant string.\r\n\r\nNotes:\r\nSee also http://code.google.com/p/address-sanitizer/issues/detail?id=10 for the examples of how the bug may lead to hangs and incorrectly working code.\r\nThere also is a proposal how to fix the code."
+    email: ramosian.glider@gmail.com
+    modified: "2012-04-02T09:32:50.142825Z"
+    number: "11164715"
+    number_intvalue: 11164715
+    originated: 02-Apr-2012 01:27 PM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: CFStringCreateCopy incorrectly copies constant strings

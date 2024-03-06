@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13014239"
+    labels:
+        datastore_id: "2555402"
+data:
+    classification: Enhancement
+    created: "2013-01-15T08:51:01.894797Z"
+    description: "Summary:\r\n\r\nIn <syslimits.h>, on line 88, there is a hard-coded limit that allows a running process to have no more than 10,240 open file descriptors. The comment on that same line says: \"Todo: make this a config option?\"\r\n\r\nI would like that to-do implemented. Specifically, I would like the limitation on open file descriptors raised or (ideally) eliminated.\r\n\r\n\r\n\r\nJUSTIFICATION FOR REQUEST:\r\n\r\nThere are several categories of apps that need to watch a broad swath of files for changes. I write one them. My app is used by web developers. Whenever the user saves a file, my app processes that file (example: it takes a CSS file or a JPEG and minifies it, then reloads the web browser so the user can see the changes live.) \r\n\r\nMany of my users develop massively complex websites that have thousands of files and run into this limitation. \r\n\r\nBenchmarking apps are another type of application that frequently want to create many thousands of sockets or descriptors simultaneously. \r\n\r\n\r\n\r\nSTABILITY CONSIDERATIONS:\r\n\r\nI understand that removing this limit entirely would enable developers to write apps that simply suck up system resources until the entire system crashes. There is, however, a key safeguard against that:\r\n\r\nBy default, an app is limited to far less than the maximum number of open descriptors. Until the developer uses setrlimit(RLIMIT_NOFILE, x) to raise it, the limit is far lower (around 4,864 I believe). Leaving this \"soft\" limit in place would guard against bad developers who simply forget to close file descriptors, etc. Eventually their apps would crash when they hit the limit, but they would not go on sucking up resources until the system became unstable.\r\n\r\n\r\n\r\nPLAN B:\r\n\r\nIf removing the hard-coded limit is not acceptable, then please consider raising it substantially. Virtually every Mac now ships with at least 8GB of RAM and *plenty* of resources to handle more than 10,240 open file descriptors in a single process.\r\n\r\nI propose *at least* doubling the limit, but preferably tripling it. \r\n\r\nThank you."
+    email: bdkjones@gmail.com
+    modified: "2013-01-15T08:51:01.895166Z"
+    number: "13014239"
+    number_intvalue: 13014239
+    originated: 15 Jan 2013
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.8.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Raise limit on number of open file descriptors per process

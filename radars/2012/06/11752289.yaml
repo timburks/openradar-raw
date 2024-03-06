@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11752289"
+    labels:
+        datastore_id: "1788405"
+data:
+    classification: UI/Usability
+    created: "2012-06-26T19:56:55.385667Z"
+    description: "With iTunes 10.6.3, sending an ascr/gdte Apple Event returns the generic (\"Standard Suite\") scripting terminology instead of the iTunes scripting terminology. This breaks (among other things) remote scripting.\r\n\r\nSteps to Reproduce:\r\n\r\nOn machine 192.168.0.1, enable remote scripting, start iTunes, and select the first track.\r\n\r\nOn another machine on the LAN, run the two following one-liner scripts (either via AppleScript Editor or osascript):\r\n\r\ntell application \"iTunes\" of machine \"eppc://192.168.0.1\" to selection\r\n\r\ntell application \"iTunes\" of machine \"eppc://192.168.0.1\" to first track\r\n\r\nExpected Results:\r\n\r\nBoth commands should return something like {file track id 127126 of user playlist id 126691 of source id 73 of application \"iTunes\" of machine \"eppc://192.168.0.1\"}\r\n\r\nActual Results:\r\n\r\nThe first command returns something like {«class cFlT» id 127126 of «class cUsP» id 126691 of «class cSrc» id 73 of application \"iTunes\" of machine \"eppc://192.168.0.1\"}\r\n\r\nThe second command fails to run, with the error \"Expected class name but found identifier.\"\r\n\r\nRegression:\r\n\r\nThis worked as expected with iTunes 10.6.1, and every other version back into the mists of time. It doesn't matter which OS version you're running on either machine; all that matters is the iTunes version.\r\n\r\nNotes:\r\n\r\nI do not know of any way to work around this in AppleScript.\r\n\r\nCalling OSAGetAppTerminology instead of sending ascr/gdte seems to work. However, that method is deprecated, doesn't work in 64-bit apps, and doesn't work remotely. And besides, it's not what AppleScript does for remote scripting, so even if this were an option, you'd have to rewrite all your scripts in C to take advantage of it.\r\n\r\nAnother workaround is to run the sdef tool on the remote machine, copy the resulting sdef to the scripting machine, and use it as static glue with the appscript library. (The dynamic-glue features of appscript, and the ASTranslate tool, are broken by ITunes 10.6.3, even locally, for exactly the same reasons as remote AppleScript, but with static glue everything still works.) That at least allows you to rewrite your scripts in Python, Ruby, or ObjC instead of C. But it's still pretty drastic. Plus, appscript is a third-party library that's no longer maintained."
+    email: abarnert@gmail.com
+    modified: "2012-06-26T19:56:55.385858Z"
+    number: "11752289"
+    number_intvalue: 11752289
+    originated: 26-Jun-2012 12:55 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iTunes
+    product_version: 10.6.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: iTunes is no longer remotely scriptable

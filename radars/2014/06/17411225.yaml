@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17411225"
+    labels:
+        datastore_id: "5034984926609408"
+data:
+    classification: Serious Bug
+    created: "2014-06-22T15:33:26.405045Z"
+    description: "Summary:\r\nIn a normal Swift class, one can overload a method with different implementations for different argument types, and the appropriate overload will be called.\r\n\r\nHowever, if a the @objc attribute is added to a class to allow interoperation with Objective-C, or if an extension containing overloads is declared for an existing Objective-C class, then while the Swift compiler does allow compilation of the class with overloaded methods, the wrong overload may be called at runtime. It seems that the first method declared in the class is called regardless of argument type.\r\n\r\nSteps to Reproduce:\r\nPaste this into a Swift playground:\r\n\r\nimport Foundation\r\n\r\n@objc class Foo {\r\n    func bar(value: Double) -> String {\r\n        println(\"Calling bar(Double) with value \\(value)\\n\")\r\n        return NSString(format:\"%f\", value)\r\n    }\r\n\r\n    func bar(value: Int) -> String {\r\n        println(\"Calling bar(Int) with value \\(value)\\n\")\r\n        return NSString(format:\"%d\", value)\r\n    }\r\n}\r\n\r\nlet foo = Foo()\r\nlet fooDouble = foo.bar(12.2)\r\nlet fooInt = foo.bar(12)\r\n\r\nExpected Results:\r\nWould expect the value of fooInt to be \"12\", and for the console output to be this:\r\n\r\nCalling bar(Double) with value 12.2\r\nCalling bar(Int) with value 12\r\n\r\nAlternatively, I would expect the Swift compiler to issue an error or warning indicating that overloaded methods are not supported with @objc\r\n\r\nActual Results:\r\nThe value of fooInt is \"0.000000\", and this is the console output:\r\n\r\nCalling bar(Double) with value 12.2\r\nCalling bar(Double) with value 2.13025656856374e-314\r\n\r\nIf \"@objc\" is removed from the class declaration, then the expected output is generated.\r\n\r\nVersion:\r\nXcode 6.0 (6A216f)\r\n\r\nNotes:\r\nAn example for a class is presented here, but the same problem occurs if declaring a class extension for an Objective-C class. For example, if one declares this extension on UIStepper, the first method is called even if the argument is an Int, leading to unexpected behavior when the Int bit pattern is interpreted as a Double:\r\n\r\nextension UIStepper {\r\n    // Set value if proposed new value is within minimumValue...maximumValue\r\n    func ifInRangeSetValue(proposedValue: Double) -> Bool {\r\n        if minimumValue <= proposedValue && proposedValue <= maximumValue {\r\n            value = proposedValue\r\n            return true\r\n        }\r\n        else {\r\n            return false\r\n        }\r\n    }\r\n    \r\n    func ifInRangeSetValue(proposedValue: Int) -> Bool {\r\n        return ifInRangeSetValue(Double(proposedValue))\r\n    }\r\n}\r\n\r\nFor additional commentary and workarounds, see https://gist.github.com/kristopherjohnson/9b061e07832917da8a6c\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: kristopherdjohnson@gmail.com
+    modified: "2014-06-22T16:37:02.731639Z"
+    number: "17411225"
+    number_intvalue: 17411225
+    originated: 22-Jun-2014 11:31 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "6.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift does not resolve overloaded methods for classes marked with @objc

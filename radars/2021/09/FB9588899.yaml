@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9588899
+    labels:
+        datastore_id: "5059954041946112"
+data:
+    classification: ""
+    created: "2021-09-01T19:56:56.731579Z"
+    description: "Reproducible builds:\r\nThe bug exists in iOS 14.5+ simulators and devices.\r\n\r\nExpected behavior:\r\nI should be able to programmatically control the flow of multiple NavigationLinks destinations (within the same View) using `selection` and `tag`.\r\n\r\nUnexpected behavior:\r\nWhen a third NavigationLink is added to a SwiftUI View, the second NavigationLink will redirect back to the NavigationView root and not to the third NavigationLink destination.\r\n\r\nNotes:\r\n\r\nI've included a SwiftUI test that should fail (thus reproducing) the bug when running the XCUITest suite in an iOS 14.5 simulator. This XCUITest suite passes when running in an iOS 14.3 simulator.\r\n\r\n```swift\r\nimport XCTest\r\n\r\nclass AwesomeAppUITests: XCTestCase {\r\n\r\n  func test_whenUserTapsThroughMoreThanTwoScreens_itShouldTakeThemToLastScreen() {\r\n    let app = XCUIApplication()\r\n    app.launch()\r\n\r\n    XCTAssertTrue(app.staticTexts[\"First screen\"].exists)\r\n    app.buttons[\"Tap me!\"].tap()\r\n\r\n    XCTAssertTrue(app.staticTexts[\"Second screen\"].exists)\r\n    app.buttons[\"Tap me, again!\"].tap()\r\n\r\n    XCTAssertTrue(app.staticTexts[\"Third screen\"].exists)\r\n    app.buttons[\"One more time...\"].tap()\r\n\r\n    XCTAssertTrue(app.staticTexts[\"Final screen\"].exists)\r\n  }\r\n}\r\n```\r\n\r\n```swift\r\nimport SwiftUI\r\n\r\nstruct ButtonView: View {\r\n  let message: String\r\n  let buttonTitle: String\r\n  let onTap: () -> Void\r\n\r\n  var body: some View {\r\n    VStack {\r\n      Text(message).padding()\r\n\r\n      Button(action: { onTap() }) {\r\n        Text(buttonTitle)\r\n      }\r\n    }\r\n  }\r\n}\r\n\r\nstruct ContentView: View {\r\n  @State private var selection: String?\r\n\r\n  var body: some View {\r\n    NavigationView {\r\n      VStack {\r\n        ButtonView(\r\n          message: \"First screen\",\r\n          buttonTitle: \"Tap me!\",\r\n          onTap: { self.selection = \"view-2\" }\r\n        )\r\n\r\n        NavigationLink(\r\n          destination: ButtonView(\r\n            message: \"Second screen\",\r\n            buttonTitle: \"Tap me, again!\",\r\n            onTap: { self.selection = \"view-3\" }\r\n          ),\r\n          tag: \"view-2\",\r\n          selection: self.$selection\r\n        ) { EmptyView() }\r\n\r\n        NavigationLink(\r\n          destination: ButtonView(\r\n            message: \"Third screen\",\r\n            buttonTitle: \"One more time...\",\r\n            onTap: { self.selection = \"view-4\" }\r\n          ),\r\n          tag: \"view-3\",\r\n          selection: self.$selection\r\n        ) { EmptyView() }\r\n\r\n        NavigationLink(\r\n          destination: Text(\"Final screen\"),\r\n          tag: \"view-4\",\r\n          selection: self.$selection\r\n        ) { EmptyView() }\r\n      }\r\n    }\r\n  }\r\n}\r\n```"
+    email: TJMaynes@gmail.com
+    modified: "2021-09-01T19:56:56.731738Z"
+    number: FB9588899
+    number_intvalue: 9588899
+    originated: Sep 1, 2021 at 3:55 PM
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: iOS 14.5
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: SwiftUI - Unable to use more than two NavigationLinks in the same SwiftUI View

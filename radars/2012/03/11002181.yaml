@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11002181"
+    labels:
+        datastore_id: "1628404"
+data:
+    classification: Other
+    created: "2012-03-29T09:51:44.820241Z"
+    description: "Summary:\r\n\r\nIn a non-arc project, specifying -fobj-arc against a particular file to compile with ARC still triggers analyser warnings inside Xcode.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a new single-view iOS project, ensure ARC is switched *off* for the project.\r\n2. In Build Phases, add -fobj-arc to the generated ViewController class. [DOH.  TRY OBJC-ARC, IDIOT]\r\n3. add the following code to the ViewControllers viewDidLoad\r\n\r\n    NSString* leak = [[NSString alloc] initWithString:@\"I will be reported as a leak despite -fobj-arc\"];\r\n    NSLog(@\"LEAK: %@\", leak);\r\n\r\n4. Add the following code to the AppDelegates application:didFinishLaunchingWithOptions:\r\n\r\n    NSString* leak = [[NSString alloc] initWithString:@\"I *SHOULD* be reported as a leak as this is a non-ARC project\"];\r\n    NSLog(@\"LEAK: %@\", leak);\r\n\r\n5. Select Product->Analyse\r\n\r\nExpected Results:\r\n\r\nThe leak in AppDelegate should be reported as the file (and indeed the project) are not ARC-enabled.  The leak in the ViewController should *not* be reported as it's ARC compiled.\r\n\r\nActual Results:\r\n\r\nBoth leaks are reported.\r\n\r\n['ClangTest.zip' was successfully uploaded]"
+    email: alan.francis@hungrymachine.com
+    modified: "2012-03-29T11:01:50.541807Z"
+    number: "11002181"
+    number_intvalue: 11002181
+    originated: 28th March 2011
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 4.2.1
+    reproducible: Always
+    resolved: 28th March 2011
+    status: Open
+    title: clang static analyser in Xcode does not respect per-file -fobj-arc

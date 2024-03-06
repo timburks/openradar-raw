@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22108354"
+    labels:
+        datastore_id: "5065498052001792"
+data:
+    classification: Enhancement
+    created: "2015-08-02T20:07:37.15206Z"
+    description: "Summary:\nFunctions have a curried syntax allowing convenient definition of functions returning functions:\n\nfunc add(x: Int)(_ y: Int) -> Int {\n\treturn x + y\n}\n\nThe same syntax would be useful for defining initializers:\n\nstruct Add {\n\tinit(_ x: Int)(_ y: Int) {\n\t\tself.x = x\n\t\tself.y = y\n\t}\n\tlet x: Int\n\tlet y: Int\n}\n\nThe above initializer would be equivalent to a static function:\n\nstruct Add {\n\tstatic func init_(x: Int)(_ y: Int) -> Add {\n\t\treturn Add(x: x, y: y)\n\t}\n\tlet x: Int\n\tlet y: Int\n}\n\nFor example it can be partially applied, returning a function which initializes new instances of the type:\n\nlet incremented = [0, 1, 2, 3, 4].map(Add(1)) // equivalently: .map(Add.init(1))\n\nThis would also allow failable initialization in the usual way:\n\nstruct Pair<A, B> {\n\tinit?(x: A?)(y: B?) {\n\t\tguard let x = x else { return nil }\n\t\tguard let y = y else { return nil }\n\t\tleft = x\n\t\tright = y\n\t}\n\tlet left: A\n\tlet right: B\n}\n\nThis would yield an initializer of type A? -> B? -> Pair<A, B>?, i.e. the semantics are again identical to a curried static function defined over an uncurried (failable) initializer:\n\nstruct Pair<A, B> {\n\tstatic func init_(x: A?)(y: B?) -> Pair {\n\t\treturn Pair(x: x, y: y)\n\t}\n\n\tinit?(x: A?, y: B?) {\n\t\tguard let x = x else { return nil }\n\t\tguard let y = y else { return nil }\n\t\tleft = x\n\t\tright = y\n\t}\n\tlet left: A\n\tlet right: B\n}\n\nThis syntax would enable more idiomatic curried construction of Swift types than is currently possible. For example, my motivating case is the family of `loc` functions defined here:\n\nhttps://github.com/antitypical/Manifold/blob/289e8444349c9d3bf7d02cefde7db08966134f69/Manifold/Location.swift#L46-L79\n\nTaking the first function as an example, we could define it in extant Swift 2 syntax as a failable initializer, something like so (\U0001F6A8 untested \U0001F6A8):\n\ninit?(_ weave: (A -> Location?) -> A -> Location?, _ up: A -> Location?, _ a: A) {\n\tfunc into(t1: A) -> Location? {\n\t\treturn Location(it: t1, down: weave(into), up: up, left: const(nil), right: const(nil))\n\t}\n\tself = into(a)\n}\n\nHowever, in doing so we would lose the ability to partially apply it, which is depended upon elsewhere in the codebase.\n\n\nSteps to Reproduce:\nN/A\n\nExpected Results:\nN/A\n\nActual Results:\nN/A\n\nRegression:\nN/A\n\nNotes:\nN/A"
+    email: rix.rob@gmail.com
+    modified: "2015-08-02T20:07:37.1523Z"
+    number: "22108354"
+    number_intvalue: 22108354
+    originated: 02-Aug-2015 04:07 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A165t)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2.0b4: Curried initializer syntax'

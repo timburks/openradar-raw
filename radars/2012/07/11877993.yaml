@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11877993"
+    labels:
+        datastore_id: "1822401"
+data:
+    classification: Serious Bug
+    created: "2012-07-16T21:10:00.771307Z"
+    description: "15-Jul-2012 09:19 PM Zach Lipton:\r\nSummary: \r\nAfter several days of screaming my head off at NSURLCache on iOS, I finally figured out what was going on. The problem was that responses were being cached properly, but subsequent requests were only sometimes being served from the cached copies. It was practically random: sometimes a request was immediately served from the cache, while other times NSURLConnection was blindly making a new request to the server even though I could see the perfectly good cached response in the SQLite cache file on disk.\r\n\r\nI tried pretty much every permutation of configurations and debugging methods, and finally hit on the cause. NSURLCache doesn't work as expected if the memory capacity is not equal to the disk capacity. You see, I had initialized my cache with a large disk capacity and a smaller in-memory capacity, expecting to be able to benefit from the larger disk cache for storing large images on the retina iPad while keeping fast performance and reducing file IO with the memory cache:\r\n\r\n[NSURLCache setSharedURLCache:[[MyCustomCache alloc] initWithMemoryCapacity:8 * 1024 * 1024 //8mb \r\n                                                                    diskCapacity:32 * 1024 * 1024 // 32mb \r\n                                                                        diskPath:@\"webcache.db\"]];\r\n\r\nIt appears that NSURLCache on iOS doesn't actually support this though. All the responses are written to the cache file as expected, but requests only hit the cache if the relevant response happens to be available in the in-memory portion of the cache. Otherwise, the Foundation implementation of cachedResponseForRequest: just returns nil instead of checking the disk cache as expected. \r\n\r\nSteps to Reproduce:\r\n1. Run the attached code sample for an example. This sample uses a 1mb memory cache and 8mb disk cache, which makes the problem pretty obvious with a small number of requests. \r\n2. Change the memory and disk capacities (lines 32 and 33) to both be 1024*1024*8. \r\n\r\nExpected Results:\r\nAll responses are returned from the cache pursuant to the Cache-Control HTTP headers and standard caching heuristics.\r\n\r\nActual Results:\r\n[NSURLCache cachedResponseForRequest:] alternates between blocks of returning results from the cache and returning nil. After changing the capacities to be equal, all responses are served from the cache as expected.\r\n\r\nRegression:\r\niOS4 and earlier behavior was to ignore the disk cache entirely, as NSURLCache on iOS only stored results in memory (without really documenting this fact). It's certainly an improvement to have the disk cache working on iOS5, but if the class is not going to support using the memory and disk caches as a single multi-level cache (as one would expect), the API should enforce the requirement that both caches be the same size. \r\n\r\nNotes:\r\nFeel free to contact me if I can provide further information. Thanks."
+    email: zachlipton@gmail.com
+    modified: "2012-07-16T21:10:00.77149Z"
+    number: "11877993"
+    number_intvalue: 11877993
+    originated: 7/15/2012
+    parent_number: '&{NULL_VALUE}'
+    product: iPad SDK
+    product_version: "5.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSURLCache has inconsistent behavior if memoryCapacity != diskCapacity

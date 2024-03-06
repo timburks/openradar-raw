@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30483448"
+    labels:
+        datastore_id: "5044321061437440"
+data:
+    classification: Serious Bug
+    created: "2017-02-12T17:45:33.39158Z"
+    description: "This CloudKit app uses CKQuerySubscriptions to be notified of server changes and update the on device data store.\r\n\r\nDuring user testing, the Production database had been firing the expected CKNotifications,  the app received and processed these notifications to fetch changed data.  At some point the notifications were no longer fired.  The app also uses CKFetchNotificationChangesOperation to fetch notifications when the app becomes Active.  The expected CKNotifications were not included in this queue, giving a clue that the Apple Push Service was not at fault.\r\n\r\nUsing the steps in QA1917 and the 'CloudKit Catalog' sample, I verified the container was working using both the development and production database. (really... why do I NOW have to live with the 'items' model in our database forever!!!)\r\n\r\nOn intuition, I then removed the field indexes referred to by the CKQuerySubscriptions predicate and deployed this to the Production database. Then added the indexes back to the fields and again deployed.\r\n\r\nAfter this forced re-indexing, the CKNotifications immediately began working as expected.\r\n\r\nTroubleshooting - QA1917:\r\nhttps://developer.apple.com/library/content/qa/qa1917/_index.html\r\n\r\nThis leaves me with the theory that CloudKit indexing can fail in some way. Since our app architecture relies on CKQuerySubscriptions to keep the device updated of database changes, this is a critical bug with no acceptable (performent) work around.  Future planned features include a social network news feed that includes immediate updating of new posts.  This will not be possible if indexing continues to prevent notifications to fail to fire.\r\n\r\n\r\nSteps to Reproduce:\r\nThus far, there are no clues on how to reproduce or how frequently this may occur.\r\n\r\nExpected Results:\r\nProper firing of CKNotifications in response to the modify/update/delete of a model object referred to by a CKSubscription Predicate.\r\n\r\nActual Results: \r\nCKNotifications are not fired, even when the CKSubscription predicate is reasoned through that it evaluates to true.\r\n\r\nConfiguration:\r\niPhone 5s, iPad Pro 12.9, iPhone 7 Plus, iPhone 6+\r\n\r\nVersion & Build:\r\niOS 10.2 & iOS 10.2.1\r\n\r\nAdditional Notes:\r\nApp architecture notes:\r\nI am concerned that our unique use of CloudKit may stress the indexing system in a way it fundamentally can not handle.  The following notes are here to illustrate this\r\n\r\n- All app data is in the public database\r\n- All models use one or more CKReference fields that point to a Person model.  Each of these CKReference fields are indexed.\r\n- A single user action can cause the creation or update of 14 objects in 3 model types, necessitating the indexes to be updated for 3 fields. As a social app, this needs to scale to millions of users, with thousands of simultaneous user actions.\r\n- In responce to a common user activity, the CKQuerySubscriptions are deleted and new CKQuerySubscriptions with updated predicates are saved to CloudKit.\r\n- The App aims to persist a minimal view of the expansive public model object graph on device.  The CKQuerySubscriptions represent a query to be notified of any modify/update/delete of these locally persisted model objects."
+    email: brian@hiddentower.com
+    modified: "2017-02-12T17:45:33.39176Z"
+    number: "30483448"
+    number_intvalue: 30483448
+    originated: 2/12/2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK (CloudKit)
+    product_version: na
+    reproducible: no
+    resolved: ""
+    status: Open
+    title: Previously working CKQuerySubscription fails to fire CKNotification. Forced reindexing restores expected behavior.

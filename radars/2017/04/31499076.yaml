@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31499076"
+    labels:
+        datastore_id: "6724976392536064"
+data:
+    classification: security
+    created: "2017-04-07T12:28:56.85666Z"
+    description: "Summary:\r\nOur iOS CI Server needs to verify distribution certificates before using them to sign a build. This worked perfectly fine for years with the following command:\r\n\r\nsecurity verify-cert -p codeSign -c ios_distribution.cer\r\n\r\nIn case the cert could be successfully verified, the output was: \"...certificate verification successful.\" (Exit Code 0)\r\n\r\nIf it could not be verified, e.g. because it has been revoked, the output looked like: \"Cert Verify Result: CSSMERR_TP_CERT_REVOKED\" (and Non-Zero Exit Code).\r\n\r\nAfter installing macos Sierra, this stopped working. Calling security verify-cert with revoked certificates always produces the output \"...certificate verification successful.\" and a zero exit code. I've tested this with several certs from different accounts on several machines. Some of the certs were revoked for over 4 weeks.\r\n\r\nSteps to Reproduce:\r\n1. Create a new developer or distribution certificate on developer.apple.com/membercenter\r\n2. Download this cert on a 10.12.* machine\r\n3. Revoke the certificate on developer.apple.com/membercenter\r\n4. verify the cert with: security verify-cert -p codeSign -c ios_distribution.cer\r\n\r\nExpected Results:\r\n/usr/bin/security should return a non-zero exit code and the string \"Cert Verify Result: CSSMERR_TP_CERT_REVOKED\"\r\n\r\nActual Results:\r\n/usr/bin/security returns a zero exit code and the string \"...certificate verification successful.\""
+    email: esdee84@googlemail.com
+    modified: "2017-04-07T12:28:56.85695Z"
+    number: "31499076"
+    number_intvalue: 31499076
+    originated: 07-Apr-2017
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 10.12.*
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'macos Sierra: /usr/bin/security falsely verifies revoked certificate'

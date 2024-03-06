@@ -1,0 +1,51 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13680523"
+    labels:
+        datastore_id: "2944404"
+data:
+    classification: Enhancement
+    created: "2013-04-18T01:31:47.52875Z"
+    description: |-
+        Summary:
+        When a UITableView has completed reordering cells it sends the message tableView:didEndReorderingRowAtIndexPath: to its delegate.  This is undocumented behavior, and therefore not allowed to be used in production code.  It would be very useful if it were documented.
+
+        Steps to Reproduce:
+        In a class that is the delegate of a UITableView, add the following code:
+        - (void)tableView:(UITableView *)tableView didEndReorderingRowAtIndexPath:(NSIndexPath *)indexPath
+        {
+            NSLog(@"UITableView: %@  Did end reordering row at index path: %@", tableView, indexPath);
+        }
+
+        You will then see the output in the console every time you reorder a cell, even if you put the cell back to the same indexPath it started at.
+
+        Expected Results:
+        The method should be documented, public API so it can be used in an app submitted to the App Store.
+
+        Actual Results:
+        The method is undocumented, private API, and is therefore not allowed in apps submitted to the App Store.
+
+        Regression:
+        Unknown.  The method is not listed as deprecated, so I assume it has always been undocumented.
+
+        Notes:
+        Currently, your delegate gets sent the message tableView:moveRowAtIndexPath:toIndexPath: if, and only if, the index path that the cell was placed at is different from its starting index path.  If you place it back where it came from, you do not get sent the message and cannot react.
+
+        Your delegate also currently gets sent tableView:targetIndexPathForMoveFromRowAtIndexPath:toProposedIndexPath:, but that is sent before the animation is completed (whereas, tableView:didEndReorderingRowAtIndexPath: gets sent after the animation completes).  So you may not be able to react appropriately at this time.
+
+        One example problem (and my current problem) is having subviews of the tableView. They end up underneath the cells when the cells are reordered. Bringing them to the front in tableView:didEndReorderingRowAtIndexPath: solves the problem, but it is an undocumented, private method :(
+
+        Help me, Obi-Wan Kenobi; you're my only hope.
+    email: cflesner@gmail.com
+    modified: "2013-04-18T01:31:47.528924Z"
+    number: "13680523"
+    number_intvalue: 13680523
+    originated: 17-Apr-2013 08:31 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "6.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'UITableViewDelegate method tableView:didEndReorderingRowAtIndexPath: should be public API'

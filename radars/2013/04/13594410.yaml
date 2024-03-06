@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13594410"
+    labels:
+        datastore_id: "2917401"
+data:
+    classification: Enhancement
+    created: "2013-04-07T12:47:09.181472Z"
+    description: "This bug is an intentional duplicate of rdar://13594403\r\n\r\nA lot of the Cocoa APIs use NSStrings to indicate state. However, these strings are private constants that are not supposed to be looked at, their contents relied on, or saved to disk. This means that anyone who wants to keep a record of their state or wants to perform different actions based on state has to write chains of 'if' statements.\r\n\r\nThe surface fix for this would be to add support for objects to the switch() statement in ObjC, so one can switch like:\r\n\r\nswitch( exportSession.exportPreset )\r\n{\r\n\tcase AVExportPresetIPad:\r\n\t\t// react.\r\n\t\tbreak;\r\n}\r\n\r\nAn even better fix would be to allow to dispatch on string identifiers in some better way that maps a preset to a selector. I *can* do this with strings whose contents are guaranteed, where I can use NSSelectorFromString() to build a selector based on its contents. Another alternative would be to fix the frameworks to use real objects (on which one can declare categories that will dispatch to the right place) instead of string constants. For this I propose an @enum construct:\r\n\r\n@enum\r\n{\r\n\tAVExportPresetIPad,\r\n\tAVExportPresetIPhone\r\n};\r\n\r\nwhere each constant would effectively map to something like:\r\n\r\n@interface AVExportPresetIPad : NSObject\r\n@end\r\n\r\nAVExportPresetIPad*\tAVExportPresetIPad = [[AVExportPresetIPad alloc] init];\r\n\r\n(Where the alloc/init would effectively be a global object like a class, not an actual heap object) People can now use this like any other object and class, and declare categories on it to add their specialized dispatch. Even better, for backward compatibility, one could add support for types in enums like that, like:\r\n\r\n@enum : NSString\r\n{\r\n\tAVExportPresetIPad = @\"ExportPresetIPad\",\r\n\tAVExportPresetIPhone = @\"ExportPresetIPhone\"\r\n};\r\n\r\nwhich would isa-swizzle the string to pretend to be an NSString subclass named like the constant, which means old code gets the same string, but new code can declare categories on it etc. Furthermore, it would be easy to graduate from constants to a full-blown object"
+    email: ameaijou@gmail.com
+    modified: "2013-04-07T12:47:09.181619Z"
+    number: "13594410"
+    number_intvalue: 13594410
+    originated: 4/7/2013
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 10.8.3
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: Prolific use of strings for state in Cocoa frameworks

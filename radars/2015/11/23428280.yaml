@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23428280"
+    labels:
+        datastore_id: "6060237140262912"
+data:
+    classification: Bug
+    created: "2015-11-18T07:27:04.84484Z"
+    description: "Summary:\r\nInstantiating more than 1 NSProgress (with progressWithTotalUnitCount:) \r\nbetween the becomeCurrentWithPendingUnitCount and resignCurrent \r\ndoes not make all instances children of the the current progress.\r\n\r\nSteps to Reproduce:\r\n  _mainProgress = [NSProgress progressWithTotalUnitCount:100];\r\n    \r\n    [_mainProgress becomeCurrentWithPendingUnitCount:100];\r\n\r\n    for (int i=0; i<5; i++) {\r\n        [self addChildProgress];\r\n    }\r\n    \r\n    [_mainProgress resignCurrent];\r\n\r\nExpected Results:\r\nexpected _mainProgress to have 5 children like in iOS 8 \r\n\r\n<NSProgress: 0x7fe05248c750> : Parent: 0x0 / Fraction completed: 0.0000 / Completed: 0 of 100  \r\n  <_NSProgressGroup: 0x7fe05248fcc0> : Portion of parent: 100 Children: 5\r\n    <NSProgress: 0x7fe052519bf0> : Parent: 0x7fe05248c750 / Fraction completed: 0.0000 / Completed: 0 of 0  \r\n    <NSProgress: 0x7fe05248fe50> : Parent: 0x7fe05248c750 / Fraction completed: 0.0000 / Completed: 0 of 0  \r\n    <NSProgress: 0x7fe0524904e0> : Parent: 0x7fe05248c750 / Fraction completed: 0.0000 / Completed: 0 of 0  \r\n    <NSProgress: 0x7fe052519a50> : Parent: 0x7fe05248c750 / Fraction completed: 0.0000 / Completed: 0 of 0  \r\n    <NSProgress: 0x7fe052490070> : Parent: 0x7fe05248c750 / Fraction completed: 0.0000 / Completed: 0 of 0  \r\n\r\n\r\nActual Results:\r\nsame code on iOS 9.1 the main progress has only 1 child\r\n<NSProgress: 0x7fa259d3d180> : Parent: 0x0 / Fraction completed: 0.0000 / Completed: 0 of 100  \r\n  <NSProgress: 0x7fa259d406f0> : Parent: 0x7fa259d3d180 / Fraction completed: 0.0000 / Completed: 0 of 0 \r\n\r\nall other 4 progress instances have the parent nil \r\n\r\nVersion:\r\nwith iOS 8.4 an iOS 9.1\r\n\r\nNotes:\r\nEven though [NSProgress currentProgress] is always returning the _mainProgress as expected, using the - (instancetype)initWithParent:(NSProgress *)parentProgressOrNil userInfo:(NSDictionary *)userInfoOrNil\r\nmethod and passing the [NSProgress currentProgress] the resulting progress still has the parent nil\r\n\r\nConfiguration:\r\niPhone 6 Simulator"
+    email: unho86@gmail.com
+    modified: "2015-11-18T07:27:04.84506Z"
+    number: "23428280"
+    number_intvalue: 23428280
+    originated: 18-Nov-2015 01:01 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "9.0"
+    reproducible: Always
+    resolved: Behaves correctly
+    status: Closed
+    title: NSProgress can't implicitly add multiple children in iOS 9.0

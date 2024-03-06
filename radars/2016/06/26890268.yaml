@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26890268"
+    labels:
+        datastore_id: "4944086339420160"
+data:
+    classification: ""
+    created: "2016-06-20T12:07:10.43934Z"
+    description: "Summary:\r\nCoreData's '-com.apple.CoreData.ConcurrencyDebug 1' option breaks in unexpected line. \r\n\r\nFully reproduce code is here:\r\nhttps://github.com/kenmaz/CoreDataVioration/tree/master\r\n\r\nI have two CoreData Entities, EntityA and EntityB.\r\n\r\nNSManagedObjectContext hierarchy is here:\r\n- RootSaving Context ( private queue) \r\n  - Main Context ( main queue )\r\n    - Private Context (private queue) \r\n\r\nIn my sample code, execute three code blocks in parallel.\r\n#1 In private queue, insert and save EntityA record\r\n#2 In main queue, fetch EntityB record\r\n#3 in main queue, fetch EntityA record\r\n\r\nI think #2 and #3 run in serial because I use main queue and perofmBlock: method.\r\n \r\nXcode stop in #3 code block with EXC_BAD_INSTRUCTION.\r\nI can see \"__Multithreading_Violation_AllThatIsLeftToUsIsHonor__\" in stack trace, so I think this breaks cuased by CoreData's ConcurrencyDebug option.\r\n\r\nI don't know why ConcurrencyDebug option stops my code.\r\n\r\nIf you turn off ConcurrencyDebug option, this code works fine.\r\n\r\nSteps to Reproduce:\r\n1. Clone sample code from: \r\nhttps://github.com/kenmaz/CoreDataVioration/tree/master\r\n\r\n2. Open CoreDataViolationCrash.xcodeproj with Xcode\r\n\r\n3. Edit Scheme > Run > Argument Passed on Launch >\r\n\r\n4. Add \"-com.apple.CoreData.ConcurrencyDebug 1\"\r\n\r\n5. Run with simulator (cmd+R)\r\n\r\n6. Press 'button' button once or twice on main screen.\r\n\r\n7. Xcode stop the execution on following line:\r\n\r\nExpected Results:\r\nXcode don't stop execution.\r\n\r\nActual Results:\r\nXcode stop execution.\r\n\r\nVersion:\r\niOS 9.3.2\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nXcode 7.3 (7D175) + Mac OSX 10.11.4 + iPhone6s simulator / iPhone6 actual device"
+    email: kentaro.matsumae@gmail.com
+    modified: "2016-06-20T12:07:10.43965Z"
+    number: "26890268"
+    number_intvalue: 26890268
+    originated: 20-Jun-2016 08:51 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Strange behavior of CoreData's '-com.apple.CoreData.ConcurrencyDebug 1' option

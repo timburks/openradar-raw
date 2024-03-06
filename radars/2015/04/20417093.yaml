@@ -1,0 +1,44 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20417093"
+    labels:
+        datastore_id: "5291195899052032"
+data:
+    classification: Other Bug
+    created: "2015-04-03T17:36:55.670636Z"
+    description: |-
+        Summary:
+        A session/login cookie gathered while using a WKWebView is not permanently removed when using NSHTTPCookieStorage.sharedHTTPCookieStorage().deleteCookie. This only works if the WKWebView instance is removed from the view stack and nil’d out before calling deleteCookie.
+
+        Steps to Reproduce:
+        1. Use a WKWebView instance to log into a site with a known login cookie. In my case it was a Rails server using out-of-the-box cookie-based session management.
+        2. Observe that NSHTTPCookieStorage.sharedHTTPCookieStorage().cookies contains the expected cookie
+        3. Loop through all cookies and, for each, delete it using NSHTTPCookieStorage.sharedHTTPCookieStorage().deleteCookie(cookie)
+        4. Observe that is now an empty collection
+        5. Quit the application via double home button tap and swipe up to toss the card away
+        6. Restart the application and observe that SHTTPCookieStorage.sharedHTTPCookieStorage().cookies contains the cookie that was supposedly deleted
+
+        Expected Results:
+        The cookies that were deleted using deleteCookie() stay deleted.
+
+        Actual Results:
+        The cookies that were deleted using deleteCookie() are not deleted after restarting the application.
+
+        Regression:
+        Unknown
+
+        Notes:
+        This can be seen on both the iOS 8.2 Simulator and hardware – iPad 2, in my case. The solution for this is to run removeFromSuperview() on the associated WKWebView instance, nil it out, then attempt to delete cookies.
+    email: fatchicksinpartyhats@gmail.com
+    modified: "2015-04-03T17:36:55.670758Z"
+    number: "20417093"
+    number_intvalue: 20417093
+    originated: 03-Apr-2015 10:36 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "8.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSHTTPCookie does not permanently remove cookies while WKWebView instance exists

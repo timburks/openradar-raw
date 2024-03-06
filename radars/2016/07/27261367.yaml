@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27261367"
+    labels:
+        datastore_id: "6065507669114880"
+data:
+    classification: Crash
+    created: "2016-07-09T09:26:35.74554Z"
+    description: "rdar://27261367\r\n\r\nArea:\r\nUIKit\r\n\r\nSummary:\r\nIn PSPDFKit, we check the modalPresentationStyle before accessing the popoverPresentationController. There have been bugs in the past where merely accessing the popoverPresentationController property caused behavior changes and/or retain cycles, so we added extra checks to ensure we only try to access it when modalPresentationStyle is set to UIModalPresentationPopover.\r\n\r\nThis is now causing crashes on all PSPDFKit installs before today’s 5.4.1 release. And since it will take our customers a while to update, this is very very bad.\r\n\r\nIn iOS 9, [UIActivityViewController setModalPresentationStyle:] was implemented as a simple check to prevent form/page sheet styles and then set the style. This is fine. In iOS 10, there’s an added check for -[UIActivityViewController allowsEmbedding] under certain conditions (_UIAppUseModernRotationAndPresentationBehaviors, which of course is true for most modern apps)\r\n\r\nIf this is all the case, then the value is set to 100. Our code expects UIModalPresentationPopover which has value 7. Value 100 seems to be an internal value and is not defined in the enum.\r\n\r\nI stopped digging what value 100 does, but it seems to be used in other (internal) view controllers as well.\r\n\r\nSteps to Reproduce:\r\nRun the attached sample on an iPad with iOS 9: works. iOS 10: throws an exception.\r\n\r\nExpected Results:\r\nI’m fine with this behavior change (even if I believe that internal implementation details should not be leaked like this) but if you do that, please add a UIApplicationLinkedOnVersion check to keep behavior for < SDK 10 linked apps.\r\n\r\n\r\nActual Results:\r\nBehavior changes. All PSPDFKit-using apps crash when the activity button is pressed and this is really bad since the public beta is now out.\r\n\r\nThis is an unexpected, undocumented behavior change. It’s not documented (please correct me if I’m wrong) that checking for modalPresentationStyle is forbidden.\r\n\r\nVersion:\r\niOS 10.0b2\r\n\r\nNotes:\r\nYou’ll find the most up-to-date sample code for all our radars on https://github.com/PSPDFKit-labs/radar.apple.com\r\n\r\nConfiguration:\r\nXcode 10.0b2\r\n\r\nAttachments:"
+    email: steipete@gmail.com
+    modified: "2016-07-09T09:26:35.74577Z"
+    number: "27261367"
+    number_intvalue: 27261367
+    originated: 09-Jul-2016 11:24 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 10b2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Breaking changing on UIActivityViewController when checking modalPresentationStyle leads to crash

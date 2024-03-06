@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6047383"
+    labels:
+        datastore_id: "70411"
+data:
+    classification: ""
+    created: "2009-08-27T02:54:53.582545Z"
+    description: "01-Jul-2008 12:17 PM W Lewis:\r\nSummary: \r\n\r\nCertain paths, such as the triangle in the attached demo application, will cause Quartz to crash if you draw them too close to the left edge of an NSImage.\r\n\r\nSteps to Reproduce:\r\n\r\nBuild and run the attached application. You'll see a pixelated smudge (which is a very small triangle drawn into a 32x32 NSImage and then composited at a larger size so you can see it). Use the \"horizontal position\" slider to move the triangle to the left.\r\n\r\nExpected Results:\r\n\r\nThe triangle will be drawn where it's supposed to be.\r\n\r\nActual Results:\r\n\r\nWhen the triangle reaches a certain point about 8-10 pixels from the left edge of the image, the application will segfault. The stack trace always looks like this:\r\n\r\nProgram received signal:  “EXC_BAD_ACCESS”.\r\n(gdb) bt\r\n#0  0x93896b74 in draw_line ()\r\n#1  0x938959da in line_to ()\r\n#2  0x938952a2 in aa_line_render ()\r\n#3  0x96f08d86 in ripr_Coverage ()\r\n#4  0x96ef6872 in ripc_Render ()\r\n#5  0x96eff7c4 in ripc_DrawPath ()\r\n#6  0x93846a67 in CGContextDrawPath ()\r\n#7  0x93894726 in CGContextStrokePath ()\r\n#8  0x000028a8 in -[StrokeView drawPath] (self=0x1344a0, _cmd=0x2f19) at /Volumes/Local/Source/PlainSVN/trunk/Staff/wiml/radar/badn/StrokeView.m:75\r\n\r\nIt's typically trying to read from an address near 0xc0001d60, which is not mapped.\r\n\r\nClipping the left edge of the triangle (with the other slider) will not prevent the crash. Clipping the entire triangle (or most of it) will, presumably because the deadly path segment gets culled before it reaches the buggy RIP.\r\n\r\nRegression:\r\n\r\nTested on 10.5.2 and 10.5.4; no change.\r\n\r\nNotes:\r\n\r\nProbably the same bug as RADARs #4273679 and #5736773.\r\n\r\n\r\n\r\n\r\n'slowpoke.spx' was successfully uploaded\r\n\r\n01-Jul-2008 12:27 PM W Lewis:\r\nAttaching a simple application which demonstrates the crash.\r\n\r\n\r\n\r\n\r\n'badstroke-6047383.tar.gz' was successfully uploaded\r\n\r\n11-Jun-2009 04:49 PM W Lewis:\r\nCrash still occurs on Snow Leopard 10.6/10A380 (same behavior as under 10.5.x).\r\n\r\n\r\n10-Jan-2011 02:31 PM W Lewis:\r\nCrash still occurs on Snow Leopard 10.6.6/10J537 (same behavior as under 10.5.x and 10.6.0).\r\n\r\nThe crash only seems to happen on i386 on 10.6.6; on x86_64, the path simply doesn't render at all (but also doesn't crash)."
+    email: wiml@omnigroup.com
+    modified: "2011-08-28T05:49:59.378869Z"
+    number: "6047383"
+    number_intvalue: 6047383
+    originated: 01-Jul-2008 01:17 PM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: 10.5.x, 10.6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Drawing this triangle too close to the left edge of an image will segfault

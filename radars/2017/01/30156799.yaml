@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30156799"
+    labels:
+        datastore_id: "6175625849077760"
+data:
+    classification: Serious Bug
+    created: "2017-01-24T01:40:13.76223Z"
+    description: "Area:\r\nTerminal\r\n\r\nSummary:\r\nAccording to TN2449 (and \"man ssh_config\"), using the config option \"UseKeychain yes\" will store the passphrase for an SSH key in the keychain once it is used successfully. However, no new entry appears in the Keychain Access after the passphrase is saved.\r\n\r\nEven more strange, if I restart my computer, immediately lock the \"login\" keychain in Keychain Access, and then attempt to use the ssh key… it works immediately. I am not prompted to unlock the keychain first.\r\n\r\nThis leaves me with a lot of questions:\r\n- Where is the passphrase actually stored?\r\n- Is it encrypted?\r\n- Is there any way to lock this keychain or revoke access?\r\n- Why doesn't the documentation explain any of this?\r\n\r\nSteps to Reproduce:\r\n- Set up SSH for another computer, using a key with a passphrase\r\n- Set \"UseKeychain yes\" as described in \"man ssh_config\" or TN2449: https://developer.apple.com/library/content/technotes/tn2449/_index.html#//apple_ref/doc/uid/DTS40017589\r\n- Restart your Mac (in case there are any keys already loaded by ssh-agent)\r\n- Immediately lock the default \"login\" keychain in Keychain Access\r\n- Open Terminal\r\n- Optional: use \"ssh-add -D\" to make sure no identities are already loaded (in my testing this makes no difference)\r\n- Attempt to connect to the other computer using SSH\r\n\r\nExpected Results:\r\nIf the passphrase is actually stored in the keychain, it should prompt the user to unlock the keychain, and fail if it is not unlocked as requested.\r\n\r\nIdeally the passphrase should show up in Keychain Access, it should be unavailable if its keychain is locked, and it should be possible to move it to different keychain (for example with a different password or different automatic locking settings).\r\n\r\nIf there's some reason that behavior isn't possible, it should be documented in some way—explaining that it is not the standard keychain, along with where and how it is stored.\r\n\r\nActual Results:\r\nIt works, the ssh connection is successful. I assume this is because the \"keychain\" being used is some entirely separate storage mechanism that does not show in Keychain Access.\r\n\r\nVersion:\r\n10.12.3 (16D32)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n3.3 GHz Intel Core i7, 16 GB RAM, 1TB SSD, Intel Iris Graphics 550 1536 MB\r\n\r\nAttachments:"
+    email: robotspacer@gmail.com
+    modified: "2017-01-24T01:40:13.7625Z"
+    number: "30156799"
+    number_intvalue: 30156799
+    originated: 23-Jan-2017 08:38 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.12.3 (16D32)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: The SSH config option "UseKeychain yes" does not seem to actually use the keychain?

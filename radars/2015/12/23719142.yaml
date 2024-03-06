@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23719142"
+    labels:
+        datastore_id: "5000860908126208"
+data:
+    classification: Other Bug
+    created: "2015-12-02T06:01:33.03996Z"
+    description: "Summary:\r\n\r\nWhen calling a generic function that has a signature similar to another\r\ngeneric function, the return type can be incorrectly inferred, and\r\ncasting to the return type doesn't work correctly.\r\n\r\nSteps to reproduce:\r\n\r\n1. Run the attached script with\r\n  `swift GenericFunctionIncorrectTypeInference.swift`\r\n\r\nExpected results:\r\n\r\nEach test should print:\r\n\r\n```\r\nGot 'Optional(\"hi\")' should be 'hi'\r\n```\r\n\r\nActual results:\r\n\r\nThe first run returns nil because `\"hi\" as? Optional<String>` fails to\r\ncast correctly. Here's the output:\r\n\r\n```\r\nType inferred as 'Optional<String>'\r\nType inferred as 'String'\r\nGot 'nil' should be 'hi'\r\n\r\nType inferred as 'String'\r\nGot 'Optional(\"hi\")' should be 'hi'\r\n\r\nType inferred as 'Optional<String>'\r\nType inferred as 'String'\r\nGot 'Optional(\"hi\")' should be 'hi'\r\n```\r\n\r\nNotes:\r\n\r\n- The main issue here is that when casting `\"hi\" as? T` where `T` is\r\n  `Optional<String>`, it returns nil, when it should work fine.\r\n- Commenting out the other `RawRepresentable` function and running again\r\n  solves this problem.\r\n- It seems extremely odd that the last inferred type is different from\r\n  those before it *only* when the other `RawRepresentable` function is\r\n  also there, since these shouldn't collide as `String` does not conform\r\n  to `RawRepresentable`"
+    email: keithbsmiley@gmail.com
+    modified: "2016-02-21T02:59:05.68235Z"
+    number: "23719142"
+    number_intvalue: 23719142
+    originated: 01-Dec-2015 10:01 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Swift 2.1
+    reproducible: Always
+    resolved: ""
+    status: Resolved (fixed in Swift 2.2)
+    title: Swift generic function return type incorrectly inferred, casting fails

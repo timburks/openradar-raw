@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17435540"
+    labels:
+        datastore_id: "6732991657148416"
+data:
+    classification: Enhancement
+    created: "2014-06-24T15:31:08.804816Z"
+    description: "Consider a class implementing two protocols with clashing function declarations (name + all parameter types). Currently there is no mechanism to disambiguate which function is being a) implemented and b) invoked. The compiler collapses the implementation of the clashing function to be invoked for both protocols even though these may have very different semantics (as function name *will* depend on the protocol context)\r\n\r\nRegarding implementation, I propose that it's disambiguated with extensions. Allow the following:\r\n\r\nprotocol Protocol1 {\r\n    func doSomething()\r\n}\r\n\r\nprotocol Protocol2 {\r\n    func doSomething()\r\n}\r\n\r\n//  Compiler error - don't know which one is being implemented, use extension for this.\r\nclass Class1 : Protocol1, Protocol2 {\r\n    func doSomething() {\r\n        println(\"which one is it?\");\r\n    }\r\n}\r\n\r\n//  Fine - the compiler knows that it's Protocol1 that's being implemented *and* it's obvious to the programmer as well.\r\nclass Class2 : Protocol1 {\r\n    func doSomething() {\r\n        println(\"it's protocol1\");\r\n    }\r\n}\r\n\r\n//  Fine - again it's perfectly clear to both compiler and programmer what's going on.\r\nextension Class2 : Protocol2 {\r\n    func doSomething() {\r\n        println(\"it's protocol2\");\r\n    }\r\n}\r\n\r\nRegarding invocation the compiler knows that there is an ambigous call and it with explicit casting it's easy for the programmer to manually disambiguate:\r\n\r\nvar obj = Class2()\r\nobj.doSomething()   //  Compiler error - it's not clear which function should be invoked, cast to explicit var var p1 = obj as Protocol1;\r\np1.doSomething()    //  Fine - invoke the Protocol1 implementation\r\nvar p2 = obj as Protocol2;\r\np2.doSomething()    //  Fine - invoke the Protocol2 implementation\r\n\r\nThis even works when extending classes to which we don't have source code:\r\n\r\n//  In library source code (we don't have it)\r\nprotocol LibraryProtocol1 {\r\n    func doSomething()\r\n}\r\n\r\nclass LibraryClass : LibraryProtocol {\r\n    func doSomething() {\r\n        //  whatever it may be\r\n    }\r\n\r\n    func doSomethingConditionally() {\r\n        if(someCondition) {\r\n            doSomething()\r\n        }\r\n    }\r\n}\r\n\r\nprotocol LibraryProtocol2 {\r\n    func doSomething()\r\n}\r\n\r\n//  Our source code\r\nextension LibraryClass : LibraryProtocol2 {\r\n    func doSomething() {\r\n        //  something else to be done\r\n    }\r\n}\r\n\r\nvar obj = LibraryClass()\r\nobj.doSomethingConditionally()    //  Invokes LibraryProtocol1.doSomething() because when LibraryClass module was compiled there was no ambiguity\r\nobj.doSomething()   //  Error - this now has to be disambiguated manually\r\n\r\nSteps to reproduce:\r\n\r\n1. Run this code in a playground:\r\n\r\nprotocol Protocol1 {\r\n    func doSomething()\r\n}\r\n\r\nprotocol Protocol2 {\r\n    func doSomething()\r\n}\r\n\r\nclass TestClass : Protocol1, Protocol2 {\r\n    \r\n    func doSomething() {\r\n        println(\"which one is it?\");\r\n    }\r\n\r\n}\r\n\r\nvar t = TestClass()\r\nvar p1 = t as Protocol1;\r\np1.doSomething()\r\nvar p2 = t as Protocol2;\r\np2.doSomething()\r\n\r\nExpected results:\r\n\r\nIt shouldn't compile (clashing function declarations) and it should allow us to disambiguate the implementations\r\n\r\nActual results:\r\n\r\nIt compiles and prints out \"which one is it?\" two times."
+    email: ivan@softwaremarbles.com
+    modified: "2014-06-24T15:31:08.805005Z"
+    number: "17435540"
+    number_intvalue: 17435540
+    originated: "2014-06-24"
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: Version 6.0 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Clashing protocol functions cannot be disambiguated

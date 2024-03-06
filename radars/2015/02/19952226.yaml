@@ -1,0 +1,57 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19952226"
+    labels:
+        datastore_id: "6410948231299072"
+data:
+    classification: Enhancement
+    created: "2015-02-25T15:25:32.091923Z"
+    description: |-
+        Summary:
+        I have a function composition operator defined like so in Prelude.framework[1]:
+
+        public func >>> <T, U, V> (f: T -> U, g: U -> V) -> T -> V {
+        	return { g(f($0)) }
+        }
+
+        Now I want to use it to implement Either.map[2]:
+
+        extension Either {
+        	public func map<V>(f: U -> V) -> Either<T, V> {
+        		return either(ifLeft: Either<T, V>.left, ifRight: f >>> Either<T, V>.right)
+        	}
+        }
+
+        Great! Being a good citizen I now want to mark map’s parameter as @noescape. However, if I do that, I can’t use >>> to compose f with the Either.right static function, because I don’t have a way to indicate to Swift that the operands to >>> will not escape if the returned closure does not escape. As a result, I have to either forego @noescape, or forego my composition operator.
+
+        I’d love to be able to tell Swift that >>>’s operands are captured completely by its returned closure and do not otherwise escape it.
+
+
+        Steps to Reproduce:
+        N/A
+
+        Expected Results:
+        N/A
+
+        Actual Results:
+        N/A
+
+        Regression:
+        N/A
+
+        Notes:
+        1: https://github.com/robrix/Prelude
+        2: https://github.com/robrix/Either
+    email: rix.rob@gmail.com
+    modified: "2015-02-25T15:25:32.092076Z"
+    number: "19952226"
+    number_intvalue: 19952226
+    originated: 25-Feb-2015 10:25 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (6D532l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2: Transitive @noescape-like attribute for returned closures'

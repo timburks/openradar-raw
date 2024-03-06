@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9948414
+    labels:
+        datastore_id: "5561570989965312"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2022-03-07T20:01:13.273126Z"
+    description: "# Intro\r\n\r\nWe currently work on Wi-Fi transition from SSID: OLDWIFI (WPA2 Personal) to SSID: NEWWIFI (WPA2 Enterprise EAP-TTLS with PAP).\r\nWe want to use EAP-TTLS with PAP inner authentication method so our user can use Okta credentials to authenticate when connecting to Wi-Fi.\r\nmacOS won't connect to EAP-TTLS with PAP by default unless explicitly configured in configuration profile. We provide the configuration profile via MDM (VMware Workspace ONE UEM).\r\n\r\n# Problem\r\n\r\nWhen user provides bad password during connection attempt for EAP TTLS + PAPm very confusing system message appears \"The Wi-Fi network NEWWIFI could not be joined. Try moving closer to the wireless router. Alternatively run Wireless Diagnostics to troubleshoot.\" (See bad_password_message.png)\r\n\r\n# Steps to reproduce\r\n\r\n1. Send SYSTEM scope configuration profile wifi_system_scope.mobileconfig or USER scope wifi_user_scope.mobileconfig (Profiles can be installed manually for the purpose of this bug report).\r\n2. Profile is delivered and configuration applied.\r\n3. If the profile is SYSTEM scope macOS will automatically try to connect to NEWWIFI, fail and reconnect back to OLDWIFI. FB9947906\r\n4. User opens the Wi-Fi menu and clicks on the NEWWIFI SSID.\r\n5. Macs prompts for credentials on the the third connection attempt. FB9948356\r\n6. User enters authentication credentials BUT provides wrong password.\r\n\r\n# Expected result\r\n\r\nmacOS informs the user that provided password was wrong and reprompts so user can enter it again.\r\n\r\nIf macOS does not know what was the reason behind unsuccessful authentication we would at least expect better worded message informing user about the possibility that the password was wrong.\r\n\r\n# Actual result\r\n\r\nFollowing message is displayed: \"The Wi-Fi network NEWWIFI could not be joined. Try moving closer to the wireless router. Alternatively run Wireless Diagnostics to troubleshoot.\" (See bad_password_message.png) \r\n\r\n# Affected systems\r\nBoth M1 and Intel MacBook Pro running macOS 12 Monterey. Tested with\r\n- MacBookPro14,1 running 12.2.1 (21D62)\r\n- MacBookPro17,1 running 12.3 Beta 5 (21E5227a)\r\n\r\nTo provide more detailed logs we turned on extended logging via sudo wdutil log +wifi +eapol."
+    email: michalm.mac@gmail.com
+    modified: "2022-03-07T20:01:13.27327Z"
+    number: FB9948414
+    number_intvalue: 9948414
+    originated: "2022-03-07"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: "12.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Confusing system message when user enters bad password for EAP TTLS + PAP authentication

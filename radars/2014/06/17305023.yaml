@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17305023"
+    labels:
+        datastore_id: "4997315915939840"
+data:
+    classification: Other Bug
+    created: "2014-06-13T18:16:59.127001Z"
+    description: "Summary:\r\nI hoped that willSet and didSet will be called if optional properties become nil, because the object get deallocated.\r\nBut they are not called. We get the same problems like in Objective-C.\r\n\r\nSteps to Reproduce:\r\nimport Foundation\r\n\r\nclass ObjectA {\r\n\tinit() {\r\n\t\tprintln(\"Init of \\(self)\");\r\n\t}\r\n\t\r\n\tdeinit {\r\n\t\tprintln(\"Deinit of \\(self)\");\r\n\t}\r\n}\r\n\r\nclass ObjectB {\r\n\tweak var instanceA : ObjectA? {\r\n\t\twillSet(newValue) {\r\n\t\t\tprintln(\"Will set value to \\(newValue)\")\r\n\t\t}\r\n\t\tdidSet {\r\n\t\t\tprintln(\"Did set value to \\(instanceA)\")\r\n\t\t}\r\n\t}\r\n}\r\n\r\nvar instanceA : ObjectA?\r\nvar instanceB = ObjectB();\r\n\r\nautoreleasepool {\r\n\tprintln(\"\\nStep 1\");\r\n\tinstanceA = ObjectA();\r\n\t\r\n\tprintln(\"\\nStep 2\");\r\n\tinstanceB.instanceA = instanceA\r\n\tprintln(\"value of ivar: \\(instanceB.instanceA)\");\r\n\t\r\n\tprintln(\"\\nStep 3\");\r\n\tinstanceA = nil\r\n\t\r\n\tprintln(\"\\nStep 4\");\r\n\tprintln(\"value of ivar: \\(instanceB.instanceA)\");\r\n}\r\n\r\nprintln(\"Finish\")\r\n\r\nActual Results:\r\nI got following output:\r\nStep 1\r\nInit of C9TestSwift7ObjectA (has 0 children)\r\n\r\nStep 2\r\nWill set value to C9TestSwift7ObjectA (has 0 children)\r\nDid set value to C9TestSwift7ObjectA (has 0 children)\r\nvalue of ivar: C9TestSwift7ObjectA (has 0 children)\r\n\r\nStep 3\r\nDeinit of C9TestSwift7ObjectA (has 0 children)\r\n\r\nStep 4\r\nvalue of ivar: nil\r\nFinish"
+    email: stephan.michels@gmail.com
+    modified: "2014-06-13T18:22:01.590472Z"
+    number: "17305023"
+    number_intvalue: 17305023
+    originated: 13-Jun-2014 08:16 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "10.10"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: willSet and didSet are not called if optional properties become nil'

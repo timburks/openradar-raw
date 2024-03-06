@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19163498"
+    labels:
+        datastore_id: "5342783153897472"
+data:
+    classification: Developer Tools
+    created: "2014-12-06T00:12:53.309425Z"
+    description: "Summary:\r\nI had an Xcode project in which I was working on a framework. Eventually, we decided to port it to OS X. Most of the code was the same, so I just added a new target for OS X. The target properly has CONFIGURATION_BUILD_DIR set to `build/Debug` and `build/Release`, but the product listing in the navigation pane expects to find the OS X product in `build/Debug-iphones` and `build/Release-iphoneos`.\r\n\r\nI suspect this is because the Products in the nav pane assume a project-global build directory, rather than a platform-specific (or target-specific) build directory. I think they should reference the target-specific directory.\r\n\r\nBonus: Create yet another OS X target with the same PRODUCT_NAME as an existing iOS target. Because of the above, Xcode thinks they are the same build product. The attached project shows them both in Products for me, but I have other projects in which targets with products of the same name are shown only once. Ideally, Products would show the name of each product and, if there are dupes, the name of the target or platform in parens if there are products with the same names (and different build directories and/or platforms).\r\n\r\nThis causes mayhem for dependencies, too. I try to depend on \"foo.framework\" in an iOS app, and it implicitly depends on a \"foo framework for OS X\" target, because it doesn't know whether to pick the iOS \"foo.framework\" of the OS X \"foo.framework\".\r\n\r\nThe attached example project demonstrates some of these confusions.\r\n\r\nSteps to Reproduce:\r\n1. Create a new iOS project in Xcode 6.1.\r\n2. Add an OS X target to it.\r\n3. Click on the iOS product in the navigator. Note in the \"Identity and Type\" pane in the Utilities area that its path ends in \"Build/Products/Debug-iphoneos\".\r\n4. Click on the OS X product in the navigator. Note in the \"Identity and Type\" pane in the Utilities area that its path ends in \"Build/Products/Debug-iphoneos\".\r\n\r\nBonus:\r\n1. Create another OS X product.\r\n2. Change its PRODUCT_NAME to be the same as the iOS target.\r\n3. Click this new OS product in the navigator. Note that it has exactly the same build directory as the iOS target (ending in \"Build/Products/Debug-iphoneos\" again).\r\n4. Note also that you cannot tell the iOS from the OS X target from each other in the Products area.\r\n5. Try creating dependencies on these products in other projects. See if they get confused and pick the wrong target!\r\n\r\nExpected Results:\r\nI expected the OS X product to have its build directory end in Note in the \"Identity and Type\" pane in the Utilities area that its path ends in \"Build/Products/Debug\". I also expected to be able to see at a glance in he Products area whether a product was for iOS or OS X, or perhaps which target each comes from. Same goes for Schemes, BTW.\r\n\r\nActual Results:\r\nThe OS X product has its build directory end in \"Build/Products/Debug-iphoneos\". Xcode sometimes picks the wrong one when dependencies are created and products have the same names on both platforms. \r\n\r\nVersion:\r\nVersion 6.1.1 (6A2008a)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'PlatformProducts.zip' was successfully uploaded."
+    email: justatheory@gmail.com
+    modified: "2015-01-22T18:34:24.714573Z"
+    number: "19163498"
+    number_intvalue: 19163498
+    originated: "2014-12-05"
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: Version 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: Duplicate
+    status: Duplicate of 11761819
+    title: Xcode Thinks that OS X Targets Created in an iOS Project are in the iOS Build Directory

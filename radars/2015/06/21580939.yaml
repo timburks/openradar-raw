@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21580939"
+    labels:
+        datastore_id: "5519497939124224"
+data:
+    classification: ""
+    created: "2015-06-27T22:23:32.28011Z"
+    description: "Ryan Cumley27-Jun-2015 04:15 PM\r\n\r\nSummary:\r\n'switch' statements fail to compile in Xcode 7b2 when switching off of a particular enum: namely an enumeration which has at least one member with an associated type of Array<SomeOtherType> and other members with no associated type.\r\n\r\nA few examples of problem enumerations:\r\n\r\nenum LiftingAnInt {\r\n    case One\r\n    case Two(Array<Int>)\r\n    case Three\r\n}\r\n\r\nprotocol Test { }\r\nenum LiftingAProtocol {\r\n    case One\r\n    case Two(Array<Test>)\r\n    case Three \r\n}\r\n\r\nSteps to Reproduce:\r\n1. Compile with Xcode 6.3.2 (6D2105)  No errors.\r\n2. Compile with Xcode 7b2 (7A121l) Will fail to compile with error: \"Terminator found in the middle of a basic block! label %entry LLVM ERROR: broken function found, compilation aborted!\"\r\n\r\nprotocol Test { }\r\nstruct TestInstance: Test { }\r\n\r\nenum ProblemExample {\r\n    case One\r\n    case Two(Array<Test>)\r\n    case Three\r\n}\r\n\r\nfunc someProblemExampleMember() -> ProblemExample {\r\n    return ProblemExample.Two([TestInstance()])\r\n}\r\n\r\nfunc forkProblemExecution() -> Int {\r\n    switch someProblemExampleMember() {\r\n    case .One: return 1\r\n    case .Two(let data):\r\n        print(data)\r\n        return 2\r\n   case .Three: return 3\r\n    }\r\n}\r\n\r\n\r\n\r\nExpected Results:\r\nExpected Xcode7b2 (7A121l) to compile without errors, because Xcode 6.3.2 (6D2105) compiles without errors.\r\n\r\nActual Results:\r\nNo warnings are observed on the .swift file itself. \r\nThe build fails. \r\nThe 'CompileSwiftSources' step fails. \r\nCompiling the actual file in question succeeds (green check mark) but throws an error: \"Terminator found in the middle of a basic block! label %entry LLVM ERROR: broken function found, compilation aborted!\"\r\n\r\nVersion:\r\nXcode 6.3.2/6D2105 & OS X 10.10.3/14D136    Compiles with no errors as expected\r\nXcode 7/7A121l & OS X 10.10.3/14D136    Build Fails to compile\r\n\r\nNotes:\r\nInterestingly enough, reducing the enum to consist only of members with the exact same associated type succeeds.\r\n\r\nFor example, these compile just fine in Xcode7b2\r\n\r\nenum WorksJustFine {\r\n    case One(Array<Test>)\r\n    case Two(Array<Test>)\r\n}\r\n\r\nenum ThisCompilesFineToo {\r\n    case One(Array<Test>)\r\n    case Two(Array<Int>)\r\n}\r\n\r\nSo my best debugging guess at this point would be that adding in an enumeration member with no associated values is where I'd start."
+    email: ryancumley@gmail.com
+    modified: "2015-06-27T22:23:32.28056Z"
+    number: "21580939"
+    number_intvalue: 21580939
+    originated: Jun-27-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode 7b2
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift2 Xcode7b2 switch statements fail when using certain enumerations

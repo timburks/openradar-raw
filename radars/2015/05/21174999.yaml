@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21174999"
+    labels:
+        datastore_id: "6069366126804992"
+data:
+    classification: High
+    created: "2015-05-31T06:02:40.65464Z"
+    description: "Summary:\r\nCalling array.insert() with a struct instance containing a reference to a protocol crashes with EXC_BAD_ACCESS\r\n\r\nSteps to Reproduce:\r\nRun the following code:\r\n\r\npublic protocol Pet       {}\r\npublic class    Dog : Pet {}\r\n\r\npublic struct Person {\r\n    public let pet : Pet\r\n    public init(_ pet: Pet) { self.pet = pet }\r\n}\r\n\r\nlet rex = Dog()         // rex is a dog\r\nlet john = Person(rex)  // john has a dog\r\n\r\n// lets start simple and see if using Dog works\r\nvar pets = [ rex, rex ]\r\npets.append(rex)                // works\r\npets.insert(rex, atIndex: 0)    // works\r\n\r\n// now do the same thing for a Person...\r\nvar people = [ john, john ]\r\npeople.append(john)             // works\r\npeople.insert(john, atIndex: 0) // EXC_BAD_ACCESS\r\n\r\nprintln(\"done\")\r\n\r\nAs I've indicated above, trying to insert an instance of Person into an array fails, whereas inserting an instance of Dog works just fine.  Where it gets really weird is that if I change my Person struct to have references to the Dog struct instead of Pet protocol everything works as expected.\r\n\r\n\r\nExpected Results:\r\nThe call to people.insert() should insert the john object into the array.\r\n\r\nActual Results:\r\nCrashes with a EXC_BAD_ACCESS.  \r\n\r\nSide note, if you cut'n'paste the above code into a Playground, you'll notice that it just silently stops running (and \"done\" doesn't get printed). However, if you run it as a test case, then it bombs with EXC_BAD_ACCESS.\r\n\r\nVersion:\r\nVersion 6.3.2 (6D2105)\r\n\r\nNotes:\r\nAnother user on  the devforums has identified some more info:\r\n\r\nstruct Foo {\r\n    let v: Printable = 1234\r\n}\r\nvar foos = [Foo(), Foo()]\r\nfoos.append(Foo())\r\nfoos.insert(Foo(), atIndex: 0) // Runtime error: Thread 1: EXC_BAD_ACCESS (code=1, address = 0xfffffffffffffffc)\r\nprintln(foos.count)\r\n\r\nIt will only crash with that exact setup before foos.insert.\r\n\r\nFor example, it won't crash if the line foos.append(Foo()) is removed, or if the number of initial Foo()'s in the array is changed to something else than two.\r\n\r\nConfiguration:\r\nMacBook Pro (Retina, Mid 2012)\r\nYosemite 10.10.3 (14D136)\r\nXcode 6.3.2 (6D2105)"
+    email: craig@blackdogfoundry.com
+    modified: "2015-06-10T03:04:49.31218Z"
+    number: "21174999"
+    number_intvalue: 21174999
+    originated: 31-May-2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.10.3
+    reproducible: Always
+    resolved: 10-Jun-2015
+    status: Closed
+    title: 'Swift: EXC_BAD_ACCESS calling array.insert()'

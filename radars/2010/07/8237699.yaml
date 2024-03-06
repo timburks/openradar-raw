@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8237699"
+    labels:
+        datastore_id: "548401"
+data:
+    classification: Serious Bug
+    created: "2010-07-27T01:06:14.465691Z"
+    description: "Summary:\r\nWhen a selector invoked (either directly or indirectly) using an NSInvocation raises an exception, it cannot be caught with a @try/@catch block when using the iOS Simulator SDK. The problem does not occur using the device SDK.\r\n\r\nSteps to Reproduce:\r\n\r\nThe simplest case is to create an invocation for a given selector inside an object, then invoke it on self. Implement that selector to raise an exception and try and catch it.\r\n\r\n- (NSInvocation *)getInvocationForSelector:(SEL)aSelector;\r\n{\r\n  // create and return the invocation here\r\n}\r\n\r\n- (void)doSomething;\r\n{\r\n  [[NSException exceptionWithName:@\"Testing\" reason:nil userInfo:nil] raise];\r\n}\r\n\r\n- (void)testTheBug;\r\n{\r\n  @try {\r\n    NSInvocation *invocation = [self getInvocationForSelector:@selector(doSomething)];\r\n    [invocation invokeWithTarget:self];\r\n  }\r\n  @catch (NSException *e) {\r\n    // should jump to here, but it does not\r\n  }\r\n}\r\n\r\n\r\nExpected Results:\r\nThe exception raised in doSomething should be caught in testTheBug;\r\n\r\nActual Results:\r\nWith the device SDK, the exception is caught. With the simulator SDK, it is not and an uncaught exception is thrown and a crash results.\r\n\r\nRegression:\r\nAccording to this similar bug report: rdar://8081169 this did not occur in SDKs prior to 3.2.\r\n\r\nNotes:\r\nThis technique is used by various testing tools such as Google Toolbox for Mac and OCMock. I am also working on a mock object library that uses this pattern to allow mocks to throw exceptions when an expected or stubbed method is called. This bug makes it hard to uses these tools properly against the simulator SDK."
+    email: ljredpath@gmail.com
+    modified: "2011-08-28T05:40:29.825051Z"
+    number: "8237699"
+    number_intvalue: 8237699
+    originated: 26/07/2010
+    parent_number: "8033271"
+    product: iOS SDK
+    product_version: "4.0"
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/8033271
+    title: Exceptions raised from an NSInvocation cannot be caught

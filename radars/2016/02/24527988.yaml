@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24527988"
+    labels:
+        datastore_id: "4985528344641536"
+data:
+    classification: Important
+    created: "2016-02-05T18:51:20.69616Z"
+    description: "When dealing with a large number of files (stored in the App Sandbox) and attempting to copy and paste their URLs to the pasteboard (within the app), retrieving them using:\r\n\r\nlet imageURLs = info.draggingPasteboard().readObjectsForClasses([NSURL.self], options: nil) // causes: Consume sandbox extension for itemIdentifier (44) with path: 'xxx' from pasteboard failed! where xxx is URL from pasteboard.\r\n\r\nThe source and destination is my app, using files stored within my sandbox, e.g. 2016-02-05 18:35:15.113 Stockpile[2997:538103] Consume sandbox extension for itemIdentifier (30) with path: /Users/Alex/Library/Containers/com.sandatum.stockpile/Data/Library/Application Support/com.sandatum.stockpile/photos/476386606001927/database-export.png from pasteboard failed!\r\n\r\nSteps to Reproduce:\r\n1. Store a large(ish) number of files somewhere in the App Sandbox, using boomarks that are NOT security scoped (7,500+ it happens, but with 15,000 it happens very soon)\r\n2. Show those files in an IKImageBrowserView using IKImageBrowserNSImageRepresentationType as the content, and provide that content by reading from the URL.\r\n3. Attempt to drag those files onto an NSOutlineView and in \r\nNSOutlineView - outlineView:acceptDrop:item:childIndex:, do info.draggingPasteboard().readObjectsForClasses([NSURL.self], options: nil)\r\n3a. When the mouse is released and the drop occurs, the problem will occur.\r\n\r\nExpected Results:\r\nNothing, just works...\r\n\r\nActual Results:\r\n2016-02-05 18:35:15.113 Stockpile[2997:538103] Consume sandbox extension for itemIdentifier (30) with path: /Users/Alex/Library/Containers/com.sandatum.stockpile/Data/Library/Application Support/com.sandatum.stockpile/photos/476386606001927/database-export.png from pasteboard failed!\r\n\r\nThis happens for most of the files in the pasteboard list.\r\n\r\nVersion:\r\nOS X 10.11.3 (15D21)\r\n\r\nNotes:\r\nI have found a solution, however I don't believe I should be using it?\r\n\r\nThe app container directory. Upon first launch, the operating system creates a special directory for use by your app—and only by your app—called a container. Each user on a system gets an individual container for your app, within their home directory; your app has unfettered read/write access to the container for the user who ran it. [https://developer.apple.com/library/mac/documentation/Security/Conceptual/AppSandboxDesignGuide/AppSandboxInDepth/AppSandboxInDepth.html#//apple_ref/doc/uid/TP40011183-CH3-SW4]\r\n\r\nWhen I read the URL from the sandbox to retrieve the NSImage, I added stopAccessingSecurityScopedResource() to my code and it works fine.\r\n\r\nHowever, a) this is unbalanced as I never asked to use a security scoped resource, and b) I thought I have full 'unfettered' access to my sandbox?"
+    email: alex@sandatum.com
+    modified: "2016-02-05T18:51:20.69649Z"
+    number: "24527988"
+    number_intvalue: 24527988
+    originated: 05-Feb-2016 06:46 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: OS X 10.11.3 (15D21)
+    reproducible: Yes
+    resolved: No
+    status: Open
+    title: 'Consume sandbox extension for itemIdentifier (44) with path: ''xxx'' from pasteboard failed!'

@@ -1,0 +1,50 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18982302"
+    labels:
+        datastore_id: "5902247741358080"
+data:
+    classification: Serious Bug
+    created: "2014-11-14T11:35:23.975422Z"
+    description: |-
+        Summary:
+        An inbox rule that has a criteria of “Message Content” contains [expression], where the expression is a long expression over about 62 (?) characters, messages that are plain text but otherwise have the proper content will fail.
+
+        Steps to Reproduce:
+        Create a Rule with the following conditions:
+         Name: Whatever
+         if [any] of the following conditions are met:
+        	Criteria
+         [Message content]  [contains] “Some very long text that is something that I want to search for in a message.”
+        	Actions
+         [Mark as Flagged] [blue] (or any other action that allows you to test if the rule was performed)
+
+        From another account (where you can determine that the message is sent as plain text [i.e. FastMail]) send a plain text message to the first account with the following line in the content:
+
+        “Some very long text that is something that I want to search for in a message.”
+
+        In both cases the text should be without the quotes.
+
+        Expected Results:
+        The incoming message should have the action applied to it (in my example the flag should be set to blue).
+
+        Actual Results:
+        The rule action is not executed
+
+        Regression:
+        I have reproduced this on both Mail 7.3 and 8.0. I have even been able to reproduce this as long as the compared text spans the location where plain text encoding breaks the original message
+
+        Notes:
+    email: scott.j.little@gmail.com
+    modified: "2014-11-14T11:35:23.975552Z"
+    number: "18982302"
+    number_intvalue: 18982302
+    originated: 14-Nov-2014 12:32 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mail
+    product_version: 8.0 (1990.1)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Plain Text messages fail "body contains" criteria if the expression spans the plain text line break point

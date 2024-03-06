@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "41101885"
+    labels:
+        datastore_id: "5006149438930944"
+data:
+    classification: Crash
+    created: "2018-10-22T18:59:55.613429Z"
+    description: "Summary:\r\nUICollectionViewFlowLayout crashes in certain scenarios when items are being removed from the collection view. \r\n\r\nThis happens when:\r\n1.  There is an unsized item (has not received preferred layout attributes) just below the bottom of the screen.\r\n2. An on-screen item is removed, causing the unsized item to slide up into the visible region\r\n3. UICollectionViewFlowLayout receives a call to [UICollectionViewFlowLayout invalidationContextForPreferredLayoutAttributes:withOriginalAttributes:], with a final size for the item that is sliding up onto the screen due to the item removal\r\n4. The index path in the preferred layout attributed *is the old index before the deletion*\r\n5. [_UIFlowLayoutInfo setSize:forItemAtIndexPath:], then [_UIFlowLayoutSection setSize:forItemAtIndexPath:invalidationContext:] are invoked with the final size for the item\r\n6. [_UIFlowLayoutSection setSize:forItemAtIndexPath:invalidationContext:] indexes into its array of _UIFlowLayoutItems, but with the index of the item *before the batch update*, which results in an index out of bounds crash since the item has already been removed from the array of items.\r\n\r\n\r\nMy layout has a similar concept of \"model state\" (_UIFlowLayoutInfo), \"section models\" (_UIFlowLayoutSection), and \"item models\" (_UIFlowLayoutItem). The way we've modeled out layouts is eerily similar actually, which has been quite entertaining to me as I've peeled back parts of UICollectionView and UICollectionViewFlowLayout during my bug investigations :)\r\n\r\nI solve this by saving off the \"previous\" section models as soon as my model state receives some batch updates, that way I can always reference the \"old\" state and the \"new\" state as batch updates are occurring. Previous state is cleared up once finalizeBatchUpdates is called. I understand that this may not be an option for flow layout, since that would nearly double memory usage, although very briefly, while batch updates are in flight. Overall, this model has allowed me to maintain a very clean architecture, and allowed me to avoid this crash in my layout.\r\n\r\nSteps to Reproduce:\r\n1. Open sample project and deploy (I tested on iPhone X simulator, but others should work fine)\r\n2. The collection view is initially empty. Click append 3 times. The first item will be fully visible. The second item will be partially visible. The third item will be completely off screen.\r\n3. Click remove. This removes the first item (index 0) and causes item 2 (index 1) to become completely visible), and item 3 (index 2) to become partially visible.\r\n\r\nObserve crash. If you trace through the code, you'll see that when item 3 (index 2) starts to slide up, it receives preferred layout attributes (as described in Summary)\r\n\r\n\r\nLink to sample project: https://drive.google.com/file/d/1HEDsWoU1xWd2PnpCRttlCo2rm3Iz1kGp/view?usp=sharing"
+    email: kellerbryan19@gmail.com
+    modified: "2018-10-22T18:59:55.613731Z"
+    number: "41101885"
+    number_intvalue: 41101885
+    originated: 06/16/2018
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: iOS 11
+    reproducible: Yes
+    resolved: Yes
+    status: Closed
+    title: UICollectionViewFlowLayout crash on delete due to self sizing cells

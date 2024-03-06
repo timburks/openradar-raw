@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7079646"
+    labels:
+        datastore_id: "60454"
+data:
+    classification: Enhancement
+    created: "2009-07-22T01:15:48.067356Z"
+    description: "Currently, the semantic of the -retain message says that the returned address of the object is the same as the receiver of the message, that's what we expect of course, but it's a big issue with blocks.\r\n\r\nWhen sending -retain to a block copied on the heap it works as it should, the retain count of the block is incremented. So it works like normal ObjC objects that are always allocated on the heap.\r\n\r\nBut when it comes to stack blocks, that's a very big issue, sending -retain to a stack block is a no-op since stack blocks doesn't need a retain count and that they are deallocated as the enclosing function returns. But the end result goes at the opposite of the real -retain message job.\r\n\r\nWhen sending -retain to an object we expect that the object will be always around until we send it a -release message, and with the current retain semantic applied to stack blocks it's not the case. We can retain the block as many times as we want, the block will always die.\r\n\r\nWhere this semantic problem is the biggest issue is when we want blocks in collections. When you add an object to an NSArray collection, the NSArray send a retain message to the object, which makes that kind of nice code:\r\n\r\nchar *name = \"Steve\";\r\nNSArray *myBlocks = [[NSArray alloc] initWithObjects: ^{ printf(\"Hello, %s\\n\", name); }, ^{ NSLog(@\"Hello, %s\", name); }, nil];\r\n\r\ncompletely unusable, and forces us to do:\r\n\r\nchar *name = \"Steve\";\r\nNSArray *myBlocks = [[NSArray alloc] initWithObjects: [[^{ printf(\"Hello, %s\\n\", name); } copy] autorelease], [[^{ NSLog(@\"Hello, %s\", name); } copy] autorelease], nil];\r\n\r\nWhich is everything but nice... And that uses the autorelease pool, and that uses two messages just to correct the -retain problem...\r\n\r\nWhat's the reason for the current -retain behavior on stack blocks ? Wouldn't that be better to have it behave like -copy ? Since -copy behaves like -retain when applied to heap blocks...\r\n\r\nThank you for reading."
+    email: remy.demarest@gmail.com
+    modified: "2011-08-28T05:45:42.183598Z"
+    number: "7079646"
+    number_intvalue: 7079646
+    originated: 22-Jul-2009 12:05 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: NO
+    status: Open
+    title: Blocks -retain message semantic

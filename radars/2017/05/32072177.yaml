@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32072177"
+    labels:
+        datastore_id: "4998447589490688"
+data:
+    classification: Security
+    created: "2017-05-09T10:23:05.80772Z"
+    description: "Area:\r\nSomething not on this list\r\n\r\nSummary:\r\nWhen calling ODRecordAuthenticationAllowed(), it checks for certain conditions on accounts, such as whether the account is disabled.\r\n\r\nHowever, other conditions are not checked:\r\n* ActiveDirectory accounts which have expired\r\n* ActiveDirectory accounts where the loginHours restriction has been applied\r\n\r\nNote that ODRecordVerifyPassword() does verify both of these conditions; yet, when a non-password-based authentication is being used (eg certificate, public-key, or Kerberos) these restrictions are not checked.\r\n\r\nNote that pam_opendirectory invokes ODRecordAuthenticationAllowed() in its \"account\" actions, and ODRecordVerifyPassword() in its \"auth\" actions. This issue therefore allows users to log in the macOS's SSH server when the users should be denied.\r\n\r\nThis is a security defect, since it indirectly affects your SSH server.\r\n\r\nThe expected return codes from ODRecordAuthenticationAllowed() are kODErrorCredentialsAccountExpired and kODErrorCredentialsInvalidLogonHours. Preferably this should be fixed in the OpenDirectory framework, so that all applications are fixed, rather than hacking in a fix in pam_opendirectory or your OpenSSH distribution.\r\n\r\nSteps to Reproduce:\r\n1. Set up SSH for public key authentication (copy your public key to ~/.ssh/authorizedKeys)\r\n2. Set an expiry time in the past for the ActiveDirectory account (or alternatively, deny access to the account via a \"loginHours\" restriction)\r\n3. Attempt to authenticate using password authentication\r\n4. Attempt to authenticate using the SSH keyfile\r\n\r\nExpected Results:\r\nI would expect both password and keyfile authentication to fail, since the account has expired (or restricted via \"loginHours\").\r\n\r\nActual Results:\r\nActually, password authentication does fail as expected, but keyfile access is incorrectly granted.\r\n\r\nVersion:\r\nSierra 10.12.4 (Darwin Kernel Version 16.5.0: Fri Mar  3 16:52:33 PST 2017; root:xnu-3789.51.2~3/RELEASE_X86_64 x86_64)"
+    email: realvnc@nickcwilson.co.uk
+    modified: "2017-05-09T10:23:05.8079Z"
+    number: "32072177"
+    number_intvalue: 32072177
+    originated: 09-May-2017 11:21 AM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: Sierra
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ODRecordAuthenticationAllowed does not check for expired accounts or loginHours restrictions

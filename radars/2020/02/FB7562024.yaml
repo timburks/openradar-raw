@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7562024
+    labels:
+        datastore_id: "4942240765968384"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2020-02-03T11:21:33.523673Z"
+    description: "Defect:\r\nWe're trying to play FairPlay protected HLS VOD stream that has a video track encrypted with dedicated key and 2 audio tracks encrypted with the same key. \r\nThe native player on Safari thus issues 3 consecutive webkitneedkey events. \r\nEach event causes that our SDK does following (rough timeline of events): \r\n(1) create a media key session \r\n(2) get license request message from the session \r\n(3) fetch the license \r\n(4) update the session with the keys \r\nTo create a media session one needs the init data which are passed along with the webkitneedkey event. \r\nFor the audio tracks the init data are exactly the same which results in creating the \"same\" session twice and this seems to be problematic - duplicated/twin session sometimes throw an error which will lead the SDK to fail and sometimes there is just no errors and everything runs smoothly.\r\n\r\nSteps to reproduce:\r\n1. Prepare a content with a video track encrypted with one key and multiple audio tracks encrypted with the 2nd key (the same key for all audio tracks)\r\n2. Wait for webkitneedkey events and on each occurrence create a media key session\r\n\r\nExpected results:\r\nEach media key session is created correctly and there is no error\r\n\r\nActual results:\r\nIn cca 50% of the attempts there is an error when trying to create media key session (we couldn't find a pattern)"
+    email: tomica.gril@castlabs.com
+    modified: "2020-02-03T11:21:33.523822Z"
+    number: FB7562024
+    number_intvalue: 7562024
+    originated: Feb 3, 2020
+    parent_number: '&{NULL_VALUE}'
+    product: Safari
+    product_version: 13.0.4
+    reproducible: YES
+    resolved: ""
+    status: Open
+    title: Two parallel media key sessions with the same data not handled properly

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18087973"
+    labels:
+        datastore_id: "6168985041108992"
+data:
+    classification: Usability
+    created: "2015-04-15T00:22:22.94649Z"
+    description: "Summary:\r\nAn attempt to bring up the Spotlight menu will fail with a beep if the elapsed time since switching processes via Cmd-Tab is short enough.\r\n\r\nThis frustrating behavior often causes me to have to redundantly press Cmd-Space to bring up Spotlight, after being jarred by an discomforting beep.\r\n\r\nSteps to Reproduce:\r\nThe easiest way to produce this in my tests is to invoke the Dock's application switching with Cmd-Tab, and then opt instead to stay in the current application, but to open Spotlight instead. The practical scenario for this is e.g. when Cmd-Tabbing to see if an app is already running, to switch to it. If it's not running my first instinct might be to instead not switch to any application, but immediately to bring up Spotlight to quickly launch the app.\r\n\r\n1. From any active application, press Cmd-Tab to bring up the Dock. You can tab around to another app process if you like, or back to the original one. Keep the Cmd key depressed the entire time.\r\n\r\n2. Fully release the Cmd key but quickly press it again and then press Space. Timing is critical here but it shouldn't be too difficult to get Spotlight invoked during this critical window of time when it will fail.\r\n\r\nExpected Results:\r\nSpotlight should always appear when the required keyboard shortcut is pressed, and when there is no obvious state to the UI that would preclude Spotlight appearing.\r\n\r\nActual Results:\r\nA jarring beep and no Spotlight menu. You have to then press Cmd-Space again to get Spotlight to finally appear.\r\n\r\n\r\nVersion:\r\n14A329f\r\n\r\nNotes:\r\nI was curious about this bug so I did some research in the debugger and determined that the root of the problem lies in Spotlight's own -[SPStatusItemView shouldBeDisabled] returning YES at the critical time, basing this assessment on its own call to CGSAreEventsCaptured returning true.\r\n\r\nIn short: it appears that for a critical window of time, CGSAreEventsCaptured returns true even after user interaction has evidently ended, and the result is Spotlight's unwillingness to present its own UI, even though it should be able to.\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n\r\n----\r\n\r\nAfter they demanded seemingly not pertinent details, as the Spotlight bug screeners are wont to do:\r\n\r\nDaniel Jalkut28-Aug-2014 07:41 PM\r\n\r\nI am not comfortable providing that level of crude information from my system, as this is my main work machine and contains privileged information in syslogs, etc.\r\n\r\nThis bug seems extremely unlikely to be related to specific metadata, so if you would indulge me to have somebody attempt to reproduce the bug following the steps I listed, I would appreciate that.\r\n\r\nIf somebody from engineering has solid reason to believe it's related specifically to my specific metadata, and is interested in following up with me to gather data on a more fine-grained basis, I would be happy to help.\r\n\r\n---\r\n\r\nAfter they closed the bug as \"no plans to address this\" 7 months later:\r\n\r\nDaniel Jalkut14-Apr-2015 08:20 PM\r\n\r\nThat's disappointing. The bug is still easily reproduceable and smells strongly of a UI bug with the Spotlight search window,  that has nothing to do with the specific metadata in my Spotlight database, nor should require a full system diagnosis to evaluate. I will probably not bother with reporting further UI related bugs to the Spotlight component, even though I typically chastise other developers for giving up on the Apple bug reporting process."
+    email: jalkut@gmail.com
+    modified: "2015-04-15T00:24:47.69153Z"
+    number: "18087973"
+    number_intvalue: 18087973
+    originated: 21-Aug-2014 09:08 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: Spotlight menu fails to appear, beeps, shortly after switching processes

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35667841"
+    labels:
+        datastore_id: "4934624207699968"
+data:
+    classification: Other Bug
+    created: "2017-11-22T15:56:14.24973Z"
+    description: "Summary:\r\nWhen configuring an email account using a configuration profile (generated from example using Apple Configurator 2, but I also reproduced the issue with my MDM provider), the \"EmailAddress\" field of the payload may contain multiple email addresses separated by commas.\nOn iOS 10+ (maybe earlier too), the field will not correctly be parsed when the configuration profile is installed, and the whole string will be used as an email address.\nSo, for example `<string>john.appleseed@example.com, john@example.com, j.appleseed@example.com</string>` will not create 3 distinct aliases for the same mail account, but one email address with the whole thing (which is obviously incorrect).\n\nThe problem can be solved by manually navigating to the mail account configuration in Settings, opening the account configuration view, and closing it right after by touch the \"OK\" button, without any other modifications. This will apparently force the field to be parsed again, this time correctly.\n\nIt looks like it's a bug, and that the aliases should be parsed while installing the profile, without requiring the user to manually re-open the email account configuration.\n\n------------------------------\n\nAttached is an example configuration profile with which you can reproduce the issue.\n\nAttached are also screenshots of the whole process :\n# 1-configuration-received.jpeg\n    This is what the mail configuration looks like just after having installed the profile. Note the address field (\"Adresse\" in French), for which the value (in gray) is a string with the 3 aliases displayed.\n\n# 2-from-field-before.jpeg\n    This is what the compose mail view looks like just after having installed the profile. No \"From:\" field is available, but we expected to be able to chose what email alias we want to send the email from.\n\n# 3-configuration-after-ok.jpeg\n    This is what the mail configuration looks like after we opened it and closed it at least once by touching \"OK\". Notice the \"Adresse\" field now looks different, with only the first alias shown, and a disclosure indicator.\n\n# 4-configuration-after-ok-submenu.jpeg\n    This is the view you have once you touch the \"Adresse\" cell on screenshot 3. This lists the aliases, which have apparently been re-parsed correctly after we closed the configuration between 1. and 3.\n\n# 5-from-field-after.jpeg\n    The mail compose view once the aliases are correctly parsed. This is what was expected immediately after installing the profile, without having to manually re-validate the email account configuration in Settings.  \r\n\r\nSteps to Reproduce:\r\n1. Create an email configuration profile in Apple Configurator\n2. In the \"Email Address\" field, type in at least to email adresses, separated by a comma\n3. Install the profile on an iOS device\n4. Open Mail on the Device\n5. Compose a new mail\r\n\r\nExpected Results:\r\nMail displays the \"From:\" field, allowing the user to chose between the email addresses aliases defined in step 2.\r\n\r\nActual Results:\r\nMail does not display the \"From:\" field, and assumes that the sending email address in the concatenation of all aliases.\r\n\r\nVersion:\r\niOS 10+ (reproduced on 11.1 (15B93))\r\n\r\nNotes:"
+    email: guillaume.algis@gmail.com
+    modified: "2017-11-22T15:56:14.24993Z"
+    number: "35667841"
+    number_intvalue: 35667841
+    originated: 22-nov.-2017 04:56 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 10+ (reproduced on 11.1 (15B93))
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: iOS does not parse aliases in the EmailAddress field of the Mail configuration profile automatically

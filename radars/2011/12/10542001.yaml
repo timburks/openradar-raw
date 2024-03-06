@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10542001"
+    labels:
+        datastore_id: "1463401"
+data:
+    classification: Serious Bug
+    created: "2011-12-07T17:32:02.457629Z"
+    description: "07-Dec-2011 12:26 PM Matthew Messier:\r\nSummary:\r\nUsing a Darwin kernel built from source prevents Instruments from functioning.\r\n\r\nSteps to Reproduce:\r\n1. Build and install a Darwin kernel using the publicly available xnu sources (1699.24.8)\r\n2. Launch Instruments\r\n3. Use Time Profile (or most anything else, really, but this is what I first used to discover the problem)\r\n4. Start the time profiler. No data will be collected. No error is displayed; however, a system.log entry is made indicating a problem (see Notes below)\r\n\r\nExpected Results:\r\nInstruments should function normally, collecting data at timed intervals.\r\n\r\nActual Results:\r\nInstruments does not collect any data.\r\n\r\nRegression:\r\n\r\nNotes:\r\nWhen Instruments attempts to start capturing data from a process, the following is logged to system.log:\r\n\r\nDec  7 12:09:55 ichor Instruments[10478]: <CPTimeTrigger.c:295>\tUnable to create new time trigger client for new time trigger <CPTimeTrigger 0x7f9b4d806910>.\r\nDec  7 12:09:55 ichor Instruments[10478]: <CPTrigger.c:3776>\tUnable to obtain control lock on time trigger <CPTimeTrigger 0x7f9b4d806910>, error #22 - Invalid argument.\r\nDec  7 12:09:55 ichor Instruments[10478]: <CPTrigger.c:3807>\tWarning: unable to destroy control lock for <CPTimeTrigger 0x7f9b4d806910>, error #22 - Invalid argument.\r\nDec  7 12:09:55 ichor [0x0-0x15b15b].com.apple.Instruments3[10478]: [ERROR]\t<CPTimeTrigger.c:295>\tUnable to create new time trigger client for new time trigger <CPTimeTrigger 0x7f9b4d806910>.\r\nDec  7 12:09:55 ichor [0x0-0x15b15b].com.apple.Instruments3[10478]: [ERROR]\t<CPTrigger.c:3776>\tUnable to obtain control lock on time trigger <CPTimeTrigger 0x7f9b4d806910>, error #22 - Invalid argument.\r\nDec  7 12:09:55 ichor [0x0-0x15b15b].com.apple.Instruments3[10478]: [ERROR]\t<CPTrigger.c:3807>\tWarning: unable to destroy control lock for <CPTimeTrigger 0x7f9b4d806910>, error #22 - Invalid argument.\r\nDec  7 12:09:55 ichor Instruments[10478]: (_AddTimeTrigger:653): Error Domain=com.apple.CoreProfile Code=-2 \"Initialisation of new time trigger <CPTimeTrigger 0x7f9b4d806910> failed.\" UserInfo=0x7f9b4d809ec0 {com.apple.CoreProfile.facility=com.apple.CoreProfile.Triggers, com.apple.CoreProfile.file=CPTimeTrigger.c, com.apple.CoreProfile.function=CPTimeTriggerCreate, com.apple.CoreProfile.line=85, NSLocalizedDescription=Initialisation of new time trigger <CPTimeTrigger 0x7f9b4d806910> failed.}\r\n\r\nApple private profiling kernel modules appear to be failing to initialize. The appleprofile.* sysctls do not exist as they normally would using an Apple supplied kernel. No error or other indication of failure is reported anywhere when the kernel modules are loaded, even manually using kextutil.\r\n\r\nThe inability to use Instruments with a custom-built kernel makes it rather difficult to fix and test performance bottlenecks in the kernel. Obviously I can fix and test that they work, but I can't actually use them for any further testing, which is a significant hinderance."
+    email: verbalfu@gmail.com
+    modified: "2011-12-07T17:32:02.457893Z"
+    number: "10542001"
+    number_intvalue: 10542001
+    originated: 12/07/2011
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.2 / 11C54
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Instruments does not work with a kernel built from source.

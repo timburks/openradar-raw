@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "49471412"
+    labels:
+        datastore_id: "5002158311211008"
+data:
+    classification: Other Bug
+    created: "2019-04-01T08:29:23.285299Z"
+    description: "Summary:\r\n\r\nWhile evaluating the capabilities of Core Bluetooth we found that having multiple instances of `CBPeripheralManager` running in an app seems to not be supported on iOS, which the documentation apparently used to document as unsupported:\r\n\r\n```\r\n/*!\r\n *  @class CBPeripheralManager\r\n *\r\n *  @discussion Entry point to the peripheral role.\r\n *  Commands should only be issued when its state is\r\n *  <code>CBPeripheralManagerStatePoweredOn</code>.\r\n *  The use of more than one <code>CBPeripheralManager</code> at a time\r\n *  is not supported and may result in undefined behavior.\r\n */\r\n```\r\n(Source: https://github.com/ralcr/hxcocoa/blob/bcdeffc3a1d23720033db200604dc3ca553d5863/ios/bluetooth/CBPeripheralManager.h#L61)\r\n\r\nThe comment has since been removed from the framework header documentation, but our own tests seem to confirm this to still be the case, even today (iOS 12). No crashes or error logs were encountered, but only the first call to `startAdvertising(_:)` seems to have an effect, i.e. only a single peripheral gets advertised.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create two instances of `CBPeripheralManager`.\r\n2. Wait for `poweredOn` of each instance.\r\n3. Start advertising individual peripherals for each instance.\r\n\r\nExpected Results:\r\n\r\nBoth peripherals show up in a BLE scanner.\r\n\r\nActual Results:\r\n\r\nOnly the first peripheral shows up in a BLE scanner.\r\n\r\nVersion/Build:\r\n\r\niOS 6.0 or later\r\n\r\nConfiguration:\r\n\r\nn/a"
+    email: regexident@gmail.com
+    modified: "2019-04-01T08:29:23.285507Z"
+    number: "49471412"
+    number_intvalue: 49471412
+    originated: April 1 2019
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK - Core Bluetooth
+    product_version: iOS 6.0 or later
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Multiple instances of CBPeripheralManager not supported, apparently

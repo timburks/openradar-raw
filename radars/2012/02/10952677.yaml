@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10952677"
+    labels:
+        datastore_id: "1551401"
+data:
+    classification: Serious Bug
+    created: "2012-02-29T08:13:08.626932Z"
+    description: "Summary:\r\nThe -[NSWorkspace launchApplicationAtURL:options:configuration:error:] method\r\nsometimes fails, saying the app is corrupt, with error code -10827 (which\r\nLSInfo.h says is \"The executable is missing\".  Using -[NSWorkspace\r\nlaunchApplication:] always succeeds.\r\n\r\n\r\nSteps to Reproduce:\r\n1) Open the attached project.\r\n2) Build the LaunchTarget target.\r\n3) Build and run the Launcher target.\r\n4) Press the \"Launch w/ Env\" button.\r\n\r\n\r\nExpected Results:\r\nThe LaunchTarget app should launch, and be passed an environment variable of\r\ntest_key=test_value, which will cause the LaunchTarget app to show:\r\n    Got envar:  test_key= test_value\r\n\r\n\r\nActual Results:\r\nI often get the result (shown in the Launcher app's window):\r\n    error: Error Domain=NSCocoaErrorDomain Code=3584 \"The application\r\n    “LaunchTarget.app” could not be launched because it is corrupt.\"\r\n    UserInfo=0x102929ae0\r\n    {NSURL=/Users/kelan/Library/Developer/Xcode/DerivedData/LaunchTest-eslrhyybedrznegdutegsiaqsnze/Build/Products/Debug/LaunchTarget.app,\r\n    NSLocalizedDescription=The application “LaunchTarget.app” could not be\r\n    launched because it is corrupt., NSUnderlyingError=0x102927ac0 \"The\r\n    operation couldn’t be completed. (OSStatus error -10827.)\"}\r\n\r\n\r\nNotes:\r\n * The \"Launch w/ Env\" version uses -fullPathForApplication: to determine\r\n   the path to the app, and shows the path it gets in the window for\r\n   verification.\r\n\r\n * The \"Launch Simple\" button (which uses -launchApplication:) always works.\r\n   This version doesn't (and can't) pass any environment variables to\r\n   LaunchTarget, so that app will launch showing \"test_key= ()\".\r\n\r\n * Sometimes, the \"Launch w/ Env\" does actually work, and the LaunchTarget\r\n   app will correctly show \"test_key= test_value\".  And once it starts working,\r\n   it will continue to do so, until the LaunchTarget app is re-built.\r\n\r\n * I'm not sure what the trigger is to make it start working.  I thought that\r\n   maybe the app had to be launched once first \"manually\" before LaunchServices\r\n   would correctly know about it.  But that didn't turn out to be the case (and\r\n   -launchApplication: always works, even immediately after rebuilding\r\n   LaunchTarget, and that one doesn't even take the full path to the app, so\r\n   clearly LaunchServices has no trouble \"knowing about\" the LaunchTarget app\r\n   when it is re-built).\r\n\r\n * Since this method isn't reliable, there is no way to launch an application\r\n   using NSWorkspace and passing it custom options/arguments/environment\r\n   variables.\r\n\r\n * Some web-research suggests others are running into a similar issue with\r\n   Sandboxed applications, and that manually launching the app first will\r\n   cause the method to work after that, but that isn't the same case here,\r\n   becuase neither of these apps are Sandboxed, and that first manual launch\r\n   doesn't solve this problem."
+    email: kelan@yeahrightkeller.com
+    modified: "2012-02-29T08:13:08.627246Z"
+    number: "10952677"
+    number_intvalue: 10952677
+    originated: "2012-02-29"
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X SDK
+    product_version: OS X 10.7.3
+    reproducible: Sometimes
+    resolved: ""
+    status: open
+    title: -[NSWorkspace launchApplicationAtURL:options:config...] fails sometimes

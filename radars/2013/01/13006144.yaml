@@ -1,0 +1,68 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13006144"
+    labels:
+        datastore_id: "2550402"
+data:
+    classification: Serious Bug
+    created: "2013-01-14T10:18:44.271123Z"
+    description: |-
+        Summary:
+        Sandboxed Application can open a limited number of files from 'outside' the sandbox (also called: user selected files).
+
+        Steps to Reproduce:
+        I've setup an example project that simulates the problem, the same project works fine if the App Sandbox is removed, so I expect this to be a bug, but I would love to have some kind of confirmation or eventually an explanation if I'm doing something wrong.
+
+        The project is located here -> https://github.com/shinyfrog/sandboxbreaker
+        And the images that can be used for testing purposes here -> http://sf-applications.s3.amazonaws.com/5162_icons.zip
+
+        The test app is very simple, it provides 3 ways of opening files (images in this test):
+
+        1- from Apple provided NSOpenPanel
+        2- from the NSApplication delegate methods - (void)application:(NSApplication*)app openFiles:(NSArray*)someFiles
+        3- from dropping files inside a NSView that accept NSFilenamesPboardType as dragged type
+
+        The problem will present no matter of which method is used to load files.
+
+        The steps for reproducing the problem are very easy:
+
+        1- load an significant amount of different images (more than 4000) from outside the app container using one of the provided methods, it's not important if the images are loaded all at a time or in small chunks.
+
+        After loading a seemingly magic random number (around 3000/3200) of images the Sandbox will stop loading any more images. Any other operation that tries to load files from outside the container will fail.
+
+        The NSOpenPanel behave in a different way, it just won't return more than the "magic random number" of images, and after that any attempt to use it will return zero files.
+
+        If the files are loaded from inside the container, they will all load as expected, but after reaching the "magic random number" files from outside the container can't be loaded anymore.
+
+        Almost any operation that will read the file will add a "+1" count to the "magic random number", even resolving a Scoped Bookmark's URL will trigger that "+1":
+
+        Scoped Bookmark created with:
+             NSData *fileURLData = [[NSURL fileURLWithPath:filePath] bookmarkDataWithOptions:NSURLBookmarkCreationPreferFileIDResolution includingResourceValuesForKeys:nil relativeToURL:nil error:&e];
+        Scoped Bookmark resolved with:
+             NSURL *fileURL = [NSURL URLByResolvingBookmarkData:fileURLData options:NSURLBookmarkResolutionWithoutUI | NSURLBookmarkResolutionWithoutMounting relativeToURL:nil bookmarkDataIsStale:&isStale error:nil];
+
+        Quitting and restarting the app seem to "reset" that counter, but once again after loading many images, the Sandbox will prevent to load any more image*s*.
+
+        Removing the Sandbox from the test app make everything working as we expected and any amount of files will load fine.
+
+        Expected Results:
+        The App should be granted the permission over all the user selected files and the NSOpenPanel should return all the user selected files instead of a truncated list (or nil in the worst case)
+
+        Actual Results:
+        The Sandbox will stop giving file permission after a 'random' number of files ~3000/3200 and the NSOpenPanel truncate the result to that number (or after this the NSOpenPanel will always return nil)
+
+        Regression:
+        The problem seem to affect all version of Mountain Lion, also the 10.8.3 pre-release.
+    email: matteo.rattotti@gmail.com
+    modified: "2013-01-14T10:18:44.271248Z"
+    number: "13006144"
+    number_intvalue: 13006144
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: "10.8"
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: Sandbox and limitation on number of files that can be opened from a user

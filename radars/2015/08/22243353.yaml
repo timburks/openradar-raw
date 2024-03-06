@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22243353"
+    labels:
+        datastore_id: "5527155228278784"
+data:
+    classification: Serious Bug
+    created: "2015-08-12T01:42:27.22295Z"
+    description: "Summary:\r\nIncorrect behavior is observed on an iPad when a popover is presented, and the user transitions from regular to compact size class. Upon transition between these size classes, UIPresentationController’s delegate is given a chance via  presentationController(_: , viewControllerForAdaptivePresentationStyle) to return a view controller wrapped in a UINavigtationController. When doing this, it is clear the child in the now modally presented view controller (which is now inside a UINavigationController) is given an incorrect size in viewWillTransitionToSize(_:withTransitionCoordinator:). This behavior is not present if not wrapping the view controller in a UINavigationController.\r\n\r\nSteps to Reproduce:\r\n1. Create a Universal App.\r\n2. Create a button that can present a view with a presentation style of .Popover\r\n3. Respond to the delegate of the popoverPresentationController’s method presentationController(_:viewControllerForAdaptivePresentationStyle) with the presentationController’s presentedViewController wrapped in a UINavigationController\r\n4. Launch the app on an iPad in landscape.\r\n5. Tap the button to present a popover.\r\n6. Transition into 50/50 Split View\r\n\r\n\r\nExpected Results:\r\nThe size reported to the presented view controller via viewWillTransitionToSize(_:withTransitionCoordinator) should be accurate\r\n\r\nActual Results:\r\nInaccurate sizes are given.\r\n\r\nVersion:\r\niOS 9 13A4325c\r\n\r\nNotes:\r\nI've attached a sample project that demonstrates this issue, and the issue of collection view cell sizing that allowed me to stumble onto it. It also contains a screenshot of running the broken and fixed schemes.\r\n\r\nIt contains two schemes. BrokenTransitionToSizeBroken and BrokenTransitionToSizeFixed. The only difference is that ...Broken defines a flag that responds to presentationController(_:viewControllerForAdaptivePresentationStyle) with the view wrapped in a UINavigationController. The Fixed version simply does not wrap this controller and expected behavior is observed both visibly, and in the console where I'm logging out the expected size.\r\n\r\nConfiguration:\r\niPad Air 2 Simulator\r\n\r\nAttachments:\r\n'BrokenTransitionToSize.zip' was successfully uploaded."
+    email: matt.yohe@gmail.com
+    modified: "2015-08-12T01:42:27.22317Z"
+    number: "22243353"
+    number_intvalue: 22243353
+    originated: 11-Aug-2015 09:34 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 9 Beta 13A4325c
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UINavigationController incorrectly informs children of new size in multitasking environment.

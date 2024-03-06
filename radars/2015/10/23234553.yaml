@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23234553"
+    labels:
+        datastore_id: "6102989378945024"
+data:
+    classification: Other Bug
+    created: "2015-10-23T13:58:18.03855Z"
+    description: "Summary:\r\nUsing a custom designable view (UIView subclass with IB_DESIGNABLE/@IBDesignable attribute) with overridden intrinsicContentSize method in Interface Builder of Xcode 7.1 results in extra unnecessary constraints created for this view at build time by Interface Builder, even though layout of that view is fully defined by constraints in canvas and customized intrinsic content size. At design time, Interface Builder does not show any layout warnings and lays out the view correctly in canvas without any ambiguities. At runtime, that view's superview contains extra constraints with identifiers of \"IB auto generated at build time for view with ambiguity\". This issue goes away if deployment target is set to iOS 9.1.\r\n\r\nSteps to Reproduce:\r\n1. Create a new iOS project in Xcode 7.1, regardless of language. Set its deployment target to anything below iOS 9.1, e.g.: iOS 8.0.\r\n2. Create a subclass of UIView, let's call it CustomView. Mark it as IB_DESIGNABLE/@IBDesignable. Implement intrinsicContentSize method in it. E.g.:\r\n- (CGSize)intrinsicContentSize\r\n{\r\n    return CGSizeMake(50.0f, 50.0f);\r\n}\r\n3. Open the project's storyboard, add a view in the scene and set its class to CustomView.\r\n4. Constrain this view to its superview's top margin and center it horizontally in superview.\r\n5. Make sure Interface Builder has refreshed designable views (click Editor → Refresh All Views if necessary).\r\n6. The view should have a size of 50, 50 as per its intrinsic content size.\r\n7. Build and run the app.\r\n8. The view should be laid correctly. Now inspect the constraints connected to that view (in debugger, View Debugger or, for example, Reveal).\r\n\r\nExpected Results:\r\nThe view should be connected to its superview by two constraints and should contain two NSContentSizeLayoutConstraint constraints.\r\n\r\nActual Results:\r\nBesides the expected constraints, the view is also connected to 4 extra constraints of class NSIBPrototypingLayoutConstraint and identifier \"IB auto generated at build time for view with ambiguity\", even though they are extraneous in that configuration.\r\n\r\nVersion:\r\nXcode 7.1 (7B91b), OS X 10.11.1 (15B42)\r\n\r\nNotes:\r\nIt seems like at build time Interface Builder compiler doesn't take into account the defined intrinsic content size method of the designable view, while Interface Builder agent at design time does.\r\nThe current workaround is either to define placeholder intrinsic content size for the custom view, or compile in Xcode 7.0.\r\nSince this issue results in extra constraints required to resolve in runtime, it affects performance and may also potentially affect layout correctness.\r\nAttachment contains a sample project with a custom view inside a storyboard, with deployment target set to iOS 9.0, and it can be used to demonstrate the issue and confirm that it doesn't occur in Xcode 7.0.\r\n\r\nConfiguration:\r\nThis issue occurs:\r\n* Only in Xcode 7.1 (doesn't occur in Xcode 7.0, occurred in later betas of Xcode 7.1 as well).\r\n* Only if deployment target is set to *lower* than iOS 9.1.\r\n* Regardless of Objective C/Swift.\r\n* Regardless of custom view class location (main app target or library).\r\n* Only if the custom view is @IBDesignable / IB_DESIGNABLE.\r\n* Only if it defines intrinsic content size.\r\n* Regardless of whether it's used in a XIB file or a Storyboard.\r\n* Only if placeholder intrinsic size is ​*not* set on the view.\r\n\r\nAttachments:\r\n'InterfaceBuilderTest.zip' was successfully uploaded."
+    email: argentumko@gmail.com
+    modified: "2018-10-01T12:24:39.722579Z"
+    number: "23234553"
+    number_intvalue: 23234553
+    originated: 24-Oct-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.1 (7B91b), OS X 10.11.1 (15B42)
+    reproducible: Always
+    resolved: Yes
+    status: Closed
+    title: Xcode 7.1 Interface Builder generates bogus constraints for designable views at build time

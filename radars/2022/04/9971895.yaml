@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9971895"
+    labels:
+        datastore_id: "5613996325470208"
+data:
+    classification: Application Crash
+    created: "2022-04-01T19:23:31.397341Z"
+    description: "While testing manually inside Xcode presents no issue with pre-iOS 15 builds for a project using Swift’s new Concurrency (async-await) features, we found xcodebuild crashing on our CI for our pre-iOS 15 build tests (iOS 14.5, iOS 13.7). Upon further testing, we found that we could get our CI to work via xcodebuild if we used the “xcodebuild clean test” command, but that the failures would occur if we used “xcodebuild build-for-testing” followed by “xcodebuild test-without-building” - which nicely separates out a build failure from a test failure in CI. Furthermore, this is NOT encountered if a build is tested in simulator manually thru Xcode. It appears that only on a truly clean build where the DerivedData folder is also clean, will this occur. Unfortunately, this is how CI usually works. Our hypothesis is that the libswift_Concurrency library is not included in a standard “xcodebuild build-for-testing” run and that may be what’s causing the failure. It appears there may have been recent fixes in 13.3 and 13.2.1 which resolved an issue with a weakly linked library and perhaps that fix isn’t included when “xcodebuild build-for-testing” is invoked? Have tried both on Apple Silicon and Intel and can reproduce on both.\r\nSee also (may be related):\r\nhttps://stackoverflow.com/questions/70316323/ios-app-crashes-at-launch-on-testflight-for-ios-14-and-below-but-not-ios-15\r\nhttps://forums.swift.org/t/async-await-crash-on-ios14-with-xcode-13-2-1/54541/2\r\nhttps://developer.apple.com/forums/thread/696197\r\n\r\nTo reproduce:\r\nThe problem has been simplified in the attached PoC project. Note that the project simply contains an “actor” which requires libswift_Concurrency. With a clean DerivedData folder, attempt the following commands:\r\nxcodebuild build-for-testing -project 'PoC.xcodeproj' -scheme 'PoC' -destination 'platform=iOS Simulator,OS=15.4,name=iPhone 13' -destination 'platform=iOS Simulator,OS=14.5,name=iPhone 12'\r\nxcodebuild test-without-building -project 'PoC.xcodeproj' -scheme 'PoC' -destination 'platform=iOS Simulator,OS=14.5,name=iPhone 12’`\r\n\r\nExpected Behavior:\r\nThe tests should run and pass\r\n\r\nObserved Behavior:\r\nThe tests fail with the following explanation in the console (abbreviated):\r\nPoC (35350) encountered an error (Early unexpected exit, operation never finished bootstrapping - no restart will be attempted. (Underlying Error: Crash: PoC (35350) AnActor.__allocating_init().\r\nSee also the “PoC crash.txt” attached which contains the crash report that appears on the screen (GUI) when this occurs.\r\n\r\nNote that the following incantations of xcodebuild work without issue (as well as doing testing inside Xcode):\r\n\r\n// testing against iOS 15\r\nxcodebuild build-for-testing -project 'PoC.xcodeproj' -scheme 'PoC' -destination 'platform=iOS Simulator,OS=15.4,name=iPhone 13' -destination 'platform=iOS Simulator,OS=14.5,name=iPhone 12'\r\nxcodebuild test-without-building -project 'PoC.xcodeproj' -scheme 'PoC' -destination 'platform=iOS Simulator,OS=15.4,name=iPhone 13'\r\n\r\n// testing using Xcode clean test (builds and tests in one action)\r\nxcodebuild clean test -project 'PoC.xcodeproj' -scheme 'PoC' -destination 'platform=iOS Simulator,OS=14.5,name=iPhone 12'"
+    email: eric.schramm@gmail.com
+    modified: "2022-04-01T19:23:31.397482Z"
+    number: "9971895"
+    number_intvalue: 9971895
+    originated: 4/1/2022
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 13.3 (13E113)
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Concurrency dylib not available when testing using xcodebuild build-for-testing on iOS 13 and 14

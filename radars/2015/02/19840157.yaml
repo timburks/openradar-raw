@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19840157"
+    labels:
+        datastore_id: "6470169924730880"
+data:
+    classification: Serious bug
+    created: "2015-02-16T09:47:35.398156Z"
+    description: "Summary:\r\nSince a while now, PasswordServer preferences are stored in the LDAP server. So when we need to update those settings, for example to use the ExternalCommand standard feature, we need to edit the preference via the LDAP server.\r\n\r\nSince 10.9, this system is broken. I don't know how is it possible but the LDAP server has an inconsistant behavior with LDAP request concerning apple-xmlplist on cn=passwordserver,cn=config.\r\n\r\nDepending of the LDAP request, if the attribute is specified as the only thing we want, the returned value is not the same as the full record.\r\n\r\nThis lead to a big problem since it's impossible to edit the shadow record. When we try to add the good content to the full record, it's still not return by the specific LDAP request.\r\n\r\nSteps to Reproduce:\r\n- Setup a standard OS X Server on 10.9 or 10.10 and enable correctly the OD service\r\n- With directory service app, look at the passwordserver record on the LDAP server, the apple-xmlplist field is missing\r\n- with the CLI, execute this LDAP search:\r\nldapsearch -x -b \"cn=passwordserver,cn=config,dc=srv,dc=example,dc=com\"\r\nthe apple-xmlplist field is missing\r\n- with the CLI, execute this LDAP search:\r\nldapsearch -x -b \"cn=passwordserver,cn=config,dc=srv,dc=example,dc=com\" apple-xmlplist\r\nthe apple-xmlplist field is present with the default content\r\n- with the CLI, re execute this LDAP search:\r\nldapsearch -x -b \"cn=passwordserver,cn=config,dc=srv,dc=example,dc=com\"\r\nthe apple-xmlplist field is still missing\r\n\r\nIf you try to modify the LDAP record to add the apple-xmlplist field, the record is saved, but not returned by the LDAP request without the attribute specifier.\r\n\r\nExpected Results:\r\nThe LDAP request must be consistent and return the same content for each request\r\n\r\nBeing able to modify the apple-xmlplist field is mandatory for almost all OS X Server deployment scenario. It's the only possibility to synchronise the internal directory service to an external cloud service provider like mail provider.\r\n\r\nActual Results:\r\nAll OS X Server setup using external cloud provider are locked in 10.8 for they OD Server\r\n\r\nVersion:\r\nAll OS X / OS X Server version since 10.9.0 / 3.0 to 10.10.2 (Version 14C109) / 4.0.3 (version 14S350)\r\n\r\nNotes:\r\nPlease, take this problem with attention, it's a really big one who can lead to the end of OS X Server in tech-dependant SMB.\r\n\r\nWithout the ability to edit the ExternalCommand field we can't do really important feature like directory synchronisation, password complexity audit trail or password black list.\r\n\r\nAll companies need that nowadays.\r\n\r\n\r\n\r\nAdditional comments:\r\nAfter investigation it seems that feature is now broken by design. The odusers_search_pwsprefs function in odusers overlay block all incoming request to return an hardcoded array.\r\n\r\nIt's wrong in so many ways and I hope it will be fixed as soon as possible.\r\n\r\nWhat's the point of preferences if you can't chose them?!"
+    email: yoann.gini@gmail.com
+    modified: "2015-02-16T09:47:35.398363Z"
+    number: "19840157"
+    number_intvalue: 19840157
+    originated: 15-Feb-2015 11:11 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X Server
+    product_version: 10.9+
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Shadow apple-xmlplist for cn=passwordserver,cn=config in LDAP

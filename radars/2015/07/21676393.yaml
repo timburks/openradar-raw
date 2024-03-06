@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21676393"
+    labels:
+        datastore_id: "4951414862249984"
+data:
+    classification: ""
+    created: "2015-07-06T20:08:52.67586Z"
+    description: "Summary:\r\nSwift type inference can help a function return the requested result. That is very handy.\r\n\r\nHowever, when optionals are involved, Swift type inference turns FRAGILE. The place of a single question mark can trigger or prevent type inference, without the user being fully aware of her mistake, which yields subtle bugs that are VERY difficult to spot.\r\n\r\nSteps to Reproduce:\r\nIn the following code, the last lines reveal the fragility of Swift type inference:\r\n\r\n\r\nprotocol Convertible {\r\n    static var value: Self { get }\r\n}\r\n\r\nextension String: Convertible {\r\n    static var value: String { return \"good\" }\r\n}\r\n\r\nfunc value() -> Any? { return false }\r\nfunc value<T: Convertible>() -> T? { return T.value }\r\n\r\n// OK: \"good\"\r\nlet int: String? = value()\r\n\r\n// OK: \"good\"\r\nvalue() as String?\r\n\r\n// SURPRISE: nil\r\nvalue() as? String\r\n\r\nThis may have well known and good reasons to happen, yet it is a real big nasty surprise. And developers don't like surprises.\r\n\r\nExpected Results:\r\nBoth `value() as String?` and `value() as? String` return \"good\".\r\n\r\nActual Results:\r\n`value() as String?` returns \"good\" and `value() as? String` return nil.\r\n\r\nVersion:\r\nVersion 7.0 beta (7A121l)\r\nOSX 10.10.3 (14D136\r\n\r\nNotes:\r\n\r\nYou may be happy to have some context where this issue turns out to be a real problem.\r\n\r\nPlease open https://github.com/groue/GRDB.swift/blob/e782b3e88e9ab39bc12d38cb846ac17e3d91f6ba/README.md#row-queries, and scroll down a little to the \"WARNING: type inference requires a very careful use of the `as` operator\" sentence.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: gwendal.roue@gmail.com
+    modified: "2015-07-06T20:08:52.67609Z"
+    number: "21676393"
+    number_intvalue: 21676393
+    originated: 05-Jul-2015 01:57 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode Version 7.0 beta (7A121l)
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'Swift 2: usability issue for Type inference of generic optional types'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19570127"
+    labels:
+        datastore_id: "6421938515738624"
+data:
+    classification: Serious Bug
+    created: "2015-01-22T22:53:10.262318Z"
+    description: "Summary:\n\nAn NSManagedObject subclass written in Swift which implements a protocol leads to linker errors if a property from the protocol is also @NSManaged.\n\nSteps to Reproduce:\n\nConsider the following Swift program:\n\nimport CoreData\n \n@objc protocol Foo {\n  var bar: String { get set }\n}\n \nclass Bar: NSManagedObject, Foo {\n  @NSManaged var bar: String\n}\n \nlet b = Bar()\n\nand compile it using `xcrun swiftc main.swift`\n\nExpected Results:\n\nIdeally, the program compiles and links successfully. Another option would be that it is rejected by the compiler in some fashion, because this case is unsupported on purpose.\n\nActual Results:\n\nLinker errror:\n\n$ xcrun swiftc nsmanaged.swift \nUndefined symbols for architecture x86_64:\n  \"__TFC9nsmanaged3Barg3barSS\", referenced from:\n      __TFC9nsmanaged3Barm3barSS in nsmanaged-9a8736.o\nld: symbol(s) not found for architecture x86_64\n<unknown>:0: error: linker command failed with exit code 1 (use -v to see invocation)\n\nRegression:\n\nThis has been possible in Objective-C\n\nNotes: -"
+    email: neocool2@googlemail.com
+    modified: "2015-01-22T22:53:10.262533Z"
+    number: "19570127"
+    number_intvalue: 19570127
+    originated: 22-Jan-2015 11:53 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Version 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Linker error with NSManagedObject implementing a protocol in Swift

@@ -1,0 +1,60 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21783882"
+    labels:
+        datastore_id: "5504589470105600"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-07-12T01:34:57.61448Z"
+    description: |-
+        Summary:
+        Xcode autocompletes Swift frontend crashers, which is pretty convenient if you’re trying to set some kind of record for number of crashes filed against a single compiler version in a single evening.
+
+        I’m not, for what it’s worth. But some men are born to crashes, some achieve crashes, and some have crashes thrust upon them.
+
+        Steps to Reproduce:
+        1. This code:
+        struct S: StringLiteralConvertible {
+        	init(stringLiteral value: Self.StringLiteralType) {
+        		<#code#>
+        	}
+        }
+
+        Expected Results:
+        shouldn’t crash the swift frontend
+
+        Actual Results:
+        but totally does:
+        rob@Resonance ~/Desktop> swiftc -v boom.swift
+        Apple Swift version 2.0 (swiftlang-700.0.45 clang-700.0.57.2)
+        Target: x86_64-apple-darwin14.4.0
+        /Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift -frontend -c -primary-file boom.swift -target x86_64-apple-darwin14.4.0 -enable-objc-interop -color-diagnostics -module-name boom -o /var/folders/9y/f7n4rvx901nctm_5d16c1wm40000gn/T/boom-d6e355.o
+        boom.swift:3:3: error: editor placeholder in source file
+                        <#code#>
+                        ^
+        boom.swift:2:28: error: 'Self' is only available in a protocol or as the result of a method in a class; did you mean 'S'?
+                init(stringLiteral value: Self.StringLiteralType) {
+                                          ^~~~
+                                          S
+        <unknown>:0: error: unable to execute command: Segmentation fault: 11
+        <unknown>:0: error: swift frontend command failed due to signal (use -v to see invocation)
+
+
+        Regression:
+        It doesn’t crash if the type is not StringLiteralConvertible.
+
+        Notes:
+        This is one of the autocompletions Xcode provides for “init” when in a type declared to be StringLiteralConvertible which does not yet implement the requirements. Xcode autocompletes crash repros! Neat.
+    email: rix.rob@gmail.com
+    modified: "2015-07-12T01:34:57.61484Z"
+    number: "21783882"
+    number_intvalue: 21783882
+    originated: 11-Jul-2015 09:34 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A152u)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2b3: Frontend crash with autocompleted init for StringLiteralConvertible.'

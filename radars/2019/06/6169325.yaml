@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6169325"
+    labels:
+        datastore_id: "4949630693408768"
+data:
+    classification: Suggestion
+    created: "2019-06-18T15:43:34.684894Z"
+    description: "In UITableViewDiffableDataSource, initWithTableView:cellProvider: it stores the tableView as weak and calls tableView.dataSource = self. The other reason for supplying it is so that it can update the tableView when the snapshot is applied, insertRows etc. I find it concerning that it is possible for the tableView it was init with to be different from the one it is the delegate of, because this class could be set as the dataSource of another table. I also find it strange that the init is setting the table's dataSource rather than the developer doing it since they may have renamed it due to delegate forwarding and the start of the delegate chain may not be a table view. In this case they could set it after the init is called in which case the init would have done it unnecessarily. Because of these issues I would like to propose the following different design to this class.\r\n\r\nThe UITableViewController already has a private property _staticDataSource which is an instance of the private class UITableViewDataSource which is used for when a static table is designed in the Storyboard. This private property could be changed to public dataSource and UITableViewDiffableDataSource could become a subclass of UITableViewDataSource. The init method of UITableViewDiffableDataSource would become just initWithCellProvider: and it can have an internal weak property of tableViewController. This is the pattern CloudKit uses and personally I think it is best to set weaks as properties rather than as init params. Lastly when setting an instance of UITableViewDiffableDataSource on UITableViewController's dataSource property the setter can set dataSource.tableViewController = self; which gives it the access to the tableView property it requires for doing table updates.\r\n\r\nThis design resolves the issues I mentioned. Furthermore because the UITableViewController is now only forwarding the data source protocol methods that the diffable datasource requires, the developer is now able to implement additional data source methods in their UITableViewController subclass, e.g. the essential canEditRowAtIndexPath and commitEditingStyle methods. Currently the only way to implement those is to subclass UITableViewDiffableDataSource which given it is a class using lightweight generics it seems to be designed to be more of a utility class rather than one that has been designed to always be subclassed.\r\n\r\nI have attached my sample project when I was tinkering with this new class."
+    email: indiekiduk@gmail.com
+    modified: "2019-06-18T15:43:34.685027Z"
+    number: "6169325"
+    number_intvalue: 6169325
+    originated: 18/6/2019
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: iOS 13.0b2
+    reproducible: ""
+    resolved: No
+    status: Open
+    title: iOS 13b2 Suggested Change to API Design of UITableViewDiffableDataSource

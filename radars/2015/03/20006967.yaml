@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20006967"
+    labels:
+        datastore_id: "5269541345034240"
+data:
+    classification: Serious Bug
+    created: "2015-03-02T18:13:58.590344Z"
+    description: "Summary:\r\nWhen you have an SKTexture, and you create another texture with a CIFilter, the original texture is always retained and will not be released until the texture with the filter applied is dealloc'd. This can be a potential issue, as if I wanted to load the spaceship image, make it black and white, then blur it, it would require 3 textures to stay in memory at all times, even though only the effected texture may ever be on the screen.\r\n\r\nSteps to Reproduce:\r\n1. Create an SKTexture\r\n2. Create a texture with a filter applied using -[SKTexture textureByApplyingCIFilter:]\r\n\r\nThis minimal code demonstrates the result. When run in instruments, single taps always tick up the count of live SKTextures, while double taps drop it down to the original number.\r\n\r\n\r\n@interface GameScene()\r\n\r\n@property (weak, nonatomic) SKSpriteNode *ship;\r\n\r\n@end\r\n\r\n@implementation GameScene\r\n\r\n-(void)didMoveToView:(SKView *)view {\r\n    SKSpriteNode *sprite = [SKSpriteNode spriteNodeWithImageNamed:@\"Spaceship\"];\r\n\r\n    sprite.xScale = 1.5;\r\n    sprite.yScale = 1.5;\r\n    sprite.position = CGPointMake(500, 500);\r\n\r\n    [self addChild:sprite];\r\n    self.ship = sprite;\r\n}\r\n\r\n-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {\r\n    if (touches.count == 1) {\r\n        self.ship.texture = [self.ship.texture textureByApplyingCIFilter:[CIFilter filterWithName:@\"CIGaussianBlur\"]];\r\n    } else {\r\n        self.ship.texture = [SKTexture textureWithImageNamed:@\"Spaceship\"];\r\n    }\r\n}\r\n\r\n@end\r\n\r\nExpected Results:\r\nThe # of textures in memory should stay the same, as only one texture is being shown to the user.\r\n\r\nActual Results:\r\nThe number of textures in memory will tick up each time, even though one texture is ever being shown to the user.\r\n\r\nVersion:\r\n8.1.3 (12B466)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nAny iPhone or iPad, Sim or device\r\n\r\nAttachments:"
+    email: stephen.gazzard@robotsandpencils.com
+    modified: "2015-03-02T18:13:58.59058Z"
+    number: "20006967"
+    number_intvalue: 20006967
+    originated: 02-Mar-2015 11:11 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 8.1.3 (12B466)
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: -[SKTexture textureByApplyingCIFilter:] leaks original texture

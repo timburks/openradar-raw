@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17299539"
+    labels:
+        datastore_id: "5793293614972928"
+data:
+    classification: ""
+    created: "2014-06-13T09:18:48.860222Z"
+    description: "Summary:\r\nIn order to build a custom DSL atop the XCTest framework, I created a subclass of XCTestCase that overrides +[XCTestCase testInvocations]. The overridden method uses the objc/runtime.h function class_addMethod to add methods to the test case at runtime, and then returns an array of invocations that execute the new methods.\r\n\r\nThis works like a charm. The latest version of the XCTest framework that is shipped with Xcode 6 displays the name of the selector in the test gutter. There is one problem, however: when the selector name changes in a subsequent test run, it is displayed alongside the old selector name. The old selector name is displayed with a gray check mark, indicating that the test was not executed.\r\n\r\nIdeally, instead of a gray check mark, Xcode should determine that the test in question no longer exists, and remove the selector name from the test navigator altogether.\r\n\r\nSteps to Reproduce:\r\n1. Download the source code for the following project from GitHub: https://github.com/modocache/Quick\r\n2. Open the Quick.xcodeproj file in the latest version of Xcode\r\n3. Run the unit tests for the \"Quick\" scheme. See that the test navigator displays a series of passing tests.\r\n4. Open QuickTests/Matchers/ContainSpec.swift, and change the following line:\r\n```\r\nit(\"says it expected subject to contain expected\") {\r\n```\r\n\r\n...to:\r\n\r\n```\r\nit(\"renamed example\") {\r\n```\r\n\r\n5. Save the file, then run the unit tests again.\r\n\r\nExpected Results:\r\nThe test navigator displays a passing test result for a selector containing the string \"renamed_example\". The result for a selector named \"says_it_expected_subject_to_contain_expected\" is not displayed.\r\n\r\nActual Results:\r\nThe test navigator displays a passing test result for a selector containing the string \"renamed_example\". It also displays a result for a selector named \"says_it_expected_subject_to_contain_expected\". This result is displayed with a gray checkmark, indicating the test did not run.\r\n\r\nSee the attached screenshot for an example.\r\n\r\nClosing Xcode clears all selector names from the test navigator.\r\n\r\nVersion:\r\nXcode Version 6.0 (6A215l) & OS X 10.9.3 (13D65)\r\n\r\nNotes:\r\nIt appears Xcode looks at methods defined in the source code when determining what to display in the test navigator. Closing Xcode and then reopening it \"reloads\" these methods.\r\n\r\nWould it be possible to reload the methods immediately prior to when the test suite is run? I think that would solve my problem. In my case, all test methods are defined at runtime, so a \"reload\" immediately prior to a test run would clear out all methods, thus \"refreshing\" the test navigator.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: B.Gesiak@gmail.com
+    modified: "2014-06-13T09:18:48.860353Z"
+    number: "17299539"
+    number_intvalue: 17299539
+    originated: 13-Jun-2014 06:14 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Test invocations created at runtime remain in test navigator until Xcode is closed

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30143243"
+    labels:
+        datastore_id: "6124764980576256"
+data:
+    classification: Serious Bug
+    created: "2017-01-25T09:08:31.71672Z"
+    description: "Summary:\r\nUsing otool from Xcode 8.2.1, it starts disassembling from the first known symbol in the text section to the end of the text section. Everything above that symbol is ignored.\r\n\r\nUsing otool from Xcode 7.3.1, it starts disassembling from the beginning of the text section to the first known symbol.Everything after  that symbol is ignored.\r\n\r\nIMHO both is wrong.\r\n\r\nSteps to Reproduce:\r\nRun the following command on any binary with some symbols but also lots of stripped code:\r\n\r\notool -tvV binary\r\n\r\nExpected Results:\r\nThe whole text section is disassembled, always. In my case it starts at address 0x100002100 and ends at address 0x1003a9c97:\r\n\r\n# otool -t binary\r\n\r\nbinary:\r\nContents of (__TEXT,__text) section\r\n0000000100002100\t55 48 89 e5 41 56 53 48 8b 35 32 24 54 00 4c 8b \r\n:\r\n00000001003a9c90\t5d 41 5e 41 5f 5d c3 \r\n\r\n\r\nActual Results:\r\nUsing otool in Xcode 8:\r\n\r\n# otool -tvV binary\r\n\r\nbinary:\r\n(__TEXT,__text) section\r\n_symbol_1:\r\n00000001003a32ce pushq %rbp\r\n:\r\n00000001003a9c96 retq\r\n\r\n\r\nUsing otool in Xcode 7:\r\n\r\n(__TEXT,__text) section\r\n0000000100002100 pushq %rbp\r\n:\r\n00000001003a9c96 retq\r\n\r\n\r\nBoth wrong. Both only disassemble a subrange of the text section and both not even the same one.\r\n\r\nVersion:\r\nXcode 8.2.1 / Xcode 7.3.1"
+    email: m.hanauska@gmail.com
+    modified: "2017-02-14T10:37:21.54102Z"
+    number: "30143243"
+    number_intvalue: 30143243
+    originated: 23-Jan-2017
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.2.1
+    reproducible: Always
+    resolved: 25-Jan-2017
+    status: Open
+    title: otool fails to disassemble whole binary

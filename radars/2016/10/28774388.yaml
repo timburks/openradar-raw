@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28774388"
+    labels:
+        datastore_id: "4969816196644864"
+data:
+    classification: Serious Bug
+    created: "2016-10-14T15:39:09.19917Z"
+    description: "We are working on adding CallKit support to <redacted>. During development and testing, we are seeing an issue where we cannot get incoming calls to work when presented via CallKit.\r\n\r\nThe issue occurs on the first launch of the application. Once the application has been launched and an incoming call is received and answered via CallKit, we are never getting the provider:didActivateAudioSession: delegate callback. However, if we place an outgoing call first, subsequent incoming calls will work.\r\n\r\nInitially we thought it was something that was happening due to our underlying networking and infrastructure. I began testing the same scenario with the Speakerbox sample application and have been able to reproduce the issue. Out of the box, however, Speakerbox appears to work. The incoming calls are simulated by pressing the button on the bottom of the screen and the code that reports the incoming call to CallKit is tossed in a dispatch after call.\r\n\r\nTo reproduce this issue, you need to set Spearkerbox up to accept a VoIP push. I set up an app id in my account, created a VoIP certificate, and setup infrastructure to send a VoIP push to Spearkerbox. Once you send a valid push to the application, you will note that you do not get provider:didActivateAudioSession: called and you get errors logged.\r\n\r\nSteps to Reproduce:\r\nStart with a fresh Speakerbox sample app. \r\n\r\n1. Configure a VoIP certificate for the application.\r\n2. Start the application and collect the device token.\r\n3. Send a valid VoIP push to the device via the device token (see below for the payload I sent)\r\n4. Answer the call via the CallKit interface\r\n\r\nVoIP Payload: { \"aps\" : {}, \"UUID\" : \"0CDC915B-6F82-42DF-870A-FA67D16D6DC2\", \"handle\" : \"+14125551212\", \"hasVideo\" : 0}\r\n\r\nExpected Results:\r\nThe call should be answered, provider:didActivateAudioSession: should be called and everything should work happily.\r\n\r\nActual Results:\r\nprovider:didActivateAudioSession:  is never called. The following is logged:\r\n\r\nConfiguring audio session  \r\n2016-10-13 16:13:46.096232 Speakerbox[7252:1785573] [aurioc] 889: failed: 'ent?' (enable 3, outf< 1 ch,  44100 Hz, Float32> inf< 1 ch,  44100 Hz, Float32>)  \r\n2016-10-13 16:13:46.096288 Speakerbox[7252:1785573] Error returned from setupIOUnit: 1701737535: couldn't initialize Apple Voice Processing IO instance \r\n\r\nVersion:\r\niOS 10.0.2, iOS 10.1 beta 3\r\n\r\nNotes:\r\nI have attempted, twice, to add a reply to the following post on the developer forums: https://forums.developer.apple.com/thread/64544 however it tells me that I am being moderated.\r\n\r\nThe issue there seems to be similar or maybe the same.\r\n\r\nConfiguration:\r\niPhone 7plus, iPhone 6plus\r\n\r\nPlease also note that the Speakerbox sample app has been configured with the Audio and VoIP background modes as well as with the push notifications capability."
+    email: Ryan.C.Payne@gmail.com
+    modified: "2016-10-14T15:45:11.80502Z"
+    number: "28774388"
+    number_intvalue: 28774388
+    originated: 14-Oct-2016
+    parent_number: '&{NULL_VALUE}'
+    product: OS SDK
+    product_version: 10.0.2 & 10.1 Beta 3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'provider:didActivateAudioSession: is not called when accepting the first incoming call via a VoIP push'

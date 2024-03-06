@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29409207"
+    labels:
+        datastore_id: "6677995691442176"
+data:
+    classification: Crash
+    created: "2016-11-29T21:13:56.65013Z"
+    description: "Summary:\r\nThe views provided by SecurityInterface leak memory in 10.12. In our case, SFChooseIdentityPanel was observed to retain an NSWindow and several views inside that window and never release them. This leak affects any application that presents a SFChooseIdentityPanel, including system apps like Safari.\r\n\r\nThe leaked window remains in the window list and contains an NSTableView whose data source is the SFChooseIdentityPanel itself.\r\n\r\nThe table view will try to calculate its size in response to screen changes (e.g. a display being connected or disconnected), and in response to scroll bar style changes (always visible/visible when scrolling) even if the window is explicitly closed by app code.\r\n\r\nWhen an app links against a 10.11+ SDK, this does *not* lead to a crash because NSTableView's dataSource property is a zeroing weak reference. The property is an unowned (but not zeroing) reference for apps which link against an *older* SDK, so after the SFChooseIdentityPanel has been deallocated either of the above events will crash the app.\r\n\r\nSteps to Reproduce:\r\n1. Unzip SFChooseIdentityPanel-crash.zip on a machine running macOS Sierra and run the included .app or build and run the Xcode project.\r\n2. Follow the instructions and observe the crash.\r\n3. Change the Xcode project to target a newer SDK, build, and observe that the app no longer crashes but did leak memory.\r\n4. Also run `swift SFChooseIdentityPanel-leaks.swift` and observe the breakdown of leaks.\r\n\r\nExpected Results:\r\nUsing SFChooseIdentityPanel or other classes provided by SecurityInterface doesn't introduce leaks or crashes.\r\n\r\nActual Results:\r\nUsing SFChooseIdentityPanel always results in memory leaks, and causes crashes when used on Sierra with an app built against the 10.10 SDK.\r\n\r\nVersion:\r\nVersion 8.1 (8B62)\r\n\r\nNotes:\r\nThere appear to be other lifetime issues with SFChooseIdentityPanel, too (e.g. if I don't keep a reference to it until after its callback returns, I also get a crash).\r\n\r\nI suspect that the other classes in this framework are also leaky/crashy.\r\n\r\nConfiguration:\r\n10.12.1 (16B2657)\r\nLeak: Any SDK, including the current 10.12.1 SDK\r\nCrash: 10.10 SDK"
+    email: sdy@google.com
+    modified: "2016-11-29T21:13:56.65045Z"
+    number: "29409207"
+    number_intvalue: 29409207
+    originated: "2016-11-28"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS SDK
+    product_version: 10.12.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'macOS Sierra: SFChooseIdentityPanel leaks window and views, leaves dangling NSTableView data source'

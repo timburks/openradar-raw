@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35247464"
+    labels:
+        datastore_id: "5036679341539328"
+data:
+    classification: ""
+    created: "2017-10-30T10:42:49.26399Z"
+    description: "Summary:\r\nA DateComponents value produced by Calendar.current.dateComponents(in: TimeZone, from: Date) fails to trigger a notification; only after setting the following components to nil is the notification triggered:\r\n * weekday\r\n * weekdayOrdinal\r\n * weekOfMonth\r\n * weekOfYear\r\n * yearForWeekOfYear\r\n(Note that due to a bug in Calendar.current.dateComponents(in: TimeZone, from: Date) it is also necessary to modify `quarter`; however setting this to its correct value allows the notification to trigger, so that's not part of the UserNotification bug.)\r\n\r\nSteps to Reproduce:\r\n        var components = Calendar.current.dateComponents(in: TimeZone.current, from: Date().addingTimeInterval(15))\r\n        components.quarter = nil // work around a Foundation bug: quarter value was not correct\r\n        // uncomment the following lines to get the notification to trigger:\r\n        //components.weekday = nil\r\n        //components.weekdayOrdinal = nil\r\n        //components.weekOfMonth = nil\r\n        //components.weekOfYear = nil\r\n        //components.yearForWeekOfYear = nil\r\n        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)\r\n        let content = UNMutableNotificationContent()\r\n        content.title = \"Message!\"\r\n        content.body = \"Message body\"\r\n        let request  = UNNotificationRequest(identifier: \"request-identifier\", content: content, trigger: trigger)\r\n        UNUserNotificationCenter.current().add(notification, withCompletionHandler: nil)\r\n\r\nExpected Results:\r\nNotification triggers 15 seconds in the future.\r\n\r\nActual Results:\r\nNotification never triggers. Uncommenting the lines setting the DateComponent properties to nil allows the notification to trigger.\r\n\r\nVersion/Build:\r\nXcode Version 8.3.3 (8E3004b)\r\niOS simulator iOS version 10.3.1 (14E8301)\r\n\r\nConfiguration:\r\nI don't know how many of these are needed to reproduce:\r\n* Calendar: .gregorian\r\n* TimeZone: \"Europe/Athens\""
+    email: tdejager@minddistrict.com
+    modified: "2017-10-30T10:42:49.26436Z"
+    number: "35247464"
+    number_intvalue: 35247464
+    originated: 30/10/2017
+    parent_number: '&{NULL_VALUE}'
+    product: UserNotifications
+    product_version: Swift 3
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: UNCalendarNotificationTrigger(dateMatching:,repeats:) incorrectly interprets several DateComponent fields

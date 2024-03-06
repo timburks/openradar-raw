@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27141382"
+    labels:
+        datastore_id: "6169558352134144"
+data:
+    classification: Serious Bug
+    created: "2016-07-01T23:02:19.27975Z"
+    description: "In general, the fix-it suggestions are very good if not spot-on for methods renamed due to the Grand Renaming in Swift 3. However, I’ve stumbled across a case where the fix-it generates invalid code. Additionally, manually converting the method call to the new format generates nonsensical compiler errors.\r\n\r\nThe original method signature has no argument label:\r\n    public func objects<T: Object>(type: T.Type) -> Results<T>\r\n\r\nThe renamed version adopting the Swift 3 naming convention with a required argument label:\r\n    public func allObjects<T: Object>(ofType type: T.Type) -> Results<T>\r\n\r\nCallers of this method need to change from the first to the second form:\r\n\r\n-      realm.objects(T)\r\n-     realm.allObjects(ofType: T.Type)\r\n\r\nSteps to Reproduce:\r\n1. Clone the Xcode project located at https://github.com/phatblat/RealmAllObjectsOfTypeSwift3\r\n\r\n2. Run `git submodule update —init` to pull down the Realm projects\r\n\r\n3. Check out the “before” tag\r\n4. Build the project\r\n\r\n- Click on the fix-it suggestion for the objects(T) method call\r\n\r\nExpected Results:\r\nThe Xcode fix-it will identify the renamed method (works) and applying it will change the call to the following:\r\n    allObjects(ofType: T.Type)\r\n\r\nActual Results:\r\nThe fix-it places the opening parentheses after the argument label, colon and space, generating invalid code.\r\n    allObjectsofType: (T)\r\n\r\nAdditionally, the correct method call syntax generates 2 compiler errors even when manually migrated:\r\n\r\n- cannot create a single-element tuple with an element label\r\n- missing argument label 'ofType:' in call\r\n\r\nConfiguration: (hardware)\r\nMacBook 12-inch (MacBook8,1), Early 2015\r\n\r\nVersion & Build:\r\nXcode 8.0 beta 1 (8S128d)\r\nOS X 10.12 beta 1 (16A201w)"
+    email: benchatelain@gmail.com
+    modified: "2016-07-06T01:32:48.87368Z"
+    number: "27141382"
+    number_intvalue: 27141382
+    originated: "2016-07-01"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.0 beta (8S128d), Default Swift toolchain
+    reproducible: Always
+    resolved: "2016-07-05"
+    status: Resolved
+    title: Fix-it for Swift 3 renamed generic method call fails, manual conversion gives errors

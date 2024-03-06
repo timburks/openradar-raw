@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6644971"
+    labels:
+        datastore_id: "13403"
+data:
+    classification: Serious Bug
+    created: "2009-03-04T15:02:29.610407Z"
+    description: "If you declare a function static, the compiler appears to produce *larger* code with \"Smallest\" optimization\r\n\r\nSteps to Reproduce:\r\n\r\n(1) Drop the enclosed folder in your home folder and open the project\r\n\t\r\n(2) Set to build for Device - iPhone OS 2.2.1 and Release\r\n\r\n(3) Set Optimization Level to None, build, open a shell window, and paste:\r\ngrep \\\\[Test ~/CodeSize/build/CodeSize.build/Release-iphoneos/CodeSize.build/CodeSize-LinkMap-normal-armv6.txt | awk -F \\t \"{ print \\$2+0, \\$3 }\"\r\n\r\n(4) Repeat step (3) for each optimization level available, in order.\r\n\r\n\r\nExpected Results:\LMethods get smaller as you increase the optimization level\r\n\r\nActual Results:\L\r\nThe output suggests that the two highest levels of optimization produce larger code. -[Test doLocalFunction] and -[Test doLocalFunction2] are both 60 bytes instead of 16 bytes. Is the compiler inlining a static function as a “favor” for me?\r\n\r\nOptimization level None produces:\r\n\r\n18 [  4] -[Test minimalMethod]\r\n82 [  4] -[Test doNSLocalizedString]\r\n32 [  4] -[Test doLocalFunction]\r\n32 [  4] -[Test doExternalFunction]\r\n84 [  4] -[Test doNSLocalizedString2]\r\n32 [  4] -[Test doLocalFunction2]\r\n32 [  4] -[Test doExternalFunction2]\r\n\r\n\r\nOptimization levels Fast and Faster both produce:\r\n\r\n2 [  4] -[Test minimalMethod]\r\n58 [  4] -[Test doNSLocalizedString]\r\n16 [  4] -[Test doLocalFunction]\r\n16 [  4] -[Test doExternalFunction]\r\n60 [  4] -[Test doNSLocalizedString2]\r\n16 [  4] -[Test doLocalFunction2]\r\n16 [  4] -[Test doExternalFunction2]\r\n\r\nOptimization levels Fastest and Fastest,Smallest both produce:\r\n(Methods aren’t in the same order in this output as they are above)\r\n\r\n2 [  4] -[Test minimalMethod]\r\n58 [  4] -[Test doNSLocalizedString]\r\n60 [  4] -[Test doLocalFunction]\r\n16 [  4] -[Test doExternalFunction]\r\n60 [  4] -[Test doNSLocalizedString2]\r\n16 [  4] -[Test doExternalFunction2]\r\n60 [  4] -[Test doLocalFunction2]\r\n\r\n----------------\r\n\r\nSince OpenRadar seems to not do enclosures, here are the imporant sources:\r\n\r\n$ cat ExternalFunction.h\r\n#import <Foundation/Foundation.h>\r\n\r\nextern NSString *externalFunction(NSString *key);\r\n$ cat ExternalFunction.m \r\n#import \"ExternalFunction.h\"\r\n\r\nNSString *externalFunction(NSString *key) {\r\n  return NSLocalizedString (key, @\"\");\r\n}\r\n$ cat Test.h \r\n#import <UIKit/UIKit.h>\r\n\r\n\r\n@interface Test : NSObject\r\n@end\r\n$ cat Test.m \r\n#import \"Test.h\"\r\n#import \"ExternalFunction.h\"\r\n\r\n@implementation Test\r\n\r\nstatic NSString *localFunction(NSString *key) {\r\n  return NSLocalizedString (key, @\"\");\r\n}\r\n\r\n- (void)minimalMethod {\r\n}\r\n\r\n- (void)doNSLocalizedString {\r\n  NSLocalizedString (@\"foo\", @\"\");\r\n}\r\n\r\n- (void)doLocalFunction {\r\n  localFunction (@\"foo\");\r\n}\r\n\r\n- (void)doExternalFunction {\r\n  externalFunction (@\"foo\");\r\n}\r\n\r\n- (void)doNSLocalizedString2 {\r\n  NSLocalizedString (@\"foo\", @\"\");\r\n}\r\n\r\n- (void)doLocalFunction2 {\r\n  localFunction (@\"foo\");\r\n}\r\n\r\n- (void)doExternalFunction2 {\r\n  externalFunction (@\"foo\");\r\n}\r\n\r\n@end"
+    email: mrmachinetool@gmail.com
+    modified: "2011-08-28T05:47:44.307309Z"
+    number: "6644971"
+    number_intvalue: 6644971
+    originated: 4 Mar 2009
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 2.2.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: compiler appears to inline static functions, even with "Smallest" optimization

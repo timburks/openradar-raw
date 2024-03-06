@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19368054"
+    labels:
+        datastore_id: "5050408623931392"
+data:
+    classification: Serious Bug
+    created: "2015-01-03T05:31:39.540187Z"
+    description: "Summary:\r\nCalling NSEntityDescription.insertNewObjectForEntityForName(entityName: context:) to instantiate a custom managedObject subclass fails to cast.\r\n\r\nFor example:\r\nlet person = NSEntityDescription.insertNewObjectForEntityForName(\"Person\", inManagedObjectContext: context) as? Person\r\n\r\nThis fails ONLY if the class is internal and is added to the test target compile sources. (So that the test target recognizes the class)\r\n\r\nCurrent workarounds:\r\n\r\n(1) If the class is public and NOT add to the test target, but instead imported (import AppNameTarget), then casting succeeds.\r\n\r\n(2) Implement the following convenience initializer:\r\n\r\nclass Person: NSManagedObject {\r\n\r\n    convenience init(context: NSManagedObjectContext) {\r\n        let entityDescription = NSEntityDescription.entityForName(\"Person\", inManagedObjectContext: context)!\r\n        self.init(entity: entityDescription, insertIntoManagedObjectContext: context)\r\n    }\r\n\r\n    override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {\r\n        super.init(entity: entity, insertIntoManagedObjectContext: context)\r\n    }\r\n}\r\n\r\nSteps to Reproduce:\r\nSee the attached demo project.\r\n\r\n1. Build and run the unit tests\r\n2. Note the passing test, and the failing test\r\n\r\nExpected Results:\r\nThe NSManagedObject subclass should be successfully casted from AnyObject to its proper class upon insertion into Core Data.\r\n\r\nAll unit tests should pass.\r\n\r\nActual Results:\r\nThe NSManagedObject subclass fails to cast from AnyObject to its proper class upon insertion into Core Data.\r\n\r\nUnit test fails.\r\n\r\nVersion:\r\n6.1.1 (6A2008a)\r\n\r\nAttachments:\r\nhttps://github.com/jessesquires/rdar-19368054"
+    email: jesse.squires.developer@gmail.com
+    modified: "2015-01-03T21:41:00.772261Z"
+    number: "19368054"
+    number_intvalue: 19368054
+    originated: 02-Jan-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift ManagedObject fails to cast to subclass in test target

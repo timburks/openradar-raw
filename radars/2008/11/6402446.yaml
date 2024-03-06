@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6402446"
+    labels:
+        datastore_id: "698"
+data:
+    classification: Other bug
+    created: "2008-11-26T09:05:19.911105Z"
+    description: "Further related to rdar://problem/6398355 and rdar://problem/6395684\r\n\r\nSummary:\r\n\r\niPhone OS 2.2 includes Emoji support, which is by default enabled solely for Softbank SIMs, and is only “supported” when sending text messages to other Softbank users or when sending e-mail via Softbank’s i.softbank.jp e-mail server.\r\n\r\nThe reason for this appears to be that the iPhone implements Emoji using the “private use” section of Unicode, making use of code points in the range U+E001–U+E05A. This is presumably because Softbank has not previously made use of Unicode-based encodings for i-mode services and Emoji, preferring to use S-JIS instead.\r\n\r\nIn contrast, NTT DoCoMo’s services are Unicode-based, and have recommended for some time that developers building i-mode services use Unicode throughout.\r\n\r\nWhile Apple's implementation of Emoji was designed to not conflict with DoCoMo’s similar use of the Unicode private use area (DoCoMo’s range begins at U+E63E, as detailed on http://www.nttdocomo.co.jp/english/service/imode/make/content/pictograph/basic/index.html), it is inherently incompatible with any existing implementation.\r\n\r\nMy best guess is that i.softbank.jp and Softbank’s SMSC translates to and from the private-use area code points used by the iPhone to S-JIS characters used by other subscribers to Softbank’s services. In electing to implement the service this way, picking a separate private-use area range from DoCoMo (which has operated a Unicode-based service from some time), iPhone applications are guaranteed to only interoperate properly with either other Softbank subscribers in the best case (when sending text messages or e-mail from an @i.softbank.jp address), or other iPhone OS 2.2 users in the worst case (for example, when using third-party web services). Had Apple and Softbank elected to use the same code points as DoCoMo, all devices which encoded emoji as Unicode code points would interoperate.\r\n\r\nSteps to reproduce:\r\n\r\n1. Include emoji in a text sent by an application\r\n\r\nExpected result:\r\n\r\nEither:\r\n\r\na) [Best case] Emoji would be encoded as Unicode code points from a range reserved for the purpose by the appropriate standards body, guaranteeing interoperability.\r\n\r\nor\r\n\r\nb) [Worst case] Emoji would be encoded as Unicode code points in a manner consistent with existing implementations, ensuring compatibility with the “de facto” standard.\r\n\r\nActual result:\r\n\r\nEmoji are encoded using private-use area code points which are compatible only with other iPhone OS 2.2 users in most cases. In many cases, even subscribers of the same network (Softbank) will not be able to view the pictograms.\r\n\r\n\r\n26-Nov-2008 01:10 PM Mo McRoberts:\r\nApologies, where I stated U+E001-U+E05A in the above report, I obviously intended to say U+E001-U+E537."
+    email: mo@ilaven.net
+    modified: "2011-08-28T05:49:08.332454Z"
+    number: "6402446"
+    number_intvalue: 6402446
+    originated: "2008-11-26"
+    parent_number: "6209815"
+    product: iPhone
+    product_version: "2.2"
+    reproducible: Always
+    resolved: No
+    status: Duplicate/6209815
+    title: iPhone implements Emoji incompatibly

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20574502"
+    labels:
+        datastore_id: "4986057531588608"
+data:
+    classification: Serious Bug
+    created: "2015-04-16T19:09:40.83604Z"
+    description: "Summary:\r\nIn some projects, -[XCTestCase expectationWithDescription:] takes over 70 seconds to create an XCTestCaseExpectation instance.\r\n\r\nThe following test case file reproduces the problem:\r\n\r\n```\r\n#import <XCTest/XCTest.h>\r\n\r\n@interface LoweredExpectationsTests : XCTestCase\r\n@end\r\n\r\n@implementation LoweredExpectationsTests\r\n\r\n- (void)testExample {\r\n  XCTestExpectation *expectation = [self expectationWithDescription:@\"some random expectation\"];\r\n  [expectation fulfill];\r\n  [self waitForExpectationsWithTimeout:1.0 handler:nil];\r\n}\r\n\r\n@end\r\n```\r\n\r\nThis test case, when run on a new Xcode project with very little code in it, executes in around 0.007 seconds. However, in a large project, the same test case takes upwards of 70 seconds--76.767 seconds, to be exact.\r\n\r\nBecause the project that consistently reproduces this error is proprietary, I cannot send a sample project. I have, however attached a sysdiagnose report. To product the report, I:\r\n\r\n1. Ran sysdiagnose, passing the pid of Xcode.\r\n2. While that was running, I ran the unit tests in Xcode for the project that reproduces the issue.\r\n3. Waited until sysdiagnose completed.\r\n\r\nPlease let me know if there's a better way to report information on this error.\r\n\r\nTo diagnose, I paused execution of the test using the debugger while it was taking 70+ seconds to execute -[XCTestCase expectationWithDescription:]. I've attached a text file containing the stack trace (also available online at https://gist.github.com/modocache/da56bff7703682f6311d). My theory is that my library contains a lot of code, and CoreSymbolication is having a hard time symbolicating. I'm not sure why symbolication is occurring.\r\n\r\nSteps to Reproduce:\r\n1. Add the following test case to a large codebase:\r\n\r\n```\r\n#import <XCTest/XCTest.h>\r\n\r\n@interface LoweredExpectationsTests : XCTestCase\r\n@end\r\n\r\n@implementation LoweredExpectationsTests\r\n\r\n- (void)testExample {\r\n  XCTestExpectation *expectation = [self expectationWithDescription:@\"some random expectation\"];\r\n  [expectation fulfill];\r\n  [self waitForExpectationsWithTimeout:1.0 handler:nil];\r\n}\r\n\r\n@end\r\n```\r\n\r\n2. Run the test case.\r\n\r\nExpected Results:\r\nThe test case executes and passes immediately.\r\n\r\nActual Results:\r\nThe test case takes a very long time to run, in my case over 70 seconds.\r\n\r\nVersion:\r\nVersion 6.3 (6D570), OS X 10.10.2 (14C1514)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'sysdiagnose_2015.04.16_14-30-14-0400_37345.tar.gz' and 'xctestcase-stack-trace.txt' were successfully uploaded."
+    email: B.Gesiak@gmail.com
+    modified: "2015-04-16T19:09:40.83634Z"
+    number: "20574502"
+    number_intvalue: 20574502
+    originated: 16-Apr-2015 03:08 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: -[XCTestCase expectationWithDescription:] takes 70+ seconds to create an expectation

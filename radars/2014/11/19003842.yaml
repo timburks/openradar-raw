@@ -1,0 +1,57 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19003842"
+    labels:
+        datastore_id: "6411837021093888"
+data:
+    classification: Serious Bug
+    created: "2014-11-17T19:15:24.207177Z"
+    description: |-
+        Summary:
+        Our .pch imports a header that we end up using in most of our sources. Any time we change that header, builds fail:
+
+        fatal error: file '/Users/rob/Developer/GitHub/Mac/Classes/Categories/NSFont+GHStyle.h' has been modified since the precompiled header '/Users/rob/Library/Developer/Xcode/DerivedData/GitHub-czytagsiudrpmjdgigwcrwiuinkd/Build/Intermediates/PrecompiledHeaders/GitHub_Prefix-gvznqpqxnsfcvqanokezhglwrmsk/GitHub_Prefix.pch.pch' was built
+        note: please rebuild precompiled header '/Users/rob/Library/Developer/Xcode/DerivedData/GitHub-czytagsiudrpmjdgigwcrwiuinkd/Build/Intermediates/PrecompiledHeaders/GitHub_Prefix-gvznqpqxnsfcvqanokezhglwrmsk/GitHub_Prefix.pch.pch'
+
+        It’s nice that it says “please” when asking us to do its job for it :D
+
+
+        Steps to Reproduce:
+        1. Add a header used in an app to its .pch
+        2. Build
+        3. Change the header
+        4. Build
+
+
+        Expected Results:
+        I expected it to build.
+
+
+        Actual Results:
+        fatal error: file '/Users/rob/Developer/GitHub/Mac/Classes/Categories/NSFont+GHStyle.h' has been modified since the precompiled header '/Users/rob/Library/Developer/Xcode/DerivedData/GitHub-czytagsiudrpmjdgigwcrwiuinkd/Build/Intermediates/PrecompiledHeaders/GitHub_Prefix-gvznqpqxnsfcvqanokezhglwrmsk/GitHub_Prefix.pch.pch' was built
+        note: please rebuild precompiled header '/Users/rob/Library/Developer/Xcode/DerivedData/GitHub-czytagsiudrpmjdgigwcrwiuinkd/Build/Intermediates/PrecompiledHeaders/GitHub_Prefix-gvznqpqxnsfcvqanokezhglwrmsk/GitHub_Prefix.pch.pch'
+
+
+        Regression:
+        Xcode 5 was reliably able to rebuild the pch in question. We enabled modules when we migrated to Xcode 6.1, tho, which could conceivably be related.
+
+
+        Notes:
+        We have precompilation of prefix headers enabled.
+        We don’t have “increase sharing” enabled.
+        The changes noted in the repro don’t involve macros at all.
+
+        I’m not sure what best practices for pch files are with modules enabled. I’m not finding much relevant to this in Xcode’s docs either. If there’s a fine manual I could be reading, I’d be happy to <3 — thank you!
+    email: rix.rob@gmail.com
+    modified: "2014-11-17T19:15:24.207383Z"
+    number: "19003842"
+    number_intvalue: 19003842
+    originated: 17-Nov-2014 02:15 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1 (6A2006)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 6.1: pch files importing headers aren’t rebuilt correctly'

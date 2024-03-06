@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21591087"
+    labels:
+        datastore_id: "5140160152862720"
+data:
+    classification: UI/Usability
+    created: "2015-06-29T14:43:54.10887Z"
+    description: "Summary:\r\nInterface Builder allows you to drag a custom view onto a UINavigationItem to provide a title view using its titleView property. This works great, but you can’t use Auto Layout to size it, and the controls to change its width only extend to the edges of the 600pt-wide simulated view.\r\n\r\nSteps to Reproduce:\r\n1. Create a view controller embedded in a navigation controller in your Interface Builder storyboard.\r\n2. Drag a view onto the middle of the navigation bar of the view controller to set the title view. In my example, it’s a UITextField.\r\n3. Add left and right bar button items to the navigation items.\r\n4. Drag the title view to be as wide as possible.\r\n5. Run the app on a landscape iPad simulator.\r\n\r\nExpected Results:\r\nThe title view fills the width of the navigation bar, with appropriate margins between it and the bar button items.\r\n\r\nActual Results:\r\nThe title view’s width does not increase. On smaller devices, there is no margin between it and the bar button items.\r\n\r\nVersion:\r\nXcode Version 6.3.2 (6D2105)\r\n\r\nNotes:\r\nHere’s a workaround in the view controller:\r\n\r\n// We can look at the frame in the 600✕600 view in the storyboard to derive the\r\n// margin between the text field and the bar button items. In this case the full\r\n// width is 600 points and the text field is 485 points wide.\r\nlet kTextFieldWidthOffset: CGFloat = 600 - 485\r\n\r\nclass ViewController: UIViewController {\r\n\r\n    @IBOutlet weak var titleTextField: UITextField?\r\n \r\n    override func viewWillLayoutSubviews() {\r\n        super.viewWillLayoutSubviews()\r\n        \r\n        if let textField = titleTextField {\r\n            let width = view.bounds.width - kTextFieldWidthOffset\r\n            \r\n            var frame = textField.frame\r\n            \r\n            if frame.width != width {\r\n                frame.size.width = width\r\n                textField.frame = frame\r\n            }\r\n        }\r\n    }\r\n    \r\n}\r\n\r\nSample project attached.\r\n\r\nConfiguration:\r\niOS Simulator Version 8.3 (SimulatorApp-565.9 CoreSimulator-117.15)"
+    email: SlaunchaMan@gmail.com
+    modified: "2015-06-29T14:43:54.10916Z"
+    number: "21591087"
+    number_intvalue: 21591087
+    originated: 29-Jun-2015 10:41 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: Xcode Version 6.3.2 (6D2105)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Can't Set a Full-Width Title View in Storyboard using Size Classes

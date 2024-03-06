@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "728970"
+    labels:
+        datastore_id: "87402"
+data:
+    classification: Other Bug
+    created: "2009-10-09T09:02:52.438823Z"
+    description: "09-Oct-2009 11:00 AM Patrick Stein:\r\nSummary: When using pmset to set the hibernate mode with a disksleep 0 and system sleep time you get an erromessage even though it's not really an error.\r\n\r\nSteps to reproduce set Systemsleep to 10 , disksleep to 0 and then use pmset hibernatemode 0 :\r\n\r\n#pmset -g                                                                                                                                   \r\n\r\nActive Profiles:\r\nBattery Power\t\t-1\r\nAC Power\t\t-1*\r\nCurrently in use:\r\n womp\t\t1\r\n lidwake\t1\r\n halfdim\t1\r\n sms\t\t1\r\n hibernatefile\t/var/vm/sleepimage\r\n disksleep\t0\r\n sleep\t\t57\r\n hibernatemode\t0\r\n ttyskeepawake\t1\r\n displaysleep\t57\r\n acwake\t\t0\r\n autorestart\t0\r\n\r\n\r\n#sudo pmset hibernatemode 0                                                                                                                                                   \r\nWarning: Idle sleep timings for \"AC Power\" may not behave as expected.\r\n- Disk sleep should be non-zero whenever system sleep is non-zero.\r\n\r\n\r\nThe code that is responsible for that is http://opensource.apple.com/source/PowerManagement/PowerManagement-31/pmset/pmset.c?f=text\r\n\r\nline 660ff:\r\n\r\n    if(sleep_time != 0)\r\n    {\r\n        if(dim_time > sleep_time || dim_time == 0) ret |= kInconsistentDisplaySetting;\r\n    \r\n        if(disk_time == 0) ret |= kInconsistentDiskSetting;\r\n    }\r\n\r\n\r\nI don't see it as inconsistency for the pmset hibernate mode there or for the disk to never spin down until system sleep.\r\n\r\nExpected behaviour: no error message.\r\n\r\n\r\n\r\nBest Regards - Patrick Stein \r\n\r\n ---\r\nauthor of: ScreenRecycler, JollysFastVNC, SmartSleep, SmartSokoban and more."
+    email: jollysupport@googlemail.com
+    modified: "2011-08-28T05:44:08.980622Z"
+    number: "728970"
+    number_intvalue: 728970
+    originated: 10/9/09
+    parent_number: '&{NULL_VALUE}'
+    product: MacOS X
+    product_version: 10.6.1
+    reproducible: always
+    resolved: ""
+    status: open
+    title: pmset produces incorrect error message

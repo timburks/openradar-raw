@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16535024"
+    labels:
+        datastore_id: "5811446428467200"
+data:
+    classification: Enhancement
+    created: "2014-04-06T14:43:32.271386Z"
+    description: "Summary:\r\nInstead of having Content Size Category Constants (including Accessibility contents and UIApplication's preferredContentSizeCategory) as NSStrings, make them enumerations. This would allow for cleaner/faster code when supporting DynamicType with custom (non system-provided) fonts.\r\n\r\nSteps to Reproduce:\r\nSuppose we're using a custom font in an app and we're supporting DynamicType. With a system font, this means we'd set UILabel fonts with UIFont's preferredFontForTextStyle. With a custom font, we have to essentially mimic preferredFontForTextStyle, but return our custom font in the appropriate size. We might make a UIFont category message called preferredCustomFontForTextStyle, whose body looks like:\r\n\r\nCGFloat fontSize;\r\nif ([style isEqualToString:UIFontTextStyleHeadline]) {\r\n\t\tif ([preferredContentSizeCategory isEqualToString:UIContentSizeCategoryExtraSmall])\r\n\t\t\tfontSize = 12.0;\r\n\t\telse if ([preferredContentSizeCategory isEqualToString:UIContentSizeCategorySmall])\r\n\t\t\tfontSize = 14.0;\r\n\t\telse if ([preferredContentSizeCategory isEqualToString:UIContentSizeCategoryMedium])\r\n\t\t\tfontSize = 16.0;\r\n\t\telse if ([preferredContentSizeCategory isEqualToString:UIContentSizeCategoryLarge])\r\n\t\t\tfontSize = 18.0;\r\n\t\telse if ([preferredContentSizeCategory isEqualToString:UIContentSizeCategoryExtraLarge])\r\n\t\t\tfontSize = 20.0;\r\n\t\telse if ([preferredContentSizeCategory isEqualToString:UIContentSizeCategoryExtraExtraLarge])\r\n\t\t\tfontSize = 22.0;\r\n\t\telse if ([preferredContentSizeCategory isEqualToString:UIContentSizeCategoryExtraExtraExtraLarge])\r\n\t\t\tfontSize = 24.0;\r\n...\r\n\r\nreturn ([UIFont fontWithName:@\"customFont\" size:fontSize]);\r\n\r\nWe need to repeat this for each and every Content Size Category, Accessibility Content Size Category, and Text Style. In the worst case, we have to enumerate and isEqualToString every single constant. If the constants were enumerable, the code would still be a little bit ugly, but it would run much faster.\r\n\r\nCGFloat fontSize;\r\nswitch (textStyle) {\r\ncase UIFontTextStyleHeadline:\r\n        switch (preferredContentSizeCategory) {\r\n        case UIContentSizeCategoryLarge:\r\n                fontSize = 18.0;\r\n                break;\r\n        ...\r\n        default:\r\n                fontSize = 12.0;\r\n                break;\r\n        }\r\ncase ...\r\n        ....\r\n}\r\nreturn ([UIFont fontWithName:@\"customFont\" size:18.0]);\r\n\r\nExpected Results:\r\nFaster slightly-less-ugly-but-still-big code.\r\n\r\nActual Results:\r\nSlow ugly code."
+    email: greg@gregfiumara.com
+    modified: "2014-04-06T14:43:32.271515Z"
+    number: "16535024"
+    number_intvalue: 16535024
+    originated: 04/06/2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.1"
+    reproducible: n/a
+    resolved: ""
+    status: Open
+    title: Make Content Size Category and Text Style Constants Enumerable on iOS

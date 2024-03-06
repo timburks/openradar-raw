@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "42670741"
+    labels:
+        datastore_id: "5045255476871168"
+data:
+    classification: UI/Usability
+    created: "2018-07-27T19:40:56.99581Z"
+    description: "Summary:\r\nOur CI system runs our tests on iOS Simulators, and sometimes we encounter crashes for bugs in our code.\r\n\r\nIn rdar://40830829, I've called out that we don't have a signal for when a crash is in process of being symbolicated so that we can wait for it in CI and/or kick something to synchronously complete processing.\r\n\r\nI noticed today some crashes that took a long time to symbolicate (from a recursive method leading to a stack overflow), and ended up getting generated during the subsequent CI job and attached as a failure for that crash. On opening the crash logs, it appears that the `Date/Time` that is in the `.crash` file is not from when the crash occurred, but from some other time later in the crash processing pipeline.\r\n\r\n```\r\nDate/Time:             2018-07-27 10:54:45.357 -0700\r\n```\r\n\r\nBarring a way to get crash information for test runs as part of the testing process (rdar://40830829), it would be great if there were a way to make this date/time reflect the time that the crash occurred so we can filter out crash files that weren't caused by the current run.\r\n\r\nSteps to Reproduce:\r\n1. Have a test running within an AppHost that crashes the host apps process.\r\n * In the test, output the system time just before the crash is triggered\r\n * Potentially having it be a stack overflow might make it take longer to symbolicate.\r\n * It is also possible that having it be for an app with a massive compiled app binary (static and dynamic frameworks) causes the symbolication process to take longer.\r\n2. When the crash file is generated under ~/Library/Logs/DiagnosticReports, compare the \"Date/Time\" in the crash file to the time from running the test\r\n\r\nExpected Results:\r\nThe crash time should reflect the time that the crash occurred.\r\n\r\nActual Results:\r\nThe crash time should reflect the time that the crash is being processed.\r\n\r\nVersion/Build:\r\nMac OS X 10.13.3 (17D47)\r\nXcode 9.4 - Build version 9F1027a\r\n\r\nConfiguration:"
+    email: JSM_2001@hotmail.com
+    modified: "2018-07-27T19:40:56.99615Z"
+    number: "42670741"
+    number_intvalue: 42670741
+    originated: 07/27/2018
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 9.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Crash Logs generated should contain the timestamp of when the crash happened

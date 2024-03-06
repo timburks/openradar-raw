@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8263585"
+    labels:
+        datastore_id: "566401"
+data:
+    classification: UI/Usability
+    created: "2010-08-02T21:27:25.96603Z"
+    description: "Summary:\r\n\r\nGiven a UIImage or CGImageRef with width greater than 2048, if a subimage is created using CGImageCreateWithImageInRect and the given subimage rect has an origin with x = 0, the resulting image will not be displayed by a UIImageView. This only appears to happen on the iPhone 4 device.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a UIImage with a width > 2048. This can easily be achieved by using UIGraphicsBeginImageContextWithOptions() then UIGraphicsGetImageFromCurrentImageContext.\r\n2. Create a CGImageRef subimage of the original image using CGImageCreateWithImageInRect(). The size of the subimage's rect does not appear to matter, but the x component of the origin must be 0.\r\n3. Create a UIImageView using the resulting image.\r\n4. Add the resulting UIImageView to the view hierarchy.\r\n\r\nExpected Results:\r\n\r\nThe portion of the original image specified by the rect passed into CGImageCreateWithImageInRect should appear on the screen.\r\n\r\nActual Results:\r\n\r\nNo image appears.\r\n\r\nRegression:\r\n\r\nI have only managed to reproduce this on an iPhone 4 device. It does not occur on an iPod touch 2nd generation. I currently have no way of knowing whether the different behavior is due to the different hardware, or the difference between iOS 4.0 and iOS 4.0.1.\r\n\r\nNotes:\r\n\r\nI've attached a project which demonstrates this problem. It generates a 2049x480 image, draws a big red X on it, creates a 128x128 subimage from it, then displays it via a UIImageView. In UIImageViewBugViewController.m, there are few toggles to demonstrate different conditions where the problem does and does not occur, in particular note:\r\n\r\n// Setting belowWidthThreshold to YES demonstrates that the problem does not occur if the image's width is 2048 or less.\r\nBOOL belowWidthThreshold = NO;\r\n// Setting useWorkaround to YES demonstrates that the problem does not occur if the subimage's rect has an origin of\r\n// (1, 0) instead of (0, 0).\r\nBOOL useWorkaround = NO;\r\n// Setting verifyImage to YES saves the subimage to the camera roll to verify its contents are expected (they always \r\n// are).\r\nBOOL verifyImage = NO;"
+    email: amolloy@gmail.com
+    modified: "2011-08-28T05:40:23.033542Z"
+    number: "8263585"
+    number_intvalue: 8263585
+    originated: 8-2-2010
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 4.0.1 (8A306)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIImageView does not display certain subimages of images with width > 2048

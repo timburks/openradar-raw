@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7743153
+    labels:
+        datastore_id: "4998297672482816"
+data:
+    classification: Crash
+    created: "2020-06-19T17:12:08.433419Z"
+    description: "Although the FileHandle's `func seekToEnd() throws -> UInt64` is marked as available since iOS 13.0:\r\n\r\n```\r\n@available(OSX 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)\r\npublic func seekToEnd() throws -> UInt64\r\n```\r\n\r\nit crashes on iOS 13.0, 13.1, 13.2 and 13.3 Simulator.\r\n\r\n\r\nSteps to reproduce the issue:\r\n\r\n1. Run following code on iOS 13.0, 13.1, 13.2 or 13.3 Simulator:\r\n```\r\nlet directoryURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!\r\nlet fileURL = directoryURL.appendingPathComponent(\"foo.txt\", isDirectory: false)\r\nFileManager.default.createFile(atPath: fileURL.path, contents: nil, attributes: nil)\r\n\r\ndo {\r\n    let fileHandle = FileHandle(forWritingAtPath: fileURL.path)!\r\n    defer { fileHandle.closeFile() }\r\n\r\n    try fileHandle.seekToEnd()\r\n    fileHandle.write(\"abcd\".data(using: .utf8)!)\r\n} catch {\r\n    print(\"\\(error)\")\r\n}\r\n```\r\n2. It crashes with:\r\n```\r\ndyld: Symbol not found: _$sSo12NSFileHandleC10FoundationE9seekToEnds6UInt64VyKF\r\n```\r\n\r\n\r\nThe same problem seems to occur for other new APIs:\r\n```\r\n@available(OSX 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)\r\npublic func readToEnd() throws -> Data?\r\n\r\n@available(OSX 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)\r\npublic func read(upToCount count: Int) throws -> Data?\r\n\r\n@available(OSX 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)\r\npublic func offset() throws -> UInt64\r\n\r\n@available(OSX 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)\r\npublic func seekToEnd() throws -> UInt64\r\n\r\n@available(OSX 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)\r\npublic func write<T>(contentsOf data: T) throws where T : DataProtocol\r\n```\r\n\r\nI don't have iPhone running iOS prior to iOS 13.4 to confirm this on a real device."
+    email: ncreated@gmail.com
+    modified: "2020-06-19T17:12:47.226309Z"
+    number: FB7743153
+    number_intvalue: 7743153
+    originated: Jun 19, 2020 at 7:06 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 13.0 - 13.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: FileHandle throwing APIs (e.g. seekToEnd()) crash on iOS13.0-13.3 Simulator

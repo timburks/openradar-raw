@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20239912"
+    labels:
+        datastore_id: "5219604834025472"
+data:
+    classification: Other Bug
+    created: "2015-03-20T16:58:43.819523Z"
+    description: "On Mac OS X 10.10, cl_kernels images almost always contain an __LD,__compact_unwind section in their __TEXT segment.\r\n\r\nThat is to say that these modules have one LC_SEGMENT[_64] load command whose segment_command[_64]::segname is \"__TEXT\", with several sections attached. One of those sections has a section[_64]::segname of \"__LD\". This is in the section whose section[_64]::sectname is \"__compact_unwind\".\r\n\r\nAlso of note, the __LD,__compact_unwind section has the S_ATTR_DEBUG bit set in section[_64]::flags. The documentation for this bit in <mach-o/loader.h> states that if any section in a segment has this bit set, all sections in the segment must have it set. This is not the case, and of course should not be the case because sections like __TEXT,__text are not debug sections.\r\n\r\nThe __LD,__compact_unwind section is supposed to appear in object files, not in images loaded into a program. mach_header::filetype does report cl_kernels images as MH_BUNDLE and not MH_OBJECT. (If they were MH_OBJECT images, the segment_command would have had an empty segname.)\r\n\r\nIn final linked images including MH_BUNDLE images, unwind data is supposed to be presented in a __TEXT,__unwind_info section. <mach-o/compact_unwind_encoding.h> explains the expectations for __LD,__compact_unwind and __TEXT,__unwind_info.\r\n\r\nlldb and libunwind both know how to process data present in a __TEXT,__unwind_info section. Neither knows what to do with an __LD,__compact_unwind section.\r\n\r\ncl_kernels images are not produced by ld64 and do not exist as files on disk. They are produced by OpenCL and attached as images in memory. They should still conform to the Mach-O format so that debuggers and other tools are able to properly access them.\r\n\r\nSteps to Reproduce:\r\nExamine almost any cl_kernels image loaded into a process on Mac OS X 10.10.\r\n\r\nExpected Results:\r\ncl_kernels images should have a proper Mach-O structure for a final linked image. If unwind information is present, it should be in a __TEXT,__unwind_info section. There should be no __LD,__compact_unwind section in the __TEXT segment.\r\n\r\nActual Results:\r\ncl_kernels images with unwind information have an __LD,__compact_unwind section present in the __TEXT segment, and no __TEXT,__unwind_info section at all.\r\n\r\nVersion:\r\n10.10.2 14C1514\r\n\r\nNotes:\r\nThis bug was detected when a debugger-like tool began rejecting cl_kernels images found in many processes on Mac OS X 10.10. See https://codereview.chromium.org/1019243006/.\r\n\r\nThis problem does not occur in 10.9, 10.8, or 10.7. Although OpenCL is present on 10.6, cl_kernels images do not appear on that OS. This is a regression introduced in 10.10."
+    email: mark@chromium.org
+    modified: "2017-06-13T18:48:42.49712Z"
+    number: "20239912"
+    number_intvalue: 20239912
+    originated: "2015-03-20"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.2 14C1514
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: 'OpenCL regression: cl_kernels images contain errant __LD,__compact_unwind sections in their __TEXT segments'

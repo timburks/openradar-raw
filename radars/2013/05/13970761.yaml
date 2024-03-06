@@ -1,0 +1,80 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13970761"
+    labels:
+        datastore_id: "3026402"
+data:
+    classification: Other Bug
+    created: "2013-05-23T11:25:51.892472Z"
+    description: |-
+        Summary:
+
+        Manual animation of the UICollectionView's bounds does not properly create cells during the animation (as it does when setting the animated: argument to YES).
+
+        Steps to Reproduce:
+
+        I have tried a good number of approaches here. The closest solution is to do what we would normally do for UIScrollView animation (by setting the animated: argument to NO and wrapping it in a UIView animation block). This works perfectly fine for the scrollview. However, this screws with the UICollectionView creation process for some reason.
+
+        I have included an example below using two approaches. Each approach assumes that you have 4 sections with 4 items in each section. In addition, the animation assumes you are moving from 0,0 to 3,3.
+
+        Using Default Animation
+
+        Part of the issue here certainly seems tied to UICollectionView. If you take the following approach (using the default animation option) - all works fine:
+
+        [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:3 inSection:3]
+                                        atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
+                                                animated:YES];
+        When this is being executed, each cell in-between the current visible cells and the destination cell is created. I have included logging on the collectionView:cellForItemAtIndexPath: method:
+
+        2013-05-18 09:33:24.366 DEF-CV-Testing[75463:c07] Transition
+        Cell Created for Index Path: <NSIndexPath 0x8913f40> 2 indexes [0, 1]
+        Cell Created for Index Path: <NSIndexPath 0x75112e0> 2 indexes [0, 2]
+        Cell Created for Index Path: <NSIndexPath 0xfe1a6c0> 2 indexes [0, 3]
+        Cell Created for Index Path: <NSIndexPath 0x89159e0> 2 indexes [1, 0]
+        Cell Created for Index Path: <NSIndexPath 0x8a10e70> 2 indexes [1, 1]
+        Cell Created for Index Path: <NSIndexPath 0x7510d90> 2 indexes [1, 2]
+        Cell Created for Index Path: <NSIndexPath 0x75112a0> 2 indexes [1, 3]
+        Cell Created for Index Path: <NSIndexPath 0x8915a00> 2 indexes [2, 0]
+        Cell Created for Index Path: <NSIndexPath 0x75111c0> 2 indexes [2, 1]
+        Cell Created for Index Path: <NSIndexPath 0xfe17f30> 2 indexes [2, 2]
+        Cell Created for Index Path: <NSIndexPath 0xfe190c0> 2 indexes [2, 3]
+        Cell Created for Index Path: <NSIndexPath 0xfe16920> 2 indexes [3, 0]
+        Cell Created for Index Path: <NSIndexPath 0x75112a0> 2 indexes [3, 1]
+        Cell Created for Index Path: <NSIndexPath 0xfe1a4f0> 2 indexes [3, 2]
+        Cell Created for Index Path: <NSIndexPath 0x75142d0> 2 indexes [3, 3]
+        Using Custom Animation
+
+        When wrapping the scrollToItemAtIndexPath: method in a UIView animation block, items are not created correctly. See code sample here:
+
+        [UIView animateWithDuration:5.0 delay:0.0 options:0 animations:^{
+            [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:3 inSection:3]
+                                        atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
+                                                animated:NO];
+        } completion:^(BOOL finished) {
+            NSLog(@"Completed");
+        }];
+
+        The currently visible cells disappear and only the destination one is created. I have included the same logging on the collectionView:cellForItemAtIndexPath: method:
+
+        Transition
+        Cell Created for Index Path: <NSIndexPath 0x71702f0> 2 indexes [3, 3]
+        Completed
+
+        Expected Results:
+        In both of the methods described above, the UICollectionView should act identically (as far as how cells are created).
+
+        Actual Results:
+        When trying to perform the animation using a UIView animation block, the currently visible cell disappears and no new cells are created except for the cell which is the 'end' of the animation.
+    email: david.tucker@universalmind.com
+    modified: "2013-05-23T11:25:51.892639Z"
+    number: "13970761"
+    number_intvalue: 13970761
+    originated: 23-May-2013 07:25 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 6.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UICollectionView Does Not Handle Cell Creation During Manual Animation

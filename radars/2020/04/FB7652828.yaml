@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7652828
+    labels:
+        datastore_id: "4977334071328768"
+data:
+    classification: Bug
+    created: "2020-04-05T15:55:52.664695Z"
+    description: "According to RFC 2367, the reply of a SADB_REGISTER message contains a Supported Algorithms Extension, which informs the client about the capabilities of the kernel:\r\n\r\nhttps://tools.ietf.org/html/rfc2367#section-3.1.7\r\nhttps://tools.ietf.org/html/rfc2367#section-2.3.8\r\n\r\nAccording to the man page of `setkey` in macOS 10.15, the following algorithms are supported for encryption:\r\n\r\ndes-cbc      \r\n3des-cbc     \r\nnull         \r\nblowfish-cbc \r\ncast128-cbc  \r\ndes-deriv    \r\n3des-deriv   \r\nrijndael-cbc \r\ntwofish-cbc  \r\naes-ctr      \r\n\r\nHowever, the Supported Algorithms Extension only reports the following algorithms as available:\r\n\r\ndes-cbc      \r\n3des-cbc     \r\nnull         \r\nrijndael-cbc \r\n\r\n\r\nLooking at the source of xnu-6153.41.3, the problem is found in `esp_core.c` in the function `esp_algorithm_lookup()`:\r\n\r\n\r\nconst struct esp_algorithm *\r\nesp_algorithm_lookup(int idx)\r\n{\r\n\tswitch (idx) {\r\n\tcase SADB_EALG_DESCBC:\r\n\t\treturn &des_cbc;\r\n\tcase SADB_EALG_3DESCBC:\r\n\t\treturn &des3_cbc;\r\n\tcase SADB_EALG_NULL:\r\n\t\treturn &null_esp;\r\n\tcase SADB_X_EALG_RIJNDAELCBC:\r\n\t\treturn &aes_cbc;\r\n\tcase SADB_X_EALG_AES_GCM:\r\n\t\treturn &aes_gcm;\r\n\tcase SADB_X_EALG_CHACHA20POLY1305:\r\n\t\treturn &chacha_poly;\r\n\tdefault:\r\n\t\treturn NULL;\r\n\t}\r\n}\r\n\r\n\r\nwhich is called by `key_register()` that is found in `key.c` and builds up the Supported Algorithms Extension."
+    email: m.hanauska@gmail.com
+    modified: "2020-04-05T15:55:52.664868Z"
+    number: FB7652828
+    number_intvalue: 7652828
+    originated: Apr 5, 2020
+    parent_number: '&{NULL_VALUE}'
+    product: macOS Kernel (xnu)
+    product_version: 10.5 (6153.41.3) / probably all others, too
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SADB_REGISTER reply not correctly announcing supported encryption algorithms

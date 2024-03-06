@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15854892"
+    labels:
+        datastore_id: "6453512095399936"
+data:
+    classification: Serious Bug
+    created: "2014-01-19T16:34:46.426979Z"
+    description: "This is a duplicate of rdar://10114310\n\nSummary:\r\n\r\nCoreDataGeneratedAccessors for an ordered one-to-many relationship crash at runtime with message\r\n\r\n*** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '*** -[NSSet intersectsSet:]: set argument is not an NSSet'\r\n*** First throw call stack:\r\n(0x16ad022 0x183ecd6 0x1650124 0x96fd3e 0x93ad1a 0x96fbae 0xf920b7 0xbfdc069 0x3dcc 0x16aee99 0x1b14e 0x259a0e 0x16aee99 0x1b14e 0x1b0e6 0xc1ade 0xc1fa7 0xc1266 0x403c0 0x405e6 0x26dc4 0x1a634 0x1597ef5 0x1681195 0x15e5ff2 0x15e48da 0x15e3d84 0x15e3c9b 0x15967d8 0x159688a 0x18626 0x2a4d 0x29b5)\r\n\r\nSteps to Reproduce:\r\n\r\nCreate an ordered relationship and generate the NSManagedObject subclasses, e.g.:\r\n\r\n#import <Foundation/Foundation.h>\r\n#import <CoreData/CoreData.h>\r\n\r\n@class Event;\r\n\r\n@interface Image : NSManagedObject\r\n\r\n@property (nonatomic, retain) NSString * path;\r\n@property (nonatomic, retain) Event *event;\r\n\r\n@end\r\n\r\nThen, try to create an Event object and add an Image object to it:\r\n\r\n    NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];\r\n    Event *event = [NSEntityDescription insertNewObjectForEntityForName:@\"Event\" inManagedObjectContext:context];\r\n    \r\n    // If appropriate, configure the new managed object.\r\n    [event setTimeStamp:[NSDate date]];\r\n    // make an image\r\n    Image *image = [NSEntityDescription insertNewObjectForEntityForName:@\"Image\" inManagedObjectContext:context];\r\n    image.path = @\"/something\";\r\n    [event addImagesObject:image];\r\n    \r\nThe app will crash on the last line with aforementioned exception."
+    email: timothy.broder@gmail.com
+    modified: "2014-01-19T16:34:46.427145Z"
+    number: "15854892"
+    number_intvalue: 15854892
+    originated: 19-Jan-2014 11:34 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 5.0-7.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Duplicate of 10114310: CoreData ordered relationships: CoreDataGeneratedAccessors crashes on insert'

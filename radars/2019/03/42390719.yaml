@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "42390719"
+    labels:
+        datastore_id: "4944737014382592"
+data:
+    classification: UI / Usability
+    created: "2019-03-08T21:05:35.697425Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\n\r\nUICollectionView fails to continuously layout the included cells when changing its frame within an animation block. It fails in Objective C completely and a possible workaround in Swift seems to be unexpected the way it's done.\r\n\r\nI'm providing the issue demonstration in both Swift (workaround-able) and Objective C (failing).\r\n\r\nA few important related lines are marked with `// MARK:` comments in both examples.\r\n\r\n# Swift demo – playground:\r\n\r\nSwift demo contains an illustration of a loop performing expanding and shrinking of the holding view using an animation. Included table view and collection view have auto resizing mask applied so when I start changing the holder view's height using an animation block, both elements change their height using an animation properly.\r\n\r\nContracting (setting a lower height) phase is the important one where the issue is visible. While the table view lays out its content during the transition smoothly (cells stay in place until they get of bounds), the collection view immediately calls for re-layout, dropping the to-be-out-of-bounds cells immediately, before the animation block finishes (`contractWrong()` function).\r\n\r\nNow, I've discovered that by moving the frame update operation inside the animation block addresses the issue on Swift (as seen in `contractRight()` function).\r\n\r\nAssigning the updated frame struct to a holder view's frame property is included within the animation block in BOTH functions.\r\n\r\nMy first Question no.1 here then is why do these functions even behave differently? I'd like to know as it would probably describe some unexpected behaviour here.\r\n\r\n# Objective C demo – example project:\r\n\r\nObjective C example is amost-a-1:1 copy of the Playground code. Unlike the Swift example and its workaround, I cannot achieve the workarounding hotfix behaviour of `-contractRight` in Objective C.\r\n\r\nThus there comes my Question no.2 – how am I supposed to do this properly then?\r\n\r\nAs the Swift example tends to be behaving a bit unexpectedly due to a single line position and the Objective C code is not working at all, with no easy way to alter the expected behaviour the work, I consider this being a Collection view layout issue.\r\n\r\nAny hints on how to work around the issue in Objective C and/or bug confirmation would be welcome.\r\n_______________________________\r\n\r\nSteps to Reproduce:\r\nSee the attached demos and the description above.\r\n\r\nExpected Results:\r\nA smooth transition of collection view cells.\r\n\r\nActual Results:\r\nPremature re-layout performing a cutting effect when contracting the frame.\r\n\r\nVersion/Build:\r\niOS 11/12"
+    email: misacek@misacek.net
+    modified: "2019-03-08T21:05:58.673481Z"
+    number: "42390719"
+    number_intvalue: 42390719
+    originated: July 19 2018, 7:59 PM
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: "12"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Premature UICollectionView re-layout when animating its frame [iOS 11][iOS 12]

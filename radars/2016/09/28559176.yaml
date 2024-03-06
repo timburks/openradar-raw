@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28559176"
+    labels:
+        datastore_id: "5005743598075904"
+data:
+    classification: Serious Bug
+    created: "2016-09-30T04:35:48.28777Z"
+    description: "Summary:\r\nAs far as I can tell, new restrictions have been placed on sandboxed apps in 10.12 that prevent such apps from using a variety of LaunchServices functions (or their NSWorkspace abstractions) that would reveal the path on disk of a specific other application.\r\n\r\nI can imagine reasons why this may have been intentionally changed, but it leaves some existing sandboxed apps (including my own sandboxed betas of MarsEdit) in a pickle, particularly when they have established reasons for looking up specific apps by bundle identifier.\r\n\r\nMarsEdit maintains a list of temporary exceptions for sending Apple Events, because of its historic ability to integrate with other editors. For example a user can \"Edit in BBEdit\" and through an AppleEvent-based dance, the app is targeted and opened.\r\n\r\nIn 10.12, MarsEdit's efforts to locate the app fail. MarsEdit uses NSWorkspace to request the url of the app, but the issue is exemplified at a lower level by the return of nil by pertinent LaunchServices functions.\r\n\r\nIt seems that if an app has already asked for a temporary entitlement to send Apple Events to a specific bundle identifier, then the app should also be granted the right to look up that bundle identifier's LaunchServices information including its URL/path.\r\n\r\nSteps to Reproduce:\r\n1. Arrange for BBEdit to be on the computer.\r\n2. Open attached TestingSandbox.xcodeproj.\r\n3. Build and run\r\n\r\n\r\nExpected Results:\r\nThe path to BBEdit should be displayd in the console.\r\n\r\nActual Results:\r\nnil is printed to the console, reflecting the nil return value from:\r\n\r\nNSWorkspace.shared().urlForApplication(withBundleIdentifier: \"com.barebones.bbedit\")\r\n\r\n\r\nVersion:\r\n10.12 (16A323) \r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'TestingSandbox.zip' was successfully uploaded."
+    email: jalkut@gmail.com
+    modified: "2016-09-30T04:35:48.28797Z"
+    number: "28559176"
+    number_intvalue: 28559176
+    originated: 30-Sep-2016 00:34 AM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: "10.12"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: LaunchServices functionality removed for Sandboxed apps

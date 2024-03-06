@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13594738"
+    labels:
+        datastore_id: "2914403"
+data:
+    classification: ""
+    created: "2013-04-07T19:09:02.227514Z"
+    description: "Summary:\r\nbitmask types defined using NS_OPTIONS do not agree with what the documentation specifies.  We will use NSRegularExpressionOptions as an example.  The documentation specifies:\r\n\r\nenum {\r\n   NSRegularExpressionCaseInsensitive             = 1 << 0,\r\n   NSRegularExpressionAllowCommentsAndWhitespace  = 1 << 1,\r\n   NSRegularExpressionIgnoreMetacharacters        = 1 << 2,\r\n   NSRegularExpressionDotMatchesLineSeparators    = 1 << 3,\r\n   NSRegularExpressionAnchorsMatchLines           = 1 << 4,\r\n   NSRegularExpressionUseUnixLineSeparators       = 1 << 5,\r\n   NSRegularExpressionUseUnicodeWordBoundaries    = 1 << 6\r\n};\r\ntypedef NSUInteger NSRegularExpressionOptions;\r\n\r\nThat is, NSRegularExpressionOptions is an unsigned integer.\r\n\r\nMeanwhile, the header actually specifies (through NS_OPTIONS)\r\ntypedef enum : NSUInteger {\r\n   NSRegularExpressionCaseInsensitive             = 1 << 0,\r\n   NSRegularExpressionAllowCommentsAndWhitespace  = 1 << 1,\r\n   NSRegularExpressionIgnoreMetacharacters        = 1 << 2,\r\n   NSRegularExpressionDotMatchesLineSeparators    = 1 << 3,\r\n   NSRegularExpressionAnchorsMatchLines           = 1 << 4,\r\n   NSRegularExpressionUseUnixLineSeparators       = 1 << 5,\r\n   NSRegularExpressionUseUnicodeWordBoundaries    = 1 << 6\r\n} NSRegularExpressionOptions;\r\n\r\nThese two declarations are not equivalent.  One creates a type synonym, the other creates a new type with only 7 values in it (although backed by an unsigned integer).  This means that with the declaration used in the header 0 is not a value in the type (but happens to work with the current implementation), so it is impossible to specify no options at all.  It would be entirely valid for the compiler to warn (or error) about values other than the 7 specified in the enum, or to produce undefined behaviour when other values are used."
+    email: tom.davie@gmail.com
+    modified: "2013-04-07T19:09:02.228192Z"
+    number: "13594738"
+    number_intvalue: 13594738
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: ""

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34431044"
+    labels:
+        datastore_id: "6128911402401792"
+data:
+    classification: Bug
+    created: "2017-10-03T04:35:32.04913Z"
+    description: "Area:\r\nExternal Accessory Framework\r\n\r\nSummary: We produce an IAP2 Bluetooth accessory (www.beartooth.com). On the iOS 11 GM, the InputStream provided by the accessory's EASession frequently hangs, rendering our app unusable (we rely on low latency I/O with the accessory). The hangs occur regardless of whether we schedule the stream in a RunLoop or use polling. It appears to be related to the `hasBytesAvailable` property/stream event. \r\n\r\nWhen using RunLoop scheduling, we attempt to read an arbitrary amount of data from the InputStream after consuming the `hasBytesAvailable` stream event. The first read works as expected, but no subsequent `hasBytesAvailable` events are fired.\r\n\r\nWhen polling, we read from the stream while the `hasBytesAvailable` property returns true, spinning otherwise. Similarly to the RunLoop approach, the first read appears to succeed. After the first read, the reader thread appears to be hung up trying to access the `hasBytesAvailable` property.  This behavior seems indicative of some kind of internal spin lock that is misbehaving. \r\n\r\nI have confirmed that this issue does not occur on iOS 10.3.3. \r\n\r\nDue to the dependence on our specific MFi accessory, I have not included any sample projects/code. I do not believe this problem lies with the accessory itself, as our latest release of both application and firmware works as intended on iOS 10. I can tell the accessory is attempting to respond to requests on the Bluetooth link, as it will eventually crash our firmware due to buffer overflow if the app is left running in a hung state. \r\n\r\nSteps to Reproduce: \r\nConnect with a Beartooth on the iOS 11 GM build, and attempt to read data from the EASession's InputStream instance (using polling or RunLoop scheduling)\r\n\r\nExpected Results:\r\nThe InputStream produces accessory data as expected.\r\n\r\nActual Results:\r\nThe InputStream frequently hangs during reads for several seconds or indefinitely. \r\n\r\nVersion/Build:\r\niOS 11 GM (Build 15A372)\r\n\r\nConfiguration:\r\nTest Devices: iPhone 5S, iPhone 6, iPhone 6 Plus, iPhone 7\r\nToolchains: Xcode 9 GM Seed, Jetbrains AppCode 2017.3\r\nSwift Source Version: 4.0\r\nMFi Accessory: Beartooth MK1"
+    email: jeff@beartoothradio.com
+    modified: "2017-10-03T04:37:37.51514Z"
+    number: "34431044"
+    number_intvalue: 34431044
+    originated: 09/14/17
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 11.0 - 11.1 Beta
+    reproducible: Always
+    resolved: N/A
+    status: Open (Duplicate 33955993)
+    title: EASession's InputStream hangs on iOS 11 (unusable)

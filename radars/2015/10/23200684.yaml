@@ -1,0 +1,62 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23200684"
+    labels:
+        datastore_id: "5623099261190144"
+data:
+    classification: Enhancement
+    created: "2015-10-21T14:01:47.30776Z"
+    description: |-
+        Summary:
+        My project has Range<String.CharacterView.Index>es. I need to recover integer ranges for them. Specifically, I need the integer ranges of sequences of logical Characters, and not e.g. Unicode scalar values or UTF16 code points. To use the blog post’s example, my algorithm ought to treat both precomposed and decomposed “café” as the same string; `characters` is therefore the appropriate collection interface.
+
+        As far as I can see, the only correct way of producing Range<Int> is:
+
+        	string.startIndex.distanceTo(range.startIndex)..<string.startIndex.distanceTo(range.endIndex)
+
+        However, the start and end offsets are both computed in O(n) time. I have unbounded numbers of ranges, commonly tens of thousands, and so this causes execution time in my test case to balloon to 21s for something that should otherwise be (nearly) interactive.
+
+        String.CharacterView.Index values know their logical offsets. You can verify this by print()ing them to the console. This has yielded the following workaround:
+
+        	Int(String(range.startIndex))!..<(Int(String(range.endIndex))!)
+
+        This yields execution time of under a tenth of a second on the same test case. I can’t ship this, obviously.
+
+        I see two remaining workarounds:
+
+        1. Map the input strings into `[Character]` and parse over that. This may require substantial changes to my system, and it seems likely that it would have quite a hefty performance cost in terms of copies, locality of reference, etc.
+
+        2. Since my string ranges often nest, but never overlap, I could perform a depth-first traversal of the tree holding them, keeping track of the most recently computed index in order to bound the distances being computed to the intervals between indices. This is not something I very much want to write, but it seems like it’s probably my best bet.
+
+        However, since `String.CharacterView.Index` already knows its integer offset, I would very much appreciate it if it would share. I would like some API, whether on `String.CharacterView.Index`, `String.CharacterView`, or some other interface, which produces the integer offset for a given string offset, presumably in the context of the original string, in O(1) time. This does not have to be applicable to arbitrary `ForwardIndexType`s, either—it would only operate over `String.CharacterView.Index`.
+
+        I don’t think this would violate any of the collection semantics; it would just make it much faster to map string indices into integer offsets.
+
+
+        Steps to Reproduce:
+        N/A
+
+        Expected Results:
+        N/A
+
+        Actual Results:
+        N/A
+
+        Regression:
+        N/A
+
+        Notes:
+        1: I hereby swear to have read and understood https://developer.apple.com/swift/blog/?id=30
+    email: rix.rob@gmail.com
+    modified: "2015-10-21T14:01:47.30807Z"
+    number: "23200684"
+    number_intvalue: 23200684
+    originated: 21-Oct-2015 10:01 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0.1 (7A1001)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Recover integer offsets from String.Index in O(1) time

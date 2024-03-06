@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7699277
+    labels:
+        datastore_id: "4991421161406464"
+data:
+    classification: ""
+    created: "2020-05-12T21:54:42.920997Z"
+    description: "There’s a bug when refreshing StoreKit receipts on WatchOS (tested on watchOS 6.2.5 (17T5607a). \r\n\r\nThe issue is that after performing an SKRefreshReceiptRequest, the request succeeds, and refreshes the receipt, however the receipt is stored in the wrong URL for Sandbox environments. \r\n\r\nInstead of being stored in <receipts_folder>/sandboxReceipt, like in other platforms, it gets stored in <receipts_folder>/receipt. \r\n\r\nThis is problematic because [[NSBundle mainBundle] appStoreReceiptURL] returns the URL for the sandboxReceipt, so the app has no reliable way of going to the correct receipt. \r\n\r\nto clarify, the problem is that appStoreReceiptURL (correctly) returns the url of the sandbox receipt when you’re in sandbox, but it seems like the refreshed receipt lives in the path where the production receipt would usually live\r\n\r\nfor example:\r\nfile:/private/var/mobile/Containers/Data/PluginKitPlugin/6CC24F0D-402C-4AB9-9747-96116D575348/StoreKit/receipt -> contains the purchases\r\nfile:/private/var/mobile/Containers/Data/PluginKitPlugin/6CC24F0D-402C-4AB9-9747-96116D575348/StoreKit/sandboxReceipt -> MISSING, but this is the url returned by `[[NSBundle mainBundle] appStoreReceiptURL]`\r\n\r\nI've verified the receipt located in /receipt against the /verifyReceipt endpoint, and it correctly contains the purchases I've made on device, and it indicates that the receipt type is Sandbox. Here's an excerpt from the receipt:\r\n\r\n```\r\n{\r\n  \"status\": 0,\r\n  \"environment\": \"Sandbox\",\r\n  \"receipt\": {\r\n    \"receipt_type\": \"ProductionSandbox\",\r\n    \"adam_id\": 0,\r\n```\r\n\r\nTo reproduce: \r\n\r\n- Make a purchase on Apple Watch\r\n- Make an SKRefreshReceiptRequest\r\n- Once it finishes, check the file stored in `[[NSBundle mainBundle] appStoreReceiptURL]`. There won't be anything there. You can also verify that the URL ends in `sandboxReceipt`, as expected. \r\n- Look for a file in the same folder where the sandbox receipt should be, named `receipt`, and verify its contents. It should have the refreshed receipt. \r\n\r\nI expect that this works correctly in production, but I haven't checked because I'd have to upload an app that I haven't tested successfully."
+    email: andy@revenuecat.com
+    modified: "2021-04-22T15:38:56.433722Z"
+    number: FB7699277
+    number_intvalue: 7699277
+    originated: 05/12/2020
+    parent_number: '&{NULL_VALUE}'
+    product: WatchOS
+    product_version: 6.2.5
+    reproducible: yes
+    resolved: ""
+    status: Closed
+    title: Sandbox receipts are stored in the production URL

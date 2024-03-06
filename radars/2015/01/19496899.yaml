@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19496899"
+    labels:
+        datastore_id: "6280770725347328"
+data:
+    classification: Serious Bug
+    created: "2015-01-16T09:47:51.655097Z"
+    description: "Summary:\r\n-[NSDocumentController currentDirectory] has no effect.\r\n-[NSOpenPanel setDirectoryURL:] has no effect.\r\n\r\nSteps to Reproduce:\r\n1.  Open Apple's TextEdit Sample Project in Xcode.\r\n2.  Open the DocumentController.m file.\r\n3.  Insert the following code at line 315:\r\n\r\nNSString* path = [NSHomeDirectory() stringByAppendingPathComponent:@\"Desktop\"] ;\r\n[openPanel setDirectoryURL:[NSURL fileURLWithPath:path]] ;\r\n    \r\n4.  Insert the following override somewhere in the implementation:\r\n\r\n- (NSString*)currentDirectory {\r\n    return [NSHomeDirectory() stringByAppendingPathComponent:@\"Desktop\"] ;\r\n}\r\n\r\n5.  Build and run.\r\n\r\n6.  Click in the menu: File > Open.\r\n\r\nExpected Results:\r\nBased on the documentation of -[NSDocumentController currentDirectory] and\r\n-[NSOpenPanel setDirectoryURL:], either of the changes made in the code should cause the open panel to navigate to your Desktop.\r\n\r\nActual Results:\r\nThe open panel will navigate to either the last file opened (NSNavLastRootDirectory in user defaults) or ~/Documents.   The inserted code will never have the effect which the documentation indicates it should.\r\n\r\nVersion:\r\nXcode 6.1.1\r\n\r\nNotes:\r\nThe documented behavior is necessary for (1) \"semi-shoebox\" apps for which users typically create one or a few documents, or for apps that might use a directory of templates or scripts as documents.  To work around this bug, the developer may set the value of key \"NSNavLastRootDirectory\" in NSUserDefaults standardUserDefaults to the desired directory.\r\n\r\nI suggest that -[NSDocumentController currentDirectory] be marked as either deprecated or ignored, and that -[NSOpenPanel setDirectoryURL:] be fixed."
+    email: jerrykrinock@gmail.com
+    modified: "2015-01-16T09:47:51.655374Z"
+    number: "19496899"
+    number_intvalue: 19496899
+    originated: 2015-Jan-16
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.10.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Methods to customize directory in NSOpenPanel do not work

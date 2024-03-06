@@ -1,0 +1,61 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31154770"
+    labels:
+        datastore_id: "5037637890998272"
+data:
+    classification: Serious Bug
+    created: "2017-03-20T20:29:39.88179Z"
+    description: |-
+        Summary:
+        The attached code will report a leak in Instruments, but as far as I can determine, it is a false positive. Thanks to github.com/noremac and github.com/KingOfBrian for helping me to track it down.
+
+        Steps to Reproduce:
+        1. Open the attached sample code in Xcode 8.3 beta 4 (8W143q).
+        2. Run the app in Instruments on the iPhone simulator (I used iPhone SE), iOS 10.3.
+        3. Choose the Leaks instrument.
+        4. Start recording.
+
+        Expected Results:
+        No leaks are reported.
+
+        Actual Results:
+        A leak is reported. Then:
+        1. Observe the reported leak is of type _ContiguousArrayStorage<Bool>.
+        2. Click the arrow in a circle (what’s that called?) next to the memory address to view details about the leak.
+        3. Observe that it got a +1 ref count via Malloc, and that’s it.
+        4. In the iOS simulator, click the “Nil the Container” button.
+        5. In Instruments, click back out to the Leaks by Backtrace view, since the individual leak doesn’t seem to update automatically.
+        6. Click the disclosure arrow thingy next to the address again.
+        7. Observe that it has now received a balanced pair of +/- ref counts via Malloc and then Release, and that it then proceeds to Free. This means that it was never a leak, because it existed while its parent existed, and was deallocated when its parent was deallocated. Therefore, Instruments is reporting a false positive leak.
+
+        Regression:
+        Unknown. Reproducible in Xcode 8.2.1.
+
+        Notes:
+        Sample code: https://cl.ly/jd26
+        Video of reproduction: https://cl.ly/jdPd
+
+        Here is a list of interesting things that you can change in the code, any one of which will cause the false leak report to disappear:
+        1. Comment out ViewController.swift:34, which mutates the array storage of the struct.
+        2. Change MyTrivialEnum to have one case instead of two.
+        3. Move the declaration of leakyContiguousAraryStorage to the top of the ProblemType struct instead of the bottom.
+        4. Comment out any of the a, b, c, d, or e variables in the ProblemType struct. With four or fewer, it does not report a leak, but with five, it reports a leak.
+        5. Change the type of FillerType from MyTrivialEnum to any of Bool, Int, Int8, or Int16.
+
+        Those last few make it seem like memory layout or alignment are implicated somehow.
+
+        This may seem like a rare issue, but I’m reporting it because we encountered it in a real-world type: https://github.com/Raizlabs/BonMot/blob/master/Sources/StringStyle.swift#L18-L74
+    email: igeek1@gmail.com
+    modified: "2017-03-20T20:29:39.88208Z"
+    number: "31154770"
+    number_intvalue: 31154770
+    originated: 20-Mar-2017 04:29 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Instruments 8.3 beta (8W143q)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Instruments 8.3 beta: false positive leak reported'

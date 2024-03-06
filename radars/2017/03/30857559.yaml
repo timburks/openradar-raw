@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30857559"
+    labels:
+        datastore_id: "6097968679616512"
+data:
+    classification: Foundation
+    created: "2017-03-05T16:25:54.70845Z"
+    description: "For values near UInt64.max, Decimal.init() crashes. Two examples:\r\n\r\n(lldb) po Decimal.init(UInt64.max - 1023)\r\nerror: warning: couldn't get required object pointer (substituting NULL): Couldn't load 'self' because its value couldn't be evaluated\r\n\r\nerror: Execution was interrupted, reason: EXC_BAD_INSTRUCTION (code=EXC_I386_INVOP, subcode=0x0).\r\nThe process has been returned to the state before expression evaluation.\r\n\r\n\r\n(lldb) po Decimal.init(UInt64.max - 1024)\r\n▿ 18446744073709547520\r\n  ▿ _mantissa : 8 elements\r\n    - .0 : 38912\r\n    - .1 : 39321\r\n    - .2 : 39321\r\n    - .3 : 6553\r\n    - .4 : 0\r\n    - .5 : 0\r\n    - .6 : 0\r\n    - .7 : 0\r\n\r\nSteps to Reproduce:\r\nIn lldb, type:\r\n\r\npo Decimal.init(UInt64.max - 1023)\r\n\r\nExpected Results:\r\n▿ 18446744073709547521\r\n  ▿ _mantissa : 8 elements\r\n    - .0 : 38913\r\n    - .1 : 39321\r\n    - .2 : 39321\r\n    - .3 : 6553\r\n    - .4 : 0\r\n    - .5 : 0\r\n    - .6 : 0\r\n    - .7 : 0\r\n\r\nActual Results:\r\n------------- iPad Air 2 output: ------------\r\nerror: warning: couldn't get required object pointer (substituting NULL): Couldn't load 'self' because its value couldn't be evaluated\r\n\r\nerror: Execution was interrupted, reason: EXC_BREAKPOINT (code=1, subcode=0x100a007c8).\r\nThe process has been returned to the state before expression evaluation.\r\n\r\n------------- Simulator output: ----------------\r\nerror: warning: couldn't get required object pointer (substituting NULL): Couldn't load 'self' because its value couldn't be evaluated\r\n\r\nerror: Execution was interrupted, reason: EXC_BAD_INSTRUCTION (code=EXC_I386_INVOP, subcode=0x0).\r\nThe process has been returned to the state before expression evaluation.\r\n\r\nNotes:\r\nAny legal UInt64 value should be supported, even UInt64.max.\r\n\r\nConfiguration:\r\nSeen in lldb (debugging on an app on an iPad Air 2 running iOS 10.2.1, or Simulator iOS10). Similar problem seen in swift repl."
+    email: dr.eric.roller@gmail.com
+    modified: "2017-03-05T16:25:54.70874Z"
+    number: "30857559"
+    number_intvalue: 30857559
+    originated: 05/03/2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: Swift 3.0.2 on iOS 10.2.1
+    reproducible: yes
+    resolved: ""
+    status: Open
+    title: 'Decimal.init(value: UInt64) crashes for very large values'

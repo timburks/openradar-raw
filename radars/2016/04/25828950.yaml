@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25828950"
+    labels:
+        datastore_id: "4951854190428160"
+data:
+    classification: ""
+    created: "2016-04-20T14:29:18.0807Z"
+    description: "Summary:\r\nThere is a 100% reproducible deadlock in VideoToolbox when suspending the app to background. VTDecompressionSessionDecodeFrame hangs forever waiting on a condition  variable.\r\n\r\nWe provide a sample project reproducing the issue. It depends on ffmpeg for demuxing, whose libraries we provide pre-compiled for arm64 and armv7.\r\nUse of the VideotoolBox API can be found in sxplayer/decoder_vt.c  The overall architecture of the module is descrived in sxplayer/README.md. \r\n\r\n\r\nA few additional information: \r\n\r\n - This happens only when decodeFlags is set to  kVTDecodeFrame_EnableAsynchronousDecompression and we are not epxlicitely calling VTDecompressionSessionWaitForAsynchronousFrames after the call to VTDecompressionSessionDecodeFrame\r\n\r\n- Limiting the internal queue to less than 10 packets does not affect the outcome. \r\n\r\n- Invalidating the session (via VTDecompressionSessionInvalidate) while the call is hanging does not resolve the issue either\r\n\r\n- After 10 seconds, there does seem to have a timeout mechanism entering into effect, and our decode callback is called for as much time as there is packets in the queue. However, the previous points still apply\r\n\r\nSteps to Reproduce:\r\n1. Create a VTDecompressionSession\r\n2. Setup a callback to consume output frames\r\n3. Push packets via VTDecompressionSessionDecodeFrame in async mode \r\n4. While pushing packets, put the app in `inactive` state (either by pressing the home button to the homescreen, or by pressing the lock button to the lock screen)\r\n\r\n\r\nExpected Results:\r\n5. The call to VTDecompressionSessionDecodeFrame eitherfails with a sensible error or succeeds when the app is back in active state\r\n\r\n\r\nActual Results:\r\n5. The call to VTDecompressionSessionDecodeFrame hangs forever, regardless of whether or not the application goes back to active state\r\n\r\n\r\nVersion:\r\niOS 9.0 and above\r\n\r\nNotes:\r\nYou can simply reproduce the issue by launching our test project, waiting a few seconds for decode to happen, and pressing the lock button. By pausing the program in the debugger, you should notice the deadlock\r\n\r\nNote: The chromium team does seem to have stumbled upon the same problem: https://bugs.chromium.org/p/webrtc/issues/detail?id=5464\r\n\r\nConfiguration:\r\nAll iPhone models from the 5 up"
+    email: floriandenis@gmail.com
+    modified: "2016-04-20T14:29:18.08087Z"
+    number: "25828950"
+    number_intvalue: 25828950
+    originated: 04/20/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: 100%
+    resolved: ""
+    status: Open
+    title: Deadlock in VTDecompressionSessionDecodeFrame when application goes to background

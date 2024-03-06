@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10424591"
+    labels:
+        datastore_id: "1534401"
+data:
+    classification: Serious Bug
+    created: "2012-02-23T10:51:57.164915Z"
+    description: "NSPopover's detachable window API is bad. With Cocoa experience, the way I'd expect detaching to work is in two stages. First the popover would send -(BOOL)[delegate shouldPopoverDetach:], which determines whether the user is allowed to drag the popover around the screen in preparation for detaching. Then, if the user follows through with detaching, the popover sends -(NSWindow *)[delegate windowForDeatchingPopover:]. If the user cancels detaching (by dragging the popover back to its attachment point — as implemented currently in AppKit), the window will never be requested.\r\n\r\nThis solves several problems with the current implementation:\r\n\r\n1. Currently, the window is created while the popover is still “live”, so the view and view controller can’t simply be moved to the new window. Instead we must carefully construct a similar view. Worse, we must move over state manually, because the state restoration API provided to us doesn’t actually let us encode and restore the state of the view hierarchy.\r\n\r\n2. Currently, we have to be very careful with the detachable window. We must make it on-demand, and store it IN CASE the user detaches the popover (when we receive -popoverWillClose:). We have no way of clearing this if the user cancels detaching (until the popover eventually closes, potentially much later).\r\n\r\n3. Currently, the popover content must be replicated in a new window as the user begins dragging. If this takes an appreciable amount of time, the start of the drag is noticeably delayed, when the resulting window may not even be used. Deferring creation of the window to the end of the drag fixes this (and if we could just move the view over to the new window, this would be faster still).\r\n\r\n\r\nFrom the above points, changing to use two delegate calls instead of one makes the process (1) easier, (2) safer and more memory efficient, and (3) faster.\r\n\r\nIt would be straightforward to keep compatibility when changing to the two proposed methods. (It’s left as an exercise to the reader.)\r\n\r\n----\r\n\r\nThe current API that requires us to re-construct the view hierarchy in a new window exposes another paucity of API: state restoration. To implement replicating the popover in a detached window, I attempted to implement -copyWithZone: in my NSViewController subclass as so:\r\n\r\n- (id)copyWithZone:(NSZone *)zone;\r\n{\r\n    LIDetailsViewController *copy = [[LIDetailsViewController alloc] initWithMedia:self.media];\r\n    \r\n    NSMutableData *stateData = [NSMutableData data];\r\n    NSKeyedArchiver *stateEncoder = [[NSKeyedArchiver alloc] initForWritingWithMutableData:stateData];\r\n    [self.view encodeRestorableStateWithCoder:stateEncoder];\r\n    [stateEncoder finishEncoding];\r\n    [copy.view restoreStateWithCoder:[[NSKeyedUnarchiver alloc] initForReadingWithData:stateData]];\r\n    \r\n    return copy;\r\n}\r\n\r\nUnfortunately, this has no effect; stateData remains empty. It looks like -encodeRestorableStateWithCoder: acts like -drawRect:, in that it’s called as the framework traverses the view hierarchy, instead of performing the recursion itself. It appears there is no API to actually encode and restore state when we want. In fact, the popover in question contains a tab view, and sending -encodeRestorableStateWithCoder: directly to that tab view encodes nothing. The documentation, however, states:\r\n\r\n> For example, the NSTabView class uses this method to save information about the currently selected tab.\r\n\r\nThis doesn’t appear to be correct.\r\n\r\nIf I could have used state restoration to work around the popover forcing me to duplicate the hierarchy, I don’t think I would have bothered writing this at all. But I felt like I was hitting roadblock after roadblock."
+    email: me@JonathonMah.com
+    modified: "2012-02-23T10:51:57.165159Z"
+    number: "10424591"
+    number_intvalue: 10424591
+    originated: 09-Nov-2011 08:55 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.3 (11D50)
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: NSPopover detachable window API sucks

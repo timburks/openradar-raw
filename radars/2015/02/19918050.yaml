@@ -1,0 +1,88 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19918050"
+    labels:
+        datastore_id: "4538286655668224"
+data:
+    classification: Other Bug
+    created: "2015-02-23T04:35:01.439983Z"
+    description: |-
+        Summary:
+        Given free and static functions (on S<T>) f with overloads (() -> T) -> S<T> and (() -> Bool) -> S<()>, applying the free function to { true } selects the S<()> overload, while static functions on S<T> select S<Bool>.
+
+        This appears to be because <T> bound in the type has priority over the concrete Bool overload: static functions on an unrelated type which does not bind the type parameter behave identically to free functions.
+
+
+        Steps to Reproduce:
+        1. Compile & run this:
+
+        struct S<T>: Printable, DebugPrintable {
+        	init(v: T) { self.v = v }
+        	let v: T
+        	static func f(f: () -> Bool) -> S<()> { return S<()>(v: ()) }
+        	static func f(f: () -> T) -> S<T> { return S(v: f()) }
+        	var description: String { return toString(v) }
+        	var debugDescription: String { return toDebugString(v) }
+        }
+        struct U {
+        	static func f(f: () -> Bool) -> S<()> { return S<()>(v: ()) }
+        	static func f<T>(f: () -> T) -> S<T> { return S(v: f()) }
+        }
+        func f(f: () -> Bool) -> S<()> { return S(v: ()) }
+        func f<T>(f: () -> T) -> S<T> { return S(v: f()) }
+
+        let a = f { true }
+        let b = f { 1 }
+        let c = S.f { true }
+        let d = S.f { 1 }
+        let e = U.f { true }
+        let g = U.f { 1 }
+        println(a.description)
+        println(b.description)
+        println(c.description)
+        println(d.description)
+        println(e.description)
+        println(g.description)
+
+
+        Expected Results:
+        I expected the output to be the same for all three sets, i.e.:
+        ()
+        1
+        ()
+        1
+        ()
+        1
+
+
+        Actual Results:
+        The function on S selects the generic overload despite the availability of a concrete one, resulting in:
+        ()
+        1
+        true
+        1
+        ()
+        1
+
+
+        Regression:
+        This is not a regression since Swift 1.1; it was similarly surprising.
+
+
+        Notes:
+        One cannot realistically work around this issue by binding the type parameter in f, as callers then have to specify the type explicitly, i.e. let d = S<Int>.f { 1 }, which defeats the purpose of the inferencing altogether.
+
+        This therefore necessitates the use of free functions where I would otherwise prefer to use a static function.
+    email: rix.rob@gmail.com
+    modified: "2015-02-23T04:35:01.440153Z"
+    number: "19918050"
+    number_intvalue: 19918050
+    originated: 22-Feb-2015 11:34 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-Beta (6D520o)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2b1: Bound type parameters receive priority over concrete types in overload selection'

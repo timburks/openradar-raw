@@ -1,0 +1,114 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22820368"
+    labels:
+        datastore_id: "6149407942639616"
+data:
+    classification: Other Bug
+    created: "2015-09-23T16:23:11.37191Z"
+    description: |-
+        Summary:
+        For the most part Swift seems to identify tuples and function arguments. This makes sense for a language with by-default-uncurried functions, and for the most part it works quite well. However, when a function is assigned to a constant (as with function composition), this stops working, and you get inconsistent behaviour when you try to actually call the functions yourself.
+
+        A little further on this point: in general I understand the terms x and (x) to be the same (per The Swift Programming Language’s section Types > Tuple Type), i.e. given some valid term, parenthesizing it yields the same valid term. That would suggest that (1, 2) should be the same as ((1, 2)), but this does not seem to be the case when it comes to functions.
+
+
+        Steps to Reproduce:
+        This code:
+        // forward function composition
+        infix operator >>> { associativity right precedence 170 }
+        func >>> <A, B, C> (f: A -> B, g: B -> C) -> A -> C { return { g(f($0)) } }
+
+        enum Term {
+        	indirect case Algebraic(Algebra<Term>)
+        	case Constant(Int)
+
+        	static let Plus = Algebra.Plus >>> Algebraic
+        	// identical incorrect behaviour with:
+        //	static let Plus = { Term.Algebraic(Algebra<Term>.Plus($0)) }
+        //	static func Plus(x: (Term, Term)) -> Term {
+        //		return .Algebraic(Algebra.Plus(x.0, x.1))
+        //	}
+
+        	static func Times(x: Term, _ y: Term) -> Term {
+        		return .Algebraic(.Times(x, y))
+        	}
+        	// identical correct behaviour with:
+        //	static let Times = { Term.Algebraic(Algebra.Times($0, $1)) }
+        //	static let Times: (Term, Term) -> Term = Algebra.Times >>> Algebraic
+        }
+
+        enum Algebra<A> {
+        	case Plus(A, A)
+        	case Times(A, A)
+        }
+
+        let a = Term.Plus(.Constant(0), .Constant(1)) // should work; does not work
+        let b = Term.Plus((.Constant(0), .Constant(1))) // should not work; does work
+        let c = Term.Times(.Constant(0), .Constant(1)) // should work; does work
+        let d = Term.Times((.Constant(0), .Constant(1))) // should not work; does not work
+
+
+        Expected Results:
+        should have errors on the assignment of b and d, but not on a and c. (Following the connection between x and (x), I would also accept all four of these assignments being valid.)
+
+        Actual Results:
+        It errors out on a and d:
+        rob@Resonance ~/Desktop> swiftc boom.swift
+        boom.swift:29:18: error: extra argument in call
+        let a = Term.Plus(.Constant(0), .Constant(1)) // should work; does not work
+                         ^              ~~~~~~~~~~~~
+        boom.swift:32:20: error: missing argument for parameter #2 in call
+        let d = Term.Times((.Constant(0), .Constant(1))) // should not work; does not work
+                           ^
+
+
+        Regression:
+        As the comments note, there’s a distinction between multiple function parameters and a single function parameter of tuple type. This is only reflected in the syntax when writing a function using `func` which explicitly takes an argument of tuple type, or when writing a function using closure syntax which uses $0 (and only $0) to pass all of its arguments along as a tuple.
+
+        However, even this is inconsistent: a closure using $0 like so:
+
+        	static let Plus = { Term.Algebraic(Algebra<Term>.Plus($0)) }
+
+        is well-formed (tho suffers incorrect behaviour when attempting to apply it), while a function explicitly taking a tuple of parameters like so:
+
+        	static func Plus(x: (Term, Term)) -> Term {
+        		return .Algebraic(Algebra.Plus(x.0, x.1))
+        	}
+
+        is required to project the tuple fields out in order to be well-formed; it cannot simply pass x.
+
+        At the moment the best workaround appears to be explicitly annotating the type of the constant:
+
+        	static let Times: (Term, Term) -> Term = Algebra.Times >>> Algebraic
+
+
+        Notes:
+        This is related to but distinct from rdar://19268421 — that radar is regarding inconsistencies in function application, whereas this one is regarding inconsistencies in function definition.
+
+        The compiled symbols & their demanglings shed further light on the distinction Swift is drawing here. These definitions:
+
+        	static let Plus = Algebra.Plus >>> Algebraic
+        	static let Times: (Term, Term) -> Term = Algebra.Times >>> Algebraic
+
+        (which differ only in annotation) are compiled to these symbols:
+
+        	_TZvO4boom4Term4PlusFTS0_S0__S0_ ---> static boom.Term.Plus : (boom.Term, boom.Term) -> boom.Term
+        	_TZFO4boom4Term5TimesfMS0_FTS0_S0__S0_ ---> static boom.Term.Times (boom.Term.Type)(boom.Term, boom.Term) -> boom.Term
+
+        It seems like the latter—the correct one—is abstracted over the type. I’m not clear on whether that’s e.g. providing an implicit `self` parameter (the `F` and `M` characters in the symbols would suggest Function vs. Method, lending that some weight), or whether it’s a type abstraction a la System F polymorphism, but in either case it is apparently the necessary ingredient to correct construction.
+
+        So as a resolution, I would request that function composition (or other cases where functions are assigned to constants with implicit types thus) result in the same symbol as when annotating the type explicitly, i.e. adding that mysterious (boom.Term.Type) parameter-y thing in so I can call these functions without either a) annotating them, or b) adding an extra set of parentheses at each call site.
+    email: rix.rob@gmail.com
+    modified: "2015-09-23T16:23:11.37227Z"
+    number: "22820368"
+    number_intvalue: 22820368
+    originated: 23-Sep-2015 12:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7B60)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Composed function requires arguments to be wrapped into tuples'

@@ -1,0 +1,46 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17984797"
+    labels:
+        datastore_id: "5820627055280128"
+data:
+    classification: Enhancement
+    created: "2014-08-12T00:08:44.186382Z"
+    description: |-
+        Summary:
+        When defining a new operator, you must also define its precedence. Currently, the precedence is expressed as a magic integer. It should instead be expressed relative to other operators.
+
+        Steps to Reproduce:
+        1. Attempt to define, e.g. a logical XOR operator to go with logical OR:
+
+            infix operator ^^ { precedence equals || }
+
+        Expected Results:
+        This works.
+
+        Actual Results:
+        It doesn’t. You must instead look up the definition of operator ||, note that its precedence is 110, and put that in the definition of your new operator.
+
+        Notes:
+        Here are the full details of what I propose.
+
+        Precedence numbers still exist, but they’re a completely internal concept. You define an operator’s precedence as “between (some operator) and (some other operator)”. The new operator’s precedence will then be the average of the two specified operators. You can also say “equals (some operator)”, which is equivalent to a “between” with both operators being the one specified.
+
+        To bootstrap this, there should be two built-in precedences: “highest” (255) and “lowest” (0). Additionally, there should be a third precedence, “default”, halfway between “highest” and “lowest”. If an operator doesn’t specify its precedence, it should get default precedence.
+
+        I’ve translated the infix operator declarations in the standard library to this proposed syntax: <https://gist.github.com/brentdax/5669a9098a2b665a786c> Although the exact numbers associated with each precedence level change, it isn’t difficult to express the same ordering, with nearly similar amounts of room above, below, and between the current precedence levels for future expansion.
+
+        (Note that switching to an internal floating-point representation of precedence would permit insertion of new precedence levels anywhere in the hierarchy essentially without limit. A switch to floating-point could even be made in the future with no impact on existing source code.)
+    email: brent@architechies.com
+    modified: "2014-08-12T00:08:44.18649Z"
+    number: "17984797"
+    number_intvalue: 17984797
+    originated: 11-Aug-2014 05:08 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta5 (6A279r)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift custom operator precedence should be defined relative to other operators

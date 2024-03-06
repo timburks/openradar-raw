@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18406156"
+    labels:
+        datastore_id: "5346898068111360"
+data:
+    classification: UI/Usability
+    created: "2014-09-21T14:01:07.629445Z"
+    description: "Summary:\r\nIn an app that supports all orientations (as set in info.plist), we add a second UIWindow programmatically. This second UIWindow has a root view controller that only supports landscape orientation. If this window should be added while the device is in portrait orientation, there are two options (both bad):\r\n\r\n1. If we create the second window with a [UIScreen mainScreen].bounds frame, the second window assumes portrait frame, cutting its root view controller's view.\r\n2. If we create the second window with a \"rotated\" screen bounds, the second window looks fine, but after rotating the device a few times, the *original* window's frame is broken.\r\n\r\nSo, no matter what frame the second window is created with, something goes bad.\r\n\r\nA sample project is attached.\r\n\r\nSteps to Reproduce:\r\n1. Create a new project in Xcode 6 - use a \"single view\" template.\r\n2. In the project's deployment info, set the supported device orientations to all orientations (portrait and landscape).\r\n3. Add a button to the automatically created view controller, and hook it up to a buttonPressed: IBAction.\r\n4. Create a second view controller - call it MyViewController.\r\n5. In MyViewController, have the shouldAutorotate method return true and the supportedInterfaceOrientations method return UIInterfaceOrientationMaskLandscape.\r\n6. In the buttonPressed: IBAction (From step #3), create a new UIWindow (with [UIScreen mainScreen].bounds as the frame), set its root view controller to a new instance of MyViewController, set the root view controller's background colour to something clearly visible (e.g., green colour), and call the new window's makeKeyAndVisible method.\r\n7. Run the app under iOS 8.\r\n8. Orient the simulator or device to portrait - the app should orient itself to portrait as well.\r\n9. Press the button.\r\n\r\nExpected Results:\r\nThe new window should be correctly sized to the entire screen, as should be its root view controller. The background colour from step #6 should fill the entire screen.\r\n\r\nActual Results:\r\nIt appears as if the window was forced into portrait mode, though the status bar orientation changed to landscape.\r\n\r\nVersion:\r\niOS 8.0 [12A365]\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nAll iOS 8 devices and simulators\r\n\r\nAttachments:\r\n'LandscapeWindowTest.zip' was successfully uploaded. Public URL: https://www.sendspace.com/file/yian5m"
+    email: vladimir@nextpeer.com
+    modified: "2014-09-21T14:01:07.629624Z"
+    number: "18406156"
+    number_intvalue: 18406156
+    originated: 21/09/2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 8.0 [12A365]
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: Adding a second UIWindow with constrained orientation in its root view controller breaks the orientation logic

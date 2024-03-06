@@ -1,0 +1,47 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15902745"
+    labels:
+        datastore_id: "5080600029429760"
+data:
+    classification: Other Bug
+    created: "2014-01-24T17:20:41.1643Z"
+    description: |-
+        I'm presenting a modal UINavigationController with an interactive dismiss transition. The parent view controller has a dark status bar and the modal view controller a light status bar. I'm using the iOS 7 view controller-based status bar appearance configuration.
+
+        All works fine as long as I present and dismiss the view controller non-interactively. However, when I start an interactive dismiss transition and cancel it, the status bar color remains dark.
+
+        A sample project is here:
+        https://github.com/futuretap/UIViewController-Transitions-Example/tree/481a1c2bff62fdde60eba4c19ec1b28ee15517e6
+
+        Tap the "Menu" button, then start the interactive transition by panning from the right screen edge. Then cancel the interactive transition by panning to the right. The status bar remains black but it should be white.
+
+
+        To me this looks like a bug in UINavigationController. After a canceled dismissal UINavigationController doesn't query again its presentedViewController for the preferredStatusBarStyle but uses the preferredStatusBarStyle from itself. I worked around this by overwriting -childViewControllerForStatusBarStyle:
+
+        - (UIViewController*)childViewControllerForStatusBarStyle {
+            if (self.presentedViewController) {
+                return self.presentedViewController.childViewControllerForStatusBarStyle;
+            }
+
+            return [super childViewControllerForStatusBarStyle];
+        }
+
+        I pushed the workaround to the sample project: https://github.com/futuretap/UIViewController-Transitions-Example
+
+        As you can see in the last commit, I also had to do some horribly ugly changes just to get the statusBar transition right. It seems, the new view controller based status bar appearance API has some major drawbacks in terms of flexibility.
+
+        See also: http://stackoverflow.com/q/21336410/235297
+    email: futuretap@googlemail.com
+    modified: "2014-01-24T17:20:41.164474Z"
+    number: "15902745"
+    number_intvalue: 15902745
+    originated: 24-Jan-2014 06:20 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Interactive View Controller dismissal doesn't honor statusBarStyle change

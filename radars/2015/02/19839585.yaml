@@ -1,0 +1,41 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19839585"
+    labels:
+        datastore_id: "4945392110141440"
+data:
+    classification: Serious Bug
+    created: "2015-02-15T04:47:35.977281Z"
+    description: |-
+        The GLenum typealias is: typealias GLenum = UInt32
+
+        However, the enum values themselves are defined as Int32 values:
+
+        …
+        var GL_TEXTURE_BINDING_2D: Int32 { get }
+        var GL_TEXTURE_WIDTH: Int32 { get }
+        var GL_TEXTURE_HEIGHT: Int32 { get }
+        ….
+
+        So when passing them into functions, like:
+
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        Does not work. Instead, we have to cast the values:
+
+                glTexParameteri(UInt32(GL_TEXTURE_2D), UInt32(GL_TEXTURE_MIN_FILTER), GL_LINEAR);
+
+        That’s broken. Please fix.
+    email: owensd@gmail.com
+    modified: "2015-02-15T04:47:35.977505Z"
+    number: "19839585"
+    number_intvalue: 19839585
+    originated: 14-Feb-2015 08:47 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-Beta (6D520o)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode-Beta (6D520o): Swift: OpenGL enums and functions are mapped improperly'

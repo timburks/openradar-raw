@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31733529"
+    labels:
+        datastore_id: "5494394442481664"
+data:
+    classification: Serious Bug
+    created: "2017-04-20T15:31:56.36201Z"
+    description: "Area:\r\nAVkit\r\n\r\n\r\nSummary:\r\nI use `AVPlayerViewController` to play short videos in my app.\r\n\r\nIf there is an app playing audio in background before user plays a video in my app, I want the background audio playing of the other app to resume after my video player is dismissed. I use `AVAudioSession.setActive(false, with: .notifyOthersOnDeactivation)` to do that. \r\n\r\nEven though Apple's Music app and Podcasts app do resume playing after I call `AVAudioSession.setActive(false, with: .notifyOthersOnDeactivation)`—won't resume without the call so it means this call does have effect—none of the 3rd party music or podcast apps that I tested(Spotify, SoundCloud, Amazon Music, Overcast) do.\r\n\r\nAt first I thought it might be these 3rd party apps' fault. But then I tested them with the official Twitter app and found they can resume audio playback after video playing in Twitter app. \r\n\r\nSo I used DTS(case number 660336191) to ask for help from Apple engineers. After several back and forth we finally confirmed that it is an issue of AVPlayerViewController. Using AVPlayerLayer can avoid this issue.\r\n\r\nHowever, the reason I'm using AVPlayerViewController is exactly to avoid using AVPlayerLayer directly. AVPlayerViewController is a turnkey solution for video playback for apps wherein the standard controls are good enough. My app is such an app. If I have to use AVPlayerLayer and have to emulate all the standard controls and features of AVPlayerViewController, what's the point of iOS offering AVPlayerViewController? So I believe it is a bug of AVPlayerViewController that should be fixed asap.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nSample app with Apple Music and Podcasts:\r\n\r\n1. Play some music or podcast in Apple Music or Podcasts.\r\n2. Launch sample app.\r\n3. Tap Play.\r\n4. Wait until video starts playing.\r\n5. Tap Done to dismiss AVPlayerViewController.\r\n6. Notice Apple Music or Podcasts resumes audio playback.\r\n\r\n\r\nSample app with 3rd party apps:\r\n\r\n1. Play some music or podcast in Spotify, SoundCloud, Amazon Music, or Overcast.\r\n2. Launch sample app.\r\n3. Tap Play.\r\n4. Wait until video starts playing.\r\n5. Tap Done to dismiss AVPlayerViewController.\r\n6. Notice the 3rd party app doesn't resume audio playback.\r\n\r\n\r\nTwitter app with 3rd party apps(as an example of AVPlayerLayer working): \r\n\r\n1. Play some music or podcast in Spotify, SoundCloud, Amazon Music, or Overcast.\r\n2. Launch Twitter app.\r\n3. Find some tweet with video, like this: https://twitter.com/an0/status/824292924368228361\r\n4. Play the video.\r\n5. Dismiss the video. You may also need to dismiss the whole tweet or scroll it out of bounds to make sure its video playback stops.\r\n6. Notice the 3rd party app resumes audio playback.\r\n\r\nExpected Results:\r\nAVPlayerViewController should support audio resuming of other apps.\r\n\r\nObserved Results:\r\nAVPlayerViewController doesn't support audio resuming of other apps.\r\n\r\nCode:\r\nhttps://cloudup.com/cTrxy7AcpUV"
+    email: an00na@gmail.com
+    modified: "2017-06-23T16:38:47.51543Z"
+    number: "31733529"
+    number_intvalue: 31733529
+    originated: April 20, 2017 10:21 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "10.3"
+    reproducible: Always
+    resolved: iOS 11
+    status: Closed
+    title: AVPlayerViewController prevents other apps from resuming audio playing

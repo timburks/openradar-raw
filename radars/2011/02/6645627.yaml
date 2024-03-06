@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6645627"
+    labels:
+        datastore_id: "1097402"
+data:
+    classification: Serious Bug
+    created: "2011-02-04T05:59:49.284737Z"
+    description: "Steps to Reproduce\r\n1. Open Terminal.app.\r\n2. mkdir killPackageMaker && cd killPackageMaker && ln -s ../ transitivelyRecursiveLink\r\n3. Open PackageMaker.app v3.0.3/174.\r\n4. Add the killPackageMaker folder to the new package's contents.\r\n\r\nExpected Results\r\nPackageMaker adds the directory and symbolic link and stops.\r\n\r\nActual Results\r\nPackageMaker continues following the link over and over till malloc fails to allocate some memory for CFUniCharDecompose, which dereferences the null pointer and causes an EXC_BAD_ACCESS/KERN_PROTECTION_ERROR.\r\n\r\nRegression\r\nThe version of PackageMaker distributed with Xcode 2.5, v2.1.1 (123), can handle recursive contents.\r\n\r\nNotes\r\nSee attached archive for crash report and console logging at the time of crash. Also included is an excerpt from a gdb session running PackageMaker. There, you can see the path grown out of control, the deep stack, and the actual crash.\r\n\r\nWorkaround\r\nRevert to the version of PackageMaker distributed with Xcode 2.5. I have not checked, but the command line PackageMaker executable might also work.\r\n\r\nRoot Cause\r\nPackageMaker will follow a recursive path to the bitter end.\r\n\r\nDirect Cause\r\nmalloc returns a null pointer when memory runs out, which CFUniCharDecompose, running as part of CFStringCreateFileSystemRepresentation, then dereferences to cause an EXC_BAD_ACCESS/KERN_PROTECTION_ERROR.\r\n\r\nReal-World Case\r\nI ran into this while trying to create a package with an application embedding DotMacKit.framework (Developer Preview 2). In that framework, DotMacKit.framework/Versions/A/Support/.MacMessageManager.app has, in its Frameworks directory, a symbolic link to the enclosing framework: DotMacKit.framework/Versions/A/Support/.MacMessageManager.app/Contents/Frameworks/DotMacKit.framework/ is a symbolic link to ../../../../../../../DotMacKit.framework.\r\n\r\nExpected Resolution\r\nEither PackageMaker should detect recursive paths and fail gracefully (or handle them), or it should make clear that it cannot handle recursive paths.\r\n\r\nIf PackageMaker does not handle recursive paths by design, then an updated version of DotMacKit.framework should be released that does not employ a recursive path."
+    email: jeremyw.sherman@gmail.com
+    modified: "2011-08-28T05:47:44.077173Z"
+    number: "6645627"
+    number_intvalue: 6645627
+    originated: 04-Mar-2009 02:10 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: v3.0.3/174
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: PackageMaker crashes adding recursive package contents

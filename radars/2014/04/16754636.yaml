@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16754636"
+    labels:
+        datastore_id: "5836176313286656"
+data:
+    classification: Enhancement
+    created: "2014-04-29T12:18:11.516515Z"
+    description: "Summary:\r\nI'm trying to share a IOSurface object between an OS X app and a bundled XPC service. I'm targeting Mavericks and I'd like to use the Cocoa interface to XPC, rather than the low-level C API. Unfortunately, there doesn't seem to be a way to pass the raw xpc_object_t I get from IOSurfaceCreateXPCObject() over an NSXPConnection, nor to wrap that xpc_object_t in a Cocoa object that NSXPConnection can marshal.\r\n\r\nIdeally, I'd like to be able to define a protocol like this:\r\n\r\n@protocol LibremonProtocol <NSObject>\r\n\r\n- (oneway void)openFile:(NSString*)filename\r\n\tsurface:(xpc_object_t)surface\r\n\tcompletion:(void(^)(id ebook, NSError * error))completion;\r\n\r\n@end\r\n\r\nassociate it with an NSXPCInterface, and then call openFile:surface:completion on the NSXPCConnection's remoteObjectProxy, passing the return value from IOSurfaceCreateXPCObject() in the surface: parameter.\r\n\r\nSteps to Reproduce:\r\n1. Set up an Xcode project with an OS X app main target and an ancillary XPC service target;\r\n\r\n2. Write boilerplate client/server code to set up and accept an NSXPCConnection;\r\n\r\n3. Define an Objective-C protocol with a single method that takes an xpc_object_t parameter;\r\n\r\n4. Create an IOSurfaceRef object and obtain an xpc_object_t from it using IOSurfaceCreateXPCObject();\r\n\r\n5. Attempt to invoke the protocol method on the remote object proxy;\r\n\r\nExpected Results:\r\nThe XPC server receives the call, getting an xpc_object_t that can be passed to IOSurfaceLookupFromXPCObject() to get a usable, shared IOSurface.\r\n\r\nActual Results:\r\nAttempting to call the remote object proxy throws an exception:\r\n\r\n*** -[NSXPCEncoder _checkObject:]: This coder only encodes objects that adopt NSSecureCoding (object is of class 'OS_xpc_mach_send')."
+    email: marco@ovolab.com
+    modified: "2014-04-29T12:18:11.51671Z"
+    number: "16754636"
+    number_intvalue: 16754636
+    originated: "2014-04-29"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: "10.9"
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: IOSurface.framework does not appear to be interoperable with the Cocoa XPC API (NSXPCConnection)

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11329693"
+    labels:
+        datastore_id: "1691401"
+data:
+    classification: ""
+    created: "2012-04-26T21:09:55.540351Z"
+    description: "Summary:\r\n\r\nA switch statement containing a block which captures another block in the first case: will generate incorrect code for the second case:.\r\n\r\nSteps to Reproduce:\r\n\r\nCreate a new iPhone project in Xcode, then put the following code into the app delegate:\r\n\r\nid F(int x, void(^block)(void))\r\n{\r\n    switch(x) {\r\n        case 0:\r\n            return ^{ return block; }();\r\n        \r\n        case 1:\r\n            return nil;\r\n            \r\n    }\r\n    return nil;\r\n}\r\n\r\n- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions\r\n{\r\n    F(1, ^{});\r\n    return YES;\r\n}\r\n\r\nThen run the app in the simulator.\r\n\r\nExpected Results:\r\n\r\nThe app should run quietly.\r\n\r\nActual Results:\r\n\r\nThe app crashes with a stack trace like this:\r\n\r\n* thread #1: tid = 0x1f03, 0x00375de3 libobjc.A.dylib`objc_release + 19, stop reason = EXC_BAD_ACCESS (code=2, address=0x1)\r\n    frame #0: 0x00375de3 libobjc.A.dylib`objc_release + 19\r\n    frame #1: 0x00002c1b ARCCrash`F + 203 at PLAppDelegate.m:22\r\n    frame #2: 0x00002d61 ARCCrash`-[PLAppDelegate application:didFinishLaunchingWithOptions:] + 97 at PLAppDelegate.m:28\r\n    frame #3: 0x0044d386 UIKit`-[UIApplication _callInitializationDelegatesForURL:payload:suspended:] + 1292\r\n    frame #4: 0x0044e274 UIKit`-[UIApplication _runWithURL:payload:launchOrientation:statusBarStyle:statusBarHidden:] + 524\r\n    frame #5: 0x0045d183 UIKit`-[UIApplication handleEvent:withNewEvent:] + 1027\r\n    frame #6: 0x0045dc38 UIKit`-[UIApplication sendEvent:] + 68\r\n    frame #7: 0x00451634 UIKit`_UIApplicationHandleEvent + 8196\r\n    frame #8: 0x01bd4ef5 GraphicsServices`PurpleEventCallback + 1274\r\n    frame #9: 0x014b0195 CoreFoundation`__CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE1_PERFORM_FUNCTION__ + 53\r\n    frame #10: 0x01414ff2 CoreFoundation`__CFRunLoopDoSource1 + 146\r\n    frame #11: 0x014138da CoreFoundation`__CFRunLoopRun + 2218\r\n    frame #12: 0x01412d84 CoreFoundation`CFRunLoopRunSpecific + 212\r\n    frame #13: 0x01412c9b CoreFoundation`CFRunLoopRunInMode + 123\r\n    frame #14: 0x0044dc65 UIKit`-[UIApplication _run] + 576\r\n    frame #15: 0x0044f626 UIKit`UIApplicationMain + 1163\r\n    frame #16: 0x00002b1d ARCCrash`main + 141 at main.m:16\r\n\r\nRegression:\r\n\r\nUnknown.\r\n\r\nNotes:\r\n\r\nThe code in question works fine if the return statement in case 0: is surrounded by braces. By examining the generated assembly and comparing the broken case with the working case, it appears that the compiler is incorrectly generating cleanup code for the second case statement to clean up the block from the first case statement. Specifically, a call to objc_release is emitted for the case 1: code, which is unnecessary and is crashing when, it appears, it accesses stale or uninitialized data on the stack."
+    email: michael.ash@gmail.com
+    modified: "2012-05-04T17:49:12.225888Z"
+    number: "11329693"
+    number_intvalue: 11329693
+    originated: 26-Apr-2012 05:09 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: Duplicate
+    status: Closed
+    title: Incorrect codegen with ARC, a switch statement with blocks, and a captured block

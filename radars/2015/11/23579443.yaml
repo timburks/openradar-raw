@@ -1,0 +1,73 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23579443"
+    labels:
+        datastore_id: "5573913832587264"
+data:
+    classification: Other Bug
+    created: "2015-11-17T19:47:34.08135Z"
+    description: |-
+        Summary:
+        `joinWithSeparator` makes multiple passes over sequences. This is both a correctness and a performance issue.
+
+
+        Steps to Reproduce:
+        1. Compile and run this code:
+        import Cocoa
+
+        func benchmark(label: String, f: () -> ()) {
+        	let start = NSDate.timeIntervalSinceReferenceDate()
+        	f()
+        	print("\(label): \(NSDate.timeIntervalSinceReferenceDate() - start)s")
+        }
+
+        let separator = ", "
+        benchmark("control") {
+        	_ = (0..<2).map { sleep(1); return String($0) }.joinWithSeparator(separator)
+        }
+
+        benchmark("lazy") {
+        	_ = (0..<2).lazy.map { sleep(1); return String($0) }.joinWithSeparator(separator)
+        }
+
+        benchmark("reduce") {
+        	_ = (0..<2).reduce("") { sleep(1); return $0 + separator + String($1) }
+        }
+
+        benchmark("lazy.reduce") {
+        	_ = (0..<2).lazy.reduce("") { sleep(1); return $0 + separator + String($1) }
+        }
+
+
+        Expected Results:
+        I expected each pass to take about two seconds.
+
+        Actual Results:
+        The lazy joinWithSeparator makes two passes:
+
+        rob@Resonance ~/Desktop> swiftc boom.swift; and ./boom
+        control: 2.00651800632477s
+        lazy: 4.01631498336792s
+        reduce: 2.00521194934845s
+        lazy.reduce: 2.00257503986359s
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        I’ve illustrated this using side-effects purely for convenience. In real life™, this error was the difference between a program completing interactively and it continuing for 15min and counting before I decided just to kill it—so it could have taken much longer, too.
+    email: rix.rob@gmail.com
+    modified: "2015-11-17T19:47:34.08172Z"
+    number: "23579443"
+    number_intvalue: 23579443
+    originated: 17-Nov-2015 11:47 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.1.1 (7B1005)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift stdlib: `joinWithSeparator` evaluates sequence elements twice'

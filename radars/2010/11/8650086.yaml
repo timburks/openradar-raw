@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8650086"
+    labels:
+        datastore_id: "847401"
+data:
+    classification: Other Bug
+    created: "2010-11-10T01:16:12.212482Z"
+    description: "10-Nov-2010 12:14 PM Aidan Steele:\r\nSummary:\r\nValidation of correct kernel extensions (as performed by kextutil) fails on account of bug causing macho_find_symbol() to not find __kOSKextKmodInfoSymbol in the symbol table.\r\n\r\nSteps to Reproduce:\r\nLines 99 through 103 of IOKitUser-514.16.2/kext.subproj/macho_util.c are as follows:\r\n\r\nif (sixtyfourbit) {\r\n        syms_bytes = num_syms * sizeof(struct nlist);\r\n    } else {\r\n        syms_bytes = num_syms * sizeof(struct nlist_64);\r\n    }\r\n\r\nIf the symbol table is at the end of the file and there is no padding after it, this causes the next lines to execute:\r\n\r\nif ((char *)syms_address + syms_bytes > (char *)file_end) {\r\n        result = macho_seek_result_error;\r\n        goto finish;\r\n    }\r\n\r\nExpected Results:\r\nThey should be something more like:\r\n\r\nif (sixtyfourbit) {\r\n        syms_bytes = num_syms * sizeof(struct nlist_64);\r\n    } else {\r\n        syms_bytes = num_syms * sizeof(struct nlist);\r\n    }\r\n\r\nRegression:\r\nThis behaviour seems to have existed for some time.\r\n\r\nNotes:\r\nWork-arounds include padding the symbol table if it is at the end of file."
+    email: aidan@awsteele.com
+    modified: "2011-08-28T05:39:07.450706Z"
+    number: "8650086"
+    number_intvalue: 8650086
+    originated: 10-Nov-2010 12:14 PM
+    parent_number: "7872520"
+    product: Mac OS X
+    product_version: 10.6.4
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/7872520
+    title: Bug in IOKitUser-514.16.2/kext.subproj/macho_util.c

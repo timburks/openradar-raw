@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "44370991"
+    labels:
+        datastore_id: "5054061678166016"
+data:
+    classification: ""
+    created: "2018-09-12T04:57:39.489034Z"
+    description: "Area:\r\nFoundation\r\n\r\nSummary:\r\n\r\nPersonNameComponentsFormatter's personNameComponents method works great for Chinese, English, Spanish and some other languages. However, it doesn't work so well for French, Thai, Japanese and Hindi. E.g., I would expect feeding in the default names from:\r\n\r\nhttps://developer.apple.com/documentation/foundation/personnamecomponentsformatter\r\n\r\nand outputting an abbreviated name would result in the initials mentioned in that document.\r\n\r\nSteps to Reproduce:\r\n\r\nIn the following cases where the comparison is to the \"\" (empty string), I'd expect there to actually be a valid set of initials returned.\r\n\r\n        // English: Prefix, First Name, Middle Name, Last Name, Suffix\r\n        XCTAssertEqual(\"Mr John Binksy Smith III\".personNameInitials, \"JS\")\r\n        // Arabic\r\n        XCTAssertEqual(\"أحمد محمﺩﺍلمصﺭﻱ\".personNameInitials, \"\")\r\n        // Chinese\r\n        XCTAssertEqual(\"杨振宁\".personNameInitials, \"杨\")\r\n        // Spanish: super long name\r\n        XCTAssertEqual(\"Dr. José Ramiro Martín González de Rivera júnior, PhD\".personNameInitials, \"JM\")\r\n        // Hindi: no abbreviation determinated\r\n        XCTAssertEqual(\"डॉ. रिय साहिल\".personNameInitials, \"\")\r\n        // Thai\r\n        XCTAssertEqual(\"สมชาย รัตนเรืองรอง บวรทิพย์\".personNameInitials, \"\")\r\n        // Japanese\r\n        XCTAssertEqual(\"木田\".personNameInitials, \"木田\")\r\n        // French\r\n        XCTAssertEqual(\"Jean-Philippe de Zélicourt\".personNameInitials, \"JD\")\r\n\r\nImplementation of personNameInitials:\r\n    var personNameInitials: String {\r\n        let formatter = PersonNameComponentsFormatter()\r\n        var nameInitials = [Character]()\r\n            guard let personNameComponents = formatter.personNameComponents(from: self) else {\r\n                // Not able to parse into a PersonNameComponent object\r\n                return \"\"\r\n            }\r\n            formatter.style = .abbreviated\r\n            nameInitials = Array(formatter.string(from: personNameComponents))\r\n        }\r\n        var result = \"\"\r\n        switch nameInitials.count {\r\n        case let count where count >= 2:\r\n            if let firstInitial = nameInitials.first {\r\n                result.append(firstInitial)\r\n            }\r\n            if let lastInitial = nameInitials.last {\r\n                result.append(lastInitial)\r\n            }\r\n        case let count where count == 1:\r\n            if let firstInitial = nameInitials.first {\r\n                result.append(firstInitial)\r\n            }\r\n        default:\r\n            break\r\n        }\r\n        return result\r\n    }\r\n\r\nExpected Results:\r\n\r\nThe Thai, Hindi and Arabic initials should be those mentioned in https://developer.apple.com/documentation/foundation/personnamecomponentsformatter. Also the JD should be Jd for French.\r\n\r\nActual Results:\r\n\r\nThe initials are the empty string.\r\n\r\nVersion/Build:\r\n\r\nXcode 9.3, Swift 4.2. I'm not sure the version of Foundation.\r\n\r\nConfiguration:\r\n\r\nTested on simulator and iOS devices (debug and release)."
+    email: tmharada@gmail.com
+    modified: "2018-09-12T04:57:39.489217Z"
+    number: "44370991"
+    number_intvalue: 44370991
+    originated: "2018-09-11"
+    parent_number: '&{NULL_VALUE}'
+    product: Foundation
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Hindi, Thai and Japanese person name parsing (PersonNameComponentsFormatter) does not work as expected

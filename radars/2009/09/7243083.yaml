@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7243083"
+    labels:
+        datastore_id: "76419"
+data:
+    classification: Other Bugs
+    created: "2009-09-22T16:44:47.572926Z"
+    description: "22-Sep-2009 09:37 AM Seth Roby:\r\nThe attached file is based on this Stack Overflow question:\r\n\r\nhttp://stackoverflow.com/questions/1458365/c-multiple-inheritance-and-objective-c-is-this-is-a-bug-in-gcc\r\n\r\nAnd when compiled as so:\r\n\r\ng++ -x objective-c++ -lobjc -framework CoreFoundation main.mm\r\n\r\nIt should print out:\r\n\r\ndo_foo: foo\r\ndo_bar: bar\r\n\r\nBut it gets confused somewhere and instead prints:\r\n\r\ndo_foo: foo\r\ndo_bar: foo\r\n\r\nIf you try to \"help\" the compiler by performing casts, then you can't even compile:\r\n\r\ng++ -x objective-c++ -lobjc -framework CoreFoundation main.mm -DCAST\r\n\r\nmain.mm: In function ‘int main()’:\r\nmain.mm:82: error: cannot convert ‘Bar_cpp*’ to ‘Foo_cpp*’ in argument passing\r\n\r\nEither one of these seems like a problem. As pointed out on the Stack Overflow page, there is a workaround: if you change lines 76-77 to the following, it works correctly, but it's bad ObjC style:\r\n\r\nFoo_objc* fo = [Foo_objc alloc]; [fo init:m];\r\nBar_objc* bo = [Bar_objc alloc]; [bo init:m];\r\n\r\n-------\r\n#include <iostream>\r\n#import <Foundation/Foundation.h>\r\n\r\n// An abstract C++ interface\r\nclass Foo_cpp {\r\npublic:\r\n    virtual void foo() = 0;\r\n};\r\n\r\n// Another abstract C++ interface\r\nclass Bar_cpp {\r\npublic:\r\n    virtual void bar() = 0;\r\n};\r\n\r\n// An Objective-C to C++ adaptor. \r\n// It takes a C++ interface Foo. When it's do_foo method is called it\r\n// delegates call to Foo::foo.\r\n@interface Foo_objc : NSObject {\r\n    Foo_cpp* foo_cpp_;\r\n}\r\n@end\r\n\r\n@implementation Foo_objc\r\n\r\n- (id)init:(Foo_cpp*)foo {\r\n    self = [super init];\r\n    if (self) {\r\n        foo_cpp_ = foo;\r\n    } \r\n    return self;\r\n}\r\n\r\n- (void) do_foo {\r\n    std::cout << \"do_foo: \";\r\n    foo_cpp_->foo();\r\n}\r\n@end \r\n\r\n// Another Objective-C to C++ adaptor. \r\n@interface Bar_objc : NSObject{\r\n    Bar_cpp* bar_cpp_;\r\n}\r\n@end \r\n\r\n@implementation Bar_objc\r\n\r\n- (id)init:(Bar_cpp*)bar {\r\n    self = [super init];\r\n    if (self) {\r\n        bar_cpp_ = bar;\r\n    }\r\n    return self;\r\n}\r\n\r\n- (void) do_bar {\r\n    std::cout << \"do_bar: \";\r\n    bar_cpp_->bar();\r\n}\r\n@end \r\n\r\nclass Main : public Foo_cpp, public Bar_cpp {\r\n    void foo() { \r\n        std::cout << \"foo\" << std::endl;\r\n    }\r\n    void bar() {\r\n        std::cout << \"bar\" << std::endl;\r\n    }\r\n};\r\n\r\nint main() {\r\n    Main* m = new Main;    \r\n#ifndef CAST\r\n    // Compiles but produces\r\n    //   do_foo: foo\r\n    //   do_bar: foo !!! incorrect method called !!!\r\n    Foo_objc* fo = [[Foo_objc alloc] init:m];\r\n    Bar_objc* bo = [[Bar_objc alloc] init:m];\r\n#else \r\n    // Doesn't compile\r\n    Foo_objc* fo = [[Foo_objc alloc] init:(Foo_cpp*)m];\r\n    Bar_objc* bo = [[Bar_objc alloc] init:(Bar_cpp*)m];\r\n    // A line above produces following error\r\n    //    mheritance_test2.mm: In function ‘int main()’:\r\n    //    mheritance_test2.mm:82: error: cannot convert ‘Bar_cpp*’ to ‘Foo_cpp*’ in argument passing\r\n#endif\r\n    [fo do_foo];\r\n    [bo do_bar];\r\n}"
+    email: tallama@gmail.com
+    modified: "2011-08-28T05:44:25.800865Z"
+    number: "7243083"
+    number_intvalue: 7243083
+    originated: "2009-09-22"
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Objective-C++, Multiple Inheritance of Abstract Classes, and Virtual Methods

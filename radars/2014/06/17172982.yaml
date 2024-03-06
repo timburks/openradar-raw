@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17172982"
+    labels:
+        datastore_id: "6114057878765568"
+data:
+    classification: Feature enhancement
+    created: "2014-06-05T09:51:28.284657Z"
+    description: "Swift obscurs the concept of pointers by determing whether vars should be byref or byval based on the type. This seems simpler at first, but complicates many other language features, and makes mutability/immutability conceptually more complicated.\r\n\r\nI propose that an explicit byref and byval keyword be added to the language that can be included when defining a var. If omitted, the rules would be the same by default as they are now (primitives &* structs byval by default, classes byref by default)\r\n\r\nBenefits:\r\n\r\n* You could use a class (for inheritance reasons), and still pass byval (for copy-on-reference)\r\n* You could use a struct (for specific data alignment), but still pass byref (for performance)\r\n* You could define immutable class instances using let (currently, only reference itself is immutable)\r\n* The mutating keyword would be meaningful for classes as well as structs (more consistency)\r\n* You could get rid of the separate inout keyword for method params and use byref\r\n\r\n\r\n\r\nHere is an example of where byref / byval would simplify the language. Here I've defined a Vector struct and equivalent class:\r\n\r\nstruct VectorStruct {\r\n    var x: Float\r\n    var y: Float\r\n    init (x: Float, y: Float) {\r\n        self.x = x\r\n        self.y = y\r\n    }\r\n}\r\n\r\nvar v1 = VectorStruct(x:5, y:6)\r\nlet v2 = v1\r\n\r\nv1.x = 7   // defined with \"var\", so I can do this\r\nv2.x       // still has a value of 5 because it was \"let\"\r\nv2.x = 7   // error - can't modify \"let\" value\r\n\r\n\r\nclass VectorClass {\r\n    var x: Float\r\n    var y: Float\r\n    init (x: Float, y: Float) {\r\n        self.x = x\r\n        self.y = y\r\n    }\r\n}\r\n\r\nvar v3 = VectorClass(x:5, y:6)\r\nlet v4 = v1\r\n\r\nv3.x = 7   // still works as expected\r\nv4.x       // oops - the value has changed to 7 even though v4 was \"let\"\r\nv4.x = 7   // no error here - v4 is mutable despite being \"let\"\r\n\r\nthis is expected of course, because structs are value types and classes are reference types, but it's still very confusing. And my reasons for wanting to use a class may have nothing to do with mutability rules (I may want to inherit Vector3D from Vector2D for example)\r\n\r\nIf I could define my VectorClass vars like this:\r\n\r\nbyref var v3 = VectorClass(x:5, y:6)\r\nbyval let v4 = v1\r\n\r\nThen the rules would be the same as for struct:\r\n\r\nv3.x = 7   // still works the same\r\nv4.x       // still has a value of 5 because assigning from a byref to byval copies the value\r\nv4.x = 7   // this would be an error because you can't modify a byval value defined with \"let\""
+    email: nicklockwood81@gmail.com
+    modified: "2014-06-05T09:51:28.284774Z"
+    number: "17172982"
+    number_intvalue: 17172982
+    originated: 05/06/2014
+    parent_number: '&{NULL_VALUE}'
+    product: Swift language
+    product_version: beta 1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Proposal for simpler, more explicit control of references in Swift

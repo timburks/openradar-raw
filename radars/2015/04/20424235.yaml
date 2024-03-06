@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20424235"
+    labels:
+        datastore_id: "4983723753734144"
+data:
+    classification: Bug (Other)
+    created: "2015-04-28T17:57:01.7612Z"
+    description: "Joel Bruner 03-Apr-2015 07:46 PM\r\n\r\nSummary:\r\nA typo exists in rc.netboot\r\nA missing operator in a BASH variable assignment causes a NETBOOT_SHADOW to be set with the first character truncated \"NETWORK-\" rather than \"-NETWORK-\".\r\n\r\nThis has the effect of not properly matching in the case statement in do_start(). It will not use the network drive for the shadow file, but rather the local drive. Thus it is not truly diskless. In an imaging scenario makes erasing the local drive impossible.\r\n\r\nSteps to Reproduce:\r\n1. Create a NetBoot using System Image Utility on OS X Server\r\n2. Set that Netboot image to be Diskless.\r\n3. Boot a machine from that image.\r\n\r\nExpected Results:\r\nThe server is used for the shadow file \r\nThe local drive \"Macintosh HD\" is unmountable.\r\n\r\nActual Results:\r\nThe local drive is mounted as /var/netboot \r\nLocal drive is unable to be unmounted and erased by disk utility because the shadow file is on that disk\r\n\r\nVersion:\r\n10.10.3/14D130a\r\n\r\nNotes:\r\nrc.netboot line currently is:\r\nNETBOOT_SHADOW=${NETBOOT_SHADOW:-NETWORK-}\r\n\r\nShould be:\r\nNETBOOT_SHADOW=${NETBOOT_SHADOW:=-NETWORK-}\r\nor Alternately:\r\nNETBOOT_SHADOW=${NETBOOT_SHADOW:--NETWORK-}\r\n\r\nAs a test, from Terminal:\r\n\r\n#current setting\r\necho ${NETBOOT_SHADOW:-NETWORK-}\r\n#result: NETWORK-\r\n\r\n#correct variable setting\r\necho ${NETBOOT_SHADOW:=-NETWORK-}\r\n#result: -NETWORK-\r\n\r\nHistorical context of bug:\r\n#rc.netboot NETBOOT_SHADOW Variable Assignment Bug\r\nhttp://www.macos.utah.edu/documentation/administration/setup_netboot_service_on_mac_os_x_10.6.x_client.x_client/setup_netboot_service_on_mac_os_x_10.6.x_client-diskless_netboot.html\r\n\r\n#typo correct verified as a fix\r\nhttps://jamfnation.jamfsoftware.com/discussion.html?id=7199\r\n\r\nConfiguration:\r\nWhen typo is corrected, diskless works.\r\n\r\n=======================================\r\n\r\nApple Developer Relations 08-Apr-2015 01:24 AM\r\nDuplicate of 20114234 (Closed)\r\n\r\nEngineering has determined that your bug report is a duplicate of another issue and will be closed. \r\n\r\nThe open or closed status of the original bug report your issue was duplicated to appears in the yellow \"Duplicate of XXXXXXXX\" section of the bug reporter user interface. This section appears near the top of the right column's bug detail view just under the bug number, title, state, product and rank.\r\n\r\n=======================================\r\n\r\nJoel Bruner 28-Apr-2015 12:49 PM\r\n\r\n10.10.4 (14E11f ): It'd sure be nice for someone to correct this one character mistake, please."
+    email: brunerd@gmail.com
+    modified: "2015-04-28T17:57:01.76135Z"
+    number: "20424235"
+    number_intvalue: 20424235
+    originated: 03-04-15
+    parent_number: '&{NULL_VALUE}'
+    product: OS X Server
+    product_version: 10.10.3/14D130a
+    reproducible: Sometimes
+    resolved: No
+    status: Duplicate
+    title: rc.netboot typo causes diskless netboot to fail

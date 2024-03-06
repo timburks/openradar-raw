@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8179031"
+    labels:
+        datastore_id: "507401"
+data:
+    classification: UI/Usability
+    created: "2010-07-11T22:32:59.078787Z"
+    description: "Summary:\r\n\r\nWhen a Cocoa app loads a NIB with a custom view, the resizesSubviews property on that view is changed randomly when the NIB loads.\r\n\r\nSteps to Reproduce:\r\n\r\nCreate a simple Cocoa app in Xcode 3.2.2.\r\n\r\nAdd a custom view class.  In that class:\r\n* perform self.autoresizesSubviews = NO in -[initWithFrame:]\r\n* add an override of -[setAutoresizesSubviews:] that logs its argument to the console\r\n* add an override of awakeFromNib that sets a string in the UI (e.g. the window title) to the value of self.autoresizesSubviews\r\n\r\nAdd the following view hierarchy to the window displayed by the application:\r\n* Window\r\n** Content View -- make it scale in all directions, fixed margins\r\n*** Custom View -- set the class to the custom view class; make it scale in all directions, fixed margins; set Autoresizes Subviews to off\r\n**** Box -- make it scale in all directions, fixed margins\r\n***** arbitrary child views of the box\r\n\r\nBuild the app.\r\nRun the app either from Xcode or from the Finder.\r\n\r\nSee the attached project for an example.\r\n\r\nExpected Results:\r\n\r\n* The console log will show only one call to setAutoresizesSubviews -- the one call from -[initWithFrame:]\r\n\r\n* The UI for the app will show the value NO for autoresizesSubviews\r\n\r\n* The box will not change shape as the window resizes\r\n\r\nActual Results:\r\n\r\nRandomly, the app will show the below behavior:\r\n\r\n* The console log has two calls to setAutoresizesSubviews, first with NO, then with YES\r\n\r\n* The UI for the app will show the value YES for autoresizesSubviews\r\n\r\n* The box changes shape in sync with window resizing\r\n\r\nAt other random launches, the app will show the expected behavior.\r\n\r\nRegression:\r\n\r\nAlmost the same behavior on Power Mac G5 running 10.5.7, using the executable build under 10.6.4.  On that system, loading the NIB always changes autoresizesSubviews to YES, whereas on an iMac running 10.6.4, the value is random."
+    email: jlieske@gmail.com
+    modified: "2011-08-28T05:40:41.207969Z"
+    number: "8179031"
+    number_intvalue: 8179031
+    originated: 11 July 2010
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.4 10F569
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: Autoresizes Subviews setting changes randomly when loading NIB

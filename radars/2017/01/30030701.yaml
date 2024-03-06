@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30030701"
+    labels:
+        datastore_id: "6126750060773376"
+data:
+    classification: Serious Bug
+    created: "2017-01-15T10:24:23.98326Z"
+    description: "I am not sure if this started with the iOS 10.2 Simulator included in Xcode 8.2, but what I am noticing is a clear difference between the behaviour of a real device iPhone 7 Plus running iOS 10.2 and the Simulator version of the iPhone 7 Plus running iOS 10.2. So, same exact phone... just one is a Simulator and the other one a physical device .\r\n\r\nThe application in question does not have @3x assets or launch assets for the 4.7'' or 5.5'' screens so it is currently meant to essentially display a scaled version of the iPhone 5 (although we are working to address this soon).\r\n\r\nLet's take the following code snippet for a CAGradientLayer\r\n\r\ngradientMask.rasterizationScale = [UIScreen mainScreen].scale;\r\ngradientMask.startPoint = CGPointMake(0, CGRectGetMidY(self.frame));\r\n\r\nand let's put a breakpoint in the second line. Let's compile in debug mode (-O0 -g).\r\n\r\n* On the iOS Simulator specified above (same thing for the iOS 9.3 version of the simulator) the following happens:\r\n(lldb) po gradientMask.rasterizationScale\r\n--> 3\r\n(lldb) po [UIScreen mainScreen].scale\r\n--> 3\r\n\r\n* On the iPhone 7 Plus device specified above the following happens:\r\n(lldb) po gradientMask.rasterizationScale\r\n--> 2\r\n(lldb) po [UIScreen mainScreen].scale\r\n--> 3\r\n\r\n**Observations**\r\n * On the iOS Device: The debugger is not printing out the same value when breaking in step 2 as the value just stored by the same command in step one of the original code snippet.\r\n      ** The iOS Device behaves as expected, but the debugger would give you incorrect data.\r\n          *** Actual used screen scale: 2.\r\n          *** Debugger screen scale result: 3.\r\n    \r\n * On the iOS Simulator: The debugger is printing out the same value when breaking in step 2 as the value just stored by the same command in step one of the original code snippet.\r\n      ** The iOS Simulator does not behave as expected.\r\n          *** Actual used screen scale: 3.\r\n          *** Debugger screen scale result: 3.\r\n\r\nSteps to Reproduce:\r\n1. Launch Xcode 8.2.1.\r\n2. Compile and run the above code inside our app on both Simulator and device (same OS, same device type as mentioned in the description).\r\n\r\nLet's take the following code snippet for a CAGradientLayer\r\n\r\ngradientMask.rasterizationScale = [UIScreen mainScreen].scale;\r\ngradientMask.startPoint = CGPointMake(0, CGRectGetMidY(self.frame));\r\n\r\nand let's put a breakpoint in the second line. Let's compile in debug mode (-O0 -g). Let's print out the values like so:\r\n\r\n(lldb) po gradientMask.rasterizationScale\r\n(lldb) po [UIScreen mainScreen].scale\r\n\r\nwhen the breakpoint we setup hits.\r\n\r\nExpected Results:\r\n(lldb) po gradientMask.rasterizationScale\r\n2\r\n\r\n(lldb) po [UIScreen mainScreen].scale\r\n2\r\n\r\non both Simulator and Device.\r\n\r\nActual Results:\r\n* On the iOS Simulator specified above (same thing for the iOS 9.3 version of the simulator) the following happens:\r\n(lldb) po gradientMask.rasterizationScale\r\n--> 3\r\n(lldb) po [UIScreen mainScreen].scale\r\n--> 3\r\n\r\n* On the iPhone 7 Plus device specified above the following happens:\r\n(lldb) po gradientMask.rasterizationScale\r\n--> 2\r\n(lldb) po [UIScreen mainScreen].scale\r\n--> 3\r\n\r\nVersion:\r\nXcode 8.2.1 (8C1002), macOS 10.2.2 (16C67)"
+    email: Panajev@gmail.com
+    modified: "2017-01-15T10:24:23.98359Z"
+    number: "30030701"
+    number_intvalue: 30030701
+    originated: 14/01/2017
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.2.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIScreen scale property differs between device and simulator and debugger

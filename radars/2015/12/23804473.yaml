@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23804473"
+    labels:
+        datastore_id: "5004702219501568"
+data:
+    classification: Other Bug
+    created: "2015-12-08T18:25:43.13464Z"
+    description: "Summary:\nRecently, my Mac OS X app using CloudKit subscriptions stopped receiving change notifications. I have filed a DTS incident #631119498 to help resolve it. I was asked to file a radar as they appear to suspect an issue with the CloudKit infrastructure.\n\nSteps to Reproduce:\nWhat I've done:\n\n1. Save a separate subscription for each of CREATE, UPDATE and DELETE actions. My CKNotificationInfo objects look like this:\n\n- (CKNotificationInfo *)notificationInfo {\n    CKNotificationInfo *note = [[CKNotificationInfo alloc] init];\n    note.alertBody = @\"\";\n    note.shouldBadge = NO;\n    note.shouldSendContentAvailable = YES;\n    note.soundName = @\"\";\n    return note;\n}\n\nI then save the subscription if it hasn't been saved before using this code:\n\nCKSubscription *sub = [[CKSubscription alloc] initWithRecordType:@\"Video\" predicate:[NSPredicate predicateWithFormat:@\"TRUEPREDICATE\"] subscriptionID:ident options:options];\n    sub.notificationInfo = [self notificationInfo];\n    \n    CKContainer * myContainer = [CKContainer containerWithIdentifier:@\"iCloud.com.innoveghtive.VideoGrabber\"];\n    CKDatabase * privateDatabase = [myContainer privateCloudDatabase];\n    \n    [privateDatabase saveSubscription:sub completionHandler:^(CKSubscription *subscription, NSError *error) {\n        if (error) {\n            NSLog(@\"SUBSCRIPTION ERROR! %@\", error);\n        }\n        else {\n            NSLog(@\"Sub successful for %@\", ident);\n        }\n    }];\n\nThe subscriptions are saved successfully.\n\n2. I register for the push notifications in my Mac app's AppDelegate. I want it to be a silent notification, so I choose that setting:\n\n[NSApp registerForRemoteNotificationTypes:NSRemoteNotificationTypeNone];\n\nI also wrote the delegate methods to check whether I registered:\n\n- (void)application:(NSApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken\n{\n    NSLog(@\"Succeed register with token = %@\", deviceToken);\n}\n\nThat also works every time.\n\n3. I deploy the delegate method to respond to notifications:\n\n- (void)application:(NSApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo\n{\n    [self.windowVC didReceiveNotification:userInfo];  \n}\n\nThis method is never called.\n\nI have tried a great variety of different techniques and notification info configurations, but nothing takes. \n\nExpected Results:\nMy Mac app should receive notifications.\n\nActual Results:\nNo notification is received.\n\nNotes:\nIf you are able to check 631119498 with the DTS team you can see the ongoing discussion around the things we’ve tried to fix this.\n\nIn the meantime I have updated my app to periodically check CloudKit for data changes, and that is working fine, if inelegantly."
+    email: aaron@vegh.ca
+    modified: "2015-12-08T18:25:43.13488Z"
+    number: "23804473"
+    number_intvalue: 23804473
+    originated: 08-Dec-2015 01:25 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: OS X 10.11.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: OS X CloudKit App Not Receiving Subscription Notifications

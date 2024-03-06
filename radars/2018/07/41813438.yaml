@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "41813438"
+    labels:
+        datastore_id: "4959396035559424"
+data:
+    classification: Serious Bug
+    created: "2018-07-04T09:33:33.46828Z"
+    description: "This is a dupe of rdar://41570203. My app Timing (https://timingapp.com/) is also affected; one individual prompt is shown for each app that Timing tries to track via AppleScript (Safari, Mail, Terminal, Finder, and several more), leading to \"alert overload\". In addition, the user has no idea what is going on or why Timing needs these permissions.\r\n\r\nFor more info, please see https://bit.ly/2KeNNaP\r\n\r\n--\r\n\r\nThe Apple Event Sandbox implementation as of macOS 10.14 Mojave beta 2 (18A314h) lacks essential APIs that apps would need to adapt to and provide a good user experience around the change.\r\n\r\n--\r\n\r\nI identified these issues with the current implementation:\r\n\r\n1) timing: apps don't have sufficient control over when the user is prompted for authorization\r\n\r\n2) adapting UI: apps have no guaranteed non-interactive/-blocking way to know if they're authorized to send AEs to another app to adapt their UIs\r\n\r\n3) apps can't avoid getting stuck indefinitely if there's no one to answer the auth prompt (problem for remote/MDM/accessibility apps) \r\n\r\n4) authorization requires launching the target app. Makes on-boarding for tools targeting many apps a UX nightmare.\r\n\r\n5) even if trusting an app targeting a large (or even open-ended) list of other apps, users can't whitelist it to avoid constantly running into auth prompts.\r\n\r\n6) authorization can't be re-requested. F.ex. in response to a click on an \"Authorize\" button in an alert stating that the app lacks a permission.\r\n\r\n7) lack of context: users lack usage descriptions to inform their decision.\r\n\r\n-- \r\n\r\nWhat's missing:\r\n\r\n1) an API to get the current authorization status without launching the target app, similiar to +[AVCaptureDevice authorizationStatusForMediaType:] or AXIsProcessTrustedWithOptions(). API idea:\r\n\r\n+ (NSAppleEventAuthStatus)authorizationStatusForTarget:(nullable NSAppleEventDescriptor *)eventDesc;\r\n\r\n\"eventDesc\" identifies the target app. Passing nil returns the app's whitelist status (see pt. 3).\r\n\r\nThe return value represents the current status:\r\n- not determined (user not prompted yet)\r\n- denied\r\n- authorized\r\n\r\n2) an API to prompt without launching the target app, similar to +[AVCaptureDevice requestAccessForMediaType:completionHandler:] or AXIsProcessTrustedWithOptions().\r\n\r\nIt should be possible to bring up the prompt even if it has been brought up before. API idea:\r\n\r\n+ (void)requestAccessForTarget:(nullable NSAppleEventDescriptor *)eventDesc options:(NSAppleEventAuthOptions)options completionHandler:(void (^)(BOOL granted))handler;\r\n\r\n\"eventDesc\" identifies the target app. Passing nil opens System Prefs showing \"Automation\".\r\n\"options\" allow to show the prompt even if it was shown before.\r\n\"handler\" is called with the result.\r\n\r\n3) an option in System Prefs to \"whitelist\" apps, which can then send AEs to any other app (similar to what the new \"Application Data\" category achieves for file access). UI ideas: https://bit.ly/2yPoeaW\r\n\r\n4) support default and app-specific usage descriptions in prompts."
+    email: Daniel.Alexander.Alm@gmail.com
+    modified: "2018-07-04T09:33:33.46857Z"
+    number: "41813438"
+    number_intvalue: 41813438
+    originated: 4.7.2018
+    parent_number: '&{NULL_VALUE}'
+    product: AppKit
+    product_version: macOS 10.14 Mojave beta 2 (18A314h)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: The new Apple Event sandbox in macOS 10.14 Mojave lacks essential APIs

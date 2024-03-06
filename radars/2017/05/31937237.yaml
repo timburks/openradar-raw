@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31937237"
+    labels:
+        datastore_id: "5034530146615296"
+data:
+    classification: Crash
+    created: "2017-05-02T15:41:33.23478Z"
+    description: "Summary:\r\nValue for expirationDate can return nil but type is not defined as optional in API for NSUserActivity\r\n\r\nWhen value is nil, there is a crash.\r\nCan not nil check because type is not defined to allow nil check\r\n\r\nSteps to Reproduce:\r\nFunction to test: (in appDelegate)\r\napplication(_ application: UIApplication,\r\n                     continue userActivity: NSUserActivity,\r\n                     restorationHandler: @escaping ([Any]?) -> Void) -> Bool\r\n\r\n1. Cause an app to be opened by: function noted above\r\n2. Assure cause will have nil expiration date (I used a simple weblink, associated through an associated domain)\r\n3. In function: print(\"crash here: \\(userActivity.expirationDate)\r\n\r\n\r\n\r\nExpected Results:\r\nNSUser Activity definition in SDK:\r\n    /* If non-nil, then an absolute date after which this activity is no longer eligible to be indexed or handed off. */\r\n    @available(iOS 9.0, *)\r\n    open var expirationDate: Date\r\n\r\n\r\nSo.. if the non optional isn't nil we're okay. but if the non-option is nil...\r\n\r\n\r\nActual Results:\r\nCrash\r\n\r\nAttempt to p or po userActivity.expirationDate:\r\nerror: Execution was interrupted, reason: EXC_BREAKPOINT (code=1, subcode=0x1026683d0).\r\nThe process has been returned to the state before expression evaluation.\r\n\r\nVersion:\r\nPhone: iOS 10.3.2 (14F5089a) ,Simulator: 10.3 (14E269)\r\n\r\nNotes:\r\nXcode 8.3.2 (8E2002); Reproduces always\r\nSDK: 10.3\r\nProblem is reentry of closed issue: 29024139\r\n\r\n\r\nConfiguration:\r\niPhone 7+, Simulator"
+    email: lordandrei@gmail.com
+    modified: "2017-05-02T15:41:33.23495Z"
+    number: "31937237"
+    number_intvalue: 31937237
+    originated: 02-May-2017 10:54 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 'SDK: 10.3'
+    reproducible: Under circumstances
+    resolved: ""
+    status: Open
+    title: NSUserActivity.expirationDate defined as NSDate, Should be NSDate?

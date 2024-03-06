@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12194320"
+    labels:
+        datastore_id: "2058401"
+data:
+    classification: Other Bug
+    created: "2012-09-26T19:32:05.247389Z"
+    description: "28-Aug-2012 06:51 PM Eric Wing:\r\nSummary:\r\nI found a race condition in the Apple OpenAL implementation when trying to pause/resume very quickly.\r\nThis affects both Mac and iOS.\r\n\r\nIf you pause and then very soon after call resume, audio will not actually resume.\r\n\r\n\r\nSteps to Reproduce:\r\nAttached is an example for both iOS and Mac that can reproduce the problem. Build and run both. (Both real iOS devices and the iOS simulator have the problem as well as Mac proper.)\r\n\r\n\r\nExpected Results:\r\nWhen you run, you should hear a single laser shot. A callback message should appear in the log after the sound finishes playing. (This is achieved by polling the OpenAL state to figure out when a sound finishes playing.)\r\n\r\nActual Results:\r\nYou do not hear the laser shot. You do not get a callback print message in the log.\r\n\r\nRegression:\r\nTried on Mac 10.7 and iOS 5.1. This bug has probably always been around.\r\n\r\nNotes:\r\nI you put a sleep before the resume call, then I can get the resume call. This is why I think it is a race condition.\r\n\r\n\r\nMy users are doing this to immediately tell something to seek to a position and then resume playing. The pattern would be:\r\n\r\nplay()\r\npause()\r\nseek()\r\nresume()\r\n\r\n(A limitation in ALmixer is that you have to start playing to attach a buffer to a source so pausing immediately is the workaround if you want to start playing at an offset.)\r\n\r\nThis is failing with both iOS and Mac. (It works fine on OpenAL Soft.)\r\n\r\n\r\nOpenALPauseResume uploaded at https://github.com/ewmailing/MyAppleBugs"
+    email: ewmailing@gmail.com
+    modified: "2012-09-26T19:32:05.24756Z"
+    number: "12194320"
+    number_intvalue: 12194320
+    originated: "2012-08-28"
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "5.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Mac/iOS: OpenAL pause/resume race condition: Never resumes'

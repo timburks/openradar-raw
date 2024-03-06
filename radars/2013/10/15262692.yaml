@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15262692"
+    labels:
+        datastore_id: "5244726299066368"
+data:
+    classification: Crash
+    created: "2013-10-18T16:21:09.25439Z"
+    description: "Summary:\r\nWhen the collection view is not visible (ie. collectionView.window == nil), the start of performBatchUpdates:completion: would call the collection view's private _validateItemCounts method, which would call the delegate method collectionView:numberOfItemsInSection:, which would in turn ask the fetched results controller for its number of objects.  The number of objects reported by the fetched results controller would be different than the number of items in the collection view prior to this call because the fetched results controller had just been updated.  But now, the collection view thinks it has the same number of items as the fetched results controller. \r\n \r\nIt's then that the block for performBatchUpdates is called, and the collection view's items are changed based on the changes recorded during the fetched results controller's most recent callbacks.\r\n \r\nAt the end of the performUpdates block, the collection view again wants to know how many items it has, and again the fetched results controller at the end of the change reports the same number as it did at the beginning of performBatchUpdates, but the collection view has had items inserted, deleted, moved, etc. as a result of the performBatchUpdates block.\r\n \r\nAt this point, the collection view is apparently very confused.  Sometimes I would get an assertion failure about the updates, and other times I would get EXC_BAD_ACCESS crashes.\r\n\r\nTo work around this issue, I needed only to call collection view's numberOfItemsInSection: in the fetched results controller delegate method controllerWillChangeContent.  This apparently updates the collection view state sufficiently such that the subsequent performBatchUpdates call in controllerDidChangeContent does not trigger any collection view item count validation.\r\n\r\nSteps to Reproduce:\r\n1. Set up a collectionViewController with a fetchedResultsController. \r\n2. Open a second viewController with a child managed object context and add an object.\r\n3. Save the child context which triggers the fetchedResultsController to trigger delegate methods on the collectionViewController.\r\n4. In controllerDidChangeContent do performBatchUpdates and in the block do the insertItem on the collectionView.\r\n\r\nExpected Results:\r\nExpected result is that the collection view will insert the object and not crash the app.\r\n\r\nActual Results:\r\nCollection view throws an exception like:\r\n*** Assertion failure in -[UICollectionView _endItemAnimations], /SourceCache/UIKit/UIKit-2903.2/UICollectionView.m:3716\r\n2013-10-18 11:07:53.362 Journal[15086:60b] *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'Invalid update: invalid number of items in section 0.  The number of items contained in an existing section after the update (7) must be equal to the number of items contained in that section before the update (7), plus or minus the number of items inserted or deleted from that section (1 inserted, 0 deleted) and plus or minus the number of items moved into or out of that section (0 moved in, 0 moved out).'\r\n\r\nVersion:\r\niOS 7.0.2/11A501\r\n\r\nNotes:\r\nSee post on devforums at https://devforums.apple.com/message/908659#908659 for more details\r\n\r\nConfiguration:\r\nOccurs in iOS 7.0.2 on iPad Mini and iPhone 5, uncertain about previous iOS versions or other hardware."
+    email: jamie@timeuser.com
+    modified: "2013-10-18T16:21:09.254538Z"
+    number: "15262692"
+    number_intvalue: 15262692
+    originated: 10/18/2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 7.0.2
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: UICollectionView performBatchUpdates + NSFetchedResultsController controllerDidChangeContent iOS crashes

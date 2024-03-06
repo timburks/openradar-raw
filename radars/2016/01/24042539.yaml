@@ -1,0 +1,62 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24042539"
+    labels:
+        datastore_id: "6093458443862016"
+data:
+    classification: Other Bug
+    created: "2016-01-04T18:08:58.96725Z"
+    description: |-
+        I try to obtain an OmniFocus task object by doing this:
+
+        OFTask *ofTask = [self.omniFocus.defaultDocument.flattenedTasks objectWithID:taskID];
+
+
+        If "taskID" contains the ID of a task that is the root task of a project, I run into trouble. I end up with an object of class SBObject, which looks like this if I print it in the debugger:
+
+        <SBObject @0x618000a5fb00: rootTask of OmniFocusProject id "nLBEWwnG6_a" of OmniFocusDocument id "g_4SrQjMH8I" of application "OmniFocus" (75814)>
+
+
+        If I call [ofTask name], I get "unrecognised selector".
+
+
+        I have discovered a workaround, in the form of this code:
+
+
+        	OFTask *ofTask = [self.omniFocus.defaultDocument.flattenedTasks objectWithID:taskID];
+
+
+        	if (ofTask) {
+        		id context = ofTask._context;
+        		voidPtr specifier = ofTask._specifier;
+
+        		OFTask *properTask =  [[[self.omniFocus classForScriptingClass:@"task"] alloc] initWithContext:context specifier:specifier];
+        		;
+        	}
+
+
+        If I then log properTask, I get:
+
+        <OmniFocusTask @0x600000040570: OmniFocusFlattenedTask id "nLBEWwnG6_a" of defaultDocument of application "OmniFocus" (75814)>
+
+        I can then successfully call [properTask name].
+
+
+        If, however, I call [properTask get], I once again end up with an unusable SBObject that doesn't respond to anything.
+
+
+
+        This may be a similar issue to in rdar://20515878.
+    email: amorya@gmail.com
+    modified: "2016-01-04T18:08:58.9675Z"
+    number: "24042539"
+    number_intvalue: 24042539
+    originated: 04-Jan-2016 06:08 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: Mac OS X 10.10.5 (14F1021)
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: 'Mac OS X 10.10.5: Scripting Bridge can''t correctly deduce Cocoa class for "root task" from OmniFocus'

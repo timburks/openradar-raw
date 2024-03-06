@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29880025"
+    labels:
+        datastore_id: "6715014014566400"
+data:
+    classification: ""
+    created: "2017-01-05T09:38:01.05474Z"
+    description: "Summary:\r\nLet's say we have iOS application with iCloud Drive enabled and NSMetadataQuery started.\r\n\r\nSteps to Reproduce:\r\nOnce file is deleted on macOS, it's moved to the \".Trash\" directory and application receive NSMetadataQueryDidUpdateNotification about the change, like this one:\r\n\r\nNSMetadataQueryDidUpdateNotification received {\r\n    kMDQueryUpdateAddedItems =     (\r\n    );\r\n    kMDQueryUpdateChangedItems =     (\r\n        \"<NSMetadataItem: 0x60000003b500> URL: file:///Users/marcinkrzyzanowski/Library/Developer/CoreSimulator/Devices/EDE8CE6B-E25B-4BEE-87E3-FA41DB025481/data/Library/Mobile%20Documents/iCloud~com~pspdfkit~viewer/Documents/.Trash/bilety_2%20copy.pdf\"\r\n    );\r\n    kMDQueryUpdateRemovedItems =     (\r\n    );\r\n}\r\n\r\n\r\nlater, when file is restore from the trash (possible from the macOS only), iOS application receive notification about removed files only:\r\n\r\nNSMetadataQueryDidUpdateNotification received {\r\n    kMDQueryUpdateAddedItems =     (\r\n    );\r\n    kMDQueryUpdateChangedItems =     (\r\n    );\r\n    kMDQueryUpdateRemovedItems =     (\r\n        \"<NSMetadataItem: 0x60000003b500> URL: file:///Users/marcinkrzyzanowski/Library/Developer/CoreSimulator/Devices/EDE8CE6B-E25B-4BEE-87E3-FA41DB025481/data/Library/Mobile%20Documents/iCloud~com~pspdfkit~viewer/Documents/.Trash/bilety_2%20copy.pdf\"\r\n    );\r\n}\r\n\r\nthat is only partially correct. The file is removed from the \".Trash\", true, but is re-added to the original directory.\r\n\r\nExpected Results:\r\nI expect here either change notification the same as when moving to the \".Trash\", or another \"kMDQueryUpdateAddedItems\" notification for the files.\r\n\r\nActual Results:\r\nFiles are added without notification.\r\n\r\nVersion:\r\niOS 10, macOS 10.12.2"
+    email: marcin.krzyzanowski@gmail.com
+    modified: "2017-01-05T09:38:01.05494Z"
+    number: "29880025"
+    number_intvalue: 29880025
+    originated: 5 Jan 2017
+    parent_number: '&{NULL_VALUE}'
+    product: iCloud
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: iCloud Drive changes of restored files are not announced properly

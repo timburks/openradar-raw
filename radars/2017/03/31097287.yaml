@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31097287"
+    labels:
+        datastore_id: "4964382928797696"
+data:
+    classification: Enhancement Request
+    created: "2017-03-16T20:48:56.99903Z"
+    description: "Summary:\r\n\r\nWe have an iPad app that allows the user to search the web (custom non web view UI) to find and download images to include in a presentation. The user enters a search term, thumbnails are presented in a collection view and the user is allowed to select an image, that will then be downloaded and added to her canvas. The search and retrieval are using Google image search APIs. We have no control over where this content will come from; much like browsing the web in general, we could be pulling content from any arbitrary URL from any server in the world and have no control over the security configurations of these machines.\r\n\r\nThis presents obvious issues with ATS. We do not use a web view anywhere in this flow, so NSAllowsArbitraryLoadsInWebContent does not apply. Further, NSAllowsArbitraryLoadsForMedia is documented to only work for media that the app loads using the AV Foundation framework (rather than any/all media including images). In investigating this, I have:\r\n\r\n* Watched WWDC 2016 Session 706\r\n* Read about all transport security keys: https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW33\r\n* Read Quinn “The Eskimo!”s very detailed forum posts on the matter: https://forums.developer.apple.com/message/200894#200894 and https://forums.developer.apple.com/message/15705#15705\r\n\r\nFollowing this guidance: \r\nhttps://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW36\r\n\r\nOur current approach is to use ATS NSExceptionDomains when communicating with servers whose security attributes we control, but then also enable NSAllowsArbitraryLoads to allow downloading of images from arbitrary URLs.\r\n\r\nI'm fairly certain that there's no way to accomplish what we need to accomplish without this approach, but once enforced (TBD 2017), it will require escalated review - and for an exception to be granted by the review team. Based on everything I have read, I believe this to be a \"reasonable justification\", but it would be nice if instead we had access to a new key - something like NSAllowsArbitraryLoadsForMedia - that would allow for downloading media resources/assets like images from anywhere, as well.\r\n\r\nSteps to Reproduce:\r\nUse any API that attempts to access image resources from servers that are not ATS compliant.\r\n\r\nExpected Results:\r\nIt would be nice for this to not require a special exception from the App Store review team to work as intended.\r\n\r\nActual Results:\r\nWithout enabling NSAllowsArbitraryLoads, the request will fail depending on the image's host server's configuration.\r\n\r\nVersion:\r\niOS 9 and above\r\n\r\nConfiguration:\r\nAny iOS device"
+    email: joshsloat@gmail.com
+    modified: "2017-03-16T20:48:56.99928Z"
+    number: "31097287"
+    number_intvalue: 31097287
+    originated: 3/16/2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ATS Exception for all media resources

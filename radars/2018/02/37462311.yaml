@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "37462311"
+    labels:
+        datastore_id: "6191756236292096"
+data:
+    classification: ""
+    created: "2018-02-12T18:03:12.74569Z"
+    description: "getaudit_addr syscall does not return correct ai_mask field. It always returns masks set to zero even if with proper privileges \r\n\r\nobservation:\r\nfunction getaudit_addr_internal is called by getaudit_addr.\r\n\r\nStatement 'bcopy(scred->cr_audit.as_aia_p, &aia, sizeof (auditinfo_addr_t)); ' simply copies the stored session specific 'auditinfo_addr_t' and returns.\r\n But  'ai_mask ' field of 'scred->cr_audit.as_aia_p' does not store the mask. mask is stored in the 'as_mask' field of 'struct au_session'. Getting the mask using auditon system call has no such problem.\r\n<sinp>\r\nstatic int\r\ngetaudit_addr_internal(proc_t p, user_addr_t user_addr, size_t length)\r\n{\r\n\tkauth_cred_t scred;\r\n\tauditinfo_addr_t aia;\r\n\r\n\tscred = kauth_cred_proc_ref(p);\r\n\r\n\tbcopy(scred->cr_audit.as_aia_p, &aia, sizeof (auditinfo_addr_t)); \r\n\t/*\r\n\t * Only superuser gets to see the real mask.\r\n\t */\r\n\tif (suser(scred, &p->p_acflag)) {\r\n\t\taia.ai_mask.am_success = ~0;\r\n\t\taia.ai_mask.am_failure = ~0;\r\n\t}\r\n\tkauth_cred_unref(&scred);\r\n\r\n\treturn (copyout(&aia, user_addr, min(sizeof(aia), length)));\r\n}\r\n<\\snip>\r\n\r\nBecause of this bug sudo utility is not able to generate ACE_sudo event. Because sudo utility is using getaudit_addr syscall to check the stored mask.\r\n\r\nSteps to Reproduce:\r\n1. Set non-zero au_mask using setaudit_addr with proper privileges.\r\n2. get au_mask using getaudit_addr with proper privileges.\r\n\r\nExpected Results:\r\nShould get back the mask stored.\r\n\r\nActual Results:\r\nreturns au_mask set to zero \r\n\r\nVersion/Build:\r\nosx-10.9 to osx-10.13.3"
+    email: nishant.pamnani@gmail.com
+    modified: "2018-02-12T18:03:12.74598Z"
+    number: "37462311"
+    number_intvalue: 37462311
+    originated: 2/12/2018
+    parent_number: '&{NULL_VALUE}'
+    product: mac osx
+    product_version: 10.9 - 13.3.3
+    reproducible: yes
+    resolved: ""
+    status: open
+    title: getaudit_addr syscall has a bug

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17235907"
+    labels:
+        datastore_id: "5813371513339904"
+data:
+    classification: Enhancement
+    created: "2014-06-09T18:42:02.265538Z"
+    description: "Summary:\r\nGiven how smart the compiler is at helping interoperability when using ObjC API from Swift, I thought I'd suggest the following enhancement.\r\n\r\nWhen writing my own API, part of those contracts is that `nil` is sometimes disallowed as a value for an argument. Apple has encouraged enforcing this by using the NSParameterAssert macro in the first lines inside a method's implementation.\r\n\r\nCould it be possible that the compiler can see these assertions, and therefore mark a parameter as non-optional?\r\n\r\nSteps to Reproduce:\r\n__Example from NSFileManager Documentation__\r\n\r\nCopies the item at the specified path to a new location synchronously.\r\n\r\n- (BOOL)copyItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath error:(NSError **)error\r\n\r\nParameters\r\n\r\n**srcPath**\r\nThe path to the file or directory you want to move. This parameter must not be nil.\r\n\r\n**dstPath**\r\nThe path at which to place the copy of srcPath. This path must include the name of the file or directory in its new location. This parameter must not be nil.\r\n\r\n**error**\r\nOn input, a pointer to an error object. If an error occurs, this pointer is set to an actual error object containing the error information. You may specify nil for this parameter if you do not want the error information.\r\n\r\n------------\r\n\r\nWhen converted to Swift, the method signature looks like this:\r\n\r\nfunc copyItemAtPath(_ srcPath: String!, toPath dstPath: String!, error error: NSErrorPointer) -> Bool\r\n\r\n------------\r\n\r\nOf course I'm making an assumption to drive my point, but in the implementation of this method, there should be:\r\n\r\nNSParameterAssert(srcPath);\r\nNSParameterAssert(dstPath);\r\n\r\n...which could allow Swift to generate a method signature like this:\r\n\r\nfunc copyItemAtPath(_ srcPath: String, toPath dstPath: String, error error: NSErrorPointer) -> Bool\r\n\r\n(note lack of exclamation points)\r\n\r\n=====================================================\r\n\r\nApple Developer Relations10-Jun-2014 07:03 PM\r\n\r\nEngineering has determined that your bug report is a duplicate of another issue and will be closed. \r\n\r\nThe open or closed status of the original bug report your issue was duplicated to appears in the yellow \"Duplicate of XXXXXXXX\" section of the bug reporter user interface. This section appears near the top of the right column's bug detail view just under the bug number, title, state, product and rank.\r\n\r\nIf you have any questions or concerns, please update your report directly here: http://bugreport.apple.com/."
+    email: evan@thinkfishhook.com
+    modified: "2014-06-12T11:34:30.147789Z"
+    number: "17235907"
+    number_intvalue: 17235907
+    originated: 09-Jun-2014 02:39 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: N/A
+    resolved: 10-Jun-2014 07:03 PM
+    status: Duplicate
+    title: 'Swift and ObjC InterOp: Implicit Unwrapped Optionals vs. Non-Optionals when using NSParameterAssert()'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "4660340"
+    labels:
+        datastore_id: "70432"
+data:
+    classification: ""
+    created: "2009-09-01T06:35:17.611463Z"
+    description: "31-Jul-2006 12:19 PM W Lewis:\r\nDescription of problem:\r\n\r\nMail.app can be configured to use SSL (STARTTLS) when submitting outgoing mail to a mail server. During the TLS setup, the server identifies itself to Mail.app using the server certificate, and gives Mail.app the opportunity to identify itself to the server using a client certificate. However, there doesn't seem to be any way to get Mail to present a client certificate.\r\n\r\nSteps to reproduce:\r\n\r\n1. Configure your SMTP relay to offer STARTTLS. I'm using Postfix 2.3.1 with the following TLS-related configuration settings:\r\n\r\n# Enable opportunistic TLS and client certificates\r\nsmtp_tls_security_level = may\r\nsmtpd_tls_security_level = may\r\nsmtpd_tls_cert_file = /etc/postfix/smtpd-cert.pem\r\nsmtpd_tls_key_file = /etc/postfix/smtpd-key.pem\r\nsmtpd_tls_CAfile = /etc/ssl/root-ca-cert.pem\r\nsmtpd_tls_loglevel = 1\r\nsmtpd_tls_received_header = yes\r\nsmtpd_tls_ask_ccert = yes\r\nsmtpd_tls_auth_only = yes\r\n\r\n2. Create and install certificates on the OSX client machine. I have a keypair certified for SSL client use by by the \"root-ca-cert\" that Postfix is using; it shows up in Keychain Access under \"my certificates\" and is marked as valid (little green checkbox icon).\r\n\r\n3. Check the \"Use SSL\" checkbox in Mail for this SMTP server. Attempt to send mail.\r\n\r\nResults:\r\n\r\nMail does correctly set up an SSL session using STARTTLS, and (as far as I can tell) verifies the server's identity. However, it does not present a certificate to the server when the server asks for one. Therefore there is no way for the server to verify the client's identity (at least, not using SSL/TLS; it can still use SASL or GSSAPI or whatever of course).\r\n\r\nIt's possible that I simply don't have things set up correctly o the client side, but there is no hint in the documentation that this is expected to work.\r\n\r\nExpected results:\r\n\r\nI would expect the SSL layer that Mail is using to just automatically check the keychain for applicable client certs, in the same way it automatically uses X509Anchors.keychain for trust anchors.\r\n\r\nIf Mail.app doesn't just use the keychain, then there should be some UI in the \"configure outgoing mail server\" sheet to select a client certificate for use."
+    email: wiml@omnigroup.com
+    modified: "2011-08-28T05:51:19.054358Z"
+    number: "4660340"
+    number_intvalue: 4660340
+    originated: 31-Jul-2006 12:19 PM
+    parent_number: "3036726"
+    product: Mac OS X
+    product_version: 10.4.x-10.5.x
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/3036726
+    title: Mail will not present client certificate when using smtp+starttls

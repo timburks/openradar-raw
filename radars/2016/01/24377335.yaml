@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24377335"
+    labels:
+        datastore_id: "4961642219569152"
+data:
+    classification: Bug
+    created: "2016-01-27T22:48:45.94142Z"
+    description: "I can add some ATOM feeds to the Feeds section of the Shared Links on Safari, like http://xkcd.com/atom.xml and it works fine. But I tried to add GitHub's Releases feed like https://github.com/apple/swift/releases.atom but nothing shows up.\r\n\r\nI checked validator.w3.org and it tells me the GitHub feed is valid and the XKCD feed is not valid.\r\n\r\nAfter some testing I managed to figure out what causes Safari to not display GitHub's items: the link does not have the hostname.\r\n\r\nSimplifying the feed, this is what GitHub sends:\r\n\r\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<feed xmlns=\"http://www.w3.org/2005/Atom\" xml:lang=\"en-US\">\r\n  <entry>\r\n    <link rel=\"alternate\" type=\"text/html\" href=\"/apple/swift/releases/tag/swift-2.2-SNAPSHOT-2016-01-25-a\"/>\r\n  </entry>\r\n</feed>\r\n\r\nI took that and added the host (http://github.com) to the link:\r\n\r\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<feed xmlns=\"http://www.w3.org/2005/Atom\" xml:lang=\"en-US\">\r\n  <entry>\r\n    <link rel=\"alternate\" type=\"text/html\" href=\"http://github.com/apple/swift/releases/tag/swift-2.2-SNAPSHOT-2016-01-25-a\"/>\r\n  </entry>\r\n</feed>\r\n\r\nAnd the items appeared on Shared Links.\r\n\r\nFound some references:\r\n- https://validator.w3.org/feed/docs/atom.html#aboutThisDocument talks about the use of xml:base but Safari's Shared Links didn't care when I added that the the feed element and didn't display them.\r\n- https://www.w3.org/TR/xmlbase/#syntax more about xml:base\r\n\r\n\r\n\r\nSteps to reproduce\r\nOpen http://xkcd.com/atom.xml on Safari and click the Add button to add to Shared Links.\r\nOpen https://github.com/apple/swift/releases.atom and click the Add button to add to Shared Links.\r\n\r\n\r\n\r\nExpected Results\r\nBoth xkcd and github items appear on Shared Links section.\r\n\r\n\r\n\r\nActual Results\r\nxkcd items appear on Shared Links section. GitHub items do not appear on Shared Links section \r\n\r\n\r\n\r\nSafari Version/Build & Platform (incl. Version/Build)*\r\nOSX 10.11.3 (15D21)\r\nSafari Version 9.0.3 (11601.4.4)"
+    email: carlosefonseca@gmail.com
+    modified: "2016-01-27T22:48:45.94175Z"
+    number: "24377335"
+    number_intvalue: 24377335
+    originated: 27-Jan-2016 10:48 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Safari
+    product_version: 9.0.3 (11601.4.4)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ATOM feeds with relative links don't appear on Shared Links

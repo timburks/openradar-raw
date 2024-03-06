@@ -1,0 +1,61 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19091008"
+    labels:
+        datastore_id: "5275304922710016"
+data:
+    classification: Other Bug
+    created: "2014-11-27T20:12:42.670392Z"
+    description: |-
+        Summary:
+        Constructors are functions. Static functions are also functions. The difference is that the latter can be passed as the argument to map, but the former cannot.
+
+
+        Steps to Reproduce:
+        1. Try to run this code:
+        struct S {
+        	init(Int) {}
+        }
+        let f: Int -> S = S
+        let x: [S] = map([1, 2, 3], S.init)
+
+
+        Expected Results:
+        I expected this to compile, and for f or at least x to be successfully bound by those expressions.
+
+
+        Actual Results:
+        Both of them error: “expected member name or constructor call after type name” and “initializer cannot be referenced without arguments” respectively.
+
+
+        Regression:
+        The workaround is to construct an anonymous closure:
+
+        let x = map([1, 2, 3]) { S($0) }
+
+
+        Notes:
+        This makes for a proliferation of static functions or free functions constructing types which could otherwise just be using the extant initializers/constructors. I would much rather see:
+
+        map(array, Result) // or equivalently Result.init
+
+        than
+
+        map(array) { Result($0) }
+
+        More generally, improving Swift’s support for tacit programming[1] would be lovely ❤️
+
+        1: http://en.wikipedia.org/wiki/Tacit_programming
+    email: rix.rob@gmail.com
+    modified: "2014-11-27T20:12:42.67052Z"
+    number: "19091008"
+    number_intvalue: 19091008
+    originated: 27-Nov-2014 03:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2006)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Can’t get reference to constructor functions'

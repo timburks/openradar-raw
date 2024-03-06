@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7684093
+    labels:
+        datastore_id: "5032140236390400"
+data:
+    classification: Application Crash
+    created: "2020-05-01T18:03:47.233826Z"
+    description: "Utilizing undo manager in parent managed object context to batch changes in child leads to validation errors with empty/nilled objects.\r\n\r\nIn our application, because changes are made to multiple objects in real time based on user typing, for undo we need to batch changes in a managed object context, rather than utilize event-loop based undo, which would undo one “letter” at a time.\r\n\r\nIn our app we’re attempting to utilize the batching property of child object contexts’ saves for undo rather than undo groups, where we have found bugs that are hard to reproduce and debug.\r\n\r\nUnder this scheme, the main managed object context hosts an undo manager, and is saved before and after the child managed object context is saved when changes are made. An UndoManager subclass ensures that after the main context is \"undone\" or \"redone\", a main context save propagates the changes to the child object context.\r\n\r\nHowever, we’re having issues with nil-objects appearing after undoing inserts. These nil objects cause database validation errors.\r\n\r\nThe sample application we’re providing (based on the template split view application) has a main managed object context (`persistentContainer.viewContext`) and an auto-merging child context used in the `MasterViewController`.\r\n\r\nCurrent status for resolving bug 1 (steps to reproduce section): I have considered deleting empty objects when they fail validation in the parent object context, but believe this will not allow redo. Instead, we reverted to moving the undo manager to the child context, where we manage undo groups.\r\n\r\nSteps to reproduce:\r\nBug 1:\r\nRun the provided demo application\r\n1. Press insert\r\n2. Press undo\r\n3. Press insert\r\n4. Press undo\r\n\r\nExpectation: Undone insert\r\nResult: Validation error about saving an object with nil properties. That is, a totally nil object is registered as inserted in the child object context. \r\n\r\nTry going to the xcdatamodeld and making timestamp an optional property, repeating the above procedure: instead of a crash, the nil object appears in the child context. Repeating steps 3 & 4 inserts additional nil objects. From experience in our app, all present properties of the object are nil.\r\n\r\nI have already figured out the solution to bug #2, which is included only because it may be related.\r\n\r\nBug 2: See `insertNewObject()` in MasterViewController, where `obtainPermanentIDs` is needed to prevent duplicate objects from appearing in fetched results controller of the child MOC.\r\n1. Comment out the relevant lines in insertNewObject, run the application.\r\n2. Press insert\r\n\r\nExpectation: One object inserted.\r\nResult: Two objects inserted.\r\n\r\nEnvironment:\r\niOS 13.3 simulator and real hardware (iPhone X). Targets 13.2 & 11.0. Swift versions 5 & 4.2. XCode 11.3.1."
+    email: atlex2@gmail.com
+    modified: "2020-05-01T18:03:47.233977Z"
+    number: FB7684093
+    number_intvalue: 7684093
+    originated: 05/01/2020
+    parent_number: '&{NULL_VALUE}'
+    product: Core Data
+    product_version: iOS 13.3
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Utilizing undo manager in parent managed object context to batch changes in child leads to validation errors with empty/nilled objects.

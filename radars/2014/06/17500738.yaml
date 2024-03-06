@@ -1,0 +1,51 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17500738"
+    labels:
+        datastore_id: "4974775390699520"
+data:
+    classification: Enhancement
+    created: "2014-06-30T01:01:08.537032Z"
+    description: |-
+        Summary:
+        Enumerations in Swift are, de facto, a hybrid sum & product type: effectively, they serve as the sum type of several tuple types. While this is reasonably pragmatic, how these tuple types are specified makes many useful cases for them in e.g. ADTs much more complicated, which in turn means that one is forced to choose between protocols (which are limited when it comes to type parametrization, losing the convenience of switch/case destructuring, etc.); or cluttering their type definitions with unrelated state; or combining the enumeration with some external state which owns the enum (or vice versa).
+
+        This complication stems from the need to provide duplicate definitions of state across all of the cases. For example, an enumeration with which you wish to associate a name now needs to have a String field explicitly associated with each of its cases—requiring you to change every location which destructures instances of the type using switch/case, as well as requiring you to add redundant definitions to each case.
+
+        Instead, I would like to see (non-computed) let/var definitions allowed in enums, defined as extra fields in each member of the enum. These would not be available via switch/case destructuring (since you can already unpack them using the property names). When initializing an enumeration, you would provide them via labelled parameters in order in the same manner as with structures; I would further suggest that they always occur before the field types specified in cases.
+
+
+        Steps to Reproduce:
+        N/A
+
+        Expected Results:
+        N/A
+
+
+        Actual Results:
+        N/A
+
+
+        Regression:
+        A workaround I am employing in Hammer (see link below) is to parameterize the enumeration by a type, Recur, which is in this case used in the recursive definition of languages: nonterminal languages’ references to their child languages are mediated by Recur, such that the Language type does not know about its own recursion or state (as these are handled by the Recur type, if desired), but it can conveniently be associated—recursively!—with state without needlessly complicating the definitions of e.g. terminal languages.
+
+        This would not work very well for nonrecursive enumerations, and it requires that the Language enumeration itself be a member of a Recur that it knows nothing about; these are, thus far, necessary evils.
+
+
+        Notes:
+        This would greatly simplify the definition of the language type I am in my derivative parsing library, Hammer:
+
+        https://github.com/robrix/Hammer.swift/blob/master/Hammer/Language.swift
+    email: rix.rob@gmail.com
+    modified: "2014-06-30T01:01:08.53714Z"
+    number: "17500738"
+    number_intvalue: 17500738
+    originated: 29-Jun-2014 09:00 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta2 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Implicit members of enumerated cases'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB11792210
+    labels:
+        datastore_id: "5554322922274816"
+data:
+    classification: Application Crash
+    created: "2022-11-15T15:41:04.004551Z"
+    description: "Sample Application:\r\n\r\nhttps://github.com/SomeRandomiOSDev/XcodeSampleCrash\r\n\r\nBackground:\r\n\r\nSwift 5.7 expanded the way in which we can reference protocols, namely using the `any Protocol<Value>` and `some Protocol<Value>` semantics. When running on iOS 16 and up, one is able use runtime checks to type check and cast existential references to the protocols (`any Protocol<Value>`) to other parameterized protocol types (e.g. `any Protocol<Int>`). Although this particular piece of the functionality is gated to iOS 16.0, other functionality for these parameterized protocols exist for prior versions as well.\r\n\r\nIn iOS versions prior to iOS 16.0 we are still able to use the `any Protocol<Value>` and `some Protocol<Value>` semantics when working with protocols in may places in code. The `any Protocol<Value>` syntax can be used anywhere we can currently reference protocols whereas the `some Protocol<Value>` is a bit more restrained given what it's representative of to the compiler. The `some Protocol<Value>` syntax is limited to the return value for functions, properties, subscripts, etc., parameters to functions, and local variables that are always initialized to the same type (and perhaps others that aren't coming to mind). Because of this restraint we could use `some Protocol<Value>` as a parameter for the initializer of a given type, but if we wanted to set that to a property that property's declaration could not use the `some Protocol<Value>` syntax. Because of this limitation, we could have to use an existential (`any Protocol<Value>`) for the type of the property and then assign the `some` to the `any`. \r\n\r\nIssue:\r\n\r\nThis brings us to the issue. When working with an enumeration where each case has an associated parameter that references a given existential of a parameterized protocol (in the example, using a Combine Publisher). This enumeration also has convenience static methods for initializing a case of the enumeration but with an input parameter that uses the `some` syntax for the protocol it takes in. Upon assignment, or conversion, of the `some` protocol reference to the `any` protocol reference, the application crashes for (seemingly) all iOS versions prior to iOS 16.0 when running with an optimized build (e.g. release). If the same application is ran on iOS 16.0+ or without optimizations (e.g. debug) the crashing code instead succeeds without issue.\r\n\r\nWhen running the sample via Xcode a breadcrumb pertaining to the crash becomes apparent, in the outlined initializer for the existential `any Protocol<Value>` that created in the convenience static methods (i.e. when `some` is converted to `any`) the `__swift_instantiateConcreteTypeFromMangledName` runtime function is called to demangle the type metadata for the existential being created. This function is expected to return the demangled value, however, the function is actually returning `nil`. The code immediately after this function call tries to load the value 8 bytes before the returned pointer, but given that the pointer returned is `0x00` this results in a crash.\r\n\r\nIf I were to speculate, it appears that whatever metadata is embedded into the application at build time is stripped out by the compiler when the optimizations are performed, leaving the application in a state without the metadata it needs at runtime and given that it's running an iOS version prior to iOS 16.0, the runtime components that would allow looking up and resolving this metadata is unavailable to the application leading to a `nil` value to be returned from the `__swift_instantiateConcreteTypeFromMangledName` function, and ultimately a crash. \r\n\r\nAlternatively, it could be that `nil` is a perfectly acceptable return value but the outlined initializer in question should be accounting for this scenario instead of blindly dereferencing the returned pointer."
+    email: Jnewto32@gmail.com
+    modified: "2022-11-15T15:41:04.004718Z"
+    number: FB11792210
+    number_intvalue: 11792210
+    originated: 11/15/2022
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 14.*
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Xcode produces a build that consistently crashes when built with optimizations (release)

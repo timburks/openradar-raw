@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11827110"
+    labels:
+        datastore_id: "1798413"
+data:
+    classification: Serious Bug
+    created: "2012-07-08T19:12:03.787803Z"
+    description: "Summary:\r\n\r\nNotifications registered for NSWorkspace's notification center, using the block syntax do not fire.\r\n\r\nNotifications using the old-school syntax work fine, and if they exist, cause the block-syntax blocks to trigger as well.\r\n\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nRegister a notification handler with:\r\n\r\n  center = [[NSWorkspace sharedWorkspace] notificationCenter];\r\n    [center addObserverForName: nil\r\n                        object: nil\r\n                         queue: nil\r\n                    usingBlock: ^(NSNotification *notification) {\r\n                        NSLog (@\"+++++++ WORKSPACE??? %@ -> %@\", notification.name, notification.userInfo);\r\n                    }];\r\n\r\n\r\nExpected Results:\r\n\r\nA flurry of notifications\r\n\r\n\r\nActual Results:\r\n\r\nnothing\r\n\r\n\r\nRegression:\r\n\r\nIf I register a notification handler with the old-school syntax, it works great.  In fact, the block-based version starts working.\r\n\r\n\r\nNotes:\r\n\r\nA sample project is attached.\r\n\r\n\r\n(OpenRadar folks - here's the function in question)\r\n\r\n\r\n- (void)applicationDidFinishLaunching:(NSNotification *)aNotification\r\n{\r\n    NSNotificationCenter *center;\r\n   \r\n#if 0\r\n    center = [[NSWorkspace sharedWorkspace]\r\n              notificationCenter]; \r\n    \r\n    [center addObserver: self\r\n               selector: @selector(observeWorkspaceStuff:)\r\n                   name: nil\r\n                 object: nil];\r\n#endif\r\n    \r\n    center = [[NSWorkspace sharedWorkspace] notificationCenter];\r\n    [center addObserverForName: nil\r\n                        object: nil\r\n                         queue: nil\r\n                    usingBlock: ^(NSNotification *notification) {\r\n                        NSLog (@\"+++++++ WORKSPACE??? %@ -> %@\", notification.name, notification.userInfo);\r\n                    }];\r\n\r\n}\r\n\r\nRun it as-is, juggle between apps, no notifications show at all.  Change the #if 0  to #if 1  and re-run, and juggle between apps.  Now *both* notifications fire."
+    email: markd@badgertronics.com
+    modified: "2012-07-08T19:12:03.787971Z"
+    number: "11827110"
+    number_intvalue: 11827110
+    originated: 7/8/2012
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.4 11E53
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Block-style notifications not called for workspace notification center

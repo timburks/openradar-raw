@@ -1,0 +1,65 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22743728"
+    labels:
+        datastore_id: "6086161327980544"
+data:
+    classification: Other Bug
+    created: "2015-09-17T19:09:50.71544Z"
+    description: |-
+        Summary:
+        Switching over a pair of items with >1 wildcard incorrectly fails the exhaustiveness checker.
+
+
+        Steps to Reproduce:
+        1. This code:
+        enum E {
+        	case A
+        	case B
+        }
+
+        func f(l: E, r: E) {
+        	switch (l, r) {
+        	case (.A, .A):
+        		return
+        	case (.A, _):
+        		return
+        	case (_, .A):
+        		return
+        	case (.B, .B):
+        		return
+        	}
+        }
+
+
+        Expected Results:
+        should compile
+
+
+        Actual Results:
+        but errors out:
+        rob@Resonance ~/Desktop> swiftc boom.swift
+        boom.swift:16:2: error: switch must be exhaustive, consider adding a default clause
+                }
+                ^
+
+
+        Regression:
+        Replacing either the second or the third `_` with `.B` passes the exhaustiveness check.
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-09-17T19:09:50.7158Z"
+    number: "22743728"
+    number_intvalue: 22743728
+    originated: 17-Sep-2015 03:09 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7B60)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Exhaustiveness check fails exhaustive switch with wildcards'

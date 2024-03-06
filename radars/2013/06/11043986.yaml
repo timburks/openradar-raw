@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11043986"
+    labels:
+        datastore_id: "3134402"
+data:
+    classification: Security
+    created: "2013-06-19T19:09:59.507557Z"
+    description: "13-Mar-2012 07:26 PM W Lewis:\r\nSummary:\r\n\r\nCertain invalid elliptic-curve signatures will cause whatever program tries to evaluate them to exit immediately. This program may be Keychain Access, or it may be your mailreader, or it may be the system 'securityd' daemon.\r\n\r\nSteps to Reproduce:\r\n\r\nAttempt to verify an ECDSA signature which is syntactically valid DER but in which one of the integers is much larger than it should be.\r\n\r\nAttached is a handful of test cases demonstrating the same bug being reached through several APIs:\r\n\r\n1. Open achey_breaky.keychain, select all items, and select the leaf cert. Keychain Access will exit immediately.\r\n\r\nMar 13 18:21:48 slowpoke com.apple.launchd.peruser.5003[231] ([0x0-0x81081].com.apple.keychainaccess[4599]): Exited with exit code: 1\r\n\r\n2. Attempt to verify \"cert2_broken.pem\" using the \"security\" command-line tool. It will abort.\r\n\r\n3. Compile sigcheck.c and run it with the option \"embedded\". It will attempt to verify an ECDSA signature that is broken in a similar way to cert2_broken.pem, and crash.\r\n\r\n4. (My favorite) Compile sigcheck.c and run it with the option \"keychain\". It willl perform the same signature verification as before, except that the SecKeyRef it uses will be obtained from achey_breaky_2.keychain. As a result, the verification will be performed by securityd, which will crash immediately and --- on SL --- render the system almost unusable (can't launch new apps, can't log out).\r\n\r\nMar 13 18:24:20 slowpoke com.apple.launchd[1] (com.apple.securityd[31]): Exited with exit code: 1\r\n[followed by many other system daemons crashing, including ReportCrash crashing and recursively invoking itself]\r\n\r\nExpected Results:\r\n\r\nAn invalid signature should cause a verification failure, not a crash.\r\n\r\nActual Results:\r\n\r\nCrashypoo.\r\n\r\nRegression:\r\n\r\nThe problem is the same on Snow Leopard and on Lion, except that Lion (unlike SL) will restart securityd when it crashes, meaning that the machine does not become nonfunctional.\r\n\r\nNotes:\r\n\r\nObviously, bogus signatures could be introduced to the system in a number of other ways as well --- SSL certificates, S/MIME content, signed applications, WPA2 EAP-TLS, 802.1X, etc etc. Presumably each route would cause the associated daemon or service to crash or hang.\r\n\r\n\r\n\r\n13-Mar-2012 07:26 PM W Lewis:\r\n'bugreport.tar.bz2' and 'slowpoke.spx' were successfully uploaded\r\n\r\n\r\n29-Dec-2014 04:03 PM W Lewis:\r\nProblem persists in 10.9.5/13F34"
+    email: wiml@omnigroup.com
+    modified: "2014-12-30T00:04:17.270316Z"
+    number: "11043986"
+    number_intvalue: 11043986
+    originated: 13-Mar-2012 07:26 PM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '10.6/10.7: Attempting to verify certain signatures will crash task or daemon'

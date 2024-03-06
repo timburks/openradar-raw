@@ -1,0 +1,64 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21558949"
+    labels:
+        datastore_id: "6749157981159424"
+data:
+    classification: Serious Bug
+    created: "2015-06-26T02:39:55.93677Z"
+    description: |-
+        Summary:
+        Backticks to enable the use of keywords as ordinary symbols don’t work in closures with implicit arguments and returns.
+
+
+        Steps to Reproduce:
+        1. Compile this:
+        struct S {}
+        func `if`(S) -> S { return S() }
+        func g(S -> S) {}
+        func h() {
+        	g { `if`($0) }
+        }
+
+
+        Expected Results:
+        Compilation.
+
+
+        Actual Results:
+        Errors:
+        boom.swift:5:9: error: expected expression, var, or let in 'if' condition
+                g { `if`($0) }
+                       ^
+        boom.swift:5:2: error: cannot invoke 'g' with an argument list of type '(() -> _)'
+                g { `if`($0) }
+                ^
+        boom.swift:5:4: note: expected an argument list of type '(S -> S)'
+                g { `if`($0) }
+                  ^
+
+
+        Regression:
+        This doesn’t happen if:
+        1. you add a `return` keyword to the closure.
+        2. you use a first-order value instead of a closure, i.e. f(`if`(S())) where f : S -> ().
+        3. you use a named parameter.
+        4. you pass `if` directly as a referent instead of closing over it, i.e. f(`if`) where f : (S -> S) -> ().
+        5. you get fed up and name the function something else instead. Haha, as if that would ever happen!
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-06-26T02:39:55.93702Z"
+    number: "21558949"
+    number_intvalue: 21558949
+    originated: 25-Jun-2015 10:39 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A121l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2b2: Backticks around keywords are ignored in closures with implicit arguments and returns'

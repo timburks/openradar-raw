@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17156774"
+    labels:
+        datastore_id: "5894043884060672"
+data:
+    classification: Other Bug
+    created: "2014-06-04T19:12:14.255274Z"
+    description: "Summary:\r\nWhen attempting to create a function that receives both a default parameters and a closure, it becomes a impossible to use a trailing closure when specifying an explicit value for one of the default parameters.\r\n\r\nSteps to Reproduce:\r\n1. Open the provided Playground\r\n2. Try to utilize the various foo functions and invocations provided\r\n\r\nExpected Results:\r\nIt is expected that a function with default parameters should also be able to use trailing closures and still maintain the ability to specify values when needed. Such as\r\n\r\ndefine function as (a = 1, closure)\r\n\r\nfunction(){} // Default value is used\r\nfunction(a: 10){} // Custom value is used\r\n\r\nActual Results:\r\nThe compiler was unable to interpret the desired behavior, resulting in trailing closures unable to be utilized in conjunction with default parameters\r\n\r\nVersion:\r\nXcode 6.0 (6A215l), Swift version 1.0 (swift-600.0.34.4.5), OSX 10.9.3 (12D65)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'Playground.playground.zip' was successfully uploaded.\r\n\r\n// Playground - noun: a place where people can play\r\n\r\nimport Cocoa\r\n\r\nfunc foo(done: ((String) -> Void), bar: String = \"default\"){\r\n\tdone(bar)\r\n}\r\n\r\n// It works!, but what if I want to set bar?\r\nfoo(){(bar: String) in\r\n\tprintln(bar)\r\n}\r\n\r\n// No workie\r\n//foo(bar: \"test\"){(bar: String) in\r\n//\tprintln(bar)\r\n//}\r\n\r\n// Ugh I guess rewrite, but works\r\nfoo({(bar: String) in\r\n\tprintln(bar)\r\n}, bar: \"test\")\r\n\r\n\r\n\r\nfunc foo2(bar: String = \"z\", done: ((String) -> Void)){\r\n\tdone(bar)\r\n}\r\n\r\n// No workie\r\n//foo2(){(bar: String) in\r\n//\tprintln(bar)\r\n//}\r\n\r\n// Works now, but still not usage of defaults\r\nfoo2(bar: \"test2\"){(bar: String) in\r\n\tprintln(bar)\r\n}\r\n\r\n\r\nfunc foo3(bar: String = \"z\", _ done: ((String) -> Void) = {x in println(\"default\")}\r\n\t){\r\n\tdone(bar)\r\n}\r\n\r\n// No workie\r\n//foo3(){(bar: String) in\r\n//\tprintln(bar)\r\n//}\r\n\r\n// Works, but no default value\r\nfoo3(bar: \"test3\"){(bar: String) in\r\n\tprintln(bar)\r\n}\r\n\r\n// Works, but useless\r\nfoo3()\r\nfoo3(bar: \"test4\")"
+    email: zachthayer@gmail.com
+    modified: "2014-07-11T20:20:16.129975Z"
+    number: "17156774"
+    number_intvalue: 17156774
+    originated: 04-Jun-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Swift Compiler
+    product_version: Swift version 1.0 (swift-600.0.34.4.5)
+    reproducible: Always
+    resolved: "16535452"
+    status: Duplicate
+    title: 'Swift: Trailing closures do not work with default parameters'

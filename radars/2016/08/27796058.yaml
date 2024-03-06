@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27796058"
+    labels:
+        datastore_id: "4970377226747904"
+data:
+    classification: Enhancement
+    created: "2016-08-10T23:43:57.95608Z"
+    description: "Summary:\r\nIn the resolveDefroster(forSetDefrosterSettingsInCar: INSetDefrosterSettingsInCarIntent) we can prompt a user for more specific information regarding which defroster a user wanted to turn on (front or back), but I found that users have responded more often with \"All of them\" and Siri does not recognize this scenario. \r\n\r\nIn this way, it may make more sense to use an nsarray of defrosters (similar to recipients in messaging Siri extensions) going forward\r\n\r\nSteps to Reproduce:\r\n1. Make CarPlay app with SiriKit that conforms to the INSetDefrosterSettingsInCarIntentHandling protocol.\r\n2. In func resolveDefroster(forSetDefrosterSettingsInCar), use the sample code in the notes below\r\n3. Launch CarPlay and request Siri to \"turn on the defroster\". \r\n4. Siri will respond with \"which defroster?\"\r\n5. Respond with \"all of them\"\r\n\r\nExpected Results:\r\ndefrosters value of type nsarray would exist that contains any defroster a user might have available and can be accessible similar to recipients in INMessage intents.\r\n\r\nActual Results:\r\nuser must specify either front or rear defroster and is unable to say \"all of them\" if an app developer requests needsValue()\r\n\r\nVersion:\r\niOS 10 developer beta 5 (14A5335b)\r\n\r\nNotes:\r\nWritten in Swift 3\r\n\r\nfunc resolveDefroster(forSetDefrosterSettingsInCar intent: INSetDefrosterSettingsInCarIntent, with: (INCarDefrosterResolutionResult) -> Void){\r\n        \r\n        var defroster = INCarDefroster.unknown\r\n        if intent.defroster != .unknown {\r\n            defroster = intent.defroster\r\n        }\r\n        \r\n        switch defroster {\r\n        case .front:\r\n            with(INCarDefrosterResolutionResult.success(with: intent.defroster))\r\n        case .rear:\r\n            with(INCarDefrosterResolutionResult.success(with: intent.defroster))\r\n        case .unknown:\r\n            with(INCarDefrosterResolutionResult.needsValue())\r\n        }\r\n        //with(INCarDefrosterResolutionResult.notRequired())\r\n    }"
+    email: LigerXX@gmail.com
+    modified: "2016-08-10T23:43:57.95626Z"
+    number: "27796058"
+    number_intvalue: 27796058
+    originated: 8/10/16
+    parent_number: '&{NULL_VALUE}'
+    product: Siri
+    product_version: iOS 10
+    reproducible: Always
+    resolved: N/A
+    status: Open
+    title: CarPlay OEM App for SiriKit - INSetDefrosterSettingsInCarIntent doesn't recognize "All of them" when prompted by needsValue()

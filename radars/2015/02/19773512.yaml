@@ -1,0 +1,52 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19773512"
+    labels:
+        datastore_id: "5281404581576704"
+data:
+    classification: Other Bug
+    created: "2015-02-09T23:48:02.292202Z"
+    description: |-
+        Summary:
+        When calling a method that is also the declared getter for a property, the unused-getter-return-value warning is given when the return value of that method call are unused.
+
+        Steps to Reproduce:
+
+        @interface Model
+        @property (nonatomic, readonly, getter=getOrCreateGroup) id group;
+        @end
+        @implementation Model {
+            id _group;
+        }
+        - (void)method {
+            [self getOrCreateGroup];
+        }
+        - (id)getOrCreateGroup {
+            if (!_group) {
+                _group = @"group"; // Perform potentially mutating method
+            }
+            return _group;
+        }
+        @end
+
+        Expected Results:
+        There should be no warning on `[self getOrCreateGroup]` since it is a method call, not accessing the property through dot syntax.
+
+        Actual Results:
+        An unused-getter-return-value warning is given.
+
+        Regression:
+        This warning is not given in Xcode 6.2 Beta and before, is given in 6.3 Beta 1.
+    email: segiddins@gmail.com
+    modified: "2015-02-09T23:48:02.292428Z"
+    number: "19773512"
+    number_intvalue: 19773512
+    originated: 09-Feb-2015 03:47 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-6.3-Beta (6D520o)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode-6.3-Beta (6D520o): Incorrect -Wunused-getter-return-value warning'

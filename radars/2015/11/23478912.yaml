@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23478912"
+    labels:
+        datastore_id: "5037110566322176"
+data:
+    classification: Data loss
+    created: "2015-11-10T10:34:45.706Z"
+    description: "Summary:\r\nWhen using a background NSURLSession, if a long running task is called synchronously (eg, unzipping a file) in \r\nURLSession:downloadTask:didFinishDownloadingToURL:\r\nwhen the app is relaunched in the background, subsequent calls to that method for the other downloads will not run, and the app will never receive notification that those downloads completed.\r\n\r\nSteps to Reproduce:\r\n1. Create background session\r\n2. Begin several background downloads (3 is a good demo number for this)\r\n3. Background app\r\n4. Wait for application:handleEventsForBackgroundURLSession:completionHandler: to be called\r\n5. Wait for URLSession:downloadTask:didFinishDownloadingToURL: to be called for the first download\r\n6. Run a long running task (unzipping a file is a good real world example, but you can sleep() to the same effect) from that method\r\n7. App will eventually time out (expected), but the tasks that didn't ever send delegate completed messages are lost forever (unexpected)\r\n\r\nExpected Results:\r\nApp would be woken up again and notified of subsequent task completion, or notified on next launch. At a minimum, those downloads should receive an error message.\r\n\r\nActual Results:\r\nTasks are lost. App is never notified of their completion, and they are not recoverable via getTasksWithCompletionHandler:\r\n\r\nObviously the correct solution here is to not block the calling thread, but data loss isn't a great outcome (and SUPER annoying/non-obvious to debug, as there's no errors reported)\r\n\r\nVersion:\r\nXcode 7.1.1\r\n\r\nNotes:\r\nSample project: https://github.com/maxdisney/urlsession_loss\r\n\r\nConfiguration:\r\nNot config dependent, but tested on iOS 9.1 iPhone 6S\r\n\r\nAttachments:"
+    email: goedm003@apps.disney.com
+    modified: "2015-11-10T10:34:45.70631Z"
+    number: "23478912"
+    number_intvalue: 23478912
+    originated: 10-Nov-2015 02:33 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "9.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Background NSURLSession data loss if callback thread blocked

@@ -1,0 +1,66 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20171408"
+    labels:
+        datastore_id: "5866465563508736"
+data:
+    classification: Security
+    created: "2015-03-16T11:49:13.982165Z"
+    description: |-
+        Summary:
+        ========
+
+        There seems to be an information leak from the system wide daemon (LaunchDaemon) /usr/libexec/discoveryd to arbitrary user processes. The information seems to be leaked through the CNAME (((struct addrinfo *)info)->ai_canonname field) returned from eg. getattrinfo(3). The program using getaddrinfo can receive data which looks very much like arbitrary (specially escaped) address space content from discoveryd.
+
+        The problem in discoveryd seems to be that doesn't handle DNS message compression correctly (see section "4.1.4. Message compression" in RFC 1035 [1]). It does handle message compression pointers to ordinary DNS labels correctly however it seems to fail if DNS message compression pointers point to other DNS message compression pointers.
+
+        Example:
+
+        Assuming a DNS query to mail.aYa.com, a DNS server might respond with
+
+        000  7e 6d 81 80 00 01 00 02  00 00 00 00 04 6d 61 69  |~m...........mai|
+        010  6c 03 61 59 61 03 63 6f  6d 00 00 01 00 01 c0 0c  |l.aYa.com.......|
+        020  00 05 00 01 00 00 0e 0e  00 02 c0 11 c0 2a 00 01
+        030  00 01 00 00 0e 0e 00 04  7f 00 00 01
+
+        This response contains a CNAME record (bytes 0x1e to 0x2b in the whole packet above):
+
+        c0 0c 00 05 00 01 00 00 0e 0e 00 02 c0 11
+
+        It's not that interesting, the only interesting thing is that the byte sequence "c0 11" references byte 0x11 in the packet to refer to the CNAME. The bytes starting at 0x11 are "03 61 59 61 03 63 6f 6d 00 00" which corresponds to "aYa.com". So name compression worked well and saved a couple of bytes.
+
+        The response does also contain an A record (bytes 0x2c to 0x3d in the packet above):
+
+        c0 2a 00 01 00 01 00 00 0e 0e 00 04 7f 00 00 01
+
+        The A record is a bit more interesting because it's name (again "aYa.com") doesn't reference the initial reference of "aYa.com" directly but references the CNAME we saw earlier at bytes 0x2a. Again, the CNAME field is "c0 11" which is a reference to "aYa.com".
+
+        So the A record's name references the CNAME which references the actual labels.
+
+        It turns out, discoveryd doesn't not seem to cope well with recursive DNS name compression pointers.
+
+        The problem is also illustrated in the attached image packet-picture.png (also available [4]).
+
+        This ticket contains an example DNS server that reproduces this problem for every domain on every request. Most DNS servers we have tested do not exhibit this problem (as they don't seem to use recursive DNS name compression pointers). We have however seen one real DNS server that triggered this problem repeatedly in OS X Yosemite. The DNS server triggering that problem is a Microsoft Windows 2008 R2 DNS Server (Active Directory).
+
+
+        Steps to Reproduce:
+        ===================
+
+        1. Download the attached program `pydns.py` (also available at [2]) which is a DNS server which replies with packets as described above, always pointing to 127.0.0.1
+        2. Run it as root (`sudo python pydns.py`)
+        3. Configure the only DNS server in the system to be "127.0.0.1"
+        4. Run `ping -c1 mail.aYa.com`
+    email: weissismail@gmail.com
+    modified: "2015-03-16T11:49:13.982303Z"
+    number: "20171408"
+    number_intvalue: 20171408
+    originated: 16-Mar-2015 11:49 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: Mac OS X 10.10.2 (14C1510)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Mac OS X 10.10.2: Information leak from discoveryd (''s address space) caused by valid DNS server responses'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27925651"
+    labels:
+        datastore_id: "5046035223150592"
+data:
+    classification: Serious Bug
+    created: "2016-08-19T16:58:28.55299Z"
+    description: "Summary:\r\nHTTPURLResponse normalizes header names following RFC 2616 as described in https://developer.apple.com/reference/foundation/httpurlresponse/1417930-allheaderfields\r\n\r\nAccess to these header values is case-insensitive as described in the documentation. This is broken in the latest Xcode8 beta6. The access is now case-sensitive.\r\n\r\nAdditionally the \"ETag\" header name is normalized to \"Etag\" instead of \"ETag\" as described in RFC 2616\r\n\r\nThis works correctly on Xcode8 beta4\r\n\r\nSteps to Reproduce:\r\nRun following Swift code:\r\n\r\nlet url = URL(string: \"http://www.apple.com\")!\r\n\r\nlet headers = [\r\n    \"ETag\" : \"123456\",\r\n    \"content-type\": \"application/json\",\r\n    ]\r\n\r\nlet urlResponse = HTTPURLResponse(url: url,\r\n                                  statusCode: 200,\r\n                                  httpVersion: nil,\r\n                                  headerFields: headers)\r\n\r\nprint(\"ETag: \\(urlResponse?.allHeaderFields[\"ETag\"])\")\r\nprint(\"Etag: \\(urlResponse?.allHeaderFields[\"Etag\"])\")\r\nprint(\"ETAG: \\(urlResponse?.allHeaderFields[\"ETAG\"])\")\r\nprint(\"etag: \\(urlResponse?.allHeaderFields[\"etag\"])\")\r\nprint(\"content-type: \\(urlResponse?.allHeaderFields[\"content-type\"])\")\r\nprint(\"Content-Type: \\(urlResponse?.allHeaderFields[\"Content-Type\"])\")\r\nprint(\"CONTENT-TYPE: \\(urlResponse?.allHeaderFields[\"CONTENT-TYPE\"])\")\r\n\r\n\r\nSame code in Objective-C works as expected:\r\n\r\nNSURL *url = [[NSURL alloc] initWithString:@\"http://www.apple.com\"];\r\n\r\nNSDictionary *headers = @{\r\n                          @\"ETag\": @\"123456\",\r\n                          @\"content-type\": @\"application/json\",\r\n\r\n                          };\r\n\r\nNSURL *url = [[NSURL alloc] initWithString:@\"http://www.apple.com\"];\r\n\r\nNSDictionary *headers = @{\r\n                          @\"ETag\": @\"123456\",\r\n                          @\"content-type\": @\"application/json\",\r\n\r\n                          };\r\n\r\nNSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:url\r\n                                                          statusCode:200\r\n                                                         HTTPVersion:nil\r\n                                                        headerFields:headers];\r\n\r\nNSLog(@\"Headers: %@\", response.allHeaderFields);\r\n\r\nNSLog(@\"ETag: %@\", response.allHeaderFields[@\"ETag\"]);\r\nNSLog(@\"Etag: %@\", response.allHeaderFields[@\"Etag\"]);\r\nNSLog(@\"etag: %@\", response.allHeaderFields[@\"etag\"]);\r\nNSLog(@\"ETAG: %@\", response.allHeaderFields[@\"ETAG\"]);\r\nNSLog(@\"content-type: %@\", response.allHeaderFields[@\"content-type\"]);\r\nNSLog(@\"Content-Type: %@\", response.allHeaderFields[@\"Content-Type\"]);\r\nNSLog(@\"CONTENT-TYPE: %@\", response.allHeaderFields[@\"CONTENT-TYPE\"]);\r\n\r\n\r\nExpected Results:\r\nHeaders: Optional([AnyHashable(\"Content-Type\"): application/json, AnyHashable(\"Etag\"): 123456])\r\nETag: Optional(123456)\r\nEtag: Optional(123456)\r\nETAG: Optional(123456)\r\netag: Optional(123456)\r\ncontent-type: Optional(application/json)\r\nContent-Type: Optional(application/json)\r\nCONTENT-TYPE: Optional(application/json)\r\n\r\nActual Results:\r\nHeaders: Optional([AnyHashable(\"Content-Type\"): application/json, AnyHashable(\"Etag\"): 123456])\r\nETag: nil\r\nEtag: Optional(123456)\r\nETAG: nil\r\netag: nil\r\ncontent-type: nil\r\nContent-Type: Optional(application/json)\r\nCONTENT-TYPE: nil\r\n\r\nVersion:\r\nVersion 8.0 beta 6 (8S201h)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: alex.sporn@gmail.com
+    modified: "2016-08-19T16:58:28.55327Z"
+    number: "27925651"
+    number_intvalue: 27925651
+    originated: 19-Aug-2016
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Version 8.0 beta 6 (8S201h)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Regression: HTTPURLResponse allHeaderFields is now case-sensitive'

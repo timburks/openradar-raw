@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23706636"
+    labels:
+        datastore_id: "6121668728586240"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-12-01T17:39:04.50712Z"
+    description: "[Want to discuss? Get in touch with me @jamesreggio.]\r\n\r\nOne of the primary value propositions of SFSafariViewController is its sandbox. The sandbox should work in both directions. The obvious direction is that the host app should have no access to the browser process. The less obvious direction is that the browser should have no ability to impact the host app beyond what is defined in the SFSafariViewControllerDelegate. This latter aspect is broken.\r\n\r\nMore specifically, when the SFSafariViewController remote process crashes, it crashes the host app with absolutely no notification. It is not possible to observe these crashes in a debugger, nor are any crash logs uploaded to Apple for later inspection by the host app developer. (At least, not to my understanding.)\r\n\r\nIf there is one constant with web browsers, it's that they have bugs which people will consistently find and exploit. If a WebView is not properly isolated from the host app, the host app takes on all of the risk of bugs and crashes of the WebView, despite having no control over the code within the WebView. This is an unfortunate state of affairs, and could lead to DoS attacks on end-users, wherein attackers entice users to click poisonous links to induce a crash.\r\n\r\n(It's worth noting that when the remote WKWebView process crashes, it does not crash the host app. This is a problem specifically with SFSafariViewController.)\r\n\r\nSteps to Reproduce:\r\n1. Load the app referenced below *on a physical device*.\r\n2. Tap the 'Bugs' tab bar item.\r\n3. Tap the 'Large Resources OOM Crash' button.\r\n4. Wait for several minutes for the many large image resources to exhaust the remote process of memory.\r\n\r\nExpected Results:\r\nA number of better things could happen here:\r\n1. The host app crashes, but in a manner that is interceptable.\r\n2. The SFSafariViewController goes blank.\r\n3. The SFSafariViewController dismisses itself and sends the safariViewControllerDidFinish: message.\r\n\r\nActual Results:\r\nInstead, the host app eventually terminates. If a debugger is attached, it simply becomes detached (with no exception or breakpoints triggered) and asks to be manually re-attached.\r\n\r\nVersion:\r\niOS 9.1 (13B137)\r\n\r\nNotes:\r\nThe sample project is available on GitHub here:\r\nhttps://github.com/jamesreggio/SFSafariViewControllerPlayground\r\n\r\nIt is important to reproduce this issue on an actual device since the simulators are not subject to the same memory restrictions.\r\n\r\nThe crash is being forced via native memory exhaustion using excessively large images because this is a timelessly reliable way to crash a browser. I imagine this bug also reproduces using other unpatched known browser exploits or a simple, forced SEGFAULT within the remote process.\r\n\r\nConfiguration:\r\niPhone 6 on iOS 9.1 (13B137)"
+    email: james.reggio@gmail.com
+    modified: "2016-01-16T20:33:22.91361Z"
+    number: "23706636"
+    number_intvalue: 23706636
+    originated: 12/01/2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9.1 (13B137)
+    reproducible: Always
+    resolved: Fixed in iOS 9.2
+    status: Fixed
+    title: A crash in the remote SFSafariViewController process will crash the host process with no notification

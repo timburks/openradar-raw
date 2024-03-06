@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23255528"
+    labels:
+        datastore_id: "5595026281201664"
+data:
+    classification: UI/Usability
+    created: "2015-10-26T10:49:45.48464Z"
+    description: "Summary:\n\nIn PSPDFKit we're using UIScrollView content insets to center PDF page views inside the viewport. In order to correctly center pages of certain sizes, we might end up with values that are fractions (say contentInset = UIEdgeInsetsMake(0, 7.5, 0, 7.5)). Setting insets like that works fine.\n\nIn order to correctly position the page, the contentOffset also needs to be adjusted according to to set contentInset. In the above case contentOffset.x would need to be -7.5.\n\nWe noticed that while sometimes this works fine, we also get cases where the set contentInset gets rounded to the nearest integer (-8.0 for the given example). This seems to be especially true during initial view setup. This breaks out layout code and leaves us with incorrectly positioned pages and small gaps.\n\nSteps to Reproduce:\n\nOpen ScrollViewCenteringExample on the iPad simulator, running iOS 9. In the console you’ll see output that is the result of an overridden UIScrollView setContentOffset: method. \n\nSet: {0, 0}, Applied: {0, 0}\nSet: {0, 0}, Applied: {0, 0}\nSet: {-8, 0}, Applied: {-8, 0}\nSet: {-7.5, 0}, Applied: {-8, 0}\n\nObserve that we’re setting fractional scroll offsets, but the end result is a rounded value. \n\nExpected Results:\n\nThe value would not be rounded (offset -7.5, 0). \n\nActual Results:\n\nThe content offset is rounded (offset -8, 0) and the page is off-center. \n\nRegression:\n\nThe rounding is not always applied. The end results seem to be very depended on the sequence of (internal layout) methods called. For example, when the above project used Auto Layout to lay out the scroll view in the storyboard, the content was not offset at the end, but there were still intermediate states where the content offset was incorrect (rounded). \n\nSet: {0, 0}, Applied: {0, 0}\nSet: {0, 0}, Applied: {0, 0}\nSet: {0, 0}, Applied: {0, 0}\nSet: {-7.5, 0}, Applied: {-8, 0}\nSet: {-7.5, 0}, Applied: {-7.5, 0}\n\nNotes:\n\nDigging into the code with the debugger revealed that using -[UIScrollView setContentInset:] triggers -[UIScrollView(UIScrollViewInternal) _adjustContentOffsetIfNecessary] which sets rounded values for the contentOffset. We tried to manually correct the value by setting the contentOffset explicitly after setting the inset, but noticed that even setContentOffset rounds internally. This appears to be only happening in some cases, mainly depending on the value of two private UIScrollView flags (disableContentOffsetRounding and alwaysDisableContentOffsetRounding)."
+    email: matej@bukovinski.com
+    modified: "2015-10-26T10:49:45.48498Z"
+    number: "23255528"
+    number_intvalue: 23255528
+    originated: 26-Oct-2015 11:49 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 8.x, 9.x
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIScrollView ignores fractional content offsets in some cases

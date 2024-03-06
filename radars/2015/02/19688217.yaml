@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19688217"
+    labels:
+        datastore_id: "5502121877176320"
+data:
+    classification: Serious Bug
+    created: "2015-02-02T20:15:53.26849Z"
+    description: "Summary:\n\nUsing property observers on a @NSManaged property in Swift leads to runtime crashes. \n\nConsider an NSManagedObject defined like this:\n\nclass Entity: Base {\n    // Comment this and everything works as expected \\o/\n    override var lol: String { willSet {} }\n}\n\nclass Base: NSManagedObject {\n    @NSManaged var lol: String\n}\n\nUsing the given property will result in a runtime crash:\n\nlet entity = NSEntityDescription.insertNewObjectForEntityForName(\"Entity\", inManagedObjectContext: managedObjectContext!) as Entity\nentity.lol = \"LOL!\"\n\nSteps to Reproduce:\n\nRun the attached example project. \n\nExpected Results:\n\nIt works, just as it does without property observers (comment line 14 of Entity.swift to see that behaviour). Alternatively, it could not compile if there is no way to support Swift property observers on @NSManaged properties.\n\nActual Results:\n\nCrash:\n\n(lldb) bt\n* thread #1: tid = 0x1e4ca3, 0x0000000000000000, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=1, address=0x0)\n    frame #0: 0x0000000000000000\n  * frame #1: 0x000000010f6c7f22 LOLSwift`LOLSwift.AppDelegate.application (application=0x00007fdbca40f280, launchOptions=None, self=0x00007fdbca41c520)(ObjectiveC.UIApplication, didFinishLaunchingWithOptions : Swift.Optional<Swift.Dictionary<ObjectiveC.NSObject, Swift.AnyObject>>) -> Swift.Bool + 738 at AppDelegate.swift:20\n   […]\n\nRegression: -\n\nNotes: -"
+    email: neocool2@googlemail.com
+    modified: "2015-02-02T20:15:53.268679Z"
+    number: "19688217"
+    number_intvalue: 19688217
+    originated: 02-Feb-2015 09:15 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "8.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Using Swift property observers breaks @NSManaged

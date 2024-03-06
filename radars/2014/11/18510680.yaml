@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18510680"
+    labels:
+        datastore_id: "5257829237653504"
+data:
+    classification: Performance
+    created: "2014-11-17T04:30:57.854167Z"
+    description: "Summary:\r\nSee the attached sample project.\r\n\r\nclass SampleClass {\r\n\r\n    enum LogLevel: Int, Comparable {\r\n        case Verbose = 0\r\n        case Debug\r\n        case Info\r\n        case Error\r\n    }\r\n\r\n    var outputLogLevel: LogLevel = .Verbose\r\n\r\n    class func defaultInstance() -> SampleClass {\r\n        struct statics {\r\n            static let instance: SampleClass = SampleClass()\r\n        }\r\n        return statics.instance\r\n    }\r\n\r\n    func isEnabledForLogLevel(logLevel: SampleClass.LogLevel) -> Bool {\r\n        return logLevel >= self.outputLogLevel\r\n    }\r\n\r\n    func exec(logLevel: LogLevel = .Verbose, closure: () -> () = {}) {\r\n// START CODE BLOCK 1\r\n        if (!isEnabledForLogLevel(logLevel)) { return }\r\n// END CODE BLOCK 1\r\n\r\n        closure()\r\n    }\r\n\r\n// START CODE BLOCK 2\r\n    class func verboseExec(closure: () -> () = {}) {\r\n        self.defaultInstance().exec(logLevel: SampleClass.LogLevel.Verbose, closure: closure)\r\n    }\r\n// END CODE BLOCK 2\r\n}\r\n\r\nfunc < (lhs:SampleClass.LogLevel, rhs:SampleClass.LogLevel) -> Bool {\r\n    return lhs.rawValue < rhs.rawValue\r\n}\r\n\r\nThe SampleClass exhibits some very strange behaviour.\r\nWhen built with the Swift compiler optimization level set to None, it builds without errors.\r\nWhen the optimization level is Fastest (or Fastest, Unchecked), there are build errors:\r\n    Swift Compiler Error\r\n    - Command failed due to signal: Segmentation fault: 11\r\n    Ditto Error\r\n    - Command /usr/bin/ditto failed with exit code 1\r\n    Apple Mach-O Linker Error\r\n    - Linker command failed with exit code 1 (use -v to see invocation)\r\n    Dsymutil Error\r\n    - error: unable to open executable '...'\r\n\r\nI've stripped this class down to the bare minimum needed to see the problem.\r\n\r\nBuilt as is, with -O, and with all code below enabled, you'll see the build errors in Xcode 6.1 GM (6A1042b).\r\n\r\nHere is were it gets really strange.\r\n\r\nTest 1)\r\n    Start with no code commented out.\r\n    Comment out the line: \"case Error\" from the LogLevel enum, reducing it to 3 options, and the code will build.\r\n    Same effect for Debug or Info. Can't comment out Verbose as it's used elsewhere in the class as the default value.\r\n    How can having 4+ options cause a build failure, while 3 works fine?\r\n\r\nTest 2)\r\n    Start with no code commented out.\r\n    Comment out the Code Block 1: \"if (!isEnabledForLogLevel(logLevel)) { return }\"\r\n    The code builds again.\r\n\r\nTest 3)\r\n    Start with no code commented out.\r\n    Comment out the Code Block 2, the entire class func verboseExec()\r\n    The code builds again.\r\n\r\nTest 4)\r\n    Start with no code commented out.\r\n    Change the build settings to use Optimization Level None.\r\n    The code builds again.\r\n\r\nSomething here is really borking the compiler.\r\n\r\nSteps to Reproduce:\r\nBuild the sample project attached.\r\n\r\nExpected Results:\r\nCompile cleanly.\r\n\r\nActual Results:\r\nDoes not compile:\r\n\r\n    Swift Compiler Error\r\n    - Command failed due to signal: Segmentation fault: 11\r\n    Ditto Error\r\n    - Command /usr/bin/ditto failed with exit code 1\r\n    Apple Mach-O Linker Error\r\n    - Linker command failed with exit code 1 (use -v to see invocation)\r\n    Dsymutil Error\r\n    - error: unable to open executable '...'\r\n\r\n\r\nVersion:\r\nXcode 6.1 GM (6A1042b) on Mavericks 10.9.5.\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\n\r\nNote: Sample project file: http://cl.ly/1G0c0F2D2p0Z\r\nIf the link breaks, you can add the code above to a blank Swift project and recreate it.\r\n\r\nProblem still exists in Xcode 6.1.1 GM"
+    email: dave@cerebralgardens.com
+    modified: "2014-11-17T04:30:57.854424Z"
+    number: "18510680"
+    number_intvalue: 18510680
+    originated: 01-Oct-2014 00:07 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6, up to and including Xcode 6.1.1 GM
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift Compiler crashes when trying to compile the attached sample project when optimization is set to Fastest

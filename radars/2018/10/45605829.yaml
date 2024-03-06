@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "45605829"
+    labels:
+        datastore_id: "4984326173229056"
+data:
+    classification: bug
+    created: "2018-10-30T17:24:49.080897Z"
+    description: "Summary:\r\nIt appears that the value returned by the \"count\" method on NSMutableDictionary is truncated modulo 0x2000000. NSDictionary is not affected.\r\nFor instance, invoking \"count\" on a mutable dictionary which contains exactly 0x2000000 items will return 0. Also, in that case, the methods \"allKeys\" and \"allValues\" return empty arrays.\r\nEnumerating the dictionary shows that items are still there, and it is possible to count them with a simple for loop.\r\n\r\nSteps to Reproduce:\r\nTake a look at the small attached Objective-C program.\r\n\r\n-----------------------------------------------------------------------------------------\r\n#import <Foundation/Foundation.h>\r\n\r\n\r\nint main (int argc, char const *argv[]) {\r\n    NSMutableArray *a = [NSMutableArray array];\r\n    for (uint64_t x=1; x<=0x2123456; x++) {\r\n        [a addObject:@(x)];\r\n    }\r\n\r\n    NSLog(@\"Array count: 0x%lx (should be 0x2123456)\", a.count);\r\n    \r\n    NSDictionary *d1 = [NSDictionary dictionaryWithObjects:a forKeys:a];\r\n    NSMutableDictionary *d2 = [d1 mutableCopy];\r\n    NSLog(@\"Count on built NSDictionary:        0x%lx (should be 0x2123456)\", d1.count);\r\n    NSLog(@\"Count on built NSMutableDictionary: 0x%lx (should be 0x2123456)\", d2.count);\r\n    \r\n    NSMutableDictionary *d = [NSMutableDictionary dictionary];\r\n    for (uint64_t x=1; x<=0x2123456; x++) {\r\n        d[@(x)] = @(x);\r\n        if (d.count != x) {\r\n            NSLog(@\"count = 0x%lx (should be 0x%llx)\", d.count, x);\r\n            NSLog(@\"keys: %@\", d.allKeys);\r\n            NSLog(@\"values: %@\", d.allValues);\r\n\r\n            __block uint64_t cnt1 = 0;\r\n            [d enumerateKeysAndObjectsUsingBlock:^(id key, id object, BOOL *stop) { cnt1++; }];\r\n            NSLog(@\"Counting by hand with enumerateKeysAndObjectsUsingBlock: = 0x%llx (should be 0x%llx)\", cnt1, x);\r\n\r\n            uint64_t cnt2 = 0;\r\n            for (id k in d) { cnt2++; }\r\n            NSLog(@\"Counting by hand with a for loop = 0x%llx (should be 0x%llx)\", cnt2, x);\r\n\r\n            break;\r\n        }\r\n    }\r\n\r\n    return 0;\r\n}"
+    email: vbenony@gmail.com
+    modified: "2018-10-30T17:24:49.081106Z"
+    number: "45605829"
+    number_intvalue: 45605829
+    originated: 2018/10/26
+    parent_number: '&{NULL_VALUE}'
+    product: Foundation
+    product_version: ""
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: NSMutableDictionary count / allKeys / allValues inconsistencies on big collections

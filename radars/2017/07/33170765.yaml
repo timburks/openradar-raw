@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33170765"
+    labels:
+        datastore_id: "6713870815068160"
+data:
+    classification: Serious Bug
+    created: "2017-07-07T00:03:45.84134Z"
+    description: "Summary:\r\nDepending on the way a segue is added to the storyboard it can eventually have the wrong action tag in the xml storyboard file. For example, if when creating a segue you choose kind 'showDetail', if you use the inspector to change it to a 'show', then when you examine the xml file the segue still and incorrectly has action=\"showDetailViewController:sender:\". This glitch has serious implications for how view controllers are presented, especially when using a split-view controller, as demonstrated in the steps to reproduce and attached sample application.\r\n\r\nSteps to Reproduce:\r\n1. Create a new iOS, master-detail, universal project named ShowTest.\r\n2. Select the Main.storyboard to open it.\r\n3. Delete the relationship segue between the top nav controller and the Master table view controller.\r\n4. Move the Master a bit to the right to free space for a new controller.\r\n5. Drag in a View Controller from the object library into the space.\r\n6. Right click the primary nav controller and drag from Triggered Segues->root view controller to the new view controller.\r\n7. Drag a button from the object library onto the new view controller.\r\n8. Right click the button and drag from Triggered Segues->action to the Master table view controller and choose Show Detail. (It is essential that you select Show Detail at this point).\r\n9. Select the new segue and in the inspector change its kind to Show. (this step is causing the bug to happen)\r\n10. Run the app on the iPhone simulator (e.g. iPhone 7)\r\n11. When the app has launched first click the button, then on next view click the +, then click on the table cell created.\r\n\r\nExpected Results:\r\nThe detail view controller should be pushed onto the navigation controller.\r\n\r\nObserved Results:\r\nThe detail view controller is instead shown modally. Open the Main.storyboard in a text editor, e.g. TextMate. Search for the term:\r\nkind=\"show\"\r\n\r\nYou will see the segue incorrectly has the action designed for a showDetail segue:\r\n<segue destination=\"7bK-jq-Zjz\" kind=\"show\" action=\"showDetailViewController:sender:\" id=\"w2W-0A-Kpr\"/>\r\n\r\nThe segue should really be (note the showView instead of showDetailView):\r\n<segue destination=\"7bK-jq-Zjz\" kind=\"show\" action=\"showViewController:sender:\" id=\"w2W-0A-Kpr\"/>\r\nOr since this action is the default, just:\r\n<segue destination=\"7bK-jq-Zjz\" kind=\"show\" id=\"w2W-0A-Kpr\"/>\r\n\r\nIf you delete the segue and go back to step 8 and create the segue using show, then you will experience the correct behaviour. Thus the bug only appears when initially choosing  a showDetail segue and consequently changing it to a show.\r\n\r\nVersion:\r\nXcode 8 & 9\r\nmacOS 10.12.5 (16F73)\r\n\r\nNotes:\r\nProject in its erroneous condition is attached and is ready to run."
+    email: indiekiduk@gmail.com
+    modified: "2017-07-07T00:03:45.84162Z"
+    number: "33170765"
+    number_intvalue: 33170765
+    originated: 7/7/2017
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 8 & 9
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode: Storyboard segues can have wrong action'

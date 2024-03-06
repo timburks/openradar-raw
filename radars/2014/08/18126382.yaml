@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18126382"
+    labels:
+        datastore_id: "6165852231565312"
+data:
+    classification: Other Bug
+    created: "2014-08-25T23:22:00.845309Z"
+    description: "Summary:\r\nRemoving a CALayer with a endlessly repeating animation from layer tree and later adding it back ends up with odd state.\r\n\r\nAfter removing the layer, the animation calls animationDidStop:finished:. It is understandable because I believe the system stops the animation when its layer is detached from the layer tree.\r\n\r\nHowever, after adding the layer back to the layer tree, the animation is still going on. In one aspect, it is understandable because the animation is endlessly repeating. But, the animation does not call animationDidStart: again. So its delegate thinks it is still in stop state.\r\n\r\nWhat's even worse is that [layer animationForKey:animationKey] now returns nil even though the animation is still going on. So in effect, the animation is lost because I can not get the reference to it from the layer.\r\n\r\nThe most odd thing is that the animation can still be stopped by calling [layer removeAnimationForKey:animationKey] even though [layer animationForKey:animationKey] returns nil.\r\n\r\nAs you can see, quite a lot of things are inconsistent in this state.\r\n\r\nSteps to Reproduce:\r\n1. Launch sample app.\r\n2. Tap Remove button to remove the rotating view and read console log.\r\n3. Tap Add Back button to add the rotating view back and read console log.\r\n4. Tap Stop button to stop the rotating animation and read console log.\r\n\r\nExpected Results:\r\n1. CAAnimation delegate calls match the reality.\r\n2. CALayer should always return the animation from animationForKey: if the animation is still going on.\r\n\r\nActual Results:\r\n1. Animation is still going one after it calls animationDidStop:finished:.\r\n2. [CALayer animationForKey:] returns nil even though the animation is still going on.\r\n\r\nSample code:\r\nhttp://cl.ly/3w0q2c3U1h2X"
+    email: an00na@gmail.com
+    modified: "2014-08-25T23:22:00.845546Z"
+    number: "18126382"
+    number_intvalue: 18126382
+    originated: 25-Aug-2014 06:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 7 & 8
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Repeating animation bug

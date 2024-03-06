@@ -1,0 +1,46 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20099385"
+    labels:
+        datastore_id: "6171973029724160"
+data:
+    classification: UI/Usability
+    created: "2015-03-10T00:20:05.266389Z"
+    description: |-
+        Summary:
+        When using a ternary operator, the error “Could not find an overload for == that accepts the supplied arguments” will display when the problem is actually not related to the == operator at all.
+
+        Steps to Reproduce:
+        Open the attached playground, and note the code:
+
+        let number: Int = 1
+        let text: String = number == 0 ? "" : number
+
+        Of course, the above code doesn’t build because Swift can’t automatically cast number to a String. The error message is very confusing however: it complains about == and highlights the whole expression. If you break out the equality check, you get more helpful, but still confusing errors:
+
+        let boolean: Bool = number == 0
+        let text2: String = boolean ? "" : number
+
+        This will give you “_ is not convertible to StringLiteralConvertible” indicating the empty string. Hidden inside that is the actually useful error “Int is not convertible to String”, though both errors in Xcode indicate the “” as the issue.
+
+        Expected Results:
+        It should show the error “Int is not convertible to String” indicated at the use of “number” in the ternary expression.
+
+        Actual Results:
+        The error message “Could not find an overload for ‘==‘ that accepts the supplied arguments”
+
+        Regression:
+        Tested on Swift 1.2 in Xcode 6.3b2.
+    email: ajpike@gmail.com
+    modified: "2015-03-10T00:20:05.266508Z"
+    number: "20099385"
+    number_intvalue: 20099385
+    originated: 09-Mar-2015 05:19 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.3b2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2: Misleading "could not find an overload" compiler error'

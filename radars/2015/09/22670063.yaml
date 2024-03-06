@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22670063"
+    labels:
+        datastore_id: "5039631879897088"
+data:
+    classification: Serious Bug
+    created: "2015-09-11T23:11:32.04641Z"
+    description: "Summary:\r\nOn an iOS 9.0 iPad, tap coordinates are reported incorrectly if the app is on the right-hand side (using slide-over, split-view or side-by-side mode)\r\n\r\nSteps to Reproduce:\r\n1) Build and run attached Xcode project in Xcode 7.0 (7A218) on an iPad, or iPad simulator\r\n2) Home-screen the app\r\n3) Open another app (e.g. Mobile Safari)\r\n4) Bring iOS9WindowOffset app to the right-hand side using slide-over.\r\n5) Tap in the bottom left corner\r\n\r\n\r\nExpected Results:\r\nThe “Current coordinate space point” should report the tap as being in the bottom left of the window.\r\n\r\nActual Results:\r\nThe “Current coordinate space point” is actually negative, because iOS internally is converting the touch point (e.g. 0, 0) against the shifted over frame of the window (e.g. 448, 0), even though the window’s origin is reported to the app as (0,0).\r\n\r\nRegression:\r\nIn older betas, I’ve been told this was working as expected, and that the actual window frame was not “leaked” as in this case.\r\n\r\nNotes:\r\nEssentially the tap code should be:\r\nCGPoint touchPoint = [recognizer locationInView:nil];\r\ntouchPoint = [window convertPoint:touchPoint fromCoordinateSpace:window.screen.fixedCoordinateSpace];\r\n\r\n… but with the bug above, you have to determine the actual non-zero window frame, and then apply a translation to the converted point.\r\n\r\nWith this bug, it’s possible to determine the actual, non-zero window frame of your app, something which Apple engineers said should not be possible. While this might actually be useful for developers, the incorrect conversion of the touch point means every app developer has to calculate the actual window offset and then “translate” the converted point to the actually usable point.\r\n\r\nI’ve attached the Xcode project, but in case you can’t get it, download it as a zip from: http://cl.ly/1Y080C2B192c"
+    email: rsattar@gmail.com
+    modified: "2015-09-12T00:00:58.61951Z"
+    number: "22670063"
+    number_intvalue: 22670063
+    originated: 11-Sep-2015 04:11 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 9.0 (13A341)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'iOS 9.0: On iPad multitasking, app on right-hand side returns incorrect tap coordinates (slide-over, split-view, or side-by-side)'

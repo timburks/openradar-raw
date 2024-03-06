@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16019362"
+    labels:
+        datastore_id: "6439143282311168"
+data:
+    classification: Serious
+    created: "2014-02-08T10:33:20.579731Z"
+    description: "Summary:\r\nUnder prior versions of OSX, calling CTFontCopyFeatures for a CTFontRef containing the LNUM opentype feature would show three options for kNumberCaseType: \r\n\r\n0: oldstyle figures\r\n1: lining figures\r\n2: no change\r\n\r\nin mavericks, only 0 and 2 are available, with the same font.\r\n\r\nthe problem also manifests itself under advanced typography options in textedit.\r\n\r\nSteps to Reproduce:\r\nwith the supplied font (or any font using the LNUM opentype feature), compile the following:\r\n\r\n    CTFontRef ctf = CTFontCreateWithName(CFSTR(\"NadyezhdaSLOne-Reg\"), 16.0, nil);\r\n    CFArrayRef feats = CTFontCopyFeatures(ctf);\r\n    for (NSDictionary* d in (__bridge NSArray *) feats) {\r\n        if ([d objectForKey:@\"CTFeatureTypeIdentifier\"] == [NSNumber numberWithInt:21])\r\n            NSLog(@\"%@\", d);\r\n    }\r\n\r\n\r\nExpected Results:\r\n{\r\n        CTFeatureTypeExclusive = 1;\r\n        CTFeatureTypeIdentifier = 21;\r\n        CTFeatureTypeName = \"Number Case\";\r\n        CTFeatureTypeSelectors =         (\r\n                        {\r\n                CTFeatureSelectorIdentifier = 0;\r\n                CTFeatureSelectorName = \"Old-Style Figures\";\r\n            },\r\n                        {\r\n                CTFeatureSelectorIdentifier = 1;\r\n                CTFeatureSelectorName = \"Lining Figures\";\r\n            },\r\n                        {\r\n                CTFeatureSelectorDefault = 1;\r\n                CTFeatureSelectorIdentifier = 2;\r\n                CTFeatureSelectorName = \"No Change\";\r\n            }\r\n        );\r\n    }\r\n\r\nActual Results:\r\n{\r\n        CTFeatureTypeExclusive = 1;\r\n        CTFeatureTypeIdentifier = 21;\r\n        CTFeatureTypeName = \"Number Case\";\r\n        CTFeatureTypeNameID = \"-2200\";\r\n        CTFeatureTypeSelectors =         (\r\n                        {\r\n                CTFeatureSelectorIdentifier = 0;\r\n                CTFeatureSelectorName = \"Old-Style Figures\";\r\n                CTFeatureSelectorNameID = \"-2201\";\r\n            },\r\n                        {\r\n                CTFeatureSelectorDefault = 1;\r\n                CTFeatureSelectorIdentifier = 2;\r\n                CTFeatureSelectorName = \"No Change\";\r\n                CTFeatureSelectorNameID = \"-2203\";\r\n            }\r\n        );\r\n    }\r\n\r\nVersion:\r\nosx 10.9.1 -- incorrect behavior\r\n\r\nosx 10.6.8 -- correct behavior\r\n\r\nNotes:\r\ndid not have any other versions of osx handy to test\r\n\r\nConfiguration:\r\nthe correct behavior was observed in 10.6, the incorrect behavior showing only two states for NumberCase showed up in 10.9\r\n\r\nAttachments:\r\n'Nadyezhda SL One.ttf' was successfully uploaded."
+    email: marcos@generic.cx
+    modified: "2014-02-19T23:57:41.750965Z"
+    number: "16019362"
+    number_intvalue: 16019362
+    originated: 8 Feb 2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.1
+    reproducible: yes
+    resolved: 10 Feb 2014
+    status: Duplicate of 16005083 (Open)
+    title: LNUM unavailable in Mavericks via CTFontCopyFeatures

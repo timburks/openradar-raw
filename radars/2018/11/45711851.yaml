@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "45711851"
+    labels:
+        datastore_id: "5029895239368704"
+data:
+    classification: ""
+    created: "2018-11-08T16:06:36.775202Z"
+    description: "Summary: \r\n\r\nThis is an upstream bug in OpenSSH itself. As per the release notes (https://www.openssh.com/releasenotes.html) It was introduced in 7.8 and fixed in 7.9:\r\n\r\n>  * ssh(1): fix regression in OpenSSH 7.8 that could prevent public-\r\n>   key authentication using certificates hosted in a ssh-agent(1)\r\n>   or against sshd(8) from OpenSSH <7.8.\r\n\r\nIt appears that the specific fix for this issue was https://github.com/openssh/openssh-portable/commit/1a4a9cf80f5b92b9d1dadd0bfa8867c04d195391\r\n\r\nSteps to Reproduce:\r\n\r\n1. Generate a ssh certificate authority keypair:\r\n\r\n$ ssh-keygen -N '' -C ca_key -f ca_key\r\n\r\n2. Configure a server running an older version of OpenSSH (for example, CentOS 7, which distributes OpenSSH 7.4p1) to trust that certificate authority for user logins. For example, edit a user's ~/.ssh/authorized_keys file to contain a line like:\r\n\r\ncert-authority ssh-rsa AAAA...\r\n\r\n(where the \"ssh-rsa AAAA...\" string is the contents of ca_key.pub, created in step 1)\r\n\r\n3. Use the CA key to sign a user key; for example:\r\n\r\n$ ssh-keygen -N '' -C user_key -f user_key\r\n$ ssh-keygen -s ca_key -I user_cert user_key.pub\r\n\r\n4. Attempt to connect to the remote host using the certificate:\r\n\r\n$ ssh -v -i user_key remote_user@server.hostname.com\r\n\r\nExpected Results: SSH pubkey authentication succeeds\r\n\r\nActual Results: SSH pubkey authentication fails. With verbose logging enabled, you see the following message:\r\n\r\ndebug1: send_pubkey_test: no mutual signature algorithm\r\n\r\nVersion/Build:\r\n\r\nOS X 10.14.1\r\nOpenSSH_7.8p1, LibreSSL 2.7.3"
+    email: akgood@duosecurity.com
+    modified: "2018-11-08T16:06:36.775425Z"
+    number: "45711851"
+    number_intvalue: 45711851
+    originated: 10/31/2018
+    parent_number: "45769139"
+    product: macOS + SDK
+    product_version: ""
+    reproducible: ""
+    resolved: 11/7/2018
+    status: Duplicate/45769139
+    title: OpenSSH 7.8 client cannot authenticate against sshd from OpenSSH <7.8 with RSA certificates

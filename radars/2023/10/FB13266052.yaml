@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13266052
+    labels:
+        datastore_id: "5611228462317568"
+data:
+    classification: ""
+    created: "2023-10-13T00:52:09.187683Z"
+    description: "When a View adds @Environment(\\.openUrl), its equality is now broken and will redraw multiple times. Does not happen with other environment variables.\r\n\r\nI have attached a playground that reproduces the issue but here is the code:\r\n\r\nimport PlaygroundSupport\r\nimport SwiftUI\r\n\r\nstruct ViewWithBug: View {\r\n    @Environment(\\.openURL) private var openURL\r\n\r\n    var body: some View {\r\n        let _ = Self._printChanges()\r\n        Text(\"OpenURL redraws\")\r\n    }\r\n}\r\n\r\nstruct SimpleView: View {\r\n    @Environment(\\.isFocused) private var isFocused\r\n\r\n    var body: some View {\r\n        let _ = Self._printChanges()\r\n        Text(\"Hello\")\r\n    }\r\n}\r\n\r\n// Present the view controller in the Live View window\r\nPlaygroundPage.current.liveView = UIHostingController(\r\n    rootView: VStack {\r\n        ViewWithBug()\r\n        SimpleView()\r\n    })\r\n\r\n\r\nIf you run this in a playground and check the console you will see that ViewWithBug changes multiple times while it should only change once like SimpleView.\r\n\r\nConsole output:\r\nViewWithBug: @self, @identity, _openURL changed.\r\nSimpleView: @self, @identity, _isFocused changed.\r\nViewWithBug: _openURL changed.\r\nViewWithBug: _openURL changed.\r\nViewWithBug: _openURL changed.\r\n\r\nI expected adding this environment variable to not cause so many redraws.\r\n\r\nI am on Xcode Version 15.0 (15A240d)"
+    email: albano16@gmail.com
+    modified: "2023-10-13T00:52:09.187848Z"
+    number: FB13266052
+    number_intvalue: 13266052
+    originated: 13 October 2023
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: Yes
+    resolved: Open
+    status: Open
+    title: SwiftUI Environment openURL causes view to redraw multiple times

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6851193"
+    labels:
+        datastore_id: "35408"
+data:
+    classification: Security
+    created: "2009-05-03T18:55:47.720449Z"
+    description: "SUMMARY:\r\n\r\nThe SIGSTOP signal (along with SIGKILL) are the only two signals that \"cannot be caught or ignored\".  Unfortunately that's not true in regards to SIGSTOP.  The included example program arranges to ignore SIGSTOP.  Since that is not supposed to be possible, this represents a potential security hole.\r\n\r\n\r\nSTEPS TO REPRODUCE:\r\n\r\n1. Save the following source code as ignorestop.c (it's also attached as a file to this report):\r\n\r\n  #include <stddef.h>\r\n  #include <stdio.h>\r\n  #include <stdlib.h>\r\n  #include <signal.h>\r\n  #include <time.h>\r\n  #include <unistd.h>\r\n  \r\n  int main()\r\n  {\r\n    int c;\r\n    sigset_t sigs;\r\n    pthread_t ignored;\r\n    sigemptyset(&sigs);\r\n    sigaddset(&sigs, SIGCONT);\r\n    sigprocmask(SIG_BLOCK, &sigs, NULL);\r\n    signal(SIGCHLD, SIG_IGN);\r\n    if (fork() == 0) {\r\n      struct timespec delay = {0, 125000000};\r\n      nanosleep(&delay, NULL);\r\n      kill(getppid(), SIGSTOP);\r\n      kill(getppid(), SIGCONT);\r\n      exit(0);\r\n    }\r\n    sigwait(&sigs, &c);\r\n    for (c=0;;) {\r\n      printf(\"Ignoring SIGSTOP now %d\\n\", ++c);\r\n      sleep(1);\r\n    }\r\n    return 0;\r\n  }\r\n\r\n2. Compile the above ignorestop.c file at a shell prompt (assumes developer tools are installed for gcc compiler) like so:\r\n\r\n  gcc -o ignorestop ignorestop.c\r\n\r\n3. Now run it and attempt to stop it from a shell prompt like this:\r\n\r\n  ./ignorestop& sleep 2; killall -STOP ignorestop\r\n\r\n4. Notice how even after the 2 second sleep delay, the process continues to run outputting a message every second.\r\n\r\n\r\nEXPECTED RESULTS:\r\n\r\nThe expectation is that killing a process with -STOP will stop it as the system is supposed to guarantee that neither SIGSTOP nor SIGKILL can ever be ignored or caught.  Other systems (notably Linux) do not suffer from this bug.  (NOTE:  You cannot verify whether or not a job is stopped using the ps command as it does not properly report stopped jobs.  See rdar://6851143 )\r\n\r\n\r\nREGRESSION:\r\n\r\nSIGSTOP can also be ignored with the above technique on 10.4.11 as well -- did not test any prior versions of Mac OS X.\r\n\r\n\r\nNOTES:\r\n\r\nWorks correctly on Linux (SIGSTOP cannot be ignored)."
+    email: mackyle@gmail.com
+    modified: "2011-08-28T05:46:54.960576Z"
+    number: "6851193"
+    number_intvalue: 6851193
+    originated: 03-May-2009 11:27 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.6/9G55
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SIGSTOP can be ignored

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB6019643
+    labels:
+        datastore_id: "5794908791111680"
+data:
+    classification: Other Bug
+    created: "2014-08-11T11:19:28.980911Z"
+    description: "Summary:\r\n\r\nUsing UIAppearance proxy with UIBarButtonItem subclasses is causing an unrecognized selector being sent to UINavigationButton.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a simple app with UINavigationController with one child view controller\r\n2. Create a new subclass of UIBarButtonItem\r\n3. Create a new property tagged with UI_APPEARANCE_SELECTOR\r\n4. Set this property using appearance proxy in e.g. App Delegate\r\n5. In your view controller set self.navigationItem.rightBarButtonItem = <your button>;\r\n6. Run the application\r\n\r\nAlternatively, you can open my attached demo project and run it.\r\n\r\nExpected Results:\r\n\r\nThe property is being set correctly by UIAppearance.\r\n\r\nActual Results:\r\n\r\nAn \"unrecognized selector sent to instance\" exception (NSInvalidArgumentException) is raised, sending a property setter message to UINavigationButton\r\n\r\nRegression:\r\n\r\nThis behavior may be caused because of UIBarButtonItem inheritance. UIBarButtonItem inherits from NSObject, not UIView and it uses a custom appearance class (_UIBarButtonAppearance). Its forwardInvocation: method may be forwarding the property setter to UINavigationButton, not the UIBarButtonItem itself.\r\n\r\nNotes:\r\n\r\nThis behavior is present only if you initialize your UIBarButtonItem subclass with all methods except initWithCustomView:, because initWithCustomView: does not create a UINavigationButton.\r\n\r\n--- 13-Aug-2013 02:16 PM\r\n\r\n'UIBarButtonItem Subclass Demo.zip' was successfully uploaded\r\n\r\n--- 13-Aug-2013 02:16 PM\r\n\r\nThis feedback was created from radar ID 14722948"
+    email: adrian.kashivskyy@gmail.com
+    modified: "2020-10-12T16:33:02.69971Z"
+    number: FB6019643
+    number_intvalue: 6019643
+    originated: 13-Aug-2013 02:16 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 7.0 SDK
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: 'UIKit: Using UIAppearance with UIBarButtonItem subclasses results in exception'

@@ -1,0 +1,71 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19774567"
+    labels:
+        datastore_id: "4911665879449600"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-02-10T00:40:00.260955Z"
+    description: |-
+        Summary:
+        I have a framework named Set, now partly redundant due to the existence of Set<T> in the stdlib. I’m getting loads of bogus “Cannot specialize a non-generic definition” errors now.
+
+
+        Steps to Reproduce:
+        1. Make a framework named Set, with a generic type named Set<T> in it.
+        2. Compile the following code in another module importing Set:
+
+        println(Swift.Set<Int>.self)
+        println(Set.Set<Int>.self)
+        println(Set<Int>.self)
+
+
+        Expected Results:
+        I expected it to compile correctly, perhaps griping about the third one because of ambiguity (but ideally not since I’m explicitly importing Set above this).
+
+
+        Actual Results:
+        /Users/rob/Developer/Projects/Swift/Set/SetTests/SetPrintableTests.swift:11:15: error: cannot specialize a non-generic definition
+                        println(Set.Set<Int>.self)
+                                    ^
+        /Users/rob/Developer/Projects/Swift/Set/SetTests/SetPrintableTests.swift:11:18: note: while parsing this '<' as a type parameter bracket
+                        println(Set.Set<Int>.self)
+                                       ^
+        /Users/rob/Developer/Projects/Swift/Set/SetTests/SetPrintableTests.swift:12:11: error: cannot specialize a non-generic definition
+                        println(Set<Int>.self)
+                                ^
+        /Users/rob/Developer/Projects/Swift/Set/SetTests/SetPrintableTests.swift:12:14: note: while parsing this '<' as a type parameter bracket
+                        println(Set<Int>.self)
+                                   ^
+
+
+        Regression:
+        My Box framework, containing a generic type Box<T>, does not have this problem when used via its tests.
+
+
+        Notes:
+        I get the same error with:
+
+        println(Set.Multiset<Int>.self)
+
+        /Users/rob/Developer/Projects/Swift/Set/SetTests/SetPrintableTests.swift:10:15: error: cannot specialize a non-generic definition
+                        println(Set.Multiset<Int>.self)
+                                    ^
+        /Users/rob/Developer/Projects/Swift/Set/SetTests/SetPrintableTests.swift:10:23: note: while parsing this '<' as a type parameter bracket
+                        println(Set.Multiset<Int>.self)
+                                            ^
+
+        So it seems to be having trouble resolving Set correctly.
+    email: rix.rob@gmail.com
+    modified: "2015-02-10T00:40:00.261197Z"
+    number: "19774567"
+    number_intvalue: 19774567
+    originated: 09-Feb-2015 07:39 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-Beta (6D520o)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2b1: Swift can’t misunderstands scope resolution with modules of the same name as stdlb symbols'

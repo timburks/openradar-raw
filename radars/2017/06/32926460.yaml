@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32926460"
+    labels:
+        datastore_id: "6121289076965376"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2017-06-22T17:12:53.07559Z"
+    description: "Radar 32925139 rendered my system unable to shut down or reboot by normal means, so I was forced to hold the power button to perform a hard power-off. Upon rebooting, I discovered that recently created files on an APFS volume were missing or filled with zeroes instead of their expected content.\r\n\r\nNotably, files that are recently created linker output exist and have the correct size, but are filled with zeroes. (They’re actually sparse files, the zeroes occupy no space on disk.)\r\n\r\nWhen a system is forced to power off due to losing power, due to holding the power button (as in radar 32925139 when the system needed to be rebooted to restore networking but refused to shut down), or likely due to a kernel panic, this form of data loss occurs. In my case, this occurred during a build of Google Chrome, and files for all recent linker output existed on disk but contained no data. The timestamps were current so the build system didn’t believe these files to need rebuilding, but because they contained no data, it was not possible to use them. In effect, this had corrupted the entire build.\r\n\r\nThis is especially troubling because the linker (ld64) takes care to write its output file “safely” to avoid data loss. Rather than writing its output (in the example below, the mmap_write executable) in place, it writes it to a temporary file and then moves the temporary file to its desired output location. This is the best practice for avoiding data loss and partial or corrupt files, but APFS+ defeats this best practice and allows the new file to exist without any of its proper contents after a power event.\r\n\r\nAlthough any filesystem may be susceptible to this sort of problem on hard power-off, I experience it with APFS every single time. For comparison, despite my best efforts to reproduce on HFS+, I was not able to on that filesystem, even on the same OS version that I experience trouble with APFS.\r\n\r\nSteps to Reproduce:\r\nThe attached test program, mmap_write.c, will use the mmap() interface to write a file.\r\n\r\nHere, the current directory is on an APFS volume, and /Volumes/HFSPlus is an HFS+ volume.\r\n\r\nlitterbox@litterbox zsh% clang -g mmap_write.c -o mmap_write\r\nlitterbox@litterbox zsh% ./mmap_write file && ./mmap_write /Volumes/HFSPlus/file\r\n\r\nImmediately after that command completes, hold down the power button for several seconds. The system will power down. Reboot it and look at mmap_write, file, and /Volumes/HFSPlus/file.\r\n\r\nExpected Results:\r\nI expect mmap_write to exist and have its correct contents, a Mach-O executable compiled from mmap_write.c. file should exist on both the APFS and HFS+ volumes, and each should be filled with 1MB of 0xff bytes.\r\n\r\nObserved Results:\r\nmmap_write on the APFS volume exists and has the correct size, but is a wholly sparse file. After rebooting:\r\n\r\nlitterbox@litterbox zsh% ./mmap_write    \r\nzsh: exec format error: ./mmap_write\r\nlitterbox@litterbox zsh% stat -f '%z %b' mmap_write\r\n8980 0\r\n\r\nThat “stat” shows that the file is 8,980 bytes long, but occupies zero blocks on disk—it’s wholly sparse, and all 8,980 bytes will read as zero.\r\n\r\nHowever, on the HFS+ volume, the file exists at its full length and contains 0xff bytes.\r\n\r\nVersion:\r\n10.13db2 17A291j with Xcode 9b2 9M137d\r\nI also experienced this on 10.13db1 17A264c with Xcode 9b1 9M136h."
+    email: mark@chromium.org
+    modified: "2017-07-25T20:06:47.4815Z"
+    number: "32926460"
+    number_intvalue: 32926460
+    originated: "2017-06-22"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13db2 17A291j
+    reproducible: Always
+    resolved: "2017-07-25"
+    status: Duplicate/32747641 (Closed)
+    title: APFS is prone to data loss on hard power-off in ways that HFS+ is not

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8988319
+    labels:
+        datastore_id: "4942202581024768"
+data:
+    classification: Application Crash
+    created: "2021-02-03T03:41:30.629969Z"
+    description: "Attempts to import a PKCS 12 archive using SHA256 for the MAC when running \r\n“security import file.p12 -k ~/Library/Keychains/login.keychain -f pkcs12 -t egg”\r\nerrors with:\r\n“Sorry you entered an invalid password”\r\n“security: SecKeychainItemImport: MAC verification failed during PKCS12 import (wrong password?)”\r\n\r\nSpecifically as per RFC 7292 Appendix A: Message Authentication Codes (MACs)\r\n\r\n“The hash function HMAC is based on is identified in the MacData, which holds the MAC; for this version of this standard, the hash function can be one of the following: SHA-1, SHA-224, SHA-256, SHA-384, SHA-512, SHA-512/224, or SHA-512/256 [10].”\r\n\r\nHowever it seems only SHA1 is supported (I suspect as this was the only cypher listed at the time in the v1.0 spec). Further it seems the security framework cannot parse encrypted data / shrouded keybag / etc, using \r\n\r\nPBES2, PBKDF2, AES-256-CBC, Iteration 2048, PRF hmacWithSHA256\r\nor\r\nPBES2, PBKDF2, AES-256-CBC, Iteration 2048, PRF hmacWithSHA1\r\n\r\nAnd errors with:\r\n“security: SecKeychainItemImport: Unknown format in import”\r\n\r\nSpecifically as per RFC 7292 Appendix B: Deriving Keys and IVs from Passwords and Salt:\r\n\r\n“Note that this method for password privacy mode is not recommended and is deprecated for new usage. The procedures and algorithms defined in PKCS #5 v2.1 [13] [22] should be used instead. Specifically, PBES2 should be used as encryption scheme, with PBKDF2 as the key derivation function.”\r\n\r\nAdditionally RFC 8018 PKCS #5 v2.1: Appendix D. Revision History of PKCS #5\r\n\r\n“* Introduces AES/CBC as an encryption scheme for PBES2 and HMAC with the hash functions SHA-224, SHA-256, SHA-384, SHA-512, SHA-512/224, and SHA-512/256 as pseudorandom functions for PBKDF2 and message authentication schemes for PBMAC1.”\r\n\r\nIt should be noted that OpenSSL 3 will by default move to AES-256-CBC for the encryption by default for the certificate and private key PBE algorithm instead of the legacy RC2-40 or 3DES.\r\n\r\nSteps to reproduce:\r\n\r\nUsing either LibreSSL 2.8.3 or OpenSSL 1.1.1h\r\n\r\n# Generate cert and private key\r\nopenssl req -x509 -out cert.pem -sha256 -newkey rsa:2048 -keyout key.pem -nodes -subj \"/CN=Self Signed Test Cert/\"\r\n\r\n# Generate pkcs12 archive using sha256 hash algorithm for the MAC\r\nopenssl pkcs12 -export  -inkey key.pem -in cert.pem -out file-mac-sha256.p12 -name \"My Certificate\" -password pass:1234 -macalg sha256 \r\n\r\n# Generate pkcs12 archive using aes-256-cbc PBES2 for the certs and private keys\r\nopenssl pkcs12 -export  -inkey key.pem -in cert.pem -out file-pbes2-aes256.p12 -name \"My Certificate\" -password pass:1234 -keypbe aes-256-cbc -certpbe aes-256-cbc\r\n\r\n# Import with (using password 1234)\r\nsecurity import file-mac-sha256.p12 -k ~/Library/Keychains/login.keychain -f pkcs12 -t agg\r\nsecurity import file-pbes2-aes256.p12 -k ~/Library/Keychains/login.keychain -f pkcs12 -t agg\r\n\r\nExpected Results:\r\n1 identity imported.\r\n\r\nActual results:\r\n\r\n(file-mac-sha256.p12)\r\nSorry you entered an invalid password\r\nsecurity: SecKeychainItemImport: MAC verification failed during PKCS12 import (wrong password?)\r\n\r\n(file-pbes2-aes256.p12)\r\nsecurity: SecKeychainItemImport: Unknown format in import.\r\n\r\nNote the same error happens when double-clicking on the archives in finder.\r\n\r\nAttachments:\r\nAttached are the test PKCS 12 archives as well as info dump from “openssl pkcs12 -info -in …” as formatted by OpenSSL 1.1.1h."
+    email: tmoschou@gmail.com
+    modified: "2021-02-03T03:41:30.630123Z"
+    number: FB8988319
+    number_intvalue: 8988319
+    originated: "2021-02-03"
+    parent_number: '&{NULL_VALUE}'
+    product: Security Framework
+    product_version: MacOS 10.15.7
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'MacOS security framework fails to import RFC 7292 compliant PKCS #12 v1.1 file into keychain using modern cyphers'

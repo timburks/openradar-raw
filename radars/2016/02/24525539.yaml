@@ -1,0 +1,66 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24525539"
+    labels:
+        datastore_id: "6115013743869952"
+data:
+    classification: Serious Bug
+    created: "2016-02-05T16:35:25.54201Z"
+    description: |-
+        Summary:
+
+        Xcode reports a compiler error if I attempt to call -[B init] because I marked it as NS_UNAVAILABLE in A. However, since -init is an NS_DESIGNATED_INITIALIZER in NSObject, it shouldn’t be possible for an infinite recursion to occur because NS_DESIGNATED_INITIALIZERs should only delegate to a superclass NS_DESIGNATED_INITIALIZER.
+
+        Steps to Reproduce:
+        Compile the code below and try to initialize B with -[B init].
+
+        @interface A : NSObject
+
+        - (instancetype)init NS_UNAVAILABLE;
+        - (instancetype)initWithString:(NSString *)string NS_DESIGNATED_INITIALIZER;
+
+        @end
+
+        @interface B : A
+
+        - (instancetype)init NS_DESIGNATED_INITIALIZER;
+        - (instancetype)initWithString:(NSString *)string NS_UNAVAILABLE;
+
+        @end
+
+        @implementation A
+
+        - (instancetype)initWithString:(NSString *)string
+        {
+          return [super init];
+        }
+
+        @end
+
+        @implementation B
+
+        - (instancetype)init
+        {
+          return [super initWithString:@“B”];
+        }
+
+        @end
+
+        Expected Results:
+        Xcode should report no errors.
+
+        Actual Results:
+        Xcode reports that -[B init] is unavailable.
+    email: heath.borders@gmail.com
+    modified: "2016-02-05T16:35:25.5422Z"
+    number: "24525539"
+    number_intvalue: 24525539
+    originated: 05-Feb-2016 10:35 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: Version 7.2 (7C68)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Cannot override an NS_UNAVAILABLE initializer in a subclass

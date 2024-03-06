@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28491995"
+    labels:
+        datastore_id: "6617149023977472"
+data:
+    classification: Serious Bug
+    created: "2016-09-27T09:24:28.48831Z"
+    description: "Summary:\nSeveral apps got stuck in the \"Installing\" state. \n\nIt’s a serious problem because it results in data loss:\n- There may be data loss after rebooting the device.\n- Users tend to delete apps stuck in this state in order to solve the issue, and they lose their app data in that process \n\nSteps to Reproduce:\n\nI’m not able to reproduce this issue. However, it has happened to me in the past, and happens regularly to the users of our apps. However, I have been able to look more closely at an instance of this bug as it happened on my personal device:\n\n1. Two apps, Spotify and Twitter, got stuck in “Installing” (grayed icon, Installing label)\n2. Tapped on the app icon; it didn’t fix anything but displayed the following in the logs for Twitter (similar output for Spotify): \n\nSep 27 10:55:18 Bruno-iPhone-7 assistant_service(AssistantServices)[7647] <Notice>: Error: could not get the bundle for metaDataItem=<AAPSyncMetaDataItemUpdate:0x1007a0780 appId='com.atebits.Tweetie2' appType=4 bundleURL='file:///private/var/containers/Bundle/Application/542F589B-DA8B-4C2E-B87F-DFAA4C5D2D34/Twitter.app' anchor=1184>\nSep 27 10:55:18 Bruno-iPhone-7 assistant_service(AssistantServices)[7647] <Notice>: skipping invalid item -> <AAPSyncMetaDataItemUpdate:0x1007a0780 appId='com.atebits.Tweetie2' appType=4 bundleURL='file:///private/var/containers/Bundle/Application/542F589B-DA8B-4C2E-B87F-DFAA4C5D2D34/Twitter.app' anchor=1184> : info -> AceObject group: com.apple.ace.system class: AppInfo aceId: (null) refId: (null)\n\n(Full log attached)\n\n3. Opened the App Store, searched for Spotify. The loading indicator was stuck in progress. \n4. In the App Store app page, tapped on Stop. Triggered a redownload (at least visually according to the App Store indicator) of the app. Spotify got stuck on “Installing” again.\n5. Restarted iPhone \n6. Got a message “This App Cannot Be Downloaded At This Time” for both Twitter and Spotify.\n7. Tapped Retry: Spotify got removed (at least visually) and reinstalled !!!\n8. Issue fixed\n\nExpected Results:\n\n1. Apps shouldn’t get stuck in Installing\n2. Apps certainly shouldn’t be removed and reinstalled during step 7. I’m not sure if actual data was lost (Twitter and Spotify mostly store data in the cloud) but this at least gave the impression I had lost these two apps from my phone.\n\nActual Results:\n\n1. Apps stay stuck in Installing state\n2. Apps are are (visually) removed and reinstalled after a restart of the device\n\n\nNotes:\nOver the past couple years, we have regular reports from the users of our app, Genius Scan, that this happens. It's a major problem because users often attempt to delete the app (hence their data) to reinstall it. Of course they blame it on the app developers. Unfortunately, we have no way to monitor this issue aside from user reports, and have no way to access our user device logs."
+    email: bruno@thegrizzlylabs.com
+    modified: "2016-09-27T09:24:28.48859Z"
+    number: "28491995"
+    number_intvalue: 28491995
+    originated: 27-Sep-2016 11:24 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 10
+    reproducible: Unable
+    resolved: ""
+    status: Open
+    title: Apps Stuck Installing, then Disappear to be Reinstalled

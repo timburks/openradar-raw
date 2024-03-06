@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7840694"
+    labels:
+        datastore_id: "253401"
+data:
+    classification: Useability
+    created: "2010-04-08T13:43:11.670717Z"
+    description: "Summary: \r\nThe use by XCode of the header map feature is very nice, but sometimes it totally prevents successfully building a project. In those cases, this feature must be disabled using the USE_HEADERMAP=NO custom build setting.\r\n\r\nHowever, there are two problems:\r\n\r\n1- the USE_HEADERMAP build setting is missing from the information panels (whether the project information panel or the target information panel). This makes this setting totally impossible to discover.\r\n\r\n2- the USE_HEADERMAP is not documented anywhere that I could find. There are only a few mentions of it on the internet.\r\n\r\nThese two problems compound each other to make this very important setting totally obscure and impossible to discover.\r\n\r\nSteps to Reproduce:\r\nI could find to reasonable cases where the problem occurs:\r\n\r\n1- a project header file has the same name as a system header file.\r\n2- a project includes several variations of the same library with header files named identically. Typically, each variation of the library will be used by a different target in the project.\r\n\r\nI was in case 2. My Xcode project was structured the same as my file hierarchy, like this:\r\n\r\nMyProject\r\n  TheirOldLib\r\n    theirLib.h\r\n    theirLib.cpp\r\n  TheirNewLib\r\n    theirLib.h\r\n    theirLib.cpp\r\nmyCode.cpp\r\n\r\nand myCode.cpp does thing such as:\r\n\r\n#include \"theirLib.h\"\r\n…\r\nsomecode()\r\n{\r\n#if OLDVERSION\r\n  theirOldLibCall(…);\r\n#else\r\n  theirNewLibCall(…);\r\n#endif\r\n}\r\nAnd of course, I define OLDVERSION for one target and not for the other.\r\n\r\nExpected Results:\r\nI expected to find a way to tell Xcode which header file was to be included by each target. I was unable to discover one until an Apple employee told me about the USE_HEADERMAP build setting.\r\n\r\nActual Results:\r\nWith header mappings, Xcode will include one of the two theirLib.h header files, the same for the two targets. So the one target for which this is the wrong header will not compile. I was unable to determine how Xcode decided which header to use.\r\n\r\nRegression:\r\nI reproduced that issue with Xcode 3.2.2. Similar problems are reported on the net by people using much older versions of Xcode.\r\n\r\nNotes:\r\nI found two workarounds:\r\n1- rename one (or more) of the header to remove homonyms. This also implies changing many implementation file to include the newly named headers.\r\n2- remove the header file from the project and then use header paths to get to the correct header.\r\n\r\nNeedless to say, both workarounds are extremely annoying."
+    email: jdmuys@gmail.com
+    modified: "2011-08-28T05:41:58.160571Z"
+    number: "7840694"
+    number_intvalue: 7840694
+    originated: 4/8/2010
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 3.2.2
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: USE_HEADERMAP build option is missing and not documented

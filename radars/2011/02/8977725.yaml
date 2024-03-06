@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8977725"
+    labels:
+        datastore_id: "1107401"
+data:
+    classification: Enhancement
+    created: "2011-02-09T17:59:28.382623Z"
+    description: "I'm working on some code that uses an NSOperation to import data. I'd like for the user to be able to undo the NSManagedObject instances that are created during the import operation.\r\n\r\nFrom what I can tell, it's impossible to use the NSManagedObjectContext -undoManager for any operations that are performed off of the main thread. From the \"Core Data Programming Guide\" section on \"Use Thread Confinement to Support Concurrency\", we have these two conditions:\r\n\r\n1. Only objectID should be passed between managed object contexts (on separate threads)\r\n2. Managed objects must be saved in a context before the objectID can be used.\r\n\r\nThis makes sense since the managed objects need to be moved from private storage (NSManagedObjectContext) to public storage (NSPersistentStore) before they can be shared.\r\n\r\nUnfortunately, the -save: message also causes any managed objects in the undo stack to be removed. From the \"Memory Management Using Core Data\" section of the same guide:\r\n\r\n\"Managed objects that have pending changes (insertions, deletions, or updates) are retained by their context until their context is sent a save:, reset , rollback, or dealloc message, or the appropriate number of undos to undo the change.\"\r\n\r\nI've tried several things to work around this limitation, and everything eventually leads back to bulk of the work happening on the main thread (and spinning beach balls.)\r\n\r\nIdeally, there should be a way to move the contents of -insertedObjects, -deletedObjects and -updatedObjects from one NSManagedObjectContext to another (across threads.) The current mechanism of relying on saved data in the persistent store results in implementations that are not as user friendly as they could be (no undo.)"
+    email: craig.hockenberry@gmail.com
+    modified: "2011-08-28T05:38:00.722216Z"
+    number: "8977725"
+    number_intvalue: 8977725
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'ENHANCEMENT: Core Data, NSOperation and NSUndoManager are incompatible'

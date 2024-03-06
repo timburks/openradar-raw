@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26843986"
+    labels:
+        datastore_id: "5008773110300672"
+data:
+    classification: Security
+    created: "2016-07-30T20:42:20.3576Z"
+    description: "Summary:\r\nUsers place all sorts of data into their pasteboard, including passwords and other items that should remain secure.  It is trivial for a Mac application (or an iOS app with background capabilities) to frequently poll NSPasteboard for new data, log it, and upload to a server for harvesting.\r\n\r\nThe new expiration option is irrelevant - the data can be harvested very quickly, before any viable timer runs out.\r\n\r\nUsers should be prompted to give any application permission to programmatically read NSPasteboard.  Manual pasting shouldn't be impacted.  I think it would also be fine for an application to read NSPasteboard items copied in by the current application.\r\n\r\nSteps to Reproduce:\r\nCopy text into the pasteboard.  Watch a monitoring application grab it quickly.  Some commercial applications already do this (like Facebook for iOS which pre-fills URLs into their share field).  Who knows what's happening with the data.\r\n\r\nA trivial application example:\r\n\r\n@interface AppDelegate ()\r\n@property (nonatomic, strong) NSString *lastPasteboardString;\r\n@end\r\n\r\n- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {    \r\n    [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(logPasteboardItem) userInfo:nil repeats:YES];\r\n}\r\n\r\n-(void)logPasteboardItem {\r\n    NSString *str = [[NSPasteboard generalPasteboard] stringForType: NSPasteboardTypeString];\r\n    if (![str isEqualToString:self.lastPasteboardString]) {\r\n        NSLog(@\"New pasteboard item found: %@\", str);\r\n        self.lastPasteboardString = str;\r\n    }\r\n}\r\n\r\n\r\nExpected Results:\r\nUser is prompted to give an application permission to read all items from the pasteboard.\r\n\r\nActual Results:\r\nUser isn't prompted to give an application permission to read all items from the pasteboard.\r\n\r\nVersion:\r\nOS X 10.11\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: mcohen@proactiveinteractive.com
+    modified: "2016-07-30T20:42:58.34408Z"
+    number: "26843986"
+    number_intvalue: 26843986
+    originated: "2016-06-16"
+    parent_number: "9851038"
+    product: OS X
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Duplicate/9851038
+    title: Applications can access NSPasteboard without user permission

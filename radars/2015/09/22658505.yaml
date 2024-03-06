@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22658505"
+    labels:
+        datastore_id: "5064371529056256"
+data:
+    classification: UI/Usability
+    created: "2015-09-11T09:22:50.92643Z"
+    description: "Summary:\r\nUITableViewCells of type UITableViewCellStyleSubtitle do not display correctly if the contents of the subtitle can sometimes be nil.\r\n\r\nSteps to Reproduce:\r\nRun the attached project and scroll. Note that in some cases cells that claim they ought to have a subtitle do not display it. Touch one of these cells and drag (to avoid a segue) and note the subtitle appears. Rotating the device will also cause the subtitles to reappear.\r\n\r\nAlternatively to recreate the project take the following steps:\r\n1) Create a master/view project \r\n2) In the Main.storyboard choose the 'Master Scene' that contains the UITableView and set the style of the prototype cell to subtitle. 3) Edit MasterViewController.m altering the methods as shown below\r\n\r\n- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {\r\n\treturn 1000;\r\n}\r\n\r\n- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {\r\n\tUITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@\"Cell\" forIndexPath:indexPath];\r\n\r\n\tuint32_t nRows = (uint32_t)[self tableView:self.tableView  numberOfRowsInSection:0];\r\n\tif(arc4random_uniform(nRows*2) > nRows) {\r\n\t\tcell.textLabel.text = @\"Subtitle\";\r\n\t\tcell.detailTextLabel.text = @\"This is a subtitle\";\r\n\t}\r\n\telse {\r\n\t\tcell.textLabel.text = @\"No Subtitle\";\r\n\t\tcell.detailTextLabel.text = nil;\r\n\t}\r\n\treturn cell;\r\n}\r\n\r\n\r\nExpected Results:\r\nSubtitles should appear then cell.detailTextLabel.text is non-nil.\r\n\r\nActual Results:\r\nIt appears that when the detailTextLabel’s text is set to nil the view is removed from the view hierarchy. Setting the text to a non-nil value does not cause it to be added back until something causes a layout pass (such as a selection or rotation). \r\n\r\nRegression:\r\nThis is a regression from 7.1.1 (11D201). Confirmed occurring in 8.2 (12D5480a), 8.3 (12F701) and 8.4.1 (12H321).\r\n\r\nNotes:\r\nIt’s possible to work around this by testing to see if the detail label is in the view hierarchy and adding it back in. This should not be needed."
+    email: iosdeveloperzone@gmail.com
+    modified: "2015-10-29T05:30:41.76178Z"
+    number: "22658505"
+    number_intvalue: 22658505
+    originated: 11-Sep-2015 02:22 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 8.2 (12D5480a), 8.3 (12F701), 8.4.1 (12H321)
+    reproducible: Always
+    resolved: 28-Oct-2015 10:03 PM
+    status: Closed
+    title: UITableViewCell with UITableViewCellStyleSubtitle does not recycle cells correctly

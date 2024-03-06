@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13322024"
+    labels:
+        datastore_id: "2799401"
+data:
+    classification: Other Bug
+    created: "2013-03-01T06:18:11.193795Z"
+    description: "Summary:\r\n\r\nWith SceneKit, setting a diffuse material magnificationFilter to \"SCNNoFiltering\" is ignored when the integrated GPU (Intel HD 3000/4000) is active. It only appears to work when the discrete GPU (such as NVIDIA GeForce GT 650M) is active.\r\n\r\nAs a result, a magnificationFilter setting of \"SCNNoFiltering\" does not work on Macs with only integrated GPUs (such as MacBook Air or 13\" MacBook Pro) and rendering output differs to that of Macs with discrete GPUs (when active).\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a SceneKit scene, add a node with geometry, configure the geometry's diffuse material magnificationFilter to \"SCNNoFiltering\", assign an image to the diffuse material. For example:\r\n\r\n    SCNPlane *plane = [SCNPlane planeWithWidth:width height:height];\r\n    plane.firstMaterial.diffuse.magnificationFilter = SCNNoFiltering;\r\n    plane.firstMaterial.diffuse.contents = anImage;\r\n    SCNNode *node = [SCNNode nodeWithGeometry:plane];\r\n\r\n2. Render the scene in a SCNView, with scale > 1.0 (i.e. magnified).\r\n\r\n3. Run on a 15\" Retina MacBook Pro with discrete (NVIDIA) GPU active. Note that rendered image texture is not filtered/aliased.\r\n\r\n4. Run on a MacBook Air (or any Mac with integrated Intel GPU active). Note that rendered image texture is still being filtered/aliased.\r\n\r\n\r\nExpected Results:\r\n\r\nThe output on a Mac with integrated GPU active should not be filtered/aliased (as per \"SCNNoFiltering\" setting).\r\nThe output on a Mac with integrated GPU active should look the same as when rendered on a discrete GPU.\r\n\r\n\r\nActual Results:\r\n\r\nThe output on a Mac with integrated GPU active is filtered/aliased, even though the material is configured not to be.\r\nThe output on a Mac with integrated GPU active is not the same as when rendered on a discrete GPU (even on the same machine).\r\n\r\n\r\nRegression:\r\n\r\nn/a\r\n\r\n\r\nNotes:\r\n\r\n\r\n29-Mar-2013 04:28 PM Chris Miles:\r\nI was incorrectly using \"SCNNoFiltering\" for the magnificationFilter when I should have been using \"SCNNearestFiltering\".\r\n\r\nHowever, the problem still occurs as described when using \"SCNNearestFiltering\".\r\n\r\nIn summary: The issue still occurs as described originally. Simply substitute \"SCNNearestFiltering\" for \"SCNNoFiltering\" in the description."
+    email: miles.chris@gmail.com
+    modified: "2013-03-29T05:31:08.258137Z"
+    number: "13322024"
+    number_intvalue: 13322024
+    originated: 01-Mar-2013
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X SDK
+    product_version: 10.8.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SceneKit material filter

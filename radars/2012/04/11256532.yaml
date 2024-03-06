@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11256532"
+    labels:
+        datastore_id: "1645410"
+data:
+    classification: Serious Bug
+    created: "2012-04-16T18:25:28.163423Z"
+    description: "Summary:\r\nNSFetchedResultsController does not properly section records when initialized with a non-nil sectionNameKeyPath, the initial set of results contains no objects and the object count increases beyond 1 during the lifetime of the NSFetchedResultsController instance.\r\n\r\nSteps to Reproduce:\r\n1. Run the attached project in the iOS simulator. This project is the template master/detail project from Xcode 4.3.2 for iPhone. I changed the data model to include one additional attribute on the Event model, section. This is an integer that flip-flops between 0 and 1 every time a record is added. The NSFetchedResultsController is initialized with a sectionNameKeyPath using this new attribute. I also added a -report method that shows detail about how NSFetchedResultsController partitions results into sections and what objects are in those sections.\r\n\r\n2. Observe the console output as you click the + button to add one record, then a second record.\r\n\r\nExpected Results:\r\nThe -report method gives an view into the results, without a UITableView to hide the bug.\r\n\r\nWhen the + button is tapped the second time, I expect there to be two sections (0 and 1), each with a single object. numberOfObjects for each section should return 1, and the objects array should show a single object matching up with the row visible in the UITableView.\r\n\r\nActual Results:\r\nAfter the second record is added, section \"0\" reports a single object, but examining the actual contents of the objects array reveals there are actually TWO objects. The second object of this array is ALSO the sole object contained in the objects array of section \"1\".\r\n\r\nThis is the console output from running it here:\r\n\r\n2012-04-16 14:03:43.939 FetchedResultsBug[25299:fb03] total results = 1\r\n2012-04-16 14:03:43.941 FetchedResultsBug[25299:fb03] total sections = 1\r\n2012-04-16 14:03:43.942 FetchedResultsBug[25299:fb03] section 0, “0”, 1 objects\r\n2012-04-16 14:03:43.944 FetchedResultsBug[25299:fb03] (\r\n    \"<NSManagedObject: 0x85254c0> (entity: Event; id: 0x8525510 <x-coredata:///Event/t80760E7D-3192-4151-9330-272C3242934A2> ; data: {\\n    section = 0;\\n    timeStamp = \\\"2012-04-16 18:03:43 +0000\\\";\\n})\"\r\n)\r\n2012-04-16 14:03:54.475 FetchedResultsBug[25299:fb03] total results = 2\r\n2012-04-16 14:03:54.476 FetchedResultsBug[25299:fb03] total sections = 2\r\n2012-04-16 14:03:54.477 FetchedResultsBug[25299:fb03] section 0, “0”, 1 objects\r\n2012-04-16 14:03:54.477 FetchedResultsBug[25299:fb03] (\r\n    \"<NSManagedObject: 0x85254c0> (entity: Event; id: 0x852a6b0 <x-coredata://01392D91-D822-49A9-A850-C59E12D6E2A5/Event/p21> ; data: {\\n    section = 0;\\n    timeStamp = \\\"2012-04-16 18:03:43 +0000\\\";\\n})\",\r\n    \"<NSManagedObject: 0x6b244a0> (entity: Event; id: 0x6b07070 <x-coredata:///Event/t80760E7D-3192-4151-9330-272C3242934A3> ; data: {\\n    section = 1;\\n    timeStamp = \\\"2012-04-16 18:03:54 +0000\\\";\\n})\"\r\n)\r\n2012-04-16 14:03:54.478 FetchedResultsBug[25299:fb03] section 1, “1”, 1 objects\r\n2012-04-16 14:03:54.479 FetchedResultsBug[25299:fb03] (\r\n    \"<NSManagedObject: 0x6b244a0> (entity: Event; id: 0x6b07070 <x-coredata:///Event/t80760E7D-3192-4151-9330-272C3242934A3> ; data: {\\n    section = 1;\\n    timeStamp = \\\"2012-04-16 18:03:54 +0000\\\";\\n})\"\r\n)\r\n\r\nRegression:\r\n\r\nNotes:\r\nThis bug is not a problem if the data is displayed using a UITableView, because tableView:numberOfRowsInSection: tells the table view to only query for that many records. UI that works with data from NSFetchedResultsController by asking for the objects within a section directly will show duplicated records in the UI.\r\n\r\nThis bug does not occur UNLESS there are zero records in the results when the NSFetchedResultsController is created."
+    email: steve.madsen@gmail.com
+    modified: "2012-04-16T18:25:28.163623Z"
+    number: "11256532"
+    number_intvalue: 11256532
+    originated: "2012-04-16"
+    parent_number: '&{NULL_VALUE}'
+    product: Other
+    product_version: iOS 5.1
+    reproducible: Always
+    resolved: ""
+    status: new
+    title: NSFetchedResultsController duplicates records between sections

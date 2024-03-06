@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26354907"
+    labels:
+        datastore_id: "4939022170324992"
+data:
+    classification: Bug
+    created: "2016-05-18T22:07:19.06573Z"
+    description: "Summary:\r\nNSDateComponentsFormatter works incorrectly if difference between dates approx 1 day\r\n\r\nSteps to Reproduce:\r\nAdd to playground code:\r\n\r\nlet formatter = NSDateComponentsFormatter()\r\nformatter.unitsStyle = .Short\r\nformatter.maximumUnitCount = 1\r\nformatter.allowedUnits = [.Year, .Month, .Day, .Hour, .Minute, .Second]\r\n\r\nlet df = NSDateFormatter()\r\ndf.dateFormat = \"yyyy-MM-dd HH:mm:ss zzz\"\r\n\r\nlet from = df.dateFromString(\"2016-05-17 12:10:00 UTC\")!\r\nlet to1 = df.dateFromString(\"2016-05-18 13:00:32 UTC\")!\r\nlet timestamp1 = formatter.stringFromDate(from, toDate: to1)!\r\nprint(timestamp1) //\"1 day, 1 hr\" but it is approx 1 day and 50 min\r\n\r\nlet to2 = df.dateFromString(\"2016-05-18 13:20:06 UTC\")!\r\nlet timestamp2 = formatter.stringFromDate(from, toDate: to2)!\r\nprint(timestamp2) //\"1 day\" but it is approx 1 day and 70 min\r\n\r\n\r\nExpected Results:\r\nFor both cases \"1 day\" should be printed\r\n\r\nActual Results:\r\nWe can see two problems here\r\n1) 2 components are returned \"1 day, 1 hr\", but formatter.maximumUnitCount = 1\r\n2) For greater difference 1 day and 70 min we have \"1 day\" result, but for smaller 1 day and 50 min difference we have greater result \"1 day, 1 hr\"\r\n1 day and 70 min > 1 day and 50 min, but \"1 day\" < \"1 day, 1 hr\"\r\n\r\n\r\nVersion:\r\niOS 9.3.1 (13E238)\r\n\r\n\r\nConfiguration:\r\niPhone 5s"
+    email: igor.palaguta@gmail.com
+    modified: "2016-06-09T07:41:27.96564Z"
+    number: "26354907"
+    number_intvalue: 26354907
+    originated: 19-May-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9.3.1 (13E238)
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 17803182
+    title: NSDateComponentsFormatter can return more than one component even if maximumUnitCount == 1

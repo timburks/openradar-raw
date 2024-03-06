@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6881192"
+    labels:
+        datastore_id: "4993656524111872"
+data:
+    classification: ""
+    created: "2019-07-31T23:04:38.080487Z"
+    description: "How to Reproduce:\r\nYou can reproduce these inconsistencies by loading the below link into `openURL` with universal link only option, and reproduce the redirect to itmss: by loading it in WKWebView.\r\nhttps://podcasts.apple.com/us/podcast/podcast-me-anything/id1454336984?fbclid=IwAR0v2-g1cm03vJmBqAk9TjewcUNCUcdle8fDM-voVL7D2asB71NSQPtOerA\r\n\r\nDescription of Issue:\r\nIn WKWebView (via `loadRequest` or on link click) opens the following link in iTunes Store App:\r\nhttps://podcasts.apple.com/us/podcast/podcast-me-anything/id1454336984?fbclid=IwAR0v2-g1cm03vJmBqAk9TjewcUNCUcdle8fDM-voVL7D2asB71NSQPtOerA\r\n\r\nHowever, there is an apple-app-site-association file specifying this should open in Podcasts app here:\r\nhttps://podcasts.apple.com/.well-known/apple-app-site-association\r\n\r\nAlong with this, we found that opening this link with `openURL` with option `UIApplicationOpenURLOptionUniversalLinksOnly` fails, \r\nwhich according to available info means that a universal link was not available for the supplied URL, contradicting what we see in the apple-app-site-association pointed out above.\r\n\r\nThis behavior is also seen for `maps` https universal links, however, I could not find the app-site-association file for it.\r\nhttps://maps.apple.com/?q=222%202nd%20St%20San%20Francisco%20CA\r\n\r\nCalling `openURL` without the option for `podcast.apple.com` link mentioned, opens the podcasts app, the correct destination app.\r\nCalling `openURL` without the option for `maps.apple.com` link mentioned, opens the maps app, the correct destination app.\r\n\r\nOpening in wkwebview, it attempts to open as a normal page, however, it then triggers a 301 redirect (see charles file attached),\r\nredirecting to a url, with an itunes store deeplink scheme (itmss:) and the same path (full path below). \r\nOur custom wkwebview deeplink code, then handles this with openURL into iTunes Store app.\r\nitmss://podcasts.apple.com/us/podcast/podcast-me-anything/id1454336984?fbclid=IwAR0v2-g1cm03vJmBqAk9TjewcUNCUcdle8fDM-voVL7D2asB71NSQPtOerA\r\n\r\nThe inconsistencies we see when this link is opened differs between iOS App Store apps:\r\n- Chrome, WeChat, LinkedIn open the link in iTunes Store App.\r\n- Safari & SFSafariViewController, FB Messenger, Messages, Mail open link in Podcasts app.\r\n\r\nThis appears to be similar to an open radar bug reported a year ago here: \r\nhttps://openradar.appspot.com/39347603"
+    email: rgfox@linkedin.com
+    modified: "2019-07-31T23:04:38.080666Z"
+    number: "6881192"
+    number_intvalue: 6881192
+    originated: 7/31/2019
+    parent_number: '&{NULL_VALUE}'
+    product: Podcasts
+    product_version: iOS 12.4 (16G5038d)
+    reproducible: Yes
+    resolved: ""
+    status: Active
+    title: Inconsistent universal/deeplinking for http://podcasts.apple.com/ links

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39508158"
+    labels:
+        datastore_id: "6118795882004480"
+data:
+    classification: UI/Usability
+    created: "2018-04-17T23:08:48.30621Z"
+    description: "## Summary\r\nStarting in iOS 11.3 when an application is backgrounded and a UIWebView is loading a URL, the network connection is terminated immediately. This was not the case in previous versions of iOS < 11.3. In previous versions the request would remain connected in the background as the user went on to another application and later returned back into the starting application.\r\n\r\nThis is a business impacting issue for two factor authentication providers where long lived connections are a requirement. They’re used to maintaining a connection while the user confirms their second factor of authentication. For example the Outlook mail app may hold open a connection to Duo Security’s service while the user backgrounds the app, goes into Duo Mobile, and approves the second factor authentication. This bug introduced in 11.3 prevents that workflow. It should be noted that this is not how it works with SFSafariViewController or WKWebViews.\r\n\r\n## Steps to Reproduce\r\n1. Start a long poll connection within an application in a UIWebView\r\n2. Background the application before that request has yet to finish\r\n3. Wait until the request should normal finish\r\n4. Resume the application from #1\r\n5. In iOS 11.3 observe the request was terminated as soon as the app was backgrounded and the connection had been dropped. \r\n\r\nI’ve attached a sample project with two parts. One is a simple python server that serves up a webpage 5 seconds after it’s requested at http://localhost:8000. The second part is a simple iOS application that opens up a UIWebView (among other options) and attempt to load this URL. To demo this functionality you need 2 iOS devices, one on 11.3 and one on an earlier version of iOS and follow the steps below.\r\n\r\n1. Start the included simple python server in ./PythonServer with `python server.py`\r\n2. Find the public IP of a machine running the sample python server (The IP that can be hit by an external iOS device on the same network) \r\n3. Open up the included code project “ConnectionBugDemo.xcodeproj”\r\n4. In ViewController.m change urlString to be equal to @“http://<local.IP>:8000”\r\n5. Launch the application on either an iOS 11.3 device or an older OS to see varying behaviors\r\n6. Tap “Load UIWebView”\r\n7. Background the application before the view loads (5 seconds)\r\n8. Foreground the application\r\n9. Notice on 11.3 the UIWebView drops the connection and never loads. However pre-11.3 it does load. The python server reports a broken pipe error as well on 11.3.\r\n10. The sample also shows WKWebView and SFSafariViewController work as expected.\r\n\r\n## Expected Results\r\nIn versions of iOS before 11.3 the UIWebView would keep the connection open as the user backgrounded the application. \r\n\r\n## Actual Results\r\nIn iOS 11.3 the long poll connection in the UIWebView is dropped. \r\n\r\n## Version/Build\r\niOS 11.3 (On device, not reproducible in simulators)\r\n\r\n## Configuration\r\nRunning demos on macOS with python 2 and on devices iOS 11.3 and iOS 11.0.1"
+    email: mikegbro@gmail.com
+    modified: "2018-04-17T23:08:48.30646Z"
+    number: "39508158"
+    number_intvalue: 39508158
+    originated: 4/17/2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "11.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIWebView dropping connections

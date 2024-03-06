@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29734167"
+    labels:
+        datastore_id: "4929365926215680"
+data:
+    classification: Enhancement
+    created: "2016-12-19T15:23:14.7695Z"
+    description: "Summary:\r\nTo be able to initialize a view controller with a view defined in a storyboard from code you have to use:\r\n- UIStoryboard.instantiateViewController(withIdentifier:) or\r\n- UIStoryboard.instantiateInitialViewController()\r\n\r\nThose methods in turn call init(coder:) on the view controller. This doesn't play well with Swift's optionality. If the view controller requires some data to be set on it to work it has to use properties that are either optional or have an implicitly unwrapped optional attribute:\r\n- var dependency: SomeType? or\r\n- var dependency: SomeType!\r\n\r\nSo, the fact that some dependency wasn't set can be found only at runtime. If UIStoryboard had a method like `decoder(forViewControllerIdentifier identifier: String) -> NSCoder` it would be possible to define an initializer on a view controller that takes both that NSCoder instance and all other objects that it requires to work, e.g.:\r\n\r\nclass DetailsViewController: UIViewController {\r\n\r\n    let dependency: SomeType\r\n\r\n    init?(coder aDecoder: NSCoder, dependency: SomeType) {\r\n        self.dependency = dependency\r\n        super.init(coder: aDecoder)\r\n    }\r\n}\r\n\r\nWe could then initialize it by calling that init directly:\r\nlet detailsViewController = DetailsViewController(coder: decoder, dependency: dependency)\r\n\r\nThis would solve a common issue of not being able to use dependency injection via initializer. At least when we don't use segues.\r\n\r\n\r\nExpected Results:\r\nWe should be able to use dependency injection via initalizer when using storyboards (which provide really nice features!).\r\n\r\n\r\nActual Results:\r\nWe aren't able to use dependency injection via initializer with storyboards.\r\n\r\n\r\nNotes:\r\nBased on a blog post: http://holko.pl/2016/12/14/storyboards-dependency-injection/"
+    email: arkadiusz.holko@gmail.com
+    modified: "2017-01-06T10:05:28.708Z"
+    number: "29734167"
+    number_intvalue: 29734167
+    originated: 19-Dec-2016 04:21 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "10.1"
+    reproducible: N/A
+    resolved: ""
+    status: Duplicate of 27213719 (Open)
+    title: Storyboards should allow dependency injection via initializer by providing NSCoder instance

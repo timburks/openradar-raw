@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10609036"
+    labels:
+        datastore_id: "1586403"
+data:
+    classification: Serious Bug
+    created: "2012-03-08T17:38:24.734558Z"
+    description: "Summary:\r\nIf you ask a NSManagedObjectContext (binary store) to save, and the file has been marked as locked, it crashes with a zombie during error handling. I have attached the Instruments document showing this.\r\n\r\nIt should open up to show an NSError zombie. It looks like -[NSBinaryObjectStoreFile _writeMetadataData:andMapDataData:toFile:error:] has its own autorelease pool which gets drained, deallocating the error object too early. Something like this:\r\n\r\n-(BOOL)_writeMetadataData:(NSData *)metadata andMapDataData:(NSData *)mapData toFile:(NSString *)path error:(NSError **)error;\r\n{\r\n  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];\r\n  BOOL result = [metadata writeToFile:path options:0 error:error];\r\n  if (!result)\r\n  {\r\n    [pool release];  // deallocates the error object accidentally\r\n    return NO;\r\n  }\r\n  \r\n  // Carry on saving…\r\n}\r\n\r\n\r\nThus shortly after, the error is accessed, but no longer exists, so causes a crash."
+    email: mike.abdullah@gmail.com
+    modified: "2012-03-08T17:38:24.734752Z"
+    number: "10609036"
+    number_intvalue: 10609036
+    originated: 20-Dec-2011 08:42 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: "10.7"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Core Data Binary Store crashes when file is locked

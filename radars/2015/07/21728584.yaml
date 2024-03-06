@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21728584"
+    labels:
+        datastore_id: "6652406158852096"
+data:
+    classification: UI/Usability
+    created: "2015-07-08T18:34:37.85269Z"
+    description: "Summary:\r\nWhen A UIPageViewController is used inside a UINavigationController constraints in the managed view controllers related to the top layout guide are setup/updated to late. They should be update in viewWillAppear, before any part of the shown pages  is first displayed. Instead the constraints are only updated on what appear to be viewDidAppear: or a similar method. At least, the constraints are only correct after the page view controller’s animation finished, not during the animation of a newly loaded child view controller.\r\n\r\nSteps to Reproduce:\r\n1. Create a UINavigationViewController with s simple UIViewController als root view controller\r\n2. Create a UIPageViewController with transitionStyle UIPageViewControllerTransitionStyleScroll (it also happens for PageCurl, but only when paging backwards. It happens for scrolling in both directions)\r\n3. Add the page view controllers view as a (full screen) subview to the root view controllers view.\r\n4. Assign a datasource to the UIPageViewController that returns simple UIViewController objects to display (at least 4 different ones).\r\n5. Make the datasource return UIViewController objects with views that contain subviews with an auto layout constraint related to the TopLayoutGuide (e.g. a label that has a 10pt distance from the top layout guide).\r\n\r\nExpected Results:\r\nAs soon as you start scrolling to the next child view controller in the page view controller the next view controller should be shown partially and the layout of the partially displayed view controller should already be correct.\r\n\r\nActual Results:\r\nThe layout of the partially displayed view controller is incorrect. It behaves as if the top layout guide for this view controller is at the top of the screen, but it the top layout guide should be at the bottom of the navigation bar. (see screenshot)\r\n\r\nRegression:\r\nThe problem does not occur if the view controller that is moved in was already loaded and had the constraint calculated correctly at least once. This is the case when e.g. navigating from page 1 to page 2 in the page view controller and then going back to page 1 (using transition style UIPageViewControllerTransitionStyleScroll). As page 1 is still in memory, it is displayed correctly when being animated in.\r\nThe problem also does not occur when UIPageViewControllerTransitionStylePageCurl is used and the navigation direction is forwards. It DOES occur when navigation backwards.\r\n\r\nNotes:\r\nAttached a a sample project. This is based on apples „Page-Based Application“ project tempalte. The only changes to this template are:\r\n1. Changes the transition style to UIPageViewControllerTransitionStyleScroll to make the problem more visible\r\n2. Put the UIPageViewController inside a navigation controller\r\n3. Adjust the top constraints of the month label in the child view controller to relate to the top layout guide instead of superview.top."
+    email: openradar@khd2.de
+    modified: "2015-08-01T12:44:34.76686Z"
+    number: "21728584"
+    number_intvalue: 21728584
+    originated: 08-Jul-2015 08:34 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 8.4 & iOS 9.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIPageViewController in UINavigationController only updates autolayout constraints for top layout guide in viewDidAppear (or similar)

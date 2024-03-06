@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15485249"
+    labels:
+        datastore_id: "5218579611910144"
+data:
+    classification: Bug
+    created: "2013-11-15T23:47:51.674962Z"
+    description: "I'm one of the developers for Google Chrome, we've had a long standing issue where users have reported their audio stops working. See http://crbug.com/160920. We're seeing almost daily reports of this issue and internal metrics suggest > 3% of our OSX user population have hit this problem.\r\n\r\nThe root problem from Chrome's point of view is that AudioUnits which start \"successfully\" (i.e. AudioOutputUnitStart() returns noErr) never deliver any AURenderCallbacks. Once a system is in this state, any subsequently created AudioUnits will have the same problem.\r\n\r\nThe problem can be resolved by closing all outstanding AudioUnits or restarting coreaudiod; neither of which is a very attractive solution.\r\n\r\nAfter some investigation I've managed to created a minimized test case. Please see the attached program.  The test program simply creates to AudioUnits, starts them, and then waits for the first AURenderCallback to come in, after which the units are stopped.\r\n\r\nThrough repeated suspend and resume (open/close lid on laptop) the program will hang after starting the AudioUnits while waiting for the first AURenderCallbacks.\r\n\r\nSteps to Reproduce:\r\n- Compile the included test case:\r\nclang -framework CoreAudio -framework AudioUnit -lstdc++ audio-hang.cc\r\n\r\n- Start the program via \"./a.out\", observe a repeated beeping pattern.\r\n\r\n- Repeatedly suspend (close system lid) and resume (open system lid) the system until the beeping pattern stops.\r\n\r\n- Observe that the program is stuck waiting for AURenderCallback events.\r\n\r\n\r\nExpected Results:\r\nProgram should never hang.\r\n\r\nActual Results:\r\nProgram hangs waiting for AURenderCallbacks.\r\n\r\nVersion:\r\nSeems to occur on all OSX versions from 10.6 to 10.9.\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nPrimarily observed on MacBook hardware; likely due to desktops not seeing as many suspend and resume events.\r\n\r\nAttachments:\r\n'audio-hang.cc' was successfully uploaded.\r\n\r\nhttp://commondatastorage.googleapis.com/dalecurtis-shared/audio-hang.cc"
+    email: dalecurtis@google.com
+    modified: "2014-11-12T22:25:42.264871Z"
+    number: "15485249"
+    number_intvalue: 15485249
+    originated: 11/15/2013
+    parent_number: '&{NULL_VALUE}'
+    product: OSX
+    product_version: All
+    reproducible: Always
+    resolved: Yosemite
+    status: Fixed
+    title: AudioUnits started "successfully" around the time of a system resume fail to deliver AURenderCallbacks.

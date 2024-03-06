@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28440950"
+    labels:
+        datastore_id: "6262388701528064"
+data:
+    classification: ""
+    created: "2016-09-30T03:48:29.39644Z"
+    description: "Summary:\r\nWe want users to be able to enter the password after canceling or failed to retrieve password via TouchId.\r\nSo we make the text field a first responder while keychain retrieval failed.\r\nHowever, on iOS 10 the keyboard become invisible but still hittable while the text field becomes first responder.\r\n\r\nThere are some other people have the same issue:\r\nhttp://stackoverflow.com/questions/39045675/ios-keyboard-inside-uiremotekeyboardwindow-is-not-shown-when-uitextfield-becom\r\n\r\nSteps to Reproduce:\r\n1. Here is our code snippet:\r\n    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{\r\n        NSMutableDictionary *query = [self.class sacDictionary:key];\r\n        if (prompt) {\r\n            query[(__bridge id)kSecReturnData] = @YES;\r\n            query[(__bridge id)kSecUseOperationPrompt] = prompt;\r\n        }\r\n        CFTypeRef dataTypeRef = NULL;\r\n        OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)[query copy], &dataTypeRef);\r\n        if (status == errSecSuccess) {\r\n            weakSelf.textField.text = (dataTypeRef ? [NSString stringWithUTF8String:[(__bridge_transfer NSData *)dataTypeRef bytes]] : nil);\r\n        } else {\r\n            [weakSelf.textField becomeFirstResponder];\r\n        }\r\n    });\r\n2. click cancel after TouchId dialog popped\r\n3. hit the area of keyboard\r\n\r\nExpected Results:\r\nThe keyboard should appear.\r\n\r\nActual Results:\r\nThe keyboard is blank but hittable.\r\n\r\nVersion:\r\n10.0.1 (14A403)"
+    email: stewwu@gmail.com
+    modified: "2016-09-30T03:48:29.39663Z"
+    number: "28440950"
+    number_intvalue: 28440950
+    originated: 23-Sep-2016
+    parent_number: "26863570"
+    product: iOS SDK
+    product_version: 10.0.1 (14A403)
+    reproducible: Always
+    resolved: 29-Sep-2016
+    status: Duplicate/26863570
+    title: Keyboard is hidden but hittable after cancel TouchId

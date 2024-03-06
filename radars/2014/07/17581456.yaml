@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17581456"
+    labels:
+        datastore_id: "6064421478596608"
+data:
+    classification: Serious Bug
+    created: "2014-07-07T22:25:21.405715Z"
+    description: "Summary:\r\nWhen endIndex is less than startIndex,\r\nRather than iterating the values from startIndex to endIndex,\r\nInstead the range generator always adds 1 to startIndex.\r\n\r\nThe generator silently overflows and wraps around before reaching the endIndex.\r\n\r\nSteps to Reproduce:\r\nfor i in 0..<Int8(-1) { println(i) }\r\n\r\nExpected Results:\r\nThe only value printed is \"0\", consistent with range [0, -1) including only the value 0.\r\n\r\nThe values in the range are iterated, from startIndex up to but not including endIndex.\r\n\r\nIteration should not be able to advance beyond the bounds of the underlying integral type. If nothing else, Swift's overflow-safety should cause an exception when we hit the end of the representable values.\r\n\r\nActual Results:\r\nThe values printed are: 0, 1, …, 127, -128, -127, …, -2.\r\n\r\nThe generator's next() function always returns the current value + 1, rather than + or - 1 per the direction of the range.\r\n\r\nOverflow is silent.\r\n\r\n(Issuing a for-in print gets really ugly when the int-type is 64 bits.)\r\n\r\nVersion:\r\nXcode 6.0\r\nBuild version 6A254o\r\n\r\nProductName:\tMac OS X\r\nProductVersion:\t10.9.4\r\nBuildVersion:\t13E28\r\n\r\nSwift version 1.0 (swift-600.0.38.7)\r\nTarget: x86_64-apple-darwin13.3.0\r\n\r\n\r\nNotes:\r\nLikely related to <rdar://17559710>."
+    email: jeremyw.sherman@gmail.com
+    modified: "2014-07-09T15:31:17.698604Z"
+    number: "17581456"
+    number_intvalue: 17581456
+    originated: 07-Jul-2014 06:21 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: 'Closed as duplicate of: 16254937'
+    status: Open
+    title: 'Swift: for i in 0..<Int8(-1) { println(i) } includes wrong values in range, silently overflows and wraps'

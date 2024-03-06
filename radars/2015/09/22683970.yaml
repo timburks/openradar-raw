@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22683970"
+    labels:
+        datastore_id: "4979742855921664"
+data:
+    classification: ""
+    created: "2015-09-14T15:20:52.21215Z"
+    description: "Summary:\r\nWhats confusing with UITesting is how it identifies labels (StaticText).  If there is an accessibility ID, it uses that, otherwise you can use the actual text to identify.  e.g. app.staticTexts[\"Label\"].  Whats confusing is you can't use both.  Once you start to use accessibility ID, there appears to be no way to test the text of the label.\r\nThe more obvious bug seems to the fact that once you add an accessibility ID and then decide to remove it, UI Testing seems to continue to identify based on accessibility ID and can't find the label by the label's text.  \r\nFound a work-around:  Go into the XML of the storyboard and remove the XML for accessibility:<accessibility key=\"accessibilityConfiguration\" identifier=\"\"/>\r\n\r\nRemoving this row, then allows UI Testing to then find labels by label text again.  Very confusing.\r\n\r\nSteps to Reproduce:\r\n1. Create a new project with a storyboard scene that contains a label with the text \"Label\"\r\n2. Create a UI Test.  app.staticTexts[\"Label\"].exists is found.\r\n2. Add an accessibility ID in the identity inspector for the label....eg \"ID\"\r\n3. Create a UI Test:  app.staticTexts[\"ID\"].exists is found, app.staticTexts[\"Label\"].exists is not found.\r\n4. Go back to the identity inspector for the label... remove the \"ID\" text.\r\n\r\nExpected Results:\r\napp.staticTexts[\"Label\"] should be found\r\n\r\nActual Results:\r\napp.staticTexts[\"Label\"] is not found.\r\nHave to remove the XML <accessibility key=\"accessibilityConfiguration\" identifier=\"\"/> in the storyboard source code to get this working.\r\n\r\nVersion:\r\niOS 7 GM\r\n\r\nNotes:\r\nWould also like to be able to find out the text of the label even if the accessibility ID has been set.  \r\napp.staticTexts[\"ID\"].value for example, does not get the text of the label."
+    email: nicholasgmcconnell@gmail.com
+    modified: "2015-09-14T15:20:52.21249Z"
+    number: "22683970"
+    number_intvalue: 22683970
+    originated: 9/14/2015
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode 7 GM
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: 'UITesting Identification of Element (Static Text/Label): Accessibility ID isn''t ignored if blanked out'

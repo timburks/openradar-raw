@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32472903"
+    labels:
+        datastore_id: "4950807946461184"
+data:
+    classification: Bug
+    created: "2017-05-30T21:53:54.14971Z"
+    description: "In my case, I have selected to never save passwords for imgur.com when prompted in Safari. Now when calling SecRequestSharedWebCredential, I receive an entry with \"Passwords not saved\" as the account and \" \" (one space) as the password.\r\n\r\nMay be a duplicate of radar: 25439039 (seen on openradar), but it claimed not reproducible and didn't understand the full situation as a result of being unable to reproduce.\r\n\r\nSteps to Reproduce:\r\nAbstract example:\r\n1. Set a site to never remember passwords in Safari\r\n2. Call SecRequestSharedWebCredential(NULL, NULL, ...)\r\n3. Check that credential count > 0 as per documentation\r\n4. Extract the first credential and get the value for kSecAttrAccount and kSecSharedPassword\r\n5. Observe that the value associated with kSecAttrAccount is \"Passwords not saved\" and the value associated with kSecSharedPassword is \" \" (single space)\r\n\r\nConcrete example:\r\n1. Visit Imgur.com, create an account/sign in and instruct Safari to never remember passwords for this site\r\n2. Download Imgur app (if first time, you are prompted to sign up immediately which will trigger the shared credential request and show an account of \"Passwords not saved\" as a selectable option.\r\n3. Select the option and note that the password provided is \" \"\r\n\r\nExpected Results:\r\nNo shared web credentials should be available (the CFArrayRef in the closure for SecRequestSharedWebCredential should have a CFArrayGetCount of 0)\r\n\r\nObserved Results:\r\nThe CFArrayRef in the closure for SecRequestSharedWebCredential is > 0 and the first is \"Passwords not saved\" / \" \""
+    email: aaron@imgur.com
+    modified: "2017-07-28T02:12:03.20074Z"
+    number: "32472903"
+    number_intvalue: 32472903
+    originated: 5/30/2017
+    parent_number: '&{NULL_VALUE}'
+    product: Security Framework
+    product_version: 10.3.2
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 24275860 | Open
+    title: SecRequestSharedWebCredential returns an invalid credential when the user has told Safari not to save passwords for a given domain

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7161994"
+    labels:
+        datastore_id: "74447"
+data:
+    classification: ""
+    created: "2009-09-14T21:09:36.644088Z"
+    description: "Summary:\r\nQLThumbnailImageCreate(IconMode == YES) returns a CGImageRef which does not have any alignmentRect data.\r\n\r\n\r\nSteps to Reproduce:\r\nWe use the following code (safety checks removed) to get an NSImage containing an icon of a file:\r\n\r\n+ (NSImage *)quickLookImageWithURL:(NSURL *)inURL size:(NSSize)inSize iconMode:(BOOL)inFlag\r\n{\r\n\tCGImageRef thumb = QLThumbnailImageCreate(kCFAllocatorDefault, (CFURLRef)inURL, NSSizeToCGSize(inSize), (CFDictionaryRef)[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:inFlag] forKey:(NSString *)kQLThumbnailOptionIconModeKey]);\r\n\tNSImage *thumbnail = nil;\r\n\tif (thumb)\r\n\t{\r\n\t\tthumbnail = NSImageCreateFromCGImageRef(thumb);\r\n\t\tCGImageRelease(thumb);\r\n\t}\r\n\treturn [thumbnail autorelease];\r\n}\r\n\r\nNSImage *NSImageCreateFromCGImageRef(CGImageRef image)\r\n{\r\n\tNSSize imageSize;\r\n\timageSize.height = CGImageGetHeight(image);\r\n\timageSize.width = CGImageGetWidth(image);\r\n\t\r\n\tNSImage *newImage = [[NSImage alloc] initWithSize:imageSize];\r\n\tNSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithCGImage:image];\r\n\t[newImage addRepresentation:bitmap];\r\n\t[bitmap release];\r\n\treturn newImage;\r\n}\r\n\r\nSince we are setting the NSImage size ourselves, there is no alignmentRect (well, the default one).\r\n\r\n\r\nExpected Results:\r\nIt would be very useful if the alignment rect functionality could be extended to CGImages (i don't know if that's a plausible idea), or if QuickLook could additionally return an NSImage via a new API, with the icon alignment rect.\r\n\r\n\r\nActual Results:\r\nI have to work out manually the extent of the shadow around an icon. This seems to vary between 1 and 3 pixels by edge and depending on the aspect ratio of the source image, making the task quite difficult.\r\n\r\nThe purpose is to set the zoom rect for the quicklook panel to the correct values. (I will additionally have to do an InsetRect(2,2) for still images and InsetRect(0,4) for movies to account for their white and black frames respectively! This at least is consistent though.)"
+    email: nickshanks@gmail.com
+    modified: "2011-08-28T05:45:15.316165Z"
+    number: "7161994"
+    number_intvalue: 7161994
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: "10.6"
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: QuickLook icons do not have alignment rect

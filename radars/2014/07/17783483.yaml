@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17783483"
+    labels:
+        datastore_id: "5872349467377664"
+data:
+    classification: Serious bug
+    created: "2014-07-23T20:18:15.222814Z"
+    description: "Summary:\r\nWhen attempting to use SKTexture creation methods with the SKMutableTexture subclass[1] some of the methods don't return a SKMutableTexture. Even when the methods *do* return a SKMutableTexture instance, calling `modifyPixelDataWithBlock:` will invoke the block with a null pixelData pointer and zero data length.\r\n\r\nThis negates most usefulness of the SKMutableTexture class because the only way to use it is to start with a blank texture of a certain size using its own initializers.\r\n\r\nI had previously filed Radar 17400234 about this, but I closed it prematurely since my sample project only tested two of SKTexture's initializers. Upon further testing it's clear that this hasn't been fixed properly.\r\n\r\n[1]: \"To use this class, create a mutable texture using either one of its creation methods or those of its superclass\"\r\n\r\nSteps to Reproduce:\r\n1. Install Xcode\r\n2. Create a new SpriteKit project\r\n3. Attempt to create an SKMutableTexture instance with `textureWithImage:` (others included in the sample project I've provided).\r\n4. Observe that the returned instance is of type SKTexture.\r\n5. Attempt to create an SKMutableTexture instance with `textureWithImageNamed:`\r\n6. Observe that the returned instance is of type SKMutableTexture.\r\n7. Attempt to mutate the image buffer with `modifyPixelDataWithBlock:`.\r\n8. Observe that the pixelData and length arguments are invalid.\r\n\r\nExpected Results:\r\nI would expect to get a SKMutableTexture back that is actually mutable with its `modifyPixelDataWithBlock:` method.\r\n\r\nActual Results:\r\nI only get a SKTexture back, or when I do get a SKMutableTexture back I can't use `modifyPixelDataWithBlock:` to do anything because I don't actually get the pixelData pointer and data length value passed into the block.\r\n\r\nVersion:\r\nXcode Version 6.0 (6A267n)\r\nOS X 10.10 (14A298i)"
+    email: brandon@brandonevans.ca
+    modified: "2014-07-30T16:26:05.150416Z"
+    number: "17783483"
+    number_intvalue: 17783483
+    originated: July 23, 2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: OS X 10.10 (14A298i)
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: SKTexture creation methods can't be properly used with SKMutableTexture subclass

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8441450"
+    labels:
+        datastore_id: "673401"
+data:
+    classification: Serious Bug
+    created: "2010-09-16T22:48:59.226381Z"
+    description: "Summary: Differing-but-still-valid return types used in a block literal with -[NSMutableArray sortUsingComparator:] can cause it to provide the wrong results.\r\n\r\nSteps to Reproduce: \r\n- Download attached project, SortItOut.zip, unzip it, build it, run it and look at results on Console.\r\n\r\nExpected Results:\r\nThere are four sets of results. All use a block literal to provide the sorting mechanism. All should provide a correctly-sorted array.\r\n\r\n#1 Uses -[NSMutableArray sortUsingComparator:] with a block literal that returns the constants NSOrderedAscending, NSOrderedDescending, and NSOrderedSame directly. Note these are not the same type as the NSComparisonResult expected of an NSComparator block, but instead are a technically unrelated enumeration. I don't know if that's significant, but it's the only difference I can see.\r\n#2 Uses -[NSMutableArray sortUsingComparator:] with a block literal that uses a local variable of type NSComparisonResult for its return value. Otherwise, it is identical in logic to #1.\r\n#3 Uses a custom sorting method (implemented as bubble sort to save time) with a block literal that returns the constants NSOrderedAscending et al directly.\r\n#4 Uses the custom sorting method as #3 with a block literal that uses a local variable of type NSComparisonResult for its return value.\r\n\r\nActual Results:\r\n#1 returns an incorrectly sorted array. Instead of the correct sorting, the order of the array's elements is merely reversed. #2-#4 all return correctly-sorted arrays.\r\n\r\nRegression:\r\nAs far as I know, this is not a regression.\r\n\r\nThe workaround is to never return NSOrderedAscending et al directly, but always to use a NSComparisonResult variable to hold the result, and return that."
+    email: apontious@gmail.com
+    modified: "2011-08-28T05:39:52.496819Z"
+    number: "8441450"
+    number_intvalue: 8441450
+    originated: 9/16/2010
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: sortUsingComparator differing results based on block return type

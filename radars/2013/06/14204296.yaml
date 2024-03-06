@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14204296"
+    labels:
+        datastore_id: "3113402"
+data:
+    classification: Serious Bug
+    created: "2013-06-19T17:08:03.751274Z"
+    description: "Summary: \r\nWhen using Xcode5-DP to compile an OpenCL .cl file into bytecode for later calling it using the built GCD stubs, an exception is thrown causing the app to crash.\r\n\r\nI think openclc is generating bad bytecode somehow.\r\n\r\nSteps to Reproduce:\r\nRun the attached project, or try and call a simple OpenCL function that does something as simple as:\r\n__kernel void doPrintf() {\r\n    printf(\"Hello\\n\");\r\n}\r\n\r\nVia the GCD interface:\r\ndispatch_queue_t queue = gcl_create_dispatch_queue(CL_DEVICE_TYPE_CPU, NULL);\r\n\r\ndispatch_sync(queue, ^{\r\n    cl_ndrange range = {1, {0}, {2}, {0}};\r\n    doPrintf_kernel(&range);\r\n});\r\n\r\n\r\nExpected Results:\r\nI'd expect the bytecode to load and run\r\n\r\nActual Results:\r\nAn exception is thrown:\r\n\r\n2013-06-18 16:58:16.253 OpenCLCompileLoadException[29367:303] *** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '-[__NSCFString objectForKey:]: unrecognized selector sent to instance 0x10250b358'\r\n*** First throw call stack:\r\n(\r\n     0   CoreFoundation                      0x00007fff90148b06 __exceptionPreprocess + 198\r\n     1   libobjc.A.dylib                     0x00007fff8ed1c3f0 objc_exception_throw + 43\r\n     2   CoreFoundation                      0x00007fff901df40a -[NSObject(NSObject) doesNotRecognizeSelector:] + 186\r\n     3   CoreFoundation                      0x00007fff9013702e ___forwarding___ + 414\r\n     4   CoreFoundation                      0x00007fff90136e18 _CF_forwarding_prep_0 + 232\r\n     5   CoreFoundation                      0x00007fff900b6bf8 CFDictionaryGetValue + 88\r\n     6   OpenCL                              0x00007fff8da2a1e1 clCreateProgramWithBinary + 1196\r\n     7   OpenCL                              0x00007fff8da2a09b clCreateProgramWithBinary + 870\r\n     8   OpenCL                              0x00007fff8da2c70e clCreateProgramPortableBinaryAPPLE + 574\r\n     9   OpenCL                              0x00007fff8da23fc6 gclBuildProgramBinaryAPPLE + 400\r\n     10  OpenCLCompileLoadException          0x0000000100000ff4 __initBlocks_block_invoke + 52\r\n     11  libdispatch.dylib                   0x00007fff8ec830b6 _dispatch_client_callout + 8\r\n     12  libdispatch.dylib                   0x00007fff8ec83041 dispatch_once_f + 50\r\n     13  OpenCLCompileLoadException          0x0000000100000f7d initBlocks + 125\r\n     14  OpenCLCompileLoadException          0x0000000100000e7d doPrintf_kernel_block_invoke + 61\r\n     15  OpenCLCompileLoadException          0x0000000100001182 __49-[OCLBAppDelegate applicationDidFinishLaunching:]_block_invoke + 82\r\n     16  libdispatch.dylib                   0x00007fff8ec830b6 _dispatch_client_callout + 8\r\n     17  libdispatch.dylib                   0x00007fff8ec84723 _dispatch_barrier_sync_f_invoke + 39\r\n     18  OpenCLCompileLoadException          0x00000001000010f7 -[OCLBAppDelegate applicationDidFinishLaunching:] + 87\r\n\r\n \r\n....\r\n\r\nRegression:\r\nThis does not occur with Xcode 4.6.\r\n\r\nNotes:\r\nThis also affects my application \"Acorn\".\r\n\r\n\r\nSample project:  http://gusmueller.com/deleteme/OpenCLCompileLoadException.zip"
+    email: gusmueller@gmail.com
+    modified: "2013-06-19T17:08:03.751408Z"
+    number: "14204296"
+    number_intvalue: 14204296
+    originated: Wed, 19 Jun 2013 17:07:25 GMT
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 5.0 / 5A11314m
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: openclc is possibly generating bad bytecode in Xcode5-DP (5A11314m)

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "38258815"
+    labels:
+        datastore_id: "5015323354857472"
+data:
+    classification: Other bug
+    created: "2018-03-08T13:17:29.49379Z"
+    description: "Area:\r\nCore Graphics\r\n\r\nSummary:\r\nWhen CTTypesetterCreateLine creates a line for a range in the typesetter's string that ends in the middle of a word, it determines the advance for the last glyph in the returned line as if the glyph was still followed by the remaining glyphs of the word. It does not adjust the last glyph's advance for the fact that it is no longer followed by another glyph. This often results in a typographic width of the returned line that is too small.\r\n\r\nSteps to Reproduce:\r\n\r\nRun the following Swift code e.g. in an iOS Swift playground:\r\n\r\nlet attrs: [NSAttributedStringKey: Any] = [.font: UIFont(name: \"HelveticaNeue\", size:18)!]\r\nlet tLine = CTLineCreateWithAttributedString(NSAttributedString(string: \"T\", attributes: attrs))\r\nlet tWidth = CTLineGetTypographicBounds(tLine, nil, nil, nil)\r\nprint(\"expected line width: \", tWidth)\r\n\r\nlet typesetter = CTTypesetterCreateWithAttributedString(NSAttributedString(string: \"Te\", attributes: attrs))\r\nlet tLine2 = CTTypesetterCreateLine(typesetter, CFRange(location: 0, length: 1))\r\nlet tWidth2 = CTLineGetTypographicBounds(tLine2, nil, nil, nil)\r\nprint(\"actual line width: \", tWidth2)\r\n\r\nExpected Results:\r\n\r\nThe code should print:\r\nexpected line width:  10.332\r\nactual line width:  10.332\r\n\r\nActual Results:\r\nThe code prints:\r\nexpected line width:  10.332\r\nactual line width:  8.334\r\n\r\nThe typographic width of tLine2 is too short by 2 pts.\r\n\r\nVersion/Build:\r\nVersion 9.3 beta 4 (9Q127n)\r\n\r\nConfiguration:\r\nNA\r\n\r\nComments\r\nNo Comments"
+    email: st@quanttec.com
+    modified: "2018-03-08T13:17:29.49407Z"
+    number: "38258815"
+    number_intvalue: 38258815
+    originated: March 8 2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: Xcode Version 9.3 beta 4 (9Q127n)
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: CTTypesetterCreateLine returns line with incorrect advance for last glyph

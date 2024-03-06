@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17136480"
+    labels:
+        datastore_id: "5806864235233280"
+data:
+    classification: New Feature
+    created: "2014-06-04T01:39:20.269452Z"
+    description: "Summary:\r\nSwift does not currently support access control. gparker stated on the developer forums that this support would be forthcoming, but I'd like to explain what I want from it, because I think the traditional public/protected/private model doesn't really cut the mustard.\r\n\r\nOne of the nice things about Objective-C is that its use of headers allows for many gradations between \"private\" and \"public\". Witness, for instance, UIGestureRecognizerSubclass.h in iOS, which contains methods that should only ever be used by subclasses, not ordinary users of the class. In Objective-C, it's possible to have not only private or protected interfaces, but even interfaces that are private between a small set of classes—for instance, a database manager class and the model classes it manages, or a small-but-user-expandable set of classes which need to interact with the class in a unique way.\r\n\r\nI'd like to see that sort of flexibility in Swift. Here's how I suggest you do it.\r\n\r\nThe keyword should, I think, be \"restricted\". (I'm not married to that, but I like it better than \"private\".) It should be possible to restrict a method or property to just your own class, or to share it with a group of self-nominated classes; a fixed set of classes might be a sensible option as well. Some examples:\r\n\r\nclass MyClass {\r\n    // visible to anyone\r\n    var foo: String\r\n    func doFoo() {}\r\n\r\n    // only visible to MyClass (and maybe subclasses)\r\n    restricted var bar: String\r\n    restricted func doBar() {}\r\n    \r\n    // restricted to classes in a certain permission group\r\n    permission BazClasses;\r\n    restricted(BazClasses) var baz: String\r\n    restricted(BazClasses) func doBaz() {}\r\n    \r\n    // Optional: restricted to specific, enumerated classes\r\n    restricted(AnotherClass, AThirdClass) var quux: String\r\n    restricted(AnotherClass, AThirdClass) func doQuux()\r\n}\r\n\r\nAny class can gain access to the BazClasses group by saying something like:\r\n\r\nclass AnotherClass {\r\n    permitted MyClass.BazClasses\r\n}\r\n\r\nIt may make sense to make some of these things into @annotations; I'm not exactly sure how those fit into Swift's design.\r\n\r\nSteps to Reproduce:\r\n1. Create a class in an Xcode playground.\r\n2. Try to create a property or method that can't be access from outside the class.\r\n\r\nExpected Results:\r\nIt is possible to do so.\r\n\r\nActual Results:\r\nIt isn't.\r\n\r\nVersion:\r\nOS X Mavericks 10.9.3 (13D65), Xcode 6 beta seed 1 (6A215l), Swift version 1.0 (swift-600.0.34.4.5)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nN/A"
+    email: brent@architechies.com
+    modified: "2014-06-17T00:11:39.954886Z"
+    number: "17136480"
+    number_intvalue: 17136480
+    originated: "2014-6-03"
+    parent_number: "15747445"
+    product: Developer Tools
+    product_version: Xcode 6A215l, swift-600.0.34.4.5
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/15747445
+    title: Swift class member access control

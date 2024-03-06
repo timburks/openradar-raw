@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20161020"
+    labels:
+        datastore_id: "6391579002535936"
+data:
+    classification: Other Bug
+    created: "2015-03-13T23:45:28.097415Z"
+    description: "boundingRectWithSize in NSAttributedString and sizeThatFits in UILabel are inconsistent for some strings.\r\n\r\nSteps to Reproduce:\r\n- (void)stringSizeBug {\r\n    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];\r\n    paragraphStyle.lineSpacing = 2;\r\n    paragraphStyle.alignment = NSTextAlignmentCenter;\r\n \r\n    NSDictionary *attributes = @{\r\n        NSForegroundColorAttributeName : [UIColor whiteColor],\r\n        NSParagraphStyleAttributeName : paragraphStyle,\r\n        NSFontAttributeName : [UIFont systemFontOfSize:12]\r\n    };\r\n \r\n    NSDictionary *attributes2 = @{\r\n        NSParagraphStyleAttributeName : paragraphStyle,\r\n        NSFontAttributeName : [UIFont systemFontOfSize:12]\r\n    };\r\n \r\n    NSAttributedString *part1 = [[NSAttributedString alloc] initWithString:@\"Add me here\" attributes:attributes];\r\n    NSAttributedString *part2 = [[NSAttributedString alloc] initWithString:@\" − Get seen by millions!\" attributes:attributes2];\r\n    NSMutableAttributedString *text = [[NSMutableAttributedString alloc] initWithAttributedString:part1];\r\n    [text appendAttributedString:part2];\r\n \r\n    // Bug 1 in NSAttributedString\r\n    NSLog(@\"%@\", NSStringFromCGSize([text boundingRectWithSize:CGSizeMake(251, 100) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin context:nil].size));  // {201.70800000000003, 16.315999999999999}\r\n    NSLog(@\"%@\", NSStringFromCGSize([text boundingRectWithSize:CGSizeMake(226, 100) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin context:nil].size));  // {201.70800000000003, 14.315999999999999}\r\n \r\n    // Bug 2 in UILabel\r\n    UILabel *label = [[UILabel alloc] init];\r\n    label.numberOfLines = 0;\r\n    label.attributedText = text;\r\n    NSLog(@\"%@\", NSStringFromCGSize([label sizeThatFits:CGSizeMake(251, 100)]));  // {202, 16.5}\r\n    NSLog(@\"%@\", NSStringFromCGSize([label sizeThatFits:CGSizeMake(226, 100)]));  // {202, 14.5}\r\n}\r\n\r\nOr https://gist.github.com/diegosanchezr/8c740548fd51400ea34c\r\n\r\nExpected Results:\r\nI expect to get a consistent sizeThatFits/boundingRectWithSize if I provide enough size to fit.\r\n\r\nActual Results:\r\nI get different sizes for two rects that can contain perfectly the string.\r\n\r\nVersion:\r\niOS 8\r\n\r\nNotes:\r\nIt does not affect iOS 7.\r\nIt seems to be taking into account lineSpacing = 2, but only one line is required. It seems to be required that both parts in the attributed string have different arguments. In the example it's just the color.\r\n\r\nConfiguration:\r\niOS 8"
+    email: diego.sanchez@corp.badoo.com
+    modified: "2015-03-13T23:45:28.097548Z"
+    number: "20161020"
+    number_intvalue: 20161020
+    originated: "2015-03-13"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 8
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Incorrect size returned by UILabel/NSAttributedString

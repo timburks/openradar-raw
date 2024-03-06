@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7501244"
+    labels:
+        datastore_id: "4966972596944896"
+data:
+    classification: Build
+    created: "2019-12-20T03:31:20.002359Z"
+    description: "In a very large project likes our the Xcode test launcher can crash due to exceeding argument limit. \r\n\r\nIn particular:\r\n\r\n- A test bundle that has hundreds of dependencies. (350+)\r\n- _all_ dependencies are built as frameworks with their `MACH_O_TYPE` set to \"Static Library\"\r\n- Each dependency has a custom `CONFIGURATION_BUILD_DIR` that is one level deep.\r\n\r\nRunning the large project test bundle scheme we observe an error message right before tests launch saying \"The request was denied by service delegate (SBMainworkspace) for reason: Unspecified.\" See attached screenshot.\r\n\r\nI dug through the issue and it seems that when building for testing (with CMD+SHIFT+U) Xcode outputs an `.xctestrun` file includes _all_ dependencies under the `DYLD_FRAMEWORK_PATH` and `__XPC_DYLD_FRAMEWORK_PATH` entires.\r\n\r\nThis causes the argument list to become too long and the test launch crashes. If you try to do the same without an app host then Xcode yields the error \"argument list too long\" which I believe is the same issue but with a different error message.\r\n\r\nAttached you can find a generated large project that reproduces the issue.\r\n\r\nIt seems that Xcode probably shouldn't be adding all these entries `DYLD_FRAMEWORK_PATH` if the dependency is statically linked.\r\n\r\nA workaround for the issue is to use the default `CONFIGURATION_BUILD_DIR` variable something we want to avoid as we use it internally."
+    email: dnkoutso@gmail.com
+    modified: "2019-12-20T03:31:20.002494Z"
+    number: "7501244"
+    number_intvalue: 7501244
+    originated: 12/19/2019
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: Xcode 10,11
+    reproducible: Always
+    resolved: NO
+    status: OPEN
+    title: Custom CONFIGURATION_BUILD_DIR + static framework causes error trying to launch tests in large project.

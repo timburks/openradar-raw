@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7663990
+    labels:
+        datastore_id: "5022946624012288"
+data:
+    classification: ""
+    created: "2020-04-15T00:45:01.555089Z"
+    description: "(Note that this ticket refers specifically to `requestReadData(atOffset:length:completion:)` on Catalyst. See FB7663947 for the related iPadOS ticket. To my knowledge, `requestReadData(atOffset:length:completion:)` has never worked on Catalyst, unlike iPadOS, where it has worked until iPadOS 13.4.)\r\n\r\nOn Mac Catalyst, ICCameraFile's `requestReadData(atOffset:length:completion:)` method does not read data from the camera file.\r\n\r\nWhen `requestReadData` is called with an offset of 0 and a length corresponding to the size of the file, the completion block is executed with a nil Data object. (The error is also nil.) The expected result is a Data object with the actual contents of the camera file (and a nil error).\r\n\r\nThe attached project reproduces this sample issue. (There is no app UI; see the messages logged to the console.) This project:\r\n\r\n- Instantiates an ICDeviceBrowser, sets its delegate, and starts its browser.\r\n- When an ICCameraDevice (such as an SD card) is connected, the code automatically sets its delegate, and opens a session.\r\n- When the ICCameraDeviceDelegate's `deviceDidBecomeReady(withCompleteContentCatalog:)` delegate method is called, `requestReadData(atOffset:length:completion:)` is called with on the first ICCameraFile object. (Using the first ICCameraFile is arbitrary; the results are the same regardless of which file is chosen.)\r\n- The `requestReadData(atOffset:length:completion:)` completion block is subsequently called with a nil Data object, and a nil Error object.\r\n\r\nFor Open Radar: The minimum code sample to reproduce this is at https://gist.github.com/mjrusso/b223bf8db93e64d858e80b6fb8ab6ef8"
+    email: mjrusso@gmail.com
+    modified: "2020-04-15T00:45:01.555244Z"
+    number: FB7663990
+    number_intvalue: 7663990
+    originated: "2020-04-14"
+    parent_number: '&{NULL_VALUE}'
+    product: Image I/O
+    product_version: macOS 10.15.4
+    reproducible: 100%
+    resolved: ""
+    status: Open
+    title: 'ImageCaptureCore via Mac Catalyst: ICCameraFile requestReadData(atOffset:length:completion:) always passes nil Data object to completion block'

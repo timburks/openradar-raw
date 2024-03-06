@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21217942"
+    labels:
+        datastore_id: "4952577187774464"
+data:
+    classification: Security
+    created: "2015-06-03T09:41:49.85413Z"
+    description: "This is a duplicate of rdar://20066350\n\nSummary:\r\nThe Swift standard library doesn’t provide any concept of an “exception”. In order to indicate user error, Swift conventionally uses assert or precondition. However, there is no way to test that production code–code I’ll be shipping to users of my app–triggers an assert or precondition. All three of the following functions are untestable:\r\n\r\n```\r\npublic func decrement(x: UInt) -> UInt {\r\n  return x - 1  // Crashes if x == 0\r\n}\r\n\r\npublic func decrementWithAssert(x: Int) -> Int {\r\n  assert(x > 0)\r\n  return x - 1\r\n}\r\n\r\npublic func decrementWithPrecondition(x: Int) -> Int {\r\n  precondition(x > 0)\r\n  return x - 1\r\n}\r\n```\r\n\r\nThe only way to test whether this Swift code triggers an assert is by waiting for crash reports from my users.\r\n\r\nSteps to Reproduce:\r\n1. Write a public Swift function that, given an integer, asserts that the integer must be less than or equal to 10:\r\n\r\n```\r\npublic func dieIfGreaterThanTen(x: Int) {\r\n    assert(x <= 10)\r\n}\r\n```\r\n\r\n2. Attempt to write a unit test for that function.\r\n\r\nExpected Results:\r\nI am able to write a unit test, such as:\r\n\r\n```\r\nfunc testDie_whenXIsGreaterThanTen_doesNotTriggerAssert() {\r\n    XCTAssertDoesNotAssert { dieIfGreaterThanTen(9) }\r\n}\r\n\r\nfunc testDie_whenXIsGreaterThanTen_triggersAssert() {\r\n    XCTAssertAsserts { dieIfGreaterThanTen(11) }\r\n}\r\n```\r\n\r\nActual Results:\r\nThere is no way to unit test the function.\r\n\r\nVersion:\r\nXcode Version 6.1.1 (6A2008a), Xcode Version 6.3 (6D532l), OS X 10.10.2\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: alancfrancis@gmail.com
+    modified: "2015-06-03T09:41:49.85446Z"
+    number: "21217942"
+    number_intvalue: 21217942
+    originated: 03-Jun-2015 10:41 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: There is no way to test assert or precondition in Swift

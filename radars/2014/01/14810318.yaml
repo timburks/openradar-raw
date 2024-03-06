@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14810318"
+    labels:
+        datastore_id: "5033020381724672"
+data:
+    classification: Bug
+    created: "2014-01-06T09:32:30.590433Z"
+    description: "Summary:The value returned by kCGImagePropertyIPTCCaptionAbstract from an image will return the value for the  IPTC key \"Image Description\"  if the key exists in the same file. \r\n\r\nSteps to Reproduce: Running this code on a image file with both keys:\r\n NSURL *imageFileURL = [NSURL fileURLWithPath:@\"Path/to/file/nat_record_tasting_menu_004.jpg\"];\r\n    CGImageSourceRef imageSource = CGImageSourceCreateWithURL((CFURLRef)imageFileURL, NULL);\r\n    NSDictionary *treeDict;\r\n NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:\r\n                             [NSNumber numberWithBool:NO], (NSString *)kCGImageSourceShouldCache,\r\n                             nil];\r\n    \r\n    \r\n    CFDictionaryRef imageProperties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, ( CFDictionaryRef)options);\r\n    CFRelease(imageSource);\r\n    if (imageProperties) {\r\n        treeDict = [NSDictionary dictionaryWithDictionary:(NSDictionary*)(imageProperties)];\r\n        id iptcTree = [treeDict objectForKey:@\"{IPTC}\"];\r\n        \r\n        for (NSString *key in [[iptcTree allKeys] sortedArrayUsingSelector:@selector(compare:)])\r\n        {\r\n           \r\n            \r\n            if ( [key isEqualToString: (NSString*) kCGImagePropertyIPTCCaptionAbstract]) {\r\n                 \r\n          \r\n            id  value = [iptcTree  valueForKey:(NSString*) kCGImagePropertyIPTCCaptionAbstract]  ;\r\n              \r\n                 NSLog(@\" kCGImagePropertyIPTCCaptionAbstract =  %@\", value);\r\n\r\n}\r\n}\r\n}\r\n\r\nExpected Results:The returned caption should be from the \"Caption/Abstract\".\r\n\r\nI.e. \"Caption: Diners pose for pictures during a Guinness World Record attempt today to curate the world's longest tasting menu with 193 courses to be eaten over 24 hours.\"\r\n\r\nActual Results: The caption retuned is from the \"Image Description\" .\r\n\r\ni.e \"Caption: TV presenter  leaves St Albans Crown Court after being found guilty of harassment, causing her fear of violence, of former girlfriend during their relationship.  she was subjected to verbal, physical and emotional abuse between January and August last year. St Albans, London.\"\r\n\r\nRegression:\r\n\r\nNotes: I have used exifTool  on the command line (http://www.sno.phy.queensu.ca/~phil/exiftool/) on the same images which returns the correct info.\r\n\r\ncommand line:\r\n\r\nexiftool -Caption-Abstract  nat_record_tasting_menu_004.jpg\r\n\r\nOther applications also return the correct values for the Caption-Abstract. for example MediaPro.\r\n\r\nI have included a txt file with the full exifTool report which show all the keys and values in the file.\r\nAlso the image I am using as an example."
+    email: mark.hunte@gmail.com
+    modified: "2014-01-06T09:51:07.802608Z"
+    number: "14810318"
+    number_intvalue: 14810318
+    originated: 22 Aug 2013
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: kCGImagePropertyIPTCCaptionAbstract returns the wrong information

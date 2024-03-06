@@ -1,0 +1,80 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17515089"
+    labels:
+        datastore_id: "6367650464661504"
+data:
+    classification: Serious Bug
+    created: "2014-07-01T01:20:37.625264Z"
+    description: |-
+        Summary:
+        Pattern matching with switch/case doesn’t allow you to match a pattern of an unknown (associated) type against a tuple.
+
+
+        Steps to Reproduce:
+        1. Write a protocol like so:
+
+        protocol PatternMatchable {
+            typealias Pattern
+            func destructure() -> Pattern
+        }
+
+        2. Write some types that conform to it:
+
+        struct ComplexNumber : PatternMatchable {
+            func destructure() -> (String, Double, Double) { return ("ComplexNumber", 0, 0) }
+        }
+
+        struct Currency {
+            func destructure() -> (String, String, Double) {return ("Currency", "CAD", 1.00) }
+        }
+
+        3. Write a function which destructures and pattern matches using the above:
+
+        func isCurrency<P : PatternMatchable>(a: P) -> Bool {
+            switch a {
+            case ("Currency", _, _): return true
+            default: return false
+            }
+        }
+
+
+        Expected Results:
+        I expected it to compile and to be usable as a pattern matching mechanism against PatternMatchable-conformant instances.
+
+
+        Actual Results:
+        It doesn’t compile; the error is:
+
+        enum case pattern cannot match values of the non-enum type 'P.Pattern'
+
+        It then occurred to me I was being too specific, so I changed the function declaration to:
+
+        func isCurrency(a: PatternMatchable) -> Bool
+
+        But this fails, too; it claims that a does not have a member “destructure.”
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        This is a pretty severe limitation of pattern matching, since protocols apparently erase the ability to reason on types altogether. Since it fails these cases at compile-time instead of at run-time, it appears to be impossible to use pattern matching to safely handle covariant types.
+
+        The solution appears to be to instead distribute any such logic across the various conformant types, increasing the implementation burden and making it much more difficult to understand at a glance how a given function operates (albeit with some payoff: extension without modification to the original code).
+
+        I was really hoping to be able to use pattern matching to destructure languages recursively in Hammer, but it looks infeasible at this point.
+    email: rix.rob@gmail.com
+    modified: "2014-07-01T01:20:37.625393Z"
+    number: "17515089"
+    number_intvalue: 17515089
+    originated: 30-Jun-2014 09:20 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta2 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Can’t pattern match unknown types against tuples'

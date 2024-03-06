@@ -1,0 +1,76 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20158053"
+    labels:
+        datastore_id: "5895286941548544"
+data:
+    classification: Other Bug
+    created: "2015-03-13T21:00:36.111694Z"
+    description: |-
+        Summary:
+        I have a function which finds or creates a value of some type from a value of some other type using a lens:
+
+        struct Lens<Whole, Part> {
+        	let from: Whole -> Part
+        	let to: (Part, Whole) -> Whole
+        }
+
+        func findOrCreate<C: CollectionType, From: Equatable>(collection: C, lens: Lens<From, C.Generator.Element>) -> Lens<From, C.Generator.Element> {
+        	return Lens(
+        		from: { value in find(collection) { lens($0, value) == value }.map { collection[$0] } ?? lens(value) },
+        		to: lens.to)
+        }
+
+        The use case is to find or construct a subview. However, subviews are of type NSView, not of the subclass used by `lens`; so subviews of other types should be ignored. Therefore, I want to change the test to consider only elements of the appropriate subtype of C.Generator.Element. This requires a new type parameter, To, and a subtype constraint To: C.Generator.Element. However, Swift rejects this constraint.
+
+
+        Steps to Reproduce:
+        1. Compile this:
+
+        struct Lens<Whole, Part> {
+        	let from: Whole -> Part
+        	let to: (Part, Whole) -> Whole
+        }
+
+        func findOrCreate<C: CollectionType, From: Equatable, To: C.Generator.Element>(collection: C, lens: Lens<From, To>) -> Lens<From, C.Generator.Element> {
+        	return Lens(
+        		from: { value in find(collection) { ($0 as? To).map { lens($0, value) == value } ?? false }.map { collection[$0] } ?? lens(value) },
+        		to: lens.to)
+        }
+
+
+
+        Expected Results:
+        I expected it to compile.
+
+
+        Actual Results:
+        It does not compile:
+        Desktop/subtype-constraint.swift:8:55: error: inheritance from non-protocol, non-class type 'C.Generator.Element'
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        I would have accepted that it might want me to constraint C.Generator.Element to AnyObject:
+
+        func findOrCreate<C: CollectionType, From: Equatable, To where C.Generator.Element: AnyObject, To: C.Generator.Element>(collection: C, lens: Lens<From, To>) -> Lens<From, C.Generator.Element>
+
+        but that doesn’t compile either:
+
+        Desktop/subtype-constraint.swift:8:58: error: type 'To' constrained to non-protocol type 'C.Generator.Element'
+    email: rix.rob@gmail.com
+    modified: "2015-03-13T21:00:36.111808Z"
+    number: "20158053"
+    number_intvalue: 20158053
+    originated: 13-Mar-2015 05:00 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (6D543q)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2b3: Function constraints don’t support subtype constraints between type parameters'

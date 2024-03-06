@@ -1,0 +1,109 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20490378"
+    labels:
+        datastore_id: "5775818533896192"
+data:
+    classification: Serious Bug
+    created: "2015-04-09T22:36:12.342603Z"
+    description: |-
+        Summary:
+        Given a workspace building a framework for iOS & Mac, with two dependency frameworks (also both for iOS & Mac), xcodebuild nondeterministically selects the wrong target (i.e. iOS for Mac, or Mac for iOS) for one or both dependencies. It still seems to build for the Mac (although how is unclear), but it fails when building for iOS, because code signing isn’t enabled in the Mac targets.
+
+        Possibly relevant details:
+        - all 3 frameworks are built by targets whose names have the platform name as a suffix, e.g. Either-iOS, Either-Mac.
+        - all 3 frameworks use the same product name for Mac & iOS, e.g. Prelude.framework.
+        - all 6 schemes have “find implicit dependencies” enabled.
+
+
+        Steps to Reproduce:
+        1. Clone https://github.com/robrix/Either & its dependencies
+
+            git clone --recursive https://github.com/robrix/Either.git
+
+        2. cd into the repo.
+
+        3. Build the Mac scheme a few times, paying attention to which targets it builds:
+
+            xcodebuild -configuration Release -sdk (xcrun --show-sdk-path --sdk macosx) -workspace Either.xcworkspace/ -scheme Either-Mac
+
+        4. Build the iOS scheme a few times, paying attention to which targets it builds:
+
+            xcodebuild -configuration Release -sdk (xcrun --show-sdk-path --sdk iphoneos) -workspace Either.xcworkspace/ -scheme Either-iOS
+
+
+        Expected Results:
+        I expected it to build the targets for the platform I specified, and no other platform. I expected all builds to succeed.
+
+
+        Actual Results:
+        It builds the target for the specified platform for the root framework, but arbitrarily selects between iOS and Mac for the dependency targets. On iOS builds, this means that 3/4 builds fail.
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        Sample output follows;
+
+        Mac:
+
+        Build settings from command line:
+            SDKROOT = macosx10.10
+
+        === BUILD TARGET Prelude-iOS OF PROJECT Prelude WITH CONFIGURATION Release ===
+
+        Check dependencies
+
+        === BUILD TARGET Box-iOS OF PROJECT Box WITH CONFIGURATION Release ===
+
+        Check dependencies
+
+        === BUILD TARGET Either-Mac OF PROJECT Either WITH CONFIGURATION Release ===
+
+        Check dependencies
+
+        ** BUILD SUCCEEDED **
+
+
+        iOS:
+
+        Build settings from command line:
+            SDKROOT = iphoneos8.3
+
+        === BUILD TARGET Box-Mac OF PROJECT Box WITH CONFIGURATION Release ===
+
+        Check dependencies
+        CodeSign error: code signing is required for product type 'Framework' in SDK 'iOS 8.3'
+
+        === BUILD TARGET Prelude-Mac OF PROJECT Prelude WITH CONFIGURATION Release ===
+        Check dependencies
+        CodeSign error: code signing is required for product type 'Framework' in SDK 'iOS 8.3'
+
+        ** BUILD FAILED **
+
+
+        The following build commands failed:
+        	Check dependencies
+        	Check dependencies
+        (2 failures)
+
+
+
+        This is a serious blocker for Carthage (cf https://github.com/Carthage/Carthage/issues/418 ). It’s possible that renaming the products per-platform would work around this issue, but migrating a _very_ large number of targets & every project using them is intractable. Other workarounds would be greatly appreciated, however :)
+
+        Thank you!
+    email: rix.rob@gmail.com
+    modified: "2015-04-09T22:36:12.34282Z"
+    number: "20490378"
+    number_intvalue: 20490378
+    originated: 09-Apr-2015 06:35 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.3 (6D570)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: xcodebuild nondeterministically selects implicit dependencies for the wrong platform

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14521283"
+    labels:
+        datastore_id: "3201401"
+data:
+    classification: UI/Usability
+    created: "2013-07-23T15:48:54.717775Z"
+    description: "Summary:\r\n\r\nWhen applying a filter to a blurred screenshot on applicationWillResignActive:, the image produced can be offset from the image that is typically reproduced. \r\n\r\nSteps to Reproduce:\r\n\r\nSend the app to the background, typically by 4-finger swipe to the side to switch apps. Return to the app to display the image with the filter applied.\r\n\r\nExpected Results:\r\n\r\nThe filter is applied in a consistent manner and the resulting image is not offset.\r\n\r\nActual Results:\r\n\r\nIn some cases, the filter image is offset from the frame it is drawn in.\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\nI have attached a sample app in which I was able to reproduce the bug very rarely when building on a device. Included are two screenshots, one showing the standard image, and one showing the offset image. Below is my investigation of the issue in the original app.\r\n\r\nThrough my investigation, I've narrowed this down to the blurWithRadius: method: \r\n- (UIImage *)blurWithRadius:(NSNumber *)radius\r\n{\r\n    /* Blur the image */\r\n    CIImage* ciImage = [[CIImage alloc] initWithCGImage:self.CGImage options:nil]; // 2\r\n    CIFilter *gaussianFilter = [CIFilter filterWithName:@\"CIGaussianBlur\"\r\n                                          keysAndValues:kCIInputImageKey, ciImage, @\"inputRadius\", radius, nil]; // 3\r\n    CIImage *blurCIImage = [gaussianFilter valueForKey:kCIOutputImageKey]; // 4\r\n    \r\n    CIContext *context = [CIContext contextWithOptions:nil]; // 1\r\n    CGImageRef cgImage = [context createCGImage:blurCIImage fromRect:[ciImage extent]]; // 5\r\n    UIImage *resizedBlurImage = [UIImage imageWithCGImage:cgImage];\r\n    CGImageRelease(cgImage);\r\n    return resizedBlurImage;\r\n}\r\n\r\nThe offset is proportional to the radius but is independent of the filter (I was also able to reproduce using the CIBloom filter).\r\n\r\nThe blurWithRadius: method follows almost exactly the Core Image programming guide example on processing images (https://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/CoreImaging/ci_tasks/ci_tasks.html):\r\nCIContext *context = [CIContext contextWithOptions:nil]; // 1\r\nCIImage *image = [CIImage imageWithContentsOfURL:myURL]; // 2\r\nCIFilter *filter = [CIFilter filterWithName:@\"CISepiaTone\"]; // 3\r\n[filter setValue:image forKey:kCIInputImgeKey];\r\n[filter setValue:[NSNumber numberWithFloat:0.8f] forKey:@\"InputIntensity\"];\r\nCIImage *result = [filter valueForKey:kCIOutputImageKey]; // 4\r\nCGImageRef cgImage = [context createCGImage:result fromRect:[result extent]; // 5\r\n\r\nMoving statement 1 to the top of the blurWithRadius: method to exactly mimic the reference does not affect the offset.\r\n\r\nThe only other apparent difference is in statement 5, where [ciImage extent] is used rather than [blurCIImage extent]. Using the [blurCIImage extent] causes a gap on either side and the image to be shifted down a bit because the difference in the CGRects is:\r\n[ciImage extent] =     origin=(x=  0, y=  0) size=(width=1496, height=2048)\r\n[blurCIImage extent] = origin=(x=-24, y=-24) size=(width=1562, height=2114) \r\n// x and y offset by 3*radius, width and height offset by 6*radius after testing with radius=4,8,11\r\nThese CGRects are the same as listed above both when the blur screen fits exactly and when it is offset."
+    email: bmwray0@gmail.com
+    modified: "2014-08-01T19:44:48.583988Z"
+    number: "14521283"
+    number_intvalue: 14521283
+    originated: 7/23/2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 6.1.3
+    reproducible: Rarely
+    resolved: Insufficient information
+    status: Closed
+    title: Inconsistent filter offset

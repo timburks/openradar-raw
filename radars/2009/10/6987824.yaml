@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6987824"
+    labels:
+        datastore_id: "90401"
+data:
+    classification: ""
+    created: "2009-10-11T11:31:59.113204Z"
+    description: "SUMMARY\r\nI have the impression that localised files are not provided by NSBundle in a way that would be reasonable / according to the documentation when some resource files do not exist for a particular localisation.\r\n\r\nEXAMPLE\r\nSuppose you have an application in with en, de, fr localisations and a readme.html file for the en and de localisations which has not been translated for fr. \r\n\r\nThen with the shared NSWorkspace object WORKSPACE you use the  call\r\n\r\n\t[WORKSPACE openFile:[[NSBundle mainBundle] pathForResource:@\"readme\" ofType:@\"html\"]];\r\n\r\naccording to documentation \r\n\r\n\"The method first looks for a matching resource file in the nonlocalized resource directory (typically Resources) of the specified bundle. If a matching resource file is not found, it then looks in the top level of any available language-specific “.lproj” directories. (The search order for the language-specific directories corresponds to the user’s preferences.) It does not recurse through other subdirectories at any of these locations. For more details see Bundles and Localization.\"\r\n\r\nthe search order for the resource file is determined by the user's language preferences. \r\n\r\nEXPECTED\r\nThat is, if the user has language preferences fr, en, de, the resource from en.lproj should be used when the resource doesn't exist for fr. And if the user has the preference fr, de, en, the resource from de.lproj should be used.\r\n\r\nACTUAL\r\nIn reality, however, the CFBundleDevelopmentRegion variable from Info.plist seems to determine which file is used. If it is set to 'en', the fallback localisation used will always come from en.lproj, regardless of the user's preferences, even when the de localisation may be closer to the user's preference.\r\n\r\nCONCLUSION\r\nTo me this looks both unreasonable for the user and contrary to the documentation (which suggests that CFBundleDevelopmentRegion provides a last resort fallback localisation to be used when the user's preferences can not be honoured).\r\n\r\nI suggest to correct the behaviour of NSBundle to match the documentation. \r\n\r\nIt'd also be helpful to document the fact that CFBundleDevelopmentRegion plays a role as a fallback mechanism here as this remains completely unclear from the NSBundle documentation  and is only mentioned in the CFBundle documentation.\r\n\r\n01-Sep-2009 10:08 PM Sven-S. Porst:\r\nThis problem remains. Set your preferred Languages to \r\n1. French\r\n2. German\r\n3. English\r\nlaunch it and use the Help menu item to see this. The function wants to open the Help.html file.\r\n\r\nAccording to the documentation this should happen:\r\n\r\n> The method first looks for a matching resource file in the non-localized resource directory of the specified bundle. (In Mac OS X, this directory is typically called Resources but in iPhone OS, it is the main bundle directory.) \r\n\r\nNo Resources/Help.html exists ….\r\n\r\n> If a matching resource file is not found, it then looks in the top level of any available language-specific “.lproj” directories. (The search order for the language-specific directories corresponds to the user’s preferences.) […]\r\n\r\nNo Resources/fr.lproj/Help.html exists\r\nEXPECTED:\r\nResources/de.lproj/Help.html exists => I'd expect that file to be used\r\n\r\nACTUAL:\r\nResources/en.lproj/Help.html is opened.\r\n\r\nI assume this happens because the Info.plist specifies the development region as 'en'.\r\n\r\nThis is \r\na) not very helpful for the user who explicitly stated he'd prefer the German version\r\nb) differing from the documentation of NSBundle's pathForResource:ofType: as detailed above."
+    email: cv47al@gmail.com
+    modified: "2011-08-28T05:46:23.459179Z"
+    number: "6987824"
+    number_intvalue: 6987824
+    originated: "2009-06-19"
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: NSBundle localisation handling incorrect?

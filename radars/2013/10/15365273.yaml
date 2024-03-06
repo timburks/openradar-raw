@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15365273"
+    labels:
+        datastore_id: "5000207368454144"
+data:
+    classification: Crash
+    created: "2013-10-31T20:40:15.096729Z"
+    description: "Summary:\r\nUsing an affine transform with a bad value will crash the Mavericks window server, kicking you back to the login window.\r\n\r\nSteps to Reproduce:\r\nMake an NSView subclass with this code in a mac os x app. Activate the crashMe function.\r\n\r\n- (id)initWithCoder:(NSCoder *)aDecoder\r\n{\r\n\tif (self = [super initWithCoder:aDecoder])\r\n    {\r\n        CALayer *backingLayer = [CALayer layer];\r\n        backingLayer.bounds = self.bounds;\r\n        self.layer = backingLayer;\r\n        [self setWantsLayer:YES];\r\n    }\r\n    \r\n\treturn self;\r\n}\r\n\r\n-(IBAction)crashMe:(id)sender\r\n{\r\n    CAShapeLayer *badShape = [CAShapeLayer layer];\r\n    badShape.strokeColor = [NSColor redColor].CGColor;\r\n\r\n    [self.layer addSublayer:badShape];\r\n\r\n    CGFloat length = 0.0;\r\n    CGFloat nan = 1.0 / length;\r\n    \r\n    CGAffineTransform transform = (CGAffineTransform){ nan, nan, nan, nan, 0, 0 };\r\n    CGMutablePathRef arrowPath = CGPathCreateMutable();\r\n    CGPathMoveToPoint(arrowPath, &transform, length, 1);\r\n    CGPathAddLineToPoint(arrowPath, &transform, length, 0);\r\n\r\n    badShape.path = arrowPath;\r\n    CGPathRelease(arrowPath);\r\n}\r\n\r\nPlease see the attached example app.\r\n\r\nExpected Results:\r\nI would expect an error, or the app to quit or throw an exception. \r\n\r\nActual Results:\r\nThe window server crashes and boots the user out to the login window\r\n\r\nVersion:\r\n13Z603\r\n\r\nhttps://gist.github.com/briandw/7255242"
+    email: brian@chromaticgray.com
+    modified: "2014-10-26T21:51:42.602123Z"
+    number: "15365273"
+    number_intvalue: 15365273
+    originated: 10/31/13
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 13Z603
+    reproducible: Always
+    resolved: Fixed in 10.10
+    status: Closed
+    title: Using an affine transform with a bad value with crash the window server.

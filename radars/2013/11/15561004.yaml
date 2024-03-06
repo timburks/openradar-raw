@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15561004"
+    labels:
+        datastore_id: "5789779660636160"
+data:
+    classification: ""
+    created: "2013-11-30T11:55:45.705216Z"
+    description: "Summary:\r\nWhen using an NSDataDetector with the NSTextCheckingTypePhoneNumber type included, it will (seemingly incorrectly) detect the text \"phone number\" before a valid phone number.\r\n\r\nSteps to Reproduce:\r\nNSError *error = nil;\r\nNSDataDetector *dataDetector = [NSDataDetector dataDetectorWithTypes:NSTextCheckingTypePhoneNumber\r\n                                                               error:&error];\r\n\r\nNSArray *stringsToTest = @[\r\n                           @\"testing phone number 0123 4567891\",\r\n                           @\"testing some other number 0123 4567892\",\r\n                           @\"phone number 0123 4567893\",\r\n                           @\"blah blah 0123 4567894\",\r\n                           @\"testing telephone number 0123 4567895\"\r\n                           ];\r\n\r\nfor (NSString *string in stringsToTest)\r\n{\r\n    [dataDetector enumerateMatchesInString:string\r\n                                   options:0\r\n                                     range:NSMakeRange(0, string.length)\r\n                                usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {\r\n                                    NSLog(@\"%@\", result.phoneNumber);\r\n                                }];\r\n}\r\n\r\nExpected Results:\r\nI'd expect the following numbers to be detected and be the sole content of result.phoneNumber:\r\n0123 4567891\r\n0123 4567892\r\n0123 4567893\r\n0123 4567894\r\n0123 4567895\r\n\r\nActual Results:\r\nInstead the NSLog call prints out the following, not in log 1 and 3 the text \"phone number\" before the actual number:\r\n\r\n2013-11-24 19:04:26.000 PhoneNumberDetector[21874:70b] phone number 0123 4567891\r\n2013-11-24 19:04:26.000 PhoneNumberDetector[21874:70b] 0123 4567892\r\n2013-11-24 19:04:26.000 PhoneNumberDetector[21874:70b] phone number 0123 4567893\r\n2013-11-24 19:04:26.000 PhoneNumberDetector[21874:70b] 0123 4567894\r\n2013-11-24 19:04:26.001 PhoneNumberDetector[21874:70b] 0123 4567895"
+    email: steve_w101@gmx.com
+    modified: "2013-11-30T11:55:45.705351Z"
+    number: "15561004"
+    number_intvalue: 15561004
+    originated: 30-Nov-2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 7.0.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSDataDetector phone number result

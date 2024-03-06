@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "44875522"
+    labels:
+        datastore_id: "5024558297907200"
+data:
+    classification: ""
+    created: "2018-09-28T21:46:07.298835Z"
+    description: "Area:\r\ntvOS SDK\r\n\r\nSteps to Reproduce:\r\n\r\n1. Hold down Play button on the Siri remote.\r\n2. Turn on Airplay output and disable local output.\r\n3. Launch app that activates AVAudioSession and notice that session.currentRoute.outputs.firstObject.portType says Airplay\r\n4. Hold down TV button and put the ATV to sleep\r\n5. Wake up the ATV\r\n6. Launch app that activates AVAudioSession and expect Airplay but see HDMI output\r\n7. Go to home screen and hold down Play button. Airplay option is still selected\r\n\r\nVersion/Build:\r\n\r\nApple TV 4\r\ntvOS 12.0\r\n\r\nCode:\r\n\r\nimport UIKit\r\nimport AVFoundation\r\n\r\n@UIApplicationMain\r\nclass AppDelegate: UIResponder, UIApplicationDelegate {\r\n\r\n  var window: UIWindow?\r\n\r\n\r\n  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {\r\n    let notificationCenter = NotificationCenter.default\r\n    notificationCenter.addObserver(self,\r\n                                   selector: #selector(handleRouteChange),\r\n                                   name: AVAudioSession.routeChangeNotification,\r\n                                   object: nil)\r\n    return true\r\n  }\r\n\r\n  @objc func handleRouteChange(notification: Notification) {\r\n    guard let userInfo = notification.userInfo,\r\n      let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,\r\n      let reason = AVAudioSession.RouteChangeReason(rawValue:reasonValue) else {\r\n        return\r\n    }\r\n    print(\"route changed: reason=\\(reason)\")\r\n  }\r\n\r\n  func applicationWillResignActive(_ application: UIApplication) {\r\n    let session = AVAudioSession.sharedInstance()\r\n    do {\r\n      try session.setActive(false)\r\n    } catch {\r\n      print(\"deactive error: \\(error)\")\r\n    }\r\n  }\r\n\r\n  func applicationDidBecomeActive(_ application: UIApplication) {\r\n    let session = AVAudioSession.sharedInstance()\r\n    do {\r\n      try session.setCategory(.playback, mode: .moviePlayback, policy: .longForm)\r\n      try session.setActive(true)\r\n      print(\"outputs: \\(session.currentRoute.outputs)\")\r\n    } catch {\r\n      print(\"reactive error: \\(error)\")\r\n    }\r\n  }\r\n}\r\n\r\nOutput:\r\n\r\noutputs: [<AVAudioSessionPortDescription: 0x1c000ed20, type = AirPlay; name = AirPlay; UID = 12779568-c588-478e-8019-d3b65ae2c30b; selectedDataSource = (null)>]\r\n<sleep>\r\n<wake>\r\noutputs: [<AVAudioSessionPortDescription: 0x1c000f870, type = HDMIOutput; name = Entertainment Room; UID = 4C2DBA07-0000-0000-2E14-010380593278; selectedDataSource = (null)>]"
+    email: aman@tmm1.net
+    modified: "2018-09-28T21:46:07.299082Z"
+    number: "44875522"
+    number_intvalue: 44875522
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: AVAudioSession output route switches back from Airplay to HDMI after sleep/wake

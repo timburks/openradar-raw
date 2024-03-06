@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32015376"
+    labels:
+        datastore_id: "5015629740376064"
+data:
+    classification: Serious Bug
+    created: "2017-05-05T14:33:50.70943Z"
+    description: "Summary:\nA sandboxed macOS app cannot seem to connect to localhost port 631, even with all required network entitlements. I use the interface defined in cups/cups.h, which is also used by the java printing system.  My java app, Moneydance, on the mac app store is seriously affected by this because the accumulated connection time-outs add up to nearly five minutes of delay before the print dialog appears.\n\nSteps to Reproduce:\n1. Create a sandboxed macOS app (see attachment) with ATS and all entitlements enabled to allow network connections, including client+server, and even arbitrary loads.\n2. open a socket to \"localhost\" port 631 (the CUPS printer server) using the httpsConnect2 function from the CUPS printing interface\n3. wait for whatever your timeout period is\n\nExpected Results:\nExpected to get an HTTP response from the CUPS server listening to that port.  Ideally we could then go on to print via the advertised CUPS print system.\n\nUsing \"curl\" from a shell to retrieve the same URL (http://localhost:631/) works fine.\n\nActual Results:\nThe connection times out or outright fails (if using NSURL) and an error is printed to the console: \n  nw_socket_connect connectx failed: [1] Operation not permitted\nIn the case of using NSURL the connection fails but does so immediately\n\nRegression:\nThis worked in 10.12.3 and earlier.  10.12.4 and beta5 of 10.12.5 fail.\n\nNotes:\nI haven't found any workaround although it does seem that CUPs the connection will occasionally go through.  Perhaps it's just a firewall rule or reverse DNS configuration causing the delay?\n\nSee attached xcode project which *must* be run in sandboxed mode.  httpConnect2 from libcups times out reliably and NSURL to the same URL fails immediately.  I haven't found any variations on the httpConnect2 parameters that change the time-out behaviour.  HTTP_ENCRYPTION_NONE, etc don't seem to make a difference."
+    email: seandreilly@gmail.com
+    modified: "2017-05-05T14:33:50.70965Z"
+    number: "32015376"
+    number_intvalue: 32015376
+    originated: 05-May-2017 03:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.12.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Sandboxed connections can't connect to localhost port even with full network entitlements

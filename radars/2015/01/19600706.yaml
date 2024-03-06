@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19600706"
+    labels:
+        datastore_id: "6363576352636928"
+data:
+    classification: ""
+    created: "2015-01-26T18:50:18.119264Z"
+    description: "Summary:\r\n_pthread_cond has a pointer to the mutex passed to pthread_cond_wait, and subsequent calls to pthread_cond_wait check that the mutex is at the same address. However, for mutexes constructed with PTHREAD_PROCESS_SHARED this check is incorrect, as you can have the same mutex at multiple addresses -- and when sharing a mutex between multiple processes, it normally will be at different addresses in each process. This means that in practice, condition variables can only reliably be shared between the parent and child of a fork().\r\n\r\nSteps to Reproduce:\r\ncc repro.c -o repro && ./repro && echo $?\r\n\r\nExpected Results:\r\nThe program exits correctly and the return code of 0 is printed\r\n\r\nActual Results:\r\npthread_cond_wait on the second thread to reach it fails, resulting in an infinite loop.\r\n\r\nVersion:\r\nApple LLVM version 6.0 (clang-600.0.57) (based on LLVM 3.5svn)\r\nOS X 10.10.2 14C106a\r\n\r\nNotes:\r\nWe're currently working around this by setting the `busy` field of `_pthread_cond` to NULL before calling pthread_cond_wait, which we can get away with since we don't cancel threads. This is of course highly fragile since it requires mucking about in a private data structure.\r\n\r\nConfiguration:\r\nThis has been a problem since pthread_condattr_setpshared was implemented.\r\n\r\nAttachments:\r\n'repro.c' was successfully uploaded."
+    email: tg@realm.io
+    modified: "2015-01-26T18:50:18.119417Z"
+    number: "19600706"
+    number_intvalue: 19600706
+    originated: 26-Jan-2015 10:48 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: pthread_cond_wait requires that the mutex be at the same address in every process

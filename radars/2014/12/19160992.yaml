@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19160992"
+    labels:
+        datastore_id: "5238570067427328"
+data:
+    classification: Open
+    created: "2014-12-05T21:56:11.197902Z"
+    description: "Summary:\r\nWhen a view controller hierarchy has a depth of more than 1 container view controller inside of a UINavigationController, only the top most container view controller is properly restored (i.e. decodeRestorableStateWithCoder: is called).  The attached sample project has several configurations that demonstrate the problem.  In the AppDelegate.m, there are six different example hierarchies created, with the last two (#5 and #6) not working properly.  In all cases, all of the view controllers involved in the hierarchy get encoded into the state preservation data (checked using logging statements and the restorationArchiveTool provided by Apple), but in the last two examples not all of the view controllers are properly restored.  Using logging statements, you can see that the decodeRestorableStateWithCoder: method is not called on all of the view controllers, which causes the tab bar to lose its selected view controller and restore back to the first tab.\r\n\r\nSteps to Reproduce:\r\n1) Uncomment one of the scenarios in the AppDelegate.m, make sure all of the other scenarios are commented.\r\n2) Run the application in Xcode\r\n3) Switch to the second tab\r\n4) Press the home button to kick off the state preservation process\r\n5) Quit the application by stopping in Xcode\r\n6) Run the application again in Xcode\r\n7) Note that in examples 1-4, the second tab is still selected, but in examples 5-6, the tab bar changes back to the first tab.\r\n8) Delete the application from the device\r\n9) Repeat steps 1-7 for all of the examples.\r\n\r\nExpected Results:\r\nAll 6 of the examples should properly restore the application so the second tab is still selected.\r\n\r\nActual Results:\r\nThe final two examples are not properly restored.  The first tab is selected instead.\r\n\r\nVersion:\r\n8.0.2 (12A405)\r\n\r\nNotes:\r\nI have subclassed UINavigationController and UITabController only to log the calls to encodeRestorableStateWithCoder: and decodeRestorableStateWithCoder:(NSCoder *)coder.  Using actual UINavigationController and UITabController gets the same results.\r\n\r\nConfiguration:\r\niPhone 6, AT&T\r\n\r\n\r\nUpdate: This is by design: you need to make reference to child view controllers inside of custom container controllers.  See: http://mikeabdullah.net/thl-diary-20-restore-container-vc.html"
+    email: michael.mcguire@gmail.com
+    modified: "2015-01-16T14:32:24.923197Z"
+    number: "19160992"
+    number_intvalue: 19160992
+    originated: 12/5/2014
+    parent_number: "19217659"
+    product: iOS SDK
+    product_version: "8.0"
+    reproducible: Yes
+    resolved: Yes
+    status: Closed
+    title: Container View Controllers inside of a UINavigationController don't properly get restored during State Restoration

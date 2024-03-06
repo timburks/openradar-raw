@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20583619"
+    labels:
+        datastore_id: "6185198710423552"
+data:
+    classification: Serius bug
+    created: "2015-04-17T06:55:55.3915Z"
+    description: "Summary:\r\nThe compiler does not allow me to use a generic function of the form:\r\nfunc myFunction<T>() -> Void {}\r\n\r\nSteps to Reproduce:\r\n1. Write a function of above form:\r\n  func myFunction<T>() -> Void {}\r\n2. Call it:\r\n  myFunction<MyObject>()\r\n3. Compile it\r\n\r\nOR\r\n\r\nJust execute the attached code in a playground :)\r\n\r\nExpected Results:\r\nIt compiles without issues\r\n\r\nActual Results:\r\nError: Cannot explicitly specialize a generic function\r\n\r\nVersion:\r\nXcode 6.3\r\nswift 1.2\r\n\r\nNotes:\r\nSame error on swift1.1\r\n- Not only me:\r\n\r\nhttp://stackoverflow.com/questions/27965439/cannot-explicitly-specialize-a-generic-function\r\n\r\nhttp://stackoverflow.com/questions/28726937/how-do-i-call-a-generic-swift-function-when-none-of-the-arguments-provides-the-g\r\n\r\nhttps://twitter.com/dangerdave/status/490385202170982401\r\n\r\n\r\nAttached code:\r\n\r\n\r\n\r\nimport Foundation\r\n\r\nprotocol Registrable: NSObjectProtocol {\r\n    static func registerIfNeeded()\r\n    static func unregister()\r\n    init()\r\n}\r\n\r\nclass Something: NSObject, Registrable {\r\n    static func registerIfNeeded() {\r\n    }\r\n    static func unregister() {\r\n    }\r\n    override required init() {\r\n    }\r\n}\r\n\r\nfunc doMyThing<T: Registrable>(whatever: Int) {\r\n    // Before doing my stuff I make sure the class is registered\r\n    T.registerIfNeeded()\r\n    // Now I can do my thing\r\n    var t = T()\r\n}\r\n\r\n//: No way the compiler can know about `Something` unless it is passed explicitly. However it does not work explicitly too: **ERROR** ***Cannot explicitly specialize a generic function***\r\n\r\ndoMyThing<Something>(123)\r\n\r\nfunc doMyThing2<T: Registrable>(index: Int) -> T {\r\n    T.registerIfNeeded()\r\n    var t = T()\r\n    return t\r\n}\r\n\r\ndoMyThing2(123) as Something // This works because the compiler got a hint"
+    email: nacho4d@gmail.com
+    modified: "2015-04-17T06:55:55.39177Z"
+    number: "20583619"
+    number_intvalue: 20583619
+    originated: 2015/0417
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Cannot explicitly specialize a generic function

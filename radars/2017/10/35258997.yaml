@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35258997"
+    labels:
+        datastore_id: "4943461371346944"
+data:
+    classification: Security
+    created: "2017-10-30T21:42:02.63098Z"
+    description: "Area:\r\nTerminal\r\n\r\nSummary:\r\nfdesetup will delete the Filevault 2 Recovery Key on a \"changerecovery -personal\" operation if given A) an incorrect password or B) the valid password of a user who is not the current console user\r\nThe is a security bug that results in data loss.\r\n\r\nSteps to Reproduce:\r\nInstall 10.13, update to beta 5 (occurs in betas 1-4 also)\r\nEnable Filevault via Security Preference pane, note the recovery key\r\nAllow encryption to finish\r\nAdd another user via Users and Groups preference pane\r\nOpen Terminal\r\nRun: fdesetup list\r\nNote there should be 3 entries: the two users and (null) the recovery key entry\r\nRun \"fdesetup changerecovery -personal\"\r\nSupply either:\r\nA) an incorrect password \r\nB) the 2nd user created who is not the current console user\r\nRun: fdesetup list\r\nNote (null) is not there\r\nRun: fdesetup validaterecovery\r\nEnter recovery key given at encryption, it returns false, the recovery key has been deleted\r\n\r\nExpected Results:\r\nWhen running \"fdesetup changerecovery -personal\"\r\nA) An incorrect password should simply error out with \"Error: Unable to unlock FileVault.\" and exit with exit status 11\r\nB) Given ANY valid filevault2 password generate a new key\r\n\r\nActual Results:\r\nIn both cases\r\nA) incorrect password given and \r\nB) password of non-console user given\r\n\r\n\"Error: Unable to change key\", with exit status 136\r\n!!! Recovery key is deleted !!!\r\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n\r\nVersion/Build:\r\n10.13.1/17B46a (beta5)\r\n\r\nConfiguration:\r\nTested on APFS not converted from JHFS+\r\n10.13 installed via createinstallmedia to non-encrypted APFS container\r\nDrive was not converted. APFS drive created using 10.13 Disk Utility\r\n\r\nNotes/Regression:\r\nThe behavior did not occur in 10.7, 10.8, 10.9, 10.10, 10.11 or 10.12. Regression is new to 10.13. It is also counter to the advice given in the man page of fdesetup(8): \"It is not recommended that you remove all recovery keys since, if you lose your FileVault password, you may not be able to access your information.\" This is precisely what this behavior is doing. Also the typo \"volune\" appears in the man page as well."
+    email: brunerd@gmail.com
+    modified: "2018-01-10T19:19:11.08231Z"
+    number: "35258997"
+    number_intvalue: 35258997
+    originated: 10/30/2017
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13.1/17B46a
+    reproducible: Always
+    resolved: ""
+    status: Dupe/Closed
+    title: fdesetup changerecovery deletes recovery keys (10.13.1/17B46a)

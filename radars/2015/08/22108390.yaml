@@ -1,0 +1,65 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22108390"
+    labels:
+        datastore_id: "4980964774117376"
+data:
+    classification: Enhancement
+    created: "2015-08-02T20:20:02.5909Z"
+    description: |-
+        Summary:
+        In rdar://problem/22108354 I wrote a (pseudoSwift) example of rewriting a static function into a failable initializer:
+
+        init?(_ weave: (A -> Location?) -> A -> Location?, _ up: A -> Location?, _ a: A) {
+        	func into(t1: A) -> Location? {
+        		return Location(it: t1, down: weave(into), up: up, left: const(nil), right: const(nil))
+        	}
+        	self = into(a)
+        }
+
+        Unfortunately this does not compile, because the assignment of an Optional type to self is illegal. Instead, one has to write:
+
+        init?(_ weave: (A -> Location?) -> A -> Location?, _ up: A -> Location?, _ a: A) {
+        	func into(t1: A) -> Location? {
+        		return Location(it: t1, down: weave(into), up: up, left: const(nil), right: const(nil))
+        	}
+        	if let location = into(a) {
+        		self = location
+        	} else {
+        		return nil
+        	}
+        	// note: one can use an equivalent guard clause:
+        	// guard let location = into(a) else { return nil }
+        	// self = location
+        }
+
+        While this has the virtue of actually compiling today, it’s a lot of extra syntax to do essentially the same thing: return `nil` if the assigned value was `nil`, or else assign the (non-`nil`) value.
+
+
+        Steps to Reproduce:
+        N/A
+
+        Expected Results:
+        N/A
+
+        Actual Results:
+        N/A
+
+        Regression:
+        N/A
+
+        Notes:
+        This would presumably only apply to value types since if I recall correctly assignment to self is only legal in value type initializers.
+    email: rix.rob@gmail.com
+    modified: "2015-08-02T20:20:02.59128Z"
+    number: "22108390"
+    number_intvalue: 22108390
+    originated: 02-Aug-2015 04:19 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A165t)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2.0b4: Allow assignment of nil to self in failable initializers to indicate failure'

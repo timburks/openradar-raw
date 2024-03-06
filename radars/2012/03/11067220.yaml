@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11067220"
+    labels:
+        datastore_id: "1599411"
+data:
+    classification: Other Bug
+    created: "2012-03-16T23:32:25.402437Z"
+    description: "Summary:\r\n\r\nThe Diff mode of the Version editor is missing a major feature from FileMerge: the ability to quickly revert an individual diff chunk by choosing the \"Left\" or \"Right\" version of the chunk. I appreciate that I can edit the file live in the diff viewer, but quite often I'm reviewing my changes before committing and I just want to remove an NSLog I added in my working copy for debugging purposes.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Add a file to SVN and commit.\r\n2. Change the file but don't commit yet.\r\n3. Open the Version editor in Diff mode on that file.\r\n4. Ensure the left pane is viewing the \"working\" version of the file, and the right version is viewing the BASE version of the file.\r\n5. Select the blue-bordered chunk indicator in the gutter between the files.\r\n6. Press the right arrow key.\r\n\r\nExpected Results:\r\n\r\nThe chunk is reverted in the left pane, and a blue chunk indicator shows where the change used to be and what replaced it.\r\n\r\nActual Results:\r\n\r\nNothing happens.\r\n\r\nRegression:\r\n\r\nFileMerge has this behavior.\r\n\r\nNotes:\r\n\r\nSince the panes are actually live editors, this would be a kind of tricky feature to implement. Once a chunk is reverted, there's no difference between the file and the version it's being compared against, so there's nothing for the user to manipulate to \"redo\" an undone chunk. And with autosaving on Lion, there's no clear point at which to forget about undone chunks.\r\n\r\nI think this is solvable, since only the working copy version of a file can be edited in the Version editor. If you revert a chunk, Xcode should remember the contents and position of the chunk that was reverted, and the range that was replaced when the chunk was reverted. The Diff editor would not draw a corresponding chunk in the other pane; instead the blue bar would end in the gutter and contain a circular \"undo\" arrow (similar to the \"refresh\" arrow in the address bar of Safari). If for some strange reason the user had chosen the working version in both panes of the diff editor, the blue bar could extend across and draw the \"reverted chunk\" icon in the middle. Xcode would remember reverted chunks until either the app quit or it notices the file has lost its \"Modified\" SCM status.\r\n\r\nEven though it doesn't quite mimic the \"toggle between left and right versions\" behavior of FileMerge, I think it's even better because it allows the user to cherry pick chunks that need to be reverted when compared against multiple different versions of a file. For example, if I've accidentally committed a bunch of debugging statements over the course of three different revisions, I could load up the working version of the file in the left pane of the diff editor, and the HEAD in the right pane, find and revert the errant chunks, load the HEAD-1 rev in the right pane, find and revert errant chunks, load the HEAD-2 rev in the right pane, etc."
+    email: kyle.sluder@gmail.com
+    modified: "2012-03-16T23:32:25.402571Z"
+    number: "11067220"
+    number_intvalue: 11067220
+    originated: "2012-03-16"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 4.3.1 (4E1019)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Cannot choose left/right version in Diff mode of Version editor

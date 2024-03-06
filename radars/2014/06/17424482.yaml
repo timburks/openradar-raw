@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17424482"
+    labels:
+        datastore_id: "6401433066799104"
+data:
+    classification: Serious Bug
+    created: "2014-06-23T21:02:33.186826Z"
+    description: "Summary:\r\nExamine the following swift class:\r\n\r\nclass MyDictionary : NSDictionary {\r\n    convenience init(beAwesome:Bool) {\r\n        if (beAwesome) {\r\n            self.init(object: true, forKey:\"awesome\")\r\n        } else {\r\n            self.init(object: false, forKey:\"awesome\")\r\n        }\r\n    }\r\n}\r\n\r\nThis class does not compile. However, if the class inherits from this Swift class:\r\nclass MyClass {\r\n    var object: AnyObject!\r\n    var key: NSCopying!\r\n    convenience init(object: AnyObject!, forKey key: NSCopying!) {\r\n        self.init()\r\n        self.object = object\r\n        self.key = key\r\n    }\r\n}\r\n\r\nIt works perfectly. It appears the Swift compiler is handling the inheritance of NSDictionary's convenience and delegated initializers differently than it handles Swift classes. This same error occurs for other Objective-C classes as well.\r\n\r\nSteps to Reproduce:\r\n1. Paste the first class into an Xcode playground\r\n2. Open the assistant editor\r\n3. Notice that the code didn't compile, and spit out a bunch of errors into the console output\r\n\r\nExpected Results:\r\nThe code compiles\r\n\r\nActual Results:\r\nThe following error is printed:\r\n\r\nPlayground execution failed: error: <REPL>:8:13: error: use of 'self' in delegating initializer before self.init is called\r\n            self.init(object: true, forKey:\"awesome\")\r\n            ^\r\n<REPL>:8:18: error: use of 'self' in delegating initializer before self.init is called\r\n            self.init(object: true, forKey:\"awesome\")\r\n                 ^\r\n<REPL>:10:13: error: use of 'self' in delegating initializer before self.init is called\r\n            self.init(object: false, forKey:\"awesome\")\r\n            ^\r\n<REPL>:10:18: error: use of 'self' in delegating initializer before self.init is called\r\n            self.init(object: false, forKey:\"awesome\")\r\n                 ^\r\n<REPL>:12:5: error: self.init isn't called on all paths in delegating initializer\r\n    }\r\n    ^\r\n\r\nVersion:\r\n6.0/6A216f 10.9.3/13D65\r\n\r\nNotes:\r\nI've asked this question on Stack Overflow as well: http://stackoverflow.com/q/24373142"
+    email: wetzeal@gmail.com
+    modified: "2014-06-23T21:02:33.186981Z"
+    number: "17424482"
+    number_intvalue: 17424482
+    originated: 23-Jun-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 6.0 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift Subclasses of Objective-C Classes Cannot Delegate to Inherited Convenience Initializers

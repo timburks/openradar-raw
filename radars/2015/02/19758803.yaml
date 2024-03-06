@@ -1,0 +1,55 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19758803"
+    labels:
+        datastore_id: "5831881949970432"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-02-08T03:19:38.80385Z"
+    description: |-
+        Summary:
+        Any type-parameterized function containing a curried local function crashes the compiler.
+
+
+        Steps to Reproduce:
+        1. Compile this code:
+
+        func f<T>() { func g()() {} }
+
+
+        Expected Results:
+        I expected it to compile.
+
+
+        Actual Results:
+        Swift crashed:
+        1.	While emitting SIL for 'f' at ./boom.swift:3:1
+        2.	While emitting reabstraction thunk in SIL function @_TTRG0_R_XFo__dT__XFo__oXFo__dT___ for 'g' at ./boom.swift:3:15
+        3.	While emitting reabstraction thunk in SIL function @_TTRG0_R_T_XFo__dT__ for 'g' at ./boom.swift:3:15
+
+
+        Regression:
+        1. It doesn’t crash if f has no type parameters, i.e. func f() { … }
+
+        2. It doesn’t crash if g is uncurried:
+
+        	func f<T>() { func g() -> () -> () { return {} } }
+
+        3. It doesn’t crash if g has only one parameter tuple, i.e. func g().
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-02-08T03:19:38.80408Z"
+    number: "19758803"
+    number_intvalue: 19758803
+    originated: 07-Feb-2015 10:19 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Compiler crash with type-parameterized function containing curried function'

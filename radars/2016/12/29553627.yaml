@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29553627"
+    labels:
+        datastore_id: "5626825665413120"
+data:
+    classification: ""
+    created: "2016-12-07T15:36:40.1017Z"
+    description: "We noticed a weird side effect related to ATS configuration. This is the ATS-related section in the Info.plist file:\r\n\r\n<key>NSAppTransportSecurity</key>\r\n<dict>\r\n    <key>NSAllowsLocalNetworking</key>\r\n    <true/>\r\n    <key>NSExceptionDomains</key>\r\n    <dict>\r\n        --- REDACTED ---\r\n    </dict>\r\n    <key>NSAllowsArbitraryLoads</key>\r\n    <true/>\r\n</dict>\r\n\r\nBecause our app displays image and plays audio files from 3rd party servers we can't control nor predict at build time, we choose to globally disable ATS and enabled it using exceptions only for the domain we can control or we know we communicate with using https. While testing the app we noticed that downloading a file via NSURLSession.downloadTaskWithURL from a specific url: \r\n\r\nhttp://www.podtrac.com/pts/redirect.mp3/media.devchat.tv/iphreaks/iPS181_Swift_3_and_Swift_Migrations_with_Hesham_Salman.mp3\r\n\r\nwas triggering this ATS error: \r\n\r\nError Domain=NSURLErrorDomain Code=-1022 \"The resource could not be loaded because the App Transport Security policy requires the use of a secure connection.\" UserInfo={NSErrorFailingURLStringKey=http://www.podtrac.com/pts/redirect.mp3/media.devchat.tv/iphreaks/iPS178_Swift_3_and_Swift_Migrations_with_Paul_Cantrell.mp3, NSLocalizedDescription=The resource could not be loaded because the App Transport Security policy requires the use of a secure connection., NSErrorFailingURLKey=http://www.podtrac.com/pts/redirect.mp3/media.devchat.tv/iphreaks/iPS178_Swift_3_and_Swift_Migrations_with_Paul_Cantrell.mp3}\r\n\r\nThis was weird because that domain nor all other domains involved by redirects are not in the ATS exception list, so ATS should disabled and the download should work. \r\n\r\nAfter some debugging we identified the issue in the presence of the NSAllowsLocalNetworking key in the Info.plist. That key was there because we thought it was needed for some development tools we use internally and we were not sure local network communication was already included in NSAllowsArbitraryLoads. Removing NSAllowsLocalNetworking from Info.plist fixed the issue. Before submitting this bug we also tried several times adding/removing that key, just to be sure we didn't hit a false positive."
+    email: rocco.zanni@spreaker.com
+    modified: "2016-12-07T15:36:40.10205Z"
+    number: "29553627"
+    number_intvalue: 29553627
+    originated: 2016/12/07
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 10.1.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'ATS: NSAllowsLocalNetworking have side-effects on remote networking'

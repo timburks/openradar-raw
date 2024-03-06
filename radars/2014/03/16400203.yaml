@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16400203"
+    labels:
+        datastore_id: "5866175049236480"
+data:
+    classification: Serious bug
+    created: "2014-03-22T20:06:29.122443Z"
+    description: "Summary:\r\nToo many SKShapeNode instances added directly to an SKEffectNode  cause a severe visual glitch where the entire scene is instantaneously scaled down to roughly half size. It happens for a few frames when a new SKShapeNode is added, but is then instantaneously scaled back to full size.\r\n\r\nThis does not seem to occur when the SKShapeNode instances are added to other types of nodes.\r\n\r\nSteps to Reproduce:\r\nThis occurs simply by adding several SKShapeNode instances directly to an SKEffectNode.\r\n\r\n1. Create a new iOS Xcode project using the Sprite Kit template\r\n2. Replace the scene class's implementation with the following code:\r\n\r\n-(id)initWithSize:(CGSize)size {    \r\n    if (self = [super initWithSize:size]) {\r\n        SKEffectNode *container = [SKEffectNode node];\r\n        [self addChild:container];\r\n    }\r\n    return self;\r\n}\r\n\r\n-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {\r\n    UITouch *touch = [touches anyObject];\r\n    SKEffectNode *container = self.children[0];\r\n\r\n    SKShapeNode *shape = [SKShapeNode node];\r\n    shape.path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(-10, -10, 20, 20) cornerRadius:4].CGPath;\r\n    shape.position = [touch locationInNode:self];\r\n    shape.strokeColor = [SKColor colorWithHue:drand48() saturation:1 brightness:1 alpha:1];\r\n    shape.blendMode = SKBlendModeAdd;\r\n    [container addChild:shape];\r\n}\r\n\r\n3. Run the application\r\n4. Tap the screen at least 32 times\r\n\r\nExpected Results:\r\nEverything will be rendered correctly, at full 100% scale, on every tap.\r\n\r\nActual Results:\r\nFor the first few taps, shape nodes are correctly rendered. Subsequent taps (ie, when there are \"too many\" SKShapeNode instances) cause a visual glitch where the entire scene is scaled down to about half size. This happens only for a frame or two, but is enough to completely baffle users.\r\n\r\nI've recorded a short video demonstrating the effect I see: http://sartak.org/misc/shape-in-effect.mov\r\n\r\nVersion:\r\niOS 7.1 (11D167)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 5S\r\niOS Simulator\r\n\r\nAttachments:"
+    email: sartak@gmail.com
+    modified: "2014-06-04T20:29:19.951827Z"
+    number: "16400203"
+    number_intvalue: 16400203
+    originated: "2014-03-22"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.1"
+    reproducible: Always
+    resolved: ""
+    status: Resolved
+    title: Many SKShapeNodes inside SKEffectNode causes severe visual glitches

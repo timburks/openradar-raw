@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33839325"
+    labels:
+        datastore_id: "5012181787607040"
+data:
+    classification: ""
+    created: "2017-08-11T00:04:12.40983Z"
+    description: "Area:\r\nFoundation\r\n\r\nSummary:\r\nI've personally filed a rdar before (30450934) about how there are no guarantees on the ordering of the calling `getTasksWithCompletionHandler` and the calling of `didBecomeInvalidWithError`. In the case where a session is being used by another process.\r\n\r\nMoreover, my teammate has filed another rdar on this (28352195) about the lack of documentation on what to expect `didBecomeInvalidWithError` to be called with. He also posted on the forums: https://forums.developer.apple.com/message/203635#203635 and got no reply. He actually has seen `didBecomeInvalidWithError` never even being called on iOS 9, different from iOS 8 where it always seemed to be called.\r\n\r\nIn that forums post (https://forums.developer.apple.com/message/203635#203635) he references another thread https://forums.developer.apple.com/message/131816#131816 , where eskimo claims we can look at NSURLErrorBackgroundSessionInUseByAnotherProcess, but that is not documented anywhere first of all.\r\n\r\nThe fact also that we don't get this callback (didBecomeInvalidWithError) at all times, and that the ordering of the callbacks is not guaranteed at all (see https://forums.developer.apple.com/message/199637) makes it really hard to work with this code.\r\n\r\nEssentially, the asks are for a better documented experience of what to do when another process is using that session? What error to look for? What are the guarantees? Is `didBecomeInvalidWithError` guaranteed to be called (seems like the answers is no since iOS 9 and above). And even in the cases where it is called, is there a guaranteed ordering between `getTasksWithCompletionHandler` and the calling of `didBecomeInvalidWithError`?\r\n\r\n\r\nNote: I've filled another rdar (33838468) of how the callbacks for NSURLSession are sometimes not called in the right queue, this seems to indicate a race condition to me. If that's the case, it could explain some of the bugs here. I talked to Steve in the labs and he said it could be related and that I should file this rdar again and reference all the previous ones.\r\n\r\nSteps to Reproduce:\r\n1. Create an NSURLSession in an Extension\r\n2. In the main app, on foreground, try to create a session with that session identifier (to reconnect to tasks)\r\n3. If the Extension's NSURLSession is still alive, then the main app's session will sometimes, but not always (rdar://28352195) send the delegate method `didBecomeInvalidWithError`.\r\n4. If we call `getTasksWithCompletionHandler` on the main app, that block might be called before `didBecomeInvalidWithError` is invoked, if it's invoked at all\r\n\r\nExpected Results:\r\nWe'd expect that `didBecomeInvalidWithError` is called always when the session is still in use and that the error to expect there is at least in the documentation. And when it is called in respect to when `getTasksWithCompletionHandler` returns to also be more documented.\r\n\r\nNote: I've filled another rdar (33838468) of how the callbacks for NSURLSession are sometimes not called in the right queue, this seems to indicate a race condition to me. If that's the case, it could explain some of the bugs here. I talked to Steve in the labs and he said it could be related and that I should file this rdar again and reference all the previous ones.\r\n\r\nObserved Results:\r\n`didBecomeInvalidWithError` is not guaranteed to run at all times even when the session is being used by another process. And the variability with respect to the completion of `getTasksWithCompletionHandler` makes dealing with this code really hard.\r\n\r\nVersion:\r\niOS 9 versions and above\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:"
+    email: henriqueponde90@gmail.com
+    modified: "2018-04-13T00:39:20.44687Z"
+    number: "33839325"
+    number_intvalue: 33839325
+    originated: 08/10/2017
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: No
+    status: DUPLICATE | OPEN
+    title: Undefined behaviors for creating background session when another process (app extension) has a session with the same identifier

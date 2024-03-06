@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "41989238"
+    labels:
+        datastore_id: "4927942740148224"
+data:
+    classification: ""
+    created: "2018-07-09T21:15:25.82879Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nWhen Urdu is set to be the Preferred Language, Urdu is rendered with NotoNastaliqUrduUI. Then -[NSLayoutManager ensureLayoutForTextContainer:] runs into an infinite loop and never returns.\r\n\r\nThis issue is reproducible without setting Urdu to be the preferred language by constructing an NSTextStorage with the NotoNastaliqUrduUI font set explicitly. \r\n\r\nThis issue seems particularly valid as we found out about the issue from user reports.\r\n\r\nSteps to Reproduce:\r\nFile is included with repro steps. Essentially, create a tiny NSTextContainer and try to layout an Urdu string in it.\r\n\r\n\r\nExpected Results:\r\n[layoutManager ensureLayoutForTextContainer:textContainer] finishes\r\n\r\nActual Results:\r\n[layoutManager ensureLayoutForTextContainer:textContainer] never returns\r\n\r\nVersion/Build:\r\niOS 11.4, we believe this is caused by the NotoNastaliqUrduUI font which is new in iOS 11. Also occurs on Mac OS X 10.13.\r\n\r\nConfiguration:\r\niOS 11.4, or Mac OS X 10.13\r\n\r\nRepro file:\r\n\r\n#import <AppKit/AppKit.h>\r\n#import <Foundation/Foundation.h>\r\n\r\nint main(int argc, char *argv[]) {\r\n  @autoreleasepool {\r\n    NSDictionary *systemVersion = [NSDictionary dictionaryWithContentsOfFile:@\"/System/Library/CoreServices/SystemVersion.plist\"];\r\n    NSLog(@\"SysterVersion %@\", systemVersion);\r\n    \r\n    NSDictionary *attributes = @{\r\n      NSFontAttributeName: [NSFont fontWithName:@\".NotoNastaliqUrduUI\" size:14],\r\n    };\r\n    NSAttributedString *string = [[NSAttributedString alloc] initWithString:@\"باتیں\" attributes:attributes];\r\n    NSTextStorage *textStorage = [[NSTextStorage alloc] initWithAttributedString:string];\r\n    NSLog(@\"Text storage: %@\", textStorage);\r\n    \r\n    NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize:NSSizeFromCGSize(CGSizeMake(10, 10))];\r\n    textContainer.lineBreakMode = NSLineBreakByClipping;\r\n    NSLayoutManager *layoutManager = [NSLayoutManager new];\r\n    [layoutManager addTextContainer:textContainer];\r\n    [textStorage addLayoutManager:layoutManager];\r\n    \r\n    [layoutManager ensureLayoutForTextContainer:textContainer];\r\n    \r\n    NSLog(@\"Done\");\r\n  }\r\n}"
+    email: mars.martian@gmail.com
+    modified: "2018-07-09T21:15:25.82902Z"
+    number: "41989238"
+    number_intvalue: 41989238
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: Urdu text causes NSLayoutManager to infinite loop when Urdu is set to Preferred Language

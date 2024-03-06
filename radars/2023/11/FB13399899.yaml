@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13399899
+    labels:
+        datastore_id: "5518888167014400"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2023-11-22T09:47:29.106538Z"
+    description: "I have attached a sample project demonstrating the use of a `ModelActor`. `MyModelActor` creates a new `ModelContext` instance in its initializer and uses that context to create its `DefaultSerialModelExecutor`. Since the `ModelActor` is using a new context rather than `ModelContainer.mainContext`, one would expect that the `ModelActor` would run in the background. However, the `ModelActor` may inadvertently run on the main thread!\r\n\r\nAfter experimenting a little, I found that if the `ModelContext` initializer is called on the main dispatch queue, the instance is configured as a main context. Only if the `ModelContext` initializer is called on a background dispatch queue or thread is the instance configured as a background context. (I also confirmed this by viewing the disassembly of the `ModelContext` initializer, which branches its logic based on the result of `__SD_is_mainqueue_context()`.)\r\n\r\nThe fix for this issue should be straightforward: the `ModelContext` initializer should always configure the instance as a background context. Code that needs a main context should access `ModelContainer.mainContext`."
+    email: darren.mo@me.com
+    modified: "2023-11-22T09:47:29.106688Z"
+    number: FB13399899
+    number_intvalue: 13399899
+    originated: "2023-11-22"
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftData
+    product_version: iOS 17.2 Seed 3 (21C5046c)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '`ModelActor` runs on main thread even though it is using a background `ModelContext`'

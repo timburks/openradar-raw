@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7229416"
+    labels:
+        datastore_id: "73467"
+data:
+    classification: UI/Usability
+    created: "2009-09-16T21:30:37.650552Z"
+    description: "Summary:\r\nSince iPhoneOS3.0, UINavigationControllers have an integrated toolbar. When showing/hiding it using animation, there is a visible gap between the toolbar and the current view controller's content.\r\n\r\nSteps to Reproduce:\r\nshort version: push/pop a UIViewController inside a UINavigationController where one of the two shows/hides the toolbar while appearing/disappearing\r\nlong version:\r\n\r\nsee attached project, or:\r\n\r\n- Create a new Navigation-based application\r\n- give the RootViewController a .title\r\n- create a UIVC subclass, e.g. \"SecondVC\"\r\n- give it an opaque view, e.g.\r\n\tself.view = [[[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame] ] autorelease];\r\n\tself.view.backgroundColor = [UIColor whiteColor];\r\n\r\n- in AppDelegate's -applicationDidFinishLaunching;, set \r\nwindow.backgroundColor = [UIColor redColor];\r\n\r\n- in RootViewController's -viewWillAppear:animated:, do\r\n\t[self.navigationController setToolbarHidden:NO animated:YES];\r\n\r\n- in RootViewController's -viewDidAppear:animated:, do\r\n\t[self.navigationController pushViewController:[[[SecondVC alloc] initWithNibName:nil bundle:nil] autorelease] animated:YES];\r\n\r\n- in SecondVC's -viewWillAppear:animated:, do\r\n\t[self.navigationController setToolbarHidden:YES animated:YES];\r\n\r\n\r\nnow, after launching, the RootViewController will immediately push the SecondVC, while the toolbar appears at the same time. You will see the window's red color between the bottom of RootViewController's TableView and the screen border.\r\nWhen you go back from the SecondVC to the RootViewController, that same gap is again visible.\r\n\r\n\r\nExpected Results:\r\nthe UIViewController's content view frame should resize with the animation\r\n\r\nActual Results:\r\nvisible gap\r\n\r\nRegression:\r\nNone known\r\n\r\nNotes:\r\nthe reason for the observed behavior is probably performance, since animating a view might be expensive?"
+    email: au@hypnocode.net
+    modified: "2011-08-28T05:44:32.735606Z"
+    number: "7229416"
+    number_intvalue: 7229416
+    originated: 16-Sep-2009 11:27 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "3.0"
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: 'setToolbarHidden:animated: exposes the window behind a navigation controller'

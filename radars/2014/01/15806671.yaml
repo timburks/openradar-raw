@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15806671"
+    labels:
+        datastore_id: "5555752261386240"
+data:
+    classification: ""
+    created: "2014-01-13T20:17:43.047423Z"
+    description: "Summary:\r\nIn iOS7, the hash implementation for UIMutableIndexPath and NSIndexPath appear to have changed. If you have a mutable and non-mutable index path with the same value, they return true for isEqual: but have differing hash values. In iOS6 the hash values would be equal.\r\n\r\nThe UITableViewDelegate method - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath provides a UIMutableIndexPath. If, for example, the program keeps an NSSet of NSIndexPaths and checks the membership of the supplied indexPath, there will be false negatives due to the hash difference.\r\n\r\nSteps to Reproduce:\r\nRun the attached Xcode project, or:\r\n\r\nImplement the UITableViewDelegate method\r\n - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath\r\n\r\nwith the following code:\r\n- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {\r\n    NSIndexPath *copiedIndexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section];\r\n    if ([indexPath isEqual:copiedIndexPath]\r\n        && indexPath.hash != copiedIndexPath.hash\r\n    ) {\r\n        NSLog(@\"if isEqual: is true, hash should be equal\");\r\n        NSLog(@\"%@\", indexPath);\r\n        NSLog(@\"%@ %@\", [indexPath class], [copiedIndexPath class]);\r\n        NSLog(@\"%d\", [indexPath isEqual:copiedIndexPath]);\r\n        NSLog(@\"%u %u\", copiedIndexPath.hash, indexPath.hash);\r\n    }\r\n\r\n    return 0.f;\r\n}\r\n\r\n\r\nExpected Results:\r\nThe if statement would never evaluate to true.\r\n\r\nActual Results:\r\nThe if statement evaluates to true for index paths that are not (0, 0)."
+    email: chellmuth@gmail.com
+    modified: "2014-01-13T20:17:43.04763Z"
+    number: "15806671"
+    number_intvalue: 15806671
+    originated: 2014/01/13
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'UIMutableIndexPath and NSIndexPath return true for isEqual: but have different hash values'

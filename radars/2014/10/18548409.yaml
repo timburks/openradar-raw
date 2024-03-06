@@ -1,0 +1,67 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18548409"
+    labels:
+        datastore_id: "6393015736205312"
+data:
+    classification: Serious Bug
+    created: "2014-10-04T22:38:41.129143Z"
+    description: |-
+        Summary:
+        When I run a Swift script which triggers a compiler crash, the interpreter barfs binary garbage all over the console.
+
+
+        Steps to Reproduce:
+        Put this in a script and run it:
+
+        #!/usr/bin/env xcrun swift
+        public struct ReducibleOf<T> {
+        	public init<S : SequenceType where S.Generator.Element == T>(_ sequence: S) {}
+        	public func reduceLeft<Result>(recur: (ReducibleOf, Result, (Result, T) -> Result) -> Result) -> (ReducibleOf, Result, (Result, T) -> Result) -> Result {
+        		return { _, x, _ in x }
+        	}
+        }
+        func testReduction() {
+        	let sequence = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        	let reducible = ReducibleOf(sequence)
+        	var result = 0
+        	var take: (ReducibleOf<Int>, Int, (Int, Int) -> Int) -> Int = { reducible, initial, combine in
+        		result = initial
+        		return initial
+        	}
+        	var x = reducible.reduceLeft(take)(reducible, 0 as Int, { into, each in each })
+        }
+
+        Note that it MUST NOT have a newline at the end of the file to trigger this issue. I.e. the last byte in the file should be the closing }.
+
+
+        Expected Results:
+        I certainly didn’t expect it to spew garbage everywhere.
+
+
+        Actual Results:
+        It spewed garbage… everywhere.
+
+
+        Regression:
+        - doesn’t do it with other scripts whether I have a trailing newline or not
+        - doesn’t do it with this script if there’s a trailing newline
+        - doesn’t do it if I redirect output to a file—the file just ends up being empty
+        - wtf
+
+
+        Notes:
+        Kind of a cool party trick I guess.
+    email: rix.rob@gmail.com
+    modified: "2014-10-04T22:38:41.129372Z"
+    number: "18548409"
+    number_intvalue: 18548409
+    originated: 04-Oct-2014 06:38 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-6.1 (6A1042b)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Interpreter barfs all over the console for a specific (crashing) case'

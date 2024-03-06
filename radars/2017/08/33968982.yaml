@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33968982"
+    labels:
+        datastore_id: "4932183726751744"
+data:
+    classification: Security
+    created: "2017-08-18T20:32:24.99462Z"
+    description: "Summary:\r\nThis is a duplicate of radar #33967043\n\r\nCreating a NetBoot image and including a pkg to install using System Image Utility on 17A344b results in a NBI dmg that has /usr/local/ restricted by SIP.\r\nThis directory is very common for 3rd party tools to install into.  Having it restricted blocks any attempts at installing tools.  In testing this seems to only happen when a pkg with a payload that ends up in /usr/local on the target volume is added to the SIU process to install into the DMG.  A stock SIU run with just the beta6 installer does not have /usr/local/ restricted.\r\n\r\nThis issue is a show stopper for us rolling out High Sierra to 1,500 Macs in the company. It is essential we have access to install tools to /usr/local/.\r\n\r\nSteps to Reproduce:\r\n1) Download the full beta 6 High Sierra installer\r\n2) Acquire a pkg that has a payload that installs to /usr/local. I used https://github.com/munki/munki/releases/download/v3.0.3/munkitools-3.0.3.3352.pkg\r\n3) Launch SIU\r\n4) Choose the Sierra installer as the Source\r\n5) Choose to create a NetBoot Image\r\n6) Agree to the terms\r\n7) Create an admin\r\n8) At the \"Add Configuration Profiles, Packages, and Post-Install Scripts\" section drop the munki installer downloaded in step 2 to the window.\r\n9) Leave System Configuration, Directory Servers, Image Settings, Supported Computer Models, and Filter Clients by MAC Address settings default\r\n10) Save the image to the Desktop\r\n11) Once complete, find the Netboot.dmg and mount it\r\n12) Using Terminal issue `ls -lO /Volumes/Netboot/usr/`\r\n\r\nRepeat the steps above and not include a package at step 8 to see the that the NBI without an additional pkg does not have /usr/local/ restricted.\r\n\r\nExpected Results:\r\nThe NBI would be created, and /usr/local/ would not be SIP protected.\r\n\r\nActual Results:\r\n/usr/local/ on the output volume is SIP protected causing issues with installing \r\n\r\nVersion:\r\nmacOS 10.13 17A344b\r\n\r\nNotes:"
+    email: rtrouton@gmail.com
+    modified: "2017-08-18T20:32:24.99483Z"
+    number: "33968982"
+    number_intvalue: 33968982
+    originated: 18-Aug-2017 04:32 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: macOS 10.13 17A344b
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'macOS 10.13 17A344b: /usr/local SIP restricted upon NetBoot with included package NBI creation'

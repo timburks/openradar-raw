@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15542432"
+    labels:
+        datastore_id: "5238098090786816"
+data:
+    classification: ""
+    created: "2013-11-23T09:38:07.411426Z"
+    description: "I've seen this problem with iOS 7.0.0–7.0.4 (and possibly 6.x too but have no saved logs to confirm). I've got a user in Japan that can consistently reproduce this with two iPads but I have no devices on my own where it can be reproduced (thus no iOS logs at this time).\r\n\r\nIt started with me getting bug reports for a video plugin I've created for Moodle and after tracking it down a bit we saw the same behavior with Moodle's regular html5 player. I then saw that someone online had created a generic test for it: https://www.bizify.me/test-if-your-ios-device-is-broken/ \r\n\r\nMy specific problem is that our company is serving training videos through Moodle, which requires students to be authorized to watch videos (in order to track activity progress, etc.). The HTTP 407s in the Apache logs below is just a Moodle thing to handle logouts while serving media (https://github.com/moodle/moodle/commit/f22f1cafd254fef1dcf78fcd5007a1533baffb75). As you can see the cookie is not sent with the range requests coming from AppleCoreMedia:\r\n\r\nAccess_log:\r\n----------------\r\n\r\nxxx.yyy.zzz.227 - - [22/Nov/2013:23:11:18 +0000] \"GET /pluginfile.php/21/mod_videofile/videos/0/trailer_test.mp4 HTTP/1.1\" 200 3711807 \"http://xyz.bitnamiapp.com/mod/videofile/view.php?id=2\" \"Mozilla/5.0 (iPad; CPU OS 7_0_4 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11B554a Safari/9537.53\"\r\n\r\nxxx.yyy.zzz.227 - - [22/Nov/2013:23:11:19 +0000] \"GET /pluginfile.php/21/mod_videofile/videos/0/trailer_test.mp4 HTTP/1.1\" 407 12818 \"-\" \"AppleCoreMedia/1.0.0.11B554a (iPad; U; CPU OS 7_0_4 like Mac OS X; en_us)\"\r\n\r\n...\r\n\r\nForensic_log:\r\n------------------\r\n\r\n+Uo-kj38AAAEAAH0O5MEAAAAJ|GET /pluginfile.php/21/mod_videofile/videos/0/trailer_test.mp4 HTTP/1.1|Host:xyz.bitnamiapp.com|Referer:http%3a//xyz.bitnamiapp.com/mod/videofile/view.php?id=2|Accept-Encoding:gzip, deflate|Accept:text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8|Accept-Language:en-us|Cookie:MoodleSession=24gkspshgl8027k3l7p2cor631|Connection:keep-alive|DNT:1|User-Agent:Mozilla/5.0 (iPad; CPU OS 7_0_4 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11B554a Safari/9537.53\r\n\r\n+Uo-kkH8AAAEAAB2cL4IAAAAA|GET /pluginfile.php/21/mod_videofile/videos/0/trailer_test.mp4 HTTP/1.1|Host:xyz.bitnamiapp.com|Range:bytes=0-1|X-Playback-Session-Id:DF1039A4-571B-4EB8-BFFB-EF07CD730CA2|Accept-Encoding:identity|Accept:*/*|Accept-Language:en-us|Connection:keep-alive|User-Agent:AppleCoreMedia/1.0.0.11B554a (iPad; U; CPU OS 7_0_4 like Mac OS X; en_us)\r\n    -Uo-kj38AAAEAAH0O5MEAAAAJ\r\n    -Uo-kkH8AAAEAAB2cL4IAAAAA\r\n\r\n..."
+    email: jonasnockert@gmail.com
+    modified: "2013-11-23T09:38:07.411573Z"
+    number: "15542432"
+    number_intvalue: 15542432
+    originated: 23-Nov-2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 7.0.4
+    reproducible: yes
+    resolved: ""
+    status: Open
+    title: On some iOS 7 devices, cookies are missing from AppleCoreMedia player HTTP range requests

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB12132525
+    labels:
+        datastore_id: "5568243179716608"
+data:
+    classification: ""
+    created: "2023-04-20T09:59:42.09763Z"
+    description: "The problem occurs when safari history and website data is cleared whilst a session is running, the user returns to the app with the authentication session and then presses cancel on the screen that appears In summary: \r\n1. Start ASWebAuthenticationSession with example code provided \r\n2. Switch to iOS Safari Settings, clear history and website data — closing all tabs \r\n3. Return to app \r\n4. Hit cancel on the alert that displays \r\n5. App will crash \r\n\r\nNote: This crash can be mitigated by intentionally retaining the authentication session until after the dismiss animation is complete — but if all references are removed then the user will encounter the crash.\r\n\r\n\r\n```\r\nimport UIKit\r\nimport AuthenticationServices\r\n\r\nclass ViewController: UIViewController {\r\n    \r\n    private var session: ASWebAuthenticationSession?\r\n    private lazy var presentationContextProvider = ASWebAuthenticationPresentationContextProvider(\r\n        presentingViewController: self\r\n    )\r\n\r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n        // Do any additional setup after loading the view.\r\n    }\r\n    \r\n    override func viewDidAppear(_ animated: Bool) {\r\n        super.viewDidAppear(animated)\r\n        \r\n\r\n    }\r\n    \r\n    @IBAction func openSession() {\r\n        session = ASWebAuthenticationSession(\r\n            url: URL(string: \"https://mrmichael.co.uk\")!,\r\n            callbackURLScheme: nil\r\n        ) { [weak self] url, error in\r\n            guard let self = self else { return }\r\n            self.session = nil\r\n        }\r\n        session?.presentationContextProvider = presentationContextProvider\r\n\r\n        session?.start()\r\n    }\r\n}\r\n\r\nextension ViewController {\r\n    private final class ASWebAuthenticationPresentationContextProvider: NSObject, ASWebAuthenticationPresentationContextProviding {\r\n        private let anchor: ASPresentationAnchor\r\n\r\n        init?(presentingViewController: UIViewController?) {\r\n            guard let window = presentingViewController?.view.window else {\r\n                return nil\r\n            }\r\n            anchor = window\r\n        }\r\n\r\n        func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {\r\n            anchor\r\n        }\r\n    }\r\n}\r\n```"
+    email: michael.purdy@sohohousedigital.com
+    modified: "2023-04-20T09:59:42.097769Z"
+    number: FB12132525
+    number_intvalue: 12132525
+    originated: "2023-04-20"
+    parent_number: '&{NULL_VALUE}'
+    product: AuthenticationServices Framework
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: ASWebAuthenticationSession crashes when deallocated during or immediately after completion handler

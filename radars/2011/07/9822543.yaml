@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9822543"
+    labels:
+        datastore_id: "1277405"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2011-07-22T17:22:29.817749Z"
+    description: "22-Jul-2011 10:47 AM Anne McCreery:\r\n'Kernel_2011-07-20-154818_Lab-Administrators-iMac-4.panic' and 'Kernel_2011-07-20-144910_Lab-Administrators-iMac-4.panic' were successfully uploaded\r\n\r\n22-Jul-2011 10:47 AM Anne McCreery:\r\nSummary:  When using the auditing system above its normal load, the operating system kernel panics, then kernel panics on boot.\r\n\r\nSteps to Reproduce:\r\n\r\n1.  Make a backup of audit_control(5) (in /etc/security).\r\n\r\n2.  Open the audit_control file and include a 'host:' field after 'flags:' to avoid bug 9817001.\r\n\r\n3.  Change 'flags:lo,aa' to 'flags:all' and 'naflags:lo,aa' to 'naflags:all'.  Save the file.\r\n\r\n4.  Do 'sudo audit -s' to reread the configuration files.  Check /var/log/system.log to make sure there were no errors reading the file (for example, see bug 9817001).\r\n\r\n5.  Heavily load the system.  In our tests, we installed MAMP, then used Apache Bench on a remote machine to do 10 concurrent requests 1000 times.  The local machine usually panicked within 20 seconds.\r\n\r\nNote:  Without logging out and back in, all events are filtered through the 'naflags:' setting.  To cause a panic with attributable, user-level processes, log out, then log back in, then open several applications or otherwise load the system.\r\n\r\nExpected Results:  We expect the system to slow down in order to handle all the requests and auditing, but do not expect a kernel panic.  Perhaps with 'policy:' set to 'ahlt' instead of 'cnt', we would expect a panic, but it happens regardless of policy.\r\n\r\nActual Results:  The system panics, then panics on reboot.\r\n\r\nRegression:  Duplicated results on two separate machines.  Setting the flags to 'all' is of course a worst-case scenario, but the system panics with flags 'fr,fw,lo,aa' as well, it just takes a heavier load and a longer time.\r\n\r\nNotes:  We think that the problem has something to do with the audit_q or audit_pre_q filling up or not being allocated properly.  The particular problem area seems to be in xnu_root/bsd/security/audit/audit.c, in the audit_new routine, particularly around line 407.\r\n\r\nThis bug was found while attempting to configure the OS X audit system for performance benchmarking, as part of a survey of auditing systems on several platforms.  This research is being done by Benjamin Kuperman (advisor), Luke Lovett (student), and Isaac McCreery (student) at Oberlin College Computer Science as part of the Oberlin Summer Research Institute.\r\n\r\n22-Jul-2011 12:02 PM Anne McCreery:\r\nSteps to Reproduce (more):\r\n\r\n6.  Once the system has panicked, it will panic again on boot.  To fix this, boot in target disk mode or from install media, and replace audit_control from the backup you made in step 1."
+    email: ihmccreery@gmail.com
+    modified: "2011-08-28T05:35:29.549369Z"
+    number: "9822543"
+    number_intvalue: 9822543
+    originated: 22-Jul-2011 10:47 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10K540
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Heavy auditing causes kernel panic in 10.6.8

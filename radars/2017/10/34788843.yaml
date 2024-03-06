@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34788843"
+    labels:
+        datastore_id: "4944359422164992"
+data:
+    classification: Bug
+    created: "2017-10-03T14:01:16.54173Z"
+    description: "Area:\r\nUserNotifications Framework\r\n\r\nSummary:\r\nShowing a notification and then putting the app in the background causes the app to crash. An assertion with the name \"will present notification\" forces the OS to kill the app.\r\n\r\nSteps to Reproduce:\r\n1. Install the test project TestCrashInBackground via Xcode on an iPhone running iOS 11.1 beta. The test project is attached to this bug report (ios-test-crash-in-background.zip).\r\n2. Disconnect the phone from the computer.\r\n3. Press once on the text \"Schedule notification\" in the TestCrashInBackground app.\r\n4. Notification appears.\r\n5. Click on the home button (app is now in background).\r\n6. Lock device.\r\n7. Wait 3 minutes.\r\n8. Connect the iPhone to the computer again. \r\n9. In Xcode, go to Window->Devices And Simulators and press on View Device Logs.\r\n10. There is now a crash file for the app TestCrashInBackground.\r\n\r\nExpected Results:\r\nA notification should not cause the app to crash!\r\n\r\nActual Results:\r\nThe app has crashed and the following info is available in the crash log:\r\nException Type:  EXC_CRASH (SIGKILL)\r\nException Codes: 0x0000000000000000, 0x0000000000000000\r\nException Note:  EXC_CORPSE_NOTIFY\r\nTermination Reason: Namespace  , Code 0x8badf00d\r\nTriggered by Thread:  0\r\n\r\nFiltered syslog:\r\nNone found\r\n\r\nThread 0 name:  Dispatch queue: com.apple.main-thread\r\nThread 0 Crashed:\r\n0   libsystem_kernel.dylib        \t0x00000001853c4bc4 mach_msg_trap + 8\r\n1   libsystem_kernel.dylib        \t0x00000001853c4a3c mach_msg + 72\r\n2   CoreFoundation                \t0x0000000185875c4c __CFRunLoopServiceMachPort + 196\r\n3   CoreFoundation                \t0x0000000185873818 __CFRunLoopRun + 1424\r\n4   CoreFoundation                \t0x0000000185793e78 CFRunLoopRunSpecific + 436\r\n5   GraphicsServices              \t0x0000000187628f84 GSEventRunModal + 100\r\n6   UIKit                         \t0x000000018f5360bc UIApplicationMain + 208\r\n7   TestCrashInBackground         \t0x0000000100e8dbac 0x100e88000 + 23468\r\n8   libdyld.dylib                 \t0x00000001852b656c start + 4\r\n\r\nIn system_logs.logarchive (from the sysdiagnose) I can see that an assertion with the name \"will present notification\" is added:\r\ndefault\t2017-10-03 14:32:16.280562 +0200\tassertiond\t[SpringBoard:53] Attempting to acquire assertion for TestCrashInBack:507: <BKProcessAssertion: 0x101235c90; \"will present notification\" (notificationAction:30s); id:…E1D79D51D1D9>\r\ndefault\t2017-10-03 14:32:16.281283 +0200\tassertiond\t[TestCrashInBack:507] Add assertion: <BKProcessAssertion: 0x101235c90; id: 53-96A5F4EA-4C42-4675-97E4-E1D79D51D1D9; name: \"will present notification\"; state: active; reason: notificationAction; duration: 30.0s> {\r\n    owner = <BSProcessHandle: 0x10110a810; SpringBoard:53; valid: YES>;\r\n    flags = preventSuspend, preventThrottleDownUI, preventIdleSleep, preventSuspendOnSleep;\r\n}\r\n\r\n\r\nThat assertion is never removed. And eventually the app is killed:\r\ndefault\t2017-10-03 14:33:00.436085 +0200\tassertiond\t[TestCrashInBack:507] Forcing crash report with description: TestCrashInBack:507 has active assertions beyond permitted time: \r\n  (owner: SpringBoard:53)\r\n\r\nVersion/Build: \r\niOS 11.1 beta (15B5066f)\r\n\r\nConfiguration:\r\nXcode Version 9.1 beta (9B37)\r\n\r\nComment to open radar readers: not sure how to attach a test project when creating a new open radar issue."
+    email: lars.lindback@gmail.com
+    modified: "2017-10-06T07:27:36.2343Z"
+    number: "34788843"
+    number_intvalue: 34788843
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 11.1 beta
+    reproducible: Always
+    resolved: ""
+    status: Closed. Duplicate of 33765986
+    title: Serious bug in iOS 11 - notification causes app to crash

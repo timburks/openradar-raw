@@ -1,0 +1,62 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17499822"
+    labels:
+        datastore_id: "6373146412187648"
+data:
+    classification: Serious Bug
+    created: "2014-06-29T19:44:36.220997Z"
+    description: |-
+        Summary:
+        Instead of type-parameterized protocols, Swift offers associated types. While this can be convenient for (as its name implies) associating related types without producing very long lists of parameter types, it is much less convenient and clear than parameterizing a protocol by the types that are *not* actually associated with it.
+
+        For example, a Sequence has an associated GeneratorType of type Generator, and Generator has an associated Element type. However, Element is only associated to these in name—the Element type of a given sequence typically varies with a type parameter on the conformant struct/class.
+
+        The resulting declarations are long and unwieldy, as with this zip function:
+
+        func zip<A : Sequence, B : Sequence, C : Sequence where C.GeneratorType.Element == Pair<A.GeneratorType.Element, B.GeneratorType.Element>>(left: A, right: B) -> C
+
+        Not only does this result in an extremely long where clause before you even get to the value parameters, it also makes it more difficult to declaratively describe what’s going on here. As discussed in rdar://17499629 you cannot associate types through tuples, which means that this definition of a zip function *cannot be written* in Swift without either inventing a Pair type to relate through (as we’ve done here) or exposing implementation details by returning the specific Zip2 type that this function no doubt uses as its mechanism.
+
+        Contrast this with the same function defined using a hypothetical List type:
+
+        func zip<T, U>(left: List<T>, right: List<U>) -> List<(T, U)>
+
+        We don’t have to expose implementation details of the elements of the result or of the resulting sequence, but we’ve lost genericity—this only works on lists. Parameterizing protocols by the types they take solves all of these at once:
+
+        func zip<T, U>(left: Sequence<T>, right: Sequence<U>) -> Sequence<(T, U)>
+
+        This is clear and understandable, exactly as specific as we want to be, and would ease the burden of learning and using protocols in the language immeasurably while also promoting better API design, as the current system encourages exposing implementation details, as discussed above, which in turn encourages tight coupling to those implementation details. This is even visible in the stdlib where map() over Sequence returns not a generic Sequence of the result type, but a MapSequenceView parameterized with the base and result types, thus exposing implementation details and inflating the necessary interface of the library considerably.
+
+
+        Steps to Reproduce:
+        1. Try to parameterize Sequence by its Element type.
+
+
+        Expected Results:
+        I expected it would succeed (I mean, when the language was first introduced).
+
+
+        Actual Results:
+        You can’t.
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2014-06-29T19:44:36.221129Z"
+    number: "17499822"
+    number_intvalue: 17499822
+    originated: 29-Jun-2014 03:44 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta2 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Where clauses are much harder to read than parameterized protocols would be'

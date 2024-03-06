@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26094900"
+    labels:
+        datastore_id: "6119215564062720"
+data:
+    classification: Bug
+    created: "2016-05-05T23:51:43.4399Z"
+    description: "Summary:\r\nWhen implementing a content filter, the handleNewFlow method of NEFilterControlProvider provides an instance of either NEFilterBrowserFlow or NESocketFilterFlow.\r\n\r\nWith NEFilterBrowserFlow, the remote hostname can be extracted from the 'url' property.\r\n\r\nNEFilterSocketFlow, on the other hand, provides a 'remoteEndpoint' property, which should be a NWHostEndpoint, from which a hostname can be obtained. Instead, the value of 'remoteEndpoint' is an unknown subclass of NWEndpoint.\r\n\r\nIn fact, trying to print out the 'dynamicType' property of this instance will re-spring the device and potentially send it into an endless re-spring loop, as the content filter is loaded on startup.\r\n\r\nSteps to Reproduce:\r\n1. Implement content filtering\r\n2. Configure NEFilterManager by setting 'filterSockets = true'\r\n3. Inside the NEFilterControlProvider or NEFilterDataProvider implementation, override the handleNewFlow method and wait for it to intercept a flow which is an instance of NEFilterSocketFlow.\r\n4. Try casting the 'remoteEndpoint' property to NWHostEndpoint (it will be nil)\r\n5. Try printing out the 'dynamicType' property of 'remoteEndpoint' (it will re-spring the device)\r\n\r\nExpected Results:\r\nExpected type of NEFilterSocketFlow.remoteEndpoint is NWHostEndpoint\r\n\r\nActual Results:\r\nType of NEFilterSocketFlow.remoteEndpoint is an unknown subclass of NWEndpoint from which the hostname cannot be obtained.\r\n\r\nThis renders the content filtering API virtually useless, except when filtering strictly browser traffic and not app traffic.\r\n\r\nUPDATE: \r\nAfter inspecting the crash log, it seems like remoteEndpoint is a null pointer."
+    email: davor@onward.org
+    modified: "2016-05-06T00:09:26.63097Z"
+    number: "26094900"
+    number_intvalue: 26094900
+    originated: 05/04/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "9.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Cannot access remote endpoint hostname of in NEFilterSocketFlow

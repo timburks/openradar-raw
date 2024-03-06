@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30098291"
+    labels:
+        datastore_id: "4992988753166336"
+data:
+    classification: Other Bug
+    created: "2017-01-19T17:30:44.11802Z"
+    description: "Peter Steinberger\r\n\r\nDUPE OF rdar://29924023\r\n\r\nArea:\r\nUIKit\r\n\r\nSummary:\r\nWhen using the Safari.app to send an image to an Action Extension, the extension receives the image itself as NSData instead of a file URL (like Photos or Messages does it).\r\n\r\nSteps to Reproduce:\r\n- Install the sample project on an actual device / run the ImageSharing target on that device\r\n- Go to Safari.app\r\n- Open an image (the actual image, not contained in a website)\r\n- Tap the action button\r\n- Tap the ImageSharing action extension\r\n\r\nExpected Results:\r\nThe image is shown in the appearing view controller from the action extension.\r\n\r\nActual Results:\r\nAn error is shown, telling you that the item received was of type _NSInlineData\r\n\r\nThis is especially critical as the documentation tells you to make the completion handler of `loadItemForTypeIdentifier:options:completionHandler:` already specify the type you actually want. If you specify `NSURL` in there, the completion handler is called with a `nil` value for the item because the data can not be converted to a file url.\r\n\r\n\r\nThe current way the system handles this is a mess. It's basically 'here is a pointer to an object, it's an image btw, figure our by yourself what I actually gave you!'. To me there are three possible solutions: Either the only type ever containing a file URL is the public.file-url type and things image images always contain the actual image. This is what Safari currently does and it seems to be logical to me. This has the downside that you have no idea what you are actually dealing with when an app hands you a file-url. So the other approach would be that you always get a file url, no matter what is actually shared. This seems to be what Photos and Messages are doing. And it totally makes sense as the memory footprint is low. However this is a bit troublesome because of rdar://29918507. Once this is fixed though, this would be nice. The third option is to support both. If an app shares an NSData blob, the system can easily write this to a temp directoy if the developer asks for an NSURL and if an app shares a file URL, the system could easily create a memory mapped NSData from that file if the developer asks for an NSData instance.\r\n\r\nVersion:\r\n10.2\r\n\r\nNotes:\r\nNo matter which solution is choosen, they are all better than the current state, as you currently have no idea what you are actually dealing with.\r\n\r\nConfiguration:\r\nXcode 8.2.1\r\n\r\nAttachments:"
+    email: steipete@gmail.com
+    modified: "2017-01-19T17:30:44.1183Z"
+    number: "30098291"
+    number_intvalue: 30098291
+    originated: 19-Jan-2017 06:29 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "10.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Safari.app shares images as NSData instead of file URLs

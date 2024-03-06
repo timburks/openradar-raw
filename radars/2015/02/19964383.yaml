@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19964383"
+    labels:
+        datastore_id: "5776177834754048"
+data:
+    classification: Data Loss
+    created: "2015-02-26T03:01:52.34708Z"
+    description: "Summary:\r\nInstalling a Profile on 10.10.x using the frequency of Set-Once with no timestamp (equivalent to the \"Often\" setting from MCX) the preferences the profile controls, plus whatever was set at the time of the Profile installation, are applied every login and destroys any changes made to the domain's settings since the profile was applied.  This same profile behaves properly in OS 10.9 when installed and only refreshes the preferences in the Profile payload.\r\n\r\nThe Often setting had been used successfully in the past and is mirroring the MCX payload model.  The Forced and Once (Set-Once with a timestamp) method still behave as expected.\r\n\r\nSteps to Reproduce:\r\n1. Create a plist with settings:\r\n `defaults write my.great.app setting1 -string foobar`\r\n `defaults write my.great.app setting2 -bool false`\r\n`defaults read my.great.app` to see the applied settings\r\n\r\n2. Use Tim Sutton's mcxToProfile tool to create a Profile to manage the domain “often”. `mcxToProfile.py --plist ~/Library/Preferences/my.great.app.plist --identifier MyGreatApp --manage Often`\r\n\r\n3. Delete the settings to clear the slate\r\n `defaults delete my.great.app`\r\n\r\n4. Install the profile on a computer running Yosemite. \r\n`sudo profiles -IF MyGreatApp.mobileconfig`\r\n`defaults read my.great.app` to see the applied settings\r\n\r\n5.  Make some preference changes after the Profile was installed:\r\n`defaults write my.great.app setting3 -string Chickens`\r\n `defaults write my.great.app setting4 -int 42`\r\n`defaults read my.great.app` to see the applied settings\r\n\r\n6. Log out and back into OS X and read the plist again.\r\n `defaults read my.great.app`\r\n\r\n\r\nExpected Results:\r\nThe settings applied after the profile was installed would still be present after logging out and back in.\r\n\r\nActual Results:\r\nThe user’s settings made after the profile was installed have been eradicated even though they aren’t the keys being managed.\r\n\r\nVersion:\r\n10.10.3 14D87h\r\n\r\nNotes:\r\nAdditional anecdotal information can be found at https://osxbytes.wordpress.com/2015/02/25/profile-behavior-changes-in-yosemite/\r\n\r\nThe mcxToProfile tool is at https://github.com/timsutton/mcxToProfile and is commonly used in the Mac admin community.\r\n\r\nConfiguration:\r\nThis happens on 10.10.2 GM and 10.10.3 14D87h\r\nThis does not happen on 10.9.5"
+    email: eholtam@gmail.com
+    modified: "2015-02-26T03:01:52.347268Z"
+    number: "19964383"
+    number_intvalue: 19964383
+    originated: 25-Feb-2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.x
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Configuration Profiles using Set-Once are destructive

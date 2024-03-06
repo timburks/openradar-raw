@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25102086"
+    labels:
+        datastore_id: "5055294988091392"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2016-03-11T03:09:25.71079Z"
+    description: "Summary:\r\nWhen installing a profile that contains a certificate that already exists in the system keychain, if this profile installation fails. The certificate in the keychain is removed.\r\n\r\nExample:\r\nA self signed root certificate is installed into the system keychain manually.\r\nA configuration profile is generated to obtain a client certificate from ADCS via RPC/DCE\r\nThe profile also attempts to connect to the 802.11x wifi via EAP-TLS\r\nAs part of this profile we add the self signed root certificate and intermediate certificates to this profile.\r\nIf this profile fails to install it removes the self signed root certificate that was included in the profile from the keychain as part of its clean up.\r\n\r\n\r\nSteps to Reproduce:\r\n1. Install 10.11.3\r\n2. Configure basic user accounts\r\n3. Install self signed root certificate into system keychain with keychain access\r\n4. Bind machine to AD\r\n5. Create configuration profile with profile manager \r\n\t- Obtain AD Certificate (Acquire via DCE/RPC)\r\n\t- Certificates\r\n\t\t- Include the self signed root certificate\r\n\t\t- Include the self signed intermediate certificate\r\n\t-Network\r\n\t\t- WPA2\r\n\t\t- TLS\r\n\t\t- Identity Certificate, AD Certificate: Acquire Cert via DCE/RPC\r\n\t\t- Trust:\r\n\t\t\t- Self Signed Root Certificate\r\n\t\t\t- Self Signed Intermediate certificate\r\n\r\n6. Install configuration profile.\r\n\r\n7. Ensure the profile installation will fail by preventing access to ADCS or any other method to induce a failure.\r\n\r\n8. Note that the profile failed to install as described by the popup dialog box.\r\n\r\n9. Check keychain access and note that the self signed certificates have been removed.\r\n\r\nExpected Results:\r\nFailed profile installation should not remove a certificate from the system keychain if it was already installed.\r\n\r\nActual Results:\r\nA failed profile installation removes a certificate from the system keychain, even though it was already installed by another method\r\n\r\nNotes:\r\nI can understand why this occurs, the profile installs the certificates into the keychain as normal, the profile install fails, it then cleans up after itself and removes any items it installed. However, perhaps some logic can be added to determine if a certificate needs to be installed first before over writing an existing certificate in the keychain.\r\nThis would hopefully help the clean up functions when a profile fails to install\r\nFor example if the profile attempts to install a certificate in the system keychain but an existing item already exists and is exactly the same, then the profile should not install it. Because it is not being installed by the profile, should the install of the profile fail, there would be no reason to clean up and remove that certificate."
+    email: calum.h@gmail.com
+    modified: "2016-09-26T01:09:35.75408Z"
+    number: "25102086"
+    number_intvalue: 25102086
+    originated: 11-Mar-2016 02:08 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11.3
+    reproducible: Always
+    resolved: ""
+    status: Resolved
+    title: Failed profile install removes certificate from keychain

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20022752"
+    labels:
+        datastore_id: "5241812365082624"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-04-08T19:48:45.218445Z"
+    description: "Summary:\r\nOn the current (14D87h) developer seed of 10.10.3, attempting to build a NetRestore image of 10.10.2 using System Image Utility results in an infinite loop.\r\n\r\nThe Essentials install package component contains a postinstall script that calls update_automator_cache, which seems to continue running in an infinite loop, endlessly caching files on the newly-installed filesystem in the temporary volume. This process must be killed manually in order for the installation to complete.\r\n\r\nSteps to Reproduce:\r\n1. Download OS X Yosemite (latest at this time is 10.10.2) from the Mac App Store.\r\n2. Open System Image Utility.\r\n3. Select the Install OS X Yosemite (10.10.2, 14C109) source.\r\n4. Select NetRestore image, click Continue.\r\n5. Leave the default settings, create a dummy admin user to allow the process to continue.\r\n6. Choose a target destination for the final output image and start the build.\r\n\r\nExpected Results:\r\nBuild would normally complete after some time.\r\n\r\nActual Results:\r\nA specific postinstall script causes an infinite loop in the installer process.\r\n\r\ncom.apple.pkg.Essentials, running the generateCache postinstall_action. The actual process:\r\n\r\n/System/Library/Frameworks/Automator.framework/Versions/A/Support/update_automator_cache --system --force\r\n\r\n(this is run via `chroot \"$3\"` to run within the root of the volume that's being installed to.)\r\n\r\nThis process seems to continue in an infinite loop. Running `opensnoop` confirms that update_automator_cache is still running and reading through files, but this process never exits.\r\n\r\nKilling the process allows the installation to continue and complete the image build.\r\n\r\nVersion:\r\n10.10.3, 14D87h\r\n\r\nNotes:\r\nI've verified this on two different systems running this version of OS X. Please let me know if you'd like any additional information.\r\n\r\nConfiguration:\r\nTwo systems tested:\r\n27-inch, Late 2012\r\nMac Pro, Early 2008"
+    email: tim@synthist.net
+    modified: "2015-04-08T19:48:45.21861Z"
+    number: "20022752"
+    number_intvalue: 20022752
+    originated: 03-Mar-2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.3 (14D87h)
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: update_automator_cache infinite loop when building a 10.10.2 NetRestore image with System Image Utility

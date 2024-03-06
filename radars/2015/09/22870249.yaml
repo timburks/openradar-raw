@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22870249"
+    labels:
+        datastore_id: "5536809073246208"
+data:
+    classification: Crash
+    created: "2015-09-28T10:17:16.88815Z"
+    description: "Summary:\r\nIf a generic function parameter T is declared in such a way, that it must inherit from a generic class (e.g. \"T: GenericClass<U>\"), this information is lost when the variable is used inside the function\r\n\r\nSteps to Reproduce:\r\nOpen the sample project and try to compile it\r\n\r\nExpected Results:\r\nThe project should compile fine as it is obvious from the signature of the method OperationChain.chain that O must inherit from ResultOperation<T> and that therefore newOperation is of type ResultOperaiton<T>\r\n\r\nActual Results:\r\nThe information that the class of newOperation inherits from ResultOperation<T> is lost and Xcode complains that it \"Cannot convert value of type 'O' to expected argument type 'ResultOperation<_>'\"\r\n\r\nVersion:\r\nXcode 7.0 (7A218) and 7.1 beta (7B75)\r\n\r\nNotes:\r\nThe issue can be circumvented by explicitly casting newOperation to ResultOperaiton<T>, i.e. by replacing the constructor argument \"newOperation\" in main.swift:25 by \"newOperation as! ResultOperation<T>\"\r\n\r\nConfiguration:\r\nIf ResultOperation is not a generic class, the code compiles fine.\r\n\r\nAttachments:\r\n'SampleProject.zip' was successfully uploaded.\r\nThis contains the following file:\r\n\r\n\r\nprotocol ChainableOperation {\r\n\ttypealias InputType\r\n\tfunc setInput(input: InputType)\r\n}\r\n\r\nclass ResultOperation<ReturnType> {\r\n}\r\n\r\nclass OperationChain<LastReturnType> {\r\n\tprivate var lastOperation: ResultOperation<LastReturnType>\r\n\t\r\n\tinit(_ operation: ResultOperation<LastReturnType>) {\r\n\t\tlastOperation = operation;\r\n\t}\r\n\t\r\n\tfunc chain<T, O: ResultOperation<T> where O: ChainableOperation>(newOperation: O) -> OperationChain<T> {\r\n\t\tlet newChainItem = OperationChain<T>(newOperation as! ResultOperation<T>)\r\n\t\t\r\n\t\treturn newChainItem\r\n\t}\r\n}"
+    email: alex@hoppen-koeln.de
+    modified: "2015-09-28T10:17:16.88834Z"
+    number: "22870249"
+    number_intvalue: 22870249
+    originated: 26-Sep-2015 08:11 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xocde 7 & 7.1 beta 2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Type not correctly inferred for generic argument that needs to inherit from a generic class'

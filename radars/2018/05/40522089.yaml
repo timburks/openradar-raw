@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "40522089"
+    labels:
+        datastore_id: "4984822107734016"
+data:
+    classification: Serious bug
+    created: "2018-05-24T15:33:17.33231Z"
+    description: "Summary:\r\n`callClosureDaemon()` uses single `read` instruction to receive payload from `closured`. According to `man 2 read`:\r\n> It is not an error if this number is smaller than the number of bytes requested (...)\r\n`read` should be invoked in loop until it returns 0 – that is until whole payload was received from `closured`. Currently `callClosureDaemon` fails because `read` receives smaller number of bytes than expected.\r\n\r\nSteps to Reproduce:\r\n1. Make sure `/usr/libexec/closured` is present (I compiled it from https://opensource.apple.com/tarballs/dyld/dyld-519.2.2.tar.gz).\r\n2. Set `DYLD_PRINT_WARNINGS=1`.\r\n3. Enable `sEnableClosures` by setting DYLD_USE_CLOSURES=1 (I used lldb to set sEnableClosures to 1).\r\n4. Launch an app with lots of frameworks (so the resulting closure is very big).\r\n\r\nExpected Results:\r\nAt 4. App should be launched using the closure from closured.\r\n\r\nActual Results:\r\nAt.4. App launch fallbacks to dyld2 with log message:\r\n`dyld: error reading buffer header from closured, amount=65528, errno=0`\r\n\r\nVersion/Build:\r\nmacOS 10.13.4 (17E202)\r\n\r\nConfiguration:\r\nMacBook Pro (Retina, 13-inch, Early 2015)"
+    email: kamil.borzym@gmail.com
+    modified: "2018-05-24T15:33:17.33259Z"
+    number: "40522089"
+    number_intvalue: 40522089
+    originated: May 24 2018, 5:31 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13.4 (17E202)
+    reproducible: always
+    resolved: ""
+    status: open
+    title: dyld won't read large closure from closured

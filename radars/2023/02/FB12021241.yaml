@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB12021241
+    labels:
+        datastore_id: "5601082566770688"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2023-02-28T21:18:01.210907Z"
+    description: "When you put a view in a `NavigationStack` that has a `switch` statement in the view’s `body`, `@StateObject`s are `init`ed twice. The first one is then immediately `deinit`ed if there isn’t something keeping the original alive. This can lead to zombie `@StateObject` being left around if there was some reason to keep the object alive internally.\r\n\r\nIf you remove `NavigationStack` and just have a `switch` statement in the view’s `body`, `@StateObject`s are `init`ed only once. \r\nSimilarly if you leave the `NavigationStack` and remove the `switch` statement in the view’s `body`, `@StateObject`s are `init`ed only once. \r\n\r\nI’ve attached a sample project with the very simplest case that just prints out `init`s and `deinit`s to the console. You will see two `init` calls and one `deinit`.\r\nYou can try the above two actions of removing either the `NavigationStack` or the `switch` and see you only get one single `init` call.\r\n\r\nI would expect the behavior of `NavigationStack` and `switch` statements to only `init` my `@StateObject` once.\r\n\r\n\r\nCode:\r\n\r\n```\r\n@main\r\nstruct test_double_initApp: App {\r\n    var body: some Scene {\r\n        WindowGroup {\r\n            NavigationStack {\r\n                ContentView()\r\n            }\r\n        }\r\n    }\r\n}\r\n\r\nfinal class Test: ObservableObject {\r\n    \r\n    enum Content {\r\n        case hi\r\n        case hello\r\n    }\r\n    \r\n    @Published var content: Content\r\n    \r\n    init(content: Content) {\r\n        self.content = content\r\n        print(\"MA: Test\")\r\n    }\r\n    \r\n    deinit {\r\n        print(\"MA: deinit\")\r\n    }\r\n}\r\n\r\nstruct ContentView: View {\r\n    @StateObject private var store = Test(content: .hello)\r\n    \r\n    // MARK: - View\r\n    \r\n    var body: some View {\r\n        switch store.content {\r\n        case .hi:\r\n            Circle().frame(height: 300)\r\n        case .hello:\r\n            Circle().frame(height: 100)\r\n        }\r\n    }\r\n}\r\n```"
+    email: michael.amundsen@lickability.net
+    modified: "2023-02-28T21:19:30.075126Z"
+    number: FB12021241
+    number_intvalue: 12021241
+    originated: 02/28/2023
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI Framework
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '`@StateObject` are `init`ed twice when using `NavigationStack` and `switch` statements in a view''s `body`'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13751596"
+    labels:
+        datastore_id: "2981403"
+data:
+    classification: Serious Bug
+    created: "2013-04-29T17:19:30.866669Z"
+    description: "26-Apr-2013 04:53 PM Sam Coward:\r\nSummary:\r\nWhen ARC is enabled, C++ candidate templates' pointer template parameters are not correctly substituted for objective-C object pointers.\r\n\r\n\r\nSteps to reproduce:\r\nCompile the following main.mm file, with and without ARC:\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\ntemplate <typename T>\r\nvoid testing(const T & whoCares) {\r\n    NSLog(@\"================> Non pointer template\");\r\n}\r\n\r\ntemplate <typename T>\r\nvoid testing(T * const & whoCares) {\r\n    NSLog(@\"================> Pointer template\");\r\n}\r\n\r\nint main(int argc, const char * argv[])\r\n{\r\n    NSString *stringObject = @\"hi\";\r\n    char *cString = \"abc\";\r\n    testing(1);\r\n    testing(cString);\r\n    testing(stringObject);\r\n    testing<NSString>(stringObject);\r\n    return 0;\r\n}\r\n\r\n\r\nExpected Results:\r\nThe template with the pointer parameter should be instantiated for cString and stringObject, without needing to parameterize the template explicitly, as demonstrated by the output when compiled without ARC:\r\n\r\n================> Non pointer template\r\n================> Pointer template\r\n================> Pointer template\r\n================> Pointer template\r\n\r\n\r\nActual Results:\r\nWhen ARC is enabled and the template is not parameterized explicitly, the non-pointer template is instantiated if the pointer is an objective-c type, as demonstrated by the output when compiled with ARC:\r\n\r\n================> Non pointer template\r\n================> Pointer template\r\n================> Non pointer template         <== WRONG\r\n================> Pointer template\r\n\r\n\r\nRegression:\r\n\r\nNotes:\r\nIt seems clear that the substitution is incorrect since there is a more specialized template for T * const, which should be elected instead of const T for NSString *."
+    email: idoru42@gmail.com
+    modified: "2013-04-29T17:19:30.867075Z"
+    number: "13751596"
+    number_intvalue: 13751596
+    originated: 26-Apr-2013 04:53 PM, EDT
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 4.6.2 (4H1003)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: C++ templates with pointer template parameter specialization is broken

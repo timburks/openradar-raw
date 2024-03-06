@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6735414"
+    labels:
+        datastore_id: "22413"
+data:
+    classification: ""
+    created: "2009-03-30T07:38:19.497089Z"
+    description: "Summary:\r\nA certain combination of Xcode build settings confuses symbolicatecrash and results in incorrect symbol resolution.\r\n\r\nSteps to Reproduce:\r\n1. Make the following Xcode build settings:\r\nDeployment Postprocessing=YES\r\nStrip Debug Symbols During Copy=NO\r\nStrip Linked Product=YES\r\nStrip Style=All Symbols\r\nUse Separate Strip=YES\r\n2. Make the application crash.\r\n3. Run symbolicatecrash against the crash report.\r\n\r\nExpected Results:\r\nThe symbols should be resolved correctly.\r\n\r\nActual Results:\r\nAn example crash log:\r\nThread 0 Crashed:\r\n0   libSystem.B.dylib             \t0x3145dc58 __kill + 8\r\n1   libSystem.B.dylib             \t0x3145dc46 kill + 4\r\n2   libSystem.B.dylib             \t0x3145dc3a raise + 10\r\n3   libSystem.B.dylib             \t0x31478424 abort + 36\r\n4   libstdc++.6.dylib             \t0x30075b3c __gnu_cxx::__verbose_terminate_handler() + 556\r\n5   libobjc.A.dylib               \t0x300c20f8 _objc_terminate + 160\r\n6   libstdc++.6.dylib             \t0x300730d0 std::terminate() + 88\r\n7   libstdc++.6.dylib             \t0x300731d8 __cxa_throw + 92\r\n8   libobjc.A.dylib               \t0x300c1f84 objc_exception_throw + 92\r\n9   CoreFoundation                \t0x302c883e -[NSObject doesNotRecognizeSelector:] + 106\r\n10  CoreFoundation                \t0x30287222 ___forwarding___ + 490\r\n11  CoreFoundation                \t0x3026d618 _CF_forwarding_prep_0 + 40\r\n12  iCrash                        \t0x00002378 0x1000 + 4984\r\n13  UIKit                         \t0x30a919b8 -[UITableView(_UITableViewPrivate) _sendSelectionDidChange] + 92\r\n14  UIKit                         \t0x30a985a8 -[UITableView _userSelectRowAtIndexPath:animated:scrollPosition:] + 372\r\n15  UIKit                         \t0x30a998bc -[UITableView touchesEnded:withEvent:] + 472\r\n16  UIKit                         \t0x30a66834 -[UIWindow sendEvent:] + 392\r\n17  UIKit                         \t0x30a57acc -[UIApplication sendEvent:] + 248\r\n18  UIKit                         \t0x30a56e04 _UIApplicationHandleEvent + 4656\r\n19  GraphicsServices              \t0x315698c4 PurpleEventCallback + 428\r\n20  GraphicsServices              \t0x3156c114 HeartbeatVBLCallback + 152\r\n21  IOMobileFramebuffer           \t0x31e8d8f8 IOMobileFramebufferNotifyFunc + 124\r\n22  com.apple.framework.IOKit     \t0x30f57248 IODispatchCalloutFromCFMessage + 304\r\n23  CoreFoundation                \t0x3026ac70 __CFMachPortPerform + 72\r\n24  CoreFoundation                \t0x30269c72 CFRunLoopRunSpecific + 2364\r\n25  CoreFoundation                \t0x30269320 CFRunLoopRunInMode + 44\r\n26  GraphicsServices              \t0x31567e58 GSEventRunModal + 268\r\n\r\n27  UIKit                         \t0x30a4fa6c -[UIApplication _run] + 520\r\n28  UIKit                         \t0x30a591d0 UIApplicationMain + 1132\r\n29  iCrash                        \t0x00002090 main (main.m:14)\r\n30  iCrash                        \t0x0000202c -[CrashTypeController tableView:didSelectRowAtIndexPath:] (CrashTypeController.m:145)\r\nPlease note how the _start symbol at 0x0000202c got resolved. The symbol name is actually at address 0x00002378.\r\n\r\nRegression:\r\nIt looks like atos fails to resolve the _start symbol, which shifts the string array indices in symbolize_frames, shuffling symbols in the application binary. Symbols in other libraries are not affected.\r\n\r\nNotes:\r\nI was able to fix it by adding the following line:\r\n$symbolled_frame =~ s/0x0000202c/_start/;\r\nbefore this line:\r\n$$frame{symbolled} = $symbolled_frame\r\nin symbolize_frames routine. This is an ugly and likely-to-break fix."
+    email: kanoshkin@gmail.com
+    modified: "2011-08-28T05:47:22.508708Z"
+    number: "6735414"
+    number_intvalue: 6735414
+    originated: 29-Mar-2009
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 3.1.3
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: symbolicatecrash, stripped binaries, _start symbol

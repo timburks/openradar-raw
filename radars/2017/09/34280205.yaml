@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34280205"
+    labels:
+        datastore_id: "6162802184028160"
+data:
+    classification: Serious Bug
+    created: "2017-09-06T15:34:41.69581Z"
+    description: "Area:\r\nNotifications\r\n\r\nSummary:\r\n`application(_:didReceiveRemoteNotification:fetchCompletionHandler:)` is not invoked for silent pushes (pushes without notification text, sound nor badge). Silent pushes works on latest iOS versions prior to iOS 11, also are well documented by Apple:\r\n> “The payload’s aps dictionary must include the\r\n> content-available key with a value of 1. The\r\n> payload’s aps dictionary must not contain the\r\n> alert, sound, or badge keys.” \r\n(https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html#//apple_ref/doc/uid/TP40008194-CH10-SW1)\r\nAbsence of silent pushes will break backward iOS compatibility and badly affect lot of apps from the AppStore.\r\n\r\nSteps to Reproduce:\r\n1. Create an app, enable push notifications and background modes for remote notifications. Configure all certificates as described in Apple documentation. \r\n2. Implement `application(_:didReceiveRemoteNotification:fetchCompletionHandler:)`.\r\n3. Send a push with following content:\r\n{code}\r\n{\r\n    \"aps\" : {\r\n        \"content-available\" : 1\r\n    },\r\n    \"acme1\" : \"bar\",\r\n    \"acme2\" : 42\r\n}\r\n{code}\r\n\r\nExpected Results:\r\n`application(_:didReceiveRemoteNotification:fetchCompletionHandler:)` should be invoked as described in Apple documentation.\r\n\r\nActual Results:\r\n`application(_:didReceiveRemoteNotification:fetchCompletionHandler:)` is being called on iOS 9 and iOS 10, but not on iOS 11 beta 9.\r\niOS 11 logs: \r\n{code}\r\ndefault\t17:24:58.254964 +0200\tSpringBoard\tReceived incoming message on topic xx.xxx.xxxxxxx at priority 1\r\ndefault\t17:24:58.257488 +0200\tSpringBoard\t[xx.xxx.xxxxxxx] Received remote notification request 678F-AAA1 [ hasAlertContent: 0, hasSound: 0 hasBadge: 0 hasContentAvailable: 1 hasMutableContent: 0 ]\r\ndefault\t17:24:58.257680 +0200\tSpringBoard\t[xx.xxx.xxxxxxx] Deliver push notification request 678F-AAA1\r\ndefault\t17:24:58.257887 +0200\tSpringBoard\t[xx.xxx.xxxxxxx] Passing content-available push to Duet\r\ndefault\t17:24:58.258107 +0200\tSpringBoard\tSUBMITTING:  \r\nerror\t17:24:58.258296 +0200\tSpringBoard\tIgnoring notification with no alert, sound or badge (xx.xxx.xxxxxxx): 678F-AAA1\r\ndefault\t17:24:58.258485 +0200\tSpringBoard\t[xx.xxx.xxxxxxx] Not saving push notification 678F-AAA1 to store [ error=Error Domain=UNErrorDomain Code=1401 \"Notification has no user-facing content\" UserInfo={NSLocalizedDescription=Notification has no user-facing content} ]\r\n{code}\r\n\r\nVersion/Build:\r\niOS 11 beta 9 (15A5370a)\r\n\r\nConfiguration:\r\niPhone 7 Plus (MN4M2PM/A)"
+    email: kamil.borzym@gmail.com
+    modified: "2017-09-06T15:34:58.27969Z"
+    number: "34280205"
+    number_intvalue: 34280205
+    originated: September 6 2017, 5:31 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK / Notifications
+    product_version: iOS 11 beta 9 (15A5370a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: application(_:didReceiveRemoteNotification:fetchCompletionHandler:) not being invoked for silent pushes on iOS 11 beta 9

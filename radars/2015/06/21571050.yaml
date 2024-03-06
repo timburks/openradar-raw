@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21571050"
+    labels:
+        datastore_id: "6685821541285888"
+data:
+    classification: Other Bug
+    created: "2015-06-26T20:51:34.39603Z"
+    description: "A protocol that attempts to define a typealias that is a function using the protocol type constraints does not work.\n\nprotocol Emotional {\n    typealias Sad\n    typealias Happy\n    \n    typealias F = (state: Sad) -> Happy\n    typealias G = (state: Int) -> Int\n    typealias H = (hi: Sad, bye: Happy)\n    \n    var funcs: [F] { get }\n    var emotes: [G] { get }\n    var faces: [H] { get }\n}\n\nAnd the conforming type:\n\nstruct Emote : Emotional {\n    let funcs: [(state: Int) -> Int] = [{ $0 }]\n    let emotes: [(state: Int) -> Int] = [{ $0 }]\n    let faces: [(hi: Int, bye: Int)] = [(hi: 0, bye: 1)]\n}\n\nlet e = Emote()\ne.funcs[0](state: 1)     // 1\ne.emotes[0](state: 12)   // 12\ne.faces[0]               // (.0 0, .1 1)\n\nThis won’t compile; Emote does not conform to Emotional.\n\nHowever, changing the protocol to this is fine:\n\nprotocol Emotional {\n    typealias Sad\n    typealias Happy\n    \n    typealias G = (state: Int) -> Int\n    typealias H = (hi: Sad, bye: Happy)\n    \n    var funcs: [(state: Sad) -> Happy] { get }\n    var emotes: [G] { get }\n    var faces: [H] { get }\n}"
+    email: owensd@gmail.com
+    modified: "2015-06-26T20:51:34.39627Z"
+    number: "21571050"
+    number_intvalue: 21571050
+    originated: 26-Jun-2015 01:52 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A121l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode-beta (7A121l): Typealias for generic functions within a protocol do not work'

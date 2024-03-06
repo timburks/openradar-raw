@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13969869"
+    labels:
+        datastore_id: "3035407"
+data:
+    classification: annoying
+    created: "2013-05-29T12:50:09.864291Z"
+    description: "23-May-2013 10:22 AM Peter Sommerlad:\r\nSummary:\r\n\r\nApple's (GNU) libstdc++ (of Apple's gcc 4.2.1) std::locale class can only be instantiated with locales \"C\" and \"POSIX\". It should be able to be instantiated with all locales installed on a system (-> locale -a output)\r\n\r\nSteps to Reproduce:\r\n\r\nThe following program when named \"loc\" can be used to check which locales are supported by std::locale:\r\n$ loc `locale -a`\r\n\r\n--------- test program loc.cpp ----------------\r\n#include <iostream>\r\n#include <stdexcept>\r\n#include <locale>\r\n\r\nvoid printlocale(){\r\nstd::cout << setlocale(LC_ALL,0)<<'\\n';\r\n}\r\n\r\nint main(int argc, char *argv[]){\r\nprintlocale();\r\nwhile(*++argv) {\r\nchar const * const locstr=*argv;\r\nsetlocale(LC_ALL,locstr); // works\r\ntry {\r\n\tstd::locale loc(locstr);\r\n\tstd::cout << \"can create locale object for : \" << locstr<<'\\n';\r\n} catch (std::runtime_error &e){\r\n\t//std::cerr << \"caught runtime error: \" << e.what() << '\\n';\r\n}\r\nprintlocale(); // check that setlocale worked\r\n}\r\n}\r\n---------------\r\n\r\nExpected Results:\r\n\r\nall installed locales should be supported.\r\n\r\nActual Results:\r\n\r\nOnly \"C\" and \"POSIX\" can be used to instantiate std::locale objects.\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\nThe C function setlocale seems to work with all installed locales, but not the C++ API std::locale. \r\nThe bug is present also in gcc 4.8.0 sources when built for darwin. Linux' gcc4.8.0 builds work fine with all locales installed on a Linux system.\r\n\r\nlibc++ and clang++ allow to use all installed locales. However, all *.UTF-8 locales are broken wrt to language-specific character classification and sorting (LC_CTYPE, LC_COLLATE).\r\n\r\n28-May-2013 09:26 PM Apple Developer Bug Reporting Team :\r\nEngineering has determined that this is not to be fixed.\r\n\r\nPlease migrate to libc++ for the locale functionality.\r\n\r\nPlease update your bug report to let us know whether this is still an issue for you.\r\n\r\nIf you have questions regarding the resolution of this issue, please update your bug report with them.\r\n\r\nPlease be sure to regularly check new Apple products for any updates that might affect this issue.  Again, thank you for taking the time to submit bugs.  We sincerely appreciate your input.\r\n\r\n\r\n29-May-2013 07:16 AM Peter Sommerlad:\r\nI want to have portable code that also works with gcc and older mac os x versions, so just forcing me to use most recent library and clang is not always an option. In addition it is a pity that apple had been relying on gcc for many years and now is not fixing a minor library issue that works for libstdc++ on other platforms."
+    email: sommerlad.peter@gmail.com
+    modified: "2013-05-29T12:50:09.864479Z"
+    number: "13969869"
+    number_intvalue: 13969869
+    originated: 23-May-2013
+    parent_number: '&{NULL_VALUE}'
+    product: libstdc++
+    product_version: gcc 4.2.1
+    reproducible: ""
+    resolved: ""
+    status: open
+    title: libstdc++ std::locale incomplete/broken

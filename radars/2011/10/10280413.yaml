@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10280413"
+    labels:
+        datastore_id: "1392402"
+data:
+    classification: Serious Bug
+    created: "2011-10-13T17:34:17.233884Z"
+    description: "Summary:\r\nIf an Apple event is sent to iPhoto immediately after it launches, that event will often result in an error.\r\n\r\nSteps to Reproduce:\r\nCopy and paste the following Applescript into Applescript Editor, and click \"Run\"\r\n\r\n--quit iPhoto if it's alreeady running\r\ntell application \"System Events\"\r\n\tif exists application process \"iPhoto\" then\r\n\t\ttell application \"iPhoto\" to quit\r\n\t\trepeat while exists application process \"iPhoto\"\r\n\t\t\tdelay 1\r\n\t\tend repeat\r\n\tend if\r\nend tell\r\ntell application \"iPhoto\"\r\n\tset success to false\r\n\trepeat while not success\r\n\t\ttry\r\n\t\t\t--This command will trigger the launching of iPhoto\r\n\t\t\t--With iPhoto 9.2, this almost always results in an error\r\n\t\t\tset albumName to name of first album\r\n\t\t\tdisplay dialog \"Success, first album name is \" & albumName\r\n\t\t\tset success to true\r\n\t\ton error errorMessage number errorNumber\r\n\t\t\t--Catch the error, then retry. The second time around, the command always works\r\n\t\t\tdisplay dialog \"Got an error back (\" & errorMessage & \", \" & errorNumber & \")\" buttons {\"Retry\", \"Cancel\"} default button \"Retry\"\r\n\t\tend try\r\n\tend repeat\r\nend tell\r\n\r\n\r\n\r\nExpected Results:\r\nThe script should display only the success dialog, displaying the name of the first album in the library\r\n\r\nActual Results:\r\nInstead, the first attempt to fetch the album name fails with a -10000 error. Additionally, the following is output to the console log:\r\n\r\n10/13/11 8:36:28.963 AM iPhoto: An exception was thrown during execution of an NSScriptCommand...\r\n10/13/11 8:36:28.964 AM iPhoto: *** -[__NSArrayM insertObject:atIndex:]: object cannot be nil\r\n\r\nIf you click \"Retry\", the second attempt to fetch the album name always succeeds.\r\n\r\nRegression:\r\nThis problem is new with iPhoto 9.2, and does not occur with previous versions.\r\n\r\nSome Applescript commands will not fail in this manner, but most will. It appears that basically anything that needs to access to the data objects of iPhoto (albums, photos, etc.) will encounter a similar problem. This includes any get/set commands on iPhoto objects, as well as things like the \"new album\" command.\r\n\r\nOn very rare occasion, this script will not encounter an error. I believe the problem has something to do with the timing of the library loading, so every once in a while iPhoto will load fast enough to be able to handle the Apple event correctly.\r\n\r\nNotes:"
+    email: bewebste@gmail.com
+    modified: "2013-01-30T21:59:47.925145Z"
+    number: "10280413"
+    number_intvalue: 10280413
+    originated: 13-Oct-2011 10:31 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iLife
+    product_version: iPhoto 9.2
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: Applescript commands sent immediately after iPhoto launch often fail

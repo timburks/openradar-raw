@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "37389859"
+    labels:
+        datastore_id: "5022379180818432"
+data:
+    classification: Bug
+    created: "2018-02-09T15:19:13.40835Z"
+    description: "Summary: \r\nCalling `nextDate(after: date, matching: DateComponents(day: 1), matchingPolicy: .nextTime)` on a calendar instance returns invalid result for dates in February.\r\n\r\nSteps to Reproduce:\r\nlet calendar = Calendar(identifier: .gregorian)\r\nlet date = calendar.date(from: DateComponents(year: 2017, month: 2, day: 2))!\r\ncalendar.nextDate(after: date, matching: DateComponents(day: 1), matchingPolicy: .nextTime)\r\n\r\nExpected Results:\r\nResulting date should be March 1, 2017. This works as expected for all other months.\r\nThe result is also correct if the components we pass in are not the first day of the month. E.g. `nextDate(after: date, matching: DateComponents(day: 2), matchingPolicy: .nextTime)` works just fine.\r\n\r\nActual Results:\r\nResulting date is February 1, 2020 in the example above. The year is actually always next leap-year after the date we pass in.\r\nThe same bug is affecting `date(bySetting: .day, value: 1, of: date)` method for the dates in February.\r\n\r\nVersion/Build:\r\nXcode Version 9.2 (9C40b)\r\n\r\nConfiguration:\r\nThe same behavior is observed in Playgrounds and iOS app on iOS 11.2.\r\n\r\nAttached Playground:\r\n\r\nimport UIKit\r\n\r\nlet calendar = Calendar(identifier: .gregorian)\r\nlet firstDayOfMonth = DateComponents(day: 1)\r\n\r\nlet dateInFebruary = calendar.date(from: DateComponents(year: 2017, month: 2, day: 2))!\r\ncalendar.nextDate(after: dateInFebruary, matching: firstDayOfMonth, matchingPolicy: .nextTime)\r\n\r\nlet dateInMarch = calendar.date(from: DateComponents(year: 2017, month: 3, day: 2))!\r\ncalendar.nextDate(after: dateInMarch, matching: firstDayOfMonth, matchingPolicy: .nextTime)"
+    email: dk@doodle.com
+    modified: "2018-02-13T11:15:04.01577Z"
+    number: "37389859"
+    number_intvalue: 37389859
+    originated: February 9 2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK Calendar
+    product_version: iOS 11.2
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 35883601
+    title: Calendar.nextDate(after:matching:matchingPolicy:) doesn’t work reliably for dates in February

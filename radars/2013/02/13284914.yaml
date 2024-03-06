@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13284914"
+    labels:
+        datastore_id: "2776401"
+data:
+    classification: Crash
+    created: "2013-02-25T16:14:56.385728Z"
+    description: "In my MKMapViewDelegate my -mapView:didSelectAnnotationView: was called with an MKTeleportingUserLocation object as view.annotation.\r\n\r\nI queried annotationView.annotation.subtitle and it crashed with this exception:\r\n\r\n*** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '-[MKTeleportingUserLocation subtitle]: unrecognized selector sent to instance 0x1d53cf60'\r\n\r\nI believe I'm doing nothing wrong here and it shouldn't crash. Don't know under which circumstances an MKTeleportingUserLocation annotation is used but according to the contract, annotationView.annotation should conform to the MKAnnotation protocol:\r\n\r\n@property (nonatomic, retain) id <MKAnnotation> annotation\r\n\r\nwhich defines \r\n\r\n@property (nonatomic, readonly, copy) NSString *subtitle\r\n\r\n\r\n\r\n28-Feb-2013 05:14 PM Apple Developer Bug Reporting Team :\r\nEngineering has determined that this issue behaves as intended based on the following information:\r\n\r\nIt appears you are missing a crucial part of MKAnnotation.h. Specifically:\r\n\r\n    @optional\r\n    ....\r\n    @property (nonatomic, readonly, copy) NSString *subtitle;\r\n\r\nIt is not safe to call -title or -subtitle on something just because you know it conforms to <MKAnnotation>. MKTeleportingUserLocation definitely does conform to <MKAnnotation>.\r\n\r\n\r\n28-Feb-2013 06:08 PM Ortwin Gentz:\r\nThanks, makes sense. \r\n\r\nI didn't check the header file, only the documentation. In the latter, there's no clear indication that some of the properties are @optional. You might want to clarify in the documentation."
+    email: futuretap@googlemail.com
+    modified: "2018-02-22T15:09:45.88156Z"
+    number: "13284914"
+    number_intvalue: 13284914
+    originated: 25-Feb-2013 05:13 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 6.1.2
+    reproducible: Unable
+    resolved: ""
+    status: Closed
+    title: MKTeleportingUserLocation doesn't conform to MKAnnotation protocol

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32291130"
+    labels:
+        datastore_id: "4987401067823104"
+data:
+    classification: Other Bug
+    created: "2017-05-19T09:43:20.20904Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nA horizontal stack view containing a number of text labels and using a first/last baseline alignment incorrectly sets its top/bottom edge to the top/bottom of the first arranged subview and not the text label that extends furthest above/below the baseline.\r\n\r\nThis means that when, for example, the second label in a horizontal stack view uses a larger font than the first label it will extend above the frame of the stack view causing unexpected layout issues.\r\n\r\nSteps to Reproduce:\r\n1) Start from the Xcode single view application template and drag three labels into the Interface Builder canvas of the view controller.\r\n2) Configure each label with some text (\"Hello\", \"Ciao\", \"Hola\") and set the font size to 28, 56 and 28 points respectively (the second label is using a font size twice the size of the other labels).\r\n3) Embed the three labels in a horizontal stack view and change the alignment of the stack view to \"First Baseline\"\r\n4) Add Auto Layout constraints to center the stack view horizontally and pin it to the top layout guide with standard spacing.\r\n5) Build and run on a device or simulator. \r\n\r\nSee attached Xcode project for full example\r\n\r\nExpected Results:\r\nThe three text labels should all align on their first baseline and the stack view height should be set by the height of the second (tallest above baseline) text label. All of the text labels should be contained by the stack view, within the bounds of the stack view. See attached screenshot - Expected.png\r\n\r\nObserved Results:\r\nThe text labels align on their first baselines but the top edge of the stack view is set to the top edge of the first (and smaller) text label. This causes the taller second text label to extend above the bounds of the stack view and in this case to be appear under the top layout guide (see attached screenshot - Actual.png).\r\n\r\nVersion:\r\niOS 10.3 (14E269)\r\nXcode 8.3.2\r\n\r\nNotes:\r\nLooking at the configuration of the stack view with the view debugger it would appear to be missing constraints from the top of the stack view to the top of the 2nd and 3rd labels.\r\n\r\nThe first text label has a constraint with the top of the stack view as follows:\r\nUISV-canvas-connection: stackView.top <= label.top @ 1000\r\n\r\nThis constraint is missing for the other two labels. A workaround is to add this constraint to each label:\r\n\r\n    NSLayoutConstraint.activate([\r\n      stackView.topAnchor.constraint(lessThanOrEqualTo: label2.topAnchor),\r\n      stackView.topAnchor.constraint(lessThanOrEqualTo: label3.topAnchor)\r\n       ])"
+    email: keith@useyourloaf.com
+    modified: "2017-05-19T09:43:20.20927Z"
+    number: "32291130"
+    number_intvalue: 32291130
+    originated: May 19, 2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "10.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Stack View height incorrect for first/last baseline alignment

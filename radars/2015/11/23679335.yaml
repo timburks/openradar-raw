@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23679335"
+    labels:
+        datastore_id: "4950155732189184"
+data:
+    classification: Other Bug
+    created: "2015-11-28T03:20:16.52367Z"
+    description: "Summary:\r\nWhen launching a sandboxed version of an existing app for the first time, preferences saved using NSUserDefaults by a previous, unsandboxed version of the app are not reliably migrated.\r\n\r\nSteps to Reproduce:\r\n1. Run an unsandboxed app that sets at least one key/value pair using NSUserDefaults.\r\n2. Quit the app.\r\n3. Run a sandboxed version of the app for the first time and note the values it reads from NSUserDefaults.\r\n\r\nExpected Results:\r\nThe preferences plist for the app is migrated into the sandbox container and the sandboxed version of the app sees the same values using NSUserDefaults as were set by the unsandboxed version before migration.\r\n\r\nActual Results:\r\nWhile the preferences plist is moved into the sandbox container, when the sandboxed version of the app reads its defaults using NSUserDefaults, the values set by the unsandboxed version of the app (and stored in the plist) are not returned. Rather, NSUserDefaults behaves as if the app is being run for the first time.\r\n\r\nNotes:\r\nThis does not happen *every* time, only sometimes, but it happens quite often. In my testing so far, rebooting, or forcing cfprefsd to restart (using killall cfprefsd) prevents the problem from occurring.\r\n\r\nAnother interesting behavior is this: After running the sandboxed version, and seeing it fail to read previously set user defaults, if I then launch the *un*sandboxed version again, it continues to correctly read the value(s) it saved previously even though the plist is no longer in ~/Library/Preferences, but rather in the app sandbox container.\r\n\r\nHere is a very minimal example app that can be used to reproduce this behavior: https://www.dropbox.com/s/4i6o28vdx0aj0wv/Preferences%20Migration%20Test.zip?dl=0 It simply registers a default value for the key \"SomeDefaultsKey\" in +[AppDelegate initialize], then sets another value when the \"Set Preferences\" button is clicked. The value for \"SomeDefaultsKey\" is bound to a label in the app's window, so the current value can be easily seen.\r\n\r\nAlso included are two compiled versions of this app, one with sandboxing disabled, the other with sandboxing enabled. Reproducing the problem is as simple as:\r\n\r\n1. Run Preferences Migration Test (Unsandboxed)\r\n2. Click \"Set Preferences\". Note that the user defaults value changes to \"initialized\".\r\n3. Quit the app.\r\n4. Run Preferences Migration Test (Sandboxed)\r\n5. Notice that com.openreelsoftware.prefs-test.plist does get moved from ~/Library/Preferences into ~/Library/Containers/com.openreelsoftware.prefs-test/Data/Library/Preferences\r\n6. Note that (often) the value is again \"uninitialized\".\r\n\r\nIf repeating the test, the sandbox container should be deleted, and defaults delete com.openreelsoftware.prefs-test should be run to reset user defaults and force another sandbox migration."
+    email: armadsen@gmail.com
+    modified: "2015-11-28T03:21:52.35926Z"
+    number: "23679335"
+    number_intvalue: 23679335
+    originated: 27-Nov-2015 08:20 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: Mac OS X 10.11.1 (15B42)
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: App sandbox migration often fails to migrate user defaults

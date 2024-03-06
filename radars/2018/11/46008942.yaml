@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "46008942"
+    labels:
+        datastore_id: "5030997057863680"
+data:
+    classification: Serious Bug
+    created: "2018-11-13T00:28:49.004081Z"
+    description: "Summary:\r\nSignals raised from a block being dispatched on dispatch_get_main_queue are not handled by a signal handler registered via libdispatch if underlying runloop is CFRunLoop. They ARE caught if the underlying runloop is dispatch_main()\n\nI have seen no documentation that would lead me to believe that this is expected.\n\nSignals raised from other global dispatch queues are caught in both cases.\n\nThis appears to be due to a difference in how pthread_sigmask is set when the block is executed using CFRunLoop vs dispatch_main().\n\r\n\r\nSteps to Reproduce:\r\n1) Build attached code \n  clang /Users/dmaclach/Desktop/signaltest/signaltest/main.m -framework Foundation\n2) Run it\n  ./a.out\n\nCFRunLoopRun: 0x7fff94bd8380 SIGUSR1 thread: UNBLOCKED proc: Ignored\nSource Registered\nRaising From Global Queue\nglobalQueue: 0x70000fda2000 SIGUSR1 thread: BLOCKED proc: Ignored\nRaised From Global Queue\nReceived Signal\nSignal: 0x7fff94bd8380 SIGUSR1 thread: UNBLOCKED proc: Ignored\nRaising From Main Queue\nmainQueue: 0x7fff94bd8380 SIGUSR1 thread: UNBLOCKED proc: Ignored\nRaised From Main Queue\n\nNote that the second exception raised from the main queue was not received\n\n3) Comment out line 61\n4) Uncomment line 62\n5) Build attached code \n  clang /Users/dmaclach/Desktop/signaltest/signaltest/main.m -framework Foundation\n6) Run it\n  ./a.out\n\ndispatch_main: 0x7fff94bd8380 SIGUSR1 thread: UNBLOCKED proc: Ignored\nSource Registered\nRaising From Global Queue\nglobalQueue: 0x70000c81b000 SIGUSR1 thread: BLOCKED proc: Ignored\nRaised From Global Queue\nReceived Signal\nSignal: 0x70000c89e000 SIGUSR1 thread: BLOCKED proc: Ignored\nRaising From Main Queue\nmainQueue: 0x70000c89e000 SIGUSR1 thread: BLOCKED proc: Ignored\nRaised From Main Queue\nReceived Signal\nSignal: 0x70000c89e000 SIGUSR1 thread: BLOCKED proc: Ignored\n\nNote that signal was caught.\r\n\r\nExpected Results:\r\nI would expect the signal dispatched from dispatch_get_main_queue() to be caught in both cases, or an exception of some sort to be logged to tell me that this is not supported. Documentation explaining this somewhere would be a bonus!\r\n\r\nActual Results:\r\nSignal is caught when dispatch_main executes it. Signal is not caught when CFRunLoop executes it. Signal Handlers installed using sigaction/signal work as expected in both cases.\r\n\r\nVersion:\r\n10.13.6\r\n\r\nNotes:\r\nGOOGLER:dmaclach"
+    email: dmaclach@gmail.com
+    modified: "2018-11-13T00:28:49.004231Z"
+    number: "46008942"
+    number_intvalue: 46008942
+    originated: 12-Nov-2018 04:28 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13.6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: signals raised from dispatch_get_main_queue are not caught when CFRunLoop is used (vs dispatch_main)

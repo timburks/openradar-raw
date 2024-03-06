@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26780904"
+    labels:
+        datastore_id: "4958891762778112"
+data:
+    classification: Performance
+    created: "2016-06-14T00:58:45.77819Z"
+    description: "Summary:\r\nIn a complex network environment with multiple WAN IP addresses.\r\nWe configure Apple Caching server with LAN IP Address Ranges as well as WAN IP address ranges.\r\nWe also add the WAN IP Address ranges to a DNS TXT Service record of the default search domain\r\nThis works great, until the primary DNS Server being given to the client device is no longer responsive.\r\nIf this primary DNS server is down, the caching server discovery tool on the client device is unable to lookup the DNS TXT record. \r\nIt does not fail over to the secondary DNS Server. Because of this, it does not provide the correct information to the LCDN locator service and the client fails to retrieve the correct caching server to use.\r\n\r\n\r\nSteps to Reproduce:\r\n1. Configure Apple caching server to work in complete network topology. Provide DNS TXT record to client devices. Ensure atleast two DNS servers are available and being provided to client device via DHCP\r\n2. Confirm it is working as expected.\r\n3. Now turn off the primary DNS server.\r\n4. Trigger a rediscovery by removing the diskcache.plist ( sudo find /var/folders -iname diskcache.plist -exec rm {} \\; ) and reboot the client device.\r\n5. Attempt to download content from a content download service such as the App Store\r\n6. Check Apple caching server for connections from the client device.\r\n7. Note that no connections are made and the client device downloads the content from the WAN\r\n\r\n\r\nExpected Results:\r\nThe caching server discovery tool should fail over to the secondary DNS server to perform the DNS TXT record lookup. \r\nThe client device should then be able to locate the correct caching server by supplying the apple LCDN locator service with the lan ip and the wan ip address ranges from the DNS txt record.\r\n\r\nActual Results:\r\nThe caching server discovery tool DOES NOT fail over to the secondary DNS server and perform the DNS TXT record lookup.\r\nBecause it is unable to locate the DNS TXT record, it is unable to get the correct caching server from the Apple LCDN locator service\r\n\r\nRegression:\r\nProblem occurs in all tested versions of OS X 10.10 and 10.11 up to 10.11.5\r\n\r\nNotes:"
+    email: calum.h@gmail.com
+    modified: "2016-09-26T01:10:05.52979Z"
+    number: "26780904"
+    number_intvalue: 26780904
+    originated: 14/06/2016
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11.5
+    reproducible: Yes
+    resolved: ""
+    status: Resolved
+    title: OS X Client fails to discover Apple Caching Server

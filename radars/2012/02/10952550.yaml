@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10952550"
+    labels:
+        datastore_id: "1551402"
+data:
+    classification: Security
+    created: "2012-02-29T16:23:59.252378Z"
+    description: "29-Feb-2012 03:00 AM Keith Winstein:\r\nSummary:\r\n\r\nIn the default en_US.UTF-8 locale, the mbrtowc() and similar functions are too liberal in accepting ill-formed UTF-8 sequences. This may have security implications\r\n\r\nSteps to Reproduce:\r\n\r\nUsing attached file unicode-test2.c, run:\r\n\r\n$ cc -std=c99 -g -Wall -o unicode-test2 unicode-test2.c && ./unicode-test2\r\n\r\nExpected Results:\r\n\r\nThe program should exit cleanly with no output and 0 status. (It does this on GNU libc.)\r\n\r\nActual Results:\r\n\r\nAssertion failed: ((num == (size_t) -1) && (errno == EILSEQ)), function main, file unicode-test2.c, line 33.\r\nAbort trap: 6\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\nUnicode 6.0, D92, says that UTF-8 sequences that would otherwise encode surrogate code points are ill-formed. (ISO/IEC 10646 agrees, using the slightly different terminology of that specification.) Therefore, mbrtowc() and other routines that purport to interpret UTF-8 should return EILSEQ.\r\n\r\nInstead, this implementation of mbrtowc() produces an invalid wchar_t that does not contain a Unicode scalar value, and does not signal an invalid sequence.\r\n\r\nSuch invalid characters (isolated surrogate code points) may lead to security implications because an attacker could use the ability to generate adjacent surrogate code points, leading to a real Unicode character, while evading input filters.\r\n\r\n\r\n29-Feb-2012 03:00 AM Keith Winstein:\r\n'unicode-test2.c' was successfully uploaded\r\n\r\n#include <wchar.h>\r\n#include <stdio.h>\r\n#include <locale.h>\r\n#include <string.h>\r\n#include <langinfo.h>\r\n#include <stdlib.h>\r\n#include <assert.h>\r\n#include <errno.h>\r\n\r\nint main( void )\r\n{\r\n  /* Adopt native locale */\r\n  if ( NULL == setlocale( LC_ALL, \"\" ) ) {\r\n    perror( \"setlocale\" );\r\n    return 1;\r\n  }\r\n\r\n  /* Verify that locale calls for UTF-8 */\r\n  if ( strcmp( nl_langinfo( CODESET ), \"UTF-8\" ) != 0 ) {\r\n    fprintf( stderr, \"mosh requires a UTF-8 locale.\\n\" );\r\n    return 1;\r\n  }\r\n\r\n  char s[ 3 ] = { 0xED, 0xA0, 0x81 };\r\n  /* Ill-formed per Unicode 6.0, D92 because it maps to surrogate code point. */\r\n\r\n  mbstate_t ps;\r\n  memset( &ps, 0, sizeof( ps ) );\r\n\r\n  wchar_t y = 0;\r\n  size_t num = mbrtowc( &y, s, 3, &ps );\r\n\r\n  assert( (num == (size_t) -1) && (errno == EILSEQ) );\r\n\r\n  return 0;\r\n}"
+    email: winstein@gmail.com
+    modified: "2012-02-29T16:23:59.252915Z"
+    number: "10952550"
+    number_intvalue: 10952550
+    originated: 29-Feb-2012 03:00 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: "10.7"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: mbrtowc() improperly converts ill-formed UTF-8 sequences without giving EILSEQ

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18349647"
+    labels:
+        datastore_id: "6451645261021184"
+data:
+    classification: ""
+    created: "2014-09-16T13:00:40.228031Z"
+    description: "Summary:\r\nThe code below will crash right away - every time.\r\n\r\nSteps to Reproduce:\r\nExecute this code targeting Mac or iOS.\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\n@interface TestObject : NSObject\r\n@property NSString *foo;\r\n@end\r\n\r\n@implementation TestObject\r\n\r\n- (id)init {\r\n    self = [super init];\r\n    // Start a bunch of work hitting the property\r\n    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{\r\n        while (YES) {\r\n            self.foo = @\"ouch\";\r\n        }\r\n    });\r\n\r\n    // Start work that will constantly observe and unobserve the property\r\n    [self observe];\r\n    return self;\r\n}\r\n\r\n- (void)observe {\r\n    [self addObserver:self forKeyPath:@\"foo\" options:0 context:NULL];\r\n    [self removeObserver:self forKeyPath:@\"foo\"];\r\n    dispatch_async(dispatch_get_main_queue(), ^{\r\n        [self observe];\r\n    });\r\n}\r\n\r\n@end\r\n\r\nint main(int argc, const char * argv[]) {\r\n    TestObject *t = [[TestObject alloc] init];\r\n    CFRunLoopRunInMode(kCFRunLoopDefaultMode, 10000, false);\r\n    return 0;\r\n}\r\n\r\nExpected Results:\r\nNo crash\r\n\r\nActual Results:\r\nCrash with the following stack\r\n* thread #2: tid = 0xfe278, 0x00007fff84092097 libobjc.A.dylib`objc_msgSend + 23, queue = 'com.apple.root.default-priority', stop reason = EXC_BAD_ACCESS (code=1, address=0x18)\r\n    frame #0: 0x00007fff84092097 libobjc.A.dylib`objc_msgSend + 23\r\n    frame #1: 0x00007fff8493cb11 CoreFoundation`CFDictionaryGetValue + 145\r\n    frame #2: 0x00007fff89078da0 Foundation`_NSSetObjectValueAndNotify + 144\r\n  * frame #3: 0x0000000100001a85 testy2`__18-[TestObject init]_block_invoke(.block_descriptor=<unavailable>) + 53 at main.m:14\r\n\r\nVersion:\r\niOS 8\r\n\r\nNotes:\r\nIt is obviously impractical to expect observers to serialize their observation/unobservation with respect to the internal mutation of property in another class. \r\n\r\nConfiguration:\r\nDoesn't matter. Easily repros on any iOS simulator or when targeting Mac as well.\r\n\r\nAttachments:"
+    email: eric.patey@gmail.com
+    modified: "2014-09-16T13:00:40.22829Z"
+    number: "18349647"
+    number_intvalue: 18349647
+    originated: 9/16/14
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 100% reproducible crash mutating property while observations come and go

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28798431"
+    labels:
+        datastore_id: "6073623597023232"
+data:
+    classification: Crash/Data Loss
+    created: "2016-10-17T13:50:31.24644Z"
+    description: "Summary:\r\n(context: See example project)\r\nSometimes, depending on the CoreData model configuration, when accessing the `groups` relationship on the `User` entity, we get `Story` objects although the target-entity of the `groups` relationship is `Group`.\r\n\r\nSteps to Reproduce:\r\n1. Open the attached example project and run it. Wait for a few seconds for the initial user object and groups relationship to be set up and the first story object to be added (Log message: \"Added a story\").\r\n2. Kill the app (either on the simulator or by hitting the stop-button in Xcode)\r\n3. Run the app again. After another story was added the Assertion in `CoreDataChecker` in line 44 will be thrown. It ensures that objects return via user.groups are actually `Group`-objects which is no longer the case.\r\n\r\nExpected Results:\r\nThe `groups` relationship should always return `Group` objects.\r\n\r\nActual Results:\r\nThe `groups` relationship contains `Story` objects.\r\n\r\nVersion:\r\niOS 10.0 (14A345)\r\n\r\nNotes:\r\nIn the attached configuration of the data model the `User` has many ordered relationships but only one unordered relationship. In the attached configuration the `visitors` relationship is unordered.\r\n\r\nHowever, it does not matter which of the relationships is unordered, as long as exactly one relationship is unordered but the others are ordered the issue exists. \r\n* If all relationships on User are unordered, the issue does not occur\r\n* If two relationships on User are unordered the issue does not occur\r\n\r\nThe issue only appears on iOS 10: copying over an sqlite-database that creates a crash on iOS 10 to an iOS 9 simulator does not result in a crash (using the same data model).\r\n\r\nThere are some more comments in the code about things we tried:\r\n* Adding stories on a background context instead of on the viewContext does not seem to provoke the issue\r\n* Adding stories to another relationship with target-entity `Story` does not provoke the issue, only adding the to the specific `stories`-relationship provokes it, even though the relationships seem to be identical except for the name.\r\n\r\n\r\nNote about the project: \r\n* We tried using both the \"old way\" of setting up a Core Data stack + mogenerator generated classes and the \"new way\" via NSPersistentContainer + Xcode generated model classes. Both have the same issue.\r\n\r\nConfiguration:\r\nany simulator or device we run it on had the issue\r\n\r\nAttachments:\r\n'CoreDataFetchesWrongEntity.zip' and 'additionalNotes.txt' were successfully uploaded."
+    email: openradar@khd2.de
+    modified: "2016-10-17T13:51:42.14759Z"
+    number: "28798431"
+    number_intvalue: 28798431
+    originated: 17.10.2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "10.0"
+    reproducible: Yes
+    resolved: No
+    status: Open
+    title: When accessing a relationship on a CoreData object, objects of a separate, unrelated relationship are returned

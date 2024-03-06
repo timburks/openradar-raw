@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16213774"
+    labels:
+        datastore_id: "5803740183396352"
+data:
+    classification: Performance
+    created: "2014-03-03T20:36:28.364633Z"
+    description: "Summary:\r\nI've noticed that sometimes switching between spaces, dragging windows, and other simple graphical operations have become ridiculously bad (i.e. animating at around 10 FPS) after I upgraded to 10.9.2. This doesn't happen all the time, but often enough that it's quite annoying.\r\n\r\nI use my MBP with various display configs regularly: in extended desktop with an external monitor, with the MBP in clamshell mode (internal display off, external display on), and without any external monitor at all. This behavior seems to be related to switching between these types of display configs but I can't really be sure.\r\n\r\nI've taken a combined time profile and system trace of space switching both without the issue (NoFlickeringSpacesSwitching.trace) and when the issue occurs (FlickeringSpacesSwitching.trace). Hopefully by examining these traces, you can figure out the difference between the scenarios and fix whatever issue is occurring.\r\n\r\nI also dtrace'd on all syscalls made by WindowServer during a spaces switching operation (see the *.log files). The biggest difference that I see is that when things go bad, we block on a ton of semwait_signal syscalls (>4000 of these), whereas when things are normal, we don't block on any of those syscalls. From looking at the systrace, this syscall seems to perhaps be associated with blocking on an update from another display:\r\n\r\n   0 libsystem_kernel.dylib __semwait_signal\r\n   1 libsystem_c.dylib usleep\r\n   2 CoreGraphics begin_deferred_update_cycle\r\n   3 CoreGraphics CGXUpdateDisplay\r\n   4 CoreGraphics CGXReenableUpdateForConnection\r\n   5 CoreGraphics _CGXReenableUpdateForConnection\r\n   6 CoreGraphics _XReenableUpdateForConnection\r\n   7 CoreGraphics CGXServices_server\r\n   8 CoreGraphics __connectionHandler_block_invoke\r\n   9 CoreGraphics CGXHandleMessage\r\n  10 CoreGraphics connectionHandler\r\n  11 CoreGraphics post_port_data\r\n  12 CoreGraphics CGXRunOneServicesPass\r\n  13 CoreGraphics CGXServer\r\n  14 WindowServer main\r\n  15 libdyld.dylib tlv_get_addr\r\n\r\nSteps to Reproduce:\r\n1. Switch spaces.\r\n2. Sometimes it's ridiculously choppy.\r\n\r\nExpected Results:\r\nSwitching spaces should never be ridiculously choppy.\r\n\r\nActual Results:\r\nSwitching spaces is sometimes ridiculously choppy.\r\n\r\nVersion:\r\n10.9.2 13C64\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nSee attached config file\r\n\r\nAttachments:\r\n'config.spx' and 'FlickeringSpaces.zip' were successfully uploaded."
+    email: ben@nhaminated.com
+    modified: "2014-03-14T23:07:59.484087Z"
+    number: "16213774"
+    number_intvalue: 16213774
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.2
+    reproducible: Sometimes
+    resolved: Duplicate of 16163395
+    status: Closed
+    title: Spaces switching becomes extremely choppy (~10 FPS) in 10.9.2

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7249507"
+    labels:
+        datastore_id: "4955364072095744"
+data:
+    classification: Suggestion
+    created: "2019-11-13T23:26:47.83287Z"
+    description: "Please describe the issue:\r\nWe are hitting system limits on ARG_MAX for number of parameters that can be passed to an invocation. This is causing issues with scalability as we modularize our codebase. We are currently at a point where we can't run our unit tests (300+ modules).\r\n\r\nXCTest invocation contains unnecessary library/framework search paths when `CONFIGURATION_BUILD_DIR` has been set to be unique on targets (for isolation purposes). The unnecessary paths are ones that don't contain any dynamic libraries and frameworks.\r\n\r\nRepro:\r\n1. Download the sample project (NOTE: It has a custom `CONFIGURATION_BUILD_DIR` option for each target)\r\n2. Invoke the build with args `xcodebuild -project asfasf.xcodeproj -scheme \"run-all-tests\" -destination \"OS=13.0\" -only-testing \"FrameworkATests\" build-for-testing`\r\n3. Open xctestrun file from built products root directory\r\n\r\nExpected:\r\n* Shouldn't contain any extra DYLD flags for search paths, because all targets compiled into `CONFIGURATION_BUILD_DIR` are static (no dynamic libraries or frameworks to be linked)\r\n\r\nActual:\r\n* Lots of unnecessary DYLD flags being supplied that cause overflowing of ARG_MAX when on the scale of 300-400 module dependencies.\r\n\r\nNOTE:  Related to FB7122062, but that ticket is tracking the xctestrun containing paths unrelated to the target being compiled (all paths for all targets in a scheme). This ticket is referring to paths for dependencies of the target being compiled, but aren't useful to include as the folders don't contain dynamic libraries or frameworks.\r\nPlease list the steps you took to reproduce the issue:\r\n\r\nWhat did you expect to happen?\r\nOnly module `CONFIGURATION_BUILD_DIR` related to selected test targets should appear in the xctestrun file. Even better would be only including the `CONFIGURATION_BUILD_DIR` if they're necessary for dynamic frameworks.\r\n\r\nAs a bonus, it appears like only the `__XPC_DYLD_*` flags in the xctestrun file generated are necessary. It'd be great to remove the `DYLD_LIBRARY_PATH` and `DYLD_FRAMEWORK_PATH` unused variables."
+    email: JSM_2001@hotmail.com
+    modified: "2019-11-13T23:26:47.833066Z"
+    number: "7249507"
+    number_intvalue: 7249507
+    originated: Sep 11, 2019
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: "11.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: XCTest invocation contains unnecessary library/framework search paths

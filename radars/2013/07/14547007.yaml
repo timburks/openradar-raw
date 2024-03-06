@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14547007"
+    labels:
+        datastore_id: "3207402"
+data:
+    classification: Bug
+    created: "2013-07-25T14:53:35.478157Z"
+    description: "Summary:\r\n\r\nWhen using a security-scoped bookmark, I've suddenly found that Mavericks beta 4 only gives my security-scoped bookmarks read-only access to the files they should have access to.\r\n\r\nThe code for this works fine in Mountain Lion, and worked up until now in Developer Preview 4. Removing and re-adding the file within the UI or with a PowerBox NSOpenPanel gives me access again, but restoring from a security-scoped URL doesn't give me write access.\r\n\r\nSteps to Reproduce:\r\n\r\n• Create new project\r\n• Ensure it's sandboxed and signed\r\n• Ensure \"User Selected File\" is set to Read/Write (com.apple.security.files.user-selected.read-write)\r\n• Set ApplicationDelegate to the contents of https://gist.github.com/elliottkember/6079285\r\n• Create a directory on the desktop with \"index.html\" in it\r\n• Run the app. An openPanel should show. Select the directory on the desktop.\r\n• Quit the app and re-run. The bookmarkData is restored from the UserPreferences, startAccess is called, and then we try and write to a file called \"testing.html\".\r\n\r\nExpected Results:\r\n\r\n• We should see \"Success reading (path)/index.html: (length)\" showing the length of index.html\r\n\r\nActual Results:\r\n\r\n• Log message of \"Write access denied.\" as createFileAtPath returns NO instead of YES.\r\n• Console.log shows error: Write error: Error Domain=NSCocoaErrorDomain Code=513 \"You don’t have permission to save the file “index.html” in the folder “z”.\" UserInfo=0x100254070 {NSFilePath=/Users/elliott/Desktop/z/index.html, NSUnderlyingError=0x100253c90 \"The operation couldn’t be completed. Operation not permitted\"}\r\n\r\nRegression:\r\n\r\n• Works in OSX Mountain Lion and earlier, and no problems reported with Mavericks until Developer Preview 4.\r\n\r\nNotes: \r\n\r\nI've tried all sorts of fileURL / URL combinations with this, as well as other flags for creating the security-scoped bookmark, but with no luck. It's quite suspicious that something like this would show up four releases into a beta version of the OS, so I'm curious as to what the cause is!\r\n\r\nSetting com.apple.security.files.downloads.read-write to YES and using a directory inside the Downloads folder works fine."
+    email: elliott.kember@gmail.com
+    modified: "2013-07-25T14:53:35.478296Z"
+    number: "14547007"
+    number_intvalue: 14547007
+    originated: 25 July 2013
+    parent_number: '&{NULL_VALUE}'
+    product: OSX
+    product_version: "10.9"
+    reproducible: Always
+    resolved: ""
+    status: Submitted
+    title: Security-scoped bookmarks suddenly have read-only access

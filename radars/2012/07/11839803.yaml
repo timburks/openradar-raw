@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11839803"
+    labels:
+        datastore_id: "1802403"
+data:
+    classification: Serious Bug
+    created: "2012-07-10T15:13:26.903722Z"
+    description: "10-Jul-2012 11:09 AM Landon Fuller:\r\nSummary:\r\n\r\nWhen a signal handler is registered with SA_RESETHAND|SA_SIGINFO, xnu will reset the handler flags prior to signal dispatch, and the Libc's __sigtramp will be called with a sigstyle of UC_TRAD. If SA_RESETHAND is not specified, then __sigtramp is called with a sigstyle of UC_FLAVOR.\r\n\r\nOn x86-64, the Libc __sigtramp implementation ignores the sigstyle argument and provides the SA_SIGINFO arguments to the signal handler; this appears to result in the code working by accident on Mac OS X.\r\n\r\nI do not have access to the ARM xnu or Libc implementations, but empirically and in contrast to Mac OS X, SA_RESETHAND causes an invalid siginfo_t argument to be passed to a SA_SIGINFO-registered handler.\r\n\r\nSteps to Reproduce:\r\n\r\nTest code that will demonstrate this bug. It will output the pointer value of the siginfo_t argument, and then attempt to dereference it.\r\n\r\n#include <signal.h>\r\n#include <stdio.h>\r\n#include <stdint.h>\r\n#include <string.h>\r\n#include <stdlib.h>\r\n\r\n// not async-safe. it's demo code.\r\nstatic void signal_handler (int signal, siginfo_t *info, void *uap) {\r\n    fprintf(stderr, \"signal=%d, siginfo=%p, uap=%p\\n\", signal, info, uap);\r\n    // The following may crash\r\n    fprintf(stderr, \"si_signo=%d\\n\", signal, info->si_signo);\r\n    exit(0);\r\n}\r\n\r\nvoid configure_handler () {\r\n    /* Configure action */\r\n    struct sigaction sa;\r\n    memset(&sa, 0, sizeof(sa));\r\n    sa.sa_flags = SA_SIGINFO|SA_RESETHAND;\r\n    sigemptyset(&sa.sa_mask);\r\n    sa.sa_sigaction = &signal_handler;\r\n    sigaction(SIGSEGV, &sa, NULL);\r\n    sigaction(SIGBUS, &sa, NULL);\r\n}\r\n\r\nint main (int argc, char *argv[]) {\r\n    configure_handler();\r\n    *((uint8_t*)NULL) = 0;\r\n    return 0;\r\n}\r\n\r\nCompile with \r\ngcc test.c -o test\r\n\r\nExpected Results:\r\n\r\nHere are the expected results on an assortment of platforms:\r\n\r\ndarwin-i386:\r\n  signal=10, siginfo=0xc00e0950, uap=0xc00e0990\r\n  si_signo=10\r\n\r\ndarwin-x86_64:\r\n  signal=11, siginfo=0x7fff647847e0, uap=0x7fff64784848\r\n  si_signo=11\r\n\r\nfreebsd-x86_64:\r\n  signal=11, siginfo=0x7fffffffd7c0, uap=0x7fffffffd450\r\n  si_signo=11\r\n\r\nlinux_x86_64:\r\n  signal=11, siginfo=0x7fff1b9de5b0, uap=0x7fff1b9de480\r\n  si_signo=11\r\n\r\nActual Results:\r\n\r\nOn darwin-armv7, we get the following result:\r\n  > ./test\r\n  signal=11, siginfo=0x1, uap=0xb\r\n  [crashes here]\r\n\r\nThe siginfo and uap arguments are clearly garbage. If we remove SA_RESETHAND, the code works as expected, but obviously we lose the functionality of SA_RESETHAND:\r\n  > ./test\r\n  signal=11, siginfo=0x2fdffbf8, uap=0x2fdffc3c\r\n  si_signo=11"
+    email: landon.j.fuller@gmail.com
+    modified: "2012-07-10T15:13:26.90412Z"
+    number: "11839803"
+    number_intvalue: 11839803
+    originated: 10-Jul-2012 11:09 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 12A269
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SA_RESETHAND breaks SA_SIGINFO on ARM

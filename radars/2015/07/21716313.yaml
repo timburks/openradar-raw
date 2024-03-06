@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21716313"
+    labels:
+        datastore_id: "4958184804450304"
+data:
+    classification: UI/Usability
+    created: "2015-07-08T00:44:28.09841Z"
+    description: "Summary:\r\nApologies for the narrative form of this summary, but I can't come up with a better way to phrase it. \r\n\r\nMy application is parsing a binary file format. Certain data structures in this file include a one byte tag, which can take one of a small number (approx. 9) values. This seems like the perfect use of a Swift enum. Great, let's do it:\r\n\r\nenum Tag : ... {...}\r\n}\r\n\r\nAccording to the documentation, all these single-byte values are ASCII characters. All right, let's make Tag a Character, and set the first value. \r\nenum Tag : Character { Byte = \"B\" }\r\nTesting the size of the Tag with \r\nsizeof(Tag.RawValue.self)\r\nreveals that this enum is 9 bytes! That's huge! And we don't have 9 bytes of data to read in anyway, since our field is 1 byte. So let's make it a UInt8 instead:\r\nenum Tag: UInt8 {Byte = \"B\"}\r\nerror: \"'String' is not convertible to 'UInt8'\"\r\nAll right, let's try a character literal B\r\nenum Tag: UInt8 {Byte = 'B'}\r\nerror: invalid character in source file. \r\n\r\nTo make a long story short, there appears to be no way to work around this such that the B appears anywhere in the source code (except in a comment). The only way to make this work is to use \r\nenum Tag: UInt8 { Byte = 0x42} // or 66\r\nThis is not acceptable from a language that purports to be a general purpose programming language, usable for systems programming in particular.\r\n\r\nSteps to Reproduce:\r\n1. Install Xcode 7b2\r\n2. Create a new playground.\r\n3. Paste the following code:\r\n\r\nenum Tag : UInt8 {\r\n    case Byte = 'B'\r\n    case Char = 'C'\r\n    case Double = 'D'\r\n}\r\n\r\nenum Tag2 : UInt8 {\r\n    case Byte = \"B\"\r\n    case Char = \"C\"\r\n    case Double = \"D\"\r\n}\r\n\r\nenum Tag3 : UInt8 {\r\n    case Byte = UInt8(ascii:\"B\")\r\n    case Char = UInt8(ascii:\"C\")\r\n    case Double = UInt8(ascii:\"D\")\r\n}\r\n\r\n\r\nExpected Results:\r\nAt least one of the enums should successfully compile. I don't really care which one, but as it is, the only ones that will compile are:\r\n\r\nenum Tag4 : UInt8 {\r\n    case Byte = 0x42\r\n    case Char = 0x43\r\n    case Double = 0x44\r\n}\r\n\r\nenum Tag5 : UInt8 {\r\n    case Byte = 66\r\n    case Char = 67\r\n    case Double = 68\r\n}\r\n\r\n\r\nActual Results:\r\nTag:\r\nerror: invalid character in source file.\r\n\r\nTag2:\r\nerror: String is not convertible to 'UInt8'\r\n\r\nTag3: \r\nerror: Raw value for enum case must be a literal\r\n\r\nVersion:\r\nVersion 7.0 beta (7A121l)\r\nOS X 10.10.4 (14E46)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: chaos42@gmail.com
+    modified: "2015-07-08T00:44:28.09876Z"
+    number: "21716313"
+    number_intvalue: 21716313
+    originated: 07-Jul-2015 05:35 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Devloper Tools
+    product_version: 7.0 beta (7A121l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift 2 missing ASCII character literals for raw value enums

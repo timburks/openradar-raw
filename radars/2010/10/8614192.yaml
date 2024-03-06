@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8614192"
+    labels:
+        datastore_id: "807401"
+data:
+    classification: Serious Bug
+    created: "2010-10-31T10:27:22.850553Z"
+    description: "Summary:\r\nAfter stopping a streaming source with alSourceStop(source_id) and calling alSourcei(source_id, AL_BUFFER, AL_NONE) to detach the buffers, the source will still report some buffers processed when alGetSourcei is called with AL_BUFFERS_PROCESSED.  If you sleep for 0.01 seconds, the system will have a chance to clear the source and the source will no longer report processed buffers.\r\n\r\nA problem arises when you want to re-use that source immediately for another streaming sound. That code's streaming update loop would typically check to see how many buffers it has processed, and getting a fresh source with buffers already processed from a previous sound could break that code.\r\n\r\nSteps to Reproduce:\r\nAttach 32 buffers to a streaming source using alSourceQueueBuffers and let them play out. Then execute the following:\r\n\r\nalSourceStop(source_id);\r\nalSourcei(source_id, AL_BUFFER, AL_NONE);\r\n[NSThread sleepForTimeInterval: sleepTime];\r\nalGetSourcei(source_id, AL_BUFFERS_PROCESSED, &buffers_processed);\r\n\r\nExpected Results:\r\nEven with sleepTime 0.0, buffers_processed should be 0 since we've detached from the source. The source should be properly cleared.\r\n\r\nActual Results:\r\nIf sleepTime is 0.0, you'll likely get a value greater than zero for buffers_processed. If you increase sleepTime to 0.01, buffers_processed will be 0. It seems like the OpenAL system needs some time to properly clear the source for re-use.\r\n\r\nRegression:\r\nI tried this on iPad 3.2 and the device seems to need less sleepTime than in the Simulator. They both need non-zero sleep times though.\r\n\r\nNotes:"
+    email: bradjkean@yahoo.com
+    modified: "2011-08-28T05:39:20.217778Z"
+    number: "8614192"
+    number_intvalue: 8614192
+    originated: 31-Oct-2010 11:21 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 4.0.1
+    reproducible: Yes
+    resolved: No
+    status: Open
+    title: OpenAL slow to clear AL_BUFFERS_PROCESSED after a source has been stopped.

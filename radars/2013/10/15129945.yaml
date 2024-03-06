@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15129945"
+    labels:
+        datastore_id: "5718998062727168"
+data:
+    classification: Data loss
+    created: "2013-10-02T08:21:44.683779Z"
+    description: "This happens when the user is trying to import a contact using the ABPeoplePickerNavigationController and getting to the Groups page:\r\n\r\n- Sometimes the title from the navigation controller will contain 2 names: Contacts AND Groups\r\n- Access to the Exchange Global Address List seems allowed but does not display any data, just an empty tableView\r\n- Then Tapping the OK button can then be tricky and most users will report a freeze, while it's only impossible to quit the ABPeoplePickerNavigationController\r\n\r\nFollowing Apple release notes for iOS 7 above seed 4, we thought about expressly requesting user permission to access their Address Book. Since iOS 6 introduced this, we did not used it for importing contacts as the ABPeoplePickerNavigationController is handling this itself.\r\n\r\nAnyhow, we have been using:\r\n\r\nABAddressBookRef addressBook = ABAddressBookCreate();\r\n\r\n__block BOOL accessGranted = NO;\r\nif (ABAddressBookRequestAccessWithCompletion != NULL) { // we're on iOS 6\r\n   dispatch_semaphore_t sema = dispatch_semaphore_create(0);\r\n   ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {\r\n   accessGranted = granted;\r\n   dispatch_semaphore_signal(sema);\r\n});\r\ndispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);\r\ndispatch_release(sema);   \r\n}\r\nelse { // we're on iOS 5 or older\r\n   accessGranted = YES;\r\n}\r\n\r\nif (accessGranted) {\r\n   // Do whatever you want here.\r\n}\r\n\r\nThis does not solve the issue as access was already correctly granted.\r\n\r\nWe did reset the privacy settings in Settings / General / Reset / Reset Location and Privacy.\r\n\r\nAccess to the user's contact list is requested correctly as expected but the above mentioned behavior is still the same.\r\n\r\nPlease advice on how to make this functional again.\r\n\r\nSteps to Reproduce:\r\n- create an ABPeoplePickerNavigationController view\r\n- launch it\r\n- this view request access to User's contact\r\n- it list the contact list from the owner\r\n- tap the Groups button in the upper left corner\r\n- it shows all the contacts feeds available\r\n- with an exchange server configured, it shows at the bottom the Global Address List\r\n- Tap on this menu item, it shows a blank tableview"
+    email: beesapps.beesy@gmail.com
+    modified: "2013-10-02T08:21:44.683967Z"
+    number: "15129945"
+    number_intvalue: 15129945
+    originated: 10/02/13
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "7.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ABPeoplePickerNavigationController does not display Exchange Global Address List in iOS 7

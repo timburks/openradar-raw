@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18748242"
+    labels:
+        datastore_id: "6158615949869056"
+data:
+    classification: Serious Bug
+    created: "2014-10-23T09:52:19.572878Z"
+    description: "Summary:\r\nWhen using storyboards to setup iOS application user interface the \"awakeFromNib\" method is sent to objects unarchived from nib file (eg. UIViewController) however their connections (IBOutlets) are not set yet (nil).\r\n\r\nThe described problem doesn't occur when app is created using standalone nib files, not storyboards.\r\n\r\n\r\nApple documentation fragments that confirm this awakeFromNib storyboard is an unintended behaviour:\r\n\r\nNSObject UIKit Additions Reference:\r\n\"The nib-loading infrastructure sends an awakeFromNib message to each object recreated from a nib archive, but only after all the objects in the archive have been loaded and initialized. When an object receives an awakeFromNib message, it is guaranteed to have all its outlet and action connections already established.\"\r\n\r\n\"Important: Because the order in which objects are instantiated from an archive is not guaranteed, your initialization methods should not send messages to other objects in the hierarchy. Messages to other objects can be sent safely from within an awakeFromNib method.\"\r\n\r\nAdditionaly\r\n\r\nView Controller Programming Guide -> Resource Management in View Controllers\r\n\"[...] The archive is loaded by calling the view controller’s initWithCoder: method. Then, the awakeFromNib method is called on any object that implements that method. You use this method to perform any configuration steps that require other objects to already be instantiated.\"\r\n\r\nViewController Programming Guide -> Storyboard definition\r\n\"[...]As with all objects loaded from a story board, to finish initializing a view controller loaded from a storyboard you override awakeFromNib.\"\r\n\r\nSteps to Reproduce:\r\nExample:\r\n1. Create new iOS project in Xcode (Single View Application)\r\n2. Add a UILabel to RootViewControllers' view in Main.storyboard\r\n3. Create and connect this label to IBOutlet in ViewController.m\r\n4. Add awakeFromNib method in ViewController.m\r\n5. Setup a breakpoint in awakeFromNib\r\n6. Run the application\r\n7. Inspect previously created IBOutlet.\r\n\r\nExpected Results:\r\nProperly hooked up my RootViewControllers' IBOutlet having a reference to a UILabel instance. I would also expect all the other NSObjects I put in a nib file to have all the IBOutlets set up when awakeFromNib is called on them.\r\n\r\nActual Results:\r\nIBOutlets are not set up, property value is always nil.\r\nIt seems to be set up at later point (it's available in viewDidLoad for instance, however for objects other than UIViewController we can't use viewDidLoad as an entry point for further processing).\r\n\r\nVersion:\r\niOS 7.1.2 (11D257), iOS 8\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone Simulator, iPad 3 Retina"
+    email: kprofic@gmail.com
+    modified: "2014-10-23T09:52:19.573116Z"
+    number: "18748242"
+    number_intvalue: 18748242
+    originated: 23-Oct-2014 11:47 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 7.1.2 (11D257), iOS 8
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: IBOutlets are not setup in awakeFromNib when using storyboards

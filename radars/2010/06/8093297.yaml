@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8093297"
+    labels:
+        datastore_id: "430401"
+data:
+    classification: ""
+    created: "2010-06-15T08:46:32.538165Z"
+    description: "15-Jun-2010 10:42 AM Frank Illenberger:\r\nSummary: \r\nThe Obj-C runtime does not return references to properties using class_getProperty when the following conditions are met:\r\n- The property is declared in a protocol\r\n- The protocol is implemented in a category\r\n- The program is compiled using Clang/LLVM 1.5  (Xcode 3.2.3)\r\n\r\nSteps to reproduce:\r\n- Build and run \"CategoryPropertyProtocolBug\" under Mac OS 10.6.3 using Xcode 3 \r\n- Check the run log\r\n\r\nExpected result:\r\nThere should be no output of failed assertions in the run log\r\n\r\nActual result:\r\nThe run log contains the following output:\r\n*** Assertion failure in int main(int, char const **)(), /Users/frank/Desktop/CategoryPropertyProtocolBug/CategoryPropertyProtocolBug/CategoryPropertyProtocolBug.m:40\r\n*** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'Property2 from protocol implemented on category is not found'\r\n\r\n\r\n//\r\n//  TestClass.h\r\n//  CategoryTest\r\n//\r\n//  Created by Frank Illenberger on 15.06.10.\r\n//  Copyright 2010 ProjectWizards. All rights reserved.\r\n//\r\n\r\n#import <Cocoa/Cocoa.h>\r\n\r\n\r\n@protocol TestProtocol1\r\n@property (readonly) NSString* testProperty1;\r\n@end\r\n\r\n@protocol TestProtocol2\r\n@property (readonly) NSString* testProperty2;\r\n@end\r\n\r\n\r\n@interface TestClass : NSObject <TestProtocol1>\r\n{\r\n\r\n}\r\n\r\n@end\r\n\r\n\r\n@interface TestClass (TestCategory) <TestProtocol2>\r\n\r\n@end\r\n\r\n//\r\n//  TestClass.m\r\n//  CategoryTest\r\n//\r\n//  Created by Frank Illenberger on 15.06.10.\r\n//  Copyright 2010 ProjectWizards. All rights reserved.\r\n//\r\n\r\n#import \"TestClass.h\"\r\n\r\n\r\n@implementation TestClass\r\n- (NSString*)testProperty1\r\n{\r\n    return nil;\r\n}\r\n@end\r\n\r\n@implementation TestClass (TestCategory)\r\n- (NSString*)testProperty2\r\n{\r\n    return nil;\r\n}\r\n@end\r\n\r\n\r\nint main (int argc, const char * argv[]) {\r\n    \r\n    Class testClass = [TestClass class];\r\n    objc_property_t property1 = class_getProperty(testClass, \"testProperty1\");\r\n    objc_property_t property2 = class_getProperty(testClass, \"testProperty2\");\r\n    NSCAssert(property1 != NULL, @\"Property1 from protocol implemented on class is not found\");\r\n    NSCAssert(property2 != NULL, @\"Property2 from protocol implemented on category is not found\");\r\n    return 0;\r\n}"
+    email: frank.illenberger@googlemail.com
+    modified: "2011-08-28T05:41:14.495847Z"
+    number: "8093297"
+    number_intvalue: 8093297
+    originated: 15-Jun-2010 10:42 AM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Obj-C runtime does not return references to properties

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21950485"
+    labels:
+        datastore_id: "4537829644304384"
+data:
+    classification: Bug
+    created: "2015-07-22T22:33:03.80114Z"
+    description: "Summary:\r\nI have been working on implementing NSURLSession with background downloads. Things have been going mostly well as I learn the ins and outs but I ran into a situation that is a little bit strange.\r\n\r\nIt is possible, as a result of user action, for the user to sometimes trigger a download that may already be in progress in the background if they open the app after it has been shut down. We handle this correctly (we don't actually queue new tasks, for example), but when we create our NSURLSession, we immediately get a ton of delegate callbacks.\r\n\r\nAs best as I understand how this all works, this is actually the correct behaviour (our new session is associated with the one that has been working in the background all this time). The problem is that in this delegate:\r\n\r\n`- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location`\r\n\r\nThe location property points to a file that doesn't exist! This only seems to happen when running from code (in simulator or on device) and I was able to verify, when running in simulator by actually looking in the file system, that the containing folder was missing entirely. On the device I was able to confirm the same using lldb, NSFileManager and breakpoints. \r\n\r\nThe documentation states that the file should exist at that location until the method returns but in these cases, the method has not yet returned, nor has it spun work up onto another task. If I launch the app from springboard with a bunch of logs in and watch the logs in Xcode, I see that it actually works as expected.\r\n\r\nIt seems that something in the process of installing from Xcode is causing that directory to be erased (as my best guess?), yet the delegate callbacks are still being received.\r\n\r\nSteps to Reproduce:\r\n1. Set up an app to use NSURLSession with background downloads\r\n2. Launch the app from Xcode\r\n3. Start several download tasks in the NSURLSession in the background\r\n4. Terminate the app in some way (I used Xcodes stop button sometimes but I also tried inserting a button that crashed my app)\r\n5. Re-run the app from Xcode\r\n6. Re-create an NSURLSession with the same identifier\r\n\r\nYou will get a lot of callbacks immediately but there will be no file at the path specified. According to the docs, that file should exist until the method returns.\r\n\r\nExpected Results:\r\nI expect the path variable passed into the delegate callback to point at the downloaded file.\r\n\r\nActual Results:\r\nYou will get a lot of callbacks immediately but there will be no file at the path specified. According to the docs, that file should exist until the method returns.\r\n\r\nVersion:\r\niOS 8.4 / 8.3, Xcode Version 6.4 (6E35b),\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 6 128GB using wifi, iOS Simulator (any model seems to do it)\r\n\r\nAttachments:"
+    email: stephen.gazzard@robotsandpencils.com
+    modified: "2015-07-22T22:33:03.80153Z"
+    number: "21950485"
+    number_intvalue: 21950485
+    originated: 22-Jul-2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "8.4"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'didFinishDownloadingToURL: provides invalid URL when running with debugger'

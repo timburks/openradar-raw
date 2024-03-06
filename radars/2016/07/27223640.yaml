@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27223640"
+    labels:
+        datastore_id: "4948521564241920"
+data:
+    classification: ""
+    created: "2016-07-07T17:04:04.77002Z"
+    description: "Summary:\r\nWhen presenting a full screen view controller from a UIImagePickerController, it’s possible for the captured photo to be released after dismissing the presented view controller.  The user can still select the ‘Use Photo’ button even though the captured photo is gone.\r\n\r\nSteps to Reproduce:\r\nSee the ImagePicker_PresentationBug test app attached or located at: https://github.com/dustinlange/radars.git\r\nLaunch the project and place a breakpoint at line 34 in ViewController.swift\r\n\r\n1. Launch the camera from the ‘Launch Camera’ button.\r\n2. Tap the shutter to take a photo.  Do NOT select ‘Use Photo’\r\n3. Place the app in the background by pressing the Home button.\r\n4. Launch the app again.\r\n5. Another view controller will be presented using the UIModalPresentationStyleFullScreen style\r\n6. Tap the ‘Login’ button to dismiss the view controller.\r\n7. The UIImagePickerController is visible now but no longer displaying the captured photo.\r\n8. Tap ‘Use Photo’\r\n9. The breakpoint will be hit because UIImagePickerControllerOriginalImage doesn’t exist in the info dictionary\r\n\r\nI understand that UIModalPresentationStyleFullScreen removes views belonging to the presenting view controller but UIImagePickerController doesn’t resume to it’s previous state after dismissing the full screen view controller.  Additionally, UIModalPresentationStyleOverFullScreen behaves as it should but unfortunately I need the view lifecycle functions to be called upon presenting and dismissing.\r\n\r\nExpected Results:\r\nUIImagePickerController resumes to it’s previous state with the captured photo visible and ability to handle the photo.  When the user selects the ‘Use Photo’ button, didFinishPickingMediaWithInfo returns the original image.\r\n\r\nActual Results:\r\nThe photo preview is completely removed, showing just the ‘Cancel’ and ‘Use Photo’ buttons.  Once the user selects the ‘Use Photo’ button, didFinishPickingMediaWithInfo: doesn’t include the original image.\r\n\r\nRegression:\r\niOS 9.x\r\n\r\nNotes:\r\nSee the ImagePicker_PresentationBug test app attached or located at: https://github.com/dustinlange/radars.git"
+    email: lange.dustin@gmail.com
+    modified: "2016-08-02T16:27:45.18183Z"
+    number: "27223640"
+    number_intvalue: 27223640
+    originated: 07/07/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9.x
+    reproducible: Always
+    resolved: Yes
+    status: Closed
+    title: UIImagePickerController doesn't resume to it's previous state after a full screen view controller is dismissed

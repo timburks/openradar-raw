@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16633772"
+    labels:
+        datastore_id: "5859916745015296"
+data:
+    classification: Other
+    created: "2014-04-16T15:52:59.55104Z"
+    description: "Summary:\r\nWhen canceling the deletion of a cell while the table view is in editing mode, the methods `willTransitionToState:` and `didTransitionToState:` of the cell are not called.\r\n\r\nThe attached project exhibit this bug by implementing a custom subclass of UITableViewCell logging calls to `willTransitionToState:` and `didTransitionToState:`.\r\n\r\nSteps to Reproduce:\r\nRun the attached project:\r\n\r\n1. Add a cell to the table view with the '+' button\r\n2. Set the table view to editing mode with the 'Edit' button\r\n3. Tap the delete button (red minus button) of the cell\r\n4. Cancel the deletion by tapping anywhere in the table view\r\n\r\nExpected Results:\r\n`willTransitionToState:` and `didTransitionToState:` are each called 3 times:\r\n\r\n- one time when tapping the 'Edit' button, with a state value equal to UITableViewCellStateShowingEditControlMask;\r\n- one time when tapping the red minus button, with a state value equal to UITableViewCellStateShowingEditControlMask | UITableViewCellStateShowingDeleteConfirmationMask;\r\n- one time when canceling the deletion, with a state value equal to UITableViewCellStateShowingEditControlMask;\r\n\r\nActual Results:\r\n`willTransitionToState:` and `didTransitionToState:` are each called only 2 times:\r\n\r\n- one time when tapping the 'Edit' button;\r\n- one time when tapping the red minus button.\r\n\r\nThe methods are not called when canceling the deletion. We are never made aware that the cell state returned to UITableViewCellStateShowingEditControlMask.\r\n\r\nVersion:\r\niOS 7.1\r\nXcode 5.1.1 (5B1008)\r\n\r\nNotes:\r\nThe methods are called just fine when canceling a \"swipe to delete\" (ie. the table view is not in editing mode).\r\n\r\nPartial duplicate of http://openradar.appspot.com/15263423\r\n\r\nRelated question on StackOverflow: https://stackoverflow.com/questions/20119323"
+    email: guillaume.algis@gmail.com
+    modified: "2014-04-16T15:52:59.55124Z"
+    number: "16633772"
+    number_intvalue: 16633772
+    originated: 16-Apr-2014 05:36 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS7 SDK
+    product_version: "7.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'UITableViewCell''s willTransitionToState: and didTransitionToState: do not fire when canceling deletion'

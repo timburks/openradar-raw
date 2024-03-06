@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24205241"
+    labels:
+        datastore_id: "5020520718270464"
+data:
+    classification: Serious Bug
+    created: "2016-01-18T09:04:51.18157Z"
+    description: "Possible duplicates: rdar://21779132, rdar://15262692, rdar://22684413\r\n\r\nSummary:\r\nNSFetchedResultsController crashes on -controllerDidChangeContent: on inserting new record and saving to persistentStore. Reproducable when running iPhone app ins supporting mode on iPad.\r\n\r\nExample code fragment given:\r\n\r\n- (void)controller:(NSFetchedResultsController *)controller\r\n   didChangeObject:(id)anObject\r\n       atIndexPath:(NSIndexPath *)indexPath\r\n     forChangeType:(NSFetchedResultsChangeType)type\r\n      newIndexPath:(NSIndexPath *)newIndexPath {\r\n    NSLog(@\"== UPDATING indexPath (%@) newIndexPath (%@) type %i\", indexPath, newIndexPath, (int)type);\r\n    switch (type) {\r\n        case NSFetchedResultsChangeDelete: {\r\n            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];\r\n            break;\r\n        }\r\n        case NSFetchedResultsChangeInsert: {\r\n            [self.tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationBottom];\r\n            break;\r\n        }\r\n        case NSFetchedResultsChangeMove: {\r\n            [self.tableView moveRowAtIndexPath:indexPath toIndexPath:newIndexPath];\r\n            break;\r\n        }\r\n        case NSFetchedResultsChangeUpdate: {\r\n            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];\r\n            break;\r\n        }\r\n        default:\r\n            break;\r\n    }\r\n}\r\n\r\n- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {\r\n    NSLog(@\"== BEGIN UPDATING\");\r\n    [self.tableView beginUpdates];\r\n}\r\n\r\n- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {\r\n    NSLog(@\"== END UPDATING\");\r\n    [self.tableView endUpdates];\r\n}\r\n\r\nSteps to Reproduce:\r\n1. Create NSFetchedResultsController;\r\n2. Implement NSFetchedResultsController delegate methods (like in description);\r\n3. Implement creation of entity to which instance NSFetchedResultsController was subscribed;\r\n4. Run code on iPad;\r\n5. Perform save to persistant store.\r\n\r\nExpected Results:\r\n- (void)controller: didChangeObject: atIndexPath: forChangeType: newIndexPath: is called once and with type 1 (NSFetchedResultsChangeInsert)\r\n\r\nActual Results:\r\n- (void)controller: didChangeObject: atIndexPath: forChangeType: newIndexPath: is called multilpe times with types: 4 and 3 (NSFetchedResultsChangeUpdate, NSFetchedResultsChangeMove respectively) during one \"changeContent\" session with the same index paths (logs file attached)\r\n\r\nVersion:\r\niOS 8.3 (12F69)\r\n\r\nNotes:\r\nIn target application FetchedResults delegate was implemented in UITableViewController subclass. And FetchedResultsController was working with child managed object context.\r\n\r\nConfiguration:\r\niPad mini (ME279TU/A)"
+    email: kkormiltsev@cogniance.com
+    modified: "2016-06-23T13:46:03.73247Z"
+    number: "24205241"
+    number_intvalue: 24205241
+    originated: 15-January-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 8.3 (12F69)
+    reproducible: Always
+    resolved: NO
+    status: Closed
+    title: 'NSFetchedResultsController crash on -controllerDidChangeContent: on iPad'

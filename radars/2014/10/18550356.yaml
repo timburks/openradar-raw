@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18550356"
+    labels:
+        datastore_id: "6122626070085632"
+data:
+    classification: Other Bug
+    created: "2014-10-05T20:23:56.529593Z"
+    description: "Summary:\nWhile Swift silently permits you to shadow most variables and constants, `self` is an exception. This causes difficulties in writing some retain-cycle-safe constructs, and should be changed.\n\nSteps to Reproduce:\n1. In a playground, try to write a User class which can update its profile image, but ensures that updating the image doesn’t retain the instance:\n\nimport Foundation\n\nclass User {\n    var profileImage: NSData?\n    \n    func updateProfileImage() {\n        downloadProfileImageForUser(self) { user, image in\n            self.profileImage = image\n        }\n    }\n}\n\nfunc downloadProfileImageForUser(user: User, completion: (User, NSData?) -> Void) {\n    // Imagine we're downloading asynchronously here.\n    let image: NSData? = nil\n    dispatch_async(dispatch_get_main_queue()) { [weak user] in\n        if let user = user {\n            completion(user, image)\n        }\n    }\n}\n\n2. Notice a bug: the completion block in updateProfileImage() is using “self”, not “user”, so it’s holding a strong reference to “self”.\n\n3. Try to modify it defensively so that the outer `self` is shadowed, thus ensuring this mistake is impossible to make again:\n\n        downloadProfileImageForUser(self) { self, image in\n\nExpected Results:\nThis modification compiles and executes.\n\nActual Results:\nAn error (specifically, “Expected expression”). Basically, it seems that Swift doesn’t want to let you shadow `self` in this way.\n\nNotes:\nWhat I’m actually trying to do is write a safe block-based NSNotification observer API which implicitly treats the observer—which should usually be the caller’s `self`—as `unowned`. As you probably know, this is a common source of retain cycles. The usual way to design an API to avoid retain cycles is to have it pass the cycle-prone object as a parameter to the block, and then have the API internally manage the reference in the desired way. My extension does this with the addObserver() APIs:<  https://gist.github.com/brentdax/64845dc0b3fec0a27d87> The code itself works, but callers will frequently want to shadow `self` in their observer blocks, which isn’t allowed. This makes the code less useful.\n\nIdeally, shadowing `self` in a block should allow you to implicitly call properties and methods on it without warnings. I’d settle for just having the same “must use dot syntax in a block” rules, though."
+    email: brent@architechies.com
+    modified: "2014-10-05T20:23:56.529781Z"
+    number: "18550356"
+    number_intvalue: 18550356
+    originated: 05-Oct-2014 01:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-Beta (6A1042b)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Can''t shadow self in closure parameters'

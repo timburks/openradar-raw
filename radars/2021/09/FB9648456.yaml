@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9648456
+    labels:
+        datastore_id: "4997869652148224"
+data:
+    classification: Incorrect behavior
+    created: "2021-09-29T14:03:40.819895Z"
+    description: "When creating a UIImage from a SwiftUI View, using a UIHostingController and a UIGraphicsImageRenderer, the resulting image is offset/clipped.\r\nThe issue started appearing when building with Xcode 13.0 (13A233) after having worked previously when using Xcode 12.5.1.\r\nSee the attached SnapshotBug.swift consistently showing the problem.\r\nThe offset/clipping also seems to be device orientation dependent...\r\n\r\nReproducible in Xcode 13.0 (13A233), iOS App, iPhone 13 Pro iOS 15.0 Simulator.\r\n\r\nSnapshotBug.swift\r\n```swift\r\nimport SwiftUI\r\nimport UIKit\r\n\r\nstruct SnapshotBug: View {\r\n\r\n    @State var renderedImage: UIImage?\r\n\r\n    var icon: some View {\r\n        Image(systemName: \"gear\")\r\n            .resizable()\r\n            .scaledToFit()\r\n            .frame(width: 40, height: 40)\r\n    }\r\n\r\n    var body: some View {\r\n        VStack(spacing: 20) {\r\n            icon\r\n                .border(.red)\r\n            if let renderedImage = renderedImage {\r\n                Image(uiImage: renderedImage)\r\n                    .border(.red)\r\n            } else {\r\n                Text(\"An identical image should appear here\")\r\n            }\r\n            Button(\"Render image\") {\r\n                renderedImage = icon.toUIImage()\r\n            }\r\n        }\r\n    }\r\n\r\n}\r\n\r\nextension View {\r\n    func toUIImage() -> UIImage {\r\n        let controller = UIHostingController(rootView: self)\r\n        let view = controller.view!\r\n        view.bounds = CGRect(origin: .zero, size: view.intrinsicContentSize)\r\n        view.backgroundColor = .clear\r\n\r\n        let renderer = UIGraphicsImageRenderer(size: view.bounds.size)\r\n        let image = renderer.image { _ in\r\n            view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)\r\n        }\r\n        return image\r\n    }\r\n}\r\n```"
+    email: jonas.bromo@gmail.com
+    modified: "2021-09-29T14:03:40.820049Z"
+    number: FB9648456
+    number_intvalue: 9648456
+    originated: Sep 23, 2021
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: iOS 15
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Rendering a UIImage of a UIHostingController results in a offset/clipped image

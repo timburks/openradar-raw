@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33788799"
+    labels:
+        datastore_id: "4929939069468672"
+data:
+    classification: Serious Bug
+    created: "2017-08-09T00:17:37.92096Z"
+    description: "Area:\r\nFoundation\r\n\r\nSummary:\r\nAccording to the documentation for this method, -[NSKeyedUnarchiver initForReadingWithData:] throws an exception when data is an invalid archive file (https://developer.apple.com/documentation/foundation/nskeyedunarchiver/1410862-initforreadingwithdata). To find out whether a keyed archive file is valid, we would use @try/@catch to catch an exception, and handle it accordingly.\r\n\r\nThis seems to be the case in early version of iOS. But since iOS 9 (or even earlier?), it no longer throws an exception when data is an invalid archive. However, the method returns nil, which makes it easy to identify an invalid archive file.\r\n\r\nIn iOS 11 Beta 5, and macOS High Sierra Beta 5, this method (1) does not throw any exception, and (2) returns a private subclass __NSInvalidKeyedUnarchiver instead of nil when reading invalid archive file.\r\n\r\nAs you can imagine, there is no proper way to determine if a data file is a valid archive file anymore. Worse, __NSInvalidKeyedUnarchiver continues to respond to methods such as decodeObjectForKey:, making the app thinks that is has loaded a proper file when in fact it hasn't.\r\n\r\nThis results in app depending on -initForReadingWithData: returning nil to identify invalid databases to fail in iOS Beta 5 and macOS High Sierra Beta 5.\r\n\r\nSteps to Reproduce:\r\n1. See sample code, or…\r\n2. Load an invalid keyed archive file, perhaps a JSON file?\r\nNSData *data = [[NSData alloc] initWithContentsOfFile:pathToInvalidKeyedArchiveFile];\r\n3. Attempt to unarchive the file using NSKeyedUnarchiver, with @try/@catch blocks:\r\n\r\n\tNSKeyedUnarchiver *unarchiver = nil;\r\n\t\r\n\t@try {\r\n\t\tNSLog(@\"Attempting to unarchive data…\");\r\n\t\tunarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];\t\t\r\n\t\tNSLog(@\"… success!\");\r\n\t}\r\n\t\r\n\t@catch (NSException *exception) {\r\n\t\tNSLog(@\"… failed to unarchive data: %@%@%@\", unarchiver, [exception name], [exception reason]);\r\n\t\treturn nil;\r\n\t}\r\n\r\nExpected Results:\r\n1. initForReadingWithData: should throw an exception, as per documentation\r\n2. Failing which, it should at least return nil so we can check for an invalid archive\r\n\r\nObserved Results:\r\n1. No exception is thrown\r\n2. A private subclass __NSInvalidKeyedUnarchiver is returned, which responds to methods like a valid NSKeyedUnarchiver does, misleading the app into thinking that it has loaded a proper keyed archive that just has no data.\r\n\r\nVersion:\r\n11.0 (15A5341f)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nThis bug also affects macOS High Sierra Beta 5"
+    email: mail.junjie@gmail.com
+    modified: "2017-08-09T00:17:37.92127Z"
+    number: "33788799"
+    number_intvalue: 33788799
+    originated: August 9 2017, 8:09 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK / Foundation
+    product_version: 11.0 (15A5341f)
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: -[NSKeyedUnarchiver initForReadingWithData:] returns __NSInvalidKeyedUnarchiver instead of nil when reading invalid archive file

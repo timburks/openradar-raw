@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "716337334"
+    labels:
+        datastore_id: "4950133506572288"
+data:
+    classification: Bug
+    created: "2019-07-09T15:46:04.950021Z"
+    description: "DESCRIPTION OF PROBLEM\r\n\r\nOCSP requests do not follow NSURLProtocol subclassing. Therefore OCSP requests are not proxied when using an NSURLProtocol subclass to proxy all traffic.\r\n\r\nIssue in more detail: https://github.com/OnionBrowser/OnionBrowser/issues/178.\r\n\r\nOur current workaround is to inspect the X.509v3 certificate being authenticated for OCSP URLs and then make the requests ourselves; subsequently attaching the response with `SecTrustSetOCSPResponse()`. Reference: https://github.com/Psiphon-Labs/OCSPCache.\r\n\r\nOur Solution\r\n=========\r\n\r\nIn our implementation we do the following:\r\n1. Check if there is a pinned OCSP response\r\n- Call SecTrustEvaluate with revocation policy `SecPolicyCreateRevocation(kSecRevocationOCSPMethod|kSecRevocationRequirePositiveResponse|kSecRevocationNetworkAccessDisabled)`\r\n- If `SecTrustEvaluate` succeeds, assume there was a pinned OCSP response\r\n\r\n2. Make OCSP request manually through local proxy\r\n- Inspect leaf X.509v3 certificate of serverTrust in `URLSession:task:didReceiveChallenge:completionHandler:` for OCSP URLs\r\n- Make OCSP requests and attach OCSP response to trust\r\n- Call `SecTrustEvaluate` with revocation policy `SecPolicyCreateRevocation(kSecRevocationOCSPMethod|kSecRevocationRequirePositiveResponse|kSecRevocationNetworkAccessDisabled)`\r\n\r\nNote: Since we are caching OCSP responses, but do not know when iOS considers responses valid/invalid we only evict responses when `SecTrustEvaluate` fails with an OCSP response fetched out of band. If the response we attach was cached then we make another remote request for a new response. This can be seen here: https://github.com/Psiphon-Labs/OCSPCache/blob/b945a5784cd88ed5693a62a931617bd371f3c9a8/OCSPCache/Classes/OCSPAuthURLSessionDelegate.m#L196-L216.\r\n\r\n3. Fallback on CRLs\r\n\r\nQuestions\r\n=======\r\n\r\n- Is the assumption above regarding pinned OCSP responses correct?\r\n\r\n- Are the revocation checks in https://github.com/Psiphon-Labs/OCSPCache/blob/b945a5784cd88ed5693a62a931617bd371f3c9a8/OCSPCache/Classes/OCSPAuthURLSessionDelegate.m#L138 performed correctly?\r\n\r\n- We are only attaching the OCSP response for the leaf certificate being authenticated. Will plaintext OCSP requests be made by the system for intermediate certificates?\r\n\r\n\r\nSTEPS TO REPRODUCE \r\n\r\n1. Create NSURLProtocol subclass which proxies all traffic through a SOCKS or HTTP proxy by setting connection proxy dictionary (https://developer.apple.com/documentation/foundation/nsurlsessionconfiguration/1411499-connectionproxydictionary?language=objc)\r\n\r\n2.\r\n```\r\nSecPolicyRef policy = SecPolicyCreateRevocation(kSecRevocationOCSPMethod);\r\nSecTrustSetPolicies(trust, policy);\r\n\r\nSecTrustResultType trustResultType;\r\nSecTrustEvaluate(trust, &trustResultType); // triggers plaintext OCSP request outside of proxy\r\n```\r\n\r\n---\r\n\r\nNote: There are tests in https://github.com/Psiphon-Labs/OCSPCache which shed some light on implementation details and expected behaviour."
+    email: m.kuratczyk@psiphon.ca
+    modified: "2019-07-09T15:46:04.950151Z"
+    number: "716337334"
+    number_intvalue: 716337334
+    originated: July 9, 2019
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 8+
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Review of Manual OCSP Requests for SecTrustEvaluate (iOS makes OCSP requests outside of NSURLProtocol)

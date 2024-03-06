@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "49903264"
+    labels:
+        datastore_id: "4979621544067072"
+data:
+    classification: ""
+    created: "2019-04-15T15:24:44.591026Z"
+    description: "Summary:\r\nThe problem arises, when we have a case in enum with 2 or more associated values and one of them is URL or URLRequest (could not reproduce with other types). Also, we must have at least two same cases in switch which will be executed (changing `where false` to `where true` will not result in crash), and we have to refer to associated values as a tuple (`let .connectivity(value)`), not separate values (`let .connectivity(url, void)`).\r\nSteps to reproduce:\r\n1. Create new Xcode project for iOS.\r\n2. Add the following func and run it (for example in AppDelegate)\r\n    func failingFunc() {\r\n        enum TestError {\r\n            case connectivity(url: URL, void: Void)\r\n        }\r\n        let url = URL(string: \"https://google.com\")!\r\n        let testError = TestError.connectivity(url: url, void: ())\r\n\r\n        switch testError {\r\n        case let .connectivity(value) where false:\r\n            break\r\n        case .connectivity:\r\n            break\r\n        }\r\n    }\r\nExpected Results:\r\nCode runs correctly without crashes.\r\nActual Results:\r\nCode crashes with EXC_BAD_INSTRUCTION.\r\nEnabled zombies print the following: \r\n-[CFURL release]: message sent to deallocated instance 0x60000169e4c0\r\nSeems like a memory issue with tuples.\r\nVersion/Build:\r\n-\r\nConfiguration:\r\nXcode 10.2, Swift 4.2 or 5.0, macOS Mojave 10.14.4\r\nThing to note: Xcode 10.1 works fine"
+    email: dikovitsky.s@gmail.com
+    modified: "2019-04-15T16:04:09.831759Z"
+    number: "49903264"
+    number_intvalue: 49903264
+    originated: 15-Apr-2019
+    parent_number: '&{NULL_VALUE}'
+    product: iOS+SDK
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Pattern matching tuple in Xcode 10.2 results in EXC_BAD_INSTRUCTION

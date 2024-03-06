@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15528467"
+    labels:
+        datastore_id: "6343618377809920"
+data:
+    classification: Serious Bug
+    created: "2013-11-21T21:35:22.488229Z"
+    description: "Summary:\r\nThere was a regression introduced in Xcode 5.0.1's copy of strip that modifies our kext in such a way that it won't load on 10.6.\r\n\r\nSteps to Reproduce:\r\nThis bug manifests itself if you have the strip symbols option selected in Xcode. Running strip in Terminal is sufficient to reproduce the problem.\r\n\r\n>otool -arch i386 -lv transmitdiskfs | grep LC_FUNCTION_STARTS (returns nothing)\r\n>strip -S transmitdiskfs -o transmitdiskfs.stripped\r\n>otool -arch i386 -lv transmitdiskfs.stripped | grep LC_FUNCTION_STARTS (returns cmd LC_FUNCTION_STARTS)\r\n\r\nApparently the LC_FUNCTION_STARTS command is unrecognized on pre-10.7 systems\r\n\r\nExpected Results:\r\nThe binary is not modified in any detrimental way when it's stripped\r\n\r\nRegression:\r\nWe've confirmed that version 4.4.3 of Transmit Disk was build with Xcode 5.0 and it loads fine on 10.6. Further, the kext in that app is *unmodified* from the version that is in SVN despite it having been stripped. Starting with version 4.4.4, built with Xcode 5.0.1, the kext binary is different from what's in SVN.\r\n\r\nNotes:\r\n\r\nWhen a 10.6 user attempts to load the broken kext the following appears in Console:\r\n\r\n11/21/13 10:23:04 AM\tcom.apple.kextd[10]\tFailed to load /Users/panic/Library/Application Support/Transmit/Transmit Disk.app/Contents/Resources/transmitdiskfs.fs/Contents/Resources/com.panic.TransmitDisk.transmitdiskfs.components/transmitdiskfs.kext - (libkern/kext) link error.\r\n11/21/13 10:23:04 AM\tkernel\tkxld[com.panic.TransmitDisk.transmitdiskfs]: The Mach-O file is malformed: Invalid segment type in MH_OBJECT kext: 38.\r\n11/21/13 10:23:04 AM\tkernel\tCan't load kext com.panic.TransmitDisk.transmitdiskfs - link failed.\r\n11/21/13 10:23:04 AM\tkernel\tFailed to load executable for kext com.panic.TransmitDisk.transmitdiskfs.\r\n11/21/13 10:23:04 AM\tkernel\tKext com.panic.TransmitDisk.transmitdiskfs failed to load (0xdc008016).\r\n11/21/13 10:23:04 AM\tkernel\tFailed to load kext com.panic.TransmitDisk.transmitdiskfs (error 0xdc008016)."
+    email: hello@jmoore.me
+    modified: "2013-12-05T18:45:18.323575Z"
+    number: "15528467"
+    number_intvalue: 15528467
+    originated: 21-Nov-2013 01:35 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: XCode 5.0.1
+    reproducible: Always
+    resolved: ""
+    status: Duplicate
+    title: Stripping symbols from a kext will insert a command that prevents loading on pre-10.7 systems

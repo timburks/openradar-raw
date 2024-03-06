@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14226440"
+    labels:
+        datastore_id: "3135407"
+data:
+    classification: Other Bug
+    created: "2013-06-21T07:36:24.739541Z"
+    description: "Summary: The NSDictionary documentation in the 10.8 SDK says that -objectForKeyedSubscript: \"is the same as -valueForKey:\", however, when linked against the 10.8 SDK and run on OS X 10.9, it actually calls -objectForKey: instead of -valueForKey:. This is easily seen by testing the discussion section of -valueForKey:\r\n\"If key does not start with “@”, invokes objectForKey:. If key does start with “@”, strips the “@” and invokes [super valueForKey:] with the rest of the key.\" This does not happen when calling dict[@\"@foobar\"];\r\n\r\nSteps to Reproduce:\r\n1. Read the NSDictionary documentation\r\n2. Create a Command Line app > Foundation Tool\r\n3. in main.m, select all and paste the following: \r\n#import <Foundation/Foundation.h>\r\n\r\nNSString *globalFoobar;\r\n\r\n@interface NSDictionary (Extra)\r\n@property (nonatomic, strong) NSString *foobar;\r\n@end\r\n@implementation NSDictionary (Extra)\r\n\r\n-(NSString *)foobar\r\n{\r\n    return globalFoobar;\r\n}\r\n-(void)setFoobar:(NSString *)foobar\r\n{\r\n    globalFoobar = foobar;\r\n}\r\n@end\r\n\r\nint main(int argc, const char * argv[])\r\n{\r\n\r\n    @autoreleasepool {\r\n        NSDictionary *someDict = [[NSDictionary alloc] init];\r\n        someDict.foobar = @\"Baz\";\r\n        NSLog(@\"%@\", someDict[@\"@foobar\"]);\r\n    }\r\n    return 0;\r\n}\r\n4. Build and run.\r\n\r\nExpected Results: Outputs \r\n2013-06-21 00:26:44.028 SubscriptingTest[3384:303] Baz\r\n\r\nActual Results:\r\n2013-06-21 00:26:44.028 SubscriptingTest[3384:303] (null)\r\n\r\nRegression: Unknown\r\n\r\nNotes: It's possible this is a functionality bug rather than a documentation but, but either way, it should be fixed."
+    email: chaos42@gmail.com
+    modified: "2013-08-08T19:13:55.829841Z"
+    number: "14226440"
+    number_intvalue: 14226440
+    originated: 21-Jun-2013 12:36 AM
+    parent_number: "11935544"
+    product: Documentiation
+    product_version: 10.8/2012-7-17
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/11935544
+    title: 'NSDictionary -objectAtKeyedSubscript equiv. to -objectForKey, not -valueForKey:'

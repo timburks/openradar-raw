@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "46835293"
+    labels:
+        datastore_id: "6176012199002112"
+data:
+    classification: ""
+    created: "2019-05-21T07:17:45.486889Z"
+    description: "Area:\r\nSomething not on this list\r\n\r\nSee https://github.com/apple/darwin-xnu/blob/a449c6a3b8014d9406c2ddbdc81795da24aa7443/bsd/kern/kern_sig.c#L1393\r\n\r\nIf __sigwait_internal's msleep() is interrupted and it returns ERESTART (indicating that the interrupting signal had SA_RESTART set) before the signal is actually delivered in uu_sigwait, it can return the lowest bit in the provided sigset, even if that signal wasn't sent.\r\n\r\nThis can be demonstrated by running attached program under lldb, and then externally sending it SIGCHLD (e.g. with killall). It prints the following:\r\n0, Interrupt: 2, 0\r\n0, Child exited: 20, 0\r\n\r\nwhen one would expect only the second line. You can get it to indicate other signals by adjusting the signals in `set`; e.g. comment `sigaddset(&set, SIGINT);` and it'll indicate that it received SIGQUIT.\r\n\r\nA related issue can occur if you don't set SA_RESTART (i.e. replace SA_RESTART with 0 in the attached file); see https://github.com/apple/darwin-libpthread/blob/03c4628c8940cca6fd6a82957f683af804f62e7f/src/pthread_cancelable.c#L556\r\nEINTR is returned from msleep() instead of ERESTART, and the sigwait() userspace wrapper translates that to 0, despite the signal arg not being written to, and errno being set. This can result in very misleading results if the signal variable is uninitialized, or isn't reset to an invalid value (e.g. -1) between calls.\r\n\r\nAnother related oddity: while the process is under lldb (which is required to reproduce this issue), this:\r\nsudo dtrace -n 'proc:::signal-clear /pid/ { printf(\"%s -%d %d %d\",execname,args[0],args[1]->si_signo,args[1]->si_uid); }'\r\nindicates that the si_signo and si_uid values are both 0. This seems to indicate that signal delivery to traced processes behaves somewhat oddly.\r\n\r\nVersion/Build:\r\nSeen on 10.14.1 and 10.14.2 Beta (18C38b)\r\n\r\nOpenRadar note: attached file at https://gist.github.com/rcombs/600f0d5555236e3e120a81a1201622e8"
+    email: Rodger.Combs@gmail.com
+    modified: "2019-05-21T07:17:45.487047Z"
+    number: "46835293"
+    number_intvalue: 46835293
+    originated: "2018-12-19"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.14.5 (18F132)
+    reproducible: Always
+    resolved: N/A
+    status: Open
+    title: sigwait() returns lowest selected signal bit on spurious wakes

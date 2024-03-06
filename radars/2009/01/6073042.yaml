@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6073042"
+    labels:
+        datastore_id: "2227"
+data:
+    classification: ""
+    created: "2009-01-09T04:26:14.891077Z"
+    description: "The following works just fine in non-GC apps when called in an IBAction\r\nmethod:\r\n\r\n\tNSSpeechSynthesizer* speechSynthesizer = \r\n    [[[NSSpeechSynthesizer alloc] init] autorelease];\r\n\t[speechSynthesizer startSpeakingString:\r\n    @\"Hello. I'm Macintosh. It sure is great to get out of that bag.\"];\r\n\r\nIn GC apps it crashes (non main thread):\r\n\r\n#0  0x907586e8 in objc_msgSend ()\r\n#1  0x952f6f23 in SpeechDoneProc ()\r\n#2  0x1f00d979 in MTBEDoneTask::Execute ()\r\n#3  0x1f018b01 in MTBEWorker::WorkLoop ()\r\n#4  0x1f018b5d in MTBEWorkerStartMPTask ()\r\n#5  0x91ec555b in PrivateMPEntryPoint ()\r\n#6  0x96fa76f5 in _pthread_start ()\r\n#7  0x96fa75b2 in thread_start ()\r\n\r\nI'm guessing this is because the speechSynthesizer is collected before\r\nit finishes speaking.  This seems like a bug.  Needless\r\nto say, the docs say nothing about special considerations for garbage\r\ncollection.  My speechSynthesizer has no delegate, and I don't care when\r\nit starts or stops speaking.  Shouldn't that make it\r\nNSSpeechSynthesizer's job to keep itself alive until it finishes\r\nspeaking?  Afterall, _I'm_ finished with the speechSynthesizer."
+    email: sean.mcbride42@gmail.com
+    modified: "2011-08-28T05:49:55.715453Z"
+    number: "6073042"
+    number_intvalue: 6073042
+    originated: 14-Jul-2008 06:21 AM
+    parent_number: "5685253"
+    product: Mac OS X
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Duplicate/5685253
+    title: Simple NSSpeechSynthesizer usages crashes in GC, fine in non-GC

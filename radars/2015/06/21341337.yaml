@@ -1,0 +1,57 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21341337"
+    labels:
+        datastore_id: "4523305943957504"
+data:
+    classification: Serious Bug
+    created: "2015-06-11T17:17:26.90838Z"
+    description: |-
+        Summary:
+        If you create a multi-payload enum and give it a type constraint on one of the types, using that enum along with generics and a specific type results in a segfault.
+
+        Steps to Reproduce:
+        1. Create an enum and a protocol like so:
+
+        ```swift
+        protocol Foo { }
+
+        enum Either<L: Foo, R> {
+          case Left(L)
+          case Right(R)
+        }
+        ```
+
+        2. Create a simple function using the enum and generics:
+
+        ```swift
+        func pure<T>(val: T) -> Either<Foo, T> {
+          return .Right(val)
+        }
+        ```
+
+        Expected Results:
+        This should compile
+
+        Actual Results:
+        The compiler segfaults
+
+        Regression:
+        None
+
+        Notes:
+        Removing the type constraint or removing the generic type fixes the segfault. You can see the differences here:
+        https://gist.github.com/gfontenot/462b9cabfea700cccf3c
+    email: gordon@thoughtbot.com
+    modified: "2015-06-11T17:17:26.90859Z"
+    number: "21341337"
+    number_intvalue: 21341337
+    originated: 11-Jun-2015 10:17 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Swift 2.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Combining multi-payload enums, type constraints, and generics leads to segfault

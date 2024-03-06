@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34719508"
+    labels:
+        datastore_id: "6061925616058368"
+data:
+    classification: Serious Bug
+    created: "2017-09-28T18:21:55.34533Z"
+    description: "Summary:\r\nInside the standard iTunes 12.7  installer is a postinstall action script “startFpsdDaemons.sh” that has some issues that cause issues with tools like AutoPKG.\n\nhttps://github.com/MagerValp/AutoDMG\r\n\r\nSteps to Reproduce:\r\nFirst, the script has permissions “-rw-r--r--”. So, group and others do not have execute permissions.\n\nAnd has a syntax error on line 123.\n\nlogger -p  install.info \"sudo killall adid”\n\nNote, the last quote is a smart quote in unicode. Smart Quotes are a special kind of quotation mark where the opening-quote and the closing-quote are visually different. Sometimes they are also known as “curly quotes”. In many typographic settings, this is preferred to the more mundane “straight quote”. Many times will many times cause issues in scripts and code, you will get an error and the code won’t run.\n\nThe script is unable to run due to these issues and will get a syntax error once it has been ran.\n\n/path/to/startFpsdDaemons.sh \n/System/Library/LaunchDaemons/com.apple.fpsd.plist: service already loaded\n/path/to/startFpsdDaemons.sh: line 123: unexpected EOF while looking for matching `\"'\n/path/to/startFpsdDaemons.sh: line 129: syntax error: unexpected end of file\n\nIf the script doesn’t run properly, it will not create the _fpsd user, unload the  com.apple.fpsd.plist LaunchDaemon and properlykill adid and fpsd processes.\n\nThis causes iTunes to hang and become unresponsive. Manually installing the package doesn’t causes iTunes to hang but using open source tools like AutoDMG to create a image  will cause iTunes to hang. Fixing the permissions and the syntax error will make iTunes work properly using tools like AutoDMG, etc.\n\r\n\r\nExpected Results:\r\nExpect the script syntax errors and permissions to be fixed to work with other distribution tools like AutoDMG\r\n\r\nActual Results:\r\nThe script is unable to run due to these issues and will get a syntax error once it has been ran.\n\n/path/to/startFpsdDaemons.sh \n/System/Library/LaunchDaemons/com.apple.fpsd.plist: service already loaded\n/path/to/startFpsdDaemons.sh: line 123: unexpected EOF while looking for matching `\"'\n/path/to/startFpsdDaemons.sh: line 129: syntax error: unexpected end of file\n\r\n\r\nVersion:\r\n12.7\r\n\r\nNotes:\r\nWe fixed the script, removed the smart quote...\n\nlogger -p  install.info \"sudo killall adid\"\n\nAnd changed permissions to \"“-rwxr-xr-x”, giving group and others execute permisions.\n\nSo, now we get the following running the script:\n\n/path/to/startFpsdDaemons.sh \n/System/Library/LaunchDaemons/com.apple.fpsd.plist: service already loaded\nNo matching processes were found\nNo matching processes were found\n\nAnd created a package installer of the fixed script which fixes the issue in AutoDMG."
+    email: richard.uurazzle.glaser@gmail.com
+    modified: "2017-09-28T18:21:55.34551Z"
+    number: "34719508"
+    number_intvalue: 34719508
+    originated: 28-Sep-2017 12:21 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iTunes
+    product_version: "12.7"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: iTunes 12.7 Postinstall Action Script Issue

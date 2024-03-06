@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29819632"
+    labels:
+        datastore_id: "5065840256876544"
+data:
+    classification: Enhancement
+    created: "2016-12-28T14:07:39.36308Z"
+    description: "Area:\r\nCore Graphics\r\n\r\nSummary:\r\nCGPath.apply() has the following Swift signature:\r\n\r\n    public func apply(info: UnsafeMutableRawPointer?, function: @escaping CoreGraphics.CGPathApplierFunction)\r\n\r\nwhere CGPathApplierFunction is defined like this:\r\n\r\n    public typealias CGPathApplierFunction = @convention(c) (UnsafeMutableRawPointer?, UnsafePointer<CGPathElement>) -> Swift.Void\r\n\r\nAll of these unsafe pointers make it difficult to write type-safe Swift code. In addition, the @convention(c) makes it impossible for the applier function to capture variables in its context, so it is necessary to define some sort of struct/class to pass data to the function and return results, and cast that to/from UnsafeMutableRawPointer.\r\n\r\nCGPath.apply() should have a more Swift-friendly API, similar to that of the Array.forEach() function, which supports use of closures with captured variables, perhaps with a signature like this:\r\n\r\n    func forEach(_ body: (CGPathElement) throws -> Swift.Void) rethrows\r\n\r\nNote: A wrapper that provides a more Swift-friendly API can be defined by a Swift user like this:\r\n\r\nextension CGPath {\r\n    /// Call the given closure on each element of the path.\r\n    func forEach(_ body: @escaping (CGPathElement) -> Void) {\r\n        var info = body\r\n        self.apply(info: &info) { (infoPtr, elementPtr) in\r\n            let opaquePtr = OpaquePointer(infoPtr!)\r\n            let body = UnsafeMutablePointer<(CGPathElement) -> Void>(opaquePtr).pointee\r\n            body(elementPtr.pointee)\r\n        }\r\n    }\r\n}\r\n\r\nHowever, it would be preferable to be able to declare the closure non-escaping, and implementation within Core Graphics would probably provide better performance than a wrapper.\r\n\r\n\r\nSteps to Reproduce:\r\nN/A\r\n\r\nExpected Results:\r\nN/A\r\n\r\nActual Results:\r\nN/A\r\n\r\nVersion:\r\nXcode Version 8.2.1 (8C1002)"
+    email: kristopherdjohnson@gmail.com
+    modified: "2017-01-18T00:52:24.89098Z"
+    number: "29819632"
+    number_intvalue: 29819632
+    originated: 28-Dec-2016 09:05 AM
+    parent_number: "29603813"
+    product: iOS + SDK
+    product_version: Xcode 8.2.1 (8C1002)
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/29603813
+    title: CGPath.apply() needs a more Swift-friendly API

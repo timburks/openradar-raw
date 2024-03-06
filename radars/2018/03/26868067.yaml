@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26868067"
+    labels:
+        datastore_id: "4960397434028032"
+data:
+    classification: ""
+    created: "2018-03-24T20:29:20.99347Z"
+    description: "Summary:\r\nI'm creating an IMKCandidate candidate window for my Input Method Kit input method:\r\n\r\nhttps://developer.apple.com/library/mac/documentation/Cocoa/Reference/IMKCandidates_Class/\r\n\r\n > You then need to override the IMKInputController methods candidateSelectionChanged: and candidateSelected: as well as implement a candidates method in your delegate object. The IMKInputController subclass supplies candidates to the IMKCandidates object by implementing the candidates method. When you are ready to display a candidates window, call the candidates method to update candidates and to show the candidates window.\r\n\r\n\r\nI've implemented the IMKInputController `candidates:` method to supply the array of candidates. This works great.\r\n\r\n    - (NSArray *)candidates:(id)sender {\r\n        return @[@\"`candidates:` method\", @\"This works great!\"];\r\n    }\r\n\r\n[![`candidates:` method][1]][1]\r\n\r\n\r\nBut I notice that a `setCandidateData:` method was added to set the candidate strings, as an alternative to relying on the delegate method. This would be more convenient in my input method. \r\n\r\n> @abstract\tSet the candidates data directly rather than supplying data via `[IMKInputContoller candidates:]`.\r\n\r\n> `-(void)setCandidateData:(NSArray*)candidatesArray AVAILABLE_MAC_OS_X_VERSION_10_7_AND_LATER;`\r\n\r\n\r\nSo I comment out the `candidates:` method, and use `setCandidateData:` instead:\r\n\r\n    [candidates setCandidateData:@[@\"`setCandidateData:` method\", @\"Doesn't work :(\"]];\r\n    [candidates show:kIMKLocateCandidatesBelowHint];\r\n\r\nHowever, when doing it this way no candidate window is shown:\r\n\r\n[![enter image description here][2]][2]\r\n\r\nI also see this error via the Console:\r\n\r\n > CandidateWindowNoCandidatesException : IMKCandidates show: could not get candidate strings.\r\n\r\nThe docs seem pretty clear that `setCandidateData:` can be used in place of `candidates:`. Why then are the candidates not displayed?\r\n\r\n  [1]: http://i.stack.imgur.com/sWlur.png\r\n  [2]: http://i.stack.imgur.com/BiuZH.png\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nExpected Results:\r\n`setCandidateData:` should work to set candidates directly, rather than using the `candidates:` delegate\r\n\r\nActual Results:\r\n`setCandidateData:` does not work to set candidates for Input Method Kit. Must use the delegate method instead.\r\n\r\nVersion:\r\nOS X 10.11\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:"
+    email: peter.kamb@gmail.com
+    modified: "2018-03-24T20:29:20.99375Z"
+    number: "26868067"
+    number_intvalue: 26868067
+    originated: June 17 2016
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: IMKCandidates `setCandidateData:` method not working in place of IMKInputController `candidates:` delegate method

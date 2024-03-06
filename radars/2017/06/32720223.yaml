@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32720223"
+    labels:
+        datastore_id: "5504541436936192"
+data:
+    classification: Suggestion
+    created: "2017-06-12T20:18:33.1904Z"
+    description: "In context of https://developer.apple.com/videos/play/wwdc2017/715/ from WWDC 2017:\r\n\r\nSince the operating system and default filesystem (APFS) now support sparse files by default, it should also provide the posix_fallocate() system call. See http://pubs.opengroup.org/onlinepubs/9699919799/functions/posix_fallocate.html.\r\n\r\nposix_fallocate() can be used to ensure that disk blocks are physically allocated for a file.\r\n\r\nWhy does this matter? Why would anyone care about whether blocks are physically allocated when they’ll read as zero?\r\n\r\nWhen a file is mapped into memory with mmap(), the memory-mapped region will be backed by the file on disk, and writes to the region will result in writes to the file on disk. Unlike the defined failure and error-reporting mechanism used by traditional write mechanisms such as the write() system call, errors that occur during writes to memory-mapped files result in signals being raised. It’s much trickier to deal with signals appropriately, and when not handled, the default disposition will crash the application.\r\n\r\nThis situation will arise during normal operation when attempting to write to an unallocated block in a sparse file on a full disk. Where write() would fail with ENOSPC which is trivial to handle gracefully, the write to mapped memory will result in SIGBUS.\r\n\r\nBecause of this risk, my application fully allocates disk blocks for files intended to be used with memory-mapped I/O in this manner. The preferred mechanism for this is to call posix_fallocate() to ensure that physical blocks are allocated, which allows the underlying filesystem to choose the most expeditious manner to perform this task. While it’s possible to write a substitute for a proper posix_fallocate() system call entirely in user space, doing so is inherently racy (it may lead to data loss) and can never be as efficient as allowing the kernel and filesystem to perform the operation on their own.\r\n\r\nHere’s where we ensure that files used for memory-mapped I/O have all blocks physically allocated on disk: https://chromium.googlesource.com/chromium/src/+/0413fd9f7c660ba7504dade7bb838862f138348e/base/files/memory_mapped_file_posix.cc#104. You’ll note that macOS is currently excluded because up until now, the default filesystem, HFS+, did not support sparse files. We will need to change this to force physical allocation of these files because the new filesystem, APFS, does support sparse files."
+    email: mark@chromium.org
+    modified: "2017-06-12T20:18:33.19066Z"
+    number: "32720223"
+    number_intvalue: 32720223
+    originated: "2017-06-12"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13db1 17A264c
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'APFS: Provide posix_fallocate() (WWDC 2017)'

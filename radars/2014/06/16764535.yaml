@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16764535"
+    labels:
+        datastore_id: "5846007896080384"
+data:
+    classification: Bug
+    created: "2014-06-25T19:09:41.499897Z"
+    description: "Summary:\r\nAVPlayer puts a hard deadline on HLS media segment fetches, and terminates them after ~5 seconds (probably tied to the media segment duration).\r\n\r\nThis makes it impossible to play a HLS video where the bitrate exceeds available bandwidth by some factor, as the player will terminate every segment fetch, and be stuck in an endless buffering state.\r\n\r\nEffectively, this bug prevents users from playing HLS videos when the network is extremely poor (e.g. when the user is on a 2G network).\r\n\r\nSteps to Reproduce:\r\nAttached are two examples with HLS mediaserverd logs.\r\n\r\nIn one example, I played a video with an HLS manifest containing a range of stream bitrates down to 144p. I used Charles to throttle network bandwidth to 256k. You can see in Charles that a few of the initial media requests are unnecessarily terminated after about 5 seconds, which contributed to rebuffering - it would have been better to allow them to complete.\r\n\r\nHalfway through the video I changed the throttle settings to 128k. At this point, the video entered an endless buffering state as AVPlayer terminated every single video segment fetch before it completed.\r\n\r\nIn the second test, the player does NOT terminate video segment fetches, but instead, terminates audio segment fetches. This test used an HLS manifest containing 480p and 720p video streams, and a 128k audio stream. I used Charles to throttle the network bandwidth to 256k. Since half of the available bandwidth was being used to download the video stream, the player was unable to download the audio stream, and stayed in an endless buffering state.\r\n\r\nExpected Results:\r\nIf the player is already on the lowest bitrate, it should not terminate segment fetches. Instead, it should allow them to complete, so that the user can play the video after waiting for it to buffer.\r\n\r\n\r\nActual Results:\r\nThe player terminates segment fetches, and never manages to download a complete segment. As a consequence, the user is unable to play HLS videos."
+    email: robgaunt@google.com
+    modified: "2014-06-25T19:09:41.50018Z"
+    number: "16764535"
+    number_intvalue: 16764535
+    originated: 2014/04/29
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 7.1.1
+    reproducible: Always
+    resolved: ""
+    status: Duplicate
+    title: AVPlayer unable to play HLS streams which exceed available bandwidth

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27316402"
+    labels:
+        datastore_id: "5002623304335360"
+data:
+    classification: Serious Bug
+    created: "2016-07-13T03:49:09.0099Z"
+    description: "Summary:\nWhen handling a start workout intent by returning a “continueInApp” result and passing an NSUserActivity, the user activity handed to the parent app’s application delegate loses the userInfo and title set in the intent extension.\n\nExtension:\n\n    func handle(startWorkout startWorkoutIntent: INStartWorkoutIntent, completion: (INStartWorkoutIntentResponse) -> Void) {\n        // Implement your application logic to start a workout here.\n        \n        // Update application state by updating NSUserActivity.\n        let userActivity = NSUserActivity(activityType: NSStringFromClass(INStartWorkoutIntent.self))\n        if let name = startWorkoutIntent.workoutName?.identifier {\n            userActivity.title = startWorkoutIntent.workoutName?.identifier\n            userActivity.userInfo = [ \"name\": name ]\n        }\n        let response = INStartWorkoutIntentResponse(code: .continueInApp, userActivity: userActivity)\n        completion(response)\n    }\n\nMain App:\n\n    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {\n        let type = userActivity.activityType\n        if let name = userActivity.userInfo?[\"name\"] as? String where type == NSStringFromClass(INStartWorkoutIntent.self) {\n            // NEVER CALLED - userInfo is not carried over\n            let alert = UIAlertController(title: \"User Activity\", message: \"Continue Activity: \\(name)\", preferredStyle: .alert)\n            window?.rootViewController?.present(alert, animated: true, completion: nil)\n        }\n\n        return true\n    }\n\n\nSteps to Reproduce:\nSee attached Xcode project for report. \n\nExpected Results:\nuserInfo and title set on NSUserActivity in intent extension should be carried over to the main app. \n\nActual Results:\nuserInfo and title are lost."
+    email: atlantiasoftware@gmail.com
+    modified: "2016-07-13T03:49:09.01007Z"
+    number: "27316402"
+    number_intvalue: 27316402
+    originated: 12-Jul-2016 11:49 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 10 beta 2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Start Workout intent does not pass userInfo to parent app via user activity

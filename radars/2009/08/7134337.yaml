@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7134337"
+    labels:
+        datastore_id: "66404"
+data:
+    classification: Serious bug
+    created: "2009-08-11T19:33:04.429781Z"
+    description: "Summary:\r\n\r\nSSH is often used to establish tunnels over a secure channel, for example to allow a local client to connect to a piece of server software whose port is filtered for direct access on the server. One common example of this is using SSH tunnels to connect to servers on which the MySQL database server is running, but only bound to 127.0.0.1 on the server.\r\n\r\nNote that, at present, neither MySQL server nor client support IPv6. ::1 is not a valid alternative to 127.0.0.1 as far as it is concerned.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nAssuming mysqld is bound to 127.0.0.1:3306 on the server, execute one of the following on the (Mac OS X) client, assuming 'server-name.example.com' is accessible \r\n\r\nssh -v -L 13306:127.0.0.1:3306 server-name.example.com\r\n\r\nssh -v -L 127.0.0.1:13306:127.0.0.1:3306 server-name.example.com\r\n\r\n(after adding an entry to /etc/hosts reading “127.0.0.1 localhost-v4”):\r\n\r\nssh -v -L localhost-v4:13306:127.0.0.1:3306 server-name.example.com\r\n\r\n\r\n\r\nExpected results:\r\n\r\nIn all of these cases, the local forwarder should be bound to 127.0.0.1 on TCP port 13306.\r\n\r\n\r\n\r\nActual results:\r\n\r\nIn the first case, the socket is bound to ::1, not 127.0.0.1.\r\n\r\nIn the second case, an error is reported and no socket is bound. The error is:\r\n\r\nchannel_setup_fwd_listener: getaddrinfo(127.0.0.1): nodename nor servname provided, or not known\r\nCould not request local forwarding.\r\n\r\nIn the third case, again, an error is reported and no socket is bound. The error is similarly:\r\n\r\nchannel_setup_fwd_listener: getaddrinfo(127.0.0.1): nodename nor servname provided, or not known\r\nCould not request local forwarding.\r\n\r\n\r\nRegression:\r\n\r\nUnknown.\r\n\r\n\r\nNotes:\r\n\r\nOpenSSH_5.1p1 (the same version as used on Mac OS X 10.5.8) on Ubuntu Linux does not suffer from this problem: in the first case, sockets are opened for both 127.0.0.1 and ::1; in the second and third, sockets are opened for both 127.0.0.1.\r\n\r\nThe issue appears to be that the local forwarding socket is established with the same address family as the outgoing SSH protocol socket.\r\n\r\nFor IPv6-aware client applications, this is obviously not a problem, but for those which do not support IPv6, it renders SSH tunnelling useless where the target host is only accessible via IPv6."
+    email: mo@ilaven.net
+    modified: "2011-08-28T05:45:24.857349Z"
+    number: "7134337"
+    number_intvalue: 7134337
+    originated: "2009-08-11"
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.8
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: SSH to an IPv6 host does not properly allow forwarding of v4 connections

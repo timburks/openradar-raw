@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34763016"
+    labels:
+        datastore_id: "5014086739820544"
+data:
+    classification: Suggestion
+    created: "2017-10-02T04:58:43.1799Z"
+    description: "One nice feature that is present in other desktop graphics APIs — OpenGL since 1.0, Direct3D 11.1, Vulkan — but not in Metal is output merger logical operations, which enable bitwise blending-like operations on non-sRGB int/norm frame buffers without the overhead and limitations of unordered access.\r\n\r\niOS GPUs support arbitrary operations on the current fragment color in fragment shaders, and I guess this might be a part of the reason for logical operations being simply forgotten, however, there’s no such ability on macOS graphics hardware.\r\n\r\nWhile this functionality may seem pretty rarely needed, or even fixed-function legacy, it’s quite helpful in some cases where rasterization is involved for non-color data. Personally, I’m heavily using the “or” operation — to set up to 128 light occlusion bits in case of front face depth fail, and then to set up to 128 light mask bits in case of back face depth fail — in my rasterization-based forward+ light tiling. This lets me perform the entire culling in a few short rendering passes, starting with the “clear” load action for the occlusion grids and the light grid.\r\n\r\nThere’s one implementation detail that needs to be taken into consideration. In Direct3D, if a logical operation is used for a render target, no render target can use blending, and all targets must use the same logical operation and color write mask (though floating-point and sRGB targets should be fine, but the operation won’t be applied to them) — a render pipeline state won’t be compiled if you use a logical operation with IndependentBlendEnable set to true. However, logical operations are still set for each attachment, not for the whole render pipeline. I’m not exactly sure whether logical operations should be a part of the pipeline state (usage and validation simplicity) or of the attachment state (possibly mixing with blending in the future, though this seems very unlikely). In Vulkan and OpenGL, they are pipeline state, so I think Metal should use the same way of configuring — BOOL logicalOperationEnabled and MTLLogicalOperation logicalOperation in MTLRenderPipelineDescriptor, default to copy if enabled, and either silently ignore blending for attachments 0+ and different color write masks for attachments 1+ (this may make getters in the descriptor return incorrect parameters) or gracefully fail to compile the pipeline if blending or different write masks are used.\r\n\r\nAll Direct3D feature level 10.0 GPUs supports logical operations, and since they have also always been there in OpenGL, they are guaranteed to be supported on macOS. Considering OpenGL ES 1.1 has glLogicOp, it’s possible that iOS supports them too.\r\n\r\nA nice reference for MTLLogicalOperation enumeration documentation can be found at https://khronos.org/registry/OpenGL-Refpages/gl4/html/glLogicOp.xhtml\r\n\r\nFor porting simplicity, due to MRT-related limitations, COPY and NOOP should be kept even though they can be emulated by disabling logical operations or disabling color writing."
+    email: HWGUY.SiPlus@gmail.com
+    modified: "2017-10-02T04:58:43.18018Z"
+    number: "34763016"
+    number_intvalue: 34763016
+    originated: October 2 2017
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK / Graphics & Imaging
+    product_version: High Sierra
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: 'Metal request: Logical operations in output merger'

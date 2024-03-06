@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11873444"
+    labels:
+        datastore_id: "1815404"
+data:
+    classification: Serious Bug
+    created: "2012-07-14T02:10:18.217976Z"
+    description: "Summary:\r\n\r\nIn low VRAM situations, OpenGL textures previously populated on the GPU are being corrupted. This corruption has been witnessed on Mac OS X on various GPUs for some time. However, some progress appears to have been made in 10.8; we can no longer provoke the texture corruption on AMD GPUs (tested with an AMD Radeon HD 6490M). The problem is still reproducible on NVIDIA and Intel GPUs, however.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n1. In current Chrome on a machine with either an NVIDIA GeForce GT 330M or Intel HD Graphics 3000 GPU, visit maps.google.com and enable MapsGL.\r\n2. In five separate tabs, navigate to:\r\n2a. Seattle, WA\r\n2b. San Francisco, CA\r\n2c. New York, NY\r\n2d. Chicago, IL\r\n2e. Austin, TX\r\n\r\nFor the Intel HD Graphics 3000, add the following four:\r\n2f. St. Louis, MO\r\n2g. Milwaukee, WI\r\n2h. Portland, OR\r\n2i. Las Vegas, NV\r\n\r\n3. For each tab, zoom in far enough that the 3D buildings begin to show up, and drag around the map a little.\r\n4. Once the last tab is loaded, cycle through the tabs in order. When a tab is newly exposed, it will often show garbage. Dragging around the map will cause it to clear up.\r\n\r\n\r\nExpected Results:\r\n\r\nExpect maps to render correctly.\r\n\r\n\r\nActual Results:\r\n\r\nGarbage is rendered to the screen in place of the map.\r\n\r\n\r\nRegression:\r\n\r\nNot a new bug in 10.8, but behavior seems to have improved in 10.8 on AMD GPUs. We would like to see improvements made on Intel and NVIDIA GPUs as well.\r\n\r\n\r\nNotes:\r\n\r\nWhen switching tabs, the web page is simply re-composited; the map's most recent render, which was performed into an OpenGL texture, is drawn to the screen. The map itself is not re-rendered. The fact that just the map is corrupted, and not other page elements, indicates that the corrupted textures are those whose contents came from rendering to that texture, and not those whose contents were uploaded from system memory. For this reason we suspect a bug in the paging of textures back from the GPU into system memory.\r\n\r\nMoving the map around slightly clears up the corruption because the map is re-rendered to that texture, and then the web page is composited again.\r\n\r\nIn the WebGL conformance suite it has been observed that attempting to allocate many large textures never returns a GL_OUT_OF_MEMORY error, but always seems to succeed; eventually, however, some previously uploaded texture will be spontaneously corrupted. It is impossible for client applications to handle this silent corruption. Returning a GL_OUT_OF_MEMORY error would be better behavior."
+    email: kbr@google.com
+    modified: "2012-07-14T02:10:18.218351Z"
+    number: "11873444"
+    number_intvalue: 11873444
+    originated: 7/13/2012
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 12A256
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: OpenGL texture corruption in low VRAM situations

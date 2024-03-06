@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22978324"
+    labels:
+        datastore_id: "5051031360634880"
+data:
+    classification: Other Bug
+    created: "2015-10-05T20:54:44.06557Z"
+    description: "Summary:\r\nStatic libraries built using modules (e.g. \"@import StoreKit\"), even with CLANG_ENABLE_MODULE_DEBUGGING set to false, cause warnings when used on another developer's computer. This issue is described on this apple forum thread: https://forums.developer.apple.com/message/54432#65465\r\n\r\nThese are the types of warnings caused:\r\n\r\n\r\nwhile processing /Users/monroe/dev/ios-example-app/libStaticLibraryTest.a(StaticLibraryTest.o):\r\nwarning: /Users/Max/Library/Developer/Xcode/DerivedData/ModuleCache/1FI596T6DYYKL/AdSupport-N94D31PLFESQ.pcm: No such file or directory\r\nwhile processing /Users/monroe/dev/ios-example-app/libStaticLibraryTest.a(StaticLibraryTest.o):\r\nwarning: /Users/Max/Library/Developer/Xcode/DerivedData/ModuleCache/1FI596T6DYYKL/AdSupport-N94D31PLFESQ.pcm: No object file for requested architecture\r\n\r\n(null): warning: Could not resolve external type c:objc(cs)NSPredicate\r\n\r\nSteps to Reproduce:\r\nOption a): Build a static library from the attached \"StaticLibraryTest\" project and skip to step 4.\r\n\r\nOption b): Follow the steps below to reproduce from scratch:\r\n\r\n1. Create a new Xcode project using the Cocoa Touch Static Library framework\r\n2. Use a module in the project (I @imported StoreKit and used it in a method)\r\n3. Set CLANG_ENABLE_MODULE_DEBUGGING to NO.\r\n3. Follow the instructions here on creating a universal binary (one with i386 and ARM code) http://stackoverflow.com/a/3647187/1176156. This consists of:\r\n    3.1. Set \"Build Active Architecture Only\" to NO\r\n    3.2. Set the public headers directory to \"Headers\"\r\n    3.3. Add new Run Script Build Phase. Paste in this script: https://gist.github.com/MaxGabriel/95f7b03f16b2de1a11cc\r\n\r\n4. Set current scheme to \"Release\" and build the project. The built library is attached as \"StaticLib.zip\"\r\n5. From a different computer (I could not reproduce on my own computer), create a new project and copy the universal library and header files in from the Derived Data folder.\r\n6. Import that library and reference it\r\n\r\nExpected Results:\r\nThe new project builds without warnings\r\n\r\nActual Results:\r\nThe project has a huge number of warnings related to .pcm files, or not being able to \"resolve external type\"s.\r\n\r\nVersion:\r\nXcode 7.0.1\r\n\r\nNotes:\r\nMany developers are reporting this problem here: https://forums.developer.apple.com/message/54432#65465\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'StaticLibraryTest.zip' and 'StaticLib.zip' were successfully uploaded.\r\n\r\n===================================================\r\n\r\nFollowup message:\r\n\r\nIf you then disable modules, and replace any @imports with #import <framework>, then the warnings disappear. Attached is the static library built without modules.\r\n\r\n'NoModules.zip' was successfully uploaded.\r\n\r\n======\r\n\r\nAttachments:\r\n\r\nhttps://s3.amazonaws.com/hz-public-assets/public-assets/StaticLib.zip\r\nhttps://s3.amazonaws.com/hz-public-assets/public-assets/StaticLibraryTest.zip\r\nhttps://s3.amazonaws.com/hz-public-assets/public-assets/NoModules.zip"
+    email: feedback.tagher@gmail.com
+    modified: "2016-02-18T03:33:54.36681Z"
+    number: "22978324"
+    number_intvalue: 22978324
+    originated: 05-Oct-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools (Xcode)
+    product_version: 7.0.1
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 23893301 (Open)
+    title: 'Static libraries using modules cause warnings ("Could not resolve external type", "*.pcm: No such file or directory")'

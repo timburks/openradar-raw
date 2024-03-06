@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11748863"
+    labels:
+        datastore_id: "1796404"
+data:
+    classification: ""
+    created: "2012-06-26T14:42:51.254078Z"
+    description: "26-Jun-2012 06:37 PM Alexander Potapenko:\r\nSummary:\r\nAfter the default CFAllocator is replaced with any other (a legal operation described in the reference: https://developer.apple.com/library/mac/#documentation/CoreFOundation/Reference/CFAllocatorRef/Reference/reference.html) the standard malloc implementation starts to report invalid frees.\r\n\r\nSteps to Reproduce:\r\n\r\n$ cat t.mm\r\n#import <Foundation/Foundation.h>\r\nint main() {\r\n#ifdef REPLACE\r\n  CFAllocatorSetDefault(kCFAllocatorMallocZone);\r\n#endif\r\n  NSURL *base = [[NSURL alloc] initWithString:@\"file://localhost/Users/glider/Library/\"];\r\n  NSURL *u = [[NSURL alloc] initWithString:@\"Saved Application State\" relativeToURL:base];\r\n  return 0;\r\n}\r\n====================================\r\n\r\n$ clang++ t.mm -o t -DREPLACE -framework Foundation -g && ./t\r\nt(47457) malloc: *** error for object 0x10ba14348: pointer being freed was not allocated\r\n*** set a breakpoint in malloc_error_break to debug\r\nAbort trap: 6\r\n\r\n\r\n\r\nExpected Results:\r\nNo errors are reported (compare with the same program built with -UREPLACE)\r\n\r\nActual Results:\r\nAn invalid free is reported.\r\n\r\nRegression:\r\nN/A\r\n\r\nNotes:\r\n\r\nThis happens because _CFRuntimeCreateInstance (which is called from\r\nCFURLAlloc) checks whether the supplied allocator is\r\nkCFAllocatorSystemDefault and, if it is not, stores the allocator\r\nreference at the beginning of the allocated memory and returns the\r\npointer to the allocated memory plus sizeof(CFAllocatorRef). See\r\nhttp://www.opensource.apple.com/source/CF/CF-550/CFRuntime.c for the\r\nreference.\r\n\r\n\r\nTo the best of my knowledge, _CFRelease (see CFRuntime.c again) is the\r\nonly function that checks for the presence of the allocator reference\r\nat the beginning of the memory block, but it isn't called while\r\ndestroying the object.\r\n\r\n\r\n26-Jun-2012 06:38 PM Alexander Potapenko:\r\nhttp://code.google.com/p/address-sanitizer/issues/detail?id=70 contains some information about this bug manifesting under AddressSanitizer"
+    email: ramosian.glider@gmail.com
+    modified: "2012-06-26T14:42:51.254265Z"
+    number: "11748863"
+    number_intvalue: 11748863
+    originated: 26-Jun-2012 06:37 PM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: A bug in _CFRuntimeCreateInstance leads to invalid pointers being freed.

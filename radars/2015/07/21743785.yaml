@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21743785"
+    labels:
+        datastore_id: "4546085477416960"
+data:
+    classification: UI/Usability
+    created: "2015-07-09T11:48:51.82688Z"
+    description: "Summary:\n\nIMPORTANT - this is essentially a duplicate of rdar://352525, but contains some more infomation about the exact cause of the problem (see “Notes”). \n\nIf the device is rotated while a controller with an active UISearchController is offscreen (for example if it isn’t the top view controller in a navigation controller stack), UISearchBar layout breaks when returning back to the controller. See the attached search-controller-issue.gif for a visual representation of the problem. \n\nSteps to Reproduce:\n\nSee rdar://352525 and the attached sample project. \n\nExpected Results:\n\nThe status bar would never overlap the search bar text field. Instead search bar would keep the extended top-attached UI. \n\nActual Results:\n\nThe status bar overlaps the search bar text field. \n\nRegression:\n\nThe same problem occurs on both iPhone and iPad on iOS 8 and iOS 9. It occurs regardless of the starting orientation (landscape or portrait). This is NOT related to the status bar being hidden in landscape on iOS 8+.\n\nNotes:\n\nThe issue seems to arise in -[UIViewController _viewControllerUnderlapsStatusBar]. This method gets queried by UISearchController helpers to lay out the search bar during bounds changes, including rotation. \n\nIn some cases the method caches previous results using two private flags (_viewControllerFlags.freezeShouldUnderlapUnderStatusBar and _viewControllerFlags.previousShouldUnderlapUnderStatusBar). When the presenting view controller is offscreen the cached values are NOT used and the overlap is computed explicitly. Since the presenting view controller view is not currently added to the view hierarchy (view.window == nil), the method can’t calculate the overlap and returns NO, which causes the status bar to assume the non-top-attached appearance. \n\nWhen the presenting view controller again becomes visible -[UIViewController _viewControllerUnderlapsStatusBar] is not queried again to update the status bar appearance. In addition, if we try rotating to force an update, the implementation now uses the cached value from _viewControllerFlags.previousShouldUnderlapUnderStatusBar, preventing the overlap from being computed. \n\nIt’s possible to work around this problem by making sure -[UIViewController _viewControllerUnderlapsStatusBar] returns the cached value while the presented view controller view.window isn’t available, however that would be considered accessing private API and thus isn’t a viable option."
+    email: matej@bukovinski.com
+    modified: "2015-07-09T11:48:51.82708Z"
+    number: "21743785"
+    number_intvalue: 21743785
+    originated: 09-Jul-2015 01:48 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 8.3, iOS 9
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'UISearchController: Status Bar on top of Search Bar after rotating'

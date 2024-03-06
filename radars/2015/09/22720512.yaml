@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22720512"
+    labels:
+        datastore_id: "5052956848160768"
+data:
+    classification: Serious Bug
+    created: "2015-09-16T16:15:58.76811Z"
+    description: "Summary:\r\nThe following code snippet fails to compile with the compiler complaining that 'Test' does not conform to SequenceType.\r\n\r\nIf a non-generic generator that wraps 'Test' instead of a generic 'TestType' is used, this compiles successfully.\r\nThis also compiles if 'TestType' does not require SequenceType conformance.\r\n\r\nAn example project is attached.\r\n\r\nstruct Test : TestType {\r\n    var storage: [Int] = []\r\n\r\n    mutating func pop() -> Int? {\r\n        return storage.popLast()\r\n    }\r\n}\r\n\r\n\r\nextension Test : SequenceType {\r\n    func generate() -> TestGenerator<Test> {\r\n        return TestGenerator(self)\r\n    }\r\n}\r\n\r\n\r\npublic protocol TestType : SequenceType {\r\n    mutating func pop() -> Int?\r\n}\r\n\r\nstruct TestGenerator<T : TestType> : GeneratorType {\r\n    private var content: T\r\n    \r\n    init(_ content: T) {\r\n        self.content = content\r\n    }\r\n    \r\n    mutating func next() -> Int? {\r\n        return content.pop()\r\n    }\r\n}\r\n\r\nSteps to Reproduce:\r\n1) Open the attached project\r\n2) Build\r\n\r\nExpected Results:\r\nThe given code should compile successfully.\r\n\r\nActual Results:\r\nCompilation fails with: \"Type 'Test' does not conform to protocol 'SequenceType'\".\r\n\r\nVersion:\r\nOS X 10.11 (15A282b)\r\nVersion 7.1 beta (7B60)\r\nApple Swift version 2.0 (swiftlang_PONDEROSA-700.1.100.2 clang-700.1.74)"
+    email: janoschhildebrand@gmail.com
+    modified: "2015-09-16T16:15:58.76836Z"
+    number: "22720512"
+    number_intvalue: 22720512
+    originated: 16-Sep-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.1b1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 7.1b1: [Swift] Compiler does not accept SequenceType conformance for type conforming to protocol that descends from SequenceType when using a generic generator'

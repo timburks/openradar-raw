@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21563577"
+    labels:
+        datastore_id: "5028256759676928"
+data:
+    classification: ""
+    created: "2015-06-26T13:19:03.7486Z"
+    description: "Summary:\r\nInstance methods added to NSArray via categories that return `instancetype` will crash when called on the `__NSArray0` shared instance, which seems to represent all empty immutable arrays. This is typical for ‘map’-style methods that convert one array to another array of the same type.\r\n\r\nSpecifically, in order to return an object of `instancetype`, a ‘map’ method method might end like this:\r\n\r\n\treturn [[[self class] alloc] initWithArray:mappedArray];\r\n\r\nIf the class is `__NSArray0`, this code tries to create a new instance of `__NSArray0`, which does not implement `initWithObjects:count:`. Not implementing this method is reasonable; I don’t think it should get as far as that point.\r\n\r\nMy proposed solution is something along the lines of `__NSArray0` overriding `allocWithZone:` and returning the immutable array placeholder, so the placeholder can work out what sort of object needs to be created (either an `__NSArrayI` or `__NSArray0`).\r\n\r\nNote that this is not a problem with `__NSArrayI` and `__NSArrayM` because instances of these classes can be created with the normal `alloc`/`init` pattern.\r\n\r\nSteps to Reproduce:\r\nRun the attached sample project on OS X 10.11 or copy into an iOS project and run on iOS 9.\r\n\r\nExpected Results:\r\nInside a method where `self` is the `__NSArray0` instance, `[[[self class] alloc] initWith...` should return a suitable array instance.\r\n\r\nActual Results:\r\nAn exception is raised:\r\n\r\n*** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '*** -[NSArray initWithObjects:count:]: method only defined for abstract class.  Define -[__NSArray0 initWithObjects:count:]!'\r\n\r\nVersion:\r\nVersion 7.0 beta (7A121l)\r\n\r\nNotes:\r\nRegression:\r\n\r\nThe code works as expected on earlier versions of iOS and OS X. It looks like empty arrays used to be a shared instance of `__NSArrayI`.\r\n\r\nWorkaround:\r\n\r\nChanging map methods to return instances of `NSArray` is often fine, but might be undesirable if custom subclasses of `NSArray` were in use.\r\n\r\nBug category:\r\n\r\nI didn’t know whether to file this under iOS SDK or OS X SDK since it is in Foundation.\r\n\r\nConfiguration:\r\nThis problem is new in iOS 9 and OS X 10.11.\r\n\r\nAttachments:\r\n'NSArray0Exception.zip' was successfully uploaded."
+    email: douglashill@douglashill.co
+    modified: "2015-08-10T11:22:37.50354Z"
+    number: "21563577"
+    number_intvalue: 21563577
+    originated: 26 Jun 2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 21532366 (Closed)
+    title: __NSArray0 causes crashes with array instance methods returning instancetype

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15375938"
+    labels:
+        datastore_id: "5041688162598912"
+data:
+    classification: Bug
+    created: "2013-11-02T01:09:51.167791Z"
+    description: "Summary:\r\nIf I submit a form via an HTTP POST and then reload the resulting page, Safari displays the \"Are you sure you want to send a form again?\" prompt.\r\n\r\nIf I click \"Send\", and if the server responds to the second POST request by issuing a redirect, Safari will display the \"Are you sure you want to send a form again?\" prompt a second time.\r\n\r\nSteps to Reproduce:\r\n\r\n1.  Visit the page at:\r\nhttps://secure.goldenhillsoftware.com/redirect_on_post_reload.php\r\n\r\n2.  Click on the submit button. \r\n\r\n3.  Reload the resulting page.  When you click the reload button, the browser will display the \"Are you sure you want to send a form again?\" prompt.\r\n\r\n4.  In response to that prompt, click the \"Send\" button.\r\n\r\n5.  The server will respond to the second submission with an HTTP redirect.\r\n\r\nExpected Results:\r\n\r\nI would expect the browser to follow the redirect without any additional prompts.\r\n\r\nActual Results:\r\n\r\nThe browser follows the redirect, but displays the \"Are you sure you want to send a form again?\" prompt a second time.\r\n\r\nVersion:\r\n\r\nSafari Version 7.0 (9537.71)\r\nOS X 10.9 (13A603)\r\n\r\nNotes:\r\n\r\nI attached a copy of the PHP script hosted at the sample link above.\r\n\r\nConfiguration:\r\n\r\nN/A\r\n\r\n===\r\n\r\nThis is the code from the PHP script that I attached to the Radar submission:\r\n\r\n<?php\r\n\t\r\n\tfunction show_form() {\r\n\t\techo '<form method=\"post\" action=\"https://secure.goldenhillsoftware.com/redirect_on_post_reload.php\">';\r\n\t\techo '<input type=\"hidden\" name=\"ts\" value=\"' . time() . '\"/>';\r\n\t\techo '<p><input type=\"submit\"/></p>';\r\n\t\techo '</form>';\r\n\t}\r\n\r\n\tif ($_SERVER['REQUEST_METHOD'] == 'POST') {\r\n\t\tif ($_POST['ts'] == $_COOKIE['last_ts']) {\r\n\t\t\theader( 'Location: https://secure.goldenhillsoftware.com/redirect_on_post_reload.php' );\r\n\t\t} else {\r\n\t\t\theader('Set-Cookie: last_ts=' . $_POST['ts']);\r\n\t\t\t$COOKIE['last_ts'] = $_POST['ts'];\r\n\t\t\techo '<p>Showing the form as the result of a POST.</p>';\r\n\t\t\tshow_form();\r\n\t\t}\r\n\t} else {\r\n\t\techo '<p>Showing the form as the result of a GET.</p>';\r\n\t\tshow_form();\r\n\t}\r\n\r\n?>"
+    email: jbrayton@goldenhillsoftware.com
+    modified: "2013-11-02T01:09:51.167989Z"
+    number: "15375938"
+    number_intvalue: 15375938
+    originated: 1/1/2013
+    parent_number: '&{NULL_VALUE}'
+    product: Safari on Mac OS X
+    product_version: Safari Version 7.0 (9537.71), OS X 10.9 (13A603)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Duplicate "Are you sure you want to send a form again?" Prompt

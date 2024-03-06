@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10359348"
+    labels:
+        datastore_id: "1403415"
+data:
+    classification: Serious Bug
+    created: "2011-10-28T00:43:12.662082Z"
+    description: "Summary:\r\nThe attachMethodLists call, invoked when attaching category methods to an Objective-C class during dlopen, reallocs wastefully, potentially allocating a lot more space than it needs:\r\n0x00007fff833512c5  <+0074>  lea    0x0(,%rax,8),%r13\r\n0x00007fff833512cd  <+0082>  callq  0x7fff83359170 <dyld_stub_malloc_size>\r\n0x00007fff833512d2  <+0087>  mov    %rax,%r12\r\n0x00007fff833512d5  <+0090>  mov    -0x38(%rbp),%rax\r\n0x00007fff833512d9  <+0094>  mov    0x20(%rax),%rbx\r\n0x00007fff833512dd  <+0098>  lea    (%r12,%r13,1),%rsi\r\n0x00007fff833512e1  <+0102>  mov    0x10(%rbx),%rdi\r\n0x00007fff833512e5  <+0106>  callq  0x7fff8334426a <_realloc_internal>\r\n\r\nmalloc_size is documented to report the size of the entire block occupied by the memory, which is guaranteed to be at least the size requested when it was allocated.  However, it could be more.  In the case that it is more and there was enough space for the new entry, attachMethodLists is forcing a reallocation and potential copy when none was needed.  attachMethodLists should invoke realloc with the size of the structure plus whatever space it needs, not the size of the memory block the structure occupies plus the space it needs.\r\n\r\n(This particular problem was uncovered because Google's tcmalloc aggressively increases the amount it reallocs per call on a given piece of memory, returning 1.25x the requested amount each time.  The result is a method list for NSObject that balloons upwards of 500MB!)\r\n\r\nSteps to Reproduce:\r\ndlopen a library containing objective-c categories.\r\n\r\nExpected Results:\r\nattachMethodLists should invoke realloc with the size of the previous method list structure plus whatever space it needs.\r\n\r\nActual Results:\r\nattachMethodLists invokes realloc with the size of the memory block the structure occupies plus the space it needs.  This may be significantly more than it could possibly want.  In the case of tcmalloc, it causes huge problems.\r\n\r\nRegression:\r\n\r\nNotes:"
+    email: mills2k@gmail.com
+    modified: "2011-10-28T00:43:12.662564Z"
+    number: "10359348"
+    number_intvalue: 10359348
+    originated: 27-Oct-2011 08:40 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.8
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: attachMethodLists in the Objective-C Runtime reallocs Wastefully

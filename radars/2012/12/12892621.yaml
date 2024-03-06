@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12892621"
+    labels:
+        datastore_id: "2444401"
+data:
+    classification: Serious Bug
+    created: "2012-12-17T16:17:30.802703Z"
+    description: "Summary:\r\n\r\nUIApplicationWillEnterForegroundNotification received after applicationState != UIApplicationStateBackground test passed\r\n\r\nI am writing an Objective-C wrapper for using a GCD timer source. One of the goals is for the wrapper to manage suspending the timer source when the application enters the background.\r\n\r\nThe docs for -[UIApplicationDelegate applicationDidEnterBackground:] indicate that it should be used to invalidate timers, among other things; I'm interpreting this somewhat loosely (perhaps that is the source of my problem?) in that I'm suspending a GCD timer (dispatch_suspend()) in response to UIApplicationDidEnterBackgroundNotification).\r\n\r\nWhen an instance of the wrapper is initialized, it checks [UIApplication sharedApplication].applicationState != UIApplicationStateBackground to determine whether the GCD timer source should initially be resumed as part of the initialization sequence. It also registers for UIApplicationDidEnterBackgroundNotification and UIApplicationWillEnterForegroundNotification which it uses to suspend and resume the timer source (respectively).\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nunknown\r\n\r\n\r\nExpected Results:\r\n\r\nIf during initialization [UIApplication sharedApplication].applicationState != UIApplicationStateBackground is true, then the next notification received should not be UIApplicationWillEnterForegroundNotification.\r\n\r\n\r\nActual Results:\r\n\r\nThe issue that I have observed is that there seem to be cases where the check of [UIApplication sharedApplication].applicationState != UIApplicationStateBackground during initialization is passed so that the timer source is resumed, and the next notification that is received is UIApplicationWillEnterForegroundNotification which causes the timer source to be resumed a second time. This leads to a crash since the timer was not suspended at the time of the second resume.\r\n\r\nI can work around this by keeping track of the application state locally and confirming the transitions that would be duplicate, but I am concerned that I may be doing something incorrectly or that there may be a bug (either in implementation or in documentation).\r\n\r\n\r\nRegression:\r\n\r\n\r\nNotes:\r\n\r\nSupposing that this was a problem in my code, have posed this as a discussion question on StackOverflow, but have not received a satisfactory answer. http://stackoverflow.com/questions/13752197/uiapplicationwillenterforegroundnotification-received-after-applicationstate\r\n\r\nPlease advise whether this is a case of me doing something incorrectly, or whether there might be a bug in iOS or an error in the documentation."
+    email: andrewh@lark.com
+    modified: "2012-12-17T16:17:30.803338Z"
+    number: "12892621"
+    number_intvalue: 12892621
+    originated: 17-Dec-2012 11:15 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 6.0, 6.0.1
+    reproducible: Rarely
+    resolved: ""
+    status: Open
+    title: App state notifications seem out of sync with -[UIApplication applicationState]

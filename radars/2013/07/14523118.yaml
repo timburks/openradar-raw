@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14523118"
+    labels:
+        datastore_id: "3203401"
+data:
+    classification: Bug
+    created: "2013-07-23T18:00:14.523859Z"
+    description: "23-Jul-2013 07:57 PM Samuel Defago:\r\nSummary:\r\n\r\nThe documentation for protocol_getMethodDescription says that the function does not look at parent protocols when performing method lookup:\r\n\r\n\"Methods in other protocols adopted by this protocol are not included.\"\r\n\r\nWhen calling the function, though, parent protocols are taken into account. This is confirmed by having a look at the implementation (http://www.opensource.apple.com/source/objc4/objc4-532.2/runtime/objc-runtime-new.mm)\r\n\r\nEither the documentation should be fixed, or the implementation itself.\r\n\r\nSteps to Reproduce:\r\n\r\nPlease run the following code:\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\n#import <objc/runtime.h>\r\n\r\n@protocol ParentProtocol <NSObject>\r\n\r\n- (void)parentInstanceMethod;\r\n\r\n@end\r\n\r\n@protocol ChildProtocol <ParentProtocol>\r\n\r\n- (void)childInstanceMethod;\r\n\r\n@end\r\n\r\nint main(int argc, char *argv[])\r\n{\r\n\t@autoreleasepool {\r\n\t\tNSCAssert(protocol_getMethodDescription(@protocol(ChildProtocol), @selector(parentInstanceMethod), YES, YES).name == NULL, @\"NULL expected\");\r\n\t}\r\n}\r\n\r\nExpected Results:\r\n\r\nNo assertion failure\r\n\r\nActual Results:\r\n\r\nAssertion failure\r\n\r\nRegression:\r\n\r\nNotes:"
+    email: defagos@gmail.com
+    modified: "2014-03-24T09:01:37.739775Z"
+    number: "14523118"
+    number_intvalue: 14523118
+    originated: 23-Jul-2013
+    parent_number: '&{NULL_VALUE}'
+    product: Documentation
+    product_version: 10.8.4
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: protocol_getMethodDescription inspects parent protocols

@@ -1,0 +1,54 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27548381"
+    labels:
+        datastore_id: "6158973942104064"
+data:
+    classification: Serious Bug
+    created: "2016-07-26T17:07:07.32097Z"
+    description: |-
+        Summary:
+
+        Apple has stated that color management is only available on GPU Family 2 (A8 devices and later.) When you use UIGraphicsImageRenderer on one of these earlier CPUs, you get color management.
+
+        Steps to Reproduce:
+
+        1) Open and run the attached project.
+        2) Select “Asset Tests” then “ColorSpin” - this will show what the image looks like without color management
+        3) Tap Done
+        4) Select “Render Tests” then “Modify Image” - this will show what the image looks like with color management
+
+        Step 4 is implemented in RenderViewController’s -setModifyImage: method. The UIGraphicsImageRendererFormat specifies preferredExtendedRange to NO.
+
+        Expected Results:
+
+        Steps 2 and 4 should show an image with the same colors (even if they’re “wrong”).
+
+        Actual Results:
+
+        The colors are different in Steps 2 and 4.
+
+        Regression:
+
+        N/A
+
+        Notes:
+
+        This is actually better behavior than ignoring the color profile: the renderer can be used to convert images to sRGB for display.
+
+        As an example, It looks like Safari in this beta version of iOS 10 is taking advantage of this API to render color profiles on devices that don’t support color management. Take a look at the “Testing color profile support” example at http://furbo.org/color/ResponsiveColor/ to see how the image is rendered on iOS 10 (and compare it to how the same page was rendered in iOS 9.3+).
+
+        But if this is intended behavior, it needs to be documented. Saying that the GPU architecture is the gating factor is no longer enough and it’s hard to infer the actual rules. These rules are extremely important for developers who need to support a wide range of devices and adopt color management.
+    email: craig.hockenberry@gmail.com
+    modified: "2016-07-26T17:07:07.32128Z"
+    number: "27548381"
+    number_intvalue: 27548381
+    originated: 26-Jul-2016 10:07 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 10.0 (14A5309d)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIGraphicsImageRenderer handles color profile on devices prior to A8 (GPU Family 2)

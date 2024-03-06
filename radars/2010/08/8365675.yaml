@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8365675"
+    labels:
+        datastore_id: "614401"
+data:
+    classification: Enhancement
+    created: "2010-08-27T20:49:59.495348Z"
+    description: "Summary:\r\nCurrently, one can not implement a host controller like the built-in ones(UINavigationController, UITabController) in the aspect of orientation management, and the reason is that UIViewController.interfaceOrientation can not be updated via public API.\r\n\r\nOne important thing to achieve in a host controller is to send rotation messages to the active guest controller and ONLY the active controller. It should not send rotation messages to all its guest controllers whenever a rotation happens, which is redundant and make no sense. UINavigationController and UITabController both work this way. Unfortunately, one can not achieve that with public API. Because of the propagating-realtime-rotation-messages-only-to-the-active-one scheme, the host controller has to maintain the orientation state of guest controllers, and compare the current orientation with the last orientation when switch to another guest controller to determine whether to update its orientation. But where should the host controller save the orientation state of guest controllers? It must be the UIViewController.interfaceOrientation property, except that one can up update it. Of course, the host controller can use a dictionary to cache the orientation state of its guest controllers, but first, it is ugly and contradict Don't-Repeat-Yourself, and second, if the interfaceOrientation property is queried for the guest controllers, they could give wrong answers. Or should one force all guest controllers to return host controller's orientation when queried? Then it is unnecessary reverse dependency. So it is a dilemma: third party host controllers either do redundant rotations or miss some of them.\r\n\r\nBesides, I don't think UIDevice's orientation property is properly usable for orientation management of UIViewControllers, since it could return two irrelevant values -  UIDeviceOrientationFaceUp and UIDeviceOrientationFaceDown. \r\n\r\nThis problem pops up many times, both in my own experience and for other developers. So I believe it is time for Apple to fix it. Maybe UIViewController's willRotateToInterfaceOrientation:duration: should update the interfaceOrientation property.\r\n\r\nFinally, one example for clarity. Suppose TTController is a custom tab controller, 1) In portrait orientation, I select controller A in TTController; 2) I switch to controller B in TTController and rotate to landscape orientation; 3) I rotate back to portrait orientation with B still being the active guest controller; 4) I switch back to A. I should only send rotation messages to guest controller A but not B in this course."
+    email: an00na@gmail.com
+    modified: "2011-08-28T05:40:04.786545Z"
+    number: "8365675"
+    number_intvalue: 8365675
+    originated: 27-Aug-2010 03:43 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 4.0.2
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Update UIViewController.interfaceOrientation

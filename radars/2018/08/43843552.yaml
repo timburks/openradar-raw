@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "43843552"
+    labels:
+        datastore_id: "4964538612973568"
+data:
+    classification: Serious Bug
+    created: "2018-08-29T15:47:43.44008Z"
+    description: "Area:\r\nSomething not on this list\r\n\r\nSummary: The thread ID reported by pthread_threadid_np() is not correct after calling fork(). In the forked process, the thread receives a new thread ID from the kernel, but the ID reported by pthread_threadid_np() continues to reflect the original pre-forked thread’s ID.\r\n\r\nThis is a regression somewhere in the Mojave beta series. I experience it on 10.14db9 18A377a.\r\n\r\nSteps to Reproduce: Run the attached test program, which compares the results of pthread_threadid_np(pthread_self()) with the thread_selfid() system call.\r\n\r\nmark@garbage zsh% clang thread_id_test.c -o thread_id_test\r\nmark@garbage zsh% ./thread_id_test \r\n\r\nExpected Results:\r\nThe exact numbers are irrelevant, but three lines should be printed, and all should report “ok”.\r\n\r\nmark@garbage zsh% ./thread_id_test \r\nprefork: pthread_thread_id 0x48bfe == thread_id 0x48bfe (ok)\r\nparent: pthread_thread_id 0x48bfe == thread_id 0x48bfe (ok)\r\nchild: pthread_thread_id 0x48bff == thread_id 0x48bff (ok)\r\nmark@garbage zsh% sw_vers\r\nProductName:\tMac OS X\r\nProductVersion:\t10.13.6\r\nBuildVersion:\t17G65\r\n\r\nActual Results:\r\nOn 10.14, the “child” line prints BAD. On the child side of a fork(), pthread_threadid_np(pthread_self()) is incorrect.\r\n\r\nlitterbox@ten-fourteen zsh% sw_vers; ./thread_id_test\r\nprefork: pthread_thread_id 0x3072 == thread_id 0x3072 (ok)\r\nparent: pthread_thread_id 0x3072 == thread_id 0x3072 (ok)\r\nchild: pthread_thread_id 0x3072 != thread_id 0x3073 (BAD)\r\nlitterbox@ten-fourteen zsh% sw_vers\r\nProductName:\tMac OS X\r\nProductVersion:\t10.14\r\nBuildVersion:\t18A377a\r\n\r\nVersion/Build:\r\n10.14db9 18A377a, xnu-4903.201.2~4/RELEASE_X86_64, libpthread-330.201.1\r\n\r\nThis bug is a regression. It is not present in 10.13.6 17G65. It was not present in at least some earlier 10.14 developer betas, although I’m not certain which beta introduced the bug.\r\n\r\n--\r\n\r\nthread_id_test.c\r\n\r\n// clang thread_id_test.c -o thread_id_test\r\n\r\n#include <err.h>\r\n#include <errno.h>\r\n#include <limits.h>\r\n#include <pthread.h>\r\n#include <stdio.h>\r\n#include <stdlib.h>\r\n#include <sys/syscall.h>\r\n#include <unistd.h>\r\n\r\nvoid Test(const char* tag) {\r\n  uint64_t pthread_thread_id;\r\n  errno = pthread_threadid_np(pthread_self(), &pthread_thread_id);\r\n  if (errno != 0) {\r\n    err(EXIT_FAILURE, \"%s: pthread_threadid_np()\", tag);\r\n  }\r\n\r\n#pragma clang diagnostic push\r\n#pragma clang diagnostic ignored \"-Wdeprecated-declarations\"\r\n  int thread_id = syscall(SYS_thread_selfid);\r\n#pragma clang diagnostic pop\r\n  if (thread_id == -1) {\r\n    err(EXIT_FAILURE, \"%s: thread_selfid()\", tag);\r\n  }\r\n\r\n  if (pthread_thread_id > INT_MAX) {\r\n    printf(\"%s: pthread_thread_id 0x%llx is too large, thread_id is 0x%x\\n\",\r\n           tag,\r\n           pthread_thread_id,\r\n           thread_id);\r\n  }\r\n\r\n  _Bool ok = pthread_thread_id == thread_id;\r\n  printf(\"%s: pthread_thread_id 0x%llx %s thread_id 0x%x (%s)\\n\",\r\n         tag,\r\n         pthread_thread_id,\r\n         ok ? \"==\" : \"!=\",\r\n         thread_id,\r\n         ok ? \"ok\" : \"BAD\");\r\n}\r\n\r\nint main(int argc, char* argv[]) {\r\n  Test(\"prefork\");\r\n\r\n  pid_t pid = fork();\r\n  if (pid < 0) {\r\n    err(EXIT_FAILURE, \"fork()\");\r\n  }\r\n\r\n  if (pid == 0) {\r\n    Test(\"child\");\r\n  } else {\r\n    Test(\"parent\");\r\n  }\r\n\r\n  return EXIT_SUCCESS;\r\n}"
+    email: mark@chromium.org
+    modified: "2018-08-29T15:47:43.44045Z"
+    number: "43843552"
+    number_intvalue: 43843552
+    originated: "2018-08-29"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.14db9 18A377a
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: pthread_threadid_np() reports an incorrect thread ID after fork() on Mojave b9

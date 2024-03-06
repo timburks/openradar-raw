@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28204125"
+    labels:
+        datastore_id: "5062625289306112"
+data:
+    classification: Serious Bug
+    created: "2016-09-08T09:51:47.20041Z"
+    description: "Summary:\r\nXcode 8 doesn't compile all configurations, if those configurations use different entitlements with different app group IDs. There's always at least one app group ID from one of the entitlements files selected in the capabilities tab, and the provisioning section in the general tab is always looking for that app group ID in the selected provisioning profile, so it shows an error for the configurations that use entitlements with a different app group ID.\r\n\r\nI tried deselecting the app group ID in the capabilities tab but that a) removes it from the entitlements file of the currently selected build configuration (so i had to add a dummy configuration with which to deselect the ID in the capabilities tab) and b) the ID specified in the currently selected build configuration is automatically selected in the capabilities tab again when restarting Xcode.\r\n\r\nI tried using an environment variable as an app group ID, which worked in Xcode 7, but didn't help with the new provisioning system.\r\n\r\nI would even be happy with using one app group ID for all configurations, but we have different bundle IDs for all configurations, and if i use the same app group ID for multiple bundle IDs, Xcode doesn't acknowledge the entitlements at all.\r\n\r\nThis seems to be an entirely UI related problem: When i select a provisioning profile that Xcode thinks doesn't include the correct app group ID, Xcode won't build it - but it works from the terminal (we use Fastlane to build from the terminal).\r\n\r\nSteps to Reproduce:\r\n1. Install Xcode 8.\r\n2. Create new project.\r\n3. Deactivate \"Automatically manage signing\" in the \"General\" tab.\r\n4. Add multiple configurations to the project.\r\n5. Define all configurations to use a different bundle ID.\r\n6. Add the app groups entitlements.\r\n7. Specify a different entitlements file for each configuration.\r\n8. Use a different app group ID in each entitlement file (e.g. \"group.<bundleID>.AppName\")\r\n9. Try selecting a provisioning profile for each configuration. At least one will show an error.\r\n\r\nExpected Results:\r\nXcode should look for the app group ID specified in the entitlements file selected for the currently active build configuration.\r\n\r\nActual Results:\r\nXcode looks for the app group ID selected in the capabilities tab, which only allows selecting the ID for a single configuration, which breaks provisioning for all other configurations."
+    email: cargath@gmail.com
+    modified: "2016-09-08T09:51:47.20077Z"
+    number: "28204125"
+    number_intvalue: 28204125
+    originated: 08-Sep-2016 11:48 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode 8
+    product_version: 8.0 (8A218a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Xcode 8 can't compile using different app group IDs for different configurations

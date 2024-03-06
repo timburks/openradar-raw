@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9658819
+    labels:
+        datastore_id: "4966442973790208"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2021-10-26T16:18:14.96839Z"
+    description: "On Monterey, the pf `route-to` directive fails to work correctly.  Re-routing  a TCP stream results in retransmission errors which prevents a connection being established. This is a major regression from behaviour under Big Sur and Catalina - where `route-to` works as expected. \r\n\r\nThis regression breaks a major feature of our app .\r\n\r\nReproduction steps:\r\n\r\nWe use `route-to` to redirect traffic from a virtual utun interface (which has the default route) to a physical WIFI interface (`en0`). \r\n\r\nA minimal reproduction requires us to setup a `utun` interface as the default route before defining a `route-to` rule using `pfctl`\r\n\r\nSet a utun interface as the default route. We do this by creating the following two routes:\r\n    - (Set an ip on the utun device first: `sudo ifconfig utun0 10.1.1.3 10.1.1.3`)\r\n    - `sudo route add -inet 0.0.0.0/1 -interface utun0`\r\n    - `sudo route add -inet 128.0.0.0/1 -interface utun0`\r\n\r\nTurn on packet forwarding (necessary for `route-to` to work)\r\n    - `sudo sysctl -w net.inet.ip.forwarding=1`\r\n\r\nSetup the pf `route-to` rule to reroute all packets heading to port 8888 to the physical interface (`en0`) instead of the default `utun0` interface:\r\n    - `echo \"nat on en0 inet all -> (en0)\\npass out inet proto {udp,tcp} from any to any port 8888 no state tag BYPASS4\\npass out route-to (en0 192.168.1.1) inet all no state tagged BYPASS4\" | sudo pfctl -f -`\r\n        - Note that `192.168.1.1` should be the address of the router.\r\n        - Also note the `nat` rule is required to ensure the correct source ip.\r\n- Create the TCP stream on port 8888:\r\n    - `echo testing | nc -4 <remote TCP server> 8888`\r\n    - Best to use a raw ip for the remote server, as setting the `utun` interface as the default route may break DNS (as well as other non-rerouted packets). This is only the case for this minimal reproduction where we use a non-functional `utun` device.\r\n\r\nExpected behaviour:\r\n\r\nWe expect that the TCP stream to port `8888` will be redirected through the `en0` interface and  a TCP connection to the remote server will be established. \r\n\r\nThe expected behaviour is observed on Big Sur and Catalina.\r\n\r\nObserved behaviour:\r\n\r\nOn Monterey, the TCP stream fails to establish. WireShark indicates there are TCP retransmission errors. This breaks any connection we attempt to re-route. \r\n\r\nFurther notes:\r\n\r\nThe correct/expected behaviour has been seen on some hardware even with Monterey installed. A 2017 Macbook pro behaved as expected, but a 2018 Macbook pro did not. It is not clear the link between certain hardware and the presence of this issue - but in about 90% of cases the incorrect behaviour on Monterey was observed. It's suspected this issue may primarily be on newer hardware.\r\n\r\nSerial number of a Macbook pro where issue occurs: C02X42NMJG5K\r\nSerial number of a Macbook pro where the issue does NOT occur: C02VD002HTD9\r\n\r\nWe always observed CORRECT behaviour on Catalina and Big Sur, irrespective of the hardware."
+    email: jrmair@gmail.com
+    modified: "2021-10-26T16:18:14.968539Z"
+    number: FB9658819
+    number_intvalue: 9658819
+    originated: 9/27/2021
+    parent_number: '&{NULL_VALUE}'
+    product: pf firewall
+    product_version: macOS 12
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Major regession in PF firewall under Monterey

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39168067"
+    labels:
+        datastore_id: "4970612745306112"
+data:
+    classification: Bug
+    created: "2018-04-04T08:02:05.57175Z"
+    description: "Area:\r\nAVFoundation\r\n\r\nSummary:\r\n\r\nSince iOS 11.3, `AVPlayer` behavior at playback start has changed. The `seekableTimeRanges` property is not reliable anymore during the first seconds after playback has started. The actual duration for the \"first few seconds\" seems correlated to the media chunk size. For a stream with 10 second chunks, you namely have to wait about ~10 seconds until the information gets reliable. For a stream with 6 second chunks, the information gets reliable after ~6 seconds.\r\n\r\nAs a result, implementations relying on this seekable time range information are now confused. This is for example the case for the Safari media player, or for `AVPlayerViewController`, most notably when playing livestreams. This is of course also the case for custom `AVPlayer`-based implementations, which is quite annoying.\r\n\r\nThe steps below reproduce the issue with standard players. I also attached a sample project and a detailed analysis of this issue based on this sample (markdown file).\r\n\r\nSteps to Reproduce:\r\n\r\nOpen the following URL with Safari on an iOS 11.3 device: http://tagesschau-lh.akamaihd.net/i/tagesschau_1@119231/master.m3u8?dw=0\r\n\r\nThis stream is a livestream with no ability to seek to an earlier location (at any time, the playlist only returns 3 chunks of 10 seconds each).\r\n\r\nExpected Results:\r\n\r\nThe Safari media player displays \"Live broadcast\", hides the seek bar, and disables +/-15 seconds skip buttons (see attached screenshot). This is how the player behaves until iOS 11.3.\r\n \r\nActual Results:\r\n\r\nThe Safari media player never displays \"Live broadcast\". The slider is displayed but will never provide a way to seek to the past. The -15 seconds skip button and the \"Forward to live\" button are displayed but are useless (see attached screenshot). The player obviously incorrectly thinks that the stream supports DVR, whereas it actually doesn't.\r\n\r\nVersion/Build:\r\n\r\niOS 11.3 SDK. Issue is the same with iOS 11.4 beta 1.\r\n\r\nConfiguration:\r\n\r\nXcode 9.3, tested on an iPhone X running iOS 11.0 and on an iPhone 7 running iOS 11.3."
+    email: defagos@gmail.com
+    modified: "2018-06-15T08:09:29.20879Z"
+    number: "39168067"
+    number_intvalue: 39168067
+    originated: April 4 2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "11.3"
+    reproducible: Always
+    resolved: in iOS 12
+    status: Closed
+    title: AVPlayer seekable time range information incorrect at playback start

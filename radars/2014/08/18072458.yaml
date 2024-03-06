@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18072458"
+    labels:
+        datastore_id: "5814667788156928"
+data:
+    classification: Other Bug
+    created: "2014-08-20T06:37:58.566817Z"
+    description: "Summary:\r\nIn this beta the NSObject protocol has been changed slightly so some methods are now declared as properties. This has the unfortunate problem of causing scenarios where obtaining the property list (class_copyPropertyList) of a class that implements a protocol that inherits the NSObject protocol, to also include those properties.\r\n\r\nSteps to Reproduce:\r\n//Code to reproduce\r\n@protocol A <NSObject>\r\n@property int test;\r\n@end\r\n\r\n@interface A : NSObject <A>\r\n@end\r\n@implementation A\r\n@synthesize test;\r\n@end\r\n\r\n\r\n//in main (or wherever)\r\nunsigned int Count;\r\nobjc_property_t *Properties =  class_copyPropertyList([A class], &Count);\r\n\r\nfor (unsigned int Loop = 0; Loop < Count; Loop++)\r\n{\r\n    printf(\"%s\\n\", property_getName(Properties[Loop]));\r\n}\r\n\r\nfree(Properties);\r\n\r\nExpected Results:\r\nIn previous version it would just print the following:\r\ntest\r\n\r\nActual Results:\r\nIt will now print the following:\r\nhash\r\nsuperclass\r\ndescription\r\ndebugDescription\r\ntest\r\n\r\nNotes:\r\nWhile this is filed as an iOS bug, it's also for OS X.\r\n\r\nThis isn't necessarily a call to reverse this change, more so just a notice to make you aware of the potential issue. It's caused some previous codebases to have unintended results. While this can easily be alleviated, I'm really just checking to see if this was the intended functionality (for these methods to now be properties)."
+    email: ScrimpyCat@gmail.com
+    modified: "2014-08-20T06:46:30.937006Z"
+    number: "18072458"
+    number_intvalue: 18072458
+    originated: August 20 2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK and OS X SDK
+    product_version: Xcode 6 beta 6
+    reproducible: Yes
+    resolved: No
+    status: Open
+    title: Some methods in NSObject protocol are now declared as properties, this has some annoying consequences

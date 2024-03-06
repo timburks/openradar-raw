@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11385244"
+    labels:
+        datastore_id: "1709404"
+data:
+    classification: Crash
+    created: "2012-05-04T17:48:39.075586Z"
+    description: "Summary:\r\n\r\nWhen swapping two ivars using a temporary variable, ARC can generate incorrect code that causes one of the ivars to be deallocated.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nCompile and run the following code (note that -O3 is necessary to reproduce):\r\n\r\n// clang -framework Foundation -fobjc-arc -O3 test.m\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\n@interface Test : NSObject\r\n- (void)swap;\r\n@end\r\n\r\n@implementation Test {\r\n    id a, b;\r\n}\r\n\r\n- (id)init\r\n{\r\n    if((self = [super init]))\r\n    {\r\n        a = [[NSObject alloc] init];\r\n        b = [[NSObject alloc] init];\r\n    }\r\n    return self;\r\n}\r\n\r\n- (void)swap {\r\n    id tmp = a;\r\n    a = b;\r\n    b = tmp;\r\n    \r\n    NSLog(@\"Done swapping\");\r\n    \r\n    [self self];\r\n}\r\n\r\n@end\r\n\r\nint main(int argc, char **argv)\r\n{\r\n    @autoreleasepool\r\n    {\r\n        Test *test = [[Test alloc] init];\r\n        [test swap];\r\n    }\r\n}\r\n\r\n\r\nExpected Results:\r\n\r\nThe program should run and exit without comment.\r\n\r\n\r\nActual Results:\r\n\r\nThe program crashes due to incorrect retain/release management.\r\n\r\nRegression:\r\n\r\nReproduced with both Xcode 4.3.2 and the latest 4.4 (DP4).\r\n\r\nNotes:\r\n\r\nLooking at the output assembly, it appears that the objc_retain for 'tmp = a' is being incorrectly moved below the objc_storeStrong for 'a = b'. This causes 'a' to be deallocated. It appears that the '[self self]' line is critical for triggering this for some reason; the assembly for a method which only contains the swap looks fine. The NSLog is also somehow necessary in order to trigger the crash in my testing, although the generated assembly without it still looks bad from what I can see."
+    email: michael.ash@gmail.com
+    modified: "2012-05-04T17:48:39.075882Z"
+    number: "11385244"
+    number_intvalue: 11385244
+    originated: 04-May-2012 01:47 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Incorrect codegen when swapping two ivars with ARC and -O3

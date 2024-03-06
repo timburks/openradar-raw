@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19605314"
+    labels:
+        datastore_id: "5875891406110720"
+data:
+    classification: ""
+    created: "2015-01-26T22:44:32.107218Z"
+    description: "Summary:\r\nWhen a server sends a push notification it needs to know whether to send it to the production or sandbox environment. That information is not a part of the device token so when the app sends the token to its server it needs to tell it which environment the token is for.\r\n\r\nInstead of making the app try to figure this out in a roundabout way I propose that this is added as an extra parameter to -[UIApplicationDelegate application: didRegisterForRemoteNotificationsWithDeviceToken:]\r\n\r\nSomething like this:\r\n\r\n[UIApplicationDelegate application: didRegisterForRemoteNotificationsWithDeviceToken:environment:]\r\n\r\nand on OS X:\r\n\r\n[NSApplicationDelegate application:didRegisterForRemoteNotificationsWithDeviceToken:environment:]\r\n\r\nThis seems logical to me because the system already has to determine whether it's sandbox or not in order to generate the proper token type. Why not just pass that information on to the app along with the token?\r\n\r\nRight now the options for figuring out which environment you are in are not great:\r\n\r\n1. The most popular the build configuration using a preprocessor variable. E.g. When using the \"Debug\" configuration, set a constant at build time that says that it's the sandbox environment.\r\n\r\nProblems: First, the APNs environment is not determined by build configuration—it's determined by the certificate/provisioning profile. It's completely valid to use a \"Debug\" build configuration but sign the app with a Distribution cert/profile. We do this for our internal, continuous-deployment builds on the old TestFlight.\r\n\r\n2. At build time determine if the signing certificate is a development or a distribution certificate by looking at the certificate name.\r\n\r\nProblems: Depending on certificate names seems fragile. And cert names are not completely consistent across iOS and OS X. \"iPhone Developer\" \"iPhone Distribution\" \"Mac Developer\" \"3rd Party Mac Developer Application\". Also, doing this at build time is a problem if you re-sign your application with a different certificate later.\r\n\r\n3. Read the embedded provisioning profile at run time and look at the \"aps-environment\" value.\r\n\r\nThis is actually the most reliable way, but still not great. It requires you to embed an ASN.1 parser or to rely on a hacky way of reading out the plist data from the signed payload.\r\n\r\nSteps to Reproduce:\r\n1. Register for remote notifications ([UIApplication \r\nregisterForRemoteNotifications]\r\n2. Receive a token in [UIApplicationDelegate application: didRegisterForRemoteNotificationsWithDeviceToken:]\r\n3. Try to divine whether this is a sandbox or production token\r\n4. Send the token to your server along with the environment information.\r\n\r\nExpected Results:\r\nThe system would tell me which environment the device token is in.\r\n\r\nActual Results:\r\nI have to do some crazy stuff to figure it out on my own.\r\n\r\nVersion:\r\niOS 8\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niOS"
+    email: ben.dolman@gmail.com
+    modified: "2015-01-26T23:53:59.060962Z"
+    number: "19605314"
+    number_intvalue: 19605314
+    originated: 26-Jan-2015 03:43 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: System should tell us which APNs environment we are in

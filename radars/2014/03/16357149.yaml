@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16357149"
+    labels:
+        datastore_id: "5785610052698112"
+data:
+    classification: Serious Bug
+    created: "2014-03-29T02:41:50.000231Z"
+    description: "Summary:\r\nThe documentation for imageWithCVImageBuffer doesn't tell what situations it returns NULL.  I'm seeing this reproducibly with a valid buffer, which could indicate that the API in question is simply broken, or it could indicate that there's some subtle precondition that I'm missing, and I have no idea which.\r\n\r\nSteps to Reproduce:\r\nTo reproduce the problem trivially, grab the AVRecorder sample code project.  In the AVRecorderDocument.m file, add this method:\r\n\r\n-(void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection {\r\n    \r\n    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);\r\n    assert(imageBuffer != NULL);\r\n    CIImage *image = [CIImage imageWithCVImageBuffer:imageBuffer];\r\n    assert(image != NULL);\r\n}\r\n\r\nThen declare that the class conforms to AVCaptureVideoDataOutputSampleBufferDelegate.  Finally, in its init method, add this:\r\n\r\n\tself.videoPreviewOutput = [[AVCaptureVideoDataOutput alloc] init];\r\n        [self.videoPreviewOutput setSampleBufferDelegate: self queue:dispatch_get_main_queue()];\r\n        [session addOutput: self.videoPreviewOutput];\r\n\r\nright after:\r\n\r\n        [session addOutput:audioPreviewOutput];\r\n\r\nso that the method will get called.  The method reliably crashes at the second assert, i.e. imageWithCVImageBuffer is completely nonfunctional.  The same behavior occurs with the related initWith... method.\r\n\r\n\r\nExpected Results:\r\nI expected to get back a CIImage object.\r\n\r\n\r\nActual Results:\r\nGot NULL.\r\n\r\nVersion:\r\n10.9.2\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nCurrent 15\" Retina MacBook Pro (2.6 GHz)\r\n\r\nAttachments:"
+    email: dgatwood42@gmail.com
+    modified: "2015-03-14T04:10:03.360102Z"
+    number: "16357149"
+    number_intvalue: 16357149
+    originated: 3/18/2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.2
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 19296518 (Open)
+    title: imageWithCVImageBuffer method always returns NULL

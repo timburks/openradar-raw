@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6774047"
+    labels:
+        datastore_id: "32409"
+data:
+    classification: Bug
+    created: "2009-04-21T18:50:55.369809Z"
+    description: "When encoding/decoding NSDateComponents with NSCoding, undefined components (NSUndefinedDateComponent = 0x7fffffff) become 0, which is not the same thing. Undefined components should still be undefined after decoding.\r\n\r\n\r\nSample code to demonstrate the problem:\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\nint main (int argc, const char * argv[]) {\r\n    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];\r\n\t\r\n\t// Create date components with only the day unit defined\r\n\tNSDateComponents *now = [[NSCalendar currentCalendar] components:NSDayCalendarUnit fromDate:[NSDate date]];\r\n\tNSLog(@\"Year before archiving: %d\", [now year]);\r\n\tNSLog(@\"That is, before NSCoding, the year is *%@*\", [now year] == NSUndefinedDateComponent ? @\"undefined\" : @\"defined\");\r\n\t\r\n\tNSData *encodedData = [NSKeyedArchiver archivedDataWithRootObject:now];\r\n\tNSDateComponents *newComps = [NSKeyedUnarchiver unarchiveObjectWithData:encodedData];\r\n\t\r\n\t\r\n\tNSLog(@\"Year after archiving: %d\", [newComps year]);\r\n\tNSLog(@\"That is, after NSCoding, the year is *%@*\", [newComps year] == NSUndefinedDateComponent ? @\"undefined\" : @\"defined\");\r\n\t\r\n    [pool drain];\r\n    return 0;\r\n}\r\n\r\n\r\nProgram outputs:\r\n\r\nYear before archiving: 2147483647\r\nThat is, before NSCoding, the year is *undefined*\r\nYear after archiving: 0\r\nThat is, after NSCoding, the year is *defined*"
+    email: tomas@tomasf.se
+    modified: "2011-08-28T05:47:09.517145Z"
+    number: "6774047"
+    number_intvalue: 6774047
+    originated: 09-Apr-2009 04:01 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.6
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: NSDateComponents has incorrect NSCoding implementation

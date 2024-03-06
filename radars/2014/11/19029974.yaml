@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19029974"
+    labels:
+        datastore_id: "5781279987466240"
+data:
+    classification: Serious Bug
+    created: "2014-11-19T15:16:26.239257Z"
+    description: "Summary:\nTrying to typecheck a simple program using currying & applicative functors is unreasonably slow.\n\n\nSteps to Reproduce:\n1. Compile this program (note that it does not pass typechecking):\n\nfunc curry<A, B, R>(f: (A, B) -> R) -> A -> B -> R {\n\treturn { a in { b in f(a, b) } }\n}\n\ninfix operator <*> { associativity left precedence 150 }\nfunc <*><A, B>(lhs: (A -> B)?, rhs: A?) -> B? {\n\tif let lhs1 = lhs {\n\t\tif let rhs1 = rhs {\n\t\t\treturn lhs1(rhs1)\n\t\t}\n\t}\n\treturn nil\n}\n\nfunc cons<T, U>(lhs: T, rhs: U) -> (T, U) {\n\treturn (lhs, rhs)\n}\n\nvar str1: String? = \"\U0001F44D\"\nvar str2: String? = \"\U0001F44D\"\nvar str3: String? = \"\U0001F44D\"\n\nif let f = curry(cons) <*> str1 <*> curry(cons) <*> str2 <*> str3 {\n\tprintln(\"\\(f)\")\n}\n\n\nExpected Results:\nResponsive (interactive!) typechecking.\n\n\nActual Results:\nResonance:Desktop rob$ time ./Applicative.swift \n./Applicative.swift:25:12: error: '(T, U)' is not a subtype of 'String -> (String -> B)'\nif let f = curry(cons) <*> str1 <*> curry(cons) <*> str2 <*> str3 {\n           ^\n\nreal\t0m29.714s\nuser\t0m29.414s\nsys\t0m0.288s\n\n\nRegression:\nN/A\n\n\nNotes:\nAttached a sample."
+    email: rix.rob@gmail.com
+    modified: "2014-11-19T15:16:26.239458Z"
+    number: "19029974"
+    number_intvalue: 19029974
+    originated: 19-Nov-2014 10:16 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2006)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Unreasonably slow typechecking performance w/ curried applicative functions'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30991727"
+    labels:
+        datastore_id: "5010693950537728"
+data:
+    classification: Serious bug
+    created: "2017-03-11T10:09:39.33038Z"
+    description: "Summary:\r\nI've successfully obtained lettsencrypt certificate for domain owncloud.osxadmin.cz. (guide -> https://community.letsencrypt.org/t/complete-guide-to-install-ssl-certificate-on-your-os-x-server-hosted-website/15005).\r\nCertifiate was configured for single website via Server.app.\r\nCertifcate name was: owncloud.osxadmin.cz.6038AC0CB1BE09CABB873D44F23E73FA995FCFBB.\r\n\r\nI decided to set up automated renewal. After certificate was successfully renewed there was a serious issue when importing this renewed certificate.\r\n\r\nI am using `security` tool to import p12 archive:\r\nlocal passkey=$(openssl rand -base64 45 | tr -d /=+ | cut -c -30)\r\n  openssl pkcs12 -export -inkey \"${pem_dir}/privkey.pem\" -in \"${pem_dir}/cert.pem\" -certfile \"${pem_dir}/fullchain.pem\" -out \"${pem_dir}/letsencrypt_sslcert.p12\" -passout \"pass:${passkey}\"\r\n  security import \"${pem_dir}/letsencrypt_sslcert.p12\" -f pkcs12 -k \"/Library/Keychains/System.keychain\" -P \"$passkey\" -T \"/Applications/Server.app/Contents/ServerRoot/System/Library/CoreServices/ServerManagerDaemon.bundle/Contents/MacOS/servermgrd\"\r\n}\r\n\r\nAfter importing renewed certificate into keychain some Server daemon noticed new certificate in keychain and updated configuration files.\r\n\r\nFollowing files were updated to reference new certificate  owncloud.osxadmin.cz.DAAD369B1290CB8CCB4D106B458E71D73ABD3C4E:\r\n../apache2/servermgr_web_apache2_config.plist\r\n../apache2/sites/0000_127.0.0.1_34543_owncloud.osxadmin.cz.conf\r\n\r\nHowever duplicate Vhost entries appeared in file apache_serviceproxy_customsites.conf:\r\n\r\nUse VHost443 * owncloud.osxadmin.cz \"# No ServerAliases\" owncloud.osxadmin.cz.DAAD369B1290CB8CCB4D106B458E71D73ABD3C4E SHA-256:58733dc12e78d7f128c059687ca5fcb2111718533c85d046932489cd4e47b2b8:\"owncloud.osxadmin.cz\"\r\nUse VHost80 * icinga.osxadmin.cz \"# No ServerAliases\"\r\nUse VHost80 * munki.osxadmin.cz \"# No ServerAliases\"\r\nUse VHost80 * observium.osxadmin.cz \"# No ServerAliases\"\r\n\r\nUse VHost443 * owncloud.osxadmin.cz \"# No ServerAliases\" owncloud.osxadmin.cz.6038AC0CB1BE09CABB873D44F23E73FA995FCFBB SHA-256:2c38715aed1be9cbcd5df897e41796f9b635cb4b6ca7d9226c06efb8ff27d097:\"owncloud.osxadmin.cz\"\r\nUse VHost80 * icinga.osxadmin.cz \"# No ServerAliases\"\r\nUse VHost80 * munki.osxadmin.cz \"# No ServerAliases\"\r\nUse VHost80 * observium.osxadmin.cz \"# No ServerAliases\"\r\n\r\nThis misconfiguration broke Server Apache web proxy and manual intervention was required to fix it.\r\n\r\nSteps to Reproduce:\r\n1. Create website in Server.app with TLS certificate configured for domain abc.xyz\r\n2. Import new (renewed) TLS certificate in p12 archive for abc.xyz with `security` tool\r\n\r\nExpected Results:\r\nServer is automatically and correctly reconfigured to use the new (renewed) certficate for all services using it.\r\n\r\nActual Results:\r\nServer is automatically reconfigured to use the new certificate.\r\nHowever there is misconfiguration in file apache_serviceproxy_customsites.conf (duplicate entries).\r\nServer apache proxy is broken and manual intervention is need to fix this.\r\n\r\nVersion:\r\nServer 5.2\r\nOS X 10.11.6\r\nmacOS 10.12\r\n\r\nAttachments:\r\n'AFTERIMPORT_apache_serviceproxy_customsites.conf .txt' and 'BEFOREIMPORT_apache_serviceproxy_customsites.conf .txt' were successfully uploaded."
+    email: michalm.mac@gmail.com
+    modified: "2018-03-12T13:53:15.31464Z"
+    number: "30991727"
+    number_intvalue: 30991727
+    originated: 11.3.2017
+    parent_number: '&{NULL_VALUE}'
+    product: Server
+    product_version: "5.2"
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: Duplicate entries in apache_serviceproxy_customsites.conf after importing renewed certificate

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27696860"
+    labels:
+        datastore_id: "4936035205120000"
+data:
+    classification: ""
+    created: "2016-08-04T10:58:26.87513Z"
+    description: "Summary:\r\n\r\nMinimal test case:\r\nhttps://gist.github.com/ryb-ableton/7720a07dd58a9c9a683c5778ccf4c5e3\r\n\r\nReal-world test case using Boost.Regex:\r\nhttps://gist.github.com/ryb-ableton/01ec990172284cf4471ec4d7a13cec48\r\n\r\nThe bug involves:\r\n- Compiling for i386.\r\n- Using -mdynamic-no-pic and -Wl,-read_only_relocs,suppress to build a dylib.\r\n- A template member function with a switch statement that generates a branch table.\r\n- Taking the address of the function from multiple locations (e.g two dylibs or a dylib and the executable).\r\n\r\nThe crash happens because dyld writes to memory from the read-only __TEXT segment while binding weak symbols. The weak bindings here make the member function's address consistent everywhere. dyld doesn't make the __TEXT segment writable prior to making weak bindings (in ImageLoader::weakBind()), unlike for rebasing (ImageLoaderMachO::doRebase()).\r\n\r\nSteps to Reproduce:\r\n1- Download the minimal test case above\r\n2- Run `make && make check`\r\n\r\nTo build the Boost test case you need to download Boost – see the commands in the Makefile.\r\n\r\nExpected Results:\r\nNo crash.\r\n\r\nActual Results:\r\nCrash while launching the test executable:\r\n\r\n + 293, stop reason = EXC_BAD_ACCESS (code=2, address=0x3f7a)\r\n  * frame #0: 0x8fe139bf dyld`ImageLoaderMachO::bindLocation(ImageLoader::LinkContext const&, unsigned long, unsigned long, ImageLoader const*, unsigned char, char const*, long, char const*) + 293\r\n    frame #1: 0x8fe1cd5e dyld`ImageLoaderMachOCompressed::updateUsesCoalIterator(ImageLoader::CoalIterator&, unsigned long, ImageLoader*, ImageLoader::LinkContext const&) + 478\r\n    frame #2: 0x8fe0fb99 dyld`ImageLoader::weakBind(ImageLoader::LinkContext const&) + 1011\r\n    frame #3: 0x8fe05c37 dyld`dyld::_main(macho_header const*, unsigned long, int, char const**, char const**, char const**, unsigned long*) + 3498\r\n    frame #4: 0x8fe01231 dyld`dyldbootstrap::start(macho_header const*, int, char const**, long, macho_header const*, unsigned long*) + 427\r\n    frame #5: 0x8fe01047 dyld`_dyld_start + 71\r\n\r\nVersion:\r\nXcode 5.0 (possibly before) - Xcode 8.0\r\n\r\nNotes:\r\nThe crash does not occur if jump tables are suppressed using -fno-jump-tables. This option is available on llvm HEAD, but is not yet in Apple's clang."
+    email: ryan.brown@ableton.com
+    modified: "2016-08-04T10:58:26.87532Z"
+    number: "27696860"
+    number_intvalue: 27696860
+    originated: "2016-08-04"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 5.0 (possibly before) - Xcode 8.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Crash on launch involving a branch table, weak bindings, and no-pic

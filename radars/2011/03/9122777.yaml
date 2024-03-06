@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9122777"
+    labels:
+        datastore_id: "1140402"
+data:
+    classification: Serious Bug
+    created: "2011-03-11T20:56:20.482951Z"
+    description: "Summary:\r\n\r\nMFMailComposeViewController's \"canSendMail\" contains stale data if an application is placed into background & then re-opened.  The canSendMail BOOL is returned to a valid state only by executing one of the two available actions:\r\n\r\ni) completely closing and removing the application from the multi-task bar & then relaunching.\r\nii) placing the application into the background and then relaunching a second time. \r\n\r\nSteps to Reproduce:\r\n\r\nScenario 1\r\ni) Launch application X on a device that contains a valid (gmail) email account (in settings). \r\n\r\nii) Print out [MFMailComposeViewController canSendMail] in the AppDelegate's applicationDidBecomeActive function. \r\nExpected Result-->YES \r\nActual Result-->YES\r\n\r\niii) Leave the application (press the home button)\r\n\r\niv) Remove all email accounts in iPad Settings\r\n\r\nv) Relaunch application X (causing step ii) to automatically repeat)\r\nExpected Result-->NO\r\nActual Result-->YES\r\n\r\n* I should not be able to send email here!  There is technically no valid email accounts. If I do popup MFMailComposer and attempt to send an email, the application crashes. \r\n\r\nvi) Repeat steps iii) & v)\r\nExpected Result-->NO\r\nActual Result-->NO\r\n\r\n* canSendMail is reset to a valid state only if the iPad application is closed & relaunched twice!\r\n\r\nScenario 2\r\ni) Launch application X on a device that contains a no valid email accounts (in settings). \r\n\r\nii) Print out [MFMailComposeViewController canSendMail] in the AppDelegate's applicationWillEnterForeground function.  \r\nExpected Result-->NO\r\nActual Result-->NO\r\n\r\niii) Leave the application (press the home button)\r\n\r\niv) Add a valid email account in iPad Settings\r\n\r\nv) Relaunch application X (causing step ii) to automatically repeat)\r\nExpected Result-->YES\r\nActual Result-->NO\r\n\r\n* I now have a valid email account, yet canSendMail is still returning NO. \r\n\r\nvi) Repeat steps iii) & v)\r\nExpected Result-->YES\r\nActual Result-->YES\r\n\r\n* canSendMail is reset to a valid state only if the iPad application is closed & relaunched twice!\r\n\r\nRegression\r\n\r\nBehaviour can be reproduced every time with the above scenarios.  \r\n\r\nTesting on SDK 4.3 / xCode 4 / iPad 1\r\n\r\nNotes:\r\n\r\nThinking this value could be stored in NSUSerDefaults, I tried calling ...\r\n\r\n[[NSUserDefaults standardUserDefaults] synchronize]  \r\n\r\nNo dice; still doesn't work."
+    email: terryworona@gmail.com
+    modified: "2011-08-28T05:37:36.251982Z"
+    number: "9122777"
+    number_intvalue: 9122777
+    originated: 11-Mar-2011 03:51 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPad SDK
+    product_version: "4.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: MFMailComposeViewController's canSendMail Issue

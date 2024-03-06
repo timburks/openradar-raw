@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20398997"
+    labels:
+        datastore_id: "5262121117941760"
+data:
+    classification: Serious Bug
+    created: "2015-04-02T13:24:44.391896Z"
+    description: "Why is a closure taking Self allowed as a parameter in a non-final class, so long as it isn't optional?\n\nDeveloper forums topic: https://devforums.apple.com/message/1119632#1119632\n\nAllowed:\n=======\n \nprotocol MyProto\n{\n    func reload( completionHandler: (Self)->() )\n}\n\nclass MyClass : MyProto\n{\n    func reload( completionHandler: (MyClass)->() )\n    {\n        // Do work\n        completionHandler( self )\n    }\n}\n \nForbidden:\n=========\n\nprotocol MyProto\n{\n    func reload( completionHandler: ((Self)->())? )\n}\n\nclass MyClass : MyProto\n{\n    func reload( completionHandler: ((Self)->())? )\n    {\n        // Do work\n        completionHandler?( self )\n    }\n\n=========\n \nThe compiler's error is:\n \nerror: protocol 'MyProto' requirement 'reload' cannot be satisfied by a non-final class ('MyClass') because it uses 'Self' in a non-parameter, non-result type position\n\nI don't understand that. I am using 'Self' in a parameter type position, just embedded inside an Optional. Is this a bug or is there some reason why this cannot be supported?"
+    email: wagner@mogic.com
+    modified: "2015-04-02T13:24:44.392021Z"
+    number: "20398997"
+    number_intvalue: 20398997
+    originated: 02-Apr-2015 03:24 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Swift 1.2 b4
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: Swift does not allow optional containing Self as parameter

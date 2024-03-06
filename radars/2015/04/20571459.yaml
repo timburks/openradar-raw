@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20571459"
+    labels:
+        datastore_id: "5042908134637568"
+data:
+    classification: ""
+    created: "2015-04-16T16:35:31.37183Z"
+    description: "Summary:\r\nunique_ptrs are not supposed to be copy-constructable. In a situation where precompiled headers are used and a class that has a method that returns a unique_ptr to itself is defined in the precompiled header, the unique_ptr to that class becomes copy-constructable. However, that copy constructor does not have safe semantics, leading to a future double-free situation.\r\n\r\nSteps to Reproduce:\r\nWith included files x.hpp and x.cpp:\r\n\r\n1. clang++ -std=c++11 -x c++-header x.hpp -o x.hpp.pch\r\n2. clang++ -std=c++11 -include x.hpp x.cpp -o whatever\r\n\r\nExpected Results:\r\nCompile should fail with:\r\n\r\nx.cpp:4:31: error: call to implicitly-deleted copy constructor of 'std::unique_ptr<TestCase>'\r\n    std::unique_ptr<TestCase> y(x);\r\n                              ^ ~\r\n/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/memory:2515:31: note: copy constructor is implicitly deleted because 'unique_ptr<TestCase, std::__1::default_delete<TestCase> >' has a user-declared move constructor\r\n    _LIBCPP_INLINE_VISIBILITY unique_ptr(unique_ptr&& __u) _NOEXCEPT\r\n                              ^\r\n1 error generated.\r\n\r\nActual Results:\r\nFiles compile and link without error.\r\n\r\nVersion:\r\nApple LLVM version 6.1.0 (clang-602.0.49) (based on LLVM 3.6.0svn)\r\nTarget: x86_64-apple-darwin14.1.0\r\nThread model: posix\r\n\r\nOS X 10.10.2\r\n\r\nNotes:\r\nThe same test works as expected (fails to compile) on \"clang version 3.6.0 (tags/RELEASE_360/final)\" and \"Ubuntu clang version 3.5.0-4ubuntu2~trusty2 (tags/RELEASE_350/final) (based on LLVM 3.5.0)\" on Linux, so it appears to be particular to the Apple version.\r\n\r\nThis problem was encountered while attempting to use folly::IOBuf from Facebook's folly library.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n\r\nx.hpp:\r\n#include <memory>\r\nclass TestCase {\r\n  std::unique_ptr<TestCase> test() { return std::unique_ptr<TestCase>(); };\r\n};\r\n\r\nx.cpp:\r\nint main()\r\n{\r\n    std::unique_ptr<TestCase> x;\r\n    std::unique_ptr<TestCase> y(x);\r\n\r\n    return 0;\r\n}"
+    email: planetbeing@gmail.com
+    modified: "2015-04-16T16:35:31.37215Z"
+    number: "20571459"
+    number_intvalue: 20571459
+    originated: 16-Apr-2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: Xcode 6.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: std::unique_ptr<X> becomes copyable when std::unique_ptr<X> X::Y() exists and is defined inside precompiled header

@@ -1,0 +1,44 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23037698"
+    labels:
+        datastore_id: "5075329198587904"
+data:
+    classification: Serious Bug
+    created: "2015-10-08T21:39:28.09088Z"
+    description: |-
+        Summary:
+        In iOS9, NSFetchedResultsController sometimes fires a move change when it should fire an update change. When running on iOS8.4 on Xcode 6.4 I always got update changes. When running on iOS8.4 or iOS9 on Xcode7, I sometimes get move changes with an equivalent indexPath in the newIndex and index parameters.
+
+        Steps to Reproduce:
+        Create 3 managed objects and save them
+        Fetch them into an NSFetchedResultsController.
+        Fetch them into a different managed object context.
+        In the different managed object context, change the first two managed objects without affecting their order. Call property setters on the third object with the same values that are currently persisted so that the third object returns true for isUpdated, but an empty dictionary for changedValues().
+        Save the different managed object context.
+
+        Expected Results:
+        The NSFetchedResultsController should call -[NSFetchedResultsControllerDelegate controller:didChangeObject:atIndexPath:forChangeType:newIndexPath:] with Update change types for all 3 objects (or even better only the 2 objects that actually had changed values).
+
+        Actual Results:
+        The NSFetchedResultsController should call -[NSFetchedResultsControllerDelegate controller:didChangeObject:atIndexPath:forChangeType:newIndexPath:] with Move change types for all 3 objects with the same indexPath for both atIndexPath and newIndexPath.
+
+        Regression:
+        I saw the expected behavior when building for iOS8 with Xcode6.4 and running on an iOS8.4 simulator
+        I saw the actual behavior when building for iOS9 and targeting iOS8 with Xcode7 and running on an iOS9 and iOS8.4 simulator.
+
+        Notes:
+        See this conversation with @numist: https://twitter.com/heathborders/status/652236723561234432
+    email: heath.borders@gmail.com
+    modified: "2015-10-08T21:39:28.0911Z"
+    number: "23037698"
+    number_intvalue: 23037698
+    originated: 08-Oct-2015 04:39 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 'Xcode7: iOS Simulator 8.4, 9.0'
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSFetchedResultsController sometimes fires Move Change when it should fire an Update change

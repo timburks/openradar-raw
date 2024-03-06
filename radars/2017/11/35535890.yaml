@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35535890"
+    labels:
+        datastore_id: "5018591892078592"
+data:
+    classification: Serious Bug
+    created: "2017-11-29T14:50:42.92801Z"
+    description: "Area:\r\nAVFoundation\r\n\r\nSummary:\r\nCreating AVPlayerItem with an HLS master playlist URL causes two network requests: one for the master playlist and one for the first slave playlist in the master playlist. This happens without attaching the item to a AVPlayer, or doing anything else with the item.\r\n\r\nIf we later set preferredPeakBitRate and request video playback, another slave playlist URL must be fetched. If the first unnecessary slave playlist request hasn't completed yet, this delays the start of playback, as that request must wait for the first request to complete.\r\n\r\nThis behavior contradicts the suggestions from WWDC 2016 talk 503 (https://developer.apple.com/videos/play/wwdc2016/503/). Namely:\r\n\"On the server, you have to sort your variance from highest to lowest. Like that.\r\nAnd then in your app, you need to set the player items preferredPeakBitRate to you bitrate guess.\r\nThis will eliminate the higher bitrate variance from initial selection.\"\r\n\r\nIn the attached sample project, watch the resourceLoader:shouldWaitForLoadingOfRequestedResource: method execute and you'll see the master and slave playlist download.\r\n\r\n\r\nSteps to Reproduce:\r\nOn iOS 11 device or simulator run code:\r\nvar playerItem: AVPlayerItem?\r\noverride func viewDidAppear(_ animated: Bool)\r\n{ super.viewDidAppear(animated) self.playerItem = AVPlayerItem(url: URL(string: \"https://video.twimg.com/ext_tw_video/801091497617719296/pu/pl/DSgleUrYLtycqsRz.m3u8?descending=true\")!) }\r\nObserve network requests via proxy.\r\n\r\nExpected Results:\r\nEither no network requests are done, or only a single network request is made for the master playlist.\r\n\r\n\r\nActual Results:\r\nTwo network requests are made for both the master playlist and the first slave playlist.\r\n\r\n\r\nVersion/Build:\r\niOS 11.0.3 (15A432)\r\niOS 11.1 simulator."
+    email: jgary@twitter.com
+    modified: "2017-11-29T14:50:42.92824Z"
+    number: "35535890"
+    number_intvalue: 35535890
+    originated: 11/14/2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "11.1"
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: Start of playback is blocked by redundant network request

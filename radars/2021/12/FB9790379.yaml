@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9790379
+    labels:
+        datastore_id: "4968207232270336"
+data:
+    classification: ""
+    created: "2021-12-01T17:13:48.816608Z"
+    description: "Problem Overview\r\n==============\r\n\r\nList’s onDrag modifier provides the opportunity to provide a  preview View that is shown to the user while dragging operations are underway.\r\n\r\nOn macOS,  this preview is rendering correctly the first time it is displayed. However, the preview is not then picking up any subsequent View State changes, instead it continues to render the original (and now out of step with State) preview.\r\n\r\nSteps to reproduce\r\n==================\r\n\r\nMBP 15”, 2018, 2.6GHz i7 room heater\r\nMacOS 12.0.1\r\nXcode 13.1 (13A1030d)\r\n\r\n1. In Xcode create default app targeting iOS iPad and macOS.\r\n2. Replace default ContentView with code show below.\r\n3. Build and run on any supported iPad simulator.\r\n4. Then in the running application on iPad, drag any of the rows for the:\r\n    1. First time and note time shown in dragging preview.\r\n    2. Second time and note time shown in dragging preview is _different_ to that shown in first drag (4.1)\r\n5. Build and run on macOS.\r\n6. The in the running application on macOS, drag any of the rows for the: \r\n    1. First time and note time shown in dragging preview.\r\n    2. Second time and note time shown in dragging preview is _the same_ to that shown in first drag (6.1)\r\n    3. Repeat ad infinitum, and note time shown in dragging preview is _the same_ to that shown in first drag (6.1) i.e. it never gets updated regardless of changes to the View’s date State.\r\n\r\nExpected behaviour\r\n=================\r\n\r\nExpected the onDrag preview on macOS to update with date state changes as it does for iOS/iPadOS.\r\n\r\nWhat happened\r\n=============\r\n\r\nOn macOS the List’s onDrag preview is created correctly the first time only. Thereafter it does not pick updates to the parent view’s State.\r\n\r\n\r\nCode\r\n====\r\n\r\nimport SwiftUI\r\n\r\nstruct ContentView: View {\r\n    var body: some View {\r\n        List(band.indices, id: \\.self) { idx in\r\n            HStack {\r\n                Text(\"\\(idx), \\(band[idx]), @ \") + Text(date, formatter: dateFormatter)\r\n            }\r\n            .onDrag(\r\n                { NSItemProvider(object: NSString(string: String(idx))) },\r\n                preview: {\r\n                    HStack {\r\n                        Text(\"\\(idx), \\(band[idx]), @ \") + Text(date, formatter: dateFormatter)\r\n                    }\r\n\r\n                    .fixedSize()\r\n                    .padding()\r\n                    .background(Color.accentColor.opacity(0.5))\r\n                })\r\n        }\r\n\r\n        .onAppear {\r\n            _ = updateTimer\r\n        }\r\n    }\r\n\r\n    let band: Array<String> = [\"John\", \"Paul\", \"Ringo\", \"George\"]\r\n\r\n    @State var selected: Set<Int> = []\r\n    @State var date: Date = Date()\r\n\r\n    let dateFormatter: DateFormatter = {\r\n        let d = DateFormatter()\r\n        d.dateStyle = .none\r\n        d.timeStyle = .medium\r\n        return d\r\n    }()\r\n\r\n    var updateTimer: Timer {\r\n        Timer.scheduledTimer(\r\n            withTimeInterval: 1,\r\n            repeats: true,\r\n            block: { _ in\r\n                self.date = Date()\r\n            }\r\n        )\r\n    }\r\n}"
+    email: jonathan.hume@gmail.com
+    modified: "2021-12-01T17:17:47.857606Z"
+    number: FB9790379
+    number_intvalue: 9790379
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: SwiftUI's List onDrag preview is failing to update with View State changes on macOS

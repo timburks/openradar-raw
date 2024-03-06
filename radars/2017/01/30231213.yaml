@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30231213"
+    labels:
+        datastore_id: "5032676935335936"
+data:
+    classification: ""
+    created: "2017-01-30T12:57:15.39759Z"
+    description: "Area:\r\nSomething not on this list\r\n\r\nSummary:\r\nHello,\r\n\r\nplease find attached a minimal test case that shows a deadlock when closing a kqueue file descritpor with close() from another thread.\r\n\r\nThe original implementation was a periodic timer that did some periodic work and is stoppable while blocked in kevent() syscall.\r\n\r\nOnce the process is deadlocked it is interruptible and a debugger cannot attach. Running spindump reveals the following two callstacks:\r\n\r\n  Thread 0x7617c            DispatchQueue 1           1000 samples (1-1000)     priority 31 (base 31)\r\n  1000  start + 1 (libdyld.dylib + 21077) [0x7fffa67a9255]\r\n    1000  main + 27 (main.c:61,14 in kqueue_test_case + 3819) [0x100000eeb]\r\n      1000  run_test + 88 (main.c:54,5 in kqueue_test_case + 3768) [0x100000eb8]\r\n        1000  close + 10 (libsystem_kernel.dylib + 108370) [0x7fffa68d8752]\r\n         *1000  hndl_unix_scall64 + 22 (kernel + 671558) [0xffffff80002a3f46]\r\n           *1000  unix_syscall64 + 586 (kernel + 6452202) [0xffffff80008273ea]\r\n             *1000  close_nocancel + 266 (kernel + 5595690) [0xffffff800075622a]\r\n               *1000  close_internal_locked + 563 (kernel + 5577891) [0xffffff8000751ca3]\r\n                 *1000  fileproc_drain + 261 (kernel + 5578613) [0xffffff8000751f75]\r\n                   *1000  ??? (kernel + 5813123) [0xffffff800078b383]\r\n                     *1000  lck_mtx_sleep + 132 (kernel + 1049444) [0xffffff8000300364]\r\n                       *1000  thread_block_reason + 222 (kernel + 1091230) [0xffffff800030a69e]\r\n                         *1000  ??? (kernel + 1095803) [0xffffff800030b87b]\r\n                           *1000  machine_switch_context + 206 (kernel + 2102494) [0xffffff80004014de]\r\n\r\n  Thread 0x761d4            1000 samples (1-1000)     priority 31 (base 31)\r\n  1000  thread_start + 13 (libsystem_pthread.dylib + 13189) [0x100117385]\r\n    1000  _pthread_start + 286 (libsystem_pthread.dylib + 15260) [0x100117b9c]\r\n      1000  _pthread_body + 180 (libsystem_pthread.dylib + 15440) [0x100117c50]\r\n        1000  kevent + 10 (libsystem_kernel.dylib + 110122) [0x7fffa68d8e2a]\r\n         *1000  ??? (kernel + 5638944) [0xffffff8000760b20]\r\n\r\nSteps to Reproduce:\r\nCompile and run the attached project on Sierra with Xcode 8. Start the test case.\r\n\r\nExpected Results:\r\nA never ending stream of TEST invocations without deadlocks.\r\n\r\nActual Results:\r\nTEST * fd=3 . x\r\nTEST * fd=3 . x\r\nTEST * fd=3 <deadlocks here>\r\n\r\nVersion:\r\nDarwin gjasny-mbp.local 16.4.0 Darwin Kernel Version 16.4.0: Thu Dec 22 22:53:21 PST 2016; root:xnu-3789.41.3~3/RELEASE_X86_64 x86_64\r\n\r\nXcode 8.2.1\r\nBuild version 8C1002\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nThis did not happen on El Capitan with Xcode 7\r\n\r\nAttachments:\r\n'kqueue_test_case.zip' was successfully uploaded."
+    email: gjasny@googlemail.com
+    modified: "2017-01-30T12:57:15.39784Z"
+    number: "30231213"
+    number_intvalue: 30231213
+    originated: 27-Jan-2017 10:52 AM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: ""
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: 'Darwin: close after kqueue syscall deadlocks'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29271915"
+    labels:
+        datastore_id: "6075578746667008"
+data:
+    classification: Bug
+    created: "2016-11-17T18:34:13.27539Z"
+    description: "Summary:\r\nI have created a package to distribute our internal PKI Root certificates to our internal Mac clients. The certificates are delivered as payloads to the local hard drive, the as a post install script, I am trying to import the certificate chain into the users keychain with specific trust settings. The command I am using to install the root cert is:\r\nsecurity add-trusted-cert -d -r trustRoot -k ~/Library/Keychains/login.keychain-db \"/Users/Shared/Akamai/certs/akamaipkiroot.cer\"\r\nthen Im also importing the issuing cert using:\r\nsecurity add-trusted-cert -d -r trustAsRoot -k ~/Library/Keychains/login.keychain-db \"/Users/Shared/Akamai/certs/akamaipkiissuing.cer\"\r\n\r\nBoth certs get imported into the new login keychain, and the PKIRoot cert \"appears\" as \"Always Trusted\" but when I launch any apps or web sites that rely on the trusts, I am getting cert warnings that the cert can't be trusted. \r\n\r\nThe only way to resolve the trust warnings are for me to delete the root cert from the keychain, then manually add it by importing it, and manually trusting it and authenticating thru the GUI. \r\nThe OS does not seem to be respecting the security add-trusted-cert commands in Sierra, as it used to work in previous OSes.\r\n\r\nSteps to Reproduce:\r\nDelete the PKIRoot and PKIIssuing cert from Keychain Access.ap > login keychain\r\nexecute script to import cert chain and trust settings. Package executes without errors. \r\nOpen apps and web pages that rely on those certs, and get cert warnings that the cert and chain are not trusted. \r\nManually change the trust settings for PKIRoot to \"Not Trusted\" thru GUI and save settings\r\nManually change the trust settings for PKIRoot to \"Always Trust\" thru GUI and save settings\r\nOpen apps and web pages that rely on those certs, and no longer see any cert warnings\r\n\r\nExpected Results:\r\nWe've been using this package for years, with the expected result that when importing the root cert and issuing cert, they trusts are correct and allow us to connect to internal resources without certificate warnings. \r\nAgain, the syntax we are using is:\r\nsecurity add-trusted-cert -d -r trustRoot -k ~/Library/Keychains/login.keychain-db \"/Users/Shared/Akamai/certs/akamaipkiroot.cer\"\r\n\tsecurity add-trusted-cert -d -r trustAsRoot -k ~/Library/Keychains/login.keychain-db \"/Users/Shared/Akamai/certs/akamaipkiissuing.cer\"\r\n\r\nActual Results:\r\nSince using 10.12 Sierra, the package and import commands no longer seem to be working as they were previously, therefore causing our Mac users to see certificate warnings when connecting to internal resources. \r\nWe have to manually delete the certs, and manually change the trust settings thru the GUI for them to respect the trust settings\r\n\r\nVersion:\r\n10.12.1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nSince using 10.12 Sierra, the package and import commands no longer seem to be working as they were previously, therefore causing our Mac users to see certificate warnings when connecting to internal resources. \r\nWe have to manually delete the certs, and manually change the trust settings thru the GUI for them to respect the trust settings\r\n\r\nAttachments:"
+    email: petedonato@gmail.com
+    modified: "2016-11-17T18:34:13.27569Z"
+    number: "29271915"
+    number_intvalue: 29271915
+    originated: Nov 15
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.12.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: unexpected results when importing trusted certificates using command line

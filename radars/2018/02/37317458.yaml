@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "37317458"
+    labels:
+        datastore_id: "5020160561774592"
+data:
+    classification: Serious Bug
+    created: "2018-02-07T18:17:15.04913Z"
+    description: "Summary:\r\n1) App A embeds framework F, F contains some ObjC categories and other classes. If A *only* uses category methods of F,  \"unrecognized selector\" exception will happen at runtime. \r\n\r\n2) If A also uses any other classes of F then everything works fine.\r\n\r\n3) If A not only embeds framework F but also explicitly links it by adding it in Linked Frameworks and Libraries in General Settings or Link Binary With Libraries in Build Phases, even if A only uses category methods of F, A can also run without issues.\r\n\r\nBy using OBJC_PRINT_IMAGES env var I can see that F is loaded in case 2 and 3 but not in case 1.\r\n\r\nBecause case 2 is the common case, wherein F is automatically linked and loaded without requiring developers to explicitly add it to Link section, developers will be very confused when case 1 occurs to them.\r\n\r\nI think it is a genuine bug, especially considering that after F is added in Embedded Binaries section without also in Linked Frameworks and Libraries section(either because the project is created in old Xcode when this didn't automatically happen, or developers think it is not necessary and deleted it), F cannot be found again in the framework list popped by the + button.\r\n\r\nSteps to Reproduce:\r\n1. Run the sample app.\r\n2. See it crash and read console logs.\r\n3. Uncomment the [Foo new] line in AppDelegate.m.\r\n4. Run again to see it works.\r\n5. Comment out the [Foo new] line in AppDelegate.m.\r\n6. Add F in Linked Frameworks and Libraries section.\r\n7. Run again to see it works.\r\n\r\nCode: https://mega.nz/#!9TA0wBCa!Db9LiHsHKJOlbctfb5gYH53pe8w0nKJsxrCFtk2FdjQ"
+    email: an00na@gmail.com
+    modified: "2018-02-15T00:06:56.91987Z"
+    number: "37317458"
+    number_intvalue: 37317458
+    originated: February 7 2018, 12:15 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "9.2"
+    reproducible: Always
+    resolved: Behaves as Intended
+    status: Closed
+    title: Embedded framework is not loaded if only category methods are used

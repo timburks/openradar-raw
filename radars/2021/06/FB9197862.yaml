@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9197862
+    labels:
+        datastore_id: "5021925763973120"
+data:
+    classification: Bug
+    created: "2021-06-21T09:53:54.905701Z"
+    description: "UIListContentConfiguration.subtitleCell() does not result in cell layout that is consistent with UITableViewCellStyleSubtitle.\r\n\r\n# What we expect\r\n\r\ntableView-Subtitle-expected.png\r\n\r\n# What we see\r\n\r\nsubtitleCell.png\r\n\r\n# Reproduction steps\r\n\r\nConsider the following simple reproduction case:\r\n\r\n```swift\r\nlet cellConfig = UIListContentConfiguration.cell()\r\nlet subtitleConfig = UIListContentConfiguration.subtitleCell()\r\n\r\nprint(cellConfig)\r\nprint(subtitleConfig)\r\n```\r\n\r\nThis outputs the following:\r\n\r\n```\r\n<UIListContentConfiguration: 0x6000012ad8f0; Base Style = Cell; directionalLayoutMargins = {11, 16, 11, 8}; axesPreservingSuperviewLayoutMargins = [Horizontal]; imageToTextPadding = 16; textToSecondaryTextVerticalPadding = 3>\r\n<UIListContentConfiguration: 0x6000012adab0; Base Style = Subtitle Cell; directionalLayoutMargins = {4, 16, 4, 8}; axesPreservingSuperviewLayoutMargins = [Horizontal]; imageToTextPadding = 16; textToSecondaryTextVerticalPadding = 0>\r\n```\r\n\r\nNote that directionalLayoutMargins and textToSecondaryTextVerticalPadding do not match between both styles.\r\n\r\nThe attached screenshots cell.png and subtitleCell.png show the unexpected difference in layout behavior.\r\n\r\nThe subtitleCell configuration results in a significantly more dense layout than when using `cell` config. This incorrect behavior affects both UICollectionView and UITableView cells using contentConfiguration, as would be expected because the bug is in the UIListContentConfiguration implementation.\r\n\r\n# Why this feels like a problem\r\n\r\nComparing this behavior to the legacy, non-contentConfiguration UITableView APIs (i.e. assigning values to textLabel and detailTextLabel directly), you get tableView-Subtitle-expected.png, which has the expected padding around the content. The following code snippet was used to create the tableView-Subtitle-expected.png screenshot.\r\n\r\n```objc\r\n- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {\r\n  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@\"cell\"];\r\n  if (!cell) {\r\n    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@\"cell\"];\r\n  }\r\n  cell.textLabel.text = [NSString stringWithFormat:@\"Hello %@\", @(indexPath.row)];;\r\n  cell.detailTextLabel.text = [NSString stringWithFormat:@\"Hello %@\", @(indexPath.row)];\r\n  return cell;\r\n}\r\n```\r\n\r\n# Some work-arounds\r\n\r\nWe're exploring two work-arounds:\r\n\r\n1. Only use UIListContentConfiguration.cell()\r\n2. Provide a fixed version of UIListContentConfiguration.subtitleCell() that copies the mis-configured values from UIListContentConfiguration.cell().\r\n\r\n```objc\r\nUIListContentConfiguration *correctConfig = [UIListContentConfiguration cellConfiguration];\r\nUIListContentConfiguration *config = [UIListContentConfiguration subtitleCellConfiguration];\r\nconfig.directionalLayoutMargins = correctConfig.directionalLayoutMargins;\r\nconfig.textToSecondaryTextVerticalPadding = correctConfig.textToSecondaryTextVerticalPadding;\r\n```"
+    email: jverkoey@gmail.com
+    modified: "2021-06-21T09:53:54.905863Z"
+    number: FB9197862
+    number_intvalue: 9197862
+    originated: June 21, 2021
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "14"
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: UIListContentConfiguration.subtitleCell layout does not match UIListContentConfiguration.cell configured with secondaryText

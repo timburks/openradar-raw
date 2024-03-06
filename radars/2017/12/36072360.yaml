@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "36072360"
+    labels:
+        datastore_id: "5004546543714304"
+data:
+    classification: Bug
+    created: "2017-12-15T13:29:09.57366Z"
+    description: "Summary:\r\n========\r\n\r\nFollowing code could result in a crash on iOS 11:\r\n```\r\n@property NSTableView *tableView;\r\n@property NSMutableArray<NSMutableArray<CellModel *> *> *dataSourceArray;\r\n\r\n- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {\r\n    self.dataSourceArray[indexPath.section][indexPath.row].height;\r\n}\r\n\r\n- (void)removeFirstTableViewSection {\r\n    [self.dataSourceArray removeObjectAtIndex:0];\r\n    [UIView performWithoutAnimation:^{ // I am not sure if this wrapping matters\r\n        [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];\r\n    }];\r\n}\r\n```\r\n\r\n`-[UITableView deleteSections:withRowAnimation:]` checks for internal `_updateCount` value, and in case it is equal to 0, invokes `_setupCellAnimations`. `_setupCellAnimations` uses current state of the tableView – state that could be inconsistent with current dataSource state, because dataSource could already been changed. `_setupCellAnimations` sometimes invokes `tableView:heightForRowAtIndexPath:`, passing pre-dataSource-modification index path. This behaviour could result in a crash.\r\n\r\nExample: Let's have two sections in UITableView: one with 5 cells and second with 2 cells. The data source is modified first – first section is deleted. Calling `deleteSections:withRowAnimation:` right after dataSource modification could result in `tableView:heightForRowAtIndexPath:` being called for cell 0-4, unfortunately the section 0 in data source now contains only 2 cells – this could result in a crash.\r\n\r\nWorkaround: Wrapping any single tableView modification together with dataSource modification in `beginUpdates`/`endUpdates`. `beginUpdates` increments `_updateCount` and invokes `_setupCellAnimations` – thus calling any possible `tableView:heightForRowAtIndexPath:` before dataSource being modified.\r\n\r\nSteps to Reproduce:\r\n===================\r\n\r\nI have an app in the AppStore. The app contains a code similar to the above snippet. The crash caused by query for unexisting indexPath affects about 0.1% of all app users. I was not able to reproduce it by myself.\r\n\r\nExpected Results:\r\n=================\r\n\r\nCalling `-[UITableView deleteSections:withRowAnimation:]` after dataSource modification without `beginUpdates`/`endUpdates` wrapping is a common practice and is not denied by the documentation.\r\nEither:\r\n- `deleteSections:withRowAnimation:` should never query dataSource/delegate using old index paths, or\r\n- `deleteSections:withRowAnimation:` documentation should be updated to describe this behaviour.\r\n\r\nActual Results:\r\n===============\r\nCalling `-[UITableView deleteSections:withRowAnimation:]` after dataSource modification without `beginUpdates`/`endUpdates` wrapping sometimes queries for unexisting indexPaths.\r\n\r\nVersion/Build:\r\niOS 11.0.3 (15A432), 11.1.2 (15B202), 11.2.0 (15C114). Didn't observe the issue on 11.2.0 yet, although this version's adoption could still be low.\r\n\r\nConfiguration:\r\niPhone 5s, 6, 6Plus, 7, 7Plus, X"
+    email: kamil.borzym@gmail.com
+    modified: "2017-12-22T07:39:41.55678Z"
+    number: "36072360"
+    number_intvalue: 36072360
+    originated: December 15 2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS, UIKit
+    product_version: iOS 11.x
+    reproducible: Rarely
+    resolved: ""
+    status: Closed
+    title: '`-[UITableView deleteSections:withRowAnimation:]` queries for height in `UITableViewDelegate` using old indexPaths'

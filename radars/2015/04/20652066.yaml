@@ -1,0 +1,42 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20652066"
+    labels:
+        datastore_id: "6121188665327616"
+data:
+    classification: Serious Bug
+    created: "2015-04-22T16:43:43.75964Z"
+    description: |-
+        Summary:
+        My Mac app copies files the user drags in. The app is sandboxed. I've got a bug now, which I can reliably reproduce in Xcode, but which I can't track down the source of.
+
+        When I add a certain number of files, the app suddenly stops being able to access the later ones. All the source files come one level down from the same parent directory, and all of the folders in between have the same permissions, verified with ls -l. The app retains an app-scoped bookmark to Destination Directory, which is accessed before creating .directoryName and beginning the file copy.
+
+        Steps to Reproduce:
+        1. Start from a clean slate. Remove the app container and kill cfprefsd
+        2. Drag 6 directories of comics into my app from Finder (a total of 53 files)
+        3. Observe through console output and breakpoints the Posix errors that start half to 2/3 of the way through the files
+
+        Expected Results:
+        All files add successfully
+
+        Actual Results:
+        After a bunch of the files have been added, I start to get this error:
+
+        Error Domain=NSCocoaErrorDomain Code=513 "“Filename.ext” couldn’t be copied because you don’t have permission to access “.directoryName”." UserInfo=0x6080000eaf80 {NSSourceFilePathErrorKey=/Users/Username/Parent Directory/Subdir/Filename.ext, NSUserStringVariant=( Copy ), NSDestinationFilePath=/Users/Username/Desktop/Destination Directory/.directoryName/Filename.ext, NSFilePath=/Users/Username/Parent Directory/Subdir/Filename.ext, NSUnderlyingError=0x6080004567a0 "The operation couldn’t be completed. Operation not permitted"}
+
+        Notes:
+        This is a serious bug, which my customers have reported to me, and for which the only workaround is to quit the app and relaunch it. I’ve verified with a thorough audit of my code and with instrumentation for the app, that I’m not leaking file handles, and that I’m balancing each call to start accessing a secure URL with a call to stop, before moving on to the next file.
+    email: thedov@gmail.com
+    modified: "2015-04-22T16:43:43.75983Z"
+    number: "20652066"
+    number_intvalue: 20652066
+    originated: 22-Apr-2015 12:43 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: Mac OS X 10.10.3 (14D131)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'OS X Sandboxing: Permission denied errors when opening too many files'

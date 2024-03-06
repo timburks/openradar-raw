@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9907291855"
+    labels:
+        datastore_id: "4994410022436864"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2019-09-18T16:13:22.113994Z"
+    description: "FB7291855\r\n\r\nWhen calling CFURLCopyFileSystemPath(path, 1) in order to get a HFS style path, this returns incorrect results when the path contains a folder with a colon (or slash) in its name.\r\n\r\nI understand that this particular function is marked deprecated, but HFS paths are still needed in some parts of the OS API, e.g. when passing file refs to AppleScripts, and so this should still work correctly, at least, when needed. And I'm suspect it used to work correctly, but got broken a while ago.\r\n\r\nHow to reproduce the bug:\r\n\r\nIn Xcode, create a new \"command line\" project and use the attached main.m file. Run the program - it'll create a file named \"FolderEndingInSlash/\" inside \"/tmp\", when you look at the tmp folder with Finder (where \":\" in a POSIX file name appears as a \"/\").\r\n\r\nThen it calls CFURLCopyFileSystemPath to get the HFS path, which correctly would be:\r\n\r\n    Macintosh HD:private:tmp:FolderEndingInSlash/\r\n\r\nHowever, the \"/\" at the end is missing.\r\n\r\nThe reason for this bug seems to be that this function calls stringByStandardizingPath afterwards, which strips the slash by mistake.\r\n\r\nYou can read more about this here: https://stackoverflow.com/a/57948775/43615"
+    email: tempelmann@gmail.com
+    modified: "2019-09-18T16:14:51.20438Z"
+    number: "9907291855"
+    number_intvalue: 9907291855
+    originated: 18Sept19
+    parent_number: '&{NULL_VALUE}'
+    product: macOS, Foundation
+    product_version: "10.14"
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: Conversion from NSURL to a classic HFS path is incorrect when POSIX path contains a legal ":" character

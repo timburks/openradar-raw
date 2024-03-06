@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB12073340
+    labels:
+        datastore_id: "5573144987303936"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2023-03-21T18:27:02.591026Z"
+    description: "Consider the following example:\r\n\r\n```\r\nvar calendar = Calendar(identifier: .gregorian)\r\ncalendar.timeZone = .utc\r\ncalendar.firstWeekday = 2\r\n\r\nlet date = calendar.date(from: .init(year: 2022)).flatMap {\r\n    calendar.nextDate(after: $0, matching: DateComponents(year: 2023, weekOfYear: 3), matchingPolicy: .strict)\r\n}!\r\n```\r\n\r\nThis yields an incorrect value for `date`:\r\n```\r\ndate.ISO8601Format() // INCORRECT: “2023-01-09T00:00:00Z”, SHOULD BE: “2023-01-02T00:00:00Z”\r\n```\r\n\r\nWe can illustrate this even further by showing the date components for the date that was calculated:\r\n```\r\ncalendar.dateComponents(Set([.year, .weekOfYear]), from: date) // INCORRECT: “year: 2023 weekOfYear: 3”, SHOULD BE: “year: 2023 weekOfYear: 2”\r\n```\r\n\r\nEven though we asked for a strict date result that has the components year: 2023, weekOfYear: 2, we in fact received a result with a weekOfYear component set to 3.\r\n\r\nUnfortunately, this issue carries over into the rest of the year. If we ask for year: 2023, weekOfYear: 5, we receive a date with components year: 2023, weekOfYear: 6.\r\n\r\nAs a result, every application which relies on this API to calculate the time span of a specific week in this year will be receiving the wrong (subsequent) year under this calendar configuration."
+    email: lhunath@lyndir.com
+    modified: "2023-03-21T18:27:02.591198Z"
+    number: FB12073340
+    number_intvalue: 12073340
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Foundation
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: Calendar.nextDate mis-computes weekOfYear in certain configurations

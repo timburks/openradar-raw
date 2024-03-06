@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9940777
+    labels:
+        datastore_id: "5517423448948736"
+data:
+    classification: Bug
+    created: "2022-03-03T10:42:04.700022Z"
+    description: "Basic Information\r\nPlease provide a descriptive title for your feedback:\r\niOS 15.0 regression: AVPlayerViewController player instance is leaked when replaced\r\nWhich area are you seeing an issue with?\r\nAVKit\r\nWhat type of feedback are you reporting?\r\nIncorrect/Unexpected Behavior\r\nDescription\r\nPlease describe the issue and what steps we can take to reproduce it:\r\nDescription\r\n-----------\r\n\r\n`AVPlayerViewController` has a mutable player property with which the associated `AVPlayer` instance can be changed. Until iOS 15.0 this change was working fine but, since iOS 15.0, updating the player instance actually leaks the previous player instance (which usually continues to simultaneously play in the background).\r\n\r\n\r\nInstructions to reproduce the problem\r\n--------------------------------------\r\n\r\nI created a sample project showing this issue as follows:\r\n\r\n1. An `AVPlayerViewController` is instantiated and plays some content.\r\n2. After 3 seconds the player instance is switched with another one playing another stream.\r\n\r\nThe sample project is attached to this feedback:\r\n\r\n1. Extract the associated zip file, build and run the project (on a device or in the simulator).\r\n2. Wait until the second content starts playing.\r\n\r\nOn iOS 15.0 and above you can hear both contents incorrectly being played at the same time. On prior iOS 14 only the last content can be heard, as expected. Inspection of allocations in Instruments shows that only a single `AVPlayer` instance stays alive prior to iOS 15.0, while 2 instances incorrectly coexist starting with iOS 15.0.\r\n\r\nRemark:\r\n\r\nThe project can also be built for tvOS where the situation seems a bit different:\r\n\r\n- On tvOS 14 and 15, content are never simultaneously heard but...\r\n- ... in Instruments, on both tvOS 14 and 15, two persistent `AVPlayer` instances are reported.\r\n\r\nIt might therefore be valuable to consider what is happening on tvOS as well, as only 1 persistent instance should be expected.\r\n\r\n\r\nExpected results\r\n-----------------\r\n\r\nSwitching the player instance associated with an `AVPlayerViewController` correctly releases the previously registered instance, if any.\r\n\r\n\r\nActual results\r\n--------------\r\n\r\nAfter replacing the player instance associated with an `AVPlayerViewController`, the previously registered instance is leaked."
+    email: defagos@gmail.com
+    modified: "2022-03-03T10:42:04.700171Z"
+    number: FB9940777
+    number_intvalue: 9940777
+    originated: Mar 3, 2022
+    parent_number: '&{NULL_VALUE}'
+    product: AVKit
+    product_version: iOS
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'iOS 15.0 regression: AVPlayerViewController player instance is leaked when replaced'

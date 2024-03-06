@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8932965
+    labels:
+        datastore_id: "5030814031020032"
+data:
+    classification: Incorrect/Unexpected behavior
+    created: "2020-12-08T15:18:39.414951Z"
+    description: "> Please describe the issue:\r\n\r\nSPM 5.3 was introduced with Xcode 12.0. This version in particular allows resources to be provided within a Swift package. But if resources are bundled within a package product, the associated BCSymbolMaps entries are _hidden when archiving a project linked with the package.\r\n\r\nAs a result crash log symbolication is incomplete and associated symbols appear as _hidden. This makes crash logs from App Store Connect (or App Center and similar services) very hard to read, as symbols of affected libraries all appear as _hidden.\r\n\r\nNote that this issue also affects Xcode 12.3 beta 1.\r\n\r\n\r\n> Please list the steps you took to reproduce the issue:\r\n\r\nI created a sample project, attached to this issue in a zip file. The project contains a Swift package with 4 combination of programming languages and resource bundling:\r\n\r\n- An Objective-C library without resources (ObjCWithoutResources).\r\n- An Objective-C library with resources (ObjCWithResources).\r\n- A Swift library without resources (SwiftWithoutResources).\r\n- A Swift library with resources (SwiftWithResources).\r\n\r\nObjective-C products expose a class with a class and an instance method, as well as a global-scope function. Swift products expose a struct and an enum with similar methods, as well as a global-scope function. The idea is to see whether public symbols for these entities are then found in the BCSymbolMaps exported for a project using such products.\r\n\r\nAn Example workspace is therefore provided as well. Out of the zip file it links with all 4 products but does not use them directly in its source code. The idea is to use this project with the 4 products above, but linked one at a time to get the BCSymbolMaps for each case:\r\n\r\n1. Open the Example workspace.\r\n2. Under Frameworks, Libraries and Embedded Content (General tab of the Example target), remove all libraries except ObjCWithoutResources.\r\n2. Archive the project.\r\n3. Open the xcarchive and extract the BCSymbolMaps.\r\n\r\nRepeat again these four steps by linking the Example project successively with the other 3 individual package products (ObjCWithResources, SwiftWithoutResources, SwiftWithResources). You will get 4 symbol maps.\r\n\r\nFor convenience I attached the 4 obtained BCSymbolMaps to this issue, as well as two screenshots of my diff tool for comparison between the two Objective-C cases, respectively the two Swift cases. You can see that when resources are bundled the symbol maps contain a lot of _hidden entries, which are readable when no resources are bundled. This is true for both Objective-C and Swift package products (I initially thought only Objective-C might be affected).\r\n\r\n\r\n> What did you expect to happen?\r\n\r\nFor products integrating Swift 5.3 packages containing resources, crash logs are properly symbolicated.\r\n\r\n\r\n> What actually happened?\r\n\r\nFor products integrating Swift 5.3 packages containing resources, crash logs are not properly symbolicated, due to incomplete BCSymbolMaps."
+    email: defagos@gmail.com
+    modified: "2020-12-08T15:18:39.415117Z"
+    number: FB8932965
+    number_intvalue: 8932965
+    originated: Dec 8, 2020
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: "12.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Symbolication issue with SPM 5.3 packages containing resources (BCSymbolMaps contains _hidden entries)

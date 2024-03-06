@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8528804"
+    labels:
+        datastore_id: "710402"
+data:
+    classification: Performance
+    created: "2010-10-08T10:59:45.718892Z"
+    description: "Summary: \r\nQCRenderer is slow to instantiate and blocks the thread for 70 millisecs on a 12 core macpro causing stattering to the rendering of other QCRenderers in the same thread.\r\nWe use -(id) initWithCGLContext:(CGLContextObj)context pixelFormat:(CGLPixelFormatObj)format colorSpace:(CGColorSpaceRef)colorSpace composition:(QCComposition*)composition;\r\n\r\n\r\nSteps to Reproduce:\r\nIn an application that is already rendering a Quartz Composition instantiate another QCRenderer with\r\nqComp = [QCComposition compositionWithFile: aPath];\r\nrenderer = [[QCRenderer alloc] initWithCGLContext: preferredCGLContext pixelFormat: preferredCGLFormat\r\n                                       colorSpace: gColorSpace\r\n                                      composition: qComp];\r\ndepending on the complexity of the composition this instantiation can take a very long time (more than one frame) causing stattering on the other Quartz Compositions.\r\n\r\n\r\nExpected Results:\r\nWe would expect that the instantiation could be deferred and completed in background using GCD (internally).\r\n\r\nActual Results:\r\nThe instantiation instead blocks the current thread until it's executed.\r\n\r\nRegression:\r\nThe problem is almost unnoticeables if we work in Standard Definition (768x576), working in HD is almost impossible.\r\n\r\nNotes:\r\nIt's a performance bug, the app we're working on is a broadcast class real time graphical playout system that renders Quartz Compositions and we need to add compositions in real time without causing problems to what is currently playing.\r\nAs from your Technical Q&A QA1538 we can't just do the instantiation of the QCRenderer in another thread.\r\nThis is a showstopper for us.\r\nCurrently we're investigating a workaround using multiple threads (one for each QCRenderer) and rendering on each thread combining the rendered textures to a single FrameBuffer object but it sounds complicated and we're not sure that we will fix the problem."
+    email: matteo.centro@gmail.com
+    modified: "2011-08-28T05:39:39.72089Z"
+    number: "8528804"
+    number_intvalue: 8528804
+    originated: 2010 10 08
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: QCRenderer slow to instantiate

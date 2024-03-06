@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8734191
+    labels:
+        datastore_id: "5019998095409152"
+data:
+    classification: Operating System
+    created: "2020-09-23T21:38:46.442263Z"
+    description: "## Current behavior \r\nWhen an app is being put into the background a UIView's `traitCollectionDidChange(previousTraitCollection:)` is called twice. Once with the `traitCollection.userInterfaceStyle` set to the current `userInterfaceStyle` value and once again with the opposite `userInterfaceStyle` style. So for example, if the app was being displayed with the `dark` user interface style, the order would be:\r\n```\r\n- traitCollection.userInterfaceStyle = .dark\r\n- traitCollection.userInterfaceStyle = .light\r\n```\r\nBecause the last userInterfaceStyle is the opposite of the version at the time of backgrounding, `traitCollectionDidChange` is called with the current OS userInterfaceStyle every time the app subsequently enters the foreground from the background. The app code is then required to switch back to original `userInterfaceStyle`. Continuing with the same example, here is the sequence of events:\r\n```\r\n** App is in foreground with userInterfaceStyle of `.dark`\r\n** App is backgrounded\r\n- `traitCollectionDidChange(_:)` call with `traitCollection.userInterfaceStyle = .dark`\r\n- `traitCollectionDidChange(_:)` call with `traitCollection.userInterfaceStyle = .light`\r\n\r\n** App is brought to the foreground from the background.\r\n- `traitCollectionDidChange(_:)` call with `traitCollection.userInterfaceStyle = .dark`\r\n```\r\n\r\n## Expected Behavior\r\nThe app should have the same `userInterfaceStyle` value when entering the foreground from the background as it had before it was backgrounded. That way if the user themselves has not changed their preferred `userInterfaceStyle` the call to `traitCollectionDidChange(_:)` when entering the foreground would be a no-op. \r\n\r\n## Why this is a problem\r\nThis causes a user facing problem when switching between user interface styles is not instantaneous. For example, when switching to a custom dark mode or light mode map style. Applying an entire custom map style is not instant. So when the user foregrounds the app there is slight \"flicker\" when the map is apply the correct style to match the userInterfaceStyle. Even though it shouldn't have to because the user didn't _actually_ change their Dark Mode and Light Mode settings before foregrounding the app."
+    email: mason@livefront.com
+    modified: "2020-09-23T21:38:46.442441Z"
+    number: FB8734191
+    number_intvalue: 8734191
+    originated: 09/23/2020
+    parent_number: '&{NULL_VALUE}'
+    product: Dark Mode
+    product_version: "14.0"
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: App left in incorrect UserStyleInterface when app is backgrounded

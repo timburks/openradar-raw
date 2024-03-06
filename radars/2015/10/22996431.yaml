@@ -1,0 +1,58 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22996431"
+    labels:
+        datastore_id: "4607204069998592"
+data:
+    classification: Enhancement
+    created: "2015-10-06T20:07:34.638Z"
+    description: |-
+        Summary:
+        swiftc coerces arrays to UnsafePointer and thus also allows == in generic contexts when the arguments in question are arrays not returned from closure literals. Note that this _only_ works in generic contexts; you can’t let-bind == if the arguments are arrays.
+
+
+        Steps to Reproduce:
+        1. This code:
+        struct A {} // not Equatable!
+
+        func callsToThisShouldNotCompileButTotallyDo<A>(a: A, _ test: (A, A) -> Bool, _ b: A) -> Bool {
+        	return test(a, b)
+        }
+
+        func doesNotEvenCompile<A>(a: () -> A, _ test: (A, A) -> Bool, _ b: () -> A) -> Bool {
+        	return test(a(), b())
+        }
+
+        for i in 0..<1000000 {
+        	assert(callsToThisShouldNotCompileButTotallyDo([ A(), A() ], ==, [ A(), A() ]), "failed at comparison \(i)")
+        }
+
+
+        Expected Results:
+        should not compile
+
+
+        Actual Results:
+        but totally does.
+
+
+        Regression:
+        If you call callsToThisShouldNotCompileButTotallyDo, it compiles, and should not. At runtime, it fails deterministically.
+        If you call doesNotEvenCompile, it does not even compile. This is correct.
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-10-06T20:07:34.63816Z"
+    number: "22996431"
+    number_intvalue: 22996431
+    originated: 06-Oct-2015 04:07 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0.1 (7A1001)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: swiftc selects UnsafePointer == when resolving overload in generic context involving arrays

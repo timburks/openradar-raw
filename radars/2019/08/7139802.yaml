@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7139802"
+    labels:
+        datastore_id: "4981633065156608"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2019-08-27T20:23:08.300073Z"
+    description: "We have some code that looks for the application windows in the UIApplication.windows array. Our windows are all a UIWindow subclass (TWWindow), so we can filter the windows in that array and ignore system's \"private\" windows. If after filtering the array is empty, we assert, because we should never not have at least one window (the main app window).\r\n\r\nIn iOS 13, we started hitting this. Our app is still compiled with Xcode 10.x and the iOS 12 SDK. We haven't adopted the UIWindowSession API, so I believe this behavior is a regression.\r\n\r\nThis is an example assertion:\r\n\r\nFatal error: We should have a top app window. All windows: [<UIRemoteKeyboardWindow: 0x11deea070; frame = (0 0; 667 375); hidden = YES; opaque = NO; autoresize = W+H; layer = <UIWindowLayer: 0x280c03dc0>>]: file /Users/jenkins/workspace/twitch-iphone-testflight/Twitch.tv/Code/Controllers/TWWindow.swift, line 52\r\n\r\nThe assertion code message is implemented like this:\r\n\r\n\"We should have a top app window. All windows: \\(UIApplication.shared.windows)\"\r\n\r\nYou can see that the array of windows only contains one system window (UIRemoteKeyboardWindow), and doesn't contain our application window. All of the crashes indicate in Crashlytics that the application was in the background when the crash happened (from the stacktrace, we can infer that the application was in the process of backgrounding).\r\n\r\nWe only have assertions enabled in beta builds, where this happens a few times a day (it's only used by a few hundred users a month), but we believe and are concerned that this issue will become serious once iOS 13 comes out."
+    email: javier.api@gmail.com
+    modified: "2019-08-27T20:23:08.300234Z"
+    number: "7139802"
+    number_intvalue: 7139802
+    originated: 8/27/2019
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: "13.0"
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: iOS 13 sometimes not returning app windows in UIApplication.windows when app is backgrounded

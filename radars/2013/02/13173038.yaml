@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13173038"
+    labels:
+        datastore_id: "2682402"
+data:
+    classification: Serious Bug
+    created: "2013-02-07T19:31:39.881278Z"
+    description: "Summary:\r\n\r\nWhen the -locationManager:didUpdateToLocation:fromLocation: message is sent to the CLLocationManagerDelegate, newLocation (\"to location\") is correct, but locationManager.location is incorrect (still contains the old location).\r\n\r\nSteps to Reproduce:\r\n\r\n1. Download my sample project at https://github.com/sibljon/CoreLocationDidUpdateToLocationBug\r\n2. Run in Simulator\r\n3. Set your location to Apple (Debug->Location->Apple) and observe console\r\n4. Set your location to Germany (Debug->Location->Custom) -- Latitude 51, Longitude 9 -- and observe console\r\n5. Note how when you change the location to Germany:\r\n    newLocation == <+51.00000000,+9.00000000>\r\n    - [CLLocationManager location] == <+33.67879735,-112.62216181>\r\n\r\nExpected Results:\r\n\r\nThe CLLocationManagerDelegate Protocol Reference states that:\r\n\r\n\"By the time this message is delivered to your delegate, the most recent location data is also available directly from the CLLocationManager object. The newLocation parameter may contain the data that was cached from a previous usage of the location service. You can use the timestamp property of the location object to determine how recent the location data is.\"\r\n\r\nIn other words, [CLLocationManager location] should be correct when the -locationManager:didUpdateToLocation:fromLocation: message is sent\r\n\r\nNOTE: I also have tested this with -locationManager:didUpdateLocations: (the iOS 6+ preferred callback), and it produces the same stale location.  I left -locationManager:didUpdateLocations: commented out in the example project (JSViewController.m)\r\n\r\nActual Results:\r\n\r\n[CLLocationManager location] is not updated when the locationManager:didUpdateToLocation:fromLocation: message is sent.\r\n\r\nRegression:\r\n\r\nThis bug has been observed on the iOS 6.0 and 6.1 Simulators.\r\n\r\nNotes:"
+    email: jonsibley@gmail.com
+    modified: "2013-02-07T19:31:54.896848Z"
+    number: "13173038"
+    number_intvalue: 13173038
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: iOS SDK 6.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CLLocationManagerDelegate callback bug

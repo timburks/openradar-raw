@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29340256"
+    labels:
+        datastore_id: "5064620351946752"
+data:
+    classification: ""
+    created: "2016-11-18T23:22:12.4465Z"
+    description: "Summary:\r\nIt is expected that String.canBeConverted returning true should always correspond to [NSString dataUsingEncoding:] returning non-nil, however there are cases where this is not true. If you construct a UTF-16 string with only a first surrogate character and try to convert it to UTF-8, String.canBeConverted will be true, but -dataUsingEncoding: will be nil. This is either a bug in one or the other method (and possibly also in the method that allowed this string to be generated; I'm not certain if it's valid).\r\n\r\nFurthermore, string.data(using:.utf8) is nil when string.utf8 is not. This is surprising at least.\r\n\r\nSteps to Reproduce:\r\n        const unsigned char bytes[] = {0xDC, 0};\r\n        NSData *data = [NSData dataWithBytes:bytes length:2];\r\n        NSString *string = [[NSString alloc] initWithData:data encoding: NSUTF16StringEncoding];\r\n        NSLog(@\"%@\", string); // \\udc00\r\n        NSLog(@\"%d\", [string canBeConvertedToEncoding:NSUTF8StringEncoding]); // 1\r\n        NSData *utf8 = [string dataUsingEncoding:NSUTF8StringEncoding];\r\n        NSLog(@\"%@\", utf8); // (null)\r\n        NSLog(@\"%s\", string.UTF8String); // \"\"\r\n        NSLog(@\"%d\", string.UTF8String == nil); // 1\r\n\r\nNote that the Swift version of this is also incorrect, but different:\r\n\r\nlet lowSurrogateFirst = Data([0xDC, 0])\r\nlet string = String(bytes: lowSurrogateFirst, encoding: .utf16BigEndian)! // replacement-character\r\nstring.canBeConverted(to: .utf8) // true\r\nstring.data(using: .utf8) // nil\r\nstring.utf8 // replacement character\r\nData(string.utf8) as NSData // <efbfbd> (replacement character)\r\n\r\n\r\nExpected Results:\r\nAt a minimum, canBeConverted should always be false if data(using:) will return to be nil.\r\n\r\nIt's unclear whether NSString or String is more correct in how they accept this string of bytes. Since this sequence is not valid UTF-16, I would expect init to fail rather than injecting a replacement character."
+    email: robnapier@gmail.com
+    modified: "2016-11-18T23:22:12.44672Z"
+    number: "29340256"
+    number_intvalue: 29340256
+    originated: 18-Nov-2016 06:21 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: Xcode 8.1
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: String conversion can return nil when canBeConverted returns true

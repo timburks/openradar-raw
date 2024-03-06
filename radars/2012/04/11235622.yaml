@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11235622"
+    labels:
+        datastore_id: "1647410"
+data:
+    classification: Performance
+    created: "2012-04-12T13:29:27.12566Z"
+    description: "Summary:\r\n\r\nUsing Nested NSManagedObjectContexts removes the positive benefits of using a fetchBatchSize on NSFetchRequest for SQL data stores. \r\n\r\nWhen using a single NSManagedObjectContext, just the primary keys sorted by the sort descriptors are fetched first, and then fetchBatchSize worth of objects are fetched at a time.  Using nested NSManagedObjectContext's, the parent NSManagedObjectContext fetches all of the columns, and then presumably uses this data to fulfil the child context's requests.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Build the attached project either for Simulator or a device.\r\n2. Run it twice with the -com.apple.CoreData.SQLDebug 1 command line argument. The first time the performance figures are off probably due to disk caching.\r\n3. The time for the Single Context case is faster than the nested context case.\r\n\r\nExpected Results:\r\n\r\nThe time taken for the Nested Context case is about the same or only slightly slower than the single Context case.\r\n\r\nActual Results:\r\n\r\nThe Nested Context case is about 5x slower for this case.  Below are the output from an iPhone 4:\r\n2012-04-12 23:21:26.449 NestedMOCTest[1975:707] ******* Single Context test ********\r\n2012-04-12 23:21:26.477 NestedMOCTest[1975:707] CoreData: annotation: Connecting to sqlite database file at \"/var/mobile/Applications/E8AC836C-40C5-462C-A1A8-93EC30F0C90C/NestedMOCTest.app/NestedMOCTest.sqlite\"\r\n2012-04-12 23:21:26.485 NestedMOCTest[1975:707] CoreData: sql: SELECT Z_VERSION, Z_UUID, Z_PLIST FROM Z_METADATA\r\n2012-04-12 23:21:26.497 NestedMOCTest[1975:707] CoreData: sql: SELECT 0, t0.Z_PK FROM ZROW t0 ORDER BY t0.ZANATTRIBUTE\r\n2012-04-12 23:21:26.614 NestedMOCTest[1975:707] CoreData: annotation: sql connection fetch time: 0.1113s\r\n2012-04-12 23:21:26.619 NestedMOCTest[1975:707] CoreData: annotation: total fetch execution time: 0.1226s for 10000 rows.\r\n2012-04-12 23:21:26.628 NestedMOCTest[1975:707] CoreData: sql: SELECT 0, t0.Z_PK, t0.Z_OPT, t0.ZANATTRIBUTE FROM ZROW t0 WHERE  t0.Z_PK IN  (?,?,?,?,?,?,?,?,?,?)  ORDER BY t0.ZANATTRIBUTE LIMIT 10\r\n2012-04-12 23:21:26.637 NestedMOCTest[1975:707] CoreData: annotation: sql connection fetch time: 0.0082s\r\n2012-04-12 23:21:26.642 NestedMOCTest[1975:707] CoreData: annotation: total fetch execution time: 0.0145s for 10 rows.\r\n\r\n\r\nFor this single context case we see that 0.1226s + 0.0145s were taken to get the first batch from the store. Just the Primary key was fetched first.\r\n\r\n2012-04-12 23:21:26.648 NestedMOCTest[1975:707] ******* Nested Context test ********\r\n2012-04-12 23:21:26.655 NestedMOCTest[1975:707] CoreData: annotation: Connecting to sqlite database file at \"/var/mobile/Applications/E8AC836C-40C5-462C-A1A8-93EC30F0C90C/NestedMOCTest.app/NestedMOCTest.sqlite\"\r\n2012-04-12 23:21:26.662 NestedMOCTest[1975:707] CoreData: sql: SELECT Z_VERSION, Z_UUID, Z_PLIST FROM Z_METADATA\r\n2012-04-12 23:21:26.672 NestedMOCTest[1975:707] CoreData: sql: SELECT 0, t0.Z_PK, t0.Z_OPT, t0.ZANATTRIBUTE FROM ZROW t0 ORDER BY t0.ZANATTRIBUTE\r\n2012-04-12 23:21:27.530 NestedMOCTest[1975:707] CoreData: annotation: sql connection fetch time: 0.6705s\r\n2012-04-12 23:21:27.536 NestedMOCTest[1975:707] CoreData: annotation: total fetch execution time: 0.8637s for 10000 rows.\r\n\r\nFor this nested context case we see that all data was fetched from the store and it took 0.6705s, 5x slower than the single context case."
+    email: graham.dennis@gmail.com
+    modified: "2012-04-12T13:29:27.125889Z"
+    number: "11235622"
+    number_intvalue: 11235622
+    originated: "2012-04-12"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 5.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Nested Managed Object Contexts remove the benefit of fetchBatchSize

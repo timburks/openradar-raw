@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "38019922"
+    labels:
+        datastore_id: "6067151181971456"
+data:
+    classification: Serious Bug
+    created: "2018-03-01T10:04:20.37591Z"
+    description: "Summary:\r\nIn my project, when setting a custom class for a view in Interface Builder and keeping the default “Inherit Module From Target”, the app will crash like this:\r\n\r\n2018-03-01 10:44:06.191809+0100 TargetName[75262:2191024] Unknown class _TtC7appname26TopContentViewWithoutGraph in Interface Builder file.\r\n2018-03-01 10:44:06.259342+0100 TargetName[75262:2191024] *** Terminating app due to uncaught exception 'NSUnknownKeyException', reason: '[<UIView 0x7febc5e76670> setValue:forUndefinedKey:]: this class is not key value coding-compliant for the key buttonContainerHeightConstraint.'\r\n\r\nTo protect the client, I’ve renamed specific words. The module is called “APPName”, but in the compiled nib, it seems to be pointing to a symbol containing “appname”, which I think is what is causing the crash. The line that compiles the Nib looks like this:\r\n\r\nCompileXIB Main/Views/TopContentViewWithoutGraph.xib\r\n    cd /Users/simon/code/appname-ios/app\r\n    export PATH=\"/Applications/Xcode/Xcode-9.2.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Applications/Xcode/Xcode-9.2.app/Contents/Developer/usr/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin\"\r\n    export XCODE_DEVELOPER_USR_PATH=/Applications/Xcode/Xcode-9.2.app/Contents/Developer/usr/bin/..\r\n    /Applications/Xcode/Xcode-9.2.app/Contents/Developer/usr/bin/ibtool --errors --warnings --notices --module appname --output-partial-info-plist /Users/simon/Library/Developer/Xcode/DerivedData/APPName-gojknyfwzriukldevdemryowfsoh/Build/Intermediates.noindex/APPName.build/Debug-iphonesimulator/Target\\ Name.build/TopContentViewWithoutGraph-PartialInfo.plist --auto-activate-custom-fonts --target-device iphone --minimum-deployment-target 10.0 --output-format human-readable-text --compile /Users/simon/Library/Developer/Xcode/DerivedData/APPName-gojknyfwzriukldevdemryowfsoh/Build/Products/Debug-iphonesimulator/TargetName.app/TopContentViewWithoutGraph.nib /Users/simon/code/appname-ios/app/Main/Views/TopContentViewWithoutGraph.xib\r\n\r\nAs you see, there is a ‘—module appname’ there. In other calls to ibtool, like a storyboard, I see the correct ‘—module APPName’. \r\n\r\nSteps to Reproduce:\r\nI was unable to reproduce this in a simple project.\r\n\r\nExpected Results:\r\nPass the correct module name and don’t crash. \r\n\r\nActual Results:\r\nPass wrong module name and crash. \r\n\r\nVersion:\r\nVersion 9.2 (9C40b) \r\n\r\nNotes:\r\nWorkaround is to uncheck “Inherit module from target”, which fills in APPName for me explicitly and works."
+    email: skagedal@gmail.com
+    modified: "2018-03-02T14:21:03.67464Z"
+    number: "38019922"
+    number_intvalue: 38019922
+    originated: 01-Mar-2018 11:04 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Version 9.2 (9C40b)
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: Nibs sometimes get compiled with lowercase modulename, causing crash

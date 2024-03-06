@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35650822"
+    labels:
+        datastore_id: "5038346057285632"
+data:
+    classification: Bug
+    created: "2017-11-21T01:47:23.28965Z"
+    description: "If the WebGL canvas is resized, any subsequent draw calls that occur while a texture is bound produce the following error:\r\n\r\nWebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.\r\n\r\nSteps to Reproduce:\r\n\r\nOpen the attached HTML file.\r\n\r\nExpected Results:\r\n\r\nNo errors in console.\r\n\r\nActual Results:\r\n\r\nAbove error appears in console.\r\n\r\nVersion/Build:\r\n11.0.1 (12604.3.5.1.1)\r\n\r\nConfiguration:\r\nmacOS 10.12.6 (16G1036)\r\nMacBook Pro (13-inch, 2017, Four Thunderbolt 3 Ports)\r\nIntel Iris Plus Graphics 650 1536 MB\r\nComments\r\n\r\n\r\n-------\r\n\r\n\r\n<!DOCTYPE html>\r\n<html>\r\n<head>\r\n    <meta charset=\"utf-8\"/>\r\n    <title>Example</title>\r\n</head>\r\n<body>\r\n<canvas id=\"webgl\" width=\"640\" height=\"480\"></canvas>\r\n<script type=\"text/javascript\">\r\n    var canvas = document.getElementById('webgl');\r\n    var gl = canvas.getContext('webgl');\r\n\r\n    gl.clearColor(0.8, 0.8, 0.8, 1);\r\n    gl.clear(gl.COLOR_BUFFER_BIT);\r\n\r\n    var prog = gl.createProgram();\r\n\r\n    var vertex = gl.createShader(gl.VERTEX_SHADER);\r\n    gl.shaderSource(vertex, `\r\n        attribute vec3 pos;\r\n        void main() {\r\n            gl_Position = vec4(pos, 2.0);\r\n        }\r\n    `);\r\n    gl.compileShader(vertex);\r\n    gl.attachShader(prog, vertex);\r\n\r\n    var fragment = gl.createShader(gl.FRAGMENT_SHADER);\r\n    gl.shaderSource(fragment, `\r\n        void main() {\r\n        \tgl_FragColor = vec4(0.5, 0.5, 1.0, 1.0);\r\n        }\r\n    `);\r\n    gl.compileShader(fragment);\r\n    gl.attachShader(prog, fragment);\r\n\r\n    gl.linkProgram(prog);\r\n    gl.useProgram(prog);\r\n\r\n    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());\r\n    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([\r\n        -1, 0, 0,\r\n        0, 1, 0,\r\n        0, -1, 0,\r\n        1, 0, 0\r\n    ]), gl.STATIC_DRAW);\r\n\r\n    var attr = gl.getAttribLocation(prog, 'pos');\r\n    gl.enableVertexAttribArray(attr);\r\n    gl.vertexAttribPointer(attr, 3, gl.FLOAT, false, 0, 0);\r\n\r\n    const texture = gl.createTexture();\r\n    gl.bindTexture(gl.TEXTURE_2D, texture);\r\n    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 64, 64, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(64 * 64 * 4));\r\n\r\n    canvas.width = canvas.width + 1;\r\n\r\n    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);\r\n</script>\r\n</body>\r\n</html>"
+    email: john.firebaugh@gmail.com
+    modified: "2017-11-21T01:47:23.28991Z"
+    number: "35650822"
+    number_intvalue: 35650822
+    originated: November 20 2017
+    parent_number: '&{NULL_VALUE}'
+    product: Safari
+    product_version: 11.0.1 (12604.3.5.1.1)
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: '"texture bound to texture unit 0 is not renderable" error after resizing WebGL canvas'

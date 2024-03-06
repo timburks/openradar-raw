@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31423807"
+    labels:
+        datastore_id: "5042207132221440"
+data:
+    classification: ""
+    created: "2017-04-04T09:24:14.95997Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nUICollectionView seems to have serious performance issues when using a ‘complex’ layout with many sections and and many supplementary/decoration views in each section.\r\n\r\nUICollectionView blocks the main thread when calling -[UICollectionView performBatchUpdates:completion:] and performing changes.\r\n\r\nI've attached a screenshot of time profiler in Instruments.\r\nIt looks as though most of the time is spent in UICollectionView’s internal classes, UICollectionViewData in particular, accessing NSDictionaries, probably using NSIndexPath as the key by looking at how much time is spent is -[NSIndexPath hash] and -[NSIndexPath isEqual:].\r\n\r\nThe issue is only present when using supplementary views.\r\nWhen only showing items, -[UICollectionView performBatchUpdates:completion:] is very performant.\r\n\r\nI'm excluding a problem in my own layout, given that I'm making good use of caches, never recomputing attributes that have already been computed. Moreover, Instruments clearly shows performance issues in UIKit's internal classes.\r\n\r\nSteps to Reproduce:\r\n1. Run the example project and start scrolling the app horizontally\r\n2. As you scroll, new items will be added calling\r\n-[UICollectionView performBatchUpdates:completion:]\r\n3. Notice how the scroll is very laggy. This is because -[UICollectionView performBatchUpdates:completion:] blocks the main thread.\r\n\r\n4. Now, stop the app and comment out the code in CollectionViewLayout.m from line 83 to line 95, which removes supplementary views.\r\n5. As you scroll, new items will be added calling\r\n-[UICollectionView performBatchUpdates:completion:]\r\n6. Notice how the scroll is now very performant.\r\n\r\nExpected Results:\r\n-[UICollectionView performBatchUpdates:completion:] should be very performant, regardless of whether the UICollectionView is making use of supplementary/decoration views.\r\n\r\nActual Results:\r\n-[UICollectionView performBatchUpdates:completion:] is very slow when supplementary/decoration views are being used.\r\n\r\nVersion:\r\niOS 10.2\r\n\r\nConfiguration:\r\niOS simulator, iPhone 6S\r\n\r\nAttachments:\r\n'UICollectionView performance.png' and 'RDAR - CollectionViewBatchUpdates.zip' were successfully uploaded.\r\nhttps://www.dropbox.com/sh/uguxlfqxo6nybny/AACoVVRGzZlecrur29PguQESa?dl=0"
+    email: marco@marcosero.com
+    modified: "2017-04-04T09:24:14.96026Z"
+    number: "31423807"
+    number_intvalue: 31423807
+    originated: 04/04/2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "10.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Serious performance issues in -[UICollectionView performBatchUpdates:completion:]

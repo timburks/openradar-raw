@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15599098"
+    labels:
+        datastore_id: "5261784298553344"
+data:
+    classification: Performance
+    created: "2013-12-06T18:57:24.46747Z"
+    description: "There is a performance regression when calling +respondsToSelector: (not -respondsToSelector:) on a class that does not implement that selector in iOS 7. For our app, we see a regression in total time spent in +respondsToSelector: on launch from ~40 ms in iOS 6 to ~400 ms on iOS 7.\r\n\r\nAs far as we can tell, the reason for this is because the implementation of _class_resolveClassMethod changed in iOS 7. In this function, the runtime needs to find the class associated with the metaclass passed into the function. In iOS 6, this was done by looking up the class by name in a hash table. In iOS 7, this is done by calling _class_getNonMetaClass, which looks for the metaclass => class mapping in a hash table that is almost never populated with anything, then devolves into a linear scan of all classes in all loaded libraries. See the attached text file for relevant code snippets.\r\n\r\nIt seems like the perf regression would go away if:\r\n 1. the runtime switched back to using objc_getClass to find the class associated with the metaclass, or\r\n 2. the runtime could early exit without calling +resolveClassMethod: if it detected that the +resolveClassMethod: that would be called would be NSObject's (which does nothing and just returns NO anyway).\r\n\r\nSteps to Reproduce:\r\nRun the attached test app on an iPhone 4. Notice that in the attached instruments traces, we spend 60 ms in the CallRespondsToSelector function in iOS 6, and 523 ms in the CallRespondsToSelector function in iOS 7.\r\n\r\nExpected Results:\r\nThere shouldn't be a 10x perf regression in this function.\r\n\r\nActual Results:\r\nThere is a 10x perf regression in this function.\r\n\r\nVersion:\r\n10A403 and 11B554a\r\n\r\nSample app code to test for the regression is here: http://pastebin.com/7T2Yqfbg"
+    email: ben@nhaminated.com
+    modified: "2014-02-05T02:35:04.065655Z"
+    number: "15599098"
+    number_intvalue: 15599098
+    originated: 12/5/2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.0"
+    reproducible: Always
+    resolved: Resolved in 7.1b3 (11D5127c)
+    status: Closed
+    title: Performance regression in +[NSObject respondsToSelector:] in iOS 7

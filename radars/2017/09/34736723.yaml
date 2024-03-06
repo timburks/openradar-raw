@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34736723"
+    labels:
+        datastore_id: "5502678058663936"
+data:
+    classification: Suggestion
+    created: "2017-09-29T11:49:33.56629Z"
+    description: "Area:\r\nXcode\r\n\r\nWe observe that many of our startup calls to UIKit methods go through the same stack trace:\r\n\r\n* thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.2 2.1\r\n    frame #0: 0x0000000111c6fb86 libc++abi.dylib`__cxa_throw\r\n    frame #1: 0x00000001197f02e0 libFontParser.dylib`TFileDescriptorContext::TFileDescriptorContext(char const*) + 142\r\n    frame #2: 0x0000000119818e40 libFontParser.dylib`TFileDataReference::MapOrRead(char const*, int) + 36\r\n    frame #3: 0x00000001197f013e libFontParser.dylib`TFileDataReference::TFileDataReference(char const*) + 100\r\n    frame #4: 0x00000001197eff5c libFontParser.dylib`TFileDataSurrogate::TFileDataSurrogate(char const*, bool) + 138\r\n    frame #5: 0x00000001198374f6 libFontParser.dylib`TFont::CreateFontEntities(char const*, bool, bool&, short, char const*, bool) + 250\r\n    frame #6: 0x0000000119838d8f libFontParser.dylib`TFont::CreateFontEntitiesForFile(char const*, bool, bool, short, char const*) + 237\r\n    frame #7: 0x00000001197ef9c1 libFontParser.dylib`FPFontCreateFontsWithPath + 161\r\n    frame #8: 0x000000010b09ad37 CoreGraphics`create_private_data_array_with_path + 29\r\n    frame #9: 0x000000010ad489f7 CoreGraphics`CGFontCreateFontsWithPath + 26\r\n    frame #10: 0x000000010ada580c CoreGraphics`CGFontCreateFontsWithURL + 373\r\n    frame #11: 0x0000000113d6af00 GraphicsServices`AddFontsFromURLOrPath + 133\r\n    frame #12: 0x0000000113d6e8d5 GraphicsServices`__Initialize_block_invoke + 1135\r\n\r\nIf we enable All Exceptions breakpoint we always see that a call to UIKit always reaches the above functions and debugger always stops at something that throws a C++ exception, specifically TFileDescriptorContext::TFileDescriptorContext method.\r\n\r\nIn the attached I am commenting out different parts of our app and still there are some calls to UIKit methods that go through this very same stack trace.\r\n\r\nFrom our experience we know that Exceptions Must Not Be Used For Flow Control http://wiki.c2.com/?DontUseExceptionsForFlowControl so we find it very strange that UIKit has a code that always throws and catches something inside of its internals and then continues to work as if nothing has happened.\r\n\r\nOur app is very large so we cannot say with confidence that this throwing is not caused by something that we do on our end - in this was our fault of any kind, we would still like the app to do a real crash with a friendly descriptive error message.\r\n\r\nIf this is purely a current iOS's implementation detail, please rework the code so that it does not make our debugger to always stop on this artificial exception."
+    email: s.pankevich@gmail.com
+    modified: "2017-09-29T11:49:33.5666Z"
+    number: "34736723"
+    number_intvalue: 34736723
+    originated: "2017-09-29"
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: Version 9.0 (9A235)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 9: Calls to UIKit methods go through CGFontCreateFontsWithURL that always throws and catches an exception.'

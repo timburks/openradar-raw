@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "37723855"
+    labels:
+        datastore_id: "4976246735765504"
+data:
+    classification: ""
+    created: "2018-02-23T17:09:57.11867Z"
+    description: "Our dkreadwritecompletion() function calls into xnu/bsd/vfs/vfs_bio.c@buf_biodone(), which eventually calls a newish function, xnu/bsd/vfs/vfs_disk_conditioner.c@disk_conditioner_delay(). buf_biodone() populates the mount_t structure only if (buf_t bp)'s vnode member is not null. However, disk_conditioner_delay() doesn't make this check. It does:\r\n\r\nmp = buf_vnode(bp)->v_mount;\r\n\r\nThis doesn't protect against buf_vnode(bp) returning NULL which results in a crash in my code. I haven't ruled out that my code is causing the vnode member to be NULL, but it wouldn't cause a crash anyway if it were coded in a defensive manner like buf_biodone() is.\r\n\r\nSteps to Reproduce:\r\nPass a bp with a null bp->b_bp member into disk_conditioner_delay().\r\n\r\nExpected Results:\r\nNo panic.\r\n\r\nActual Results:\r\nPanic.\r\n\r\nVersion/Build:\r\n10.13.3 17D47\r\n\r\nConfiguration:\r\nWe have an ATTO card and fibre channel storage that this is writing to."
+    email: joh07467@gmail.com
+    modified: "2018-02-23T17:09:57.11888Z"
+    number: "37723855"
+    number_intvalue: 37723855
+    originated: 02/20/2018
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: "10.13"
+    reproducible: yes
+    resolved: ""
+    status: open
+    title: Null dereference in disk_conditioner_delay

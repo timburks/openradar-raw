@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28108858"
+    labels:
+        datastore_id: "5058247425785856"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2016-09-01T01:51:15.24243Z"
+    description: "Summary:\r\nMy app uses a UIImagePickerController with a custom cameraOverlayView that has a shutter button and flash button to toggle between On/Off/Auto. When the flash is on (picker.cameraFlashMode = UIImagePickerControllerCameraFlashModeOn), and the user locks their phone with the power button while a picture is being taken (i.e. immediately after -takePicture is called), the UIImagePickerController crashes. See the attached crash report.\r\n\r\nSteps to Reproduce:\r\n1. Present UIImagePickerController with shutter button on custom overlay and cameraFlashMode = UIImagePickerControllerCameraFlashModeOn.\r\n2. Push shutter button.\r\n3. Immediately (before or during the flash), hit the iPhone's power button to lock it.\r\n\r\n\r\n\r\nExpected Results:\r\nNo crash. Ideally finish taking the picture and call imagePickerController:didFinishPickingMediaWithInfo: on the delegate.\r\n\r\nActual Results:\r\nThe UIImagePickerController crashes with:\r\n\r\nFatalException: NSInvalidArgumentException\r\n*** setObjectForKey: object cannot be nil (key: UIImagePickerControllerOriginalImage)\r\n\r\nThis happens inside inside __CreateInfoForImage, called from PLNotifyImagePickerOfImageAvailability.\r\n\r\nNotes:\r\nI was also able to replicate this by dismissing the UIImagePickerController via the app's UI rather than hitting the power button. I disabled user interaction in the app while the picture is being taken to prevent that scenario, but I can't disable the power button.\r\n\r\nI tried changing my settings to require a passcode after one minute rather than immediately, thinking maybe this had something to do with data protection, but I was still able to replicate the crash reliably.\r\n\r\nConfiguration:\r\niPhone 6s, 64GB. AT&T. I also have Crashlytics reports for this on other iPhone models. No iPads, but that might be a coincidence."
+    email: curtis.duhn@gmail.com
+    modified: "2016-09-01T01:51:15.24261Z"
+    number: "28108858"
+    number_intvalue: 28108858
+    originated: 08/31/2016
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: iOS 9.3.5. I have Crashlytics reports for this on iOS 8, 9, and 10.
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIImagePickerController with flash on crashes when phone is locked during -takePicture

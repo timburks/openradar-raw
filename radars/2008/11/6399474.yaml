@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6399474"
+    labels:
+        datastore_id: "898"
+data:
+    classification: Serious Bug
+    created: "2008-11-25T10:01:31.73789Z"
+    description: "Summary:\r\nICACopyObjectThumbnail, when called on a device object (as demonstrated by Apple sample code), always returns paramErr.\r\n\r\nSteps to Reproduce:\r\n1. \t\tstruct ICACopyObjectThumbnailPB getThumbnailPB = {\r\n\t\t\t.header = {\r\n\t\t\t\t.err = noErr,\r\n\t\t\t\t.refcon = (unsigned long)self\r\n\t\t\t},\r\n\t\t\t.object = [objectIDNum unsignedIntValue],\r\n\t\t\t.thumbnailFormat = kICAThumbnailFormatPNG,\r\n\t\t\t.thumbnailData = (CFDataRef *)&thumbnailData\r\n\t\t};\r\n2.\t\timageCaptureErrorCode = ICACopyObjectThumbnail(&getThumbnailPB, /*completion*/ NULL);\r\n\r\nExpected Results:\r\nICACopyObjectThumbnail either returns thumbnail data or returns an error code that specifically indicates that the object does not have a thumbnail.\r\n\r\nActual Results:\r\nICACopyObjectThumbnail returns the bane of my existence, paramErr.\r\n\r\nRegression:\r\nPossibly 10.3, sort of. ICACopyObjectThumbnail returns paramErr, but ICAGetPropertyByType and ICAGetPropertyData (the older API, deprecated since Leopard) return kICAInvalidPropertyErr, a much more sensible (and specific) error code.\r\n\r\nNotes:\r\nApple's own MyPhoto sample (http://developer.apple.com/samplecode/MyPhoto/) uses ICACopyObjectThumbnail on a device object in step 3. This results in the same error as it does in my test app.\r\n\r\nAs best as I can determine from the available documentation and the aforementioned sample code, it is valid to call ICACopyObjectThumbnail on a device object, and there are no parameter errors in my own code. (In particular, the abstract for ICACopyObjectThumbnail says only that it gets the “thumbnail associated with an object”; it does not restrict the function to only certain kinds of objects.)\r\n\r\nIf it is invalid to use it on a device object, or there is a parameter error in my code, I would appreciate it if you would update the documentation to describe the invalid usage that I'm doing.\r\n\r\nWhile it would be an improvement over the non-descriptive paramErr, kICAInvalidPropertyErr does make more sense for the older ICAGetProperty* API than for ICACopyObjectThumbnail, whose documentation mentions properties nowhere other than its “don't use the older way” note. Perhaps you should create a new error code to indicate that the object does not have a thumbnail.\r\n\r\nIn summary, there is a difference between using the API incorrectly (parameter error) and using it correctly on an object that does not have a thumbnail.\r\n\r\nI'm attaching a test app. Connect a device first, then run the app in Xcode. You should see the device listed without a thumbnail and with an error code.\r\n\r\n[Attachment: http://boredzo.org/radar-attachments/6399474/ImageCaptureDeviceThumbnailTest-r0.tbz ]\r\n\r\n25-Nov-2008 02:00 AM Peter Hosey:\r\nOne other thing: I get the paramErr regardless of the thumbnailFormat I pass to ICACopyObjectThumbnail. I tried all four constants, and got four paramErr returns."
+    email: boredzo@gmail.com
+    modified: "2011-08-28T05:49:09.845273Z"
+    number: "6399474"
+    number_intvalue: 6399474
+    originated: 2008-11-25T01:53:00-0800
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.5/9F33
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ICACopyObjectThumbnail returns paramErr for apparently-valid parameters

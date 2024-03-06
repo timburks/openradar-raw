@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33180744"
+    labels:
+        datastore_id: "5024877878706176"
+data:
+    classification: Crash
+    created: "2017-07-07T16:57:51.1789Z"
+    description: "We distribute a dynamic framework (in binary form) for iOS. It uses Core Data and includes a compiled core data model. Up to iOS 10.x we hadn't any issue, but on iOS 11 the NSPersistentStoreCoordinator crashes when trying to add the persistent store.\r\n\r\nAfter a deep debug I found the root cause of the crash: we have several compound indexes in our entities, almost all plain properties. A couple of them are instead a key path on a relationship. For example a Message entity has as compound index the value \"date, sender.email\".\r\n\r\nWith this setup the app crashes with the following log:\r\n\r\nCoreData: sql: CREATE INDEX IF NOT EXISTS ZMESSAGE_ZSENDER_INDEX ON ZMESSAGE (ZSENDER)\r\nCoreData: sql: CREATE INDEX IF NOT EXISTS Z_Message_date_sender.email ON ZMESSAGE (ZDATE COLLATE BINARY ASC)\r\n2017-07-07 16:02:52.470597+0200 CoreDataRadar[695:70636] [logging] unknown database Z_Message_date_sender\r\nCoreData: annotation: Disconnecting from sqlite database due to an error.\r\n2017-07-07 16:02:52.476023+0200 CoreDataRadar[695:70636] [error] error: (1) I/O error for database at /var/mobile/Containers/Data/Application/753BEC83-EE52-460B-817E-62225A2F4928/Library/Application Support/CoreDataRadar.sqlite.  SQLite error code:1, 'unknown database Z_Message_date_sender'\r\nCoreData: error: (1) I/O error for database at /var/mobile/Containers/Data/Application/753BEC83-EE52-460B-817E-62225A2F4928/Library/Application Support/CoreDataRadar.sqlite.  SQLite error code:1, 'unknown database Z_Message_date_sender'\r\n\r\nIt seems that it can't handle the key path separator in the SQL statement.\r\n\r\nIt's important to note that if the model is built and run using Xcode 9, the generated SQL statements are the following:\r\n\r\nCoreData: sql: CREATE INDEX IF NOT EXISTS ZMESSAGE_ZSENDER_INDEX ON ZMESSAGE (ZSENDER)\r\nCoreData: sql: CREATE INDEX IF NOT EXISTS ZUSER_ZMESSAGES_INDEX ON ZUSER (ZMESSAGES)\r\nCoreData: sql: CREATE INDEX IF NOT EXISTS Z_User_email ON ZUSER (ZEMAIL COLLATE BINARY ASC)\r\n\r\nWhen building and running on iOS 10 with Xcode 8 the generated SQL statements are the following:\r\n\r\nCoreData: sql: CREATE INDEX IF NOT EXISTS ZMESSAGE_ZDATE_INDEX ON ZMESSAGE (ZDATE)\r\nCoreData: sql: CREATE INDEX IF NOT EXISTS ZMESSAGE_ZSENDER_INDEX ON ZMESSAGE (ZSENDER)\r\nCoreData: sql: CREATE INDEX IF NOT EXISTS ZMESSAGE_ZDATE ON ZMESSAGE (ZDATE)\r\nCoreData: sql: CREATE INDEX IF NOT EXISTS ZUSER_ZEMAIL_INDEX ON ZUSER (ZEMAIL)\r\n\r\nPlease, although we plan to release an update of our framework built with Xcode 9, consider fixing this bug in iOS 11 when using a model built with Xcode 8, as we have a very large user base that will use our old binary when iOS 11 will be released next fall.\r\n\r\nThank you!\r\n\r\nSteps to Reproduce:\r\n- Open the attached project with Xcode 8\r\n- Launch on a device with iOS 11 (https://stackoverflow.com/questions/44381860/use-xcode-8-with-ios-11)\r\n\r\nExpected Results:\r\nThe database should be created without errors.\r\n\r\nObserved Results:\r\nThe app crashes."
+    email: emilio.pavia@gmail.com
+    modified: "2017-08-16T07:45:03.06392Z"
+    number: "33180744"
+    number_intvalue: 33180744
+    originated: July 7 2017, 4:20 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 11.0 (15A5304i)
+    reproducible: Always
+    resolved: August 16 2017, 9:44 AM
+    status: Resolved
+    title: Core Data crashes in iOS 11 when using a key path in compound indexes

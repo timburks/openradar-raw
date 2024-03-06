@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "4538282"
+    labels:
+        datastore_id: "244"
+data:
+    classification: Serious Bug
+    created: "2008-11-16T12:36:32.159008Z"
+    description: "Summary:\r\nThe documentation for NSObject states that: \"If two objects are equal, they must have the same hash value.\" However, the Foundation classes NSCFNumber and NSCFBoolean do not honour this. Specifically, -isEqual: for these classes returns YES when comparing the integer NSNumber 1 with the boolean NSNumber true, but their hashes differ.\r\n\r\nSteps to Reproduce:\r\nCreate an NSNumber object with the integer value 1. Create an NSNumber with the boolean value YES. Compare the two with isEqual:, and compare their hashes. (Code attached)\r\n\r\nExpected Results:\r\nThere are two possible correct behaviours: either isEqual: should return YES and the hashes should be identical, or isEqual: should return NO and equality of hash values would not be an issue.\r\n\r\nActual Results:\r\nisEqual: returns YES, but the hashes differ. Specifically, for the integer NSNumber, hash returns 1, while the hash for the boolean NSNumber is its address (inherited from the NSObject implementation).\r\n\r\nRegression: \r\nNone known.\r\n\r\nNotes: \r\nCore Foundation’s equivalents handle this by returning FALSE from CFEqual(). This does not violate the definitions of CFEqual() and CFHash(), but is less convenient than defining the values to be equal. A better fix would be for the hash of NSCFBoolean to be 0 or 1 as appropriate.\r\n\r\nAlso note that this different behaviour means that -isEqual: and CFEqual() return different values for the same toll-free bridged core objects, which breaks expectations.\r\n\r\nThe fix that would have the least effect on existing software would be to change the hash of NSCFBoolean and continue to return different values for -isEqual: and CFEqual() despite the unexpectedness of this difference.\r\n\r\nThis bug was mentioned at <http://www.mulle-kybernetik.com/weblog/archives/000733.html>; the author does not specify whether he filed a bug and does not cover the CoreFoundation aspects."
+    email: jens.ayton@gmail.com
+    modified: "2011-08-28T05:51:23.216887Z"
+    number: "4538282"
+    number_intvalue: 4538282
+    originated: 05-May-2006 04:29 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Closed
+    title: 'Foundation: -isEqual: and -hash behaviour for NSCFBoolean incorrect.'

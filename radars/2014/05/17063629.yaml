@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17063629"
+    labels:
+        datastore_id: "5817236581253120"
+data:
+    classification: Enhancement
+    created: "2014-05-29T12:01:42.623738Z"
+    description: "Consider the following data model:\r\n\r\nAuthor ≪--≫ Article\r\n\r\nIn my iOS app, I am trying to display a table view with one section per author, the contents of each section showing the articles that author has written. Yes, this means that any article with multiple authors will be shown more than once in the table view. This is a reasonably common use case (I have encountered it in multiple apps).\r\n\r\nIn SQL, I would do this:\r\n\r\nSELECT author.name AS selectedAuthorName, authorID AS selectedAuthorID, article.* \r\nFROM authorArticleLinks \r\nLEFT JOIN author ON authorID = author.id \r\nLEFT JOIN article ON articleID = article.id\r\nWHERE author.isBestselling = TRUE\r\nORDER BY author.name, article.date\r\n\r\nThat is to say, I'm querying on the author-article linking table, asking for every field from article, plus the ID and name of the author through which we came to fetch each result. I've put the WHERE clause in as an example of something I might want to filter on.\r\n\r\nI'd like a way to do this in a single query through Core Data. Here's a suggestion for how it could be done.\r\n\r\nNSFetchRequest *req = [NSFetchRequest fetchRequestWithEntityName:@\"Article\"];\r\nreq.categorizationRelationshipName = @\"authors\"; // the key on Article that represents the relationship\r\nreq.categorizationSortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@\"name\"]];\r\nreq.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@\"date\"]];\r\nreq.categorizationSubstitutionVariable = @\"a\"; // for use in the predicate\r\nreq.predicate = [NSPredicate predicateWithFormat:@\"$a.isBestselling = YES\"];\r\nreq.fetchWithCategorizationObjects = NO.\r\n\r\nRun this (with executeFetchRequest), and you  get an NSArray of Article objects. Some articles may be in there more than once, as mentioned.\r\n\r\nThe real power comes when we do req.fetchWithCategorizationObjects = YES. In that circumstances, the user gets back an array of NSCategorizationResult objects.\r\n\r\nAn NSCategorizationResult has two read-only properties:\r\n\r\nNSManagedObject *categorizationObject;\r\nNSManagedObject *returnedObject;\r\n\r\nSo in this case, for each categorizationResult in our NSArray, we'd be able to get the categorizationObject (the author through which we got this result) and also the returnedObject (the article in question).\r\n\r\nThe best thing is, this would all work with NSFetchedResultsController. You'd be able to turn on fetchWithCategorizationObjects on its fetch request, then you could use a sectionNameKeyPath such as @\"categorizationObject.name\"."
+    email: amorya@gmail.com
+    modified: "2014-05-29T12:01:42.623922Z"
+    number: "17063629"
+    number_intvalue: 17063629
+    originated: Thu 29 May 2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Enhancement to NSFetchRequest/NSPredicate/NSFetchedResultsController to better support many-to-many

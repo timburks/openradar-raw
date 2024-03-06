@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10529236"
+    labels:
+        datastore_id: "1458405"
+data:
+    classification: UI/Usability
+    created: "2011-12-05T21:53:19.449809Z"
+    description: "05-Dec-2011 04:22 PM William Gray:\r\nSummary:\r\n\r\nStarting in iOS 5 SDK: when an application presents a modal view controller on applicationWillResignActive (in my case, a login view controller to hide the application view so that only the login view controller is visible on applicationDidBecomeActive), and the app receives a memory waring while in the background, once the application is resumed and calls applicationDidBecomeActive on the app delegate, the modally-presented view controller from applicationWillResignActive is visible, but when it is dismissed it will often only reveal a blank screen instead of re-drawing the application view on which it was presented. \r\n\r\nThis sequence worked fine on iOS 3 and 4, and works fine on 5 as long as the app doesn't receive a memory warning in the background. To fix the problem, I have to avoid presenting a view controller modally on applicationWillResignActive, which is problematic for my apps.\r\n\r\nSteps to Reproduce:\r\n\r\n0. On a Mac with iOS SDK 5 and Xcode 4.2 installed, launch Terminal.app\r\n\r\n1. Download the demonstration project for this issue and open in Xcode 4.2\r\n\r\n$ git clone git://github.com/billymeltdown/viewWillNotAppear.git\r\n$ cd ./viewWillNotAppear\r\n$ git checkout d856f227dc7d17bbb6d80822177918835f8050ba\r\n$ open viewWillNotAppear.xcodeproj/\r\n\r\n2. Set Scheme to iPhone 5.0 Simulator and Run\r\n\r\n3. When the app appears in Simulator, the \"login\" view is visible. Tap the login button to dismiss it and reveal the app view.\r\n\r\n4. Background the app by hitting the Home button on the Simulator\r\n\r\n5. Hardware menu -> Simulate Memory Warning\r\n\r\n6. Tap the viewWillNotAppear icon in the Simulator so that the app becomes active again\r\n\r\n7. The login view should appear. Tap the login button to dismiss it. \r\n\r\nExpected Results:\r\n\r\nAt the end of step 7, you should see the app view, it should look no different from how it appeared after dismissing the login view in step 3. \r\n\r\nActual Results:\r\n\r\nInstead of the app view, you will often see a blank white screen once the login view is dismissed. Not always, but very often. If you repeat these steps without number 5., where you simulate the memory warning, the problem doesn't occur at all.\r\n\r\nRegression:\r\n\r\nThis was not a problem in iOS 3 and 4. In Build Settings, change Deployment Target to iOS 4.3, set iPhone Simulator 4.3 the active Scheme and re-run the steps: the problem will not occur. We've been using this setup in two apps we have in the iTunes store, and both those apps will exhibit the same problem if you perform these steps with them (net.zetetic.Strip and net.zetetic.Codebook). \r\n\r\nI have not tried this in the beta SDK for iOS 5.1.\r\n\r\nNotes:\r\n\r\nThe Git repository downloaded in the steps above contains a work-around that's not quite ideal, which you can view here on the web as a diff: https://github.com/billymeltdown/viewWillNotAppear/commit/eed676758f84b32ec6f148e1dfd3a32a80b9d7d3. The gist of it is that you simply _must_ avoid presenting a modal view controller during applicationWillResignActive in order to avoid the screen-blanking that a memory warning will cause while the app is in the background. The problem with this, though, is that the screen flashes blank instead of properly animating during app-switching, and says blank while the multi-task chooser menu is activated. This itself can be cheaply worked around by drawing an image as a background color on the UIWindow so that at least it's not blank, an interim screen, a la Default.png.\r\n\r\nIf you wish to update your local clone of this demonstration Git repository to see the fix plus changes we've made since then, you can simply checkout the source to the master branch: `git checkout master`.\r\n\r\nThanks for taking the time to look all this over! Fixing this bug would mean a lot to us."
+    email: billymeltdown@gmail.com
+    modified: "2011-12-05T21:53:19.450063Z"
+    number: "10529236"
+    number_intvalue: 10529236
+    originated: 2011-12-05 4:22PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: iOS 5 SDK, Xcode 4.2
+    reproducible: Usually
+    resolved: ""
+    status: Open
+    title: views behind modal view controller not properly redrawn after memory warning

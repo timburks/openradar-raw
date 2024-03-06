@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30332506"
+    labels:
+        datastore_id: "5061871170224128"
+data:
+    classification: ""
+    created: "2017-02-02T19:24:08.73805Z"
+    description: "DispatchTime.uptimeNanoseconds appears to be returning the dispatch_time_t value returned from DispatchTime.rawValue. dispatch_time_t is not necessarily measured in nanoseconds. This causes statements such as\r\n\r\n```\r\nDispatchTime(uptimeNanoseconds: DispatchTime.now().uptimeNanoseconds + offset)\r\n```\r\n\r\nto return unexpected values.\r\n\r\nSteps to Reproduce:\r\nRun the following test both in an iOS simulator and on an iOS device:\r\n\r\n```\r\n        let seconds = 1\r\n        let now = DispatchTime.now()\r\n        let oneSecondFromNow = now + .seconds(seconds)\r\n        print(\"current dispatch time: \\(now)\")\r\n        print(\"rawValue measured: \\(oneSecondFromNow.rawValue - now.rawValue) dispatch_time_t in \\(seconds) seconds\")\r\n        print(\"uptimeNanoseconds measured: \\(oneSecondFromNow.uptimeNanoseconds - now.uptimeNanoseconds) nanoseconds in \\(seconds) seconds\")\r\n        print(\"NSEC_PER_SEC = \\(NSEC_PER_SEC)\")\r\n        XCTAssertEqual(oneSecondFromNow.uptimeNanoseconds, now.uptimeNanoseconds + NSEC_PER_SEC)\r\n```\r\n\r\nExpected Results:\r\nAs seen on an iPhone 6 simulator:\r\n\r\ncurrent dispatch time: DispatchTime(rawValue: 125467249779612)\r\nrawValue measured: 1000000000 dispatch_time_t in 1 seconds\r\nuptimeNanoseconds measured: 1000000000 nanoseconds in 1 seconds\r\nNSEC_PER_SEC = 1000000000\r\n\r\nTest passes since oneSecondFromNow.uptimeNanoseconds == 125468249779612 == now.uptimeNanoseconds + NSEC_PER_SEC\r\n\r\nActual Results:\r\nSeen on an iPhone 6:\r\n\r\ncurrent dispatch time: DispatchTime(rawValue: 4710219239612)\r\nrawValue measured: 24000000 dispatch_time_t in 1 seconds\r\nuptimeNanoseconds measured: 24000000 nanoseconds in 1 seconds\r\nNSEC_PER_SEC = 1000000000\r\nXCTAssertEqual failed: (\"4710243239612\") is not equal to (\"4711219239612\")"
+    email: micron@zalambar.com
+    modified: "2017-02-02T19:24:08.73831Z"
+    number: "30332506"
+    number_intvalue: 30332506
+    originated: 02-Feb-2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 10.2.1
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: DispatchTime.uptimeNanoseconds has an incorrect return value

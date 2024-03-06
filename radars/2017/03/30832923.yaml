@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30832923"
+    labels:
+        datastore_id: "5012407105617920"
+data:
+    classification: Serious Bug
+    created: "2017-03-03T17:03:55.26119Z"
+    description: "Summary:\r\nWhen the ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES setting is specified for a target, the CopySwiftLibs build phase does a good job of analyzing the build target and copying only the pertinent Swift libraries in. In the event NO Swift dependencies are found, nothing is copied.\r\n\r\nThis is usually good, but falls short in scenarios where Swift dependencies are deeper than the immediate list of linked libraries. For example, when a linked library is itself dependent on a library that depends on Swift.\r\n\r\nPractically speaking, this is not a problem for apps because an app must ultimately bundle all the frameworks it depends upon, including any 2nd-level dependencies. In this case the CopySwiftLibs phase locates the 2nd-level dependencies, deduces its Swift dependency, and copies in the appropriate Swift libraries.\r\n\r\nIn the case of Unit Test bundles, however, there is typically no notion of embedding frameworks, but a framework being tested may still have a Swift dependency. If the framework's Swift dependency is immediate, CopySwiftLibs finds and copies the required Swift libraries, but if the Swift dependency is 2nd-level or deeper, the Swift libraries are not copied and the Unit Test bundle fails at runtime.\r\n\r\nSteps to Reproduce:\r\n1. Open attached SwiftEmbeddingFailure.xcodeproj\r\n2. Build & Test the SwiftEmbeddingFailure target\r\n\r\nExpected Results:\r\nThe test target, depending only upon SwiftEmbeddingFailure.framework, should be given runtime access to the Swift libraries depended upon by SwiftContainingFramework.\r\n\r\nActual Results:\r\nBecause SwiftEmbeddingFailure.framework does not itself depend directly on Swift, no Swift libraries are copied and the unit test invocation fails.\r\n\r\nVersion:\r\nVersion 8.3 beta 3 (8W132p)\r\n\r\nNotes:\r\nI think that the CopySwiftLibs should follow library dependencies all the way down the chain, at least as the dependencies are not system standard frameworks. This would ensure that the linked libraries of the target in question have all of their Swift dependencies fulfilled whether they are directly or indirect.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'SwiftEmbeddingFailure.zip' was successfully uploaded."
+    email: jalkut@gmail.com
+    modified: "2017-03-03T17:03:55.26152Z"
+    number: "30832923"
+    number_intvalue: 30832923
+    originated: 03-Mar-2017 11:59 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Version 8.3 beta 3 (8W132p)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '"Always Embed Swift Standard Libraries" doesn''t always embed them...'

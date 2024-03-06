@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28688741"
+    labels:
+        datastore_id: "5557316988436480"
+data:
+    classification: UI/Usability
+    created: "2016-10-10T00:23:27.43519Z"
+    description: "Summary:\r\nUnder 10.12, an issue exists when trying to connect to a server via the NetFSMountURLSync API\r\nIf the user has obtained a kerberos ticket, and requests a share that does not exist from the server ie. smb://server.contoso.com/Non_Existent_Share_Name\r\nSo via the 'mount volume' command in AppleScript.\r\nOr via the NetFSMountURLSync API in python\r\nOr simply via the Go -> Connect to server menu item\r\n\r\nThe NetFS API performs as expected by first creating a folder in /Volumes in order to mount the requested share into, however when it attempts to mount the share, it finds that the share name does not exist on the server. Because (presumably) /Volumes is now owned by root in 10.12, NetFS is unable to remove the folder it created in /Volumes as it attempts to remove it as the user, rather than as the root user.\r\n\r\n\r\nSteps to Reproduce:\r\n1. Obtain a kerberos ticket that is able to authenticate you to a file server (smb://example.contoso.com)\r\n2. Use the connect to server dialog box and enter your file server and a non existent share name (smb://example.contoso.com/Non_Existant_Share)\r\n3. Receive an error message indicating there was a problem connect to the server \"example.contoso.com\"\r\n4. Observe the contents on /Volumes\r\n5. Note the folder called \"Non_Existant_Share\" owned by the currently logged in user and unable to be removed by anyone other than root due to the permissions on /Volumes\r\n\r\nExpected Results:\r\nWhen an error is returned trying to mount a particular share from a server, NetFS should clean up after itself and remove the directory it created in /Volumes\r\n\r\nActual Results:\r\nNetFS leaves a folder in /Volumes with the name of the requested share. This folder is unable to be removed by anyone other than root\r\n\r\nRegression:\r\nThis behaviour does NOT occur in 10.11.6 and earlier\r\n\r\nNotes:\r\nAttached a gif showing the observed behaviour."
+    email: calum.h@gmail.com
+    modified: "2018-02-01T01:50:29.47311Z"
+    number: "28688741"
+    number_intvalue: 28688741
+    originated: 10/10/2016
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: "10.12"
+    reproducible: Always
+    resolved: 01/02/2018
+    status: Closed
+    title: NetFSMountURLSync API fails to remove folder from /Volumes

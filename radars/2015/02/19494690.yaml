@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19494690"
+    labels:
+        datastore_id: "5209760232112128"
+data:
+    classification: Bug/Regression
+    created: "2015-02-17T15:52:47.708122Z"
+    description: "Summary:\r\nWe rely on a custom NSURLProtocol for our SPDY (precursor to HTTP/2) communication to give us in depth control over our SPDY configuration.  However, as of iOS 8, there seems to be a significant bug with the URLSession:dataTask:didReceiveResponse:completionHandler: of the NSURLSessionDataTaskDelegate.  Whenever the callback completes, the custom NSURLProtocol will be called by the NSURL stack with stopLoading and then startLoading.  Since stopLoading is used to cancel the instance of the NSURLProtocol (not suspend it), the startLoading will result in continuing the process almost indefinitely (until a timeout happens or the entire payload can be downloaded fast enough).\r\n\r\nSteps to Reproduce:\r\n0) With iOS 8 (simulator or device)\r\n1) Have an NSURLSession configured to use a custom NSURLProtocol (CocoaSPDY from Twitter is a good example https://github.com/twitter/CocoaSPDY - use the NSURLConnectionProtocol)\r\n2) Implement an NSURLSessionDataTaskDelegate, specifically the URLSession:dataTask:didReceiveResponse:completionHandler: callback\r\n3) Create an NSURLSession with an NSURLSessionConfiguration that has the custom NSURLProtocol in its \"protocols\" property, uses the aforementioned delegate and uses an NSOperationQueue with maxConcurrentOperations set to 1\r\n4) Create an NSURLSessionDataTask that will utilize the custom protocol (for SPDYConnectionURLProtocol, you can do an HTTP GET request to https://twitter.com/ <--- must be exact)\r\n5) Add logging to stopLoading & startLoading in the custom protocol and/or logging to the delegate callback\r\n\r\n\r\nExpected Results:\r\nthe didReceiveResponse: callback is hit only once\r\nstartLoading is hit only once (per instance)\r\nstopLoading is hit only once (per instance)\r\n\r\nActual Results:\r\nevery time the didReceiveResponse: method finishes its callback, stopLoading is called followed by startLoading which restarts the request operation.  This occurs over and over.  Eventually the attempt will timeout or the payload will download fast enough to complete the attempt.\r\n\r\nVersion:\r\niOS SDK 8 or higher\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nAnything running iOS 8 (simulator repros just fine)\r\n\r\nSample:\r\nI get 100% repro with this:\r\n\r\n- (void)test\r\n{\r\n    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@\"https://www.twitter.com/\"]];\r\n    NSURLSessionConfiguration *nsConfig = [NSURLSessionConfiguration defaultSessionConfiguration];\r\n    nsConfig.protocolClasses = @[[TestURLProtocol class]]; // <-- any proper NSURLProtocol custom implementation\r\n    NSURLSession *session = [NSURLSession sessionWithConfiguration:nsConfig delegate:self delegateQueue:nil];\r\n    NSURLSessionDataTask *task = [session dataTaskWithRequest:request];\r\n    [task resume];\r\n}\r\n\r\n- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completionHandler\r\n{\r\n    completionHandler(NSURLSessionResponseAllow);\r\n}"
+    email: nolan.d.obrien@gmail.com
+    modified: "2015-02-17T16:24:21.142949Z"
+    number: "19494690"
+    number_intvalue: 19494690
+    originated: Jan 15th, 2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 8.0+
+    reproducible: 100%
+    resolved: ""
+    status: Open
+    title: 'implementing URLSession:dataTask:didReceiveResponse:completionHandler: with a custom NSURLProtocol leads to continuous stopLoading/startLoading calls'

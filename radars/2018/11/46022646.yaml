@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "46022646"
+    labels:
+        datastore_id: "4970482981928960"
+data:
+    classification: Enhancement
+    created: "2018-11-13T10:34:30.183084Z"
+    description: "Summary:\r\nThere’s no easy way to add a Playback Speed button to change the `rate` of the `AVPlayer`. I had to find the \"Play/Pause\" button checking the Accessible Identifier and add a `UIButton` for changing the speed.\r\n\r\nSteps to Reproduce:\r\nSo, what I did was basically find that \"Play/Pause\" button and add my Playback Speed button to the superview of the \"Play/Pause\" button:\n\nfunc findPlayPauseButton(view: UIView) -> UIView? {\n    if view.accessibilityIdentifier == \"Play/Pause\" {\n        return view\n    }\n    for subview in view.subviews {\n        if let result = findPlayPauseButton(view: subview) {\n            return result\n        }\n    }\n    return nil\n}\n\nguard let playerView = playerViewController?.view else {\n    return\n}\n\nguard let playPauseButton = findPlayPauseButton(view: playerView) else {\n    return\n}\n\nif let playerControlsView = playPauseButton.superview {\n    let playbackSpeedButton = UIButton(type: .system)\n    playbackSpeedButton.accessibilityIdentifier = \"PlaybackSpeed\"\n    playbackSpeedButton.setTitle(\"1 X\", for: .normal)\n    playbackSpeedButton.addTarget(self, action: #selector(self.playbackSpeedButtonTapped), for: .touchUpInside)\n    playbackSpeedButton.translatesAutoresizingMaskIntoConstraints = false\n    playerControlsView.addSubview(playbackSpeedButton)\n    NSLayoutConstraint.activate([\n        playbackSpeedButton.heightAnchor.constraint(equalTo: playPauseButton.heightAnchor),\n        playbackSpeedButton.widthAnchor.constraint(equalToConstant: 50),\n        playbackSpeedButton.leadingAnchor.constraint(equalTo: playPauseButton.trailingAnchor, constant: 70),\n        playbackSpeedButton.bottomAnchor.constraint(equalTo: playPauseButton.bottomAnchor),\n    ])\n}\r\n\r\nExpected Results:\r\nI was expecting a simple way to add custom controls or an option to change the playback speed right from the AVPlayerViewController controls.\r\n\r\nActual Results:\r\nAs you may know, this has a lot of downsides because of all the edge cases that we will find, i.e., you need to take care the landscape as well, on every new iOS version we need to check if the hack is still valid, etc.\r\n\r\nVersion:\r\n12.0\r\n\r\nNotes:"
+    email: ricardopereira.eu@gmail.com
+    modified: "2018-11-13T10:34:30.183325Z"
+    number: "46022646"
+    number_intvalue: 46022646
+    originated: 13-Nov-2018 10:34 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "12.0"
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: Playback speed control for AVPlayerViewController (Video)

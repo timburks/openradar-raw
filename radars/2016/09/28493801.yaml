@@ -1,0 +1,48 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28493801"
+    labels:
+        datastore_id: "5652021554184192"
+data:
+    classification: Serious Bug
+    created: "2016-09-27T12:44:03.59037Z"
+    description: |-
+        Summary:
+
+        When archiving a project that contains different build configurations with different bundle IDs and different entitlements associated with them, Xcode won’t always check which build configuration is active when validating capabilities, and will sometimes throw build errors.
+
+        Steps to Reproduce:
+        1. Have an iOS project with two build configurations: Dev, Release
+        2. Dev configuration should be associated with a `com.foo.dev` bundle id; `com.foo` for Release
+        3. Also have different entitlements files selected for those build configurations (and of course separate provisioning profiles)
+        4. Have “Dev” and “Release” schemes configured to build with Dev and Release configurations
+        5. Have the entitlement files (and associated provisioning profiles) configured for different App Groups, Associated Domains, Keychain Groups, etc.
+        6. Switch from the default (Dev) scheme to Release scheme and hit Archive
+
+        Expected Results:
+        - App gets archived
+
+        Actual Results:
+        - Sometimes, build fails, saying that capabilities check failed and that the provisioning profile and entitlements configurations don’t match up for App Groups/Keychain Groups/Associated domains.
+
+        (Sadly, I have not taken a screenshot when this issue appeared repeatedly, and I currently cannot reproduce it again)
+
+        Regression:
+        - This has never happened to me with Xcode 7, it’s a new issue with Xcode 8.
+
+        Notes:
+        - This is related to rdar://28493552, at least from user perspective
+        - A workaround is to manually set the right options in Capabilities tab to match what the current scheme’s configuration’s entitlements file says. (As far as `git status` is concerned, there will be *no changes* in project files, since the entitlements files were already set up correctly, but it will get Xcode unstuck…)
+    email: radexpl@gmail.com
+    modified: "2016-09-27T12:44:03.59056Z"
+    number: "28493801"
+    number_intvalue: 28493801
+    originated: 27-Sep-2016 02:43 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "8.0"
+    reproducible: I Didn't Try
+    resolved: ""
+    status: Open
+    title: Xcode doesn't check for active build configuration when checking for valid entitlements on archive

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "40549968"
+    labels:
+        datastore_id: "4987783353466880"
+data:
+    classification: ""
+    created: "2018-05-31T13:21:00.53329Z"
+    description: "Summary:\r\nMy project setup contains English(Development Language), German and French languages to be Localized.\r\nUsing the command line tools(xcodebuild) to export localization into xliff, then import it back, I noticed that it produces a new localizable language entry \"(null).lproj\" in the list of project localization languages. It also produces \"(null).lproj\" folder, with empty Localizable.strings and Localizable.stringsdict files. \r\nI can also see 1 warning per each localizable string, that it's missing translation for the English language. ex.:\r\n--- xcodebuild: WARNING: ProjectName/en.lproj/Localizable.strings: Incoming translated string is missing (Key: \"StringKey\").\r\nAnother thing I noticed, is that the Localizable.strings and InfoPlist.strings files are now recognized as Binary Files, which became an inconvenience to track the modifications, because you can't see the diff(I know, I know, there are some hacks with gitattributes, but it still doesn't make sense for me, to be this way).\r\n\r\nAnd the last but most important thing, I compared the en.xliff file generated with xcode9.2 build tools and en.xliff file generated with xcode9.3 tools. The structure of the last one differs by:\r\n1. neither of the <file> tags contain \"target-language\" attribute;\r\n2. neither of the localized strings contain a <target> tag;\r\nThe above 2 explains to me part of the rest of the issues mentioned above.\r\n\r\nI also created 1 Single View project, with each of the xcode9.2 and xcode9.3 version, to simulate the issue. It is always reproducible. Those are attached to the ticket.\r\n\r\nSteps to Reproduce:\r\n1. Using XCode9.3, create a single view project app.\r\n2. In the view controller, define a localized string for example to set the title of the screen, like: self.navigationItem.title = NSLocalizedString(\"title\", comment: \"Comment\")\r\n3. Using Terminal, run the command to export the localizable strings for English into xliff file:\r\nxcodebuild -exportLocalizations -localizationPath \"${BASE_DIR}/Translations\" -project \"${BASE_DIR}/ProjectName.xcodeproj\" -exportLanguage en\r\n4. Using Terminal, run the command to import the previously created en.xliff file:\r\nxcodebuild -importLocalizations -project \"${BASE_DIR}/ProjectName.xcodeproj\" -localizationPath \"${BASE_DIR}/Translations/en.xliff\"\r\n\r\nExpected Results:\r\n1. en.lproj folder is created containing Localized.strings(including the entries for the \"title\" key) and InfoPlist.strings file.\r\n2. the *.strings files are not identified as Binary files within the GIT repositories;\r\n\r\nActual Results:\r\n1. en.lproj folder is not created\r\n2. (null).lproj is created containing empty Localized.strings and InfoPlist.strings files.\r\n3. the *.strings files are identified as Binary files."
+    email: odanu84@gmail.com
+    modified: "2018-05-31T13:21:00.53352Z"
+    number: "40549968"
+    number_intvalue: 40549968
+    originated: "2018-05-25"
+    parent_number: '&{NULL_VALUE}'
+    product: XCode
+    product_version: "9.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Localizing with xcodebuild tool (v9.3 9E145) produces (null).lproj as a language and doesn't produce anything for Development language

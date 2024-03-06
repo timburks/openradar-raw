@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11860951"
+    labels:
+        datastore_id: "1819401"
+data:
+    classification: Bug
+    created: "2012-07-12T22:51:25.024894Z"
+    description: "12-Jul-2012 04:17 PM Kevin Hamilton:\r\nSummary:\r\n\r\nA sandboxed, multi-document, Core Data application that has a space in the application's name (example: 'Crash Test') will crash under the GM build of OS X 10.8 when opening a SQLite-based document. This works fine under 10.7. The application also works fine under 10.8 when built without enabling the application sandbox.\r\n\r\nSteps to Reproduce:\r\n\r\nI encountered this problem testing a sandboxed version of a complex application but was able to reproduce the problem using the File Wrappers with Core Data Document example application from Apple (a packaged document file is required for sandboxing to work with SQLite-based documents outside of the app's container). I first modified the project to build under Xcode 4.4 and run in a sandboxed environment. The application ran fine and I was able to create, save, and load test documents. To reproduce this problem, run the app and add some data to a document and save it. This version is in the Source 1 directory of the attached CrashInfo.zip file.\r\n\r\nNext, I changed the project name to Crash Test in the Identity section of the File Inspector. The application crashes when trying to load a document created by the version compiled from Source 1. This version is attached as Source 2 directory of the attached CrashInfo.zip file.\r\n\r\nIn the target build settings, change the Product Name from Crash Test to CrashTest, with no space between the two words, and rebuild. It should now be able to load the document you created with the Source 1 build.\r\n\r\nExpected Results:\r\n\r\nI would expect the code to run fine, even with a space in the app's filename. This has never been a problem in the past.\r\n\r\nActual Results:\r\n\r\nThe following messages are written to the log when an attempt is made to open a file with the Source 2 build:\r\n\r\n2012-07-12 15:57:42.895 Crash Test[14481:303] Request for item CoreDataStore.sql-journal related to document /Users/kevin/Documents/Crash Test.wrapper/CoreDataStore.sql failed: Error Domain=NSOSStatusErrorDomain Code=-67068 \"The operation couldn’t be completed. (OSStatus error -67068.)\"\r\n2012-07-12 15:57:42.897 Crash Test[14481:303] Request for item CoreDataStore.sql-shm related to document /Users/kevin/Documents/Crash Test.wrapper/CoreDataStore.sql failed: Error Domain=NSOSStatusErrorDomain Code=-67068 \"The operation couldn’t be completed. (OSStatus error -67068.)\"\r\n2012-07-12 15:57:42.899 Crash Test[14481:303] Request for item CoreDataStore.sql-wal related to document /Users/kevin/Documents/Crash Test.wrapper/CoreDataStore.sql failed: Error Domain=NSOSStatusErrorDomain Code=-67068 \"The operation couldn’t be completed. (OSStatus error -67068.)\"\r\n2012-07-12 15:57:42.900 Crash Test[14481:303] Request for item .CoreDataStore.sql-conch related to document /Users/kevin/Documents/Crash Test.wrapper/CoreDataStore.sql failed: Error Domain=NSOSStatusErrorDomain Code=-67068 \"The operation couldn’t be completed. (OSStatus error -67068.)\"\r\n\r\nThe application then crashes. The crash report is attached. The crash has the hallmarks of a double-free, so I ran the Source 2 build with Instruments and found exactly that on an NSError instance released in [NSPersistentDocument _requestRelatedItemForURL:withLastComponent:]. See the Zombie.png screenshot in CrashInfo.zip.\r\n\r\nRegression:\r\n\r\nThis problem occurs under the GM build of OS X 10.8 but does not happen under OS X 10.7.4. The application runs fine under 10.8 if sandboxing is NOT enabled.\r\n\r\nNotes:\r\n\r\nThis is an extremely critical problem for us and is preventing us from releasing an update of our application that supports the application sandbox.\r\n\r\n12-Jul-2012 04:17 PM Kevin Hamilton:\r\n'CrashInfo.zip' and 'Crash Test_2012-07-12-160138_K-Dogs-ML-Install.crash' were successfully uploaded"
+    email: kevin@binaryformations.com
+    modified: "2012-07-12T22:51:25.025073Z"
+    number: "11860951"
+    number_intvalue: 11860951
+    originated: 7/12/12
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.8 GM
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: 10.8 GM crashes opening SQLite DB in a multi-doc, sandboxed app w/space in name

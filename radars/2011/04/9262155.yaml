@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9262155"
+    labels:
+        datastore_id: "1161410"
+data:
+    classification: Serious Bug
+    created: "2011-04-12T01:13:17.17876Z"
+    description: "09-Apr-2011 04:46 PM:\r\nSummary:\r\nNFS mounts made through Disk Utility's \"NFS Mounts\" menu can no longer be written to through Finder following the 10.6.7 update. Finder plays the error sound if you try to rename a file on the mounted volume. Trying to drag files to the mounted volume shows the \"can't do that\" icon. There are no problems when accessing the mounted volume via the terminal.\r\n\r\nSteps to Reproduce:\r\n1. Create an NFS mount using Disk Utility.\r\n  Remote NFS URL: nfs://server/share\r\n  Mount location: /Volumes/Network/share\r\n  Advanced Mount Parameters: -P\r\n  Mount as read-only: unchecked\r\n  Ignore \"set user ID\" privileges: unchecked\r\n2. Click Verify and then Save.\r\n3. Try to drag a file to the mounted volume with Finder.\r\n4. A reboot may be required for the problem to appear.\r\n\r\nExpected Results:\r\nNFS mounts should be writable through Finder.\r\n\r\nActual Results:\r\nNFS mounts are not writable through Finder.\r\n\r\nRegression:\r\nNFS mounts became unwritable through Finder following the 10.6.7 update.\r\n\r\nNotes:\r\nMore details in this thread:\r\nhttp://discussions.apple.com/thread.jspa?threadID=2791857\r\n\r\n\r\n09-Apr-2011 11:25 PM:\r\nI have several NFS mounts on some machines. Sometimes one or more of the mounts will work fine in Finder. No amount of unmounting/remounting or deleting and re-adding of the NFS mounts will get the broken ones to work. Rebooting changes which ones work and which ones don't. I've attached a screenshot that shows the info for a folder on a working NFS mount and the info for a folder on an unwritable NFS mount. Finder doesn't appear to be able to retrieve the permissions for the folder on the unwritable NFS mount.\r\n\r\n10-Apr-2011 01:25 PM:\r\nTo try to work around this problem I tried mounting the shares with autofs using SMB instead of NFS. I added the auto_smb file below.\r\n\r\n$ cat /etc/auto_master \r\n#\r\n# Automounter master map\r\n#\r\n+auto_master            # Use directory service\r\n/net                    -hosts          -nobrowse,hidefromfinder,nosuid\r\n/home                   auto_home       -nobrowse,hidefromfinder\r\n/Network/Servers        -fstab\r\n/-                      -static\r\n/Volumes/Network        auto_smb\r\n\r\n$ cat /etc/auto_smb\r\ndisk1        -fstype=smbfs ://username:password@server/share\r\n\r\nThis has the same problem! It appears that any shares mounted via autofs have a high probability of not being writable through Finder.\r\n\r\n13-Apr-2011 07:11 PM:\r\nThis bug has been closed as Duplicate. We are tracking this known issue under the Bug ID listed above in the bug State (Duplicate/9062261)."
+    email: vyncebox@gmail.com
+    modified: "2011-08-28T05:37:10.256772Z"
+    number: "9262155"
+    number_intvalue: 9262155
+    originated: 09-Apr-2011 04:46 PM
+    parent_number: "9062261"
+    product: Mac OS X
+    product_version: 10.6.7
+    reproducible: Always
+    resolved: 13-Apr-2011 07:11 PM
+    status: Duplicate/9062261
+    title: Autofs mounts are unwritable in Finder following the 10.6.7 update

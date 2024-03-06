@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7682055"
+    labels:
+        datastore_id: "160417"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2010-02-23T23:37:24.349619Z"
+    description: "Summary:\r\n\r\nWhen recovering data from Time Machine, some directories fail due to permission restrictions.\r\n\r\nSteps to Reproduce:\r\n\r\n(Using the calendar as an example, however, I have seen this behaviour in other directories)\r\n\r\nCreate some calendar entries in iCal.\r\nBackup ~/Library/Calendars via Time Machine.\r\nCreate some new calendar entries, delete others.\r\nQuit iCal.\r\nRecover the older version of ~/Library/Calendars from Time Machine.\r\n\r\nExpected Results:\r\n\r\nAt first a pop-up should appear and ask if the existing ~/Library/Calendars directory should be replaced, copied or if the recovery should be cancelled.\r\nIn both recovery cases, (keep both and replace), the recovery should proceed and finish successfully.\r\n\r\nActual Results:\r\n\r\nThe expected pop-up appears.\r\n\r\nSelecting \"keep both\" renames the existing directory, creates a new ~/Library/Calendars directory and the first calendar directory below that, before complaining about permission restrictions and aborting - result: an empty iCal.\r\n\r\nSelecting \"Replace\" causes the contents of ~/Library/Calendars to be completely deleted before a new ~/Library/Calendars directory and the first calendar directory below it are created. Again, recovery is aborted due to permissions problems. Again, iCal is left empty - any data which may still have existed is gone. (This is also the reason I categorised this problem as \"Crash/Hang/Data Loss\")\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\nI was able to work around this problem by using the shell to copy the files manually from Time Machine to ~/Library as follows:\r\n\r\n% rm -rf ~/Library/Calendars\r\n% cd /Volumes/Archive/Backups.backupdb/<machine>/<timestamp>/<volumename>/Users/<user>/Library\r\n% cp -rp Calendars ~/Library/\r\n\r\nThis worked flawlessly, iCal shows all calendar events as expected!\r\nSo why did it fail using Time Machine?"
+    email: mgprot@opensauce.de
+    modified: "2011-08-28T05:42:30.093882Z"
+    number: "7682055"
+    number_intvalue: 7682055
+    originated: 24-Feb-2010 12:36 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Recovery of files from Time Machine breaks due to permission problems

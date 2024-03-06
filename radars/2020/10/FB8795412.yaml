@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8795412
+    labels:
+        datastore_id: "5028552630075392"
+data:
+    classification: Bug
+    created: "2020-10-12T16:52:28.256743Z"
+    description: "Selecting a document from the Open Recent menu, available for document-based Catalyst apps since macOS Big Sur, results in no action. It’s missing the document icons as well.\r\n\r\nSTEPS TO REPRODUCE\r\n\r\nOpen the attached Demo project or:\r\n\r\n1. Create a new iOS document-based project and check the Mac checkbox.\r\n2. Add “Read/Write” entitlement for “User-Selected Files” sandbox capability.\r\n3. Set the supported document UTI to “public.plain-text” so that the app can open TXT files.\r\n\r\nThen, with either the the attached project or the new project:\r\n\r\n4. Choose “My Mac (Mac Catalyst)” destination and run the app.\r\n5. Create an empty TXT document on Desktop and open it in the app.\r\n6. Close the document, go to File → Open Recent, and select it from the list.\r\n\r\nEXPECTED BEHAVIOR\r\n\r\nThe recent document is opened.\r\n\r\nACTUAL BEHAVIOR\r\n\r\nNothing happens. Also, the menu item of the document is missing the icon.\r\n\r\nVERSION\r\n\r\nXcode 12.2 Beta 2 (12B5025f)\r\nmacOS 11.0 Beta 9 (20A5384c)\r\nMacBook Pro (15-inch, 2018)\r\n\r\nDETAILS\r\n\r\nI discovered that attempting to open a recent document actually fails silently with the following error:\r\n\r\nError Domain=NSCocoaErrorDomain Code=260 \"The file “PSPDFKit 10 QuickStart Guide.pdf” couldn’t be opened because there is no such file.\" UserInfo={NSURL=file:///Users/Adrian/Documents/PSPDFKit%2010%20QuickStart%20Guide.pdf/}\r\n\r\nThe error isn’t logged or displayed to the user. I discovered it by putting a breakpoint for the following symbol and printing $arg3:\r\n\r\n__52-[UINSRecentItemsMenuController _openRecentItemURL:]_block_invoke\r\n\r\nAsking NSFileManager if the file exists at the URL included in the error’s user info dictionary results in a YES:\r\n\r\n(BOOL)[[NSFileManager defaultManager] fileExistsAtPath:[(NSURL *)[[$arg3 userInfo] objectForKey:@\"NSURL\"] path]]"
+    email: adrian.kashivskyy@gmail.com
+    modified: "2020-10-12T16:52:28.256916Z"
+    number: FB8795412
+    number_intvalue: 8795412
+    originated: 12 October 2020
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: ""
+    reproducible: ""
+    resolved: No
+    status: Open
+    title: 'Catalyst: Selecting a document from the Open Recent menu results in no action'

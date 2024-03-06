@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23327920"
+    labels:
+        datastore_id: "5547919079899136"
+data:
+    classification: Serious Bug
+    created: "2015-10-30T04:55:40.8627Z"
+    description: "This is a duplicate of rdar://23055637\r\n\r\nSummary:\r\nAt Realm we've had a reproducible case where \"xcodebuild test\" fails, with the end of the output saying only ** TEST FAILED **. Digging through the log file, in the middle of the build output we see:\r\n\r\n2015-10-08 13:17:33.051 xcodebuild[57711:240667]  iPhoneSimulator: Timed out waiting 120 seconds for simulator to boot, current state is 1.\r\n\r\nSteps to Reproduce:\r\n1. git clone https://github.com/realm/realm-cocoa.git\r\n2. git checkout 0afd9939eaa6ffe829c0fd8f322b1f6ff00baa60\r\n3. rm -rf build && xcodebuild -IDECustomDerivedDataLocation=build/DerivedData -project RealmSwift.xcodeproj -scheme RealmSwift -configuration Release -sdk iphonesimulator -destination 'name=iPhone 6' test\r\n\r\nExpected Results:\r\nThe simulator launches and the tests run.\r\n\r\nActual Results:\r\nThe simulator doesn't launch, and the tests fail.\r\n\r\nVersion:\r\nXcode 7.0.1\r\nBuild version 7A1001\r\n\r\nProductName:\tMac OS X\r\nProductVersion:\t10.11.1\r\nBuildVersion:\t15B30a\r\n\r\n\r\nNotes:\r\nI poked at xcodebuild in the debugger for a little while. What I found is that when configuring the \"test\" operation, xcodebuild immediately kicks off a background thread to wait for the simulator to boot. However, it doesn't start booting the simulator until after the dependencies of the test target have been built. If building the dependencies takes longer than the timeout (120 seconds), the tests will always fail to run. Using \"xcodebuild build test\" results in the dependencies of the test target being up to date, which avoids the issue.\r\n\r\nI determined this by way of breakpoints on the following methods:\r\n\r\n1. -[DVTiPhoneSimulator makeTransportForTestManagerService:], which blocks on a dispatch semaphore for up to 120 seconds or until it sees the simulator running. This method emits the \"Timed out waiting 120 seconds\" message seen in the output.\r\n\r\n2. -[IDELaunchiPhoneSimulatorLauncher start], which is responsible for launching the simulator and simulated application.\r\n\r\nWith the two breakpoints in place, you'll see that -makeTransportForTestManagerService: is called relatively early. After it is called, xcodebuild goes on to compile the dependencies (in this case by way of shelling out in a script phase). Only once the dependencies have been built does -[IDELaunchiPhoneSimulatorLauncher start] run, at which point -makeTransportForTestManagerService: has already timed out waiting for the simulator.\r\n\r\nWe were able to work around this by using \"xcodebuild build test\", as this forces the dependencies to be built prior to the initialization of the test subsystem (and thus prior to -makeTransportForTestManagerService: waiting on the simulator to boot). Obviously this shouldn't be necessary."
+    email: piet.brauer@gmail.com
+    modified: "2016-06-22T19:26:12.31278Z"
+    number: "23327920"
+    number_intvalue: 23327920
+    originated: 30-Oct-2015 11:55 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 7.0.1
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 23055637
+    title: '"xcodebuild test" times out waiting for the simulator to launch'

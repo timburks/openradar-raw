@@ -1,0 +1,57 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20997232"
+    labels:
+        datastore_id: "5565710075953152"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-05-18T11:59:55.32594Z"
+    description: |-
+        Summary:
+
+        The copyio() function in osfmk/x86_64/copyio.c doesn't restore the SMAP state correctly. The source code isn't on opensource.apple.com yet...
+
+        Please find the respective code below, presumably from the copyio() function in osfmk/x86_64/copyio.c.
+
+        ffffff800040f120        callq   __bcopy
+        ffffff800040f125        movl    %r14d, %r10d
+        ffffff800040f128        andl    $0x2, %r10d
+        ffffff800040f12c        cmpl    $0x0, 0x6d2ce1(%rip)
+        ffffff800040f133        je      0xffffff800040f138
+        ffffff800040f135        clac
+        ffffff800040f138        testl   %r10d, %r10d
+        ffffff800040f13b        jne     0xffffff800040f145
+
+        That's the bit of code that reenables SMAP (clears the AC bit). But instead of unconditionally enabling SMAP it should restore the SMAP state as it was when it got disabled (STAC instruction).
+
+        So, if the copyio or any other function in a third-party kext gets preempted by copyio whilst SMAP is disabled, there'll be a Kernel Panic because when the code resumes, SMAP will be enabled even though it should be disabled.
+
+        To address the issue one could save the SMAP state before issuing the STAC to disable SMAP and then restore the state instead of unconditionally issuing a CLAC.
+
+        Steps to Reproduce:
+        n/a
+
+        Expected Results:
+        n/a
+
+        Actual Results:
+        n/a
+
+        Regression:
+        n/a
+
+        Notes:
+        Provide additional information, such as references to related problems, workarounds and relevant attachments.
+    email: weissismail@gmail.com
+    modified: "2015-05-18T11:59:55.32621Z"
+    number: "20997232"
+    number_intvalue: 20997232
+    originated: 18-May-2015 12:58 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: Mac OS X 10.10.4 (14E11f)
+    reproducible: I Didn't Try
+    resolved: ""
+    status: Open
+    title: 'Mac OS X 10.10.4: SMAP state not restored correctly in copyio'

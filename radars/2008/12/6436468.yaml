@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6436468"
+    labels:
+        datastore_id: "125"
+data:
+    classification: Serious Bug
+    created: "2008-12-12T00:57:54.764461Z"
+    description: "10-Dec-2008 06:40 PM Mike Tyson:\r\nCan't work out how to reopen 6341788 so submitting a new bug.\r\n\r\n03-Nov-2008 07:24 PM Mike Tyson:\r\nSummary:\r\n\r\nI'm using the IORemote mechanism I describe here https://devforums.apple.com/message/2679#2679%232679, and having some interesting inconsistent behaviour in the simulator.\r\n \r\nThis software all works perfectly on the actual device.\r\n \r\nHowever, the simulator frequently, but not always, crashes with EXC_BAD_ACCESS on an AudioUnitRender call from the recording callback:\r\n \r\n    status = AudioUnitRender([audioInterface audioUnit], \r\n                ioActionFlags, \r\n                inTimeStamp, \r\n                inBusNumber, \r\n                inNumberFrames, \r\n                bufferList);\r\n\r\n \r\nThe backtrace on the crash is:\r\n#0  0x347d27be in CrashIfClientProvidedBogusAudioBufferList ()\r\n#1  0x347d5e43 in AudioConverterChain::CallInputProc ()\r\n#2  0x347d3d34 in AudioConverterChain::FillBufferFromInputProc ()\r\n#3  0x347d3bc4 in BufferedAudioConverter::GetInputBytes ()\r\n#4  0x347d375d in CBRConverter::RenderOutput ()\r\n#5  0x347d343c in BufferedAudioConverter::FillBuffer ()\r\n#6  0x347d39fa in AudioConverterChain::RenderOutput ()\r\n#7  0x347d343c in BufferedAudioConverter::FillBuffer ()\r\n#8  0x347d25c4 in AudioConverterFillComplexBuffer ()\r\n#9  0x347e151a in AUConverterBase::RenderBus ()\r\n#10 0x347cfc75 in AUBase::DoRender ()\r\n#11 0x347cf959 in AudioUnitRender ()\r\n\r\n \r\nThe audio buffer list looks like:\r\n(gdb) p *bufferList\r\n$1 = {\r\n  mNumberBuffers = 1, \r\n  mBuffers = {{\r\n      mNumberChannels = 1, \r\n      mDataByteSize = 1024, \r\n      mData = 0x1823e0c\r\n    }}\r\n\r\n \r\nNothing wrong with it as far as I can see.  mDataByteSize is 1024 here, which is perfectly reasonable - the inNumberFrames value is 512, with 2 bytes per frame. mData is a valid pointer, which I've verified is pointing to the correct spot in my internal buffers. \r\n \r\nAnd as I mentioned before, this is all working just fine on the real device.\r\n \r\nIt also frequently freezes with:\r\n\r\nProgram received signal:  “EXC_BAD_ACCESS”.\r\n[Switching to process 37389 thread 0xbc03]\r\nCannot access memory at address 0x5\r\n\r\nNo back trace available when this happens.\r\n\r\n\r\n'Michael-Tysons-MacBook-Pro.spx' was successfully uploaded\r\n\r\n10-Dec-2008 03:10 AM Mike Tyson:\r\nAttached sample app shows this crash.  Crashes about five times in six. Further discussion at https://devforums.apple.com/message/16868#16868\r\n\r\n\r\n'IORemoteCrash.zip' was successfully uploaded\r\n\r\n\r\n\r\n'IORemoteCrash.zip' was successfully uploaded\r\n\r\n10-Dec-2008 06:41 PM Mike Tyson:\r\nWhoops. I'm sorry, I uploaded the sample app in the wrong place. Reuploading just in case.\r\n\r\n\r\n'IORemoteCrash-1.zip' was successfully uploaded"
+    email: mike@tyson.id.au
+    modified: "2011-08-28T05:48:53.587241Z"
+    number: "6436468"
+    number_intvalue: 6436468
+    originated: 10-Dec-2008 06:40 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 2.1-2.2
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: 'IORemote: iPhone simulator causes crashes; software works fine on device'

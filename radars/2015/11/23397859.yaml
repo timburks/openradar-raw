@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23397859"
+    labels:
+        datastore_id: "5081572873076736"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-11-04T19:49:32.0488Z"
+    description: "Summary:\r\nThe following code produces an infinite loop, but shouldn't:\r\n\r\nSteps to Reproduce:\r\n\r\nprotocol ModelProtocol {\r\n    var property: String { get }\r\n}\r\n\r\nclass ConcreteModel: ModelProtocol {\r\n    let property = \"I'm a ConcreteModel\"\r\n}\r\n\r\nclass Base {\r\n    var model: ModelProtocol? {\r\n        willSet {\r\n            print(\"Base.model.willset\")\r\n        }\r\n        didSet {\r\n            print(\"Base.model.didset\")\r\n        }\r\n    }\r\n}\r\n\r\nclass Derived: Base {\r\n    \r\n    override var model: ModelProtocol? {\r\n        willSet {\r\n            print(\"Derived.model.willset\")\r\n        }\r\n        didSet {\r\n            print(\"entering Derived.model.didset\")\r\n            _ = model?.property  // causes an infinite loop in Xcode 7.1\r\n            print(\"finished Derived.model.didset\")\r\n        }\r\n    }\r\n}\r\n\r\n\r\nlet d = Derived()\r\nd.model = ConcreteModel()\r\n\r\n\r\n\r\nExpected Results:\r\nNo loop.\r\n\r\nActual Results:\r\nInfinite loop.\r\n\r\nWORKAROUND:\r\n\r\n            let m = model   // breaks the cycle; no more infinite loop\r\n            _ = m?.property\r\n\r\n\r\nVersion:\r\n10.10.5 (14F1021)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nXcode 7.1"
+    email: jtbandes@gmail.com
+    modified: "2015-11-04T19:49:32.04919Z"
+    number: "23397859"
+    number_intvalue: 23397859
+    originated: 11/4/2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: infinite recursion with subclass + willSet + didSet + protocols + optional chaining'

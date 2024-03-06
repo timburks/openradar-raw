@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8957230
+    labels:
+        datastore_id: "5032029741645824"
+data:
+    classification: bug
+    created: "2020-12-30T16:28:32.445115Z"
+    description: "1. Create a directory containing a file:\r\n\r\n  % mkdir foo\r\n  % touch foo/file\r\n\r\n2. Copy that directory to another directory using `rm -rf bar && mkdir bar && cd foo && pax -rwl . ../bar`:\r\n\r\n  % (rm -rf bar && mkdir bar && cd foo && pax -rwl . ../bar)\r\n\r\n3. Compare timestamps on both the directory (!) and the file. (`pax -p` copies mtime by default, see `man pax` under the `-p` flag.)\r\n\r\n  % stat -f '%N %Fm' foo\r\n  foo 1609297230.485880489\r\n  % stat -f '%N %Fm' foo/*\r\n  foo/file 1609294944.907726636\r\n\r\n  % stat -f '%N %Fm' bar\r\n  bar 1609297230.000000000\r\n  % stat -f '%N %Fm' bar/file\r\n  bar/file 1609294944.907726636\r\n\r\nExpected: The mtimes on both file and directory match.\r\nActual: The mtime on file matches (but only because it's a hardlink, without `-l` it's wrong too). The mtime on the directory loses its fractional part.\r\n\r\nThis is a problem for mtime-based build systems. They'll think that the output of the copy has an older timestamp than the input and will re-run the copy on every build. Ninja 1.9+ (https://ninja-build.org/) is an example of a build system that reads high-resolution timestamps and that gets confused by this.\r\n\r\nSee https://github.com/nico/hack/blob/master/notes/copydir.md for some background around this bug report.\r\n\r\nThis reproduces on macOS 10.15.7 and macOS 11.0.1."
+    email: thakis@chromium.org
+    modified: "2020-12-30T16:28:32.445368Z"
+    number: FB8957230
+    number_intvalue: 8957230
+    originated: 2020 Dec 30
+    parent_number: '&{NULL_VALUE}'
+    product: macos
+    product_version: 11.0.1
+    reproducible: yes
+    resolved: ""
+    status: ""
+    title: '`pax -rwl` doesn''t correctly set mtime on directories'

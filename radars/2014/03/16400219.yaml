@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16400219"
+    labels:
+        datastore_id: "5827279825403904"
+data:
+    classification: UI
+    created: "2014-03-22T20:17:17.04899Z"
+    description: "Summary:\r\nWhen an SKShapeNode is inside an SKEffectNode, setStrokeColor: causes no visual change.\r\n\r\nSteps to Reproduce:\r\n1. Add an SKShapeNode to an SKEffectNode.\r\n2. Call setStrokeColor:[SKColor redColor] to set its initial stroke color to red.\r\n3. Wait for some event, such as with dispatch_after or touchesBegan:\r\n4. Call setStrokeColor:[SKColor greenColor] to change the stroke color.\r\n\r\n\r\nCreate a new iOS Xcode project using the Sprite Kit template. Replace the scene class's implementation with the following code. Note the if-statement inviting you to test the workaround described further down.\r\n\r\n\r\n-(id)initWithSize:(CGSize)size {\r\n    if (self = [super initWithSize:size]) {\r\n        SKEffectNode *container = [SKEffectNode node];\r\n        [self addChild:container];\r\n\r\n        SKShapeNode *shape = [SKShapeNode node];\r\n        shape.path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(20, 20, 200, 200) cornerRadius:40].CGPath;\r\n        shape.strokeColor = [SKColor redColor];\r\n        [container addChild:shape];\r\n\r\n        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\r\n            NSLog(@\"setting stroke color\");\r\n\r\n            if (0) { // <-- CHANGE ME\r\n                CGFloat oldAlpha = shape.alpha;\r\n                shape.alpha = 0;\r\n                shape.alpha = oldAlpha;\r\n            }\r\n            shape.strokeColor = [SKColor greenColor];\r\n        });\r\n    }\r\n    return self;\r\n}\r\n\r\nExpected Results:\r\nThe shape node's stroke color changes to green.\r\n\r\nActual Results:\r\nThe shape node's stroke color does not change to green; it stays red.\r\n\r\nVersion:\r\niOS 7.1 (11D167)\r\n\r\nNotes:\r\nYou can work around this issue by setting the SKShapeNode's alpha to a different value. Perhaps this is causing an internal setNeedsDisplay: to fire, which updates the stroke color.\r\n\r\nSee also rdar://16400203\r\n\r\nConfiguration:\r\niPhone 5S\r\niOS Simulator\r\n\r\nAttachments:"
+    email: sartak@gmail.com
+    modified: "2014-06-04T20:28:29.92675Z"
+    number: "16400219"
+    number_intvalue: 16400219
+    originated: "2014-03-22"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.1"
+    reproducible: Always
+    resolved: "2014-06-03"
+    status: Closed
+    title: 'setStrokeColor: on SKShapeNode inside SKEffectNode causes no visual change'

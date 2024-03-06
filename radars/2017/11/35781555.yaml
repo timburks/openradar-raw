@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35781555"
+    labels:
+        datastore_id: "4971155588907008"
+data:
+    classification: Serious Bug
+    created: "2017-11-30T21:53:18.49378Z"
+    description: "Summary:\r\nIn Xcode there is an undocumented build setting called HIDE_BITCODE_SYMBOLS, this setting translates later to LD_HIDE_BITCODE_SYMBOLS, and eventually causes `-Xlinker -bitcode_hide_symbols` to be passed to the compiler in some cases.\r\n\r\nOne example case of this is if you create a framework bundle where the MACH_O_TYPE is mh_object (or \"Relocatable Object File\").\r\n\r\nPassing these arguments to the linker results in the final binary's bitcode to have all its symbols replaced with `__hidden` symbols instead. This makes crash reports extremely difficult to debug.\r\n\r\nNeither of the above build settings are surfaced in the Build Settings tab of Xcode either, so I assume many projects where this behavior applies, aren't doing it intentionally.\r\n\r\nSteps to Reproduce:\r\n1. Create a new Xcode project with type \"Cocoa Touch Framework\"\r\n2. Change the MACH_O_TYPE build setting to be mh_object (Relocatable Object File in the UI)\r\n3. Archive the project for \"Generic iOS Device\"\r\n4. Check the \"Link\" step in the build log\r\n\r\nExpected Results:\r\n`-Xlinker -bitcode_hide_symbols` should not be passed by default. Instead the `HIDE_BITCODE_SYMBOLS` Build Setting should be surfaced in Xcode and NO by default\r\n\r\nActual Results:\r\nIn this case `-Xlinker -bitcode_hide_symbols` is passed unless you set `HIDE_BITCODE_SYMBOLS` to `NO` as a user defined setting\r\n\r\nVersion:\r\nXcode 9.1 (9B55)\r\n\r\nNotes:\r\n- This setting doesn't seem to be used for either dynamic frameworks nor static libraries\r\n- To see an example of this in the wild download GoogleMaps 2.5.0 https://dl.google.com/dl/cpdc/6e5f7d9da3112ca6/GoogleMaps-2.5.0.tar.gz and extract the bitcode from it.\r\n\r\nTo extract the bitcode run:\r\n\r\n```\r\n$ cd GoogleMaps.framework\r\n$ lipo -thin arm64 -output slice GoogleMaps\r\n$ segedit slice -extract __LLVM __bundle slice.arm64.xar\r\n$ xar -xf slice.arm64.xar\r\n```\r\n\r\nThen run `nm` on any of the created numbered files in the same directory. You will see output like this:\r\n\r\n```\r\n$ nm 001 | grep __hidden\r\n---------------- t __hidden#0_\r\n...\r\n```\r\n\r\nThese __hidden symbols eventually make it into crash reports in Xcode like the one attached."
+    email: keithbsmiley@gmail.com
+    modified: "2018-01-30T02:03:15.68434Z"
+    number: "35781555"
+    number_intvalue: 35781555
+    originated: 30-Nov-2017 13:53
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 9.1 (9B55)
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 34895163 (open)
+    title: HIDE_BITCODE_SYMBOLS should be NO by default

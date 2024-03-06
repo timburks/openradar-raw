@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34568166"
+    labels:
+        datastore_id: "5008158745427968"
+data:
+    classification: Serious bug
+    created: "2017-09-21T08:12:24.08124Z"
+    description: "Summary:\r\nCBPeripheralManagers no longer provide the restored services (and therefore no restored characteristics or subscribed centrals) in the delegate method `willRestoreState`.\r\n\r\nThis is a huge, huge issue because centrals still connected to the iOS device acting as a the CBPeripheralManager have no idea that the iOS device cannot communicate, and all write requests from the CBCentral fail on the central side with no callbacks at all on the iOS CBPeripheralManager side.\r\n\r\nThis issue is easily reproducible and I've attached two projects, one for iOS with a simple CBPeripheralManager setup, and one for macOS with a simple CBCentralManager setup.\r\n\r\nSteps to Reproduce:\r\n1. Open the iOS and macOS projects bundled with this project on iOS 11 and macOS High Sierra. It must be macOS High Sierra due to a different bug with Xcode 9 and Core Bluetooth (radar 34428271)\r\n2. Run the iOS project on a physical device running the release version of iOS 11\r\n3. Run the macOS project so that it connects to the iOS device and writes a value (you will see output of this in the console)\r\n4. DO NOT TURN OFF BLUETOOTH OR STOP THE MACOS APP\r\n5. Re-run the iOS app and observe that the CBPeripheralManagerDelegate callback to `willRestoreState` is called, but is _not_ prodded with the services that it were currently published at the time of restoration. Also observe that on the macOS side, there is no output to say that the device disconnected.\r\n6. Disable and re-enable Bluetooth on macOS to force a disconnection and automatically initiate a reconnection when Bluetooth is turned back on.\r\n7. Observe that where the macOS app could previously write to the connected peripheral, it no longer can with \"unknown error\" outputs.\r\n\r\nExpected Results:\r\nThe iOS app should only call `willRestoreState` while centrals are still connected if the services are going to be provided in the callback, as per the documentation.\r\n\r\nActual Results:\r\nThe iOS does not provide the services in the callback.\r\n\r\nVersion/Build:\r\niOS 11 GM\r\nmacOS High Sierra\r\n\r\nConfiguration:\r\n\r\niPhone 7 Plus (Black)\r\nMacBook 12\" (Early 2015)"
+    email: kane.cheshire@googlemail.com
+    modified: "2018-01-03T22:15:41.98098Z"
+    number: "34568166"
+    number_intvalue: 34568166
+    originated: September 21 2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 11
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: iOS CBPeripheralManager state restoration broken on iOS 11

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "2775938"
+    labels:
+        datastore_id: "110416"
+data:
+    classification: ""
+    created: "2009-11-08T05:20:07.56157Z"
+    description: "17-Sep-2001 03:38 PM W Lewis:\r\n\r\n-- Steps to Reproduce:\r\n\r\nWhen creating NSStrings or CFStrings representing floating-point\r\nnumbers in multiple threads, the program has a tendency to segfault\r\nor to return an incorrect string. Source code to a tool which\r\ndemonstrates this problem is available at\r\n   ftp://ftp.omnigroup.com/pub/outgoing/apple-bugs/fmtThreadTest.tar.gz\r\n\r\nThis tool simply starts up a number of threads. Each thread performs\r\n10,000 integer->string conversions and 10,000 float->string\r\nconversions and compares the results. If only one thread is started,\r\neverything works. If several threads are started (say, 10), then\r\na few of the conversions will return garbage, and occasionally the\r\nprogram will crash.\r\n\r\n-- Expected Results:\r\n\r\nCFStringCreateWithFormat() should return the correct results and\r\nshould not segfault randomly.\r\n\r\n-- Actual Results:\r\n\r\n\r\nCFStringCreateWithFormat() occasionally returns incorrect results\r\nor segafults.\r\n\r\n\r\n-- Workaround:\r\n\r\n\r\nDon't use CFStringCreateWithFormat() in a multithreaded application.\r\nAlso don't use any routines which call it. This includes +[NSString\r\nstringWithFormat:], -[NSNumber stringValue], NSLog(), -[...\r\ndescription], etc. Don't use EOF or WebObjects, because these\r\ntoolkits use Foundation, and may therefore crash or randomly insert\r\nbogus data into your database.\r\n\r\n-- Further details for the engineer:\r\n\r\nWhat's going on is that all of the ...withFormat() routines call\r\ninto the same routine that is used to implement libc's *printf()\r\nfunctions. This routine calls a private routine named cvt(), which\r\ncalls another private routine named __dtoa() which does the actual\r\nconversion. __dtoa() manages a linked list of conversion buffers\r\nusing its own internal routines named Balloc()/Bfree(). This freelist\r\nis static and shared by all threads in the task, but there is no\r\nlocking around it, so when two (or more) threads attempt to perform\r\na conversion at the same time, problems will occur.\r\n\r\nThis bug has existed in Apple's (and NeXT's) products for quite\r\nsome time."
+    email: wiml@omnigroup.com
+    modified: "2011-08-28T05:51:45.013506Z"
+    number: "2775938"
+    number_intvalue: 2775938
+    originated: 17-Sep-2001
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Closed
+    title: Crash/Corruption when formatting strings with floating point nrs.

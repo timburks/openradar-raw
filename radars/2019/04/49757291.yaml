@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "49757291"
+    labels:
+        datastore_id: "5024340206682112"
+data:
+    classification: Bug
+    created: "2019-04-10T00:19:09.760129Z"
+    description: "Summary:\r\nThread Sanitizer stops on a false positive when deferring mutex unlock.\r\n\r\nSteps to Reproduce:\r\n(run sample project with thread sanitizer enabled)\r\n- init a mutex\r\n- lock the mutex on a non-main thread\r\n- unlock the mutex on a non-main thread\r\n- lock the mutex on the main thread \r\n- defer unlocking mutex on main thread\r\n\r\nExpected Results:\r\n- Thread sanitizer does not pause on valid mutex usage\r\n\r\nActual Results:\r\n- WARNING: ThreadSanitizer: Swift access race\r\n\r\nVersion/Build:\r\nXcode 10.2\r\n\r\n\r\nConfiguration:\r\n\r\n```\r\nclass ViewController: UIViewController {\r\n    var mutex = pthread_mutex_t()\r\n    \r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n        pthread_mutex_init(&mutex, nil)\r\n        DispatchQueue(label: \"NotMainQueue\", attributes: []).async {\r\n            pthread_mutex_lock(&self.mutex)\r\n            pthread_mutex_unlock(&self.mutex)\r\n        }\r\n        pthread_mutex_lock(&self.mutex)\r\n        defer { pthread_mutex_unlock(&self.mutex) }\r\n    }\r\n}\r\n```"
+    email: hoar.ian@gmail.com
+    modified: "2019-04-10T00:19:09.760379Z"
+    number: "49757291"
+    number_intvalue: 49757291
+    originated: Apr 9, 2019
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: "10.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Thread Sanitizer false positive when deferring mutex unlock

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27822079"
+    labels:
+        datastore_id: "6134041120079872"
+data:
+    classification: Serious Bug
+    created: "2016-08-12T11:54:43.64028Z"
+    description: "Summary:\n\nWhile building our KIF test suite, we experienced the following failure in the linking stage.\n\n0  0x10305575c  __assert_rtn + 144\n1  0x10307203d  mach_o::relocatable::Parser<x86>::parse(mach_o::relocatable::ParserOptions const&) + 3085\n2  0x103060954  mach_o::relocatable::Parser<x86>::parse(unsigned char const*, unsigned long long, char const*, long, ld::File::Ordinal, mach_o::relocatable::ParserOptions const&) + 342\n3  0x10308d31d  archive::File<x86>::makeObjectFileForMember(archive::File<x86>::Entry const*) const + 783\n4  0x10308cb96  archive::File<x86>::forEachAtom(ld::File::AtomHandler&) const + 518\n5  0x1030a4e94  ld::tool::InputFiles::forEachInitialAtom(ld::File::AtomHandler&, ld::Internal&) + 454\n6  0x1030b04e8  ld::tool::Resolver::resolve() + 44\n7  0x1030566bb  main + 1050\n8  0x7fff9993a5ad  start + 1\nA linker snapshot was created at:\n\t/tmp/PSPDFKit KIF Tests-2016-07-12-125056.ld-snapshot\nld: Assertion failed: (cfiStartsArray[i] != cfiStartsArray[i-1]), function parse, file /Library/Caches/com.apple.xbs/Sources/ld64/ld64-274/src/ld/parsers/macho_relocatable_file.cpp, line 1893.\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n\nWe use the new incremental LTO feature (LLVM_LTO = YES_THIN). Linking success with LLVM_LTO = NO.\n\nLinking also fails with LLVM_LTO = YES with the following error:\n\nLLVM ERROR: Section too large, can't encode r_address (0x1000007) into 24 bits of scattered relocation entry.\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n\nSteps to Reproduce:\n\nSee the attached linker snapshot. \n\nExpected Results:\n\nLinking would succeed. \n\nActual Results:\n\nld fails with “Assertion failed: (cfiStartsArray[i] != cfiStartsArray[i-1]), function parse, file /Library/Caches/com.apple.xbs/Sources/ld64/ld64-274/src/ld/parsers/macho_relocatable_file.cpp, line 1893.” with LLVM_LTO = YES_THIN. \n\nld fails with “LLVM ERROR: Section too large, can't encode r_address (0x1000007) into 24 bits of scattered relocation entry.” with LLVM_LTO = YES\n\nRegression:\n\nOccurred in Xcode 8b5, while building for the iPhone 5 (iOS 9.3) simulator. Might have been an issue in earlier versions of Xcode 8 as well. \n\nNotes:\n\nI’m also attaching the full Ld command and error message from Xcode."
+    email: matej@bukovinski.com
+    modified: "2016-08-12T11:54:43.64045Z"
+    number: "27822079"
+    number_intvalue: 27822079
+    originated: 12-Aug-2016 01:53 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8b5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Linking fails due to assertion failure (cfiStartsArray[i] != cfiStartsArray[i-1]) with incremental LTO

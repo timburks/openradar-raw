@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9832923"
+    labels:
+        datastore_id: "1274410"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2011-07-25T09:34:46.610368Z"
+    description: "Summary:\r\nWe receive a number of crash reports like the ones attached. An exception like this is thrown:\r\n\r\n*** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '-[__NSArrayI length]: unrecognized selector sent to instance 0x2f6540'\r\n\r\nIt seems to happen under certain circumstances when the user edits a contact's details using the ABAddressBook API.\r\n\r\n\r\nSteps to Reproduce:\r\nHaven't been able yet.\r\n\r\n\r\nRegression:\r\nAs you see in the attached reports, this happens from iOS 4.2.1 all the way up to 4.3.4 on different hardware.\r\n\r\n\r\n25-Jul-2011 03:58 PM Patrick Collins :\r\nEngineering has requested the following information in order to further investigate this issue:\r\n\r\nAre you also experiencing this issue with iOS 5.0b4 (9A5274d)?\r\n\r\n25-Jul-2011 04:16 PM Ortwin Gentz:\r\nThe issue doesn't occur frequently (I suspect it's some sort of race condition) so we haven't seen this in the wild with any iOS 5 beta - yet.\r\n\r\n02-Aug-2011 07:28 PM Ortwin Gentz:\r\nWe're now able to reproduce this issue. It still occurs in iOS 5.0 beta 4.\r\n\r\nThe reason lies in the way we create the \"displayedPerson\" object. We basically have an addressDictionary in the format how it is returned by the reverse geocoder. This dictionary seems to be 100% compatible to the keys of a kABPersonAddressProperty but it's not. It contains a \"FormattedAddressLines\" key that AddressBook does not support. When we make sure, the kABPersonAddressProperty only contains documented keys, the exception does not occur.\r\n\r\nIt would be desirable if the system would be more fault tolerant here and wouldn't crash on unsupported keys, especially since the addressDictionary returned by MKReverseGeocoder and CLGeocoder looks so similar to ABAddressBook's kABPersonAddressProperty."
+    email: futuretap@googlemail.com
+    modified: "2018-02-22T15:23:47.27522Z"
+    number: "9832923"
+    number_intvalue: 9832923
+    originated: 25-Jul-2011 11:34 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone
+    product_version: 4.3.4
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: ABCDBContextSaveMultiValue exception

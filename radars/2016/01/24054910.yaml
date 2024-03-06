@@ -1,0 +1,45 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24054910"
+    labels:
+        datastore_id: "5048933537546240"
+data:
+    classification: Serious Bug
+    created: "2016-01-05T11:41:49.8335Z"
+    description: |-
+        Summary:
+        Restarting OS X damages /etc/certificates/foo.concat.pem file
+
+        Steps to Reproduce:
+        Configure a certificate for OS X Server to use with jabber/messages server.
+        This _should_ create a .key.pem, .concat.pem, .cert.pem and a .chain.pem file. which it doesn't always do. There are multiple RDARs pertaining to this.
+        Let's pretend, just for a moment, that the admin manually fixed this and these files exist.
+        Messages now starts and can be connected to using TLS 1.0 (which is appallingly bad transport security).
+        Now reboot the server and try to login to Messages again.
+
+        Expected Results:
+        Messages service should just start and allow transport encrypted logins.
+
+        Actual Results:
+        Messages service launches without TLS only, and just uses plaintext. It silently fails to enable TLS.
+        This is due to the fact that upon restart, OS X recreates the cert files it seems and fails at doing so again. This results in the .concat.pem feil, which _should_ contain the leaf cert and key im pem format, to only contain the leaf certificate. Obviously this fails to launch the prehistoric jabberd with encryption support and it silently drops down to plaintext.
+
+
+        Regression:
+        I think this worked some time in the past with server 3 or 2… It certainly worked with 10.6.
+
+        Notes:
+        Certigicate in use is sissued by StartSSL. Not that it makes any difference to use any other cert vendor.
+    email: pepi.zawodsky@gmail.com
+    modified: "2016-01-05T11:41:49.83383Z"
+    number: "24054910"
+    number_intvalue: 24054910
+    originated: 05-Jan-2016 12:41 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X Server
+    product_version: 5.0.15
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Restarting OS X damages /etc/certificates/foo.concat.pem file

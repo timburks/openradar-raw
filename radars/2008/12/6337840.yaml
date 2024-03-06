@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6337840"
+    labels:
+        datastore_id: "1204"
+data:
+    classification: Serious Bug
+    created: "2008-12-16T01:31:54.265427Z"
+    description: "Summary:\r\n\r\nIf a UIView is added to a UIWindow using -[window addSubview:], the associated UIViewController will set the UIWindow's delegate using -[UIWindow setDelegate:]. If this UIViewController loads further subcontrollers, those subcontrollers may also call -[UIWindow setDelegate:].\r\n\r\nIf the original UIViewController's view is then removed from the UIWindow using -[view removeFromSuperview], the removed UIViewController will not call -[UIWindow setDelegate:] to reset the delegate.\r\n\r\nThis occurs because -[UIView viewWillMoveToWindow:] checks the current window delegate, finds that the delegate does not match the to-be-removed UIViewController, and does not set the delegate.\r\n\r\nIf a delegate event occurs before a new view controller is added to the window, the UIWindow will attempt to send a message to a potentially deallocated UIViewController via its now-stale _delegate instance variable.\r\n\r\nSteps to Reproduce:\r\n\r\nI have attached an example application which replicates this problem using the UIImagePicker view:\r\n\r\n1) Run the application and click on \"Take a picture\". The UIImagePicker's view is added to the UIWindow, setting the UIWindow's delegate.\r\n2) Select an available photo album and a picture. In image editing mode, select \"Choose\". In selecting the image editing view, a new UIWindow delegate is set.\r\n4) Once you have selected \"Choose\", a black screen will now appear -- the UIImagePicker delegate removed the original UIImagePicker from the UIWindow, leaving the now invalid delegate reference.\r\n5) Rotate the device to trigger a notification that will result in the UIWindow sending a notification to its delegate. This delegate reference is invalid, and the application should now crash.\r\n\r\n\r\nExpected Results:\r\nThe UIWindow _delegate instance variable should be set to nil regardless of the method used to add the UIImagePicker delegate to the screen.\r\n\r\nActual Results:\r\nThe delegate is not set to nil.\r\n\r\nNotes:\r\nUsing -[UIViewController presentModalViewController:] sets an internal UIViewController instance variable (isPerformingModalTransition), which causes sub view controllers to -not- set the UIWindow delegate."
+    email: landon.j.fuller@gmail.com
+    modified: "2011-08-28T05:49:29.941439Z"
+    number: "6337840"
+    number_intvalue: 6337840
+    originated: 01-Nov-2008 12:42 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: ""
+    reproducible: Always
+    resolved: 03-Dec-2008
+    status: Closed
+    title: Non-modal UIViewControllers fail to set UIWindow delegate to nil on removal

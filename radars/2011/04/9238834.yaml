@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9238834"
+    labels:
+        datastore_id: "1150404"
+data:
+    classification: Enhancement
+    created: "2011-04-05T22:50:12.800559Z"
+    description: "There isn't an easy way (via public API) to move an object from one index to another.\r\n\r\nI see attempts like this frequently:\r\n\r\nNSUInteger newIndex = ...;\r\nNSUInteger oldIndex = [array indexOfObject:obj];\r\nif (oldIndex > newIndex) { // Moving to lower index\r\n\t[array removeObjectAtIndex:oldIndex];\r\n\t[array insertObject:obj atIndex:newIndex];\r\n} else if (oldIndex < newIndex) { // Moving to higher index\r\n\t[array insertObject:obj atIndex:newIndex];\r\n\t[array removeObjectAtIndex:oldIndex];\r\n}\r\n\r\nNSMutableArray already has -exchangeObjectAtIndex:withObjectAtIndex: (since 10.2), and it seems like a much more trivial convenience method, since any first-year student learns how to swap objects in an array. (I like this API, just pointing out that it's a solution to a simple yet common problem.)\r\n\r\nThe contract and documentation would certainly have to be well-defined, since the risk of one-off errors and exceeding the array bounds is real. However, it doesn't seem any more confusing than -insertObject:atIndex:. As long as the meaning of the \"to\" index is clear, this method could very possibly provide a more efficient implementation that a third-party developer.\r\n\r\n---\r\n\r\nDave DeLong also pointed out that this approach also works:\r\n\r\nNSUInteger newIndex = ...;\r\nNSUInteger oldIndex = [array indexOfObject:obj];\r\nif (newIndex > oldIndex) {\r\n\tnewIndex--;\r\n}\r\n[array removeObjectAtIndex:oldIndex];\r\n[array insertObject:obj atIndex:newIndex];\r\n\r\nI'm sure there are other alternatives, all less readable then -moveObjectAtIndex:toIndex: would be.\r\n\r\n---\r\n\r\nDave also reminded me that the object would need to be retained before removal and released after insertion, in case the array is the only owner. Another easy mistake to make when writing such code, as shown above."
+    email: quinntaylor@mac.com
+    modified: "2011-08-28T05:37:15.925271Z"
+    number: "9238834"
+    number_intvalue: 9238834
+    originated: "2011-04-05"
+    parent_number: '&{NULL_VALUE}'
+    product: Foundation
+    product_version: X
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: 'API/NSMutableArray: Add -moveObjectAtIndex:toIndex:'

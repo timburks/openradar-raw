@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19592727"
+    labels:
+        datastore_id: "5271005392011264"
+data:
+    classification: Enhancement
+    created: "2015-01-25T15:27:43.10449Z"
+    description: "Summary:\n\nInstance variables should be allowable as as default parameter variables for a function.\n\nSteps to Reproduce:\n\n1. Create a class with a non-optional property\n2. Add a method that takes a default parameter value as an argument\n3. Set the non-optional property as the parameter’s default value\n\nExpected Results:\n\nI expect the property’s current value to be used as the parameter’s default value when the function is called.\n\nActual Results:\n\nThe code will not compile.\n\nNote:\n\nSwift appears to be looking for a class variable instead of an instance variable.\n\nSample Code:\n\nPaste this code into Playground. Try the two different implementations of shrinkPayment(_:)\n\n———— playground code ————\n\nclass CreditCard {\n    var minimumPayment = 55_00 //in pennies\n    var currentBalance = 1_250_00\n    \n    // This implementation of shrinkPayment works, but is verbose\n    \n    func shrinkPayment(desiredPayment : Int?) -> Int {\n        if let desiredPayment = desiredPayment {\n            return currentBalance < desiredPayment ? currentBalance : desiredPayment\n        } else {\n            return currentBalance < minimumPayment ? currentBalance : minimumPayment\n        }\n    }\n    \n    // This implementation of shrinkPayment would be more concise, but doesn't work because instance variables can't be default parameter values\n\n//    func shrinkPayment(desiredPayment : Int = minimumPayment) -> Int {\n//        return currentBalance < desiredPayment ? currentBalance : desiredPayment\n//    }\n\n    func pay(amount : Int) {\n        currentBalance -= amount\n    }\n}\n\nlet visa = CreditCard()\n\nwhile visa.currentBalance > 0 {\n    let payment = visa.shrinkPayment(nil)\n    visa.pay(payment)\n}\n\n———— end playground code ————"
+    email: getaaron@gmail.com
+    modified: "2015-01-25T15:27:43.104686Z"
+    number: "19592727"
+    number_intvalue: 19592727
+    originated: 25-Jan-2015 07:27 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 6.1.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: allow instance variables as default parameter variables'

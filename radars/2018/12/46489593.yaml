@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "46489593"
+    labels:
+        datastore_id: "5038952343928832"
+data:
+    classification: ""
+    created: "2018-12-05T17:39:56.784453Z"
+    description: "Area:\r\nAVFoundation\r\n\r\nSummary:\r\nIf you create a new AVCaptureSession, attach it to a camera and start it while UIImagePickerController is currently present on screen, the preview window in UIImagePickerController freezes if you switch between front and rear cameras and the buttons become unresponsive. \r\n\r\nSteps to Reproduce:\r\nCreate a simple project with a single \"root\" ViewController.\r\nNow from inside the root ViewController, create a UIImagePickerController configured like so:\r\nlet picker = UIImagePickerController()\r\npicker.sourceType = .camera\r\npicker.mediaTypes = [kUTTypeImage]\r\npicker.cameraDevice = .front\r\npicker.cameraCaptureMode = .photo\r\nand present it on-screen from your root ViewController in the normal way:\r\nself.present(picker, animated: true, completion: nil)\r\n\r\nNow, in your root ViewController, create an AVCapture session configured this:\r\nlet captureSession = AVCaptureSession()\r\nlet device = AVCaptureDevice.default(AVCaptureDevice.DeviceType.builtInWideAngleCamera,\r\n                                                    for: AVMediaType.video,\r\n                                                    position: .front)\r\ncaptureSession.addInput(AVCaptureDeviceInput(device: device))\r\ncaptureSession.startRunning() // this part is crucial, make sure it's only invoked after the UIImagePickerController is fully on-screen.\r\n\r\n(note: make sure your capture session is attached to a view somewhere and is actually showing the camera preview).\r\n\r\nNow try flipping between front and rear cameras in the UIImagePickerController.\r\n\r\nExpected Results:\r\nShould be able to switch between front and rear camera in the UIImagePickerController as normal. \r\n\r\nActual Results:\r\nWhen you try to flip to rear camera, the camera preview freezes on a blurred image and the buttons become unresponsive. \r\n\r\nVersion/Build:\r\nHappens on iOS 11 and iOS 12. \r\nHappens on all iPhone devices (haven't tried iPad).\r\n\r\nConfiguration:\r\nNothing specific. \r\n\r\nI've attached a screen recording showing the end result."
+    email: joemuers.developer@gmail.com
+    modified: "2018-12-05T17:39:56.784646Z"
+    number: "46489593"
+    number_intvalue: 46489593
+    originated: 05/12/2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 11, 12
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AVCaptureSession breaks camera preview in UIImagePickerController

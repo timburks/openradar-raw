@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15933483"
+    labels:
+        datastore_id: "5783898776666112"
+data:
+    classification: Serious Bug
+    created: "2014-01-29T06:11:15.737626Z"
+    description: "Summary:\r\nWhen sending an HTTP Response with multiple cookies, CFHTTPMessage combines the cookies into a comma-separated list under a single \"Set-Cookie\" HTTP header. (This is referred to as \"set-cookie-folding\".)\r\n\r\nSet-cookie-folding is NOT supported on Google Chrome, Firefox, and Internet Explorer. Each of those browsers will completely ignore every cookie after the first comma, rendering CFHTTPMessage completely useless for handling HTTP responses with multiple cookies in any browser other than Safari (which supports cookie-folding). \r\n\r\nCFHTTPMessage.c (which is open source) references RFC 2965. However, that specification has been obsoleted by RFC 6265. The most recent specification does not formally forbid Set-Cookie folding. However, because it unsupported on the majority of web browsers, CFHTTPMessage should be modified to send a single cookie per \"Set-Cookie:\" header. \r\n\r\nThis can be done performantly in the function \"_CFHTTPMessageCopySerializedHeaders(CFHTTPMessageRef msg, Boolean forProxy)\" on line 693 of CFHTTPMessage.c. That function should be modified to include one \"Set-Cookie\" header for each cookie added to the CFHTTPMessage.\r\n\r\nNote: Set-Cookie-Folding can introduce a security vulnerability, which may be why other browser vendors have elected to not support it. For details, see: http://miki.it/blog/2013/9/15/xsrf-cookie-setting-google/\r\n\r\nSteps to Reproduce:\r\nN/A -- simply create an CFHTTPMessage with multiple cookies.\r\n\r\nExpected Results:\r\nCFHTTPMessage must use a \"Set-Cookie\" header for EACH cookie rather than combining cookies into a comma-separated list under a single \"Set-Cookie\" header. This is compatible with all web browsers.\r\n\r\nActual Results:\r\nCFHTTPMessage combines cookies into a comma-separated list under a single \"Set-Cookie\" header. This causes Google Chrome, Firefox and Internet Explorer to discard all cookies except the first. \r\n\r\nVersion:\r\nXcode Version 5.0.1 (5A2034a). Mac OS X Version 10.9.1, Build 13B42\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nN/A -- happens on all configurations"
+    email: bdkjones@gmail.com
+    modified: "2014-01-29T06:11:15.73782Z"
+    number: "15933483"
+    number_intvalue: 15933483
+    originated: 28 January 2014
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X SDK
+    product_version: 10.9.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CFHTTPMessage combines cookies in Set-Cookie header, which fails on most web browsers

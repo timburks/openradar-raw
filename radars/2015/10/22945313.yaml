@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22945313"
+    labels:
+        datastore_id: "6312615324155904"
+data:
+    classification: ""
+    created: "2015-10-02T02:29:42.921Z"
+    description: "Summary:\r\nWhen an app is updated, Finder never reflects the changes (even if the modification date has been updated or it's been registered via LSRegisterURL), such as its short version string (eg: 1.0). I did not reproduce this in 10.10 but I have reproduced this in 10.11, usually always.\r\n\r\nSteps to Reproduce:\r\n1. Download the Xcode project I've attached\r\n2. Open the project. Build the OS X application.\r\n3. Reveal the application in Finder. Note the version is 1.0 from Finder.\r\n4. In the Xcode project, change the Info.plist keys CFBundleShortVersionString and CFBundleVersion to values 1.1, and 2 respectively.\r\n5. Do a Clean in Xcode\r\n6. Build the application again. Reveal it in Finder. Note that the application still displays as version 1.0 in Finder even though you changed it.\r\n\r\nAnother reproducible test case:\r\n1. Build the app from the Xcode project and reveal it in Finder. Note the version info Finder displays you.\r\n2. Modify the app's info.plist file via a text editor by increasing the short version string and bundle version, in the same fashion as the test case above.\r\n3. Run /usr/bin/touch on the app to update its modification date\r\n4. Note that Finder still does not reflect the changes made to the app.\r\n\r\n---\r\n\r\nAlso note that it is a problem with Finder not Launch Services. This is verifiable if you execute:\r\n\r\n/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -dump\r\n\r\nand look at the output available for the application that was altered.\r\n\r\n\r\nExpected Results:\r\nI expect Finder to reflect the changes that were made to the app, since Launch Services is updated, Finder should be too.\r\n\r\nActual Results:\r\nFinder does not reflect the changes made to an app that has been updated in-place, even through keeping the modification date up-to-date.\r\n\r\nAs documented on:\r\nhttps://developer.apple.com/library/mac/documentation/Carbon/Conceptual/LaunchServicesConcepts/LSCConcepts/LSCConcepts.html\r\n\r\n\"Note: You can update an application’s modification time using the BSD touch command in a Terminal window. For example, the command touch /Applications/TextEdit.app sets the modification time of TextEdit to the current time\"\r\n\r\nThis should be a valid approach. Indeed, Launch Service recognizes the changes, but Finder doesn't.\r\n\r\nVersion:\r\n10.11 (15A284)\r\nXcode 7.0.1 (7A1001)\r\n\r\nNotes:\r\nThis affects software that updates the app in-place, and also affects Xcode building when you change the version information.\r\n\r\nConfiguration:\r\nHappens on El Capitan but has not happened to me on Yosemite.\r\n\r\nNote: this can pretty much be reproduced to any kind of application; you do need the project uploaded in this report.\r\n\r\nA workaround is to relaunch Finder from the force-quit menu.\r\n\r\nIt turns out Finder updates the modification date, but not the short version string."
+    email: zorgiepoo@gmail.com
+    modified: "2016-03-21T23:38:58.79746Z"
+    number: "22945313"
+    number_intvalue: 22945313
+    originated: 01-Oct-2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11 (15A284)
+    reproducible: Always
+    resolved: Yes (10.11.4)
+    status: Duplicate of 22272394 (Closed)
+    title: Launch Services and Finder are Out Of Sync (OS X)

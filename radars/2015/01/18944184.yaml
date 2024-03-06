@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18944184"
+    labels:
+        datastore_id: "5213982453399552"
+data:
+    classification: Serious Bug
+    created: "2015-01-02T17:54:38.831075Z"
+    description: "The OSACopyScriptingDefinitionFromURL() documentation (ASDebugging.h) states \"If used with a file: URL, this call is equivalent to OSACopyScriptingDefinition.\"\r\n\r\nHowever, using a file: URL returns an sdef containing Apple Event Manager's XML-RPC/SOAP terminology. This is a known bug (see Radar #15379481, #14298245) affecting OS X 10.10, 10.9, and probably earlier releases.\r\n\r\nThis bug needs to be fixed as the only alternative API, OSACopyScriptingDefinition(), requires an FSRef argument, which rules out its use in AppStore-hosted products and is generally undesirable due to the FSRef type and its associated functions being deprecated in 10.9.\r\n\r\nThe following code provides a quick and easy fix that can be applied with little or no tweaking:\r\n\r\nextern OSAError OSACopyScriptingDefinitionFromURL(CFURLRef url, SInt32 modeFlags, CFDataRef *sdef) {\r\n    OSAError err = noErr;\r\n    CFStringRef scheme = CFURLCopyScheme(url);\r\n    if (CFStringCompare(scheme, CFSTR(\"file\"), kCFCompareCaseInsensitive) == kCFCompareEqualTo) {\r\n        FSRef fs;\r\n        if (!CFURLGetFSRef(url, &fs)) return fnfErr; // DEPRECATED API\r\n        err = OSACopyScriptingDefinition(&fs, 0, sdef);\r\n    } else {\r\n        /* ORIGINAL OSACopyScriptingDefinitionFromURL IMPLEMENTATION GOES HERE */\r\n    }\r\n    CFRelease(scheme);\r\n    return err;\r\n}"
+    email: automate.mantasystems@gmail.com
+    modified: "2015-01-02T17:54:38.831242Z"
+    number: "18944184"
+    number_intvalue: 18944184
+    originated: 11-Nov-2014 08:23 PM
+    parent_number: "14298245"
+    product: OS X
+    product_version: 10.10, 10.9
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/14298245
+    title: 'OSACopyScriptingDefinitionFromURL() doesn''t handle file: URLs correctly'

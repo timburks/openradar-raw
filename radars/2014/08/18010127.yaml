@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18010127"
+    labels:
+        datastore_id: "5834770382585856"
+data:
+    classification: UI/Usability
+    created: "2014-08-13T21:01:33.799588Z"
+    description: "Summary:\r\nWhen the keyboard is undocked the app should receive a notification (via NSNotificationCenter) telling it that the keyboard is hidden. There are two notifications for this: UIKeyboardWillHideNotification and UIKeyboardDidHideNotification. In iOS 8 these two notifications are not sent when a user undocks or splits the keyboard with a gesture. Both are sent if the user long presses the hide keyboard button and choose \"Undock\" or \"Split\" from the menu that appears.\r\n\r\nAlso, sometimes the app does not receive UIKeyboardWillShowNotification or UIKeyboardDidShowNotification events when docking the keyboard interactively.\r\n\r\nThis bug causes apps to get into a bad state because they think that the keyboard is still docked.\r\n\r\nSteps to Reproduce:\r\n1. Build and run the attached app.\r\n2. Tap in the text field to give it focus and make the keyboard appear. As long as the keyboard is visible and docked the label in the center will say \"Shown\" and the background will change to green. Whenever the keyboard is hidden or undocked/split then the label changes to \"Shown\" and the background is white.\r\n3. Starting with the keyboard docked either drag the hide keyboard button (bottom right button on the keyboard) up to undock it or do a two-finger spread gesture (pull the keyboard apart horizontally) to split it. On iOS 7.1 and earlier this would cause the notification to be sent, and the app will properly update (the background color will change to white). On iOS 8 the background color remains green because the notification was not sent.\r\n4. Starting with the keyboard docked again long-press the hide keyboard button and choose \"Undock\" or \"Split\" from the menu. In this case the notification is sent, and the background changes to white, even in iOS 8.\r\n5. Starting with an undocked (but not split) keyboard drag the hide keyboard button to the bottom of the screen to redock it. In iOS 8 the show notifications are not sent and so the background remains white (it should be green). This case also behaves correctly if you use the long press menu to redock instead of a gesture.\r\n6. Starting with a split keyboard either use a gesture or the long press menu to merge (but don't dock) the keyboard. In iOS 8 incorrect UIKeyboardWill/DidShowNotifications will be sent (the keyboard should be considered hidden in this case because it is undocked). The background will be green when it should be white.\r\n\r\nExpected Results:\r\nIn every case described above the background should be green only if the keyboard is visible and docked.\r\n\r\nActual Results:\r\nIn some cases notifications are not sent or extra incorrect notifications are sent, causing the app to be in a bad state."
+    email: adam@adamkemp.com
+    modified: "2014-08-13T21:01:33.799828Z"
+    number: "18010127"
+    number_intvalue: 18010127
+    originated: 13-Aug-2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 8.0 (12A4345d)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: eyboard will/did hide notifications not sent on iOS 8 when interactively splitting/undocking the keyboard

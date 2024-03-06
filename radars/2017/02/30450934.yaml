@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30450934"
+    labels:
+        datastore_id: "4531969647968256"
+data:
+    classification: Bug
+    created: "2017-02-09T22:00:27.79362Z"
+    description: "Area:\r\nSomething not on this list\r\n\r\nSummary:\r\nThere is no guarantee between the ordering of the callback in `getTasksWithCompletionHandler` and the calling of `didBecomeInvalidWithError` if the session is being used in the background by another extension. And that complicated the logic tremendously, since we can't differentiate between\r\n\r\nSteps to Reproduce:\r\n1. Create an NSURLSession in an Extension\r\n2. In the main app, on foreground, try to create a session with that session identifier (to reconnect to tasks)\r\n3. If the Extension's NSURLSession is still alive, then the main app's session will sometimes (rdar://28352195) send the delegate method `didBecomeInvalidWithError`.\r\n4. If we call `getTasksWithCompletionHandler` on the main app, that block might be called before `didBecomeInvalidWithError` is invoked.\r\n\r\nNote that that call is not even guaranteed. It seemed to be consistent in iOS8 but not anymore. However, even when it is called, there are no ordering guarantees between it and `getTasksWithCompletionHandler` for instance.\r\n\r\nExpected Results:\r\nI'd like for the undefined behavior (rdar://28352195) to be fixed, and even then, for there to be some guarantee in the ordering of the calls. That is, the completion of `getTasksWithCompletionHandler` and when `didBecomeInvalidWithError` gets called. Essentially `didBecomeInvalidWithError` should be called first, so that we can differentiate between the session being owned by another process vs the session having no tasks.\r\n\r\nActual Results:\r\nWe get that the callback to `didBecomeInvalidWithError` can happen latter than `getTasksWithCompletionHandler`. So essentially we need to wait before possibly `didBecomeInvalidWithError` gets called before determining if tasks don't exist vs the session is in use from another process.\r\n\r\nIf there was a order guarantee this logic would be so much simpler.\r\n\r\nVersion:\r\niOS 10.2\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 6S Wi-Fi\r\n\r\nAttachments:"
+    email: henriqueponde90@gmail.com
+    modified: "2017-02-09T22:00:27.79382Z"
+    number: "30450934"
+    number_intvalue: 30450934
+    originated: 02/09/2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "10.2"
+    reproducible: Sometimes
+    resolved: No
+    status: Open
+    title: NSURLSession's delegate methods have no order guarantees

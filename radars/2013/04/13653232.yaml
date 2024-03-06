@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13653232"
+    labels:
+        datastore_id: "2941402"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2013-04-15T17:01:11.618189Z"
+    description: "Summary: \r\nThe writeToFile:atomically: method of NSData is no longer atomic. The introduction of versioning seems to have broken it. Just before renaming the temporary file with the new contents to the name of the document, the versioning code renames the original document to the backup name, rather than copying it or creating a hard link. Consequently, a system crash, reset, or power fail after the versioning rename but before the rename of the temp file will leave the filesystem in a state where the document file does not exist. The \"atomic\" portion of \"writeToFile:atomically:\" is meant to avoid this state, but it does not.\r\n\r\nSteps to Reproduce:\r\n1. Open TextEdit. \r\n2. Enter some text. \r\n3. Start dtruss in a Terminal window on the TextEdit process. \r\n4. Switch back to TextEdit and hit \"Cmd-S\" to save.\r\n5. After the save is complete, switch to the terminal window and hit Cntrl-C to terminate dtruss.\r\n\r\nExpected Results:\r\nI expect the dtruss output to contain the following sequence (clutter omitted, only signification syscalls shown):\r\n\r\nopen(\"/private/var/folders/xq/thqw6j0j3xj_99pw3xgk_qxm000gn_/T/com.apple.TextEdit/TemporaryItems/(A Document Being Saved By TextEdit)/foo.txt\\0\", 0x601, 0x1B6)\t\t = 8 0\r\nwrite(0x8, \"foobar\\nbaz\\nexisting text\\nfoo\\n\\n\\0\", 0x1E)\t\t = 30 0\r\nfsync(0x8, 0x7FC5A406E240, 0x0)\t\t = 0 0\r\nclose(0x8)\t\t = 0 0\r\n...\r\nlstat64(\"/Users/smb/work/projects/SNIA NVM Programming TWG/use cases/safe writes/foo.txt.sb-f0b0dec4-DnB01P\\0\", 0x10A849570, 0x8E430)\t\t = -1 Err#2\r\nln(\"/Users/smb/work/projects/SNIA NVM Programming TWG/use cases/safe writes/foo.txt\\0\", \"/Users/smb/work/projects/SNIA NVM Programming TWG/use cases/safe writes/foo.txt.sb-f0b0dec4-DnB01P\\0\")\t\t = 0 0\r\nrename(\"/private/var/folders/xq/thqw6j0j3xj_99pw3xgk_qxm000gn_/T/com.apple.TextEdit/TemporaryItems/(A Document Being Saved By TextEdit)/foo.txt\\0\", \"/Users/smb/work/projects/SNIA NVM Programming TWG/use cases/safe writes/foo.txt\\0\")\t\t = 0 0\r\n\r\n\r\nActual Results:\r\n\r\nopen(\"/private/var/folders/xq/thqw6j0j3xj_99pw3xgk_qxm000gn_/T/com.apple.TextEdit/TemporaryItems/(A Document Being Saved By TextEdit)/foo.txt\\0\", 0x601, 0x1B6)\t\t = 8 0\r\nwrite(0x8, \"foobar\\nbaz\\nexisting text\\nfoo\\n\\n\\0\", 0x1E)\t\t = 30 0\r\nfsync(0x8, 0x7FC5A406E240, 0x0)\t\t = 0 0\r\nclose(0x8)\t\t = 0 0\r\n...\r\nlstat64(\"/Users/smb/work/projects/SNIA NVM Programming TWG/use cases/safe writes/foo.txt.sb-f0b0dec4-DnB01P\\0\", 0x10A849570, 0x8E430)\t\t = -1 Err#2\r\nrename(\"/Users/smb/work/projects/SNIA NVM Programming TWG/use cases/safe writes/foo.txt\\0\", \"/Users/smb/work/projects/SNIA NVM Programming TWG/use cases/safe writes/foo.txt.sb-f0b0dec4-DnB01P\\0\")\t\t = 0 0\r\nrename(\"/private/var/folders/xq/thqw6j0j3xj_99pw3xgk_qxm000gn_/T/com.apple.TextEdit/TemporaryItems/(A Document Being Saved By TextEdit)/foo.txt\\0\", \"/Users/smb/work/projects/SNIA NVM Programming TWG/use cases/safe writes/foo.txt\\0\")\t\t = 0 0\r\n\r\nRegression:\r\n\r\nNotes:\r\nIt's also notable that the temp file is not opened with the O_SYNC flag. It's possible that the lazy writer will asynchronously flush the data and get an EIO error on the write to the device. The initial write by the app and the following fsync and close would then return without errors, giving the application the illusion that the temp file was written successfully when it actually was not. The writeToFile:atomically: method would then rename the temp file to replace the current document, even though the temp file contains corrupted data."
+    email: stevebyan@me.com
+    modified: "2013-04-15T17:01:11.618498Z"
+    number: "13653232"
+    number_intvalue: 13653232
+    originated: 15-Apr-2013 01:00 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.8.3/12D78
+    reproducible: Rarely
+    resolved: ""
+    status: Open
+    title: 'NSData method writeToFile:atomically: isn''t atomic'

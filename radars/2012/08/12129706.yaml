@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12129706"
+    labels:
+        datastore_id: "1854415"
+data:
+    classification: Other Bug
+    created: "2012-08-19T14:30:57.411608Z"
+    description: "Summary:\r\nIn my OSX app I have a ABPeoplePickerView. Then I want to make the view show a specific person. I call:\r\nid *p = [[ABAddressbook sharedAddressbook] me];\r\n[view selectRecord:p byExtendingSelection:NO];\r\n\r\nExpected Results:\r\nI expect the person to be SELECTED and VISIBLE.\r\n\r\nActual Results:\r\np is selected just fine but the view's internal table is not scrolled there\r\n\r\nworkaround:\r\nNSTable *table = [view findInternalPeoplePickerTable];\r\n[table scrollRowToVisible:[table selectedRow]];\r\n\r\n=> problem: the workaround for this bug keeps me from releasing my software to the App Store as I use internal 'private' api?\r\n\r\n--\r\nPlease see attached code which is a slightly modified version of the apple sample code: CocoaPeoplePicker. see focusMe: IBAction\r\n\r\n==>\r\n\r\n- (IBAction)focusMe:(id)sender {\r\n    //select the right record\r\n    ABPerson *me = [[ABAddressBook sharedAddressBook] me];\r\n    [ppView selectRecord:me byExtendingSelection:NO];\r\n    //=-> bug: tableView isnt scrolled!\r\n    \r\n    //\r\n    //working hack\r\n    //\r\n    \r\n    //get table\r\n    id view = [ppView findSubviewOfKind:NSClassFromString(@\"ABPeoplePickerTableView\")];\r\n    \r\n    //scroll\r\n    if([view respondsToSelector:@selector(scrollRowToVisible:)]\r\n       && [view respondsToSelector:@selector(selectedRow)]) {\r\n        \r\n       [view scrollRowToVisible:[view selectedRow]];\r\n    }\r\n       \r\n    //focus\r\n    [[view window] makeFirstResponder:view];\r\n}"
+    email: Pich.Dominik@googlemail.com
+    modified: "2012-08-19T14:37:37.152994Z"
+    number: "12129706"
+    number_intvalue: 12129706
+    originated: 08-19-2012
+    parent_number: '&{NULL_VALUE}'
+    product: MacOSX SDK
+    product_version: "10.8"
+    reproducible: Always
+    resolved: NO
+    status: New
+    title: 'ABPeoplePickerView :: selectRecord... fails to scroll to selection'

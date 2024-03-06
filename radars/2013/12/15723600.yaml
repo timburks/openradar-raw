@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15723600"
+    labels:
+        datastore_id: "6684310752985088"
+data:
+    classification: Data loss
+    created: "2013-12-24T16:39:23.971028Z"
+    description: "Summary:\r\nWhen reading a JSON feed from a remote server, and serializing the data to a dictionary, and printing the result shows the lower ~10 bits of the scalar type set to 0, thus resulting in data loss when printing out the integer.\r\n\r\nSteps to Reproduce:\r\n1. Run the attached test case\r\n\r\nExpected Results:\r\nI would expect to see printed:\r\n\r\n6988047877858960833 6988047877858960833\r\n\r\nActual Results:\r\nI see printed:\r\n\r\n6988047877858960833 6988047877858960384\r\n\r\nVersion:\r\niOS 7.0.3/iPhone 5\r\n\r\nNotes:\r\nParsing the NSNumber is sufficient to reveal this bug.\r\n\r\nConfiguration:\r\nOccurs on iOS 7, on iPhone 5 & 5S as well as in 32-bit and 64-bit simulators.\r\n\r\nAttachments:\r\n'nsnumber-corruption.m' was successfully uploaded.\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\nint main(void)\r\n{\r\n    @autoreleasepool {\r\n        NSDictionary *json = [NSJSONSerialization JSONObjectWithData:[@\"{\\\"id\\\":6988047877858960833}\" dataUsingEncoding:NSUTF8StringEncoding] options:0 error:NULL];\r\n        NSLog(@\"%@ %llu\", json[@\"id\"], [json[@\"id\"] unsignedLongLongValue]);\r\n    }\r\n    return 0;\r\n}"
+    email: jeremy@tregunna.ca
+    modified: "2014-01-09T14:58:24.393005Z"
+    number: "15723600"
+    number_intvalue: 15723600
+    originated: "2013-12-24"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "7.0"
+    reproducible: Always
+    resolved: "2014-01-09"
+    status: Dupe
+    title: Parsing JSON containing large numbers results in data loss when converting from NSNumber to scalar integer types

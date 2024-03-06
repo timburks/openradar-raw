@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18233246"
+    labels:
+        datastore_id: "5863060795293696"
+data:
+    classification: Enhancement
+    created: "2014-09-04T19:03:40.527951Z"
+    description: "Summary:\r\n+[NSDictionary(NSSharedKeySetDictionary) sharedKeySetForKeys:] returns an opaque \"id\" type, which is actually an instance of the private NSSharedKeySet. It's clearly a well-implemented collection which secretly conforms to NSCopying, NSCoding, and NSFastEnumeration and has since the feature was added to the SDK. I understand hiding the implementation detail of the class itself, but it would make sense to expose those protocol conformance for the opaque token\r\n\r\nSteps to Reproduce:\r\n1. Create a project that fills a dictionary using a parameterized set of keys.\r\n2. Attempt to switch to shared key sets.\r\n3. Continue to need to enumerate through the key array.\r\n4. Be sad.\r\n\r\nExpected Results:\r\nThe shared key set fundamentally involves holding on to the passed keys, and is explicitly documented as copying them. For parameterized implementations that might want to use shared key dictionaries, it is vital to be able to enumerate through the known set of keys.\r\n\r\nActual Results:\r\nThe shared key set is a completely opaque token; implementations require caching both the original array of keys and the resulting key set, which is wasteful when the key set already implements this functionality.\r\n\r\nVersion:\r\nXcode 6.0 DP7 (6A280n)\r\n\r\nNotes:\r\nObviously, if one just assumes that the shared key set conforms to fast enumeration, the functionality works, but in order to account for the possible removal of that feature, the array of keys must also be cached which is still wasteful. An API guarantee for this already implemented functionality would be extremely nice.\r\n\r\nConfiguration:\r\nOccurs under all versions of Foundation 945 and up, i.e., beginning in Mac OS X 10.8 and iOS 6.0.\r\n\r\nAttachments:"
+    email: zwaldowski@gmail.com
+    modified: "2014-09-04T19:03:40.528203Z"
+    number: "18233246"
+    number_intvalue: 18233246
+    originated: 04-Sep-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.0 DP7 (6A280n)
+    reproducible: Always
+    resolved: "false"
+    status: Open
+    title: 'Expose +sharedKeySetForKeys: protocols'

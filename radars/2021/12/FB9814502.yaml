@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9814502
+    labels:
+        datastore_id: "5065309597728768"
+data:
+    classification: ""
+    created: "2021-12-19T18:44:59.958855Z"
+    description: "I wrote a minimal test case reproducing this issue.\r\nhttps://github.com/manicmaniac/StoreKitTestingExample/blob/87ebb21232a1345e3db9500cc19029c43c1fd4fe/StoreKitTestingExampleTests/AutoRenewableTests.swift#L43-L82\r\n\r\nThis test case just purchases a product and confirm that SKPaymentTransactionObserver's callback methods are called as expected.\r\nI call `[SKTestSession clearTransactions]` before each test case runs, and finishes purchased transactions before each test case finishes.\r\nAlthough the test case passes if run only once, it often fails if repeatedly run.\r\n\r\nThe reason why it fails is `purchasing` transaction is missing and only `purchased` transaction comes.\r\n\r\nI investigated system log of appstored with `$ log stream --predicate 'subsystem == \"appstored\"'` and found it says -\r\n\r\n> Error finishing payment 915 for com.github.manicmaniac.StoreKitTestingExample - Error Domain=AMSErrorDomain Code=301 \"Invalid Status Code\" UserInfo={NSLocalizedFailureReason=The response has an invalid status code, AMSURL=http://localhost:49402/WebObjects/MZFinance.woa/wa/inAppTransactionDone?REDACTED, AMSStatusCode=404, AMSServerPayload={\r\n>     error = \"Transaction not found\";\r\n> }, NSLocalizedDescription=Invalid Status Code}\r\n\r\nonly at the time of test failure.\r\n\r\nAs a trial, I inserted 0.25 sec wait after each invocation of `[SKPaymentQueue finishTransaction:]`, then the problem has gone.\r\nI think somehow transactions remains after invoking `[SKTestSession clearTransactions]` when `[SKPaymentQueue finishTransaction:]` is called.\r\nPlease list the steps you took to reproduce the issue:\r\n1. clone my repo (https://github.com/manicmaniac/StoreKitTestingExample)\r\n2. run test and see it passes\r\n3. delete `RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.25))` at L24 in AutoRenewableTests.swift\r\n4. run test again and see it fails\r\nWhat did you expect to happen?\r\n- The test case passes without waiting for anything\r\n- `[SKTestSession clearTransactions]` clears all transactions including finishing transactions so that `purchasing` and `purchased` transactions comes in this order\r\n- Or this behavior is documented in API reference\r\nWhat actually happened?\r\n- The test case fails when I remove 0.25 sec wait\r\n- `purchasing` transaction was missing and only `purchased` transaction comes"
+    email: rito.0305@gmail.com
+    modified: "2021-12-19T18:44:59.958995Z"
+    number: FB9814502
+    number_intvalue: 9814502
+    originated: Dec 20, 2021 at 3:41 AM
+    parent_number: '&{NULL_VALUE}'
+    product: StoreKit Testing in Xcode
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: SKTestSession.clearTransactions() does not seem to clear finishing transactions

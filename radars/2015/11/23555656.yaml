@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23555656"
+    labels:
+        datastore_id: "5024490207576064"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-11-17T15:31:51.2983Z"
+    description: "Summary:\r\nOS X El Capitan crashes with kernel panic after some concurrent writes/polls/reads on named FIFO from two processes.\r\n\r\nI have attached source code of a simple test program, using which the crash is reproduced with 100% probability.\r\nAlso attached Kernel Panic report, and can attach the kernel core dump if required.\r\n\r\nThe crash happens in fifo_write(), when it calls knote(). It seems that v_knotes list in vp is empty at the time of knote() call.\r\nAs far as I can understand, this happens when the other process polls the FIFO, but the poll exits with timeout, detaching knote from v_knotes list at the time when fifo_write() has already checked for v_knotes non-emptyness, but before the knote() is called.\r\n\r\nCrash stack:\r\n    frame #0: 0xffffff80071dbbbe kernel`Debugger(message=<unavailable>) + 782 at model_dep.c:1018\r\n    frame #1: 0xffffff80070e5307 kernel`panic(str=<unavailable>) + 231 at debug.c:395\r\n    frame #2: 0xffffff80071d6bba kernel`kernel_trap [inlined] panic_trap(regs=<unavailable>, pl=<unavailable>) + 2330 at trap.c:847\r\n    frame #3: 0xffffff80071d69b9 kernel`kernel_trap(state=<unavailable>, lo_spp=<unavailable>) + 1817 at trap.c:791\r\n    frame #4: 0xffffff80071f4313 kernel`trap_from_kernel + 38\r\n    frame #5: 0xffffff80075909e5 kernel`knote(list=<unavailable>, hint=0) + 53 at kern_event.c:2887\r\n    frame #6: 0xffffff800733ef86 kernel`fifo_write(ap=<unavailable>) + 86 at fifo_vnops.c:364\r\n  * frame #7: 0xffffff800732e0d0 kernel`VNOP_WRITE(vp=0xffffff8038e83a50, uio=0xffffff91f1a5be80, ioflag=<unavailable>, ctx=<unavailable>) + 112 at kpi_vfs.c:3338\r\n    frame #8: 0xffffff8007322f30 kernel`vn_write(fp=0xffffff8029d6fa18, uio=0xffffff91f1a5be80, flags=0, ctx=0xffffff91f1a5bf20) + 960 at vfs_vnops.c:1156\r\n    frame #9: 0xffffff80075ca577 kernel`dofilewrite [inlined] fo_write(fp=(null) at r15, uio=(null) at rbx, flags=0, ctx=(null) at r14) + 26 at kern_descrip.c:5794\r\n    frame #10: 0xffffff80075ca55d kernel`dofilewrite(ctx=0xffffff91f1a5bf20, fp=0xffffff8029d6fa18, bufp=140734531636003, nbyte=1, offset=<unavailable>, flags=0, retval=<unavailable>) + 269 at sys_generic.c:599\r\n    frame #11: 0xffffff80075ca3ae kernel`write_nocancel(p=0xffffff80483665d8, uap=0xffffff8046af8000, retval=0xffffff8046af8040) + 222 at sys_generic.c:479\r\n    frame #12: 0xffffff800762afd1 kernel`unix_syscall64(state=0xffffff804558f5e0) + 593 at systemcalls.c:384\r\n\r\nSteps to Reproduce:\r\n1. build the test program \"clang fifo_test.c\"\r\n2. create some test FIFO \"mkfifo /tmp/tstfifo\"\r\n3. from one terminal run the test program for read \"./a.out read /tmp/tstfifo\"\r\n4. from another terminal run it for write \"./a.out write /tmp/tstfifo\"\r\n5. Wait for kernel panic (in my experience it takes from 10 seconds to 1 minute)\r\n\r\nExpected Results:\r\nSystem does not crash\r\n\r\nActual Results:\r\nSystem crashes\r\n\r\nVersion:\r\nOS X El Capitan 10.11.1 Build 15B42\r\n\r\nDarwin Kernel Version 15.0.0: Sat Sep 19 15:53:46 PDT 2015; root:xnu-3247.10.11~1/RELEASE_X86_64\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nSystem model name: Macmini7,1 (Mac-35C5E08120C7EEAF)\r\nOS X El Capitan 10.11.1 Build 15B42\r\n\r\nAlso, reproduced on a number of MacBook Pro's. It seems that the bug is not hardware-specific.\r\n\r\nAttachments:\r\n'fifo_test.c' and 'Kernel_2015-11-16-162404_MacMini-k06a-2.panic' were successfully uploaded.\r\n\r\nAlso, fifo_test.c source is available at http://pastebin.com/iC7dzWKN"
+    email: G65434.2@gmail.com
+    modified: "2015-11-17T15:31:51.29866Z"
+    number: "23555656"
+    number_intvalue: 23555656
+    originated: 16-Nov-2015 05:45 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11.1
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Kernel Panic on FIFO write in OS X El Capitan

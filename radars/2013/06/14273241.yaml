@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14273241"
+    labels:
+        datastore_id: "3153405"
+data:
+    classification: Other Bug
+    created: "2013-06-26T08:05:48.180566Z"
+    description: "26-Jun-2013 06:04 PM Chris Miles:\r\nSummary:\r\n\r\nWhen rendering a Scene Kit SCNPlane geometry of large size (for example, 204800x204800) with a texture image assigned to its material, the texture edges are rendered as randomised fuzzy edges rather than hard edges.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nCreate a SCNPlane with large size and add to scene.\r\n\r\n    CGFloat const largeSize = 204800;\r\n    SCNPlane *plane = [SCNPlane planeWithWidth:largeSize height:largeSize];\r\n\r\nAssign a texture with hard edges. For example, a simple checkerboard pattern.\r\n\r\n    CGFloat textureScale = 2.0;\r\n    plane.firstMaterial.diffuse.contents = [NSImage imageNamed:@\"checkerboard128\"];\r\n    plane.firstMaterial.diffuse.contentsTransform = CATransform3DMakeScale(textureScale, textureScale, 1.0);\r\n    plane.firstMaterial.diffuse.wrapS = SCNRepeat;\r\n    plane.firstMaterial.diffuse.wrapT = SCNRepeat;\r\n    plane.firstMaterial.diffuse.magnificationFilter = SCNNearestFiltering;\r\n    plane.firstMaterial.diffuse.minificationFilter = SCNNearestFiltering;\r\n\r\nRun the app and rotate the scene. The edges of the checkerboard pattern are rendered extremely fuzzy.\r\n\r\nThe larger the geometry the worse the fuzzy rendering gets.  Changing the size and/or scale of the texture does not appear to make any difference.\r\n\r\nA sample project is attached that demonstrates the issue.\r\n\r\n\r\nExpected Results:\r\n\r\nIt is expected that the plane is rendered with hard edges, matching the texture, which is the case when the plane geometry is much smaller.\r\n\r\n\r\nActual Results:\r\n\r\nThe plane is rendered with very fuzzy edges, like randomised noise, when rotated. The fuzzyness randomly varies as the scene is rotated.\r\n\r\nThis was tested to be the case on both 10.8.4 and 10.9 (DP2).\r\n\r\n\r\nRegression:\r\n\r\nn/a\r\n\r\n\r\nNotes:\r\n\r\nWe suspect this may be due to loss of precision as the GPU attempts to shade such a large sized geometry. However, maybe there is something that Scene Kit can do in such circumstances, like increasing shader precision. Or maybe it is caused by some issue internal to Scene Kit that could be fixed.\r\n\r\n\r\n27-Jun-2013 09:53 AM Chris Miles:\r\nUpdate: if I tesselate the large plane (using segment count) I can fix the rendering issue when running on 10.9.\r\n\r\nNote that in 10.8 setting the segment count has no effect. The rendering output still has fuzzy edges.\r\n\r\nExample of how I set the tesselation on an SCPlane object:\r\n\r\n        NSInteger tesselation = 64;\r\n        [plane setWidthSegmentCount:tesselation];\r\n        [plane setHeightSegmentCount:tesselation];\r\n\r\nIs this the recommended way to fix this type of rendering issue?\r\n\r\nWould it make sense for Scene Kit to choose a segment count automatically based on the plane size and GPU precision at run time, to avoid these types of rendering issues due to precision loss?\r\n\r\n\r\n\r\n11-Sep-2013: Behaves correctly"
+    email: miles.chris@gmail.com
+    modified: "2013-11-07T09:36:47.368902Z"
+    number: "14273241"
+    number_intvalue: 14273241
+    originated: 26-Jun-2013
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: "10.9"
+    reproducible: Always
+    resolved: 11-Sep-2013
+    status: Closed
+    title: SceneKit renders fuzzy edges when plane geometry is large

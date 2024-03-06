@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7723824
+    labels:
+        datastore_id: "4953383588855808"
+data:
+    classification: Application Slow/Unresponsive
+    created: "2020-06-08T17:51:42.055274Z"
+    description: "When creating and tearing down Core Data stacks from scratch, classes generated at run time are not released. This leads to significant memory bloat but also leads to a very slow lookup in a hash table containing the generated classes.\r\n\r\nAn example project that reproduces the issue has been attached.\r\n\r\nThis issue occurs in a unit test suite which re-creates the entire Core Data stack so each test has a clean slate. In large test bundles, the hash table grows large enough to cause the tests to slow down significantly.\r\n\r\nGeneral flow for reproducing this issue:\r\n\r\n    NSURL *url = [[NSBundle mainBundle] URLForResource:@\"Model\" withExtension:@\".momd\"];\r\n    for(int i = 0; i < 2000; i++) {\r\n        NSManagedObjectModel *model = [[NSManagedObjectModel alloc] initWithContentsOfURL:url];\r\n        NSPersistentStoreCoordinator *psc = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:model];\r\n        NSPersistentStore *store = [psc addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:nil];\r\n\r\n        NSManagedObjectContext *context = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];\r\n        context.persistentStoreCoordinator = psc;\r\n\r\n        __unused MainEntity *obj = [NSEntityDescription insertNewObjectForEntityForName:@\"MainEntity\" inManagedObjectContext:context];\r\n        [context save:NULL];\r\n\r\n        [psc removePersistentStore:store error:NULL];\r\n    }\r\n\r\nRunning the example project will run this code and display a prompt to open the Memory Graph Debugger to view the objects in question.\r\n\r\nExample project: https://github.com/amorde/FB7723824-example"
+    email: eric.amorde@gmail.com
+    modified: "2020-06-08T17:51:42.055542Z"
+    number: FB7723824
+    number_intvalue: 7723824
+    originated: June 3, 2020
+    parent_number: '&{NULL_VALUE}'
+    product: Core Data
+    product_version: iOS 13
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Generated NSManagedObject subclasses leak when re-creating Core Data stacks from scratch

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14503709"
+    labels:
+        datastore_id: "3185404"
+data:
+    classification: Serious Bug
+    created: "2013-07-21T04:34:45.561241Z"
+    description: "Summary:\r\nWhen calling addPersistentStoreWithType:configuration:URL:options:error to add a custom NSAtomicStore subclass to a coordinator, the method fails and returns the following error.\r\n\r\n2013-07-20 21:18:49.895 CSVApp[25869:c07] Error Domain=NSCocoaErrorDomain Code=134010 \"The operation couldn’t be completed. (Cocoa error 134010.)\" UserInfo=0x8481f90 {metadata={\r\n    NSStoreUUID = \"C1F1F935-60D0-4D33-AA20-90093D6AB6B5\";\r\n}, reason=The store type in the metadata does not match the specified store type.}\r\n\r\nThis is the metadata of the store at this point according to [self metadata] in the store instance:\r\n\r\n$4 = 0x08427a60 {\r\n    NSStoreUUID = \"C1F1F935-60D0-4D33-AA20-90093D6AB6B5\";\r\n}\r\n\r\nThis was populated by a call to [super metadata]. metadataForPersistentStoreWithURL:error: is never being called on the atomic store class. \r\nIn the case of an NSPersistentStore the metadata is populated by the framework with the NSStoreType key and the value of the store instance's type method. This does not seem to happen in the case of an NSAtomicStore subclass.\r\n\r\n\r\nWORKAROUND:\r\nEmulating NSIncrementalStore behavior does seem to work.\r\n1. Implement loadMetadata: and add the NSStoreType entry to the metadata there. Note that the NSAtomicStore documentation does not indicate that loadMetadata: is required to be implemented. In the case of NSIncrementalStore the framework inserts the NSStoreType correctly into the metadata.\r\nExample:\r\n-(BOOL)loadMetadata:(NSError *__autoreleasing *)__unused error {\r\n    NSMutableDictionary *mdata  = nil;\r\n    // NSAtomicStore requires the metadata to be modified\r\n    mdata = [[self metadata] mutableCopy];\r\n    if (mdata != nil){\r\n        [mdata setObject:[self type] forKey:NSStoreTypeKey];\r\n    }\r\n    [self setMetadata:mdata];\r\n    [mdata release];\r\n    \r\n    return YES;\r\n}\r\n\r\nOnce this is done addPersistentStoreWithType:configuration:URL:options:error will proceed and the framework will populate the rest of the metadata.\r\n\r\nSteps to Reproduce:\r\nSee above. A simple application that demonstrates this can be provided if needed.\r\n\r\nExpected Results:\r\naddPersistentStoreWithType:configuration:URL:options:error should not fail for an NSAtomicStore that is returning a valid, consistent value for the type method. The framework should properly populate the metadata for this store just as it does for an NSIncrementalStore.\r\n\r\nActual Results:\r\nWarp core breach.\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\nErrrr shouldn't all persistent stores more or less be treated the same? It seems as though an NSAtomicStore subclass is treated differently that NSIncrementalStore or the built in stores."
+    email: quellish@gmail.com
+    modified: "2013-07-21T04:34:45.561448Z"
+    number: "14503709"
+    number_intvalue: 14503709
+    originated: Sun, 21 Jul 2013 04:34:34 GMT
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "6.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'NSAtomicStore: CoreData does not correctly populate metadata'

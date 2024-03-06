@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "47416656"
+    labels:
+        datastore_id: "4968223627804672"
+data:
+    classification: ""
+    created: "2019-01-20T20:06:34.141874Z"
+    description: "Area:\r\nSomething not on this list\r\n\r\nSummary:\r\n\r\nRelevant source here: https://opensource.apple.com/source/dyld/dyld-635.2/src/threadLocalVariables.c.auto.html\r\nDiscussion of how this issue affected rust here: https://github.com/rust-lang/rust/issues/57534\r\n\r\nWhile tlv_finalize is iterating through the TLVTerminator list, more calls to _tlv_atexit can be triggered which can cause the list tlv_finalize is iterating through to be reallocated resulting in all sorts of memory corruption issues.\r\n\r\nA fix would be to change tlv_finalize to something like this:\r\n\r\nstatic void tlv_finalize(void* storage)\r\n{\r\n    do {\r\n        pthread_setspecific(tlv_terminators_key, NULL);\r\n        struct TLVTerminatorList* list = (struct TLVTerminatorList*)storage;\r\n        // destroy in reverse order of construction\r\n        for(uint32_t i=list->useCount; i > 0 ; --i) {\r\n            struct TLVTerminatorListEntry* entry = &list->entries[i-1];\r\n            if ( entry->termFunc != NULL ) {\r\n                (*entry->termFunc)(entry->objAddr);\r\n            }\r\n        }\r\n        free(storage);\r\n        storage = pthread_getspecific(tlv_terminators_key);\r\n    } while(storage != NULL);\r\n}\r\n\r\nSteps to Reproduce:\r\n\r\nCompile and run the attached source file using this command.\r\n\r\nclang++ --std=c++17 -fsanitize=address main.cpp && ./a.out\r\n\r\nExpected Results:\r\n\r\nNo complaints from address sanitizer.\r\n\r\nActual Results:\r\n\r\n=================================================================\r\n==87273==ERROR: AddressSanitizer: attempting double-free on 0x603000000310 in thread T0:\r\n    #0 0x10b34310d in wrap_free (libclang_rt.asan_osx_dynamic.dylib:x86_64h+0x5710d)\r\n    #1 0x7fff7f9af1d6 in exit (libsystem_c.dylib:x86_64+0x5d1d6)\r\n    #2 0x7fff7f90608b in start (libdyld.dylib:x86_64+0x1708b)\r\n\r\n0x603000000310 is located 0 bytes inside of 24-byte region [0x603000000310,0x603000000328)\r\nfreed by thread T0 here:\r\n    #0 0x10b34310d in wrap_free (libclang_rt.asan_osx_dynamic.dylib:x86_64h+0x5710d)\r\n    #1 0x7fff7f905963 in _tlv_atexit (libdyld.dylib:x86_64+0x16963)\r\n    #2 0x10b0dd3da in A::~A() (a.out:x86_64+0x1000013da)\r\n    #3 0x10b0dd2f4 in A::~A() (a.out:x86_64+0x1000012f4)\r\n    #4 0x7fff7f905d7e in tlv_finalize (libdyld.dylib:x86_64+0x16d7e)\r\n    #5 0x7fff7f9af1d6 in exit (libsystem_c.dylib:x86_64+0x5d1d6)\r\n    #6 0x7fff7f90608b in start (libdyld.dylib:x86_64+0x1708b)\r\n\r\npreviously allocated by thread T0 here:\r\n    #0 0x10b342f53 in wrap_malloc (libclang_rt.asan_osx_dynamic.dylib:x86_64h+0x56f53)\r\n    #1 0x7fff7f905974 in _tlv_atexit (libdyld.dylib:x86_64+0x16974)\r\n    #2 0x10b0df9a1 in __cxx_global_var_init (a.out:x86_64+0x1000039a1)\r\n    #3 0x10b0df924 in __tls_init (a.out:x86_64+0x100003924)\r\n    #4 0x10b0ddc78 in thread-local wrapper routine for thread_a (a.out:x86_64+0x100001c78)\r\n    #5 0x10b0ddbe3 in main (a.out:x86_64+0x100001be3)\r\n    #6 0x7fff7f906084 in start (libdyld.dylib:x86_64+0x17084)\r\n\r\nSUMMARY: AddressSanitizer: double-free (libclang_rt.asan_osx_dynamic.dylib:x86_64h+0x5710d) in wrap_free\r\n==87273==ABORTING\r\nAbort trap: 6\r\n\r\nVersion/Build:\r\n\r\nOSX 10.14\r\n\r\nConfiguration:"
+    email: tyler.m.kopf@gmail.com
+    modified: "2019-01-20T20:06:34.14276Z"
+    number: "47416656"
+    number_intvalue: 47416656
+    originated: January 20 2019
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: dyld threadLocalVariables.c - calling _tlv_atexit during tlv_finalize is undefined behavior

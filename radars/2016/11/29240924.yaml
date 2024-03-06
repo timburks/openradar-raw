@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29240924"
+    labels:
+        datastore_id: "5000368849158144"
+data:
+    classification: Performance
+    created: "2016-11-14T04:04:51.72266Z"
+    description: "Summary:\r\nIn a scenario where an NSOutlineView is bound to a NSTreeController, traversing the NSTreeController via NSTreeNode.childNodes property causes the outline view to reload all its visible leaf items every time childNodes is called on its corresponding tree node, which decreases performance. This happens on both OS X 10.11 and macOS 10.12 (including the latest 10.12.2 beta).\r\n\r\nHowever, if the tree controller is configured with a leafKeyPath, and the underlying object always returns NO/false from the corresponding \"is leaf\" method, outline performance goes back to normal – though, of course, all outline items are treated as expandable (non-leaf).\r\n\r\nInterestingly, the performance impact of this issue has actually increased in macOS 10.12. Here's a comparison of traversal performance measured on a MacBook Pro (Retina, 15-inch, Mid 2015) from the attached sample project:\r\n\r\n10.11:\r\n  * some items are leaves: ~3ms per traversal;\r\n  * all items are non-leaves: ~0.4ms per traversal.\r\n\r\n10.12.1 & 10.12.2 beta 2:\r\n  * some items are leaves: ~77ms per traversal;\r\n  * all items are non-leaves: ~0.4ms per traversal.\r\n\r\nSteps to Reproduce:\r\n1. Create a simple macOS project with an outline view that's bound to a tree controller populated with a reasonably large tree of represented items, where some items are leaf items (do not have child items).\r\n2. Create a method that traverses the tree controller using NSTreeNode.childNodes property.\r\n3. Expand all items in the outline view and scroll it to see all items, then perform the traversal multiple times.\r\n\r\nExpected Results:\r\nThe traversal is performed reasonably quickly, and the outline view does not reload any items in the process – at least after the first time the traversal is performed.\r\n\r\nActual Results:\r\nEach time the traversal is performed, the outline view reloads all its leaf items that are/were visible. This adds a significant performance overhead.\r\n\r\nVersion:\r\nXcode 8.1 (8B62); macOS 10.12.1 (16B2555) and OS X 10.11.6 (15G1108)\r\n\r\nNotes:\r\nThe issue seems to be caused by the -[NSTreeControllerTreeNode updateChildNodesForKeyPath:affectedIndexPaths:] method, which lazily populates the tree node with its child nodes. In that method, for represented objects that return YES/true from their \"is leaf\" method or return 0 from \"child items count\" method, the node's _childNodes ivar is set to nil, which not only causes this update method to be called over and over again (as if child nodes were not populated yet), but also triggers KVO notifications, which causes a \"node children changed\" binding to fire on the outline view, and the outline responds by reloading the corresponding item. If all items, however, are not treated as leaf items, this issue is not triggered and the outline is not reloaded in the childNodes call.\r\n\r\nAttached are a sample project that demonstrates the issue, and a Time Profiler trace of that sample project that shows the performance impact of a few traversals."
+    email: argentumko@gmail.com
+    modified: "2016-11-14T04:04:51.72285Z"
+    number: "29240924"
+    number_intvalue: 29240924
+    originated: 14-Nov-2016
+    parent_number: '&{NULL_VALUE}'
+    product: macOS SDK
+    product_version: macOS 10.12, OS X 10.11
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSOutlineView bound to NSTreeController reloads all leaf items each time the tree is traversed in code

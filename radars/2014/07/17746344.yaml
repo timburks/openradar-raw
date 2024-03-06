@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17746344"
+    labels:
+        datastore_id: "6748086856581120"
+data:
+    classification: ""
+    created: "2014-07-21T13:16:45.066952Z"
+    description: "Summary:\r\nWhen creating an inner function (a function inside a function) the inner function cannot recurse.\r\n\r\nSteps to Reproduce:\r\nThe simplest (although non-sensical) function I could come up with:\r\n\r\nfunc hello() {\r\n    func next() {\r\n        return next()\r\n    }    \r\n}\r\n\r\nThe compiler fails to generate code for this. Also, consider the slightly more advanced function:\r\n\r\nfunc hello2() {\r\n    var i = 0\r\n    func next(x: Int) -> Int {\r\n        i+=1\r\n        return next(i)\r\n    }\r\n    \r\n}\r\n\r\nExpected Results:\r\nI expected this to compile (and run infinitely)\r\n\r\nActual Results:\r\nIn the case above, the compiler fails with:\r\n\r\nInstruction does not dominate all uses!\r\n  %6 = bitcast %SS* %0 to %swift.opaque*, !dbg !74\r\n  %2 = bitcast %swift.opaque* %6 to i8*, !dbg !71\r\nLLVM ERROR: Broken function found, compilation aborted!\r\n\r\nFor hello2, the compiler fails with a different error message:\r\n\r\n0  swift                    0x0000000101100de8 llvm::sys::PrintStackTrace(__sFILE*) + 40\r\n1  swift                    0x00000001011012d4 SignalHandler(int) + 452\r\n2  libsystem_platform.dylib 0x00007fff885995aa _sigtramp + 26\r\n3  libsystem_platform.dylib 0x00007ff030b86010 _sigtramp + 2824784512\r\n4  swift                    0x00000001004c0e83 swift::irgen::CallEmission::emitCallSite(bool) + 115\r\n5  swift                    0x00000001004c0c81 swift::irgen::CallEmission::emitToUnmappedExplosion(swift::irgen::Explosion&) + 33\r\n6  swift                    0x00000001004c1619 swift::irgen::CallEmission::emitToExplosion(swift::irgen::Explosion&) + 505\r\n7  swift                    0x0000000100542835 swift::SILVisitor<(anonymous namespace)::IRGenSILFunction, void>::visit(swift::ValueBase*) + 51237\r\n8  swift                    0x0000000100535800 swift::irgen::IRGenModule::emitSILFunction(swift::SILFunction*) + 8896\r\n9  swift                    0x00000001004b6f57 swift::irgen::IRGenModule::emitLazyDefinitions() + 199\r\n10 swift                    0x000000010052261d performIRGeneration(swift::IRGenOptions&, swift::Module*, swift::SILModule*, llvm::StringRef, llvm::LLVMContext&, swift::SourceFile*, unsigned int) + 1997\r\n11 swift                    0x0000000100522f23 swift::performIRGeneration(swift::IRGenOptions&, swift::SourceFile&, swift::SILModule*, llvm::StringRef, llvm::LLVMContext&, unsigned int) + 51\r\n12 swift                    0x0000000100494b8e frontend_main(llvm::ArrayRef<char const*>, char const*, void*) + 4958\r\n13 swift                    0x000000010049381d main + 1533\r\n14 libdyld.dylib            0x00007fff90e4e5fd start + 1\r\n\r\nVersion:\r\nXcode6-Beta3\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: chriseidhof@eidhof.nl
+    modified: "2014-07-21T13:17:00.536775Z"
+    number: "17746344"
+    number_intvalue: 17746344
+    originated: 21-Jul-2014
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: '[swift] Inner functions cannot have recursive calls'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19111358"
+    labels:
+        datastore_id: "5878288266297344"
+data:
+    classification: Other Bug
+    created: "2014-12-02T05:11:00.535144Z"
+    description: "Summary:\r\nLLDB sometimes fails to autocomplete category methods depending on where they appear in the source. It appears that anything declared before the target class' @implementation is processed makes the cut, whereas anything declared after it, or not explicitly imported before it, does not.\r\n\r\nThe attached project has a number of schemes/targets to illustrate a number of scenarios that do and don't trigger autocompletion from the LLDB prompt in Xcode 6.1 (6A1052d)\r\n\r\nSteps to Reproduce:\r\n1. Check out or download the LLDBSymbols project at https://github.com/drance/radars/tree/LLDBSymbols\r\n2. Select a scheme, e.g. \"InternalCategory-NoInterface\"\r\n3. Run the project\r\n4. Tap the 'Press Here' button\r\n5. When LLDB prompt appears, type 'p [self inter' and wait. You should be offered the \"internalMethod\" symbol which appears in the view controller's implementation.\r\n6. Type 'p [self cat' and wait. Depending on the target (see below), you may or may not get autocompletion.\r\n\r\nEach scheme in the project corresponds to a different target using a variation of the main View Controller, each with a shared breakpoint that you should hit whenever you press the button.\r\n\r\nThe various implementation files, such as \"ViewControllerNoInterface.m\", has instructions in the -breakAction: method where the breakpoint is set. So, when you hit the breakpoint, and the LLDB prompt appears, you should be staring at instruction comments on what to do.\r\n\r\nExpected Results:\r\nExpect to always be offered 'categoryMethod' as autocompletion for '[self cat'\r\n\r\nActual Results:\r\nAutocompletion for the category method only happens if the conditions outlined in the problem description are met. As of 6A1052d, the targets / schemes that succeed are:\r\n\r\nInternalCategory-EarlyInterface\r\nInternalCategory-EarlyImplementation\r\nExternalCategory-Import\r\n\r\nThe others fail.\r\n\r\nVersion:\r\n6.1 (6A1052d) on 10.10.1 (14B25)"
+    email: matt@bookhousesoftware.com
+    modified: "2014-12-02T05:11:00.535298Z"
+    number: "19111358"
+    number_intvalue: 19111358
+    originated: 12/1/14
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 6.1 (6A1052d)
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: '6A1052d: LLDB autocomplete misses some category declarations'

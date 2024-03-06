@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB11662590
+    labels:
+        datastore_id: "5599011184574464"
+data:
+    classification: Application Crash
+    created: "2022-10-09T17:03:41.081487Z"
+    description: "On my M1 iMac 24” 2021 using vDSP_DFT_SetupD() to create a new vDSP_DFT_SetupD structure that is half the size of the previous one causes vDSP_DFT_ExecuteD() to crash. This issue does not affect the x86_64 executable, which runs correctly on x86_64 hardware and under Rosetta emulation.\r\n\r\nThe attached command line tool demonstrates the problem. When run the results expected are:\r\n\r\n    Starting\r\n    Setup 1 created\r\n    Setup 1 executed\r\n    Setup 2 created\r\n    Setup 1 destroyed\r\n    Setup 2 executed\r\n    Setup 2 destroyed\r\n    Finished\r\n    Program ended with exit code: 0\r\n\r\nThe results I actually see on M1 hardware are:\r\n\r\n    Starting\r\n    Setup 1 created\r\n    Setup 1 executed\r\n    Setup 2 created\r\n    Setup 1 destroyed\r\n    zsh: segmentation fault  ./DFTbug\r\n\r\nWith the stack trace in Xcode:\r\n\r\n    Thread 1: EXC_BAD_ACCESS (code=1, address=0x10)\r\n    #0\t0x00000001b230a92c in ___lldb_unnamed_symbol1320 ()\r\n    #1\t0x00000001b22adf3c in ___lldb_unnamed_symbol909 ()\r\n    #2\t0x0000000100003ec0 in main at /Users/cdhw/Downloads/DFTbug/DFTbug/main.c:28\r\n    #3\t0x000000010001508c in start ()\r\n\r\nI’ve pasted code below for a short command line tool that demonstrates the issue.\r\n\r\nA workaround is to use NULL instead of a previous vDSP_DFT_SetupD structure but this has severe speed penalty in practice.\r\n\r\n\r\n\r\n//\r\n//  main.c\r\n//  DFTbug\r\n//\r\n//  Created by Charles Williams on 07/10/2022.\r\n//\r\n\r\n#include <stdio.h>\r\n#include <Accelerate/Accelerate.h>\r\n\r\nint main(int argc, const char * argv[]) {\r\n    int N = 1024*1024;\r\n    double * out_real = calloc(N,sizeof(double));\r\n    double * out_imag = calloc(N,sizeof(double));\r\n    double * inp_real = calloc(N,sizeof(double));\r\n    double * inp_imag = calloc(N,sizeof(double));\r\n\r\n    printf(\"Starting\\n\");\r\n    \r\n    vDSP_DFT_SetupD setup_1 = vDSP_DFT_zop_CreateSetupD(NULL, N, vDSP_DFT_INVERSE );\r\n    printf(\"Setup 1 created\\n\");\r\n    vDSP_DFT_ExecuteD( setup_1, out_real, out_imag, inp_real, inp_imag);\r\n    printf(\"Setup 1 executed\\n\");\r\n    vDSP_DFT_SetupD setup_2 = vDSP_DFT_zop_CreateSetupD(setup_1, N/2, vDSP_DFT_INVERSE );\r\n    printf(\"Setup 2 created\\n\");\r\n    vDSP_DFT_DestroySetupD(setup_1);\r\n    printf(\"Setup 1 destroyed\\n\");\r\n    vDSP_DFT_ExecuteD( setup_2, out_real, out_imag, inp_real, inp_imag);\r\n    printf(\"Setup 2 executed\\n\");\r\n   vDSP_DFT_DestroySetupD(setup_2);\r\n    printf(\"Setup 2 destroyed\\n\");\r\n\r\n    printf(\"Finished\\n\");\r\n\r\n    return 0;\r\n}"
+    email: google@cdhw.co.uk
+    modified: "2022-10-10T16:01:31.112532Z"
+    number: FB11662590
+    number_intvalue: 11662590
+    originated: 7 October 2022
+    parent_number: '&{NULL_VALUE}'
+    product: Accelerate Framework
+    product_version: macOS 13.6
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Accelerate DFT function crashing on ARM64 hardware

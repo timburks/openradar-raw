@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18041007"
+    labels:
+        datastore_id: "6467358935744512"
+data:
+    classification: ""
+    created: "2014-08-16T16:30:23.356389Z"
+    description: "Summary:\r\nWhen an SKView contains at an SKLightNode and an SKSpriteNode setup to cast a shadow, SKView's rendering pass will leak memory. This only occurs if the SKSpriteNode's shadowCastBitMask corresponds to the SKLightNode's categoryBitMask so that it casts a shadow. If more light sources are added, more memory is leaked on each pass. The leak itself appears to be a 32 byte malloc in SKCRenderer::calculateShadowsAndSubmitSprites(). This only seem to occur on iOS devices, and not in the iOS simulator.\r\n\r\nSteps to Reproduce:\r\n1. Create a new iOS Xcode project using the Sprite Kit template and Swift.\r\n2. Replace the implementation of GameScene with the following:\r\n\r\nclass GameScene: SKScene {\r\n    override func didMoveToView(view: SKView) {\r\n        let center = CGPointMake(size.width / 2.0, size.height / 2.0)\r\n        \r\n        let wall = SKSpriteNode(color: SKColor.whiteColor(), size: CGSizeMake(size.width / 8.0, 16.0))\r\n        wall.position = center\r\n        wall.shadowCastBitMask = 1\r\n        addChild(wall)\r\n        \r\n        let light = SKLightNode()\r\n        light.position = CGPointMake(center.x, center.y - 100)\r\n        addChild(light)\r\n    }\r\n    \r\n    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {\r\n        for touch: AnyObject in touches {\r\n            let location = touch.locationInNode(self)\r\n            \r\n            let light = SKLightNode()\r\n            light.position = location\r\n            addChild(light)\r\n        }\r\n    }\r\n}\r\n\r\n3. Run the app on a physical iOS device.\r\n4. Use the Debug navigator in Xcode or Instruments to watch the memory slowly climb on each rendering pass.\r\n5 (optional). Tap the screen a few times to add more light sources to watch memory climb faster.\r\n\r\nExpected Results:\r\nMemory usage should be basically steady over time as long as the scene isn't changing.\r\n\r\nActual Results:\r\nMemory usage climbs on each rendering pass.\r\n\r\nVersion:\r\niOS 8.0 [12A4345d]\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 5S 32GB AT&T, iPad 3rd-gen WiFi\r\n\r\nAttachments:"
+    email: msealand@gmail.com
+    modified: "2014-08-16T16:30:23.356582Z"
+    number: "18041007"
+    number_intvalue: 18041007
+    originated: 8/16/2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 8
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SKView leaks memory when containing an SKLightNode which casts shadows

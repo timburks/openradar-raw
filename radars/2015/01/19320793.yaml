@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19320793"
+    labels:
+        datastore_id: "5066382412611584"
+data:
+    classification: ""
+    created: "2015-01-14T12:14:42.596972Z"
+    description: "Summary:\r\nThe attached testcase crashes with Segmentation fault: 11, when running the optimized build. Debug build works fine.\r\n\r\nSteps to Reproduce:\r\nCompile and run the attached testcase with optimizations. \r\n\r\nExpected Results:\r\nCode runs without segmentation fault.\r\n\r\nActual Results:\r\nSegmentation fault: 11\r\n\r\nVersion:\r\nXcode 6.2 Beta (6C86e), as well as 6.1 release.\r\nMac OS X 10.10.1 (14B25)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nHappens in optimized build.\r\n\r\nAttachments:\r\n'main.swift' \r\n\r\nimport Foundation\r\n\r\nlet iterations = 100\r\n\r\nfunc takeWhile<S : SequenceType>(includeElement: S.Generator.Element -> Bool, source: S) -> GeneratorOf<S.Generator.Element> {\r\n    var g = source.generate()\r\n    \r\n    return GeneratorOf {\r\n        if let e = g.next() {\r\n            return includeElement(e) ? e : .None\r\n        } else {\r\n            return .None\r\n        }\r\n    }\r\n}\r\n\r\nfunc iterate<A>(f: A -> A, x0: A) -> GeneratorOf<A> {\r\n    var x = x0\r\n    return GeneratorOf {\r\n        let previous = x\r\n        x = f(x)\r\n        return previous\r\n    }\r\n}\r\n\r\nlet takeWhileIterate: () -> Int = {\r\n    var sum = 0\r\n    let i = takeWhile({$0 < iterations}, iterate({$0 + 1}, 0))\r\n    for b in i {\r\n        sum += b\r\n    }\r\n    return sum\r\n}\r\n\r\nprintln(takeWhileIterate())"
+    email: pavol.vaskovic@gmail.com
+    modified: "2015-02-25T10:03:05.918599Z"
+    number: "19320793"
+    number_intvalue: 19320793
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.2 Beta (6C86e)
+    reproducible: ""
+    resolved: Fixed
+    status: Closed
+    title: Segmentation Fault with Optimized Build (Swift)

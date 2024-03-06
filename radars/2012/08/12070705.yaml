@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12070705"
+    labels:
+        datastore_id: "1860407"
+data:
+    classification: Enhancement
+    created: "2012-08-09T22:45:09.017709Z"
+    description: "09-Aug-2012 03:40 PM Kevin Connor:\r\nSummary:  symbolicatecrash won't find .app files that have been renamed\r\n\r\nSteps to Reproduce:\r\n1) build app in release and debug configurations\r\n2) rename app to reflect build number, configuration, etc.\r\nmv KillerApp.app KillerApp_42_release.app\r\nmv KillerApp.dSYM KillerApp_42_release.dSYM\r\nmv KillerApp.app KillerApp_42_debug.app\r\nmv KillerApp.dSYM KillerApp_42_debug.dSYM\r\n\r\n3) test killer app and crash\r\n4) run symbolicatecrash without giving it the symbol path.\r\n\r\nExpected Results:\r\nKillerApp stack entries will by annotated with symbols\r\n\r\nActual Results:\r\nKillerApp stack entries remain hex.\r\nThis line fails to find the app:\r\nmdfind \"kMDItemContentType == com.apple.application-bundle && (kMDItemAlternateNames == 'KillerApp.app' || kMDItemDisplayName == 'KillerApp')\"\r\n\r\nThe dSYM dir is found using mdfind and the uuid though.  Using that, we could just search the apps with the same name in same dir, or more broadly, any app that's a peer of the dSYM dir.\r\n\r\n189,194d188\r\n<     my @app_bundles_next_to_dsyms;\r\n<     foreach my $dsymdir (@dsym_paths) {\r\n<         my ($dsympath) = $dsymdir =~ /(^.*)\\.dSYM/i;\r\n<         push(@app_bundles_next_to_dsyms, $dsympath . '.app');\r\n<     }\r\n< \r\n202,203c196\r\n<         my @app_bundles = (@app_bundles_next_to_dsyms, split(/\\n/, `$cmd`));\r\n<         foreach my $app_bundle (@app_bundles) {\r\n---\r\n>         foreach my $app_bundle (split(/\\n/, `$cmd`)) {\r\n\r\n\r\nRegression:\r\n\r\nNotes:"
+    email: mightydweeb@gmail.com
+    modified: "2012-08-09T22:45:09.018541Z"
+    number: "12070705"
+    number_intvalue: 12070705
+    originated: 8/9/12
+    parent_number: '&{NULL_VALUE}'
+    product: DeveloperTools
+    product_version: 4.4.1
+    reproducible: ""
+    resolved: ""
+    status: open
+    title: symbolicatecrash patch to broaden search for app

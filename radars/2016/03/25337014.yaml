@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25337014"
+    labels:
+        datastore_id: "5002928867770368"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2016-03-24T13:31:51.79421Z"
+    description: "Summary:\r\nIn UIView based animations an animation’s completion handler is not called reliable. You can easily break that by calling -[UIView actionForLayer:forKey:] within an animation block.\r\nWhat is even worth is: If you happen to call this inside your layout code, this will get executed within a window rotation. This results in rotation being broken (no rotation possible after this) and the UI being completely unresponsive as the rotation animation isn’t cleaned up (-[UIApplication isIgnoringInteractionEvents] is still YES after the animation).\r\n\r\nSteps to Reproduce:\r\n0. Open the attached sample project\r\n1. Tap the ‘animate’ button and notice that after the animation an alert is shown.\r\n2. Switch the ‘break animation’ switch to on\r\n3. Tap the ‘animate’ button again\r\n4. Rotate the device\r\n5. Try to interact with the ‘animate’ button or the switch\r\n6. Try to rotate the device\r\n\r\nExpected Results:\r\n- After step 3 the alert is shown again.\r\n- Step 5 works and you can still trigger the animation and toggle the switch\r\n- Sept 6 works and the UI rotates alongside the device.\r\n\r\nActual Results:\r\n- After step 3 no alert is shown. In fact the animation’s ‘completionHandler’ is never called.\r\n- Step 5 is not working. User interactions are not interpreted due to -[UIApplication isIgnoringInteractionEvents] returning YES.\r\n- Step 6 is not working either. Inside the rotation code, the key window returns YES when asked for -[UIWindow isInterfaceAutorotationDisabled]\r\n\r\nRegression:\r\nThis can be tested on simulator as well as device. Verified on iOS 8.4 Simulator, iOS 9.3 Simulator, iPad 3rd Gen. running iOS 9.3.\r\n\r\nNotes:\r\nThe rotation issue already arises during the first rotation. The second try only illustrates what happened. When rotating the first time (Step 4) `-[UIViewController window:didRotateFromInterfaceOrientation:oldSize:]` is never called. As far as I can tell this is because this method is invoked inside an animations completion handler, which is never called for the same reason as no alert is shown after Step 3: By calling `[self.view actionForLayer:self.view.layer forKey:@\"position”]` inside `viewDidLayoutSubviews` in the sample project, this gets executed within the rotation animation block and breaks it.\r\n\r\nSample Project:\r\nhttps://github.com/michaelochs/radars/tree/master/25337014%20-%20AnimationCompletionAndRotation"
+    email: michaelhochs@googlemail.com
+    modified: "2016-07-08T11:57:22.06387Z"
+    number: "25337014"
+    number_intvalue: 25337014
+    originated: 24-Mar-2016 02:31 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "9.3"
+    reproducible: Always
+    resolved: behaves as intended
+    status: Closed
+    title: UI frozen after rotating due to animation completion handler not called

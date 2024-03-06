@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "36148377"
+    labels:
+        datastore_id: "5041879204757504"
+data:
+    classification: "1"
+    created: "2017-12-23T06:53:26.82782Z"
+    description: "Summary:\r\nProcess' file descriptor table slot is being leaked.\r\n\r\nFirst Reported here -\r\nhttps://github.com/facebook/osquery/issues/3984\r\n\r\nSteps to Reproduce:\r\nmessage \"Too many open files in system\" converted to \"Too many open files\" got me curious and I believe this is bug. It led me to -\r\nhttps://opensource.apple.com/source/xnu/xnu-4570.1.46/bsd/kern/kern_descrip.c.auto.html\r\n\r\nfunction falloc_withalloc_locked()\r\nstatic int\r\nfalloc_withalloc_locked(proc_t p, struct fileproc **resultfp, int *resultfd,\r\n\tvfs_context_t ctx, fp_allocfn_t fp_zalloc, void *crarg,\r\n\tint locked) \r\n{\r\n...\r\n...\r\n\tif ( (error = fdalloc(p, 0, &nfd)) ) {\r\n\t\tif (!locked)\r\n\t\t\tproc_fdunlock(p);\r\n\t\treturn (error);\r\n\t}\r\n\r\n\tif (nfiles >= maxfiles) {\r\n\t\tif (!locked)\r\n\t\t\tproc_fdunlock(p);\r\n\t\ttablefull(\"file\");\r\n\t\treturn (ENFILE);\r\n\t}\r\n...\r\n}\r\n\r\nChange of message from \"Too many open files in system\" to \"Too many open files\" is manifestation of a bug in the form of resource leak ( process's file descriptor table slot is being leaked here) -\r\nCall to fdalloc(p, 0, &nfd) checks that if the process is opening more than the number of files it can open and reserve a slot in the file-descriptor table which is returned via nfd.\r\n\r\nIf \"(nfiles >= maxfiles) \" fails then is not un-reserving that slot. That way here is the resource leak.\r\nIf these two if conditions are swapped then it solves this problem."
+    email: nishant.pamnani@gmail.com
+    modified: "2017-12-23T06:53:26.82802Z"
+    number: "36148377"
+    number_intvalue: 36148377
+    originated: 12/20/2017
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OSX
+    product_version: "10.13"
+    reproducible: ""
+    resolved: No
+    status: open
+    title: Process's file descriptor table slot is being leaked

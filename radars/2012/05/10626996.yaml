@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10626996"
+    labels:
+        datastore_id: "1678403"
+data:
+    classification: Bug
+    created: "2012-05-08T18:55:22.779494Z"
+    description: "26-Dec-2011 07:17 PM Jason Gregori:\r\nSummary:\r\n\r\nIf you edit a photo in the photos app (like crop it smaller), then try to access it with ALAssetsLibrary it returns the original image (not the cropped one).\r\n\r\nSteps to Reproduce:\r\n\r\n1. Take a photo\r\n2. Crop the photo in the photos app\r\n3. In code get the last image created from ALAssetsLibrary\r\n\r\nHere's a code sample:\r\n\r\n    [[ALAssetsLibrary new] enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos\r\n                                         usingBlock:^(ALAssetsGroup *group, BOOL *stop) {\r\n                                             *stop = YES;\r\n                                             [group setAssetsFilter:[ALAssetsFilter allPhotos]];\r\n                                             [group enumerateAssetsWithOptions:NSEnumerationReverse\r\n                                                                    usingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {\r\n                                                                        *stop = YES;\r\n                                                                        if (result) {\r\n                                                                            NSDate *date = [result valueForProperty:ALAssetPropertyDate];\r\n                                                                            ALAssetRepresentation *r = [result defaultRepresentation];\r\n                                                                            if (date && r) {\r\n                                                                                UIImage *image = [UIImage imageWithCGImage:r.fullResolutionImage scale:r.scale orientation:(UIImageOrientation)r.orientation];\r\n                                                                                if (image) {\r\n                                                                                    block(date, image);\r\n                                                                                }\r\n                                                                            }\r\n                                                                        }\r\n                                                                    }];\r\n                                         } failureBlock:nil];\r\n\r\nExpected Results:\r\n\r\nI would expect the image returned to be cropped like I did in the photos app.\r\n\r\nActual Results:\r\n\r\nI get the original image back (from before I cropped it).\r\n\r\nRegression:\r\n\r\nI don't know any way around this.\r\n\r\n-----------\r\n\r\n17-Jan-2012 12:16 PM Apple Developer Bug Reporting Team :\r\nEngineering has provided the following feedback regarding this issue: \r\n\r\nYou can use fullscreenImage to get to the edited/adjusted image.\r\n\r\n-----------\r\n\r\n19-Jan-2012 05:05 PM Jason Gregori:\r\nHi,\r\n\r\nfullScreenImage is a good temporary solution. Is this the permanent solution or will fullResolutionImage be fixed later? The problem being that I'd like a larger image than fullScreenImage provides.\r\n\r\n-----------\r\n\r\n17-Apr-2012 10:23 AM Apple Developer Bug Reporting Team :\r\nThis bug has been closed as Duplicate. We are aware of this issue and tracking it under the Bug ID listed below in the Related Problem section of your bug report. To check the status of the original bug report, please update your report directly <http://bugreport.apple.com> and we will provide you with any available information."
+    email: jasongregori@gmail.com
+    modified: "2012-05-08T18:55:22.779655Z"
+    number: "10626996"
+    number_intvalue: 10626996
+    originated: 26-Dec-2011 07:17 PM
+    parent_number: "10977338"
+    product: iOS
+    product_version: "5.0"
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/10977338
+    title: Photos edited in the Photo app do not show up edited in ALAssetsLibrary

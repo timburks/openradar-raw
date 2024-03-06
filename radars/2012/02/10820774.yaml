@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10820774"
+    labels:
+        datastore_id: "1516401"
+data:
+    classification: Serious Bug
+    created: "2012-02-07T18:33:58.203992Z"
+    description: "Summary:\r\nWhen a sandboxed app uses NSSavePanel and powerbox, it is granted permission to replace a regular file but not a symlink.\r\n\r\nSteps to Reproduce:\r\n1) Open an NSSavePanel from a sandboxed app with the com.apple.security.files.user-selected.read-write entitlement\r\n2) The user selects a previously existing symlink\r\n3) When prompted by the panel, the user selects to replace it\r\n4) Remove the old symlink\r\n5) Write the new file\r\n\r\nExpected Results:\r\nThe old symlink is removed (though obviously the file it was pointing to will be unaffected).\r\n\r\nActual Results:\r\nThe kernel denies the removal. Trying to remove the old symlink results in the following log message:\r\nFeb  7 13:21:37 fruitbook sandboxd[16119] ([16109]): SandboxOverwrite(16109) deny file-write-unlink /Users/chad/Desktop/Test file\r\n\r\nOverwriting the old symlink results in the following log message:\r\nFeb  7 13:21:37 fruitbook sandboxd[16119] ([16109]): SandboxOverwrite(16109) deny file-write-create /Users/chad/Desktop/Test file\r\n\r\nRegression:\r\nYou can overwrite symlinks without sandboxing.\r\n\r\nNotes:\r\nThe attached project demonstrates this. Note that you'll need to create a symlink called \"Test file\" on the Desktop for it to work. One easy way to do this is to run the test app once, which should successfully create the symlink since there wasn't one before. Then quit and restart the app to get the failure.\r\n\r\nTo use the attached project, simply launch it (it should be sandboxed) and click the Save button on the NSSavePanel that pops up. Then check the logs to see the errors.\r\n\r\nAlso, note that replacing a regular file works fine. Symlinks are the problem."
+    email: chad515@gmail.com
+    modified: "2012-02-07T18:33:58.204269Z"
+    number: "10820774"
+    number_intvalue: 10820774
+    originated: 2/7/2012
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.3
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: Sandbox Powerbox does not allow overwriting symlinks

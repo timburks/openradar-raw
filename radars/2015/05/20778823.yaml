@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20778823"
+    labels:
+        datastore_id: "5495841963900928"
+data:
+    classification: ""
+    created: "2015-05-02T19:07:16.56611Z"
+    description: "Summary:\r\nWhen running on the device, on arm64,  NSInvocation crashes with bad access, if you try to return a struct, with 3 or more variables, with 2 or more different type(defs) of the same underlying type, i.e. double, double, NSTimeInterval\r\n\r\nSteps to Reproduce:\r\ntypedef struct {\r\n  NSTimeInterval t0;\r\n  double t1;\r\n  double t2;\r\n} Foo;\r\n \r\n- (Foo)check\r\n{\r\n  Foo f = (Foo){\r\n    .t0 = 1,\r\n    .t1 = 1,\r\n    .t2 = 1,\r\n  };\r\n  return f;\r\n}\r\n \r\nSEL selector = @selector(check);\r\nNSMethodSignature *sig = [self methodSignatureForSelector:selector];\r\nNSInvocation *i = [NSInvocation invocationWithMethodSignature:sig];\r\n[i setTarget:self];\r\n[i setSelector:selector];\r\n[i invoke];\r\n\r\nExpected Results:\r\nThe call should return the actual struct.\r\n\r\nActual Results:\r\nEXC_BAD_ACCESS when returning it.\r\n\r\nVersion:\r\n8.2 (12D508)\r\n\r\nNotes:\r\nChanging t0 to double prevents the crash.\r\nXcode Version 6.2 (6C131e)\r\n\r\nConfiguration:\r\niPhone 6 64gb"
+    email: tadeuzagallo@gmail.com
+    modified: "2015-05-02T19:07:16.56635Z"
+    number: "20778823"
+    number_intvalue: 20778823
+    originated: 01-May-2015 05:30 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "8.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSInvocation fails with struct with 3 or more variables of different type(defs) of the same underlying type

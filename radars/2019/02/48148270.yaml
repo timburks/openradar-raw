@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "48148270"
+    labels:
+        datastore_id: "4940546858549248"
+data:
+    classification: ""
+    created: "2019-02-17T19:42:11.053007Z"
+    description: "Xcode 10.2 beta 2 (10P91b) SourceKit: editor.open syntax tree contains extraneous duplicate declaration with conflicting USR\r\n\r\nSummary:\r\n\r\nThe `source.request.editor.open` request with `key.enablesyntaxtree = 1` response returned by SourceKit in Xcode 10.2 beta2 (10P91b) returns an extraneous duplicate `function.method.class` declaration as a descendent of the wrong class, that conflicts with another declaration with the same USR in another class.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nGiven the following code:\r\n\r\n```\r\nimport Foundation\r\n\r\nprotocol MyProtocol: class {\r\n    static func someMethod()\r\n}\r\n\r\nopen class MyBase: MyProtocol {\r\n    open class func someMethod() {}\r\n}\r\n\r\nclass MyClass: MyBase {\r\n    override static func someMethod() {}\r\n}\r\n```\r\n\r\nOutput for 10.2 beta 2 (10P91b): https://gist.github.com/ileitch/e3464d7d66232a87613455f5686de7b2\r\nOutput for 10.1 (10B61): https://gist.github.com/ileitch/ce4969f04bc9e14f5b9441aac270d32a\r\n\r\nSince the raw output can be hard to follow, I will demonstrate the issue using a more succinct parsed format. Due to the 3000 character limit of the bug report description, the parsed format can be found at the top of each gist.\r\n\r\n`MyClass` in the 10.2 output contains an extraneous `function.method.class` declaration with the USR 's:17RetentionFixtures6MyBaseC10someMethodyyFZ'. This extraneous declaration duplicates the correct declaration with the same USR in `MyBase`. Note that the declaration also has no `name` and the USR itself references `MyBase` instead of `MyClass`, giving weight to it being incorrectly placed. It looks to me that SourceKit is confused by the use of `open class func` in `MyBase` and `open static func` in `MyClass` (note: class/static).\r\n\r\nThis extraneous declaration causes issues since its USR conflicts with the correct declaration in `MyBase`.\r\n\r\nVersion/Build:\r\n\r\nXcode 10.2 beta2 (10P91b)"
+    email: port001@gmail.com
+    modified: "2019-02-17T19:42:11.053292Z"
+    number: "48148270"
+    number_intvalue: 48148270
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: 'Xcode 10.2 beta 2 (10P91b) SourceKit: editor.open syntax tree contains extraneous duplicate declaration with conflicting USR'

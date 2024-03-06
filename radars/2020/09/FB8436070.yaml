@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8436070
+    labels:
+        datastore_id: "4957846227648512"
+data:
+    classification: Application Slow/Unresponsive
+    created: "2020-09-20T12:14:27.817874Z"
+    description: "Description:\r\n\r\nA very common pattern used to browser content in Apple TV apps is the one of a vertical list made of individually scrollable rows of content. This is a pattern you encounter for example in the App Store app or in the TV app itself, or in 3rd party apps like Netflix, to just name a few examples.\r\n\r\nThis kind of layout should be easy to reproduce with SwiftUI by nesting several HStacks into a single VStack (or lazy stacks for tvOS 14), themselves nested in scroll views. Unfortunately, the performance obtained with such layouts is very poor. \r\n\r\nAs can be seen with Instruments in a very simple case displaying trivial views (colored rectangles), the issue is apparently not related to SwiftUI diffing or view body calculations, but from the rest of the drawing process. From an old UIKit app developer perspective, it seems as if no reuse mechansim is in place in such cases. While the lazy stack should avoid memory growing up unnecessarily as content is browsed, both the normal as well as the lazy variants of stacks suffer from such issues when nested in scroll views.\r\n\r\nHow to reproduce the problem:\r\n\r\nA sample project running on iOS, iPadOS and tvOS is attached to this issue. This sample project includes 3 implementations for the layout described above:\r\n\r\n1. A VStack / HStack-based implementation.\r\n2. Same implementation, but with the new LazyVStack and LazyHStack introduced with iOS and tvOS 14.\r\n3. Implementation with UICollectionView and a compositional layout with orthogonally scrollable sections.\r\n\r\nJust run the example project on a real Apple TV device and navigate the various demos with the remote (all cells are focusable buttons so that you can navigate horizontally and vertically). You can see that scrolling performance is poor for the first two SwiftUI-based demos, while it is smooth for the UICollectionView implementation.\r\n\r\nNote that the demo contains 20 rows of 50 items each, which is not unusual (think about Netflix for example). The SwiftUI performance issues can easily be noticed with smaller amounts of cells, e.g. 20 x 20. I specifically introduced row and column item counts for each demo so that you can play a bit with these parameters if you want. Note that the UICollectionView implementation, on the other hand, scales very well with growing number of rows and columns.\r\n\r\nRemark: Tests with LazyHGrid / LazyVGrid show that those views suffer from the same issues. I also ran the example demo on an iPhone 7 test device running iOS 14 and, while performance is not as good as with UICollection view (views \"pop in\" when navigating horizontally), the performance seems far better than the one on tvOS. I could sadly not perform the same tests on iPad OS and macOS Big Sur, as I have no test devices running these versions, but the sample project should be ready for those devices too.\r\n\r\nExpected result:\r\n\r\nSwiftUI \"collections\" scroll smoothly, as do usual UIKit collections.\r\n\r\nCurrent result:\r\n\r\nScrolling performance of SwiftUI \"collections\" is poor, making fairly common app use cases for tvOS impossible to achieve with a good user experience."
+    email: defagos@gmail.com
+    modified: "2020-09-20T12:14:27.818212Z"
+    number: FB8436070
+    number_intvalue: 8436070
+    originated: Aug 17, 2020
+    parent_number: '&{NULL_VALUE}'
+    product: tvOS
+    product_version: "14"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Poor lazy stack scrolling performance (SwiftUI)

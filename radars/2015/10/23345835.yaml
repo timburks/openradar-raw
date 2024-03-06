@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23345835"
+    labels:
+        datastore_id: "4508463174516736"
+data:
+    classification: Serious Bug
+    created: "2015-10-31T20:39:55.93749Z"
+    description: "It is not possible to use a generic function/closure as a @convention(c) argument.\r\n\r\nIn most cases trying to do so results in an error message, however when using a closure literal in a generic context to create a @convention(c) closure, the Swift compiler crashes.\r\n\r\nThe following example demonstrates this issue:\r\n\r\n// Function that requires a @convention(c) closure\r\nfunc function(s: @convention(c) () -> ()) {\r\n}\r\n\r\nfunc genericFunction<T>(el: T) {\r\n    // Create one using closure literal in a generic context\r\n    function() { }\r\n}\r\n\r\n// -> Command failed due to signal: Segmentation fault: 11\r\n\r\n\r\nAn example project is attached.\r\n\r\nSteps to Reproduce:\r\nOpen & build the attached project.\r\n\r\nExpected Results:\r\nIf the closure literal does not not depend on / use the generic context in any way, this should ideally compile successfully.\r\n\r\nIf the closure literal makes use of the generic context it is in, an error message should be emitted.\r\n\r\nActual Results:\r\nThe compiler crashes.\r\n\r\nStack trace:\r\n\r\n0  swift                    0x00000001029f933b llvm::sys::PrintStackTrace(__sFILE*) + 43\r\n1  swift                    0x00000001029f9a7b SignalHandler(int) + 379\r\n2  libsystem_platform.dylib 0x00007fff9c53c52a _sigtramp + 26\r\n3  libsystem_platform.dylib 0x0000001d00726573 _sigtramp + 1679728739\r\n4  swift                    0x0000000100bc94ab swift::irgen::emitPolymorphicArguments(swift::irgen::IRGenFunction&, swift::CanTypeWrapper<swift::SILFunctionType>, swift::CanTypeWrapper<swift::SILFunctionType>, llvm::ArrayRef<swift::Substitution>, swift::irgen::WitnessMetadata*, swift::irgen::Explosion&) + 587\r\n5  swift                    0x0000000100c160ac (anonymous namespace)::IRGenSILFunction::visitFullApplySite(swift::FullApplySite) + 2172\r\n6  swift                    0x0000000100c07bad swift::irgen::IRGenModule::emitSILFunction(swift::SILFunction*) + 10973\r\n7  swift                    0x0000000100b6e253 swift::irgen::IRGenModuleDispatcher::emitLazyDefinitions() + 307\r\n8  swift                    0x0000000100bee69a performIRGeneration(swift::IRGenOptions&, swift::ModuleDecl*, swift::SILModule*, llvm::StringRef, llvm::LLVMContext&, swift::SourceFile*, unsigned int) + 1034\r\n9  swift                    0x0000000100beea30 swift::performIRGeneration(swift::IRGenOptions&, swift::SourceFile&, swift::SILModule*, llvm::StringRef, llvm::LLVMContext&, unsigned int) + 64\r\n10 swift                    0x0000000100aed465 performCompile(swift::CompilerInstance&, swift::CompilerInvocation&, llvm::ArrayRef<char const*>, int&) + 13701\r\n11 swift                    0x0000000100ae9cd3 frontend_main(llvm::ArrayRef<char const*>, char const*, void*) + 2691\r\n12 swift                    0x0000000100ae6354 main + 2324\r\n13 libdyld.dylib            0x00007fff9091e5ad start + 1\r\n\r\n\r\n1.\tWhile emitting IR SIL function @_TToFF3Bug15genericFunctionurFq_T_U_FT_T_ for expression at [/Users/janoschhildebrand/Desktop/Bug/Bug/main.swift:15:16 - line:15:18] RangeText=\"{ }\"\r\n\r\nVersion:\r\nXcode 7.1 (7B91b)\r\nApple Swift version 2.1 (swiftlang-700.1.101.6 clang-700.1.76)\r\nOS X 10.11.1 (15B42)"
+    email: janoschhildebrand@gmail.com
+    modified: "2015-11-05T15:43:43.09655Z"
+    number: "23345835"
+    number_intvalue: 23345835
+    originated: 31-Oct-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.1 (7B91b)
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 22470105 (Open)
+    title: 'Xcode 7.1 (7B91b): [Swift] Creating a @convention(c) closure using a literal closure in a generic context crashes the compiler'

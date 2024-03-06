@@ -1,0 +1,67 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19776929"
+    labels:
+        datastore_id: "5172831029559296"
+data:
+    classification: Other Bug
+    created: "2015-02-10T03:57:06.681381Z"
+    description: |-
+        Summary:
+        Swift can’t resolve the following constants, defined in the XPC module:
+
+        XPC_TYPE_CONNECTION
+        XPC_TYPE_ENDPOINT
+        XPC_TYPE_NULL
+        XPC_TYPE_BOOL
+        XPC_BOOL_TRUE
+        XPC_BOOL_FALSE
+        XPC_TYPE_INT64
+        XPC_TYPE_UINT64
+        XPC_TYPE_DOUBLE
+        XPC_TYPE_DATE
+        XPC_TYPE_DATA
+        XPC_TYPE_STRING
+        XPC_TYPE_UUID
+        XPC_TYPE_FD
+        XPC_TYPE_SHMEM
+        XPC_TYPE_ARRAY
+        XPC_TYPE_DICTIONARY
+        XPC_TYPE_ERROR
+        XPC_ERROR_KEY_DESCRIPTION
+        XPC_EVENT_KEY_NAME
+        XPC_ARRAY_APPEND
+
+        Steps to Reproduce:
+        import XPC
+
+        // Successfully gets an opaque pointer to XPC_TYPE_STRING
+        xpc_get_type(xpc_string_create(""))
+
+        //Fails to resolve when uncommented
+        //XPC_TYPE_STRING
+
+        Expected Results:
+        Swift should resolve XPC_TYPE_STRING.
+
+        Actual Results:
+        Swift does not resolve XPC_TYPE_STRING.
+
+        Regression:
+        All versions of Swift that I’ve tested (1.0, 1.1, 1.2b1).
+
+        Notes:
+        Current very ugly workaround in SwiftXPC (https://github.com/jpsim/SwiftXPC) is to create basic versions of all xpc types, store their opaque xpc_type_t pointers and check xpc_object_t’s against them: https://github.com/jpsim/SwiftXPC/blob/9e60f110e463009f30486eac0d84f7d8dc5f1936/SwiftXPC/XPCType.swift#L32-L46
+    email: jp@jpsim.com
+    modified: "2015-02-10T03:57:06.681553Z"
+    number: "19776929"
+    number_intvalue: 19776929
+    originated: 09-Feb-2015 07:57 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: XPC_TYPE* constants don''t resolve'

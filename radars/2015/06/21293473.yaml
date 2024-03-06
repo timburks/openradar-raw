@@ -1,0 +1,83 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21293473"
+    labels:
+        datastore_id: "6065402241089536"
+data:
+    classification: Other Bug
+    created: "2015-06-09T00:43:24.2412Z"
+    description: |-
+        Summary:
+        In Swift 1.2, an enum could conform to a protocol with typealiases shadowing the names of its cases. This worked out just fine in practice because they could never actually collide; the types were available in constraints and the cases were available when constructing instances of the type.
+
+        Swift 2 has regressed this, erroring out with unhelpful (bogus) paths.
+
+
+        Steps to Reproduce:
+        1. Compile this code:
+
+        protocol EitherType {
+        	typealias Left
+        	typealias Right
+
+        	func either<V>(ifLeft ifLeft: Left -> V, ifRight: Right -> V) -> V
+        }
+
+        enum Either<T, U>: EitherType {
+        	case Left(T)
+        	case Right(U)
+
+        	func either<V>(ifLeft ifLeft: T -> V, ifRight: U -> V) -> V {
+        		switch self {
+        		case let .Left(left):
+        			return ifLeft(left)
+        		case let .Right(right):
+        			return ifRight(right)
+        		}
+        	}
+        }
+
+
+
+        Expected Results:
+        Success.
+
+
+        Actual Results:
+        Bad errors:
+
+        either.Either:5:13: error: invalid redeclaration of 'Left'
+          typealias Left = T
+                    ^
+        ./either.swift:11:7: note: 'Left' previously declared here
+                case Left(T)
+                     ^
+        either.Either:6:13: error: invalid redeclaration of 'Right'
+          typealias Right = U
+                    ^
+        ./either.swift:12:7: note: 'Right' previously declared here
+                case Right(U)
+                     ^
+
+        NB: the errors themselves state that the redeclaration is in either.Either, which isn’t actually a Swift source file. Xcode therefore can’t show me the source which the errors reference, which is the icing on the cake.
+
+
+        Regression:
+        This compiled fine in Swift 1.2 (modulo the intrusion of Box or equivalent).
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-06-09T00:43:24.2415Z"
+    number: "21293473"
+    number_intvalue: 21293473
+    originated: 08-Jun-2015 08:43 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-7-beta (7A120f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2: Regression: Protocol typealiases & enum cases share a namespace'

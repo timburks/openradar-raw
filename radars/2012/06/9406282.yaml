@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9406282"
+    labels:
+        datastore_id: "1760405"
+data:
+    classification: Serious Bug
+    created: "2012-06-05T15:05:39.312845Z"
+    description: "09-May-2011 12:46 PM Daniel Jalkut:\r\nNOTE: This is a regression from 10.6.\r\n\r\nWhen the Finder is scripted to reveal a file, and the revelation of that file involves opening a new window, the file is revealed and selected correctly, but the the scripting \"Selection\" attribute of the Finder is not updated correctly.\r\n\r\n1. Make sure that all Finder windows are closed.\r\n2. Open Script Editor\r\n3. Paste and run the following:\r\n\r\ntell application \"Finder\"\r\n\tactivate\r\n\treveal POSIX file \"/Applications\"\r\n\tdisplay dialog \"selection is \" & selection as string\r\nend tell\r\n\r\nRESULT: The Finder will show clearly that the Applications folder is selected in a newly opened window, but the selection is an empty value.\r\n\r\nOn Mac OS X 10.6 and earlier, the revelation of a file in the Finder causes it to become visible but also selected, and the selection attribute of the Finder properly reflects that.\r\n\r\nThis change breaks scripts that depend on this outcome.\r\n\r\n\r\n05-Jun-2012 11:03 AM Daniel Jalkut:\r\nI wanted to add that this problem is more wide-spread than just the use of \"reveal\" command. The problem is that in general, the Finder's \"selection\" property is liable to be stale or randomly initialized. Another great example:\r\n\r\n1. Create a new finder window.\r\n2. Select anything in the window.\r\n3. Switch to Script Editor and run:\r\n\r\nselection of app \"Finder\"\r\n\r\nRESULT: the selection will be falsely reported as either empty or as some past-selected item that is no longer visibly selected.\r\n\r\nI would like to add that there is a security aspect to this bug as automated procedures that may include deletion of files are often based on the visible selection in the Finder. In this case, because of the selection property bug, a user may run destructive scripts on a visible selection, only to have the destructive actions applies to a previously selected item.\r\n\r\n05-Jun-2012 11:07 AM Daniel Jalkut:\r\nThe selection is \"fixed\" coercing the Finder to cause the selected window to be deselectd and reselected. In my tests, the most reliable, least obtrusive workaround is to switch the active app to a faceless background app, and then back to the Finder:\r\n\r\non WorkaroundSelectionBug()\r\n\tactivate application \"System Events\"\r\n\tactivate application \"Finder\"\r\nend WorkaroundSelectionBug\r\n\r\nWorkaroundSelectionBug()\r\n\r\nBut this has an obvious glaring visual side-effect."
+    email: jalkut@gmail.com
+    modified: "2012-06-05T15:12:32.532442Z"
+    number: "9406282"
+    number_intvalue: 9406282
+    originated: 09-May-2011 12:46 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Finder
+    product_version: "10.7"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Finder scripting selection may refer to bogus value not correlated with UI

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8810608"
+    labels:
+        datastore_id: "993401"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2010-12-30T20:23:37.722502Z"
+    description: "Summary:\r\n\r\nIOCreatePlugInInterfaceForService creates a mach port and a CFMachPortRef to wrap it. IODestroyPlugInInterface appears to destroy the mach port somewhat before the CFMachPortRef. This causes a race condition where other code can allocate a mach port and then a CFMachPortRef that unexpectedly points to the existing (invalid) CFMachPortRef. This can cause the mach port to be unreliable which then has disastrous consequences on the code that uses it.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nCompile and run the attached program. Note that the vendor/product IDs are hardcoded in the _kVendorID and _kProductID constants. These IDs are for my Apple aluminum USB keyboard. You may need to change those to the IDs of some USB device on your system.\r\n\r\n\r\nExpected Results:\r\n\r\nThe attached program should run forever, spitting out \"machport:\" and \"iterate:\" logs.\r\n\r\n\r\nActual Results:\r\n\r\nIt runs briefly, then hits this assertion failure:\r\n\r\nAssertion failed: (portctx.info == getctx.info), function TestMachPort, file usb-machport.c, line 94.\r\n\r\nThis indicates that an existing CFMachPortRef was found for the newly-allocated mach port, which should never happen.\r\n\r\n\r\nRegression:\r\n\r\nThis was tested on a couple of different Macs with different USB devices and the problem was still present.\r\n\r\nRemoving the call to IODestroyPlugInInterface solves the problem, at the cost of leaking the IOKit plugin object each time.\r\n\r\n\r\nNotes:\r\n\r\nN/A"
+    email: michael.ash@gmail.com
+    modified: "2011-08-28T05:38:34.732963Z"
+    number: "8810608"
+    number_intvalue: 8810608
+    originated: 30-Dec-2010 03:22 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10H574
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Mach port race condition in USB-related IODestroyPlugInInterface

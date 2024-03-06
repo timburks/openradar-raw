@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27401688"
+    labels:
+        datastore_id: "5570107887583232"
+data:
+    classification: Security
+    created: "2016-07-18T13:51:16.12913Z"
+    description: "Disk image signing is available in 10.11.4 and later. https://developer.apple.com/library/prerelease/content/technotes/tn2206/_index.html#//apple_ref/doc/uid/DTS40007919-CH1-TNTAG18\r\n\r\nWhen signing a disk image with a filename that contains its version number, codesign --sign chooses a bad identifier by default. When software is distributed by disk image, it’s common for the disk image’s filename to contain the software’s version number. For example, MyApp-1.2.3.dmg.\r\n\r\nWhen signing a disk image whose filename is of this form, codesign chooses MyApp-1 as the identifier baked into the code signature and designated requirement.\r\n\r\nThe identifier can be viewed with codesign --display.\r\n\r\nSteps to Reproduce:\r\nCreate a disk image with a file name of the format MyApp-1.2.3 and sign it.\r\n\r\n$ mkdir empty\r\n$ hdiutil create -srcdir empty -fs HFS+ -format UDZO -imagekey zlib-level=9 -o MyApp-1.2.3.dmg\r\n.\r\ncreated: …/MyApp-1.2.3.dmg\r\n$ codesign --sign='Developer ID Application: Me' MyApp-1.2.3.dmg\r\n$ codesign --display --requirements=- --verbose MyApp-1.2.3.dmg\r\n\r\nExpected Results:\r\nThe identifier as shown in the Identifier= field and the designated requirement should be the name of the disk image file. If it’s altered in any way, the .dmg suffix should be removed, but codesign --sign shouldn’t have chopped off only a portion of the version number. I would expect the identifier to be MyApp-1.2.3 as shown in the Identifier= and designated requirement below.\r\n\r\n$ codesign --display --requirements=- --verbose MyApp-1.2.3.dmg\r\nExecutable=…/MyApp-1.2.3.dmg\r\nIdentifier=MyApp-1.2.3\r\nFormat=disk image\r\nCodeDirectory v=20200 size=295 flags=0x0(none) hashes=1+6 location=embedded\r\nSignature size=8863\r\nTimestamp=Jul 18, 2016, 12:00:00 AM\r\nInfo.plist=not bound\r\nTeamIdentifier=1234567890\r\nSealed Resources=none\r\ndesignated => identifier \"MyApp-1.2.3\" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = \"1234567890\"\r\n\r\nActual Results:\r\nThe identifier is MyApp-1. Part of the version number has been chopped off.\r\n\r\n$ codesign --display --requirements=- --verbose MyApp-1.2.3.dmg\r\nExecutable=…/MyApp-1.2.3.dmg\r\nIdentifier=MyApp-1\r\nFormat=disk image\r\nCodeDirectory v=20200 size=295 flags=0x0(none) hashes=1+6 location=embedded\r\nSignature size=8863\r\nTimestamp=Jul 18, 2016, 12:00:00 AM\r\nInfo.plist=not bound\r\nTeamIdentifier=1234567890\r\nSealed Resources=none\r\ndesignated => identifier \"MyApp-1\" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = \"1234567890\"\r\n\r\nVersion:\r\n10.11.5 15F34\r\n10.12dp2 16A239j\r\n\r\nConfiguration:\r\nThis does not occur with a disk image filename such as MyApp-1.2.3b4.dmg. In that case, the identifier is MyApp-1.2.3b4.\r\n\r\nThe --identifier argument can be used with codesign --sign to provide an identifier other than the default chosen by codesign."
+    email: mark@chromium.org
+    modified: "2016-07-18T13:51:16.12935Z"
+    number: "27401688"
+    number_intvalue: 27401688
+    originated: "2016-07-18"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11.5 15F34
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: codesign chooses a bad identifier when signing a disk image with a version number in its filename

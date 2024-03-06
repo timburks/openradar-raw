@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "45403264"
+    labels:
+        datastore_id: "4976582573686784"
+data:
+    classification: Bug
+    created: "2018-10-19T12:31:46.313791Z"
+    description: "Area:\r\ntvOS SDK\r\n\r\nSummary:\r\nUITableViewCell width is incorrect when using a custom focus style and scrolling fast. The bug appears to be related to the affine transformation being applied when focus updates.\r\n\r\nIt does not matter what affine transformation is being applied: scale will have the wrong size, a rotation will have the wrong the rotation, etc.\r\n\r\nI did discover the following thread on Apple Developer forums but it's proposed solution did not work:\r\nhttps://forums.developer.apple.com/thread/48813\r\n\r\nSteps to Reproduce:\r\n1) Run the demo app: https://github.com/cgoldsby/TvOSTableViewCellFocusBug\r\n2) Using the simulator Apple Remote or a paired Apple Remote scroll up and down\r\n\r\nor\r\n\r\n1) Create a table view cell with `focusStyle == .custom`\r\n2) Using `UIFocusAnimationCoordinator` apply an affine transform for focusing & unfocusing (identity)\r\n```\r\noverride func tableView(_ tableView: UITableView, didUpdateFocusIn context: UITableViewFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {\r\n    if let cell = context.previouslyFocusedItem as? UITableViewCell {\r\n        coordinator.addCoordinatedFocusingAnimations({\r\n            _ in\r\n            cell.transform = .identity\r\n        })\r\n    }\r\n\r\n    if let cell = context.nextFocusedItem as? UITableViewCell {\r\n        coordinator.addCoordinatedFocusingAnimations({\r\n            _ in\r\n            cell.transform = CGAffineTransform(scaleX: 1.08, y: 1.08)\r\n        })\r\n    }\r\n}\r\n```\r\n3) Run app\r\n4) Using the simulator Apple Remote or a paired Apple Remote scroll up and down\r\n\r\nExpected Results:\r\n✅ When the cell is focused the scale transformation is applied and the cell appears larger.\r\n✅ When the cell is unfocused the identity transformation is applied and the cell returns to its original size.\r\n\r\nActual Results:\r\n✅ When the cell is focused the scale transformation is applied and the cell appears larger.\r\n❌ When the cell is unfocused the identity transformation is not applied and the cell size is incorrect.\r\n\r\nVersion/Build:\r\nXcode Version 10.0 (10A254a)\r\n\r\nConfiguration:\r\nXcode Version 10.0 (10A254a), Apple TV simulator, tvOS 12. Also, reproducible with tvOS 11 and Xcode 9.4.1"
+    email: cgoldsby@gmail.com
+    modified: "2018-10-19T12:31:46.314037Z"
+    number: "45403264"
+    number_intvalue: 45403264
+    originated: October 19 2018
+    parent_number: '&{NULL_VALUE}'
+    product: tvOS SDK
+    product_version: tvOS 12
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UITableViewCell with custom focus style has incorrect width after scrolling fast

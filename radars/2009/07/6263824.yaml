@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6263824"
+    labels:
+        datastore_id: "51450"
+data:
+    classification: Serious Bug
+    created: "2009-07-21T07:05:11.578499Z"
+    description: "On our production build system, we deliberately check out the source files read-only, as an additional bit of security against accidental file modification.\r\n\r\nHowever, when copying property list files in a Copy Bundle Resource Files Phase, overwriting a plist in the product bundle fails when the plist file is read-only:\r\n\r\n- unpack the enclosed sample project\r\n- make sure the file \"foo.plist\" is read-only (i.e. mode 444)\r\n- build the project once\r\n- touch foo.plist\r\n- bulid again\r\n\r\n-> you'll get an error \r\n\r\ncp: /tmp/copyplist bug/build/Debug/copyplist bug.app/Contents/Resources/foo.plist: Permission denied\r\n\r\n\r\nThe next build will work again, since the file was removed from the product bundle at that point.\r\n\r\n\r\nIMHO, if I modify a source file, even if it's read-only, xcodebuild (or, in this case, copyplist) should force overwrite the file (or remove the old one before copying). As a proof-of-concept, I added the following line to copyplist, just before it issues the cp command at line 71:\r\n\r\n    system('rm -f \"' + OPTIONS[:OutputDir] + '/' + File.basename(path) + '\"')\r\n\r\nWhen doing that, the build works without a hitch even when replacing the bundle resource file.\r\n\r\nFWIW, the same issue exists for the \"copytiff\" tool (and probably a number of other tools)."
+    email: jum@mac.com
+    modified: "2011-08-28T05:49:38.69428Z"
+    number: "6263824"
+    number_intvalue: 6263824
+    originated: 02-Oct-2008
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: copyplist fails when trying to copy read-only file for the second time

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8470815"
+    labels:
+        datastore_id: "688401"
+data:
+    classification: Serious Bug
+    created: "2010-09-23T20:28:53.793483Z"
+    description: "Summary:\r\nIf you have an NSManagedObjectContext in which you've created some new objects which have not yet been saved to the persistent store, then perform a fetch for those objects using a resultType of NSDictionaryResultType, the objects are not returned by the fetch request.\r\n\r\nSteps to Reproduce:\r\n1. Open the enclosed project, build and run\r\n\r\nExpected Results:\r\nThe console output should read \"successfully fetched first chef dictionary\"\r\n\r\nActual Results:\r\nInstead, the console output reads \"fetching first chef dictionary failed\"\r\n\r\nNotes:\r\nThe key code that tests this is located in the FetchFirstChefDictionary() function in CoreRecipesTool.m, which reads as follows:\r\n\r\nNSManagedObject *FetchFirstChefDictionary(NSError **error)\r\n{\r\n\tNSArray*\t\t\tfetchResult;\r\n\tNSFetchRequest*\t\tfetchRequest = [[NSFetchRequest alloc] init];\r\n\t\r\n\t[fetchRequest setEntity:[NSEntityDescription entityForName:@\"Chef\" inManagedObjectContext:context]];\r\n\t[fetchRequest setResultType:NSDictionaryResultType];\r\n\t[fetchRequest setPropertiesToFetch:[[[fetchRequest entity] attributesByName] allValues]];\r\n\tfetchResult = [context executeFetchRequest:fetchRequest error:error];\r\n\treturn [fetchResult lastObject];\r\n}\r\n\r\n\r\nRegression:\r\nThe key combination of ingredients here appears to be objects being unsaved in the context and using NSDictionaryResultType for the fetch request. \r\n\r\nIf you first save the objects to a persistent store (this was the case in the original code sample, the saving code in InsertChefAndSave() has been commented out), then the fetch request returns dictionaries as expected. The behavior is the same whether using an in-memory store or a persistent (e.g. XML) store.\r\n\r\nUsing NSManagedObjectResultType will return the unsaved objects correctly, but NSDictionaryResultType will not.\r\n\r\nAdding a [fetchResult setIncludesPendingChanges:YES] call doesn't change anything (YES is the default value for NSFetchRequest, but I figured it was worth a shot)."
+    email: bewebste@gmail.com
+    modified: "2011-08-28T05:39:48.011242Z"
+    number: "8470815"
+    number_intvalue: 8470815
+    originated: 23-Sep-2010 01:25 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.4/10F569
+    reproducible: Always
+    resolved: Behaves correctly
+    status: Closed
+    title: 'CoreData: unsaved objects not returned when fetching with NSDictionaryResultType'

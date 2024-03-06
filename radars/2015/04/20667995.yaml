@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20667995"
+    labels:
+        datastore_id: "4950910203592704"
+data:
+    classification: Bug/Crash/Dataloss
+    created: "2015-04-23T16:12:12.12496Z"
+    description: "Summary:\r\n\r\n# tl;dr;\r\n\r\nWhen using -[NSManagedObjectContext insertObject:] on an object created outside the context, it fails to copy the object attributes to any parent context.\r\n\r\n# Rationale\r\n\r\nWe have a large import of fairly unstructured JSON data, and in order to determine if we need to insert new objects or just update existing ones, we need to partially create NSManagedObjects before inserting them.\r\n\r\nThis is done by passing nil to to the context parameter of -[NSManagedObject initWithEntity:insertIntoManagedObjectContext:] (See -[CDTPersistenceController insertString:intoContext:] for an example.\r\n\r\nOnce the object is partially constructed, we can determine if it's required or not, and then use -[NSManagedObjectContext insertObject:] to insert the object into the object graph if we want to keep it. At that point we also connect any outstanding relationships, etc.\r\n\r\n# The Problem\r\n\r\nThis works great if the NSManagedObjectContext you are inserting into talks directly to the persistent store coordinator.  However, if it is a child context of another managed object context, the attributes of the new object do not get copied to the parent context.  If the object has any validation of it's attributes (say, non-null for example), the call to -[NSManagedObject save:] will fail.\r\n\r\n# The Workaround\r\n\r\nAs I described earlier, writing to a new context that talks directly to the persistent store coordinator, and then merging those changes in on the save notification works as intended.\r\n\r\nSteps to Reproduce:\r\nBuild and run the project on a device or in the simulator.  Press _Insert into Standalone Context_ to operate the workaround, where we are inserting into a parallel managed object context. This works great.  Press _Insert into Child/Main Context_ to demonstrate the bug and abort() on the context saving.\r\n\r\nExpected Results:\r\nusing -[NSManagedObject initWithEntity:entity insertIntoManagedObjectContext:nil]; followed by -[NSManagedObjectContext insertObject:] works correctly, and saving a child context copies the attributes of the new object to it's parent context.\r\n\r\nActual Results:\r\nIf the context being inserted into has a parent, the attributes of the new object are not copied to the parent upon save, and the parent will fail to save when validating non-null attributes.\r\n\r\nVersion:\r\nXcode 6.3.1 on OSX 10.10.3, iOS 8.3\r\n\r\nNotes:\r\nexample project also copied to https://github.com/mbrennek/insertObjectIntoContextFailure\r\n\r\nConfiguration:\r\nXcode 6.3.1 on OSX 10.10.3, iOS 8.3 SDK\r\n\r\nAttachments:\r\n'CoreDataSaveFailureTest.zip' was successfully uploaded."
+    email: brenneke@gmail.com
+    modified: "2015-04-23T16:12:12.12531Z"
+    number: "20667995"
+    number_intvalue: 20667995
+    originated: 4/23/2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "8.3"
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: CoreData fails to copy data to parent NSManagedObjectContext on save

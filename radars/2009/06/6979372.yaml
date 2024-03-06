@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6979372"
+    labels:
+        datastore_id: "43410"
+data:
+    classification: Other Bug
+    created: "2009-06-17T03:51:22.637488Z"
+    description: "Summary:\r\nThe Cocoa Fundamentals Guide includes an example showing a singleton object implemented in Cocoa. The example, as given, has two problems: It does more work than necessary, and it can hide a bug in other code that uses it.\r\n\r\nSteps to Reproduce:\r\n1. Visit the “Creating a Singleton Instance” example in the Cocoa Fundamentals Guide (http://developer.apple.com/documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html#//apple_ref/doc/uid/TP40002974-CH4-SW32).\r\n\r\nExpected Results:\r\nThe singleton example does not suggest overriding -retain, -release, -autorelease, or -retainCount, there being no good reason to override any of those.\r\n\r\nActual Results:\r\nThe singleton example suggests overriding -retain, -release, -autorelease, and -retainCount, for no reason other than “to ensure singleton status”.\r\n\r\nRegression:\r\nI don't know.\r\n\r\nNotes:\r\nThe override implementations of -retain, -release, and -autorelease shown in the CFG are no-ops. The override implementation of -retainCount returns UINT_MAX. In other words, these overrides make three methods do nothing and the fourth tell a lie.\r\n\r\nIn a correct (and much simpler) singleton implementation, the singleton object stays alive because it owns itself. The class creates and owns its first and only instance, and either never releases it or only does so on app termination. The instance never dies because it always has at least one owner: its own class.\r\n\r\nThere is no good reason to override -retain, -release, or -autorelease. If something is overreleasing the object, the bug is in the object that is overreleasing it, not the overreleased object itself. Breaking the retain-counting methods hides that bug, and that bug is a valuable learning experience for every Cocoa programmer who doesn't read and understand the memory-management rules thoroughly.\r\n\r\nThe example does more work than necessary for no benefit, puts off the inevitable, and retards the new Cocoa programmer's learning experience. The fix is simple: remove the overrides of -retain, -release, -autorelease, and -retainCount.\r\n\r\nAdded 18-Jun-2009 13:46:\r\nI've since found out that the documentation for -retainCount explicitly says that you can return UINT_MAX to indicate that you've broken -release. So I take that part back: -retainCount is not lying. However, there is still no good reason to break -retain and -release (the class being a singleton certainly isn't one); when you remove those overrides, -retainCount should go with them, since -release will no longer be broken."
+    email: boredzo@gmail.com
+    modified: "2011-08-28T05:46:26.967181Z"
+    number: "6979372"
+    number_intvalue: 6979372
+    originated: 2009-06-16T20:50-0700
+    parent_number: '&{NULL_VALUE}'
+    product: Documentation
+    product_version: "2008-11-19"
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: Singleton example in Cocoa Fundamentals is bad

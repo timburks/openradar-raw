@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6665225"
+    labels:
+        datastore_id: "15401"
+data:
+    classification: Feature (new)
+    created: "2009-03-10T18:10:12.981984Z"
+    description: "Summary:  In the Quartz Composer framework, there is a public classed called QCComposition which is an opaque type that encapsulates a composition.  One can instantiate a QCRenderer or QCView with this composition.\r\n\r\nQCCompositions are created from Files (a path supplied via NSString), in-memory data (via an NSData object), and possibly via NSDictionary.\r\n\r\nWhen instantiating from a File, the created composition has a property called \"compositionURL\" which is used when looking up files relative to the composition.  without this property, patches are only able to use resources that are referred to with an absolute path string.  Thus, in-memory-only compositions are unable to access resources in a desired location.\r\n\r\nSteps to Reproduce:  Create a composition which accesses a file in the same directory as the composition.  The file must be referenced with a composition-relative path (i.e. it doesn't start with '/' or '~').  When loading this composition with [QCComposition compositionWithFile:myFileName], the compositionURL property is properly set, and the resource will be loaded.  When loading the composition with [QCComposition compositionWithData: [NSData dataWithContentsOfFile:myFileName];, the property is not set, and the resource will not be loaded.\r\n\r\nExpected Results:  An interface to this property would allow for in-memory-only compositions to access resources in a specific file system location.\r\n\r\nActual Results:  There is no published interface to this property.  Modifying it at the QCComposition level seems intuitive, but architecturally it might make more sense to modify QCRenderer to have this functionality.\r\n\r\nRegression:  This is a reliable omission.\r\n\r\nNotes:  The following code snippet will work on a QCRenderer, though it requires the use of undocumented, private API's:\r\n\r\n_renderer is a QCRenderer.\r\n\r\nNSMutableDictionary *userInfo = (NSMutableDictionary*)[[_renderer patch] userInfo];\r\n\tNSDictionary *compositionURLDict = [[NSDictionary alloc] initWithObjectsAndKeys: [NSURL fileURLWithPath:compositionPath],@\"compositionURL\",nil];\r\n\t[userInfo setValue:compositionURLDict forKey:@\".options\"];\r\n\t[compositionURLDict release];"
+    email: chris.wrigh7@gmail.com
+    modified: "2011-08-28T05:47:39.448448Z"
+    number: "6665225"
+    number_intvalue: 6665225
+    originated: 2009.03.10
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 3.1 (63.2)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: QCComposition API lacks a way to access compositionURL

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13126776"
+    labels:
+        datastore_id: "2641401"
+data:
+    classification: serious bug
+    created: "2013-01-31T20:19:16.048495Z"
+    description: "31-Jan-2013 03:16 PM Chris Adamson:\r\nSummary:\r\nAudio Unit render callback in sample app is called once and never again in iOS 6.1; was called on every AudioUnitRender() call in iOS 6.\r\n\r\nSteps to Reproduce:\r\nThe attached AQTapDemo is an example I've been using at developer conferences to illustrate how to use the AudioQueueProcessingTap introduced in iOS 6. It's described in a blog at http://www.subfurther.com/blog/2012/10/30/cocoaconf-portland-12-and-the-audioqueueprocessingtap/ , but to describe briefly\r\n\r\n1. A NSURLConnection fetches data from a shoutcast streaming audio server\r\n2. A AudioFileStream parses out packets from this data and delivers it to streamPacketsProc()\r\n3. streamPacketsProc() puts the packets in an Audio Queue for playout\r\n4. An AudioQueueProcessingTap, created earlier, takes the decoded PCM just as it's about to play, and calls back to queuePlaybackProc()\r\n5. queuePlaybackProc() uses an AUNewTimePitch Audio Unit to perform an effect on the audio. Because the PCM is not necessarily in the floating-point format needed by the effect unit, an offline AUGraph is used. The graph looks like this:\r\n\r\n[render callback] -> AUConverter -> AUNewTimePitch -> AUConverter -> AUGenericOutput\r\n\r\nPrior to calling AudioUnitRender() on AUGenericOutput, the mData with the samples is copied off to a local pointer and NULL'ed out, so that AUGenericOutput will pull from its upstream units. At the top of the graph, the render callback (converterInputRenderCallback()) simply returns the mData pointer that was originally copied off. The upshot is that this allows the original data provided by the AQTap to pass through the entire AUGraph and have the effect applied to it.\r\n\r\nExpected Results:\r\n\r\nThe upshot of all this is that we have a pitch-shifting web radio demo. A UISlider is used to change the kNewTimePitchParam_Pitch parameter on the AUNewTimePitch unit.\r\n\r\nActual Results:\r\n\r\nIn iOS 6.1, the render callback at the top of the graph is called once and never again (this can be verified by adding log statements or setting breakpoints). All calls to AudioUnitRender() return noErr, but don't seem to actually pull data through the graph.\r\n\r\nRegression:\r\n\r\nThis example worked in iOS 6.0, both on the device and in the simulator. If you use the iPhone 6.0 simulator with Xcode 4.6, it works as expected, and you can see converterInputRenderCallback() being called in response to every AudioUnitRender(). It has simply stopped working on 6.1, both in the simulator and on the device.\r\n\r\nNotes:\r\n\r\n31-Jan-2013 03:16 PM Chris Adamson:\r\n'AQTapDemo.zip' was successfully uploaded\r\n\r\n[OpenRadar readers: sample code at https://dl.dropbox.com/u/12216224/buglets/AQTapDemo.zip ]\r\n\r\n\r\n12-Feb-2013 10:01 AM Chris Adamson:\r\nOK, working with DTS, (incident Follow-Up: 255382891), the problem here is an error in my own code, in that I failed to increment the timestamp passed to AudioUnitRender().\r\n\r\nMy sample code provided with this bug also expects interlaced AudioBufferLists in the callbacks, which is the case with 6.0, but not with 6.1. I've fixed this to property look at mNumberChannels.\r\n\r\nI'm going to post corrected code to coreaudio-api next.\r\n\r\nThis issue has been verified as resolved and can be closed."
+    email: invalidname@gmail.com
+    modified: "2013-02-12T15:03:35.508543Z"
+    number: "13126776"
+    number_intvalue: 13126776
+    originated: 1/31/2013
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "6.1"
+    reproducible: always
+    resolved: 2/12/13
+    status: closed / third party to resolve
+    title: 'Regression: Audio Unit render callback called once and never again'

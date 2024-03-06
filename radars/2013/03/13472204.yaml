@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13472204"
+    labels:
+        datastore_id: "2882402"
+data:
+    classification: Serious Bug
+    created: "2013-03-21T13:54:56.180684Z"
+    description: "Summary: The KeychainItemWrapper class in the GenericKeychain sample does not create items that are considered unique by Keychain Services. So if a developer attempts to use that sample code to create multiple items with different identifiers, the SecItemAdd() call fails with an OSStatus of -25299 (\"The item already exists.\")\r\n\r\nThe Keychain Services documentation is not clear about how it determines the identity of an item, so a developer using the sample code will have difficulty determining why the SecItemAdd() call is failing.\r\n\r\nThe problem is that Keychain Services uses the kSecAttrAccount and/or kSecAttrService attributes to determine uniqueness. The sample code does not set those attributes on its items, so they are not unique. The sample code does set the kSecAttrGeneric attribute, but that attribute does not determine uniqueness.\r\n\r\nThe sample code should be fixed, and the Keychain Services documentation should be updated to make it clear which attributes determine uniqueness.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nIn the GenericKeychain sample, add the following lines to the bottom of the AppDelegate's applicationDidFinishLaunching: method:\r\n\r\n\r\n    KeychainItemWrapper *otherItem = [[KeychainItemWrapper alloc] initWithIdentifier:@\"Other\" accessGroup:nil];\r\n    [self.passwordItem setObject:@\"foo\" forKey:kSecValueData];\r\n    [otherItem setObject:@\"bar\" forKey:kSecValueData];\r\n\r\n\r\nThis code attempts to create a second keychain item, named \"Other\", and then tries to set values for the previously created passwordItem and this new otherItem. When it does this, the assertion at the bottom of -[KeychainItemWrapper writeToKeychain] will fail with the message \"Couldn't add the Keychain Item\" because SecItemAdd() returns -25299 instead of noErr.\r\n\r\n\r\nExpected Results:\r\n\r\nDeveloper should be able to create and use multiple KeychainItemWrapper instances with different identifiers.\r\n\r\n\r\nActual Results:\r\n\r\nSecItemAdd() call fails with an OSStatus of -25299 (\"The item already exists.\") for any KeychainItemWrapper instance other than the first one.\r\n\r\n\r\nRegression: N/A\r\n\r\n\r\nNotes:\r\n\r\nMore details/discussion of this problem are here:\r\n\r\n- http://useyourloaf.com/blog/2010/04/28/keychain-duplicate-item-when-adding-password.html\r\n- http://stackoverflow.com/questions/4891562/ios-keychain-services-only-specific-values-allowed-for-ksecattrgeneric-key"
+    email: kristopherdjohnson@gmail.com
+    modified: "2013-03-21T13:54:56.181118Z"
+    number: "13472204"
+    number_intvalue: 13472204
+    originated: 21-Mar-2013 09:52 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "6"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: GenericKeychain sample code does not create unique keychain items

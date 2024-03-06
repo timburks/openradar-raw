@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26864860"
+    labels:
+        datastore_id: "5038774933258240"
+data:
+    classification: Other Bug
+    created: "2016-06-17T17:31:56.52057Z"
+    description: "Summary:\r\nNormally, in a Mach-O image, the values carried in segment_command[_64]::fileoff and section::offset are offsets from the beginning of an image file.\r\n\r\nHistorically, in the dyld shared cache, these fields were updated to be relative to the beginning of the mapped dyld shared cache. This was done for all segments and sections except for the __TEXT segment and any section within that segment. See 10.11.2 dyld-360.18/launch-cache/update_dyld_shared_cache.cpp. In that version, there are two comments that say “don't alter __TEXT until <rdar://problem/7022345> is fixed”. The original mach_header[_64]-relative values are retained for the __TEXT segment.\r\n\r\nNow, in 10.12dp1 16A201w, I’m seeing a new behavior. segment_command[_64]::fileoff is still relative to the Mach-O image file for a __TEXT segment (unaltered from the original uncached image), but within that segment, section[_64]::offset values are all relative to the start of the dyld shared cache file.\r\n\r\nThis is causing a problem for my code that expects segment_command[_64]::fileoff and section[_64]::offset values to be relative to the same base within a single segment.\r\n\r\nI don’t know what’s going on inside radar 7022345, but in all cases, it should remain possible to treat all offset values in both segment_command[_64] and section[_64] as relative to the same base, at least within the same segment.\r\n\r\nhttps://crashpad.chromium.org/bug/118\r\n\r\nVersion:\r\n10.12dp1 16A201w"
+    email: mark@chromium.org
+    modified: "2016-06-17T17:31:56.52083Z"
+    number: "26864860"
+    number_intvalue: 26864860
+    originated: "2016-06-17"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.12dp1 16A201w
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: segment_command’s fileoff doesn’t correspond to section’s offset in images loaded from the dyld shared cache

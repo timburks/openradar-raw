@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20299860"
+    labels:
+        datastore_id: "6423553289224192"
+data:
+    classification: UI/Usability
+    created: "2015-03-25T22:21:31.920541Z"
+    description: "Summary:\r\nRunning the built in `zdiff` unix utility to compare the difference between two compressed files fails.\r\n\r\nSteps to Reproduce:\r\n1. Create a text file. (e.g. run `echo \"Hello, World!\" > example.txt` from Terminal.app)\r\n2. Compress that text file with the unix utility `gzip`, keeping the original. (e.g. run `gzip --keep --stdout example.txt > a.gz` from Terminal.app)\r\n3. Alter the text file (e.g. run `echo \"Goodbye, World :(\" > example.txt` from Terminal.app)\r\n4. Again, compress the text file with the same utility as in step 2, changing the filename (e.g. run `gzip --keep --stdout example.txt > b.gz` from Terminal.app)\r\n5. Run the command `zdiff a.gz b.gz`\r\n\r\nExpected Results:\r\nThe terminal should print the differences between the two compressed text files.\r\n\r\nActual Results:\r\nThe terminal fails with a number of errors:\r\n\r\n[howard@int-osx-prod1 ~]% zdiff ~/production.sql.gz ~/development.sql.gz\r\n/usr/bin/zdiff: line 49: setvar: command not found\r\n/usr/bin/zdiff: line 50: setvar: command not found\r\n/usr/bin/zdiff: line 49: setvar: command not found\r\n/usr/bin/zdiff: line 50: setvar: command not found\r\n\r\n\r\n\r\nVersion:\r\nMac OS X Yosemite 10.10.2 (14C1514)\r\n\r\nDarwin int-osx-prod1 14.1.0 Darwin Kernel Version 14.1.0: Thu Feb 26 19:26:47 PST 2015; root:xnu-2782.10.73~1/RELEASE_X86_64 x86_64\r\n\r\nNotes:\r\nRunning the same test on a FreeBSD server returns the expected results.\r\n\r\n[howard@ext-bsd-a13 ~]> uname -a\r\nFreeBSD ext-bsd-a13.hplogsdon.net 9.3-STABLE FreeBSD 9.3-STABLE #1 r277307: Sat Jan 17 19:11:50 MST 2015     root@int-fbsd-build.hplogsdon.net:/usr/obj/usr/src/sys/HPLOGSDON_NET  i386\r\n[howard@ext-bsd-a13 ~]> echo \"Hello, World!\" > example.txt\r\n[howard@ext-bsd-a13 ~]> gzip -k -c example.txt > a.gz\r\n[howard@ext-bsd-a13 ~]> echo \"Goodbye, World :(\" > example.txt\r\n[howard@ext-bsd-a13 ~]> gzip -k -c example.txt > b.gz\r\n[howard@ext-bsd-a13 ~]> zdiff ~/a.gz ~/b.gz\r\n1c1\r\n< Hello, World!\r\n---\r\n> Goodbye, World :(\r\n\r\nthe shell /bin/sh on OS X, is a link to /bin/bash, the GNU Bourne Again Shell (GNU Bash-3.2). On FreeBSD /bin/sh's manpage states that it's version is the rewritten version modeled after Bourne shell from AT&T System V Release 4 UNIX. FreeBSD's `sh` manpage reference a \"setvar\" command, where as GNU's BASH does not.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: hplogsdon@gmail.com
+    modified: "2015-03-25T22:21:31.920744Z"
+    number: "20299860"
+    number_intvalue: 20299860
+    originated: 25-Mar-2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.2 (14C1514)
+    reproducible: Always
+    resolved: ""
+    status: open
+    title: '`zdiff` unix utility expects BSD Bourne shell, not GNU BASH.'

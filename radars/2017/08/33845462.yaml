@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33845462"
+    labels:
+        datastore_id: "4979975606239232"
+data:
+    classification: ""
+    created: "2017-08-11T09:03:58.2298Z"
+    description: "# Description:\r\nWhen the NSFileProviderExtension object is instantiated, it is created with a nil domain. The domain is only set on the object subsequently. This uncertainty impacts ability to leverage NSFileProviderDomains as a useful multitenancy mechanism.\r\n\r\n# Steps to repro:\r\n1. Implement rudimentary support for a File Provider in the project\r\n2. Add new NSFileProviderDomains via the NSFileProviderManager\r\n3. Break during the instantiation of the NSFileProviderExtension\r\n4. Inspect contents of self.domain\r\n\r\n# Expected Results:\r\nInspecting the contents of self.domain yields the domain for which the instance of NSFileProviderExtension was created.\r\n\r\n# Observed Results:\r\nself.domain is a nil pointer\r\n\r\n# Additional Notes:\r\nSince instances of NSFileProviderExtension are generally meant to be stateless and thus are not guaranteed a lifecycle of calls beyond init, we are unable to deterministically define and bootstrap our domain. Instead, we are forced to either:\r\n\r\n1. Observe the contents of self.domain for mutations, meaning that we might either have to:\r\n2. a) bleed an action/enumeration call,\r\n3. b) cache action/enumeration calls until domain is determined;\r\n4. Prefix every external method to resolve the domain, hoping it has been set between instantiation and the method call - we have observed this to not always be true.\r\n\r\nThis issue could be resolved by having the class owning the NSFileProviderExtension preset the domain property on each new instance of NSFileProviderExtension as a part of its instantiation call. Alternatively, a strong guarantee about the order of methods should be made in the documentation, or a bona fide configuration method could be exposed. (akin to viewDidLoad)"
+    email: bogo@dropbox.com
+    modified: "2017-08-11T09:03:58.23015Z"
+    number: "33845462"
+    number_intvalue: 33845462
+    originated: "2017-08-10"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 11b5
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Domains are not set during NSFileProviderExtension’s initialization

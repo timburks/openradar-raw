@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28103342"
+    labels:
+        datastore_id: "5064237026115584"
+data:
+    classification: Other Bug
+    created: "2016-08-31T21:33:21.48454Z"
+    description: "Peter Steinberger31-Aug-2016 11:30 PM\r\n\r\nSummary:\r\nI'm trying to set ASAN_OPTIONS as environment variable in Xcode based on \r\nhttps://github.com/google/sanitizers/wiki/AddressSanitizer\r\n\r\nSpecifically, I am trying to run without the new odr detection because this seems to be buggy:\r\nhttp://prod.lists.apple.com/archives/xcode-users/2016/Aug/msg00018.html\r\n\r\n>HINT: if you don't care about these errors you may set ASAN_OPTIONS=detect_odr_violation=0\r\n\r\nThis is not passed to tests. But it works if the app is Run regularly. This is a regression from 7.3.1. Sample is attached that works on both Xcode versions.\r\n\r\nSteps to Reproduce:\r\nSee attached sample project. Xcode correctly merges it's own ASAN settings with the settings in the environment variable when the app runs normally, but does not do that when I run tests.\r\n\r\nI'm using following debug code to make displaying the env variables convenient:\r\n\r\n+ (void)load {\r\nNSLog(@\"%@\", NSProcessInfo.processInfo.environment);\r\n}\r\n\r\nExpected Results:\r\nThis ist the output when the app runs:\r\nhttps://gist.github.com/steipete/a7bec36088f3db8d340aa647fc990c13\r\n\r\nAddressSanitizer debugger support is active. Memory error breakpoint has been installed and you can now use the 'memory history' command.\r\n2016-08-29 22:53:41.898 AsanOptionTest[98221:1438355] {\r\n\"ASAN_OPTIONS\" = \"abort_on_error=1:color=never:detect_odr_violation=0:asan_option_radar_test_setting=1\";\r\n\"ASAN_TEST\" = \"asan-forwarding-works=1\";\r\n\r\nActual Results:\r\nThis is the output when tests run:\r\nhttps://gist.github.com/steipete/f9b6c423254f94a3bdbedf865fdadc32\r\n\r\n2016-08-29 22:46:37.727 AsanOptionTest[97751:1426969] {\r\n\"ASAN_OPTIONS\" = \"abort_on_error=1:color=never\";\r\n\"ASAN_TEST\" = \"asan-forwarding-works=1\";\r\n\r\nVersion:\r\nXcode 7.3.1 and Xcode 8b6\r\n\r\nNotes:\r\nA regular run correctly merges the default settings with custom settings - this does not happen for tests. This is a regression - it works as expected in Xcode 7.3.1.\r\n\r\nI opened a DTS for this before because I wasn't sure it was a bug, but it was closed because Xcode is still beta software a few more days. (Number was 646910755)\r\n\r\nConfiguration:\r\nXcode 7.3.1 and Xcode 8b6\r\n\r\nAttachments:\r\nSample available at https://github.com/PSPDFKit-labs/radar.apple.com"
+    email: steipete@gmail.com
+    modified: "2017-02-17T10:14:20.7562Z"
+    number: "28103342"
+    number_intvalue: 28103342
+    originated: 31-Aug-2016 11:30 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 8b6
+    reproducible: Always
+    resolved: Late 2016
+    status: Closed
+    title: ASAN_OPTIONS no longer settable when running tests within Xcode. (Regression)

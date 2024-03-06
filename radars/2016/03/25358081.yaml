@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25358081"
+    labels:
+        datastore_id: "4944276794376192"
+data:
+    classification: ""
+    created: "2016-03-25T13:49:37.43976Z"
+    description: "Summary:\r\nIn Xcode 7.3, static libraries are sometimes compiled without bitcode.\r\n\r\nSteps to Reproduce:\r\n1. Create a project that makes a static library-based framework\r\n2. Enable bitcode support for that target\r\n3. Make an aggregate target that invokes xcodebuild to build the static library for simulator and device\r\n4. Pick the aggregate target, select a simulator\r\n5. Build\r\n\r\n\r\nExpected Results:\r\nThe static libraries should always have bitcode (checked with otool for a __LLVM segment)\r\n\r\nActual Results:\r\nThe static libraries lacks bitcode (no __LLVM segment) more often than not.\r\n\r\nBuilding a project using this library will make the compiler complain about lacking bitcode\r\n\r\nVersion:\r\nXcode 7.3 (7D175)\r\n\r\nNotes:\r\nI understand that this is quite an old school trick that doesn't really seem supported (especially since the push towards dynamic libraries) and that my project was probably expected to break. However, it did work with 7.2.\r\n\r\nI'd be happy to fix my project if it's not an Xcode issue.\r\n\r\nMore information here: http://stackoverflow.com/questions/36184930/xcodebuild-7-3-cant-enable-bitcode\r\n\r\nOpening the console when building the aggregate target with Xcode 7.3 and filtering for \"xcodebuild\" shows that xcodebuild has \"ENABLE_BITCODE\" set to \"no\", even if it's set to \"yes\" in the target settings.\r\n\r\nXcode 7.2.1 doesn't seem to output the same logs when running a build.\r\n\r\nThe problem can be worked around by:\r\n - Picking the framework target, Generic iOS device\r\n - Clean it\r\n - Pick the framework target, any simulator\r\n - Compile\r\n - Pick the aggregate target, generic iOS device\r\n - Compile\r\n - Repeat if needed\r\n\r\nTo break it again, you can pick the aggregate target for any simulator and build it.\r\n\r\nConfiguration:\r\nOccurs on Xcode 7.3 (7D175), OSX El Capitan 10.11.4\r\nDoesn't occur on Xcode 7.2.1 (7C1002) , OSX El Capitan 10.11.4"
+    email: abarisain@gmail.com
+    modified: "2016-03-25T13:49:37.43995Z"
+    number: "25358081"
+    number_intvalue: 25358081
+    originated: 25/03/2016
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 7.3 (7D175)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Xcode doesn't always generate bitcode for iOS static libraries

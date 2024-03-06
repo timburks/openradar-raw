@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23059163"
+    labels:
+        datastore_id: "4925873463492608"
+data:
+    classification: ""
+    created: "2015-10-10T03:45:20.82086Z"
+    description: "Summary:\r\nThe copyfile() cannot copy symbolic links without following them from a network mount. It errors with \"Invalid argument\"\r\n\r\nI have been testing this on my MacBook Air and iMac (both running 10.11.0 (15A284). However I have also been able to reproduce this on my virtual machine on my iMac which is running on the latest version of 10.8, so this bug has been around for a while.\r\n\r\nNote this also affects NSFileManager, and its -copyItemAtURL:toURL:error: method, since that method too is unable to copy the symbolic link.\r\n\r\nAlso note that this also affects directories that contain symbolic links (like applications for example). The copy is in progress until a symlink is encountered.\r\n\r\nAs a regression, though, the deprecated FSCopyObjectSync() function does work. After poking a bit with ditto's disassembly, I notice they don't use copyfile() much (aside from possibly preserving metadata), so I'm not too surprised this bug has gone unnoticed.\r\n\r\nSteps to Reproduce:\r\n1. Download the attached Xcode project and build the utility. This copyfile utility takes two arguments, the source and destination file paths; it copies the file at source to destination.\r\n\r\n2. Connect to another Mac via Finder's file sharing. Mount the other Mac's home directory. This is over SMB (or is it SMB2..? anyway..)\r\n\r\n3. Create a file and a symbolic link pointing to it on the mounted Mac's home directory. Eg:\r\n\r\ncd /Volumes/iMac_user/\r\necho \"foo\" > foo.txt\r\nln -s foo.txt bar.txt\r\n\r\n(The destination of the link really doesn't matter for this bug's purposes, but you'll see why I included it for step #5)\r\n\r\n4. Try to copy the symbolic link, bar.txt to your own machine using the command line tool from the project I've attached. Eg:\r\n\r\n./copyfile /Volumes/iMac_user/bar.txt /Users/MacBookAir_user/Desktop/bar.txt\r\n\r\nNotice that the program spits out an error message and fails. I get a message like this:\r\n\r\nFailed copying /Volumes/iMac_user/bar.txt to /Users/MacBookAir_user/Desktop/bar.txt with copyfile(3) error: 22 - Invalid argument\r\n\r\n5. If you omit COPYFILE_NOFOLLOW in the code and re-build, you will notice that the file can be copied. However this follows symbolic links which is *not* what I want to do. If you try calling -[NSFileManager copyItemAtURL:toURL:error:] you will run into similar issues as well. However using FSCopyObjectSync or the async version works.\r\n\r\nExpected Results:\r\nI expect copyfile() to be able to copy symlinks from other network mounted drives. Note that this issue is only prevalent when another network drive is involved. Copying symlinks locally does not cause me any issue.\r\n\r\nActual Results:\r\ncopyfile() fails at copying symlinks from network mounted drives. Finder and cp and ditto all work fine however.\r\n\r\nVersion:\r\nXcode 7.0.1 (7A1001)\r\nOS X 10.11.0 (15A284)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nI have reproduced this on my MBA running 10.11.0 (15A284), and my iMac running 10.11.0 (15A284). Additionally I reproduced it on my VM on my iMac running latest version of 10.8.\r\n\r\nMacBook Air.spx - configuration file has been successfully uploaded.\r\n\r\nAttachments:\r\n'MacBook Air.spx' and 'iMac.spx' were successfully uploaded.\r\n\r\nAttached project is here: https://zgcoder.net/zfw/copyfile.zip"
+    email: zorgiepoo@gmail.com
+    modified: "2015-10-10T03:45:20.82109Z"
+    number: "23059163"
+    number_intvalue: 23059163
+    originated: 09-Oct-2015 11:39 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11 (15A284)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: copyfile can't copy symlinks without following from network mounted drives

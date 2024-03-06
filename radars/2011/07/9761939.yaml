@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9761939"
+    labels:
+        datastore_id: "1246403"
+data:
+    classification: Serious Bug
+    created: "2011-07-12T19:22:28.057409Z"
+    description: "Summary:\r\n\r\nI have the following code that centered MapView right over Scandinavia (up to iOS 4.3.3):\r\n \r\nCLLocationCoordinate2D center = { 62.674, 15.820 };\r\nMKCoordinateRegion region = MKCoordinateRegionMake(center, MKCoordinateSpanMake(2, 2));\r\n[mapView setRegion:region animated:YES];\r\n \r\nBut on iOS 5 beta (2, 3) it positions over Eastern Europe instead. I reviewed Release Changes documents to probably find some change in API or behavior, but found nothing there. So the question is why this code stopped working.\r\n\r\nSteps to Reproduce:\r\n\r\nPlace the code above to viewDidLoad.\r\n\r\nExpected Results:\r\n\r\nAfter launch, the map is centered over Scandinavia with a zoom level that is enough to see Denmark, Norway and Sweden.\r\n\r\nActual Results:\r\n\r\nI see the countries of Eastern Europe.\r\n\r\nNotes:\r\n\r\nI did some more playing, and looks like now it depends on where this code is placed. Previously it was in viewDidLoad and it positioned wrong. Then I placed it to viewWillAppear and it started to position correctly, but the zoom was now wrong, so I had to change the span too. This is really a bad sign, but looks like I will have to live with this workaround, checking on every appear whether this is really the very first one in a row.\r\n \r\nOne more thing, and I believe it's a revelation of one and the same bug, is that when a view with MKMapView is put into landscape mode, center stops being center. The tiles remain as if at the same position, but only some part of the fresh map is added at the right. In other words center moves to the left.\r\n\r\nIt's not only iPhone bug, it can be reproduced on iPad too."
+    email: aleks@screencustoms.com
+    modified: "2011-08-28T05:35:44.435795Z"
+    number: "9761939"
+    number_intvalue: 9761939
+    originated: 12-Jul-2011 10:18 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: iOS 5 beta 3
+    reproducible: Always
+    resolved: 8-Aug-2011
+    status: Resolved
+    title: MapView - Wrong positioning

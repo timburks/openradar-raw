@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21037331"
+    labels:
+        datastore_id: "5592813467074560"
+data:
+    classification: ""
+    created: "2015-05-20T14:24:08.7921Z"
+    description: "Summary:\r\nMany of the users of my application are experiencing a read access violation in iOS 8 that they did not experience in iOS 7 when the app is performing many http downloads using NSURLConnection.\r\n \r\nI have been able to reproduce the issue in the debugger. When running with \"guard edges\" on, I see many, many errors reported from libsystem_malloc.dylib`protect such as:\r\n \r\nmalloc: *** can't protect(0x3) region for postlude guard page at 0x808c000\r\n \r\nAlthough the logging is not the crash, it is clear that CFCachedURLResponse is attempting to free a bogus memory address.\r\n \r\nOccasionally, when there is a high volume of this logging, other code will induce a read access violation with an address very close to the memory address that induced the error message above.\r\n \r\nI'm inferring that the CFCachedURLResponse code has a bug that causes it to be confused about the memory addresses it is responsible for freeing - sometimes freeing memory allocated by other parts of the system.\r\n\r\nSteps to Reproduce:\r\nNote that this does NOT happen in iOS 7. Nor does it happen in the iOS 8 simulator.\r\n \r\n- Load this app into xcode - https://github.com/epatey/URLCrash\r\n- Turn on \"Enable Guard Edges\"\r\n- Run in the debugger\r\n- Set a breakpoint in malloc_printf\r\n\r\n\r\nExpected Results:\r\nNo error messages or crashes\r\n\r\nActual Results:\r\n- malloc_printf will be called by protect very often\r\n- note the call stack will be on the com.apple.CFNetwork.addPersistCacheToStorageDaemon queue while freeing a CFCachedURLResponse\r\n- occasionally, the app will crash when freeing an NSData int the following code.\r\n            @autoreleasepool {\r\n                @synchronized(datas) {\r\n                    if (datas.count > maxDatas) {\r\n                        [datas removeObjectAtIndex:0];\r\n                    }\r\n                }\r\n            }"
+    email: eric.patey@gmail.com
+    modified: "2015-05-20T14:24:08.79243Z"
+    number: "21037331"
+    number_intvalue: 21037331
+    originated: 5/20/15
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "8.3"
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: __CFCachedURLResponse seems to be freeing memory it doesn't own (apparent iOS 8 regression)

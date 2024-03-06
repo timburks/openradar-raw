@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18179160"
+    labels:
+        datastore_id: "6443180417351680"
+data:
+    classification: Other Bug
+    created: "2014-08-31T01:23:25.488235Z"
+    description: "Summary:\r\niOS <=7 can establish an IKEv1-based IPSec connection to a strongSwan server and use it for 60 minutes. The child SA is rekeyed successfully several minutes in advance of its (iOS-configured) 60m lifetime. When the child SA finally expires on the client, the connection is left in a bad state. DPD fails immediately if present; other control messages will fail over time otherwise.\r\n\r\nThis is fully reproducible. Moreover, it appears that iOS is responsible for the ultimate failure.\r\n\r\nSteps to Reproduce:\r\n1. Set up strongSwan 5.1.2. I recommend Ubuntu 14.04. I've attached some sample configs, although you'll need to customize and bring your own PKI.\r\n2. Configure an iOS 7 device to talk to the server (\"Cisco\" IPSec).\r\n3. Turn on the VPN and wait for an hour.\r\n\r\nExpected Results:\r\nBarring an underlying network interruption, IPSec should remain operational more or less indefinitely.\r\n\r\nActual Results:\r\nAfter 60 minutes, control messages from the server to the device elicit no response. If DPD is on, it will close the connection. If not, the data still seems to get through for a while, but the control channel remains in a bad state and will eventually cause the whole connection to fail. Additionally, the device will not receive the SA delete messages, the [VPN] icon will remain on indefinitely and the network will not work.\r\n\r\nVersion:\r\niOS 7.1.2 (11D257)\r\n\r\nNotes:\r\nI can try to produce more of a turnkey repro case if necessary, although I believe this issue has already been reported by others, so I anticipate this being marked duplicate.\r\n\r\nConfiguration:\r\niPod Touch ME643LL/A\r\n\r\nAttachments:\r\n'strongswan.conf' and 'ipsec.conf' were successfully uploaded."
+    email: davepeck@getcloak.com
+    modified: "2014-09-01T19:48:24.472561Z"
+    number: "18179160"
+    number_intvalue: 18179160
+    originated: 29-Aug-2014 11:55 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 7.1.2 (11D257)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: IPSec connection to strongSwan stalls after 1 hour

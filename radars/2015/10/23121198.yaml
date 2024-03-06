@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23121198"
+    labels:
+        datastore_id: "5024037222744064"
+data:
+    classification: ""
+    created: "2015-10-17T03:13:37.33577Z"
+    description: "Summary:\r\nWhen you share your Mac with another Mac through SMB (it used to be AFP in the past), any symbolic links to the folder you decide to mount are reported to be 0 bytes in size by OS X's filesystem.\r\n\r\nSteps to Reproduce:\r\n1. Have two Macs available both running 10.11 like I am. On Mac A, find Mac B in Finder's Shared section in its sidebar. Connect/mount Mac B's user directory. (Note: File Sharing has to be enabled in System Preferences for Mac B most likely)\r\n\r\n2. cd into the remote user directory in Terminal and create a symlink. For example, in my case:\r\n\r\ncd /Volumes/mayur/\r\necho \"foo\" > foo.txt\r\nln -s foo.txt bar.txt\r\n\r\nVerify the file size of bar.txt, the symlink we created:\r\n\r\nstat -F bar.txt\r\nlrwxr-xr-x 1 msp staff 0 Oct 14 22:32:58 2015 bar.txt@ -> foo.txt\r\n\r\nNote that it's 0 bytes in size.\r\n\r\nYou can also verify by Getting Info on the file in Finder (cmd i) and Finder also reports it's 0 bytes in size.\r\n\r\nYou can also try writing a program that calls lstat() on the file and it will report back to you that the file is 0 bytes in size.\r\n\r\n3. Try reproducing this when creating a symlink on your local drive, and you notice that you can't reproduce the issue.\r\n\r\nExpected Results:\r\nI expect the file system not to report that symlinks are zero bytes in size on remote connected drives.\r\n\r\nActual Results:\r\nThe filesystem reports symlinks on SMB mounts are 0 bytes in size. Note this can affect programs in serious ways. Please take a look at rdar://23059163 for how it breaks the copyfile() function\r\n\r\nVersion:\r\nOS X 10.11 (15A284) on both Macs\r\n\r\nNotes:\r\nPlease see rdar://23059163 for more information on how the bug affects copyfile()\r\n\r\nThis is possibly an issue with how OS X Samba servers work, but I'm not really certain.\r\n\r\nConfiguration:\r\nRunning two Macs on OS X 10.11. I've attached system configuration files for them.\r\n\r\nMacBook Air.spx - configuration file has been successfully uploaded.\r\n\r\nAttachments:\r\n'MacBook Air.spx' and 'iMac.spx' were successfully uploaded.\r\n\r\n---\r\n\r\nI verified that this bug does not occur when sharing with AFP (I tested this by disabling SMB in System Preferences and enabling AFP). It only occurs when sharing with OS X's SMB."
+    email: zorgiepoo@gmail.com
+    modified: "2015-10-17T03:13:37.33612Z"
+    number: "23121198"
+    number_intvalue: 23121198
+    originated: 14-Oct-2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11 (15A284)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Symbolic Links on OS X SMB Mount are reported as Zero Bytes in Size

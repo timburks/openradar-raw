@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13482573
+    labels:
+        datastore_id: "5520107644125184"
+data:
+    classification: bug
+    created: "2023-12-21T08:34:22.097442Z"
+    description: "Display link remembers the pthread_t from last display link thread but does not clean it in CVDisplayLinkStop. When next thread has identical pthread id display link will fail to start.\r\n\r\nCode to reproduce:\r\n\r\n#import <Foundation/Foundation.h>\r\n#import <CoreVideo/CoreVideo.h>\r\n\r\nint main(int argc, const char * argv[]) {\r\n    CVDisplayLinkRef link;\r\n    CVDisplayLinkCreateWithActiveCGDisplays(&link);\r\n    CVDisplayLinkSetOutputHandler(link, ^(CVDisplayLinkRef displayLink, const CVTimeStamp* inNow, const CVTimeStamp* inOutputTime,\r\n                                          CVOptionFlags flagsIn, CVOptionFlags* flagsOut) {\r\n        return 0;\r\n    });\r\n    CVReturn res = CVDisplayLinkStart(link);\r\n    assert(res == kCVReturnSuccess);\r\n    CVDisplayLinkStop(link);\r\n    [NSThread detachNewThreadWithBlock:^{\r\n        CVReturn res = CVDisplayLinkStart(link);\r\n        assert(res == kCVReturnSuccess);\r\n    }];\r\n    return 0;\r\n}"
+    email: matej.knopp@gmail.com
+    modified: "2023-12-21T08:34:22.097613Z"
+    number: FB13482573
+    number_intvalue: 13482573
+    originated: 12/21/2023
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: All
+    reproducible: yes
+    resolved: ""
+    status: Open
+    title: CVDisplayLink fails to start from second thread.

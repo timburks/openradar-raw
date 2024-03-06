@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17283442"
+    labels:
+        datastore_id: "6704494012268544"
+data:
+    classification: Crash
+    created: "2014-07-13T00:03:32.53954Z"
+    description: "Summary:\r\nUse of nested NSManagedObjectContexts using private queue confinement crashes NSFetchedResultsController when the cache is enabled. With the cache disabled, or a single non-nested NSManagedObjectContext, it does not crash.\r\n\r\nSteps to Reproduce:\r\n1. Build the project.\r\n2. Run the project in the iOS Simulator.\r\n3. Tap the + to add a few new objects. \r\n4. Quit the simulated application.\r\n5. Open the application again or run again from Xcode.\r\n\r\nExpected Results:\r\nFetched results controller should populate with appropriate cached data, and not crash.\r\n\r\nActual Results:\r\nThe application will crash on the first attempt to access the fetchedObjects of the fetched results controller (inside configureCell:atIndexPath:). The stack trace is as follows:\r\n\r\n2014-06-12 00:07:09.695 FRCCacheCrasher[76359:60b] *** Terminating app due to uncaught exception 'NSRangeException', reason: '*** -[__NSArrayI objectAtIndex:]: index 0 beyond bounds for empty array'\r\n*** First throw call stack:\r\n(\r\n\t0   CoreFoundation                      0x0000000101cba495 __exceptionPreprocess + 165\r\n\t1   libobjc.A.dylib                     0x0000000101a1999e objc_exception_throw + 43\r\n\t2   CoreFoundation                      0x0000000101c72e3f -[__NSArrayI objectAtIndex:] + 175\r\n..... many other unhelpful lines that radar ate. \r\n\r\nStopping at that line in the debugger or setting an exception breakpoint allows us to inspect what is going on.\r\nThe NSFetchedResultsController cache has been loaded and populated the _NSDefaultSectionInfo object, however the NSFetchedResultsController at this point has no fetchedObjects, and the objects of the section info object appear to be invalid. Attempting to access them will throw an exception.\r\n\r\n(lldb) po [[self fetchedResultsController] fetchedObjects]\r\n<__NSArrayI 0x109300290>(\r\n\r\n)\r\n\r\n\r\n(lldb) po [[self fetchedResultsController] sections]\r\n<__NSArrayM 0x10977bb20>(\r\n<_NSDefaultSectionInfo: 0x10977be60>\r\n)\r\n\r\n\r\n(lldb) po [[[self fetchedResultsController] sections] lastObject]\r\n<_NSDefaultSectionInfo: 0x10977be60>\r\n\r\n(lldb) po [[[[self fetchedResultsController] sections] lastObject] objects]\r\nerror: Execution was interrupted, reason: internal ObjC exception breakpoint(-3)..\r\nThe process has been returned to the state before expression evaluation.\r\n(lldb) \r\n\r\nIt appears that when the fetch is performed on the NSFetchedResultsController the cache is loaded and _NSDefaultSectionInfo populated with bad data. This happens wether performFetch: is called from the main thread or through the context's performBlock: .\r\n\r\nDisabling the NSFetchedResultsController cache will prevent this issue from occuring.\r\n\r\nVersion:\r\niOS 7.0, iOS 7.1\r\n\r\nNotes:\r\nThe included project is based on the Core Data Master-Detail template provided by Xcode 5.1.1. Minimal changes have been made to demonstrate this issue:\r\n- The application delegate creates an NSManagedObjectContext that uses private queue confinement, not thead confinement. It also creates a child of that context, which is passed to the view controller. Bug does not seem to happen when there is no child context.\r\n- The Core Data Master-Detail template code for the Master view controller has been moved to the class CoreDataTemplateTableViewController\r\n- MasterViewController is a subclass of CoreDataTemplateTableViewController, overriding the NSFetchedResultsControllerDelegate methods to dispatch calls to the table view on the main queue, as with private queue confinement the callbacks will be coming from another thread.\r\n- The \"cacheName\" method was added to make it easy to turn the cache on and off. Have this method return nil to disable the cache.\r\n\r\nConfiguration:\r\niPhone 5s, iOS Simulator 5.1.1\r\n\r\nAttachments:\r\n'FRCCacheCrasher.zip' was successfully uploaded."
+    email: quellish@gmail.com
+    modified: "2014-07-13T00:03:32.539726Z"
+    number: "17283442"
+    number_intvalue: 17283442
+    originated: 12-Jun-2014 00:38 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'NSFetchedResultsController: Crashes when using cache with private queue confinement'

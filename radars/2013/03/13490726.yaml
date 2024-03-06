@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13490726"
+    labels:
+        datastore_id: "2890403"
+data:
+    classification: Serious Bug
+    created: "2013-03-23T17:26:47.483135Z"
+    description: "Summary:\r\nSkipping forward in mp3 podcasts is broken.\r\n\r\nSteps to Reproduce:\r\n\r\n- In iTunes: File - Subscribe to Podcast, enter http://leoville.tv/podcasts/twit.xml\r\n- double click on any older podcast episode, it will start to play at 00:00\r\n- now click in the playing control progress track to try to skip to a later point\r\n\r\nExpected Results:\r\n- playback should skip to the clicked position\r\n\r\nActual Results:\r\n- playback continues stubbornly, no HTTP ranged request for new position is sent\r\n\r\nRegression:\r\nI checked 10 other podcasts and found a second one that has the same issue with iTunes. I can provide you with the list of my tests. \r\n\r\nNotes:\r\n\r\nWhen you click on the track iTunes seems to be sending the Range: header to state the position requested on the podcasts that work. It does not make a difference whether or not the podcast uses m4a or mp3 format. Also Some do a redirect for tracking downloads, some don't. \r\n\r\nI also tested the same problematic podcasts with the iOS Podcasts app 1.2. There I cannot reproduce the problem.\r\n\r\n\r\nIt appears that some combination of redirection and/or headers in the response disable the random access functionality in iTunes for these specific podcasts and it no longer sends the range header.\r\n\r\n\r\nThe following examples are done with Charles debugging proxy.\r\n\r\n\r\nExample of functioning communication\r\n\r\n>>> request from start: \r\n\r\nGET /audio/mbw/mbw0340/mbw0340.mp3 HTTP/1.1\r\nHost: twit.cachefly.net\r\nUser-Agent: iTunes/11.0.2 (Macintosh; OS X 10.8.3) AppleWebKit/536.28.10\r\nAccept: */*\r\nCache-Control: no-cache\r\nConnection: close\r\n\r\n<<< response:\r\n\r\nHTTP/1.1 200 OK\r\nServer\tCFS 1228\r\nDate\tSat, 23 Mar 2013 17:13:15 GMT\r\nContent-Type\taudio/mpeg\r\nConnection\tclose\r\nETag\t\"7086e985aab6289a32b65ceec1ab6225\"\r\nX-CF1\tdC.ams1:cf:cacheA.ams1-01\r\nContent-Length\t48421137\r\nLast-Modified\tTue, 05 Mar 2013 23:08:26 GMT\r\nX-CF2\tL\r\nAccept-Ranges\tbytes\r\n\r\n>>> skip ahead request\r\n\r\nGET /audio/mbw/mbw0340/mbw0340.mp3 HTTP/1.1\r\nHost: twit.cachefly.net\r\nUser-Agent: iTunes/11.0.2 (Macintosh; OS X 10.8.3) AppleWebKit/536.28.10\r\nAccept: */*\r\nCache-Control: no-cache\r\nRange: bytes=20236119-\r\nConnection: close\r\n\r\n<<< skip ahead response (OK)\r\n\r\nHTTP/1.1 206 Partial Content\r\nServer\tCFS 1228\r\nDate\tSat, 23 Mar 2013 17:13:19 GMT\r\nContent-Type\taudio/mpeg\r\nConnection\tclose\r\nETag\t\"7086e985aab6289a32b65ceec1ab6225\"\r\nX-CF1\tfC.iad2:cf:cacheB.iad2-01\r\nContent-Length\t28185018\r\nLast-Modified\tTue, 05 Mar 2013 23:08:26 GMT\r\nX-CF2\tL\r\nContent-Range\tbytes 20236119-48421136/48421137\r\n\r\n\r\nExample of non working skip ahead, different podcast:\r\n\r\n>>> Initial request from start\r\n\r\nGET /twit/twit0393.mp3 HTTP/1.1\r\nHost: aolradio.podcast.aol.com\r\nUser-Agent: iTunes/11.0.2 (Macintosh; OS X 10.8.3) AppleWebKit/536.28.10\r\nAccept: */*\r\nCache-Control: no-cache\r\nConnection: close\r\n\r\n<<< Initial request response\r\n\r\nHTTP/1.0 200 OK\r\nServer: Apache\r\nLast-Modified: Mon, 18 Feb 2013 04:50:23 GMT\r\nETag: \"3e5e579-4d5f87677a1c0\"\r\nAccept-Ranges: bytes\r\nContent-Length: 65398137\r\nContent-Type: audio/mpeg\r\nCache-Control: max-age=7776000\r\nExpires: Fri, 21 Jun 2013 19:52:23 GMT\r\nDate: Sat, 23 Mar 2013 19:52:23 GMT\r\nConnection: close\r\n\r\n>>> at this point clicking in the progress bar does not send a new ranged request and skipping ahead does not work"
+    email: oliver.drobnik@gmail.com
+    modified: "2013-03-23T20:36:00.914374Z"
+    number: "13490726"
+    number_intvalue: 13490726
+    originated: March 23, 2013
+    parent_number: '&{NULL_VALUE}'
+    product: iTunes
+    product_version: 10.8.2 (25)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'iTunes 11.0.2: Skipping Ahead Broken in Some Podcasts'

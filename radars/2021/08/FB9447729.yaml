@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9447729
+    labels:
+        datastore_id: "5008610828484608"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2021-08-03T13:08:07.908401Z"
+    description: "Please provide a descriptive title for your feedback:\r\n\r\nXcode 13 ignores GIT proxy settings when resolving SwiftPM packages (and probably for other SCM operations as well).\r\n\r\nWhich area are you seeing an issue with?\r\nXcode\r\n\r\nPlease describe the issue:\r\nThis issue is seen with Xcode 13 beta 4 and all previous Xcode versions.\r\n\r\nWhen working behind a proxy (which is common when working from home during the pandemic), XCode IDE built-in SCM does not work.\r\n\r\nE.g. our Swift packages are stored in Azure Devops server, which is accessed via a corporate Proxy.\r\n\r\nWe configure the proxy settings in the user's .gitconfig file.\r\n\r\nHowever, Xcode ignores this file when it tries to connect.\r\n\r\nPlease list the steps you took to reproduce the issue:\r\n\r\nJust try to perform any SCM operation from within Xcode IDE when the SCM server must be accessed through a proxy.\r\n\r\nWhat did you expect to happen?\r\nXcode must use .gitconfig (or the relevant environment variables) to determine that a proxy must be used.\r\n\r\nWhat actually happened?\r\nI debugged the problem and found out the following:\r\n\r\nXcode uses a helper service (com.apple.dt.Xcode.sourcecontrol.Git) to communicate with GIT servers. For that it uses the open source library libgit2.dylib (version 0.26.0)\r\n\r\nWhen connecting to a remote GIT server, the service com.apple.dt.Xcode.sourcecontrol.Git calls libgit2 API git_remote_connect(...), where it passes a pointer to  git_proxy_options struct.\r\n\r\nThe struct git_proxy_options a type field with 3 possible values:\r\n\r\n/**\r\n * The type of proxy to use.\r\n */\r\ntypedef enum {\r\n\t/**\r\n\t * Do not attempt to connect through a proxy\r\n\t *\r\n\t * If built against libcurl, it itself may attempt to connect\r\n\t * to a proxy if the environment variables specify it.\r\n\t */\r\n\tGIT_PROXY_NONE,\r\n\t/**\r\n\t * Try to auto-detect the proxy from the git configuration.\r\n\t */\r\n\tGIT_PROXY_AUTO,\r\n\t/**\r\n\t * Connect via the URL given in the options\r\n\t */\r\n\tGIT_PROXY_SPECIFIED,\r\n} git_proxy_t;\r\n\r\nXcode specifies GIT_PROXY_NONE.\r\n\r\nI built a custom version of libgit2.dylib where I fixed the type to GIT_PROXY_AUTO, and resolution of packages started working from within Xcode IDE."
+    email: serieuxchat@gmail.com
+    modified: "2021-08-03T13:08:07.908542Z"
+    number: FB9447729
+    number_intvalue: 9447729
+    originated: "2021-08-03"
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 13 beta 4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Xcode 13 ignores GIT proxy settings when resolving SwiftPM packages (and probably for other SCM operations as well).

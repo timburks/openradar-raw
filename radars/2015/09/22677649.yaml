@@ -1,0 +1,49 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22677649"
+    labels:
+        datastore_id: "6753221389320192"
+data:
+    classification: Enhancement
+    created: "2015-09-13T21:37:19.08305Z"
+    description: |-
+        Summary:
+        I ran into this error while working on ReactiveCocoa, specifically on this extension:
+
+        extension SignalProducer where T: SignalProducerType, E == T.E {
+        	@warn_unused_result(message="Did you forget to call `start` on the producer?")
+        	public func flatten(strategy: FlattenStrategy) -> SignalProducer<T.T, E> {
+        		return lift { (signal: Signal<T.T, E>) -> Signal<T.T, E> in
+        			return signal.flatten(strategy)
+        		}
+        	}
+        }
+
+        “Type of expression is ambiguous without more context” was, well, ambiguous.
+
+        Steps to Reproduce:
+        - Open attached project (ReactiveCocoa.xcworkspace)
+        - Compile ReactiveCocoa iOS framework
+
+        Expected Results:
+        Compilation fails in SignalProducer.swift:1100 with a more useful error, explaining which method it’s trying to find for what values of T and E, and ideally showing that it found a similar, compatible method.
+
+        Actual Results:
+        Compilation fails with error “Type of expression is ambiguous without more context”, but no more information.
+
+        Notes:
+        - The fix was to change the input signal of the closure to Signal<T, E> (instead of T.T).
+        - Note that this is in some intermediate state while I was working on a feature, so tests (and possibly other things) are currently broken.
+    email: info@nachosoto.com
+    modified: "2015-09-13T21:37:19.0833Z"
+    number: "22677649"
+    number_intvalue: 22677649
+    originated: 13-Sep-2015 02:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0 GM
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Unhelpful Swift 2.0 error "Type of expression is ambiguous without more context"

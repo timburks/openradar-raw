@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33287132"
+    labels:
+        datastore_id: "5054119358234624"
+data:
+    classification: Bug
+    created: "2017-07-13T10:11:41.4982Z"
+    description: "Area:\r\nFoundation\r\n\r\nSummary:\r\nIt seems that JSONSerialization behaves differenly on iOS 11 and large decimal numbers (i.e Decimal.MaxValue (C#), which is 79228162514264337593543950335) is rounded up, because its internal representation was changed from NSDecimalNumberPlaceholder to NSNumber.\r\n\r\nAfter retrieving this value, the result is rounded to 79228162514264340000000000000, while on iOS it has still correct value: 79228162514264337593543950335.\r\n\r\nIs this behavior expected? The problem is that we cannot send back a rounded number to our backend because it is larger than Decimal.MaxValue. The workaround is to pass decimals as strings in JSON, but this will require a significant change on both backend and client.\r\n\r\nSteps to Reproduce:\r\nlet str = \"{ \\\"data\\\": 79228162514264337593543950335 }\" // C# Decimal.MaxValue\r\nlet data = str.data(using: .utf8)\r\nlet json = try? JSONSerialization.jsonObject(with: data!, options: [])\r\nlet dict = json as? [String: AnyObject]\r\nlet val = dict![\"data\"] //7.922816251426434e+28\r\nprint(val!.classForCoder) //NSNumber.Type (on iOS 10 we have here another internal type which is NSDecimalNumberPlaceholder)\r\n\r\nlet decimal = NSDecimalNumber(string: val?.stringValue) //\r\ndecimal.stringValue // 79228162514264340000000000000 should be 79228162514264337593543950335\r\n\r\nExpected Results:\r\n79228162514264337593543950335\r\n\r\nObserved Results:\r\n79228162514264340000000000000\r\n\r\nVersion:\r\niOS 11 b2 and b3 (Xcode 9b2 and 9b3)\r\n\r\nNotes:\r\nAffects both project written in Swift and Objective-C\r\n\r\nConfiguration:"
+    email: gebarowski@gmail.com
+    modified: "2017-07-13T10:11:41.4984Z"
+    number: "33287132"
+    number_intvalue: 33287132
+    originated: July 13 2017, 12:06 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 11 beta3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: JSONSerialization rounding large decimal number

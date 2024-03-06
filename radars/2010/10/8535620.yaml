@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8535620"
+    labels:
+        datastore_id: "736401"
+data:
+    classification: Other Bug
+    created: "2010-10-11T15:44:47.965957Z"
+    description: "ummary:\r\nI've noticed some weird behavior with NSBundle when using it in a command-line program. If, in my program, I take an existing bundle and make a copy of it and then try to use pathForResource to look up something in the Resources folder, nil is always returned unless the bundle I'm looking up existed before my program started.\r\n\r\nSteps to Reproduce:\r\n1) Create a Cocoa shell tool and add the following code to main:\r\n\r\n NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; \r\n NSString *exePath = [NSString stringWithCString:argv[0] encoding:NSASCIIStringEncoding]; \r\n NSString *path = [exePath stringByDeletingLastPathComponent]; \r\n NSString *templatePath = [path stringByAppendingPathComponent:@\"TestApp.app\"];\r\n\r\n // This call works because TestApp.app exists before this program is run \r\n NSString *resourcePath = [NSBundle pathForResource:@\"InfoPlist\" ofType:@\"strings\" inDirectory:templatePath]; \r\n NSLog(@\"NOCOPY: %@\", resourcePath); \r\n\r\n NSString *copyPath = [path stringByAppendingPathComponent:@\"TestAppCopy.app\"]; \r\n [[NSFileManager defaultManager] removeItemAtPath:copyPath error:nil]; \r\n if ([[NSFileManager defaultManager] copyItemAtPath:templatePath toPath:copyPath error:nil]) \r\n { \r\n     // This call will fail if TestAppCopy.app does not exist before \r\n     // this program is run\r\n     NSString *resourcePath2 = [NSBundle pathForResource:@\"InfoPlist\" ofType:@\"strings\" inDirectory:copyPath]; \r\n     NSLog(@\"COPY: %@\", resourcePath2); \r\n\r\n     // Comment out the line below and run the app twice. The second time it will start working as expected.\r\n     [[NSFileManager defaultManager] removeItemAtPath:copyPath error:nil]; \r\n} \r\n[pool release]; \r\n\r\n2) Take any application bundle that has an InfoPlist.strings file in it's resources and copy it into the build output directory for your configuration. The default would be build/Debug. Rename it TestApp.app or change the code above to reflect the name of your copy.\r\n\r\n3) Build and run the shell tool.\r\n\r\nExpected Results:\r\nI would expect that resourcePath2 would contain the path to the InfoPlist.strings file in the TestAppCopy.app bundle.\r\n\r\nActual Results:\r\nresourcePath2 is nil.\r\n\r\nRegression:\r\nI don't know if this is a regression. I've only test on 10.6.4.\r\n\r\nNotes:\r\nInterestingly, if you comment out the final removeItemAtPath:error: call so that the copy exists before the shell tool is run, everything works as expected.\r\n\r\nI posted this question to Stack Overflow (http://stackoverflow.com/questions/3858647/nsbundle-pathforresource-failing-in-shell-tool). It was suggested that I refactor and use performSelector:withObject:afterDelay to execute my code in the run loop. That did not make a difference."
+    email: dustin.norman@gmail.com
+    modified: "2011-08-28T05:39:37.812961Z"
+    number: "8535620"
+    number_intvalue: 8535620
+    originated: 11-Oct-2010 11:43 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSBundle in Cocoa shell tool fails to find resources in other bundles

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23641901"
+    labels:
+        datastore_id: "5044938681090048"
+data:
+    classification: UI/Usability
+    created: "2015-11-21T17:30:59.43444Z"
+    description: "Summary:\r\nNSTextTab’s -description implementation does not differentiate between Left, Justified, and Natural alignments, leading to developer confusion.\r\n\r\nSteps to Reproduce:\r\n1. Open the attached playground. It looks like this:\r\n\r\n    import UIKit\r\n\r\n    let left = NSTextTab(textAlignment: .Left, location: 20, options: [:])\r\n    let right = NSTextTab(textAlignment: .Right, location: 20, options: [:])\r\n    let center = NSTextTab(textAlignment: .Center, location: 20, options: [:])\r\n    let justified = NSTextTab(textAlignment: .Justified, location: 20, options: [:])\r\n    let natural = NSTextTab(textAlignment: .Natural, location: 20, options: [:])\r\n\r\n    left.description // \"20L\"\r\n    right.description // \"20R\"\r\n    center.description // \"20C\"\r\n    justified.description // \"20L\" <- unexpected\r\n    natural.description // \"20L\" <- unexpected\r\n\r\n2. Observe the output of the calls to -description, which I’ve included in the comments.\r\n\r\nExpected Results:\r\nThey should be, in order:\r\n20L\r\n20R\r\n20C\r\n20J (L)\r\n20N (L)\r\n\r\nOr similar. The point is that Justified and Natural are differentiated from Left, even though they behave similarly to Left in left-to-right locales. I haven’t tested their behavior on RTL systems, but I assume they would reverse.\r\n\r\nActual Results:\r\nJustified and Natural alignments are both expressed as 20L in this example. Going by -description alone, this can be very confusing. I was tripped up by this because I was writing a unit test to assert that a generated attributed string was equal to a known good control attributed string. The test was reporting that they were not equal, but their descriptions were identical. This is because the generated string used NSTextAlignmentNatural, and the control string used NSTextAlignmentLeft, but the descriptions were the same, so it was hard to tell where they differed.\r\n\r\nRegression:\r\nThis affects both Xcode 7.1.1 and Xcode 7.2b4.\r\n\r\nNotes:\r\nPlayground uploaded here: http://cl.ly/dsq2"
+    email: igeek1@gmail.com
+    modified: "2017-07-22T01:24:57.33877Z"
+    number: "23641901"
+    number_intvalue: 23641901
+    originated: 21-Nov-2015 12:30 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.2 (7C62b)
+    reproducible: Always
+    resolved: July 20 2017, 5:44 PM
+    status: Resolved
+    title: 'Xcode 7.2 (7C62b): NSTextTab -description doesn''t differentiate between Left, Justified, and Natural alignments'

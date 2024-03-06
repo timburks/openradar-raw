@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "5672457"
+    labels:
+        datastore_id: "852"
+data:
+    classification: ""
+    created: "2008-11-20T02:40:55.487633Z"
+    description: "06-Jan-2008 05:43 PM Alexander Strange:\r\nSummary:\r\nQT 7 doesn't effectively support 'y420' as a colorspace for codec components anymore, which leads to major performance issues; it can also cause correctness problems in some cases.\r\n\r\nThe lack of this forces consumer-video codecs to request 2vuy and convert between them internally; this is frequently done (at least in third-party codecs that I didn't write) with poorly-thought out scalar conversions, and the color conversion and resulting unnecessarily large texture uploads take up as much or more of decode time as the actual video codec, even for HD videos.\r\n\r\nThe correctness issues come in when reencoding from video already in 4:2:0, which is quite common. When doing the upconversion in the decompressor, you won't know whether it's for display (in which case point sampling causes obvious stairstep edge artifacts) or for reencoding (point sampling is necessary since it's exactly reversable at the other end), so the conversion method used is probably wrong sometimes. More importantly, it might not be correct for interlaced video.\r\n\r\nOf course, the old 4:2:0 method can't work; PlanarPixmapInfoYUV420 obviously isn't multi-buffer aware. But it's still conceptually possible, and it might even be possible to keep direct rendering.\r\n\r\n11-Jan-2008 03:12 PM Alexander Strange:\r\nnotes:\r\n\r\n> this is frequently done (at least in third-party codecs that I didn't write) with poorly-thought out scalar conversions\r\n\r\nThere's an example of this in QuicktimeMPEG4:\r\n00037dd0 t Y420ToY422_2vuy(unsigned char*, unsigned char*, unsigned char*, long*, unsigned short, unsigned short, unsigned short, unsigned short, long, unsigned char*, unsigned char*)\r\n\r\nwhich uses no SIMD and does use shifts and or constantly. On Intel I believe writing single bytes is faster than bitshifting, but it doesn't matter since you only ship SSE2-capable CPUs anyway.\r\n\r\nsee:\r\nhttp://softwarecommunity.intel.com/articles/eng/3088.htm (safe to read)\r\nhttp://trac.perian.org/browser/trunk/ColorConversions.c?rev=629 (probably not safe to read)\r\n\r\n> resulting unnecessarily large texture uploads\r\n\r\nThat is, using GL_ycbcr_422 is necessarily 4/3x larger than uploading three monochrome texture planes and blending them in a pixel shader.\r\n\r\n> direct rendering\r\n\r\nNot copying pixel buffers ever by using the given dest buffer for intra prediction; this is possible with MPEG-4 ASP B-frames at least, although it's rather hard. If they're guaranteed to not be overwritten before the next referencing frame, it's easier. This is more important than just not doing a color conversion, I think.\r\n\r\n23-Jan-2008 08:28 AM Alexander Strange:\r\nAn alternative to this would be the ability to render straight into a GL texture.\r\n\r\nActually, that would solve a lot of my other problems too..."
+    email: astrange@gmail.com
+    modified: "2011-08-28T05:50:43.662559Z"
+    number: "5672457"
+    number_intvalue: 5672457
+    originated: 06-Jan-2008
+    parent_number: '&{NULL_VALUE}'
+    product: QuickTime
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: YUV 4:2:0 support for multi-buffer aware image codec components

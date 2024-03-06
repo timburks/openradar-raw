@@ -1,0 +1,55 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13707952"
+    labels:
+        datastore_id: "2962402"
+data:
+    classification: Other Bug
+    created: "2013-04-22T19:04:41.269393Z"
+    description: |-
+        Summary:
+
+        Geocoding a Lat/Lon to address via the CoreLocation API yields one or more CLPlacemark objects with "areasOfInterest" array.
+
+        This value is poorly documented but appears to yield an array of strings, which can vary from the examples of a store name or retail park / municipal area all the way up to an entire country.
+
+        This makes the data next to useless as there is no classifier on the scope of each area of interest in the list.
+
+        For example if I want to show the nearest place of interest by name, e.g. "Apple Store", I cannot rely on this info because, for example, at my address in the UK (outside Stroud, Gloucestershire, England) where there is *no* area of interest in Maps nearby, areasOfInterest contains "Great Britain".
+
+        I can't show the user "You are at: Great Britain, Brimscombe". But I *do* want to tell them "You are at: Apple Store, Bristol" if there is a *real* area of interest.
+
+        Steps to Reproduce:
+
+        1. Use CoreLocation to look up a lat/lon to get CLPlacemark instances
+        2. Access the areasOfInterest property of the placemark and notice the disparity of data
+        3. Rinse and repeat in locations where there is no significant area of interest data / use my example location
+
+        Expected Results:
+
+        areasOfInterest should be empty if it would only contain a large-scale area such as an entire country.
+
+        Actual Results:
+
+        areasOfInterest contains e.g. "Great Britain" which is somewhat overshooting the "areas of interest" concept for a given lat/lon. One might argue that the nearest city is a valid area of interest, but really this appears to be meant to represent PLACES that are nearby.
+
+        Regression:
+
+        N/A
+
+        Notes:
+
+        Unless I'm using the API wrong, it looks like areasOfInterest is really completely unreliable.
+    email: wangjammer5@googlemail.com
+    modified: "2013-04-22T19:04:41.269614Z"
+    number: "13707952"
+    number_intvalue: 13707952
+    originated: 22-Apr-2013 08:04 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "6.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CLPlacemark areasOfInterest can return widely varying kinds of data

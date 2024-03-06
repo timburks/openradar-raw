@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13539442"
+    labels:
+        datastore_id: "2888406"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2013-03-29T23:38:02.653739Z"
+    description: "Summary:\r\nIf UISearchBar's delegate calls resignFirstResponder in searchBarTextDidBeginEditing, and search bar is then deallocated, app crashes as soon as it's put to background and back to foreground again. The same doesn't happen to UITextField and its corresponding textFieldDidBeginEditing delegate method.\r\n\r\nSteps to Reproduce:\r\n1. Given a simple iPhone application: navigation controller (as root for app window), view controller \"A\", view controller \"B\". A's view contains a button that, when pressed, creates an instance of \"B\" and pushes it into navigation controller. B's view contains a search bar and is set to be a delegate of it.\r\n2. \"B\" as a delegate of its search bar contains method searchBarTextDidBeginEditing, written as follows (only the cause of crash is left for the sake of simplicity; of course this makes this exact search bar unusable):\r\n\r\n- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar\r\n{\r\n    [searchBar resignFirstResponder];\r\n}\r\n\r\n3. User launches this application and is presented with a navigation controller with an instance of view controller A.\r\n4. User presses the button: view controller \"B\" is pushed into view.\r\n5. User taps on search bar. searchBarTextDidBeginEditing method is called and search bar resigns first responder immediately.\r\n6. User taps \"Back\" button of navigation controller and \"A\" is pushed back into view.\r\n7. User hides the app.\r\n8. User opens app back in a few seconds.\r\n\r\nExpected Results:\r\nUser is presented with the same view of view controller \"A\".\r\n\r\nActual Results:\r\nApp crashes right when it enters foreground.\r\n\r\nRegression:\r\nThis crash occurs on iOS 6.0 and newer, on both Simulator and real device, at least on iPhone. It doesn't occur on 5.0 and 5.1 Simulators though.\r\n\r\nNotes:\r\nAn extensive investigation was done here on stackoverflow: http://stackoverflow.com/questions/12601406/ios-app-crashes-on-resuming\r\nOf course, the best workaround would be to avoid resigning first responder in searchBarTextDidBeginEditing and returning NO from searchBarShouldBeginEditing, but it is not documented that client code can't do it the described way, too.\r\nAttached is a crash log from iPhone 4S running iOS 6.1.3, where this crash still happens. It seems that when search bar receives resignFirstResponder in searchBarTextDidBeginEditing, a subscription to a notification called \"UIApplicationResumedNotification\" (non-documented, private one) with selector _applicationResuming is orphaned and is not removed when search bar deallocates. This notification is posted when app returns to foreground, and in this case app crashes because notification center tries to dispatch the notification to a zombie."
+    email: argentumko@gmail.com
+    modified: "2015-02-12T00:11:10.022241Z"
+    number: "13539442"
+    number_intvalue: 13539442
+    originated: 30-Mar-2013
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "6.0"
+    reproducible: Always
+    resolved: 14-Jul-2013
+    status: Closed
+    title: 'iOS 6.0+: app crashes on resuming, caused by UISearchBar notification zombie'

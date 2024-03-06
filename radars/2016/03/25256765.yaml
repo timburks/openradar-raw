@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25256765"
+    labels:
+        datastore_id: "5035217693704192"
+data:
+    classification: Serious Bug
+    created: "2016-03-19T17:21:36.78808Z"
+    description: "Summary:\nCore Image fails to render RAW images with Metal (CIRawFilter, Mac) on first try, crashes on second.\n\nSteps to Reproduce:\n- load an image with CIRawFilter\n- render it to a Metal texture with the following API:\n[CIContext render:im toMTLTexture:texture commandBuffer:nil bounds:extent colorSpace:HYRenderContext.defaultWorkingColorSpace];\n\nExpected Results:\n- image contents renders to the texture\n\nActual Results:\n- first try, black image in the target texture + it outputs this to the console:\n\"\eneed a swizzler so that RGB16 can be read.\"\n- second try, it crashes with the following stack trace:\n#0\t0x00007fff98987f3d in objc_retain ()\n#1\t0x000000010108dbce in -[MTLDebugComputeCommandEncoder setTexture:atIndex:] ()\n#2\t0x00007fff9343897f in CIMetalRenderToTexture ()\n#3\t0x00007fff9342a107 in CI::MetalContext::quad(void const*, dispatch_group_s*, void const*) ()\n#4\t0x00007fff9342b3f0 in CI::MetalContext::render_node(CI::ProgramNode*, CGRect const&, CI::Texture, bool) ()\n#5\t0x00007fff9342ba32 in CI::MetalContext::render_intermediate_node(CI::ProgramNode*, CGRect const&, CI::intermediate_t*, void () block_pointer) ()\n#6\t0x00007fff933471f0 in CI::Context::recursive_render(CI::Node*, CGRect const&, CI::Node*) ()\n#7\t0x00007fff9334711b in CI::Context::recursive_render(CI::Node*, CGRect const&, CI::Node*) ()\n#8\t0x00007fff9334711b in CI::Context::recursive_render(CI::Node*, CGRect const&, CI::Node*) ()\n#9\t0x00007fff9334711b in CI::Context::recursive_render(CI::Node*, CGRect const&, CI::Node*) ()\n#10\t0x00007fff9334711b in CI::Context::recursive_render(CI::Node*, CGRect const&, CI::Node*) ()\n#11\t0x00007fff9334711b in CI::Context::recursive_render(CI::Node*, CGRect const&, CI::Node*) ()\n#12\t0x00007fff9335ee31 in ___ZN2CIL13_image_renderEPKcPNS_7ContextEPNS_5ImageE6CGRectP12CGColorSpaceNS_11PixelFormatEmRK7CGPointRKNS_12swizzle_infoE_block_invoke ()\n#13\t0x00007fff93359513 in CI::tile_node_graph(CI::Context*, char const*, CI::Node*, CGRect, void (CI::Node*, CGRect) block_pointer) ()\n#14\t0x00007fff9335901e in CI::tile_node_graph(CI::Context*, char const*, CI::Node*, CGRect, void (CI::Node*, CGRect) block_pointer) ()\n#15\t0x00007fff93355c55 in CI::_image_render(char const*, CI::Context*, CI::Image*, CGRect, CGColorSpace*, CI::PixelFormat, unsigned long, CGPoint const&, CI::swizzle_info const&) ()\n#16\t0x00007fff93356013 in CI::image_render_to_texture(CI::Context*, CI::Image*, CGRect, CGColorSpace*, CI::Texture, CI::PixelFormat, bool, void const*) ()\n#17\t0x00007fff9333bf77 in -[CIContext render:toMTLTexture:commandBuffer:bounds:colorSpace:] ()\n#18\t0x0000000100082da3 in __34-[HYMetalRenderContext loadImage:]_block_invoke at xxxx.m:112\n\n\n\nRegression:\nAlways occurs\n\n\nNotes:\nMultiple RAW formats were tried (Nikon .NEF, Canon .CR2, etc) with same results. I'm attaching a sample .NEF for reference."
+    email: raphael@creaceed.com
+    modified: "2016-03-19T17:21:36.78832Z"
+    number: "25256765"
+    number_intvalue: 25256765
+    originated: 19-Mar-2016 06:20 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.11.4 Beta (15E64a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Core Image fails to render RAW images with Metal (CIRawFilter, Mac)

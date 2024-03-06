@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33251252"
+    labels:
+        datastore_id: "4958590695636992"
+data:
+    classification: ""
+    created: "2017-08-02T11:15:23.94894Z"
+    description: "CTRunGetImageBounds is documented in the header to return the bounds for the  \"union of all non-empty glyph bounding rects, each positioned as it would be if drawn using CTRunDraw using the current context. \" However, the bounds calculated by CTRunGetImageBounds do not account for the offset of the CTRun within the CTLine, even though CTRunDraw does add this offset to the text position. \r\n\r\nSteps to Reproduce:\r\nCopy and paste the following Swift code into an Xcode 9 playground, run it and enable the live view (in the assistant editor).\r\n\r\n\r\nimport UIKit\r\nimport CoreText\r\n\r\nlet font = UIFont.systemFont(ofSize: 20)\r\n\r\nlet string = NSMutableAttributedString(\r\n               string: \"x\", attributes: [.font: font,\r\n                                         .foregroundColor: UIColor.red])\r\nstring.append(NSAttributedString(\r\n                string: \"x\", attributes: [.font: font,\r\n                                          .foregroundColor: UIColor.black]))\r\n\r\nlet line = CTLineCreateWithAttributedString(string)\r\n\r\nlet size = CGSize(width: 100, height: 50)\r\nlet image = UIGraphicsImageRenderer(size: size).image { ctx in\r\n  UIColor.white.setFill()\r\n  ctx.fill(CGRect(origin: .zero, size: size))\r\n\r\n  ctx.cgContext.translateBy(x: 0, y: 30)\r\n  ctx.cgContext.scaleBy(x: 1, y: -1)\r\n\r\n  let runs = CTLineGetGlyphRuns(line) as! [CTRun]\r\n\r\n  ctx.cgContext.textPosition = CGPoint(x: 0, y: 0)\r\n  print(CTRunGetImageBounds(runs[0], ctx.cgContext, CFRange()))\r\n  CTRunDraw(runs[0], ctx.cgContext, CFRange())\r\n\r\n  ctx.cgContext.textPosition = CGPoint(x: 0, y: 0)\r\n  print(CTRunGetImageBounds(runs[1], ctx.cgContext, CFRange()))\r\n  CTRunDraw(runs[1], ctx.cgContext, CFRange())\r\n}\r\n\r\nimport PlaygroundSupport\r\nPlaygroundPage.current.liveView =  UIImageView(image: image)\r\n\r\nExpected Results:\r\nThe printed image bounds (see the output at the bottom) for the two runs should have different x coordinates, since they are drawn at different positions.\r\n\r\nObserved Results:\r\nThe printed image bounds for the two runs are identical, which suggests that the bounds for the second run do not reflect the x-offset of the run within the line."
+    email: st@quanttec.com
+    modified: "2017-08-02T11:15:23.94918Z"
+    number: "33251252"
+    number_intvalue: 33251252
+    originated: July 12 2017
+    parent_number: '&{NULL_VALUE}'
+    product: CoreText
+    product_version: iOS < 11 Beta 4
+    reproducible: Always
+    resolved: Yes
+    status: Closed
+    title: CTRunGetImageBounds returns bounds with a wrong x origin

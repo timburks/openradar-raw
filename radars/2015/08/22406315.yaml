@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22406315"
+    labels:
+        datastore_id: "5545905008672768"
+data:
+    classification: Serious Bug
+    created: "2015-08-24T20:02:13.31411Z"
+    description: "Summary:\r\nAn autoclosure parameter whose type throws requires that client code try when passing the de-braced closure:\r\n\r\nconsume_an_error_from_a_throwing_func(try a_func_that_throws)\r\n\r\nHowever, in the context of a closure, this syntax does not work properly.  In particular, the error \"leaks\" out of <<try a_func_that_throws>> into the surrounding scope, making the closure be inferred to be of throwing type.\r\n\r\nlet c = {\r\n    consume_an_error_from_a_throwing_func(try a_func_that_throws)\r\n}\r\n\r\nHere, c is inferred to be of type () throws -> ().  However, consume_an_error_from_a_throwing_func, the only function called from this closure, does not throw.  (a_func_that_throws is called inside the implementation of consume_an_error_from_a_throwing_func and consequently any error it throws must be handled there.)  The inferred type of c should be () -> (), a non-throwing function.\r\n\r\nSteps to Reproduce:\r\nAttempt to compile the following code with Xcode7 Beta 5.\r\n\r\nfunc attempt<T>(@autoclosure f: () throws -> T) -> T? {\r\n    //...\r\n}\r\n\r\nfunc create_int() throws -> Int {\r\n    return 1\r\n}\r\n\r\nfunc call(function: () -> ()) {\r\n    function()\r\n}\r\n\r\ncall {\r\n    attempt(try create_int())\r\n}\r\n\r\nfunc direct() {\r\n    attempt(try create_int())\r\n}\r\n\r\nNotice the compile error on the line where call is invoked: Invalid conversion from throwing function of type '() throws -> _' to non-throwing function of type '() -> ()'.\r\n\r\nExpected Results:\r\nThis code should compile just fine.\r\n\r\nActual Results:\r\nA compile error is raised.\r\n\r\nVersion:\r\nXcode 7 Beta 5\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nMacBook Pro Retina\r\n\r\nAttachments:"
+    email: nathaniel.chandler@gmail.com
+    modified: "2015-08-24T20:02:13.31448Z"
+    number: "22406315"
+    number_intvalue: 22406315
+    originated: 2015 Aug 24
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: Xcode7 Beta5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Autoclosures fail to contain thrown errors when created inside a closure

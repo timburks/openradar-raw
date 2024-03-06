@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "37363662"
+    labels:
+        datastore_id: "5054151201390592"
+data:
+    classification: Other Bug
+    created: "2018-02-08T21:41:59.43223Z"
+    description: "Summary:\r\n\r\nThe Undefined Behavior Sanitizer flags member access of a MIDIPacket* returned by MIDIPacketNext() on Intel.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Compile the attached program with UBSan turned on using:\r\n\r\nclang -std=c99 -framework CoreMIDI -fsanitize=undefined MIDIPacketNextTest.m\r\n\r\n2. Run the program:\r\n\r\n./a.out\r\n\r\nExpected results:\r\n\r\nThe program runs fine.\r\n\r\nActual results:\r\n\r\nMIDIPacketNextTest.m:32:15: runtime error: member access within misaligned address 0x7f83626006e3 for type 'MIDIPacket' (aka 'struct MIDIPacket'), which requires 4 byte alignment\r\n\r\nUBSan flags the if (packet->length == 0) expression for misaligned pointer use noting that MIDIPacket requires 4-byte alignment. This is contrary to the comment in MIDIPacketNext() itself, as well as the header documentation for MIDIPacketList, which says: \"On Intel and PowerPC, MIDIPacket is unaligned. On ARM, MIDIPacket must be 4-byte aligned.\"\r\n\r\nVersion/Build:\r\nXcode Version 9.2 (9C40b), macOS 10.13.2 (17C205)\r\n\r\nTest Program: https://gist.github.com/armadsen/424a5427f77cb25c5abca6c7ce21564b"
+    email: armadsen@gmail.com
+    modified: "2018-02-08T21:41:59.4325Z"
+    number: "37363662"
+    number_intvalue: 37363662
+    originated: 02/08/2018
+    parent_number: '&{NULL_VALUE}'
+    product: macOS SDK
+    product_version: 10.13.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Undefined Behavior Sanitizer flags MIDIPacket advanced with MIDIPacketNext() for misaligned pointer use

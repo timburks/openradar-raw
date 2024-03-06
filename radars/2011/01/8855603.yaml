@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8855603"
+    labels:
+        datastore_id: "1037401"
+data:
+    classification: Serious Bug
+    created: "2011-01-12T22:59:28.503462Z"
+    description: "1/12/11 2:57 PM Quinn Taylor:\r\n* SUMMARY\r\n\r\nNSDragOperation is typedef'd as an NSUInteger (in NSDragging.h) and thus should be 64-bit modern hardware. However, the dragging mask returned by -draggingSourceOperationMask comes out as a 32-bit unsigned int value, or only the bottom 4 bytes of an unsigned long. This means that on 64-bit systems, the dragging mask returned by this method will NEVER equal NSDragOperationEvery (aka NSUIntegerMax), the documented return value when no modifier keys are pressed.\r\n\r\nThe workaround is to cast NSDragOperationEvery as a 32-bit value (e.g. unsigned int) before comparing. However, this problem is deceptively invisible and complex, and I worry that the 32/64-bit issues involved are likely beyond many developers that may get bit by this. At the simplest level, it doesn't \"just work\".\r\n\r\nI'm experiencing this problem on a Mac Pro with 10.6.6 (10J567).\r\n\r\n* STEPS TO REPRODUCE\r\n\r\n1. Start with a simple app with drag & drop enabled, such as Demo Monkey.\r\n2. In a method with an <NSDraggingInfo> argument (such as tableView:acceptDrop:row:dropOperation:) add the following debug statement:\r\n      printf(\"0x%lx ?= 0x%lx\\n\", [info draggingSourceOperationMask], NSDragOperationEvery);\r\n3. Run the app, perform a simple drag which causes the method to fire, and observe the inequality:\r\n      0xffffffff ?= 0xffffffffffffffff\r\n\r\n* NOTES\r\n\r\nExamining -draggingSourceOperationMask in NSDragManager.m from AppKit-1038 via Clownfish revealed a potential cause: the \"sourceOperationMask\" variable (the value to be returned) is passed by reference to CoreDragGetAllowableActions(), which expects to write to a CoreDragActions, a typedef for UInt32. Thus, by the time we reach `sourceOperationMask &= modifierMask;` the former is effectively holding a 32-bit value, so even if modifierMask is still equal to NSDragOperationEvery, the top 4 bytes will always be lost."
+    email: quinntaylor@mac.com
+    modified: "2011-08-28T05:38:24.395092Z"
+    number: "8855603"
+    number_intvalue: 8855603
+    originated: 12 JAN 2011
+    parent_number: '&{NULL_VALUE}'
+    product: Drag & Drop (AppKit)
+    product_version: X
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 64-bit issue with -[NSDraggingInfo draggingSourceOperationMask]

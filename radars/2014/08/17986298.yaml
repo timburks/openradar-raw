@@ -1,0 +1,93 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17986298"
+    labels:
+        datastore_id: "5803962582171648"
+data:
+    classification: Enhancement
+    created: "2014-08-12T03:20:49.720118Z"
+    description: |-
+        Summary:
+        Properties have some great functionality: they can be lazy, computed, stored, and constant; the willSet/didSet hooks are extremely handy. Providing an abstraction for interacting with these properties would enable a lot of very convenient proxies/decorators, like observable properties, copy-on-write properties, etc.
+
+        Currently you can implement these manually:
+
+        class Container<T> {
+        	var contents: T {
+        		get {
+        			return observableContents.value
+        		}
+        		set {
+        			observableContents.value = newValue
+        		}
+        	}
+        	private var observableContents: ObservableProperty<T> // assume this exists
+        }
+
+        However, this adds a lot of noise and boilerplate. If ObservableProperty<T>, CopyOnWriteProperty<T>, etc. could instead adopt a protocol in the language, these implementation details could be made much more convenient, up to the point of being transparent (i.e. drop-in) to adopt and use, while still being visible in the types as documentation:
+
+        class Container<T> {
+        	var contents: ObservableProperty<T> // seeing that this is an ObservableProperty<T>, which conforms to Swift.Property, the language can now ensure that get/set/willSet/didSet are all performed using ObservableProperty<T>’s implementations
+        }
+
+        A list of things this would enable:
+
+        - observable properties
+
+        - copy on write
+
+        - lazy evaluators in the vein the delay/force functions in Scheme:
+
+        protocol RecursiveExpression { … }
+
+        class RecursiveBinaryExpression : RecursiveExpression {
+        	let left: Lazy<RecursiveBinaryExpression>
+        	let right: Lazy<RecursiveBinaryExpression>
+        }
+
+        - automatically invoked reference type boxes for e.g. recursive structs
+
+        struct List<T> {
+        	var value: T
+        	var next: Box<List<T>?>
+        }
+
+        - memoizing (in the vein of the language’s extant lazy, and that sweet memoize {} combinator I keep going on about)
+
+        - similarly, *fixpoints* (ooooh, ahhhh)
+
+        - debug logging
+
+        typealias Infrastructure = CriticalInfrastructure<LogLevel.Error> // set to Error in development, SilentImplosion in production
+        class CriticalInfrastructure<LogLevel> {
+        	var crucialDetails: Log<LogLevel, Int>
+        }
+
+
+        Steps to Reproduce:
+        N/A
+
+        Expected Results:
+        N/A
+
+        Actual Results:
+        N/A
+
+        Regression:
+        N/A
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2014-08-12T03:20:49.720228Z"
+    number: "17986298"
+    number_intvalue: 17986298
+    originated: 11-Aug-2014 11:20 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta5 (6A279r)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Meta-object protocol: Expose the type of properties'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15330468"
+    labels:
+        datastore_id: "5268346471710720"
+data:
+    classification: Serious Bug
+    created: "2013-10-28T20:46:45.451683Z"
+    description: "The user says:\r\n\r\n\"\r\nThe best clue that I have to what might have caused the problem is that I recently deleted a bunch of old folders - including some with names like 'Junk' and 'Junk Mail', that had accumulated through various transitions between service providers over the years. I can't see exactly how that would have caused this copying behavior but it's the most relevant event I can think of.\r\n\"\r\n\r\nSummary:\r\nThis issue made the tech news over the weekend - original blog post here:\r\n\r\nhttp://blog.fastmail.fm/2013/10/26/mac-os-10-9-infinity-times-your-spam/\r\n\r\nIn short - the client is copying messages from the Junk folder into the Junk folder, and then expunging the old copies.  It has done it so often that when I first investigated there had been over 100,000 copies of a single message created and then expunged.  Our server keeps all messages for a week, causing over 2Gb of metadata to be stored for that folder.\r\n\r\nThe user has now been contacted and replied with more detail of their setup:\r\n\r\n\"Hi,\r\n\r\nInteresting.  I had noticed the junk mail folder fill up and had purged it a couple of times, but clearly this is beyond that.\r\n\r\nI have just checked my mail.app for plugins (~/Library/Mail/Bundles) and there are none.\r\n\r\nAlso, I have no rules relating to spam or the spam folder.  The only mail clients I use are mail.app on the Mac and Apple's iOS ones.\r\n\r\nI'm happy to help diagnose the problem.  Is there anything else I can check for you?\r\n\r\nThanks.\"\r\n\r\nSteps to Reproduce:\r\nThis only occurs on the one account.  The user is willing to help you debug what's wrong with their mail metadata.\r\n\r\nOf course, corruptions happen - so it's more a matter of appropriate mitigation in the code rather than fixing the problem this one user has.\r\n\r\nExpected Results:\r\nWe well-behaved internet application checks to make sure that it is not creating an infinite loop.  In this case, I would expect the client to notice that it's trying to move messages to the same folder that they are currently in, and abort.  In C I would write something like:\r\n\r\nif (!strcmp(dest_foldername, src_foldername))\r\n  return ERROR_ID;\r\n\r\nActual Results:\r\nThe mail client is causing an infinite loop of actions to the server, using legal IMAP commands.\r\n\r\nVersion:\r\nID (\"name\" \"Mac OS X Mail\" \"version\" \"7.0 (1816)\" \"os\" \"Mac OS X\" \"os-version\" \"10.9 (13A603)\" \"vendor\" \"Apple Inc.\")\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nServer is Cyrus IMAPd, FastMail custom edition (currently version 9:1fmwheezy30246-9438-6fe50bc6)"
+    email: brongondwana@gmail.com
+    modified: "2013-10-28T20:46:45.451871Z"
+    number: "15330468"
+    number_intvalue: 15330468
+    originated: "2013-10-28"
+    parent_number: '&{NULL_VALUE}'
+    product: Mail
+    product_version: "7"
+    reproducible: Not Applicable
+    resolved: ""
+    status: ""
+    title: One user's Mavericks (Mail 7) client is moving the messages to the currently selected folder over and over

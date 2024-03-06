@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14995477"
+    labels:
+        datastore_id: "5123560976678912"
+data:
+    classification: UI/Usability
+    created: "2013-09-27T20:10:00.444383Z"
+    description: "Summary:\r\nWhen presenting a popover controller from a collection view cell the popover arrow direction is not repositioned when the popover view is repositioned following a device rotation.\r\n\r\nFor example In a situation where the popover is originally positioned to the right of a cell with the arrow pointing left. On rotation if the popover is repositioned to the left of the cell the arrow remains pointing to the left when it should also have been repositioned to point right (see attached images).\r\n\r\nSteps to Reproduce:\r\n1. Create a new Xcode project targeted for the iPad with a storyboard containing a collection view controller embedded in a navigation controller. The precise configuration is not important, following steps provide one possible example setup. An Xcode project that reproduces the problem is attached.\r\n\r\n2. Add custom classes for a UICollectionViewController and a UICollectionViewCell. The cell contains an IBOutlet to a UILabel.\r\n\r\n3. Configure the collection view to use the default vertical layout and change the class to the custom subclass created in step 2. Configure the cell size to be 200 x 200, add a UILabel to the cell, set a value for the cell identifier and change the class to the custom collection view cell class created in the previous step. Connect to the UILabel to the outlet in the custom class.\r\n\r\n4. In the view controller implement the UICollectionViewDataSource methods to return a single section, containing 100 cells and have each cell simply display the cell row number in the UILabel.\r\n\r\n5. In the storyboard add a tap gesture recogniser to the collection view controller and configure for 2 taps with delayed begin/end. Connect to a method in the view controller which when triggered, selected the cell and presents a popover view controller. The content of the presented view controller is not important. The popover controller is presented from the frame of the tapped cell:\r\n\r\n  [self.uylPopoverController presentPopoverFromRect:cell.frame\r\n                              inView:self.collectionView\r\n                              permittedArrowDirections:UIPopoverArrowDirectionAny\r\n                              animated:YES];\r\n\r\n6. To ensure the popover view is correctly repositioned on rotation implement the popover delegate method:\r\n\r\n- (void)popoverController:(UIPopoverController *)popoverController willRepositionPopoverToRect:(inout CGRect *)rect inView:(inout UIView **)view\r\n\r\nThis method should return the updated (after rotation) frame of the selected cell.\r\n\r\nExpected Results:\r\nDouble-tapping a cell shows the popover controller with an arrow pointing back to the selected cell. On rotation the popover view should be correctly repositioned so that the arrow is on the side of the selected cell and pointing towards the cell.\r\n\r\nActual Results:\r\nFor any popover which, on rotation, changes side relative to the tapped cell the arrow is incorrectly positioned. The popover view is correctly repositioned but the arrow remains in the same position as used prior to the rotation.\r\n\r\nSee attached images cellWithPopover.png and popoverWithWrongArrow.png. The second image is the result of rotating the device when showing the first image."
+    email: keith@useyourloaf.com
+    modified: "2016-04-20T20:29:51.70936Z"
+    number: "14995477"
+    number_intvalue: 14995477
+    originated: 15-Sep-2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 7.0
+    reproducible: Yes
+    resolved: ""
+    status: Closed
+    title: UIPopover arrow not repositioned correctly on rotation

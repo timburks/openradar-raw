@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27266049"
+    labels:
+        datastore_id: "4978037250588672"
+data:
+    classification: ""
+    created: "2016-07-12T20:46:47.46582Z"
+    description: "Summary:\r\nContext: Xcode 7.3.1, Swift app development for iOS, small app project involving Parse for storage and Facebook for login.\r\n(case a) segmentation fault 11 when the project is loaded, see screenshot.\r\n(case b) after some minor source changes, uncommenting one particular source line - see screenshots - causes the editor to cycle between showing the source file in black and white, and in color. Presumably the incremental compilation fails, and apparently there is a watchdog timer that triggers a retry, which also fails. And this is shown to the user deliberately/accidentally as clearing all syntax highlighting.\r\n\r\nSteps to Reproduce:\r\nCase a:\r\n1. Open Xcode 7.3.1\r\n2. Load (case a) project\r\n3. gets segmentation fault within Xcode immediately (screenshot)\r\nCase b:\r\n1. Open Xcode 7.3.1\r\n2. Load (case b) project\r\n3. uncomment line 86 of ContactsTableViewController.swift\r\n4. get cycling between black-and-white and color (2 screenshots)\r\n\r\nExpected Results:\r\nNormal ability to edit and debug my project.\r\n\r\nActual Results:\r\nCase a. Segmentation fault within Xcode (without running my own code)\r\nCase b. \"An internal error occurred. Source editor functionality is limited. Attempting to restore..\" and associated cycling.\r\n\r\nVersion:\r\nXcode 7.3.1 (7D1014)\r\nOS X 10.11.5 (everything should be perfectly up to date).\r\nI also have Xcode 8.0 beta (8S128d) installed, but avoid mixing stuff.\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nIn case (b), uncommenting one line of code repeatably triggers the problem. Whether a device is attached for debugging, has no impact.\r\n\r\nAttachments:\r\n'Screen Shot case b_1.jpg', 'Tinderoid case a.zip', 'Tinderoid case b.zip', 'Screen Shot case a.jpg' and 'Screen Shot case b_2.jpg' were successfully uploaded.\r\n\r\n=============================\r\n\r\n\r\nI found a workaround by being more explicit on typing. I suspect the compiler was trying to deal with something ambiguous or even wrongly typed, and then couldn't figure it out.\r\n\r\nI fixed the method with the problem as follows:\r\n\r\n    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {\r\n        let cell = tableView.dequeueReusableCellWithIdentifier(\"cell\", forIndexPath: indexPath)\r\n        \r\n        let myRow: Int = indexPath.row\r\n        let myUser: PFUser = usersLikedAndLinking[myRow] as! PFUser\r\n        let myLabel = myUser[\"name\"] as! String\r\n        cell.textLabel?.text = myLabel\r\n\r\n        return cell\r\n    }\r\n\r\nBut it remains a nasty bug if Xcode crashes on syntax highlighting. Even if it the developer provides less than perfect code."
+    email: vdhamer@gmail.com
+    modified: "2016-07-12T20:46:47.46599Z"
+    number: "27266049"
+    number_intvalue: 27266049
+    originated: 10-Jul-2016
+    parent_number: "24260533"
+    product: XCode
+    product_version: 7.3.1
+    reproducible: Yes
+    resolved: ""
+    status: Duplicate/24260533
+    title: Xcode editor dies on specific Swift-for-iOS line of code

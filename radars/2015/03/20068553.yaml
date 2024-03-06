@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20068553"
+    labels:
+        datastore_id: "5783854015053824"
+data:
+    classification: Serious bug
+    created: "2015-03-06T09:44:33.881933Z"
+    description: "Summary:\r\nIn the apps that use many WKWebView instances there is a problem with restoration from background which leads to UI freezing or even killing by system (because of not resuming in certain time interval). The problem affects Safari on iOS 8, as well.\r\n\r\nIf most of web view instances are not in view hierarchy when entering background and restoring back - restoration is always slow, even if you push \"Home\" and return back to your app without switching to another tasks.\r\nIf you switch to another apps, especially memory-demanding or using WKWebViews such as Safari and then return back to you app (make sure it was not unloaded by the system) - you get main thread completely freezed by communicating with WKWebView system process. This problem has a huge user experience impact and also can lead to a crash due to not resuming in time.\r\n\r\nSteps to Reproduce:\r\nUse the attached sample project\r\n\r\nCase 1.\r\n1. Load 5-10 WKWebView instances using \"Create\" button.\r\n2. Press \"Home\", wait several seconds\r\n3. Return to the app and see a restoration time - should be 1-4 seconds with the linear dependence on the web view instances count.\r\n\r\nCase 2.\r\n1. Same as before\r\n2. Tap the \"Workaround\" button. This puts all WKWebView instances into view hierarchy.\r\n2. Press \"Home\", wait several seconds\r\n3. Return to the app and see a restoration time - should less than a second.\r\n4. Switch to another apps, browse sites in Safari, etc.\r\n5. Switch to the sample app again - restoration time should be several seconds again.\r\n\r\nExpected Results:\r\nMain thread is not blocked or blocked only for the active WKWebView instance\r\n\r\nActual Results:\r\nInter-process communication freezing main thread is performed for all WKWebView instances, so the restoration time is completely unacceptable (if keeping in mind a UI responsiveness principle).\r\n\r\nVersion:\r\niOS 8.1.3 [12B466], 8.3 beta 2 [12F5037c]\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 5s, iPhone 6, iPad mini\r\n\r\nAttachments:\r\n'WKWebViewRestorationFromBackground.zip': https://yadi.sk/d/Pi04ndh9f5TWh"
+    email: stone33.mail@gmail.com
+    modified: "2015-03-06T09:46:17.152317Z"
+    number: "20068553"
+    number_intvalue: 20068553
+    originated: "2015-03-06"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 8.1.3 [12B466], 8.3 beta 2 [12F5037c]
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: WKWebView freezes main thread when restoring app from background and can lead to app killing by the system.

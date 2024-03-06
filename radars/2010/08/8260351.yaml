@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8260351"
+    labels:
+        datastore_id: "546404"
+data:
+    classification: Enhancement
+    created: "2010-08-01T20:31:06.351303Z"
+    description: "Summary:\r\n\r\nThe standard method to validate toolbar and menu items is \r\n- (BOOL) validateUserInterfaceItem: (id <NSValidatedUserInterfaceItem>) anItem\r\n\r\nThe body of that method may need to conditionally perform operations with its argument by testing [anItem respondsToSelector: ...].  \r\n\r\nHowever, NSValidatedUserInterfaceItem does not extend from the NSObject protocol, so the compiler complains about the call.\r\n\r\nSince all objects in AppKit handle the NSObject protocol, all the protocols in AppKit should extend from NSObject protocol.  Then programmers would have save on pointless casts and have more elegant code.\r\n\r\nSteps to Reproduce:\r\n\r\nDefine a method on any NSView subclass:\r\n\r\n- (BOOL) validateUserInterfaceItem: (id <NSValidatedUserInterfaceItem>) anItem\r\n{\r\n    // ...\r\n   if ([anItem respondsToSelector: @selector(setState:)])\r\n        [(id)anItem setState: NSOnState];\r\n   // ...\r\n}\r\n\r\nExpected Results:\r\n\r\nCode compiles without error.\r\n\r\nActual Results:\r\n\r\nCode will not compile without error unless the test is changed to \r\n    if ([(id)anItem respondsToSelector: @selector(setState:)])"
+    email: jlieske@gmail.com
+    modified: "2014-06-21T19:45:23.334993Z"
+    number: "8260351"
+    number_intvalue: 8260351
+    originated: 01-Aug-2010
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: "10.6"
+    reproducible: Always
+    resolved: ""
+    status: Behaves correctly
+    title: NSValidatedUserInterfaceItem should derive from NSObject protocol

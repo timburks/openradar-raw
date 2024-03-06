@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7288927"
+    labels:
+        datastore_id: "4950555520663552"
+data:
+    classification: Bug
+    created: "2019-09-18T01:30:37.977657Z"
+    description: "FB7288927\r\n\r\nDescription:\r\n\r\nIf you don't pass specific platform version info to ld, it will try to infer this from the -syslibroot argument. It seems to be expecting something in the format `/Applications/Xcode-11.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk` in which case it would parse out `10.15` and set that as the SDK version correctly. In the case where you pass the SDK path without the `10.15` in it such as `/Applications/Xcode-11.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk`, the linker will set the SDK version as 11.0 because it finds that from the path of Xcode itself. This problem is also reproducible in Xcode 10.1.0 (which is the last version where opensource.apple.com has been updated to have its ld sources) and this behavior is caused by this code:\r\n\r\n```\r\n// if -sdk_version not on command line, infer from -syslibroot\r\nif ( (fSDKVersion == 0) && (fSDKPaths.size() > 0) ) {\r\n  const char* sdkPath = fSDKPaths.front();\r\n  const char* end = &sdkPath[strlen(sdkPath)-1];\r\n  while ( !isdigit(*end) && (end > sdkPath) )\r\n    --end;\r\n  const char* start = end-1;\r\n  while ( (isdigit(*start) || (*start == '.')) && (start > sdkPath))\r\n    --start;\r\n  char sdkVersionStr[32];\r\n  int len = end-start+1;\r\n  if ( len > 2 ) {\r\n    strlcpy(sdkVersionStr, start+1, len);\r\n    fSDKVersion = parseVersionNumber32(sdkVersionStr);\r\n  }\r\n}\r\n```\r\n\r\nI think this code should be changed to not parse out this version further than the first slash (/) character when looking back in the string so only `MacOSX.sdk` would be considered in `.../Developer/SDKs/MacOSX.sdk` since this seems to be the intent of this logic.\r\n\r\nSimilar to FB7253366, passing `--sdk macosx` to `xcrun` works around this issue.\r\n\r\nSteps to reproduce:\r\n\r\n1. Move your version of Xcode.app to /Applications/Xcode-11.0.app\r\n2. Create `foo.m` with `int main() { return 0 };`\r\n3. Run `DEVELOPER_DIR=/Applications/Xcode-11.0.app xcrun -l clang -o foo foo.m` (the `-l` shows you that SDKROOT is set to `MacOSX.sdk` instead of `MacOSX10.15.sdk`, this is filed separately as FB7253366)\r\n4. Run `otool -l foo | grep sdk`\r\n\r\nWhat did you expect to happen?\r\nThe output should be 10.15\r\n\r\nWhat actually happened?\r\nThe output is 11.0, pulled from the Xcode path"
+    email: keithbsmiley@gmail.com
+    modified: "2019-09-18T01:30:37.977812Z"
+    number: "7288927"
+    number_intvalue: 7288927
+    originated: 9/17/2019
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: Xcode 11.0 GM 2 (11A420a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ld SDK version fallback takes version from Xcode.app path

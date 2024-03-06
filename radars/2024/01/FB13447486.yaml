@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13447486
+    labels:
+        datastore_id: "5586863783936000"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2024-01-22T21:09:56.992639Z"
+    description: "I have a list of items in a LazyVStack inside of a ScrollView where I would like to be able to scroll to a specific item programmatically and have it anchored at the top of the screen. This screen also has a pinned section header as our designer wants to have a search bar always available to the user as they scroll through the list of items. The issue is that when I use ScrollViewProxy.scrollTo(ItemID, anchor: .top) it will scroll the item to the very top of the screen without accounting for the pinned header. This has the result of the item being completely hidden behind the header, instead of being pinned just under where the header ends. To reproduce: \r\n* Copy paste the provided code below into a new SwiftUI iOS app project \r\n* Run the project to a simulator, device, or use the Xcode Preview (I am using an iPhone 15 Pro simulator) \r\n* Tap the button at the top that says \"Scroll to item 60\" \r\n\r\nExpected result:\r\n* The scroll view should scroll and stop with \"Item 60\" clearly visible at the top \r\n\r\nResult observed: \r\n* Item 60 is offscreen, and Item 64 is actually at the top instead \r\n\r\nI think there are a couple of ways to fix this issue: \r\n* The behavior could be updated to take into account the section header size by default (preferred) \r\n* ScrollViewProxy could accept an `offset` parameter to allow the developer to provide an offset value (similar to UIScrollView which has this option) Xcode version: 15.0.1 iOS Version: 17.0.1\r\n\r\n```\r\nstruct ContentView: View {\r\n  @State var scrollItemID = 0\r\n\r\n  var body: some View {\r\n    ScrollViewReader { proxy in\r\n      ScrollView {\r\n        LazyVStack(\r\n          alignment: .leading,\r\n          spacing: 0,\r\n          pinnedViews: [.sectionHeaders])\r\n        {\r\n          Section {\r\n            Button(\"Scroll to item 60\") {\r\n              scrollItemID = 60\r\n            }\r\n            .padding()\r\n\r\n            ForEach(1...1000, id: \\.self) { count in\r\n              Row(text: \"Item \\(count)\")\r\n                .id(count)\r\n              Divider()\r\n            }\r\n            .onChange(of: scrollItemID) { oldValue, newValue in\r\n              if newValue == 0 { return }\r\n              withAnimation {\r\n                proxy.scrollTo(newValue, anchor: .top)\r\n              }\r\n              scrollItemID = 0\r\n            }\r\n          } header: {\r\n            StickyHeader()\r\n          }\r\n        }\r\n      }\r\n      .ignoresSafeArea()\r\n    }\r\n  }\r\n}\r\n\r\nstruct StickyHeader: View {\r\n  var body: some View {\r\n    Text(\"This is a sticky header. When you tap \\\"Scroll to item 60\\\" below, it should scroll to have Item 60 at the top. However, this sticky header is overlapping that row, and it looks like we scroll to a different row entirely.\")\r\n      .frame(maxWidth: .infinity, alignment: .leading)\r\n      .padding()\r\n      .padding(.top, 50)\r\n      .background(Color.green)\r\n  }\r\n}\r\n\r\nstruct Row: View {\r\n  let text: String\r\n\r\n  var body: some View {\r\n    Text(text)\r\n      .frame(maxWidth: .infinity, alignment: .leading)\r\n      .padding()\r\n  }\r\n}\r\n\r\n#Preview {\r\n  ContentView()\r\n}\r\n```"
+    email: tyler.hedrick@airbnb.com
+    modified: "2024-01-22T21:09:56.993616Z"
+    number: FB13447486
+    number_intvalue: 13447486
+    originated: 12/5/23
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: iOS 17.0
+    reproducible: Yes
+    resolved: Open
+    status: Open
+    title: LazyVStack with pinned section headers overlaps items when using a ScrollViewProxy's scrollTo method

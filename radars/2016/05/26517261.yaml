@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26517261"
+    labels:
+        datastore_id: "4969445436948480"
+data:
+    classification: UI/Usability
+    created: "2016-05-27T15:20:54.46765Z"
+    description: "This is a duplicate of rdar://26408264\n\nSummary:\r\nAfter an unsuccessful install of an application by an MDM server, storedownloadd refuses to add any other downloads to the queue.\r\nThe client also reports the command as Acknowledged to the MDM server(this makes sense but is not helpful). \r\n\r\nRestarting the storedownloadd process and re-sending an InstallApplication\r\n\r\n/var/log/commerce.log message when  storedownloadd is hanged:\r\nMay 21 17:13:40 admins-Mac storedownloadd[532]: DownloadManifest: removePurgeablePath: /var/folders/qg/yc8wn1f13jb_mly2mj34pfkh0000gn/C/com.apple.appstore/0\r\nMay 21 17:13:40 admins-Mac storedownloadd[532]: DownloadQueue: Could not add download\r\nMay 21 17:13:40 admins-Mac storedownloadd[532]: DownloadQueue: Will start any ready downloads anyways.\r\n\r\nSteps to Reproduce:\r\n1. Deploy 3rd party pkg with InstallApplication command/MDM server \r\nThe manifest plist in the InstallCommand must be malformed in any of the following ways:\r\na) missing md5-size/md5 array of hashes. or\r\nb) mismatched md5-size and md5 arrays\r\n\r\n2. The command will be acknowledged and the client will attempt the download. \r\nAfter several retries, the client will report that the download has failed and it will not attempt any retries. \r\n\r\n3. Try to queue another InstallApplication command. Could be the previous installer or a completely new install. \r\nNothing happens. commerce.log reports the log lines in description.\r\n\r\n/var/log/commerce.log message when  storedownloadd is hanged:\r\nMay 21 17:13:40 admins-Mac storedownloadd[532]: DownloadManifest: removePurgeablePath: /var/folders/qg/yc8wn1f13jb_mly2mj34pfkh0000gn/C/com.apple.appstore/0\r\nMay 21 17:13:40 admins-Mac storedownloadd[532]: DownloadQueue: Could not add download\r\nMay 21 17:13:40 admins-Mac storedownloadd[532]: DownloadQueue: Will start any ready downloads anyways.\r\n\r\n4. Killing the storedownloadd process and resending the command queue \r\n\r\nExpected Results:\r\nThe storedownloadd command should continue downloads after a failure. \r\n\r\nActual Results:\r\nThe storedownloadd process was stuck, subsequent installs did not work and the user has no way of knowing that the device is in a state that requires troubleshooting/a restart to be fixed. \r\n\r\nVersion:\r\nOS X El Capitan 10.11.4/15E65"
+    email: bruienne@gmail.com
+    modified: "2016-05-27T15:20:54.46793Z"
+    number: "26517261"
+    number_intvalue: 26517261
+    originated: 27-May-2016 11:20 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: storedownloadd hangs and blocks install of other applications

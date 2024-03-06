@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19873041"
+    labels:
+        datastore_id: "5269968694280192"
+data:
+    classification: Other Bug
+    created: "2015-02-18T10:57:52.419038Z"
+    description: "Summary:\r\nI'm trying to implement command line argument parsing in Swift by wrapping the standard getopt_long API, rather than reinvent the wheel. I found that I was able to successfully parse short arguments (e.g., \"-v\"), but was unable to successfully parse the long form (e.g., \"--verbose\"). However I observed that very occasionally it would succeed.\r\n\r\nSteps to Reproduce:\r\n1. Write this in main.swift:\r\nimport Darwin\r\n\r\nlet long_options = [\r\n\toption(name: \"verbose\", has_arg: no_argument, flag: nil, val: Int32(UnicodeScalar(\"v\").value))\r\n]\r\n\r\nwhile let ord = .Some(getopt_long(Process.argc, Process.unsafeArgv, \"v\", long_options, nil)) where ord != -1,\r\n      let c = .Some(UnicodeScalar(UInt32(ord))) {\r\n\tswitch c {\r\n\t\tcase \"v\":\r\n\t\t\tprintln(\"successfully parsed 'verbose'\")\r\n\t\tdefault:\r\n\t\t\tbreak\r\n\t}\r\n}\r\n\r\n2. Compile: xcrun -sdk macosx swiftc main.swift\r\n\r\n3. Run: ./main --verbose\r\n\r\nExpected Results:\r\nThe program would print \"successfully parsed 'verbose'\". It actually does succeed occasionally, but only about 5 or 10 times in 1000 (see Notes).\r\n\r\nActual Results:\r\nThe program prints \"main: unrecognized option `--verbose'\", most of the time.\r\n\r\nRegression:\r\nN/A\r\n\r\nNotes:\r\nI've attached a sample project that runs this same test 1000 times, and counts how many times it succeeds. It's usually about 5 to 10 times in 1000. To run the test, just unzip the folder, cd into the directory, and run \"rake\". For example:\r\n\r\n$ rake\r\nxcrun -sdk macosx swiftc main.swift -o parse-verbose-flag\r\nRunning './parse-verbose-flag --verbose' 1000 times\r\nSuccessfully parsed on 8 out of 1000 tests"
+    email: apsharp@gmail.com
+    modified: "2015-04-07T23:27:19.238196Z"
+    number: "19873041"
+    number_intvalue: 19873041
+    originated: 18-Feb-2015 09:57 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Swift 1.2
+    reproducible: Always
+    resolved: Behaves correctly
+    status: Closed
+    title: 'Swift 1.2: Calls to getopt_long only parse long arguments successfully 1% of the time'

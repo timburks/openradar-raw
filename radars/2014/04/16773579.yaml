@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16773579"
+    labels:
+        datastore_id: "5268184068259840"
+data:
+    classification: ""
+    created: "2014-04-30T20:13:32.730529Z"
+    description: "Summary:\r\nUnder certain circumstances NSFetchedResultsController (FRC) does not use the persistent section cache. This results in section info being recalculated every time -[NSFetchedResultsController performFetch:] is called.\r\n\r\nPre-conditions for this bug:\r\n\r\n1. 64-bit platform\r\n\r\n2. A core data model with a .xccurrentversion file (e.g. Good.xcdatamodeld/.xccurrentversion). This file does not normally exist unless you have more than one model version, but even adding it manually works for reproduction purposes. The presence of this file results in the inclusion of a .omo file in the final compiled core data bundle. If the .omo file is not present then the bug does not manifest.\r\n\r\n3. In addition to the entity to be used by the FRC, there must be an additional entity whose name is lexically smaller than the primary entity. For example, if I am querying on the \"Event\" entity, then I need another entity lexically smaller, such as \"AEntity\". If the other entity is larger (e.g. \"ZEntity\") then the bug does not manifest.\r\n\r\nUnder these conditions, then when calling performFetch: FRC *always* recalculates the section info cache, even if a matching one is present on the persistent storage.\r\n\r\nSteps to Reproduce:\r\nIn the included example project there are two data models, \"Good\" and \"Bad\". Each model has an \"Event\" entity, which will be queried on using an FRC. Each model also has an \"AEntity\" entity.\r\n\r\nThe only difference between these is the presence of a .xccurrentversion file in the \"Bad\" model.\r\n\r\n1. Run the example project on a 64-bit device or simulator\r\n2. Two options will appear in the root table view. \"Good\" and \"Bad\".\r\n3. Tap \"Good\". Note the lag and the console output in which the section info is calculated for the first time.\r\n4. Tap \"Back\".\r\n5. Tap \"Good\" again. Note that there is no log and no console output this time because the section info cache is being used.\r\n5. Tap \"Back\".\r\n6. Tap \"Bad\".  Note the console output in which the section info is calculated for the first time.\r\n7. Tap \"Back\".\r\n8. Tap \"Bad\" again. Note the console output that indicates that section info is being recalculated even though a valid cache file exists.\r\n\r\nExpected Results:\r\nAfter the initial cache seeding, there should be no additional log output as the cache should be used.\r\n\r\nActual Results:\r\nThe section info cache is recalculated every time we hit \"Bad\", as indicated by the log output.\r\n\r\nVersion:\r\n7.1\r\n\r\nNotes:\r\nOne workaround is to change entity names so that the desired entity is lexically smaller than all others. Unfortunately this won't work if you need to cache multiple entities.\r\n\r\nConfiguration:\r\n64-bit only. I can't reproduce on 32-bit."
+    email: ben.dolman@gmail.com
+    modified: "2014-04-30T20:13:32.730746Z"
+    number: "16773579"
+    number_intvalue: 16773579
+    originated: 4/30/2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSFetchedResultsController does not use persistent cache

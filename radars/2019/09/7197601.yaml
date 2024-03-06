@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7197601"
+    labels:
+        datastore_id: "5010417231331328"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2019-09-03T16:05:20.082782Z"
+    description: "On iOS 13.1 and Xcode beta 7, when running on an 10” iPad Pro, UIImagePickerController returns an uninitialized UIImage from the didFinishPickingMediaWithInfo delegate method.\r\n\r\nThere is no prompt for Photos access the first time the host app is run, nor is there any other indication that there is a problem, other than “Operation not permitted” being logged to the console with a file URL for the image selected by the user.\r\n\r\nHere is the code we use to generate the image picker and the delegate methods used to process the user’s choice:\r\n\r\n\tfunc imagePickerForPopover(sourceType: UIImagePickerController.SourceType) -> UIImagePickerController {\r\n\t\tlet imagePicker = UIImagePickerController()\r\n\t\t\r\n\t\timagePicker.modalPresentationStyle = .popover\r\n\t\timagePicker.sourceType = sourceType\r\n\t\timagePicker.delegate = self\r\n\t\timagePicker.mediaTypes = [kUTTypeImage as String]\r\n\t\t\r\n\t\treturn imagePicker\r\n\t}\r\n\t\r\n\t// MARK:\tUIImagePickerControllerDelegate\r\n\t\r\n\tpublic func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {\r\n\t\tif let image = info[.originalImage] as? UIImage {\r\n\t\t\tfinishImport(image: image)\r\n\t\t}\r\n\t\t\r\n\t\tpicker.dismiss(animated: true)\r\n\t}\r\n\t\r\n\tpublic func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {\r\n\t\tpicker.dismiss(animated: true)\r\n\t}\r\n\r\nTo workaround this problem, we had to explicitly request permission to the user’s photos using the following logic:\r\n\r\n\t\tactionPopup.add(title: \"Import from Photo Library\", image: #imageLiteral(resourceName: \"place-library\"), isDisabled: !UIImagePickerController.isSourceTypeAvailable(.photoLibrary)) {\r\n\t\t\t[weak self] in\r\n\t\t\t\r\n\t\t\tif let vc = self?.imagePickerForPopover(sourceType: .photoLibrary) {\r\n\t\t\t\tlet photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()\r\n\t\t\t\tswitch photoAuthorizationStatus {\r\n\t\t\t\tcase .authorized:\r\n\t\t\t\t\tpopoverPresenter(vc)\r\n\t\t\t\tcase .notDetermined:\r\n\t\t\t\t\tPHPhotoLibrary.requestAuthorization { (newAuthorizationStatus) in\r\n\t\t\t\t\t\tif (newAuthorizationStatus == .authorized) {\r\n\t\t\t\t\t\t\tDispatchQueue.main.async {\r\n\t\t\t\t\t\t\t\tpopoverPresenter(vc)\r\n\t\t\t\t\t\t\t}\r\n\t\t\t\t\t\t}\r\n\t\t\t\t\t\telse {\r\n\t\t\t\t\t\t\tself?.showImportAlert()\r\n\t\t\t\t\t\t}\r\n\t\t\t\t\t}\r\n\t\t\t\tcase .restricted, .denied:\r\n\t\t\t\t\tself?.showImportAlert()\r\n\t\t\t\t}\r\n\t\t\t}\r\n\t\t}\r\n\r\nThis gave the app ‘Read and Write” access to the Photos library, even though the documentation explicitly states that it’s not needed:\r\n\r\nhttps://developer.apple.com/documentation/photokit/requesting_authorization_to_access_photos\r\n\r\nAnother interesting datapoint: this problem only manifests itself when picking from the photo library. A .camera source type works fine.\r\n\r\nI haven't thoroughly verified the UIImage containing uninitialized memory, but there were definitely PNG header values that were invalid (even some console logging.) If so, that's probably a bigger deal security-wise since I'm getting memory out of my process.\r\n\r\nNote this problem only occurs on device - everything works fine in the Simulator.\r\n\r\n----\r\n\r\nThe problem is resolved in 13.1 beta 2 and the workaround is no longer needed."
+    email: craig.hockenberry@gmail.com
+    modified: "2019-09-04T19:17:43.511606Z"
+    number: "7197601"
+    number_intvalue: 7197601
+    originated: 9/3/2019
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "13.1"
+    reproducible: Always
+    resolved: iOS 13.1 beta 2
+    status: Open
+    title: UIImagePickerController returns an uninitialized UIImage from didFinishPickingMediaWithInfo

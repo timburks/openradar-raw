@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8005841"
+    labels:
+        datastore_id: "366401"
+data:
+    classification: Other Bug
+    created: "2010-05-19T23:59:27.400685Z"
+    description: "Summary:\r\nWhen backing up hardlinked files, TimeMachine always creates independent data records for each file rather than one record for each set of hardlinks.\r\n\r\n\r\n\r\nSteps to Reproduce:\r\nCreate a test directory, and within it, a test file and several hardlinks to that file.\r\n\r\n$ mkdir ~/test\r\n$ cd ~/test\r\n$ dd if=/dev/urandom of=link0 count=1 bs=1m\r\n$ ln link0 link1\r\n$ ln link0 link2\r\n$ ln link0 link3\r\n$ ln link0 link4\r\n\r\nCheck the files to ensure that they are indeed hardlinks.\r\n\r\n$ ls -lih\r\ntotal 5.0M\r\n28897309 -rw-r--r-- 5 arno staff 1.0M May 19 19:25 link0\r\n28897309 -rw-r--r-- 5 arno staff 1.0M May 19 19:25 link1\r\n28897309 -rw-r--r-- 5 arno staff 1.0M May 19 19:25 link2\r\n28897309 -rw-r--r-- 5 arno staff 1.0M May 19 19:25 link3\r\n28897309 -rw-r--r-- 5 arno staff 1.0M May 19 19:25 link4\r\n\r\n$ du -hc link*\r\n1.0M\tlink0\r\n1.0M\ttotal\r\n\r\nInitiate a TimeMachine backup (ensure that the test directory is not excluded from backups).\r\n\r\n\r\n\r\nExpected Results:\r\nThe files backed up by TimeMachine should exactly mirror the original; hardlinks should be preserved.  This both saves space as well as correctly represents the original file structure.\r\nChecking the files on the TimeMachine volume should result as follows: \r\n\r\n$ cd /Volumes/Backup\\ of\\ Computer/Backups.backupdb/Computer/Latest/MacHD/Users/arno/test/\r\n$ ls -lih\r\ntotal 5.0M\r\n108469821 -rw-r--r-- 1 arno staff 1.0M May 19 19:25 link0\r\n108469821 -rw-r--r-- 1 arno staff 1.0M May 19 19:25 link1\r\n108469821 -rw-r--r-- 1 arno staff 1.0M May 19 19:25 link2\r\n108469821 -rw-r--r-- 1 arno staff 1.0M May 19 19:25 link3\r\n108469821 -rw-r--r-- 1 arno staff 1.0M May 19 19:25 link4\r\n\r\n$ du -hc link*\r\n1.0M\tlink0\r\n1.0M\ttotal\r\n\r\n\r\n\r\nActual Results:\r\nThe hardlinked files backed up by TimeMachine are copied independently, breaking the hardlink structure.  While no file data is lost, the file structure is not exactly mirrored.  The biggest harm of this is that TimeMachine backups end up taking more space than the original data.  A 100 MB file that is hardlinked 10 times should, and does, take up 100 MB of space on the original drive.  When backed up by TimeMachine the files will take up 1 GB as the hardlinks are not respected.  Restoring from this backup will result in 1 GB as well.\r\n\r\nThe actual output of checking the data on the backup is as follows: \r\n\r\n$ cd /Volumes/Backup\\ of\\ Computer/Backups.backupdb/Computer/Latest/MacHD/Users/arno/test/\r\n$ ls -lih\r\ntotal 5.0M\r\n108469821 -rw-r--r-- 1 arno staff 1.0M May 19 19:25 link0\r\n108469822 -rw-r--r-- 1 arno staff 1.0M May 19 19:25 link1\r\n108469823 -rw-r--r-- 1 arno staff 1.0M May 19 19:25 link2\r\n108469824 -rw-r--r-- 1 arno staff 1.0M May 19 19:25 link3\r\n108469825 -rw-r--r-- 1 arno staff 1.0M May 19 19:25 link4\r\n\r\n$ du -hc link*\r\n1.0M\tlink0\r\n1.0M\tlink1\r\n1.0M\tlink2\r\n1.0M\tlink3\r\n1.0M\tlink4\r\n5.0M\ttotal\r\n\r\n\r\n\r\nRegression:\r\n--\r\n\r\n\r\n\r\nNotes:\r\nHardlinks cannot span volumes, but they should be re-created on the backup disk in order to appropriately mirror the original data.  No file data is lost by breaking the hardlinks, but restoring from this backup could potentially cause inconsistencies where hardlinked files are expected.  Of course, restoring hardlinks during a restore may not be possible if only one of the hardlinked files was restored during a restoration, but the link should at least be retained during the backup."
+    email: fracai@gmail.com
+    modified: "2015-02-18T05:08:32.980568Z"
+    number: "8005841"
+    number_intvalue: 8005841
+    originated: 19-May-2010 07:57 PM
+    parent_number: "4858514"
+    product: Mac OS X
+    product_version: 10.6.3
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/4858514 (Open)
+    title: TimeMachine does not correctly backup hardlinked files

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26262112"
+    labels:
+        datastore_id: "4945110152249344"
+data:
+    classification: Other Bug
+    created: "2016-05-13T10:39:41.99474Z"
+    description: "Summary:\r\nThe CFType functions declared in Core Foundation are exported to the global namespace and can cause a name collision with an unfortunately same-named C++ namespace.\r\n\r\nFor example, the following code fails to compile, resulting with an error of \"redefinition of 'CFHash' as different kind of symbol\":\r\n\r\n//--- begin code snippet ---\r\n#import <CoreFoundation/CoreFoundation.h>\r\nnamespace CFHash {\r\n\tclass SHA512 {\r\n\t};\r\n}\r\n//--- end code snippet ---\r\n\r\nGiven that renaming the CFType functions would be impossible without API breakage, is there a possibility to add a #define to control renaming of these function calls to a less common name, or even completely skipping their declarations?\r\n\r\nPerhaps something similar to the __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES found in AssertMacros.h would be helpful.\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nExpected Results:\r\nThe above code snippet compiles without a compile error.\r\n\r\nActual Results:\r\nclang errors with:\r\n\r\n/Users/falken/src/ColdFusion/tests/main.cpp:2:11: error: redefinition of 'CFHash' as different kind of symbol\r\nnamespace CFHash {\r\n          ^\r\nIn file included from /Users/falken/src/ColdFusion/tests/main.cpp:1:\r\nIn file included from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/CoreFoundation.framework/Headers/CoreFoundation.h:38:\r\n/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/CoreFoundation.framework/Headers/CFBase.h:630:12: note: previous definition is here\r\nCFHashCode CFHash(CFTypeRef cf);\r\n           ^\r\n1 error generated.\r\n\r\n\r\nVersion:\r\nXcode 7.3.1 (7D1014), OS X 10.11 SDK, OS X 10.11.4\r\n\r\nNotes:\r\nSince the CFHash() function does not conflict with a C++ namespace at link time, one workaround is to use a preprocessor #define to rename the CFHash() function to something else, then include the header.\r\n\r\nFor example, the following code compiles without issue:\r\n\r\n#define CFHash __Apple_CFHash\r\n#import <CoreFoundation/CoreFoundation.h>\r\n#undef CFHash\r\nnamespace CFHash {\r\n\tclass Test {\r\n\t};\r\n}\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: mtedder@coldfusion.co.jp
+    modified: "2016-05-13T10:39:41.99495Z"
+    number: "26262112"
+    number_intvalue: 26262112
+    originated: 13-May-2016 01:47 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: "10.11"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CFType functions prevent same-named C++ namespace creation

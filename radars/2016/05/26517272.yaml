@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26517272"
+    labels:
+        datastore_id: "6122695695532032"
+data:
+    classification: UI/Usability
+    created: "2016-05-27T15:21:55.64816Z"
+    description: "This is a duplicate of rdar://26408174\n\nThe page in question:\r\nhttp://help.apple.com/deployment/osx/#/ior5df10f73a\r\n\r\nI've done some testing for deploying OS X pkgs(third party) over the last few days and found through trial and error that much of the documentation for the manifest file needed by the MDM InstallApplication command is not accurate. Particularly with what's required and what is optional. \r\n\r\n1. \r\nmd5 hash size: Must be 10 MB chunks\r\nmd5 hash for each chunk: The hash for each 10 MB chunk\r\n\r\n\"Must\" be is not accurate. In my tests, the application was always downloaded as long as the md5-size key matched the hash for the specified size. \r\n\r\n2.\r\n       <!-- required. the download kind. -->\r\n       <key>kind</key>\r\n       <string>software</string>\r\n       <key>sizeInBytes</key>\r\n       <string>26613453</string>\r\n\r\nThis can be safely ommitted. In fact, the entire <key>metadata</key> part of the plist appears to be optional. \r\nIf metadata is added, then the user gets the launchpad animation and bouncing dock icon, but the pkg installs safely in the background with no metadata provided. \r\n\r\n3. \r\n<key>metadata</key>\r\n      <dict>\r\n       <!-- required -->\r\n       <key>bundle-identifier</key>\r\n       <string>com.example.myapp</string>\r\n       <!-- optional (software only) -->\r\n       <key>bundle-version</key>\r\n       <string>1.0</string>\r\n       <key>items</key>\r\n       <array>\r\n              <dict>\r\n              <key>bundle-identifier</key>\r\n              <string>com.example.myapp-unique</string>\r\n              <key>bundle-version</key>\r\n              <string>1.7.4</string>\r\n              <dict>\r\n       </array>\r\n\r\nI've already mentioned that they keys in metadata are optional, but even if present, the information supplied in bundle-identifier and bundle-version can have any value. Nothing is checked by the client here, and the client."
+    email: bruienne@gmail.com
+    modified: "2016-05-27T15:21:55.64837Z"
+    number: "26517272"
+    number_intvalue: 26517272
+    originated: 27-May-2016 11:21 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Documentation
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Install content wirelessly page is misleading

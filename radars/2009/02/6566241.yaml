@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6566241"
+    labels:
+        datastore_id: "4414"
+data:
+    classification: Enhancement
+    created: "2009-02-07T14:29:09.833144Z"
+    description: "07-Feb-2009 06:27 AM Andrew Thompson:\r\nSummary:\r\n\r\nThe function objc_setClassHandler was deprecated in Mac OS X 10.5 with no replacement.\r\n\r\nSteps to Reproduce:\r\n\r\nCreate a Nib file with an NSButton in it, set the button's class to MyButton.\r\nLoad the Nib file\r\n\r\nExpected Results:\r\n\r\nCallback to allow developer to generate MyButton class dynamically.\r\n\r\nThe intention of objc_setClassHandler was to allow a developer to register a callback that would be called when Objective C tried to load a class.\r\n\r\nThis allowed a developer to dynamically create classes on demand when requested by the Objective C runtime, and followed the general design of Objective C which allows developers to catch errors before they happen and take some appropriate action. i.e. it is analogous to the commonly used mechanism whereby a message sent to a class that doesn't respond to it can be intercepted and forwarded.\r\n\r\nActual Results:\r\n\r\nObjective C runtime prints error message to console about not being able to find class:\r\n\r\n2009-01-31 14:49:12.247 SampleProject[81004:10b] Unknown class MyButton in Interface Builder file.\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\nThe direct motivation here is to be able to use InterfaceBuilder with languages other than Objective C - Java etc. The specific request was from a developer who wants to be able to create MyButton in Java. When the NIB file is loaded, a callback would allow us to intercept the call for the missing class and use the APIs objc_allocateClassPair, class_addMethod and objc_registerClassPair etc. to dynamically create a bridge class that will proxy communication between Objective C and Java.\r\n\r\nobjc_setClassHandler would achieve that, though I can see you might have deprecated it because it was a bit too basic. Ideally a replacement API would give us more information about the class to be created - e.g. its superclass would be a very handy thing to know."
+    email: lordpixel@mac.com
+    modified: "2011-08-28T05:48:09.112425Z"
+    number: "6566241"
+    number_intvalue: 6566241
+    originated: 07-Feb-2009 06:27 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.6/9G55
+    reproducible: Always
+    resolved: 28-Apr-2009
+    status: Behaves correctly
+    title: objc_setClassHandler deprecated, need replacement

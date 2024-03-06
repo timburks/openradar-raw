@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29103196"
+    labels:
+        datastore_id: "6113600481525760"
+data:
+    classification: Serious Bug
+    created: "2016-11-04T01:42:41.89558Z"
+    description: "Summary:\r\nThe test app attached includes 2 frameworks I've built. The frameworks are copied using a copy files phase into the Frameworks directory of the app. I have the following app delegate code:\r\n\r\n    #import \"AppDelegate.h\"\r\n    @import ObjectiveC;\r\n\r\n    @implementation AppDelegate\r\n\r\n    - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {\r\n        [[NSBundle allFrameworks] enumerateObjectsUsingBlock:^(NSBundle *framework, NSUInteger idx, BOOL *stop) {\r\n            unsigned int count = 0;\r\n            __unused const char** classes = objc_copyClassNamesForImage([[framework executablePath] UTF8String], &count);\r\n            NSRange inFramework = [framework.executablePath rangeOfString:@\".app/Frameworks\"];\r\n            if (inFramework.length > 0) {\r\n                NSLog(@\"Framework %@, classes: %i\", framework.executablePath.lastPathComponent, count);\r\n            }\r\n        }];\r\n        return YES;\r\n    }\r\n\r\n@end\r\n\r\nWhich prints out the frameworks from the Frameworks directory and the number of classes contained in each. \r\n\r\nWhen I run this code in the simulator I get the following results:\r\n\r\n    2016-11-04 12:02:17.682 RuntimeTest[54326:623229] Framework PEGKit, classes: 24\r\n    2016-11-04 12:02:17.707 RuntimeTest[54326:623229] Framework StoryTeller, classes: 10\r\n\r\nHowever when I run it on a device I get:\r\n\r\n    2016-11-04 12:07:04.215417 RuntimeTest[1035:365233] Framework PEGKit, classes: 0\r\n    2016-11-04 12:07:04.254946 RuntimeTest[1035:365233] Framework StoryTeller, classes: 0\r\n\r\nThe device is an iPhone 7 with iOS 10.1. I'm pretty sure that this code has worked in the past and it appears that `objc_copyClassNamesForImage` is somehow broken.\r\n\r\nMy working theory is that this could be some 10.1 bug. Or perhaps something that is set/not set in the build properties.\r\n\r\nSteps to Reproduce:\r\n1. Open the test app.\r\n2. run the app. \r\n3. Examine console output.\r\n4. Compare simulator results to device results.\r\n\r\nExpected Results:\r\nBoth frameworks are listed with their correct number of classes.\r\n\r\nActual Results:\r\nIn simulator the numbers are correct. On the device the console shows 0 classes in both frameworks.\r\n\r\nVersion:\r\nOS X 10.12\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nXcode 8.1 GM, iPhone 7 with 10.1\r\n\r\nAttachments:\r\n'RuntimeTest.zip' was successfully uploaded."
+    email: d4rkf1br3@gmail.com
+    modified: "2016-11-04T01:42:41.89579Z"
+    number: "29103196"
+    number_intvalue: 29103196
+    originated: 04/11/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "10.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: objc_copyClassNamesForImage not working on device

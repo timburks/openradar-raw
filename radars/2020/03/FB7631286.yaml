@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7631286
+    labels:
+        datastore_id: "4982440653225984"
+data:
+    classification: Unexpected Behavior
+    created: "2020-03-18T21:01:59.331368Z"
+    description: "UICollectionView.reloadItems(at:) is broken. Causes strange reloading of the same cell multiple times for different index paths.\r\n\r\niPhone Pro Max Simulator\r\nXcode 11.3\r\nmacOS 10.14.4\r\n\r\nSteps to repro:\r\n1. Run the attached project on iPhone 11 Pro Max Simulator.\r\n2. We call `self.collectionView.reloadItems(at: [IndexPath(item: 2, section: 0)])`\r\n\r\nExpected: Only a single index path is reloaded.\r\n\r\nActual: 4 index paths are reloaded.\r\n```\r\n<CollectionViewMayhem.FooCell: 0x7fe7f5606e10; baseClass = UICollectionViewCell; frame = (60.6667 0; 50 50); layer = <CALayer: 0x600001b488e0>>, [0, 1]\r\n<CollectionViewMayhem.FooCell: 0x7fe7f5606e10; baseClass = UICollectionViewCell; frame = (0 0; 50 50); hidden = YES; layer = <CALayer: 0x600001b488e0>>, [0, 0]\r\n<CollectionViewMayhem.FooCell: 0x7fe7f5606e10; baseClass = UICollectionViewCell; frame = (121.333 0; 50 50); hidden = YES; layer = <CALayer: 0x600001b488e0>>, [0, 2]\r\n<CollectionViewMayhem.FooCell: 0x7fe7f5606e10; baseClass = UICollectionViewCell; frame = (121.333 0; 50 50); hidden = YES; layer = <CALayer: 0x600001b488e0>>, [0, 2]\r\n```\r\n\r\nThe workaround is to just use `reloadData()` but that's not ideal.\r\n\r\nPlease let me know if you have any questions. Thanks!\r\n\r\nHere's the sample code:\r\n\r\n++++++++++\r\n\r\nimport UIKit\r\n\r\nclass FooCell: UICollectionViewCell {}\r\n\r\nclass ViewController: UIViewController, UICollectionViewDataSource {\r\n\r\n    @IBOutlet var collectionView: UICollectionView!\r\n\r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n        collectionView.register(FooCell.self, forCellWithReuseIdentifier: \"Foo\")\r\n        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {\r\n            print(\"Reloading\")\r\n            self.collectionView.reloadItems(at: [IndexPath(item: 2, section: 0)])\r\n        }\r\n    }\r\n\r\n    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {\r\n        return 3\r\n    }\r\n\r\n    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {\r\n        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: \"Foo\", for: indexPath)\r\n        print(\"\\(cell), \\(indexPath)\")\r\n        return cell\r\n    }\r\n}"
+    email: servidionicholas@gmail.com
+    modified: "2020-03-18T21:02:38.479648Z"
+    number: FB7631286
+    number_intvalue: 7631286
+    originated: "2020-03-18"
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: iOS 13
+    reproducible: 100%
+    resolved: ""
+    status: Open
+    title: UICollectionView.reloadItems(at:) is broken. Causes strange reloading of the same cell multiple times for different index paths.

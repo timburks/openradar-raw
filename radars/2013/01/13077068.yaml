@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13077068"
+    labels:
+        datastore_id: "2604402"
+data:
+    classification: Crash
+    created: "2013-01-24T10:07:26.824077Z"
+    description: "Summary\r\nWhen using more than one model file (and one entity is updated to a new version) and merging them at runtime the lightweight migration fails with the error \"Can't find model for source store\" (Cocoa error 134130).\r\n\r\nSteps to Reproduce:\r\nSee attached git project.\r\n\r\n1) git submodule update --init --recursive (Make sure that MagicalRecord is in project)\r\n2) git checkout 04de690\r\n- Launch the app. \r\n- Press the buttons 'Create Person' and 'Create Animal'. This will create a new entity Person and Animal. The objectID of the animal is saved to the person object.\r\n\r\n3) git checkout a8537b4 (A new version of Person entity is created and property lastname is added.)\r\n- Launch the app.\r\n- Debug NSPersistentStoreCoordinator+MagicalRecord.m:78 and inspect the error variable.\r\n- Press the buttons 'Create Person' and 'Create Animal'. When trying to save the animal object, the app crashes because no persistent store could be created.\r\n\r\nExpected Results:\r\nThe migration should work even though the model for the sqlite database file is merged at runtime.\r\n\r\nActual Results:\r\nThe migration fails because the source model couldn't be found. It seems like the merged model doesn't include the old version of the model. Therefore the sqlite database can't be opened.\r\n\r\nRegression:\r\nNo regression testing was done.\r\n\r\nNotes:\r\nWhen putting both entities in one model file, the migration works without changing the Core Data setup code. You can verify this by \r\n1) git checkout 6bd89fc\r\n- Do same steps as above\r\n2) git checkout 68c79de\r\n- Do same steps as above and you will see that the migration works and the Person has the new property 'lastname'."
+    email: matthias.hochgatterer@gmail.com
+    modified: "2013-01-24T10:07:26.825211Z"
+    number: "13077068"
+    number_intvalue: 13077068
+    originated: 24-Jan-2013 11:05 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "6.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Core Data lightweight migration fails when merging models from main bundle

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7237473"
+    labels:
+        datastore_id: "75415"
+data:
+    classification: Serious bug
+    created: "2009-09-19T09:44:40.137168Z"
+    description: "Summary:\r\nLegal C++ code doesn't compile sometimes for template classes.\r\n\r\nSteps to Reproduce:\r\nUsing XCode 3.2 (64 bits), create a vanilla C++ tool project and try to compile the provided toy program (source below).\r\nThe compiler chokes on line 11 on the type traits::int_type with the error message \"error: type 'traits' is not derived from type 'basic_outbuf<charT, traits>'\"\r\n\r\nC++ is complex so I might still be wrong, but this program is taken from the book \"C++ Standard Library, The: A Tutorial and Reference\", and moreover I really had a hard look at the source code.: traits is indeed a type parameter of the class under compiling, and qualifying int_type by this template parameter should be enough for the compiler to defer checking the type at template-instanciation time.\r\n\r\nMoreover, the error message seems to show that the compiler cannot find a type traits in a template 'basic_outbuf<charT, traits>', which is insane.\r\n\r\nExpected Results:\r\nSuccessful compilation.\r\n\r\nActual Results:\r\nCompiler chokes with a difficult to understand error.\r\n\r\nRegression:\r\nOccurs always here. \r\n\r\nNotes:\r\nXCode project attached. Also Source code:\r\n\r\n#include <streambuf>\r\n#include <locale>\r\n#include <cstdio>\r\n\r\ntemplate <class charT, class traits = std::char_traits<charT> >\r\nclass basic_outbuf : public std::basic_streambuf<charT,traits>\r\n{\r\nprotected:\r\n\t/* central output function - print characters in uppercase mode */\r\n\tvirtual traits::int_type overflow (traits::int_type c) {\r\n\t\tif (!traits::eq_int_type(c,traits::eof())) {\r\n\t\t\t// convert lowercase to uppercase\r\n\t\t\tc = std::toupper(c,this->getloc());\r\n\t\t\t// and write the character to the standard output\r\n\t\t\tif (putchar(c) == EOF) {\r\n\t\t\t\treturn traits::eof();\r\n\t\t\t}\r\n\t\t}\r\n\t\treturn traits::not_eof(c);\r\n\t}\r\n};\r\n\r\ntypedef basic_outbuf<char>\toutbuf;\r\ntypedef basic_outbuf<wchar_t> woutbuf;\r\n\r\nint main()\r\n{\r\n\toutbuf ob;\t\t\t\t\t//create special output buffer\r\n\tstd::ostream out(&ob);\t\t// initialize output stream with that output buffer\r\n\tout << \"31 hexadecimal: \" << std::hex << 31 << std::endl;\r\n}"
+    email: jdmuys@gmail.com
+    modified: "2011-08-28T05:44:28.869882Z"
+    number: "7237473"
+    number_intvalue: 7237473
+    originated: 2009/09/19
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X Snow Leopard
+    product_version: GCC 4.2 C++ compiler
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: GCC wrongly reports an unknown type in a template class

@@ -1,0 +1,59 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19850344"
+    labels:
+        datastore_id: "6347119111700480"
+data:
+    classification: Serious Bug
+    created: "2015-02-16T20:56:33.676353Z"
+    description: |-
+        Summary:
+        In Swift, you can correctly overload a function based upon the type signature of a closure parameter, but that doesn’t work when the parameter is an object.
+
+        Steps to Reproduce:
+        Attempt to compile the following code:
+        class Realm {
+            func f(block: (() -> Void)) {
+                block()
+            }
+
+            func f(block: ((Realm) -> Void)) {
+                block(self)
+            }
+        }
+
+        Realm().f {
+            println("no args")
+        }
+
+        Realm().f { realm in
+            println("realm: \(realm)")
+        }
+
+        Expected Results:
+        The code compiles
+
+        Actual Results:
+        At the second invocation of Realm().f, there’s an “Ambiguous use of ‘f’” compiler error
+
+        Regression:
+        N/A
+
+        Notes:
+        This overloading works if the second definition of f were as follows:
+        func f(block: ((Int) -> Void)) {
+                block(0)
+            }
+    email: segiddins@gmail.com
+    modified: "2015-02-16T20:56:33.676531Z"
+    number: "19850344"
+    number_intvalue: 19850344
+    originated: 16-Feb-2015 12:55 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-6.3-Beta (6D520o)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode-6.3-Beta (6D520o): Unable to overload function on a closure parameter that has an optional obejct parameter'

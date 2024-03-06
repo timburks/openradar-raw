@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24046919"
+    labels:
+        datastore_id: "4950687905480704"
+data:
+    classification: Serious Bug
+    created: "2016-01-04T22:14:58.14838Z"
+    description: "Summary:\r\nIf you handle touches with touchesMoved: when a MTKView is displayed, and use multi-touch with a pencil, touches seem to get queued up and delivered much later than when they are recorded. Using the pencil or a finger by itself doesn't reproduce this, but using the pencil and holding (or moving) one or more fingers simultaneously triggers the behavior reasonably often. It doesn't occur every time you do this, but on a dozen or so tries it reliably happens. The queueing gets worse and worse with a continuous pencil touch, so touches get further and further behind real-time until they are multiple seconds behind if you keep drawing. This doesn't seem reproducible if you are not using a Metal powered view (MTKView).\r\n\r\nI'm measuring the lag in the TouchLag sample app using the following code in touchesMoved:\r\nlet now = NSProcessInfo.processInfo().systemUptime\r\nlet lag = touch.timestamp - now\r\n\r\nTypical numbers are:\r\n-0.0127476250054315\r\n-0.00874762499006465\r\n-0.0037476250436157\r\nWhen things go bad numbers look like:\r\n-1.1807324999827\r\n\r\nSteps to Reproduce:\r\n1. Open TouchLag app.\r\n2. Install on iPad Pro w/ Pencil\r\n3. Run TouchLag app.\r\n4. Touch with one or more fingers, and then draw with the Pencil.\r\n5. Draw for a while with the Pencil.\r\n6. Remove fingers and Pencil.\r\n7. Repeat steps 4-6 while watching the log.\r\n\r\nThe app prints the lag as described above.\r\n\r\n\r\nExpected Results:\r\nNormally the numbers printed in touchesMoved: will be < 0.02\r\nThey should always be that small, even with multiple fingers and a Pencil touching and moving.\r\n\r\nActual Results:\r\nEvery so often (you may need to try many dozens of times or more), the numbers will start to grow. They'll start out small, and then grow without bound. The longer you draw a continuously in this state the worse the numbers get. The event queue will end up delivering touches 10 seconds or more later than they were recorded. It never happens with a single touch, only with multi-touch. More fingers seem better to reproduce this, but I've seen it frequently with only one finger and the Pencil. Sometimes it's easy to reproduce, and sometimes I try for a while before it occurs. I can reproduce it in my full application more reliably, but I can't figure out why. It's definitely reproducible, if somewhat less often, in the simple application included.\r\n\r\n\r\nVersion:\r\niOS 9.2 13C75\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPad Pro 128GB + Pencil"
+    email: twobitbear@twobitbear.com
+    modified: "2016-01-04T22:14:58.14875Z"
+    number: "24046919"
+    number_intvalue: 24046919
+    originated: 4/1/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 9.2 13C75
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Touch events sometimes "queue" up with multi-touch, a pencil, and a Metal powered view

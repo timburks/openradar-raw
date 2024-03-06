@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15369614"
+    labels:
+        datastore_id: "5804130756984832"
+data:
+    classification: Enhancement
+    created: "2013-11-01T08:56:36.085757Z"
+    description: "Summary:\nOn Mavericks, it is not anymore possible to efficiently create a linear space floating-point grayscale CIImage. \n\nSteps to Reproduce:\nThis was possible on Mountain Lion and previous OS versions with the following code:\n\nCGColorSpaceRef bwspace = CGColorSpaceCreateDeviceGray();\nCGDataProviderRef provider = CGDataProviderCreateWithCFData((CFDataRef)grayData);\nCGImageRef image = CGImageCreate(w, h, 32, 32, bpr/4, bwspace, kCGImageAlphaNone | kCGBitmapFloatComponents | kCGBitmapByteOrder32Host, provider, NULL, NO, kCGRenderingIntentDefault);\nCGColorSpaceRelease(bwspace);\n// that's the combination of gray device + linear RGB in override that gives correct result.\noutputImage = [CIImage imageWithCGImage:image options:@{kCIImageColorSpace: linearRGBColorspace}];\n\nExpected Results:\n It would previously allow unclamped values with linear scale (gamma = 1.0). \n\nActual Results:\nOn Mavericks, this creates a 'regular' grayscale image with values clamped to [0,1], and a gamma of 2.2.\n\nRegression:\nAll Macs running Mavericks are affected.\n\nNotes:\nThis is a major problem, because linear grayscale images are very useful in image processing. It is still possible to create such an image but it is now required to use RGBA floating-point input data. To put that in perspective, a 20MP grayscale floating-point linear image would take 80MB of RAM. Now, with RGBAf, it requires 320MB to represent the same image in memory, which is both inefficient and cumbersome (can even lead to crash if no more RAM is available)."
+    email: raphael@creaceed.com
+    modified: "2013-11-01T08:56:36.085881Z"
+    number: "15369614"
+    number_intvalue: 15369614
+    originated: 01-Nov-2013 09:56 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: Mavericks 13A603
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Cannot efficiently create 'linear-space' floating-point grayscale CIImage on Mavericks

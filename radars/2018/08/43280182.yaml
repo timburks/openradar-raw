@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "43280182"
+    labels:
+        datastore_id: "6161286085738496"
+data:
+    classification: Bug
+    created: "2018-08-14T11:44:57.32119Z"
+    description: "Area:\r\nSystemConfiguration Framework\r\n\r\nSummary:\r\nCNCopySupportedInterfaces doesn't provide data about the current WiFi network (SSID / BSSID), when the app is build with Xcode 10 beta 5 (10L221o).\r\n\r\nThere are no deprecation warnings in the docs or anything like it.\r\nPreviously this API was briefly disabled in iOS 9 beta, but it was brought back in the final version of iOS 9, so I'm hoping it will be back in the GM iOS 12 as well.\r\n\r\nSteps to Reproduce:\r\n1) Install Xcode 10 beta 5 (10L221o)\r\n2) Add the following code sample to your app:\r\n\r\n- (NSDictionary *)fetchSSIDInfo {\r\n    NSArray *interfaceNames = CFBridgingRelease(CNCopySupportedInterfaces());\r\n    NSDictionary *SSIDInfo;\r\n    for (NSString *interfaceName in interfaceNames) {\r\n        SSIDInfo = CFBridgingRelease(CNCopyCurrentNetworkInfo((__bridge CFStringRef)interfaceName));\r\n        \r\n        if (SSIDInfo.count > 0) {\r\n            break;\r\n        }\r\n    }\r\n    return SSIDInfo;\r\n}\r\n...\r\nNSDictionary *ssidInfo = [self fetchSSIDInfo];\r\nNSString *ssid = ssidInfo[@\"SSID\"];\r\nNSString *bssid = ssidInfo[@\"BSSID\"];\r\n\r\n3) Build the app with Xcode 10 and run on an iOS 12 device (tried on iPad Air 2 with iOS 12 (16A5345f)). The device must be connected to a WiFi network.\r\n\r\nExpected Results:\r\nssid and bssid contain corresponding values.\r\n\r\nActual Results:\r\nssid and bssid are nil. In fact, CNCopySupportedInterfaces only returns an en0 interface.\r\n\r\nVersion/Build:\r\nXcode 10 beta 5 (10L221o)\r\niOS 12 (16A5345f)\r\niPad Air 2 (MNV72RU/A)\r\n\r\nConfiguration:"
+    email: demid.itsk@gmail.com
+    modified: "2018-08-22T07:30:34.76685Z"
+    number: "43280182"
+    number_intvalue: 43280182
+    originated: "2018-08-14"
+    parent_number: '&{NULL_VALUE}'
+    product: SystemConfiguration Framework
+    product_version: iOS 12 (16A5345f)
+    reproducible: Always
+    resolved: YES
+    status: Closed
+    title: CNCopySupportedInterfaces stopped returning WiFi data in iOS 12

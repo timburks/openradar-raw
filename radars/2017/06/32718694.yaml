@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32718694"
+    labels:
+        datastore_id: "4614484089896960"
+data:
+    classification: Suggestion
+    created: "2017-06-12T20:17:45.62499Z"
+    description: "Per https://developer.apple.com/wwdc17/413 (WWDC 2017), you requested feedback from users of dyld_all_image_infos.\r\n\r\nMy team uses dyld_all_image_infos in Crashpad, an out-of-process crash reporter. Crashpad collects a list of modules loaded in a remote process to be used when formulating a crash report, similar to what ReportCrash does. If dyld_all_image_infos is removed, a replacement interface must be provided that, at a minimum, provides the ability to enumerate loaded modules, giving access to their file paths on disk and load addresses in memory. The list of loaded modules should include the main executable, all loaded libraries, and dyld itself. We also need to be able to distinguish between the main executable, dyld, and other modules. In dyld_all_image_infos, we obtain this from the infoArrayCount/infoArray members (noting that the main executable is always at the same index of this array), and in the case of dyld itself, dyldImageLoadAddress and dyldPath.\r\n\r\nAssuming that no changes are made to what dyld maps into memory, this should be sufficient.\r\n\r\nSince we’re a crash reporter, we’re hooked into the Mach exception handling mechanism, and receive a task_t from the kernel. We’re presently able to use this task_t with mach_vm_read() to access dyld_all_image_infos at the appropriate address returned by task_info(…, TASK_DYLD_INFO, …) for the task. As such, we’d need to be able to access any replacement interface using this same task_t. Notably, crash handling happens out of process and a replacement interface that’s restricted to same-process module enumeration would be insufficient for our needs.\r\n\r\nA code reference for what we do: https://chromium.googlesource.com/crashpad/crashpad/+/9be4745be0f7b38d7ea481c81444c4fb18acff4b/snapshot/mac/process_reader.cc#342"
+    email: mark@chromium.org
+    modified: "2017-06-12T20:17:45.62516Z"
+    number: "32718694"
+    number_intvalue: 32718694
+    originated: "2017-06-12"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13db1 17A264c
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'DYLD USAGE: dyld_all_image_infos or equivalent needed for out-of-process crash reporting (WWDC 2017)'

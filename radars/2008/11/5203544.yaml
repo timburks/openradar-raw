@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "5203544"
+    labels:
+        datastore_id: "639"
+data:
+    classification: ""
+    created: "2008-11-19T15:28:00.155858Z"
+    description: "15-May-2007 07:10 AM Dave Dribin:\r\nSummary: \r\nWhen NSURLConnection needs credentials to authenticate a request, it first consults the shared NSURLCredentialStorage.  If no credentials are found, the connection:didReceiveAuthenticationChallenge: delegate method gets called.  The problem is that the if credentials *are* found in the shared credential storage, the delegate has no way of overriding them.  If another app sets credentials in the shared storage, there is no way for my own app to set the credentials to a different username/password\r\n\r\nDiscussion on the macnetworkprog list:\r\n\r\n  <http://lists.apple.com/archives/macnetworkprog//2007/May/msg00021.html>\r\n\r\nThe use case for this is integration with a web-based API protected with HTTP authentication.  A client may need to access multiple user accounts.  Or two competing clients may need to access different accounts.  My app should have complete control of the username and password used in the HTTP authentication.\r\n\r\nSteps to Reproduce: \r\n* In one app, set the default credentials using setDefaultCredential:forProtectionSpace: on the shared NSURLCredentialStorage for a Basic Auth protected URL.\r\n\r\n* In another app, try to accesss the protected URL using NSURLConnection.\r\n\r\nExpected Results: \r\n\r\nIn the second app, the connection:didReceiveAuthenticationChallenge: delegate should get called to allow it to set the username and password.\r\n\r\nActual Results: \r\n\r\nThe username and password are pulled from the shared NSURLCredentialStorage.  The standard Keychain access dialog is presented the user, asking them to allow access by the second app.  If the user replies \"Allow Once\" or \"Allow Always\", then the username/password are pulled from Keychain.  The second app has no way to override this, and thus cannot use a different username/password credential than one already saved.\r\n\r\nRegression: \r\nIt's 100% reproducible.\r\n\r\nNotes: \r\nThe only workaround I've found is to override the behavior of NSURLCredentialStorage by hacking the Obj-C runtime.  The simplest way is to use a category:\r\n\r\n-----\r\nstatic NSMutableDictionary * sDefaultCredentials;\r\n\r\nvoid initializeDefaultCredentials()\r\n{\r\n    sDefaultCredentials = [[NSMutableDictionary alloc] init];;\r\n}\r\n\r\n@implementation NSURLCredentialStorage  (SharedOverride)\r\n\r\n- (NSURLCredential *) defaultCredentialForProtectionSpace: (NSURLProtectionSpace *) protectionSpace;\r\n{\r\n    return [sDefaultCredentials objectForKey: protectionSpace];\r\n}\r\n\r\n- (void) setDefaultCredential: (NSURLCredential *) credential\r\n           forProtectionSpace: (NSURLProtectionSpace *) protectionSpace;\r\n{\r\n    [sDefaultCredentials setObject: credential forKey: protectionSpace];\r\n}\r\n\r\n@end\r\n-----\r\n\r\nThe downside to this is that the original implementation of these methods become inaccesible.  Class posing or method swizzling could solve this, if needed.  But in the end, none of this runtime hacking should be necessary."
+    email: ddribin@gmail.com
+    modified: "2011-08-28T05:51:08.663897Z"
+    number: "5203544"
+    number_intvalue: 5203544
+    originated: 15-May-2007 07:10 AM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Not possible for NSURLConnection to ignore shared NSURLCredentialStorage

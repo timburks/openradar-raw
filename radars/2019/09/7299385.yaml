@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7299385"
+    labels:
+        datastore_id: "4984115422035968"
+data:
+    classification: ""
+    created: "2019-09-20T01:33:38.259883Z"
+    description: "The OSRead* functions from libkern/OSByteOrder.h have undocumented dependencies on aligned reads due to type punning by casting through a pointer:\r\n\r\nOS_INLINE\r\nuint64_t\r\n_OSReadInt64(\r\n\tconst volatile void               * base,\r\n\tuintptr_t                     byteOffset\r\n\t)\r\n{\r\n\treturn *(volatile uint64_t *)((uintptr_t)base + byteOffset);\r\n}\r\n\r\nUsing Xcode 11, this can generate bad code on ARMv7 when building for release.\r\n\r\nhttps://gist.github.com/dmaclach/b10b0a71ae614d304c067cb9bd264336 shows the problem.\r\n\r\nBad codegen:\r\n\r\n             _GPBCodedInputStreamReadDouble:\r\n0000adb4         push       {r4, r7, lr}                                        ; CODE XREF=switch_table_11052+186, switch_table_2c152+374, switch_table_30820+252, switch_table_30bb6+70, switch_table_30cb2+76\r\n0000adb6         add        r7, sp, #0x4\r\n0000adb8         movs       r1, #0x8                                            ; argument #2 for method _CheckSize\r\n0000adba         mov        r4, r0\r\n0000adbc         bl         _CheckSize                                          ; _CheckSize\r\n0000adc0         ldr        r0, [r4]\r\n0000adc2         ldr        r2, [r4, #0x8]\r\n0000adc4         add        r0, r2\r\n0000adc6         adds       r2, #0x8\r\n0000adc8         vldr       d16, [r0]\r\n0000adcc         str        r2, [r4, #0x8]\r\n0000adce         vmov       r0, r1, d16\r\n0000add2         pop        {r4, r7, pc}\r\n                        ; endp\r\n\r\nGood codegen:\r\n _GPBCodedInputStreamReadDouble:\r\n0000adb4         push       {r4, r7, lr}                                        ; CODE XREF=switch_table_11052+186, switch_table_2c152+374, switch_table_30820+252, switch_table_30bb6+70, switch_table_30cb2+76\r\n0000adb6         add        r7, sp, #0x4\r\n0000adb8         movs       r1, #0x8                                            ; argument #2 for method _CheckSize\r\n0000adba         mov        r4, r0\r\n0000adbc         bl         _CheckSize                                          ; _CheckSize\r\n0000adc0         ldr        r0, [r4]\r\n0000adc2         ldr        r2, [r4, #0x8]\r\n0000adc4         add        r0, r2\r\n0000adc6         adds       r2, #0x8\r\n0000adc8         vld1.8     d16, [r0]\r\n0000adcc         vmov       r0, r1, d16\r\n0000add0         str        r2, [r4, #0x8]\r\n0000add2         pop        {r4, r7, pc}\r\n                        ; endp\r\n\r\nApple has sample code showing bad usage of OSRead functions (https://opensource.apple.com/source/IOSCSIParallelFamily/IOSCSIParallelFamily-200.1.1/TestTools/AppleSCSIHBAEmulator/AppleSCSIPDT00Emulator.cpp.auto.html) and code that depends on this is definitely in the wild: https://github.com/emacs-mirror/emacs/blob/master/src/macfont.m#L3131\r\n\r\nWe found this because it broke our Objective-C protocol buffer code on ARMv7: \r\n\r\nhttps://github.com/protocolbuffers/protobuf/compare/master...dmaclach:patch-4"
+    email: dmaclach@gmail.com
+    modified: "2019-09-20T01:33:38.260086Z"
+    number: "7299385"
+    number_intvalue: 7299385
+    originated: Sept 19 2019
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: OSRead* functions from OSByteOrder.h can break on unaligned reads

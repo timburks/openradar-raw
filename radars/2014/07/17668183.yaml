@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17668183"
+    labels:
+        datastore_id: "6110494666522624"
+data:
+    classification: Serious Bug
+    created: "2014-07-17T15:04:06.70845Z"
+    description: "Summary:\r\nI was using AVPlayer to play MP4 and MOV files from a server. Then I changed to playing HLS files with multiple bitrate options. Now, when the video completes the still of the last frame that it leaves on the screen is very distorted. I am using the AspectFill gravity and the playback works great. As I was trying to figure out what was going wrong, I decided to start looking at the presentationSize of the AVPlayerItem by executing\r\nNSLog(@\"Presentation size: (%f,%f)\", self.player.currentItem.presentationSize.width, self.player.currentItem.presentationSize.width);\r\n\r\nin the loadedTimeRanges KVO while the video is buffering and in a notification called for \"AVPlayerItemDidPlayToEndTimeNotification\". During buffering and playback the presentation size is the expected size of 320x320, however the distortion occurs before the AVPlayerItemDidPlayToEndTimeNotification is triggered and inside the notification the presentationSize is 1280x1280. I am not modifying the presentationSize anywhere other than by setting the frame when my AVPlayerView is created.\r\n\r\nSteps to Reproduce:\r\nThe easiest way to reproduce is to download the AVPlayerDemo provided by Apple from https://developer.apple.com/library/ios/samplecode/AVPlayerDemo/Introduction/Intro.html.\r\n\r\nThen, near line 139 of AVPlayerDemoAppDelegate.m, change:\r\nNSURL* URL = [defaults URLForKey:AVPlayerDemoContentURLUserDefaultsKey];\r\nto:\r\nNSURL *URL = [NSURL URLWithString:@\"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8\"];\r\nThis will cause the bipbop HLS demo video to load in the player.\r\nThen scrub all the way until you are near the end and start playing. When the player reaches the end of playback, the presentationSize of the AVPlayerItem changes and the final frame of the video is distorted.\r\n\r\nExpected Results:\r\nI would expect the video to end on the last frame with the exact same visual image as the last frame\r\n\r\nActual Results:\r\nThe video ends and the contents are distorted to a much larger size.\r\n\r\nAdditional information:\r\nJust to give a little more information on something I tried, but didn't work.I tried adding a KVO observer for the presentationSize field of the AVPlayerItem. Then when it actually changed, I tried to set the frame size of the AVPlayerLayer associated with the AVPlayer and AVPlayerItem. The AVPlayerItem documentation (see https://developer.apple.com/library/ios/documentation/AVFoundation/Reference/AVPlayerItem_Class/Reference/Reference.html#//apple_ref/occ/instp/AVPlayerItem/presentationSize) says \"You can also scale the presentation size arbitrarily using the frame property of an AVPlayerLayer object.\" However, after setting the frame of the AVPlayerLayer, the presentationSize of the AVPlayerItem remains unchanged."
+    email: jpswensen@gmail.com
+    modified: "2014-07-17T15:04:06.708694Z"
+    number: "17668183"
+    number_intvalue: 17668183
+    originated: 14-Jul-2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 7.0, 7.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AVPlayerItem.presentationSize modified on end of HLS playback

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39735228"
+    labels:
+        datastore_id: "4943679005392896"
+data:
+    classification: Bug
+    created: "2018-05-04T15:10:41.28384Z"
+    description: "Area:\r\nFoundation\r\n\r\nSummary:\r\n\r\nWhen protocolClasses are defined in URLSessionConfiguration, there's no way to forward the `urlSession(_:taskIsWaitingForConnectivity:)` function.\r\n\r\nSo what happens, for example, is when using a \"Request Logger\" that conforms to URLProtocol, the developer won't get calls to `urlSession(_:taskIsWaitingForConnectivity:)` on the original URLSession.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a URLSessionConfiguration.default with `waitsForConnectivity` enabled.\r\n\r\n2. Create a URLProtocol class for a URLSessionConfiguration that implements required URLSessionDelegate methods and also the optional `urlSession(_:taskIsWaitingForConnectivity:)` method.\r\n\r\n3. Create a URLSession that uses the configuration above.\r\n\r\n4. Define a class to receive URLSessionDelegate methods including the `urlSession(_:taskIsWaitingForConnectivity:)` method\r\n\r\n5. Add breakpoints inside both `urlSession(_:taskIsWaitingForConnectivity:)` methods. (URLProtocol and URLSessionDelegate classes).\r\n\r\n6. Create some request that uses a session with your created URLSessionConfiguration.\r\n\r\n7. Simulate no connectivity on some device running iOS 11.\r\n\r\n8. Trigger your request.\r\n\r\nExpected Results:\r\n\r\nNotice that the debugger stops in your breakpoint inside the URLProtocol class, but won't reach the method on the URLSessionDelegate class.\r\n\r\n`urlSession(_:taskIsWaitingForConnectivity:)` method should be called on the URLSessionDelegate class once the prerequisites are met and a URLProtocol class is able to forward this method.\r\n\r\nActual Results:\r\n\r\n`urlSession(_:taskIsWaitingForConnectivity:)` method is not called on the URLSessionDelegate class once the prerequisites are met.\r\n\r\nVersion/Build:\r\n\r\niOS 11.0+\r\n\r\nConfiguration:\r\n\r\nTested on an iPhone X running iOS 11.3.1 with Airplane mode ON, Wi-Fi and Cellular OFF."
+    email: lilxhk@gmail.com
+    modified: "2018-05-04T15:10:41.28413Z"
+    number: "39735228"
+    number_intvalue: 39735228
+    originated: 04/25/2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 11.0+
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: urlSession(_:taskIsWaitingForConnectivity:) not called when using protocolClasses of URLSessionConfiguration

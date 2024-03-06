@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21927608"
+    labels:
+        datastore_id: "4931816490270720"
+data:
+    classification: Serious Bug
+    created: "2015-07-21T21:09:10.09084Z"
+    description: "Summary:\r\nAn app signed with a Developer ID using Xcode 6 on 10.10 is rejected on 10.11.\r\n\r\nSteps to Reproduce:\r\n1) Download and launch an app signed with a Developer ID on 10.10 using Xcode 6.\r\n\r\nExpected Results:\r\nThe app should launch normally.\r\n\r\nActual Results:\r\nA dialog is presented saying the app is from an unidentified developer. The spctl utility shows “obsolete resource envelope”.\r\n\r\nRegression:\r\nThis is a new issue for OS X 10.11.\r\n\r\nNotes:\r\n\r\nA solution that requires building the app on El Capitan to get a non-obsolete resource envelope presents a problem for the developer:\r\n\r\n• We can’t do builds using Xcode 7 running on 10.11: they will not be accepted by the Mac App Store.\r\n• Customers can run our apps on the 10.11 public beta and encounter bugs which need to be fixed.\r\n\r\nWe end up in a situation where the customer MUST run code from an unidentified developer. For the average customer, this is a bad habit to instill.\r\n\r\nThe full spctl and codesign output is attached below:\r\n\r\n$ spctl --verbose=4 --assess --type execute xScope.app\r\nxScope.app: rejected\r\nsource=obsolete resource envelope\r\n\r\n$ codesign --verify --verbose=4 xScope.app\r\n--prepared:/Users/craig/Downloads/xScope.app/Contents/Frameworks/Sparkle.framework/Versions/Current/.\r\n--validated:/Users/craig/Downloads/xScope.app/Contents/Frameworks/Sparkle.framework/Versions/Current/.\r\n--prepared:/Users/craig/Downloads/xScope.app/Contents/Frameworks/YAML.framework/Versions/Current/.\r\n--validated:/Users/craig/Downloads/xScope.app/Contents/Frameworks/YAML.framework/Versions/Current/.\r\nxScope.app: valid on disk\r\nxScope.app: satisfies its Designated Requirement\r\n\r\n$ codesign --display --requirements - --verbose=4 xScope.app\r\nExecutable=/Users/craig/Downloads/xScope.app/Contents/MacOS/xScope\r\nIdentifier=com.iconfactory.xScope\r\nFormat=bundle with Mach-O thin (x86_64)\r\nCodeDirectory v=20200 size=9886 flags=0x0(none) hashes=487+3 location=embedded\r\nHash type=sha1 size=20\r\nCDHash=863a156f24c0c1c333c8eb1db93ae6b9dfc03d86\r\nSignature size=8516\r\nAuthority=Developer ID Application: The Iconfactory\r\nAuthority=Developer ID Certification Authority\r\nAuthority=Apple Root CA\r\nTimestamp=Jul 8, 2015, 10:37:56 AM\r\nInfo.plist entries=32\r\nTeamIdentifier=RYQWBTQRPT\r\nSealed Resources version=2 rules=12 files=402\r\ndesignated => anchor apple generic and identifier \"com.iconfactory.xScope\" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = RYQWBTQRPT)\r\n\r\n——— — \r\n\r\nResponse:\r\n\r\nWhenever you show output of the spctl command, use --raw. This produces a plist format that contains *all* the information returned by the assessment layer - potentially much more helpful.\r\n\r\nThe functional equivalent of spctl --assess is this:\r\n\r\n$ codesign -vvv --deep --strict /path\r\n\r\nYou need --deep because problems are often in nested code, and without --deep codesign won't fully dive in there and check everything.\r\nThe --strict option is new for 10.11 and enables additional checks (currently about symlinks) that didn't exist before 10.11.\r\n\r\nWe intend that code made on 10.10 should pass Gatekeeper on 10.11 as long as it complies with a few extra checks we added in 10.11. The command lines shown above demonstrate how to investigate such problems.\r\n\r\nThe biggest new restrictions in 10.11 apply to symbolic links - dead links (pointing to nothing) are disallowed, as are links to outside the top bundle (except into /System and /Library). There are some extra checks of Mach-O file formats that shouldn’t matter unless you use non-Xcode tools."
+    email: craig.hockenberry@gmail.com
+    modified: "2015-07-24T15:57:33.48857Z"
+    number: "21927608"
+    number_intvalue: 21927608
+    originated: 21-Jul-2015 02:08 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11 (15A216g)
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: Developer ID signed apps from 10.10 are rejected on 10.11

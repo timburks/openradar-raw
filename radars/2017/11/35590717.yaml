@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35590717"
+    labels:
+        datastore_id: "4943974083067904"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2017-11-16T17:55:01.81574Z"
+    description: "Summary:\r\n\r\nXCode allows code with a @try/@catch block but missing a return value to compile, e.g.:\r\n\r\n```\r\nstatic id invoke() {\r\n  NSArray *array = @[];\r\n\r\n  @try {\r\n    somethingThatThrows();\r\n    return array;\r\n  }\r\n  @catch (NSException *exception) {\r\n    NSLog(@\"Caught %@\", exception);\r\n  }\r\n\r\n  // should fail with a compile error due to missing return stmt, but doesn't\r\n}\r\n```\r\n\r\nLonger example: https://gist.github.com/bnham/b682d69dd2ec4944e599d44197d0beb9\r\n\r\nThis seems to lead to a variety of bad behaviors:\r\n\r\n - Sometimes it segfaults instantly\r\n - Sometimes it segfaults after running a few times\r\n - Sometimes the generated code makes no sense, e.g. a call to objc_catch_end is followed immediately by a constant pool, leading to a crash with EXC_BAD_INSTRUCTION\r\n - Sometimes the same exception is rethrown over and over into the exception handler until the program crashes\r\n\r\nI've attached a sample app showing the problem. On my iOS 11.1 (15B93) iPhone 6S using code build by Xcode 9.1 (9B55), the app segfaults after tapping \"Test Exception Handling\" twice. If add a return statement at the end of the function, it no longer crashes.\r\n\r\nSteps to Reproduce:\r\n\r\nRun the attached app and tap \"Test Exception Handling\" twice.\r\n\r\nExpected Results:\r\n\r\nThe compiler should catch the missing return statement at compile time. It should also not generate exception handling code that crashes.\r\n\r\nActual Results:\r\n\r\nThe compiler doesn't catch the missing return statement at compile time, and the exception handling code crashes.\r\n\r\nVersion/Build:\r\n\r\niOS 11.1 (15B93) / XCode 9.1 (9B55)\r\n\r\nConfiguration:\r\n\r\niPhone 6S"
+    email: ben@nhaminated.com
+    modified: "2017-11-29T15:52:22.93356Z"
+    number: "35590717"
+    number_intvalue: 35590717
+    originated: 11/16/2017
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 9.1 (9B55)
+    reproducible: Always
+    resolved: Duplicate of 12975823
+    status: Closed
+    title: Compiler miscompiles @catch blocks in Objective-C, leading to crashes

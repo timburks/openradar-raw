@@ -1,0 +1,53 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15854781"
+    labels:
+        datastore_id: "6107217472258048"
+data:
+    classification: Serious Bug
+    created: "2014-01-19T15:30:10.520141Z"
+    description: |-
+        Summary:
+        During a drag and drop session of an application being debugged while Xcode is in full-screen mode, if the app pauses in the debugger, you can’t get to Xcode to fix it. This is an OS X issue as much as an Xcode issue, but I don’t expect the circumstances around it happen very often with any other task.
+
+        It appears that the OS does not expect anything to pause or interrupt a dragging session, ever. This makes it extremely difficult to debug drag and drop in my apps using my preferred setup of Xcode in full-screen mode.
+
+        Steps to Reproduce:
+        1. Open an Xcode project that does something with drag and drop.
+        2. Ensure the window is in full screen mode.
+        3. Set a breakpoint that will trigger during the drag, e.g. in -draggingUpdated:; my favourite example of how dangerous this can be is to do something that throws an exception, and have an exception breakpoint.
+        4. Build and run the application.
+        5. Perform the drag and drop such that the breakpoint is triggered.
+
+        Expected Results:
+        I expected the system to switch me to Xcode’s space so that I could see the full-screen mode window for the app and interact with the app in the debugger.
+
+        Actual Results:
+        Instead, the system became basically unusable:
+        1. I cannot open Mission Control.
+        2. I cannot use gestures or configured keyboard shortcuts to move to Xcode’s window.
+        3. If Terminal is open in full-screen mode, or if it’s not currently open but window restoration is on and it was most recently open with a full-screen mode window, then it cannot (easily) be activated to allow you to kill the debug server (cf Notes, below).
+        4. I cannot ⌘⇥ to full-screen applications, including Xcode.
+        5. I cannot kill the app which is being debugged.
+        6. Even after working around this issue (again, cf Notes, below), Mission Control and full-screen apps behave strangely: For example, I cannot reliably activate full-screen apps with ⌘⇥ or by clicking Dock icons until I have selected them manually with Mission Control.
+
+        Regression:
+        This did not occur with 10.6, where there were no full-screen apps but there were Spaces.
+
+        Notes:
+        One workaround for the trigger is to not use Xcode in full-screen mode. This is my usual process, but it is not really a solution; it’s still possible to lock it up without realizing, humans and exceptions being what they are, and ultimately dropping out of full-screen mode for the sake of debugging this is untenable since it doesn’t allow you to properly debug interactions with full-screen apps. (I have not explicitly tested my app in full-screen mode during drag-and-drop, but I would expect similar behaviour.)
+
+        Once the actual lock-up has happened, the only workaround I have found so far is to use Terminal or DTerm (usually DTerm, since my Terminal is full-screen!) to run `killall debugserver`, which results in the app being killed and the system resuming most of its functionality.
+    email: rix.rob@gmail.com
+    modified: "2014-01-19T15:30:10.520269Z"
+    number: "15854781"
+    number_intvalue: 15854781
+    originated: 19-Jan-2014 10:29 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 5.0.2 (5A3005)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Drag and drop breakpoints with full screen Xcode render system unusable

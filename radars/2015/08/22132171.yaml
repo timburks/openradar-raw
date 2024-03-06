@@ -1,0 +1,84 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22132171"
+    labels:
+        datastore_id: "6175121374969856"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-08-04T14:02:15.41423Z"
+    description: |-
+        Summary:
+        On beta 6 of OS X El Capitan, iOS Simulator and interface builder processes crash immediately on startup with a CFPreferences-related trace. This is with both Xcode 6 and Xcode 7 beta 4.
+
+        Steps to Reproduce:
+        On beta 6, start an iPhone Simulator or open a storyboard/xib in Xcode.
+
+        Expected Results:
+        The Simulator starts & the storyboard opens as usual.
+
+        Actual Results:
+        Lots of crashes during startup in internal tools with variants of the following crash log (see attached zip for more):
+
+        Thread 0 Crashed:: Dispatch queue: com.apple.main-thread
+        0   libsystem_pthread.dylib       	0x03bee0ef pthread_mutex_lock + 12
+        1   com.apple.CoreFoundation      	0x027f2f2f CFBundleGetInfoDictionary + 31
+        2   com.apple.CoreFoundation      	0x027fea28 CFBundleGetIdentifier + 24
+        3   com.apple.CoreFoundation      	0x029321cf -[CFPrefsPlistSource _isSharedInTheiOSSimulator] + 271
+        4   com.apple.CoreFoundation      	0x02812367 -[CFPrefsPlistSource createSynchronizeMessage] + 407
+        5   com.apple.CoreFoundation      	0x02933743 __62-[CFPrefsPlistSource createRequestNewContentMessageForDaemon:]_block_invoke + 67
+        6   com.apple.CoreFoundation      	0x02933657 -[CFPrefsPlistSource createRequestNewContentMessageForDaemon:] + 215
+        7   com.apple.CoreFoundation      	0x0292a036 -[CFPrefsSearchListSource createRequestNewContentMessageForDaemon:] + 182
+        8   com.apple.CoreFoundation      	0x0292a25b -[CFPrefsSearchListSource generationCountFromListOfSources:count:] + 139
+        9   com.apple.CoreFoundation      	0x028170ac -[CFPrefsSearchListSource alreadylocked_copyDictionary] + 364
+        10  com.apple.CoreFoundation      	0x0281169c -[CFPrefsSearchListSource alreadylocked_copyValueForKey:] + 60
+        11  com.apple.CoreFoundation      	0x0291566a ___CFPreferencesCopyAppValueWithContainer_block_invoke + 74
+        12  com.apple.CoreFoundation      	0x02928e13 +[CFPrefsSearchListSource withSearchListForIdentifier:container:perform:] + 835
+        13  com.apple.CoreFoundation      	0x029155e6 _CFPreferencesCopyAppValueWithContainer + 182
+        14  com.apple.CoreFoundation      	0x0280a550 CFPreferencesCopyAppValue + 32
+        15  com.apple.Foundation          	0x01f4ee00 -[NSUserDefaults(NSUserDefaults) init] + 1604
+        16  com.apple.Foundation          	0x01f4e0b3 +[NSUserDefaults(NSUserDefaults) standardUserDefaults] + 103
+        17  com.apple.dt.IBFoundation     	0x009635ed -[IBLogAspect initWithName:] + 186
+        18  com.apple.dt.IBFoundation     	0x009634f2 __33+[IBLogAspect logAspectWithName:]_block_invoke_2 + 66
+        19  com.apple.dt.IBFoundation     	0x008e63a6 -[NSMutableDictionary(IBMutableDictionaryAdditions) ib_objectForKey:creatingIfNecessaryWithBlock:] + 89
+        20  com.apple.dt.IBFoundation     	0x00963417 +[IBLogAspect logAspectWithName:] + 143
+        21  com.apple.dt.IBFoundation     	0x0096a12a __IBMessageChannelLogAspect_block_invoke + 47
+        22  libdispatch.dylib             	0x038be41f _dispatch_client_callout + 14
+        23  libdispatch.dylib             	0x038aa917 dispatch_once_f + 83
+        24  libdispatch.dylib             	0x038aa8bf dispatch_once + 31
+        25  com.apple.dt.IBFoundation     	0x00964be3 IBMessageChannelLogAspect + 69
+        26  com.apple.dt.IBFoundation     	0x00964b47 IBMessageChannelInitializeLoggingOnStartup + 19
+        27  dyld_sim                      	0x000a247f ImageLoaderMachO::doModInitFunctions(ImageLoader::LinkContext const&) + 291
+        28  dyld_sim                      	0x000a25d8 ImageLoaderMachO::doInitialization(ImageLoader::LinkContext const&) + 64
+        29  dyld_sim                      	0x0009e741 ImageLoader::recursiveInitialization(ImageLoader::LinkContext const&, unsigned int, char const*, ImageLoader::InitializerTimingList&, ImageLoader::UninitedUpwards&) + 335
+        30  dyld_sim                      	0x0009e6d4 ImageLoader::recursiveInitialization(ImageLoader::LinkContext const&, unsigned int, char const*, ImageLoader::InitializerTimingList&, ImageLoader::UninitedUpwards&) + 226
+        31  dyld_sim                      	0x0009e6d4 ImageLoader::recursiveInitialization(ImageLoader::LinkContext const&, unsigned int, char const*, ImageLoader::InitializerTimingList&, ImageLoader::UninitedUpwards&) + 226
+        32  dyld_sim                      	0x0009e6d4 ImageLoader::recursiveInitialization(ImageLoader::LinkContext const&, unsigned int, char const*, ImageLoader::InitializerTimingList&, ImageLoader::UninitedUpwards&) + 226
+        33  dyld_sim                      	0x0009da94 ImageLoader::processInitializers(ImageLoader::LinkContext const&, unsigned int, ImageLoader::InitializerTimingList&, ImageLoader::UninitedUpwards&) + 104
+        34  dyld_sim                      	0x0009db23 ImageLoader::runInitializers(ImageLoader::LinkContext const&, ImageLoader::InitializerTimingList&) + 79
+        35  dyld_sim                      	0x00093c64 dyld::initializeMainExecutable() + 208
+        36  dyld_sim                      	0x0009718d dyld::_main(macho_header const*, unsigned long, int, char const**, char const**, char const**, unsigned long*) + 3193
+        37  dyld_sim                      	0x00093221 start_sim + 125
+        38  dyld                          	0x8fee02b6 dyld::useSimulatorDyld(int, macho_header const*, char const*, int, char const**, char const**, char const**, unsigned long*) + 1057
+        39  dyld                          	0x8fedef57 dyld::_main(macho_header const*, unsigned long, int, char const**, char const**, char const**, unsigned long*) + 202
+        40  dyld                          	0x8fedb231 dyldbootstrap::start(macho_header const*, int, char const**, long, macho_header const*, unsigned long*) + 427
+        41  dyld                          	0x8fedb047 _dyld_start + 71
+
+
+        Regression:
+        Worked OK on beta 5
+
+        Notes:
+        -
+    email: Karoly.Lorentey@gmail.com
+    modified: "2015-08-04T14:02:15.41455Z"
+    number: "22132171"
+    number_intvalue: 22132171
+    originated: 04-Aug-2015 04:01 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: Mac OS X 10.11 (15A244d)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Mac OS X 10.11 (15A244d): Xcode 6&7 iOS Simulator & Interface Builder crashes on beta 6'

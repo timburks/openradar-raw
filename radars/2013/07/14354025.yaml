@@ -1,0 +1,64 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14354025"
+    labels:
+        datastore_id: "3168405"
+data:
+    classification: Serious Bug
+    created: "2013-07-04T08:59:16.652762Z"
+    description: |-
+        Summary:
+        If I add a child window to a semi-transient popover window, then I can't close the popover anymore by clicking outside of the window.
+
+        Steps to Reproduce:
+        Here is a little snippet to reproduce the problem:
+
+        @interface SMAppDelegate () <NSApplicationDelegate, NSPopoverDelegate>
+
+        @property (assign) IBOutlet NSWindow *window;
+        @property (weak) IBOutlet NSPopover *popover;
+        @property (weak) IBOutlet NSView *popoverView;
+
+        @end
+
+        @implementation SMAppDelegate
+
+        - (IBAction)openPopover:(id)sender {
+        	[self.popover showRelativeToRect:[sender bounds] ofView:sender preferredEdge:NSMinYEdge];
+        }
+
+        - (void)popoverDidShow:(NSNotification *)notification {
+        	// get window of the popover
+        	NSWindow *window = self.popoverView.window;
+        	
+        	// create overlay window
+        	NSWindow *overlayWindow = [[NSWindow alloc] initWithContentRect:window.frame
+        														  styleMask:NSBorderlessWindowMask
+        															backing:NSBackingStoreBuffered
+        															  defer:NO];
+        	
+        	overlayWindow.backgroundColor = [NSColor colorWithCalibratedRed:1.0 green:0.0 blue:0.0 alpha:0.4];
+        	overlayWindow.opaque = NO;
+        	overlayWindow.hasShadow = NO;
+        	
+        	overlayWindow.acceptsMouseMovedEvents = NO;
+        	overlayWindow.ignoresMouseEvents = YES;
+        	
+        	// you can't close the popover if you added a child window
+        	[window addChildWindow:overlayWindow ordered:NSWindowAbove];
+        }
+
+        @end
+    email: stephan.michels@gmail.com
+    modified: "2013-07-04T08:59:16.652896Z"
+    number: "14354025"
+    number_intvalue: 14354025
+    originated: 04-Jul-2013 10:59 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: Mountain Lion
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Can't close a popover window after adding a child window

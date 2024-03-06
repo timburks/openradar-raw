@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26855019"
+    labels:
+        datastore_id: "6137493468479488"
+data:
+    classification: Serious Bug
+    created: "2016-06-17T02:47:33.52539Z"
+    description: "With the new iOS 10 User Notifications framework, one can no longer schedule notifications at a specific date or time that repeats every minute or every hour.\r\n\r\nFor instance, before iOS 10, one could schedule a notification at 7 AM tomorrow that repeats every minute with the following code:\r\n\r\n\tlet dateFlags: NSCalendarUnit = [.Year, .Month, .Day, .Hour, .Minute]\r\n\tlet nowComps = NSCalendar.currentCalendar().components(dateFlags, fromDate: NSDate.init())\r\n\tlet tomorrowComps = nowComps.copy() as! NSDateComponents\r\n\ttomorrowComps.day += 1\r\n\ttomorrowComps.hour = 7\r\n\ttomorrowComps.minute = 0\r\n\tlet dateAt7AMTomorrow = NSCalendar.currentCalendar().dateFromComponents(tomorrowComps)\r\n\r\n\tlet notification = UILocalNotification()\r\n    notification.fireDate = dateAt7AMTomorrow\r\n    notification.alertBody = \"Wake up!\"\r\n    notification.soundName = UILocalNotificationDefaultSoundName\r\n    notification.repeatInterval = .Minute\r\n    UIApplication.sharedApplication().scheduleLocalNotification(notification)\r\n\r\nIn the new framework, one would create a UNCalendarNotificationTrigger with the date components at 7 AM tomorrow, but there is no way to specify that the notification should repeat at a custom interval of every minute because the repeats option is a simple boolean.\r\n\r\n\tlet trigger = UNCalendarNotificationTrigger.init(dateMatchingComponents: tomorrowComps, repeats: true)\r\n\t\r\nUsing a UNTimeIntervalNotificationTrigger wouldn't work either.\r\n\t\r\nThis means that a simple use case such as an alarm that snoozes once every minute cannot be achieved with the new framework.\r\n\r\nIn session 707 of WWDC 2016, iOS Notifications Engineer Kritarth Jain introduced the new User Notifications framework as something with \"feature parity with what exists today, so transferring your code from the existing API to the new framework will be very easy.\"\r\n\r\nHowever, the new framework does not have feature parity with the existing API in terms of scheduling recurring notifications.\r\n\r\nThere is no way for apps to adopt the new User Notifications framework if they rely on NSCalendarUnit to specify a custom repeat interval independent of the trigger date.\r\n\r\nFor reference, the OS X NSUserNotification API introduced in OS X 10.8 features a much better way to specify the recurrence of a notification by separating the deliveryDate from the deliveryRepeatInterval. \r\n\r\nThe deliveryRepeatInterval specifies \"the date components that control how often a user notification is repeated\".\r\n\r\nThis improves on UILocalNotification by not only allowing a notification to repeat every 1 calendar unit, but also every N calendar unit of time.\r\n\r\nA wake up alarm can then repeat every 9 minutes instead of every minute with the OS X API.\r\n\r\nHowever, in the new iOS 10 User Notifications framework, there is no way to achieve either.\r\n\r\nIt's great to see Apple rethinking the notifications framework given that it has not changed since iOS 4. However, dropping support for custom repeat interval is a step backwards.\r\n\r\nA suggestion to adopt feature parity with UILocalNotification would be to change the repeats parameter in both UNCalendarNotificationTrigger and UNTimeIntervalNotificationTrigger from a Bool to a NSCalendarUnit. However, to improve it further, the repeats parameter can become a NSDateComponent similar to OS X NSUserNotification's implementation, which allows for even more flexibility in repeating a notification.\r\n\r\n\tUNCalendarNotificationTrigger.init(dateMatching: DateComponents, repeatInterval: DateComponents)\r\n\tUNTimeIntervalNotificationTrigger.init(timeInterval: TimeInterval, repeatInterval: DateComponents)"
+    email: mail.junjie@gmail.com
+    modified: "2016-06-17T02:47:33.52556Z"
+    number: "26855019"
+    number_intvalue: 26855019
+    originated: 17-Jun-2016 10:46 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 10 Beta 1
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: iOS 10 User Notifications does not allow repeating of notifications at intervals

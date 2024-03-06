@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14698495"
+    labels:
+        datastore_id: "5003357278175232"
+data:
+    classification: Incorrect / Unexpected Behavior
+    created: "2019-08-05T20:13:44.459991Z"
+    description: "According to the documentation here https://developer.apple.com/documentation/swift/string/utf16view, NSString's `length` property should always match Swift string's `utf16.count`. This holds true for every valid UTF16 character, except U+FEFF ('ZERO WIDTH NO-BREAK SPACE').\r\n\r\n\"\\u{FEFF}\".count // 1\r\n\"\\u{FEFF}\".utf8.count // 3\r\n\"\\u{FEFF}\".utf16.count // 1\r\n\"\\u{FEFF}\".unicodeScalars.count // 1\r\nNSString(string: \"\\u{FEFF}\").length // 0   <--- Wrong\r\n\r\nThis mismatch can cause index-out-of-bounds crashes when working with `NSAttributedString` and other `Foundation` string types.\r\n\r\nAttached is a Swift Playground that loops through every `UInt16` value. For each value that's recognized as a valid Unicode scalar, we compare the value of the Swift string's `utf16.count` to `NSString`'s `.length`. If there is a mismatch, which there never should be according to the documentation, then we print out the Unicode hex value of the problematic character. The only character that causes a problem is `U+FEFF`.\r\nhttps://www.icloud.com/iclouddrive/0fuU1zDQSy7tlNTH7Kcf0tBNA#UTF16_Bug"
+    email: kellerbryan19@gmail.com
+    modified: "2019-08-05T20:13:44.460201Z"
+    number: "14698495"
+    number_intvalue: 14698495
+    originated: 08/05/2019
+    parent_number: '&{NULL_VALUE}'
+    product: Foundation
+    product_version: iOS 12
+    reproducible: Yes
+    resolved: No
+    status: Open
+    title: NSString doesn't count U+FEFF as a character when calling `.length`

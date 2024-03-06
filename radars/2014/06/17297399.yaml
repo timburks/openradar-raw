@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17297399"
+    labels:
+        datastore_id: "6404690799493120"
+data:
+    classification: Serious Bug
+    created: "2014-06-13T14:58:31.96861Z"
+    description: "Summary:\r\nI was trying to implement double-dispatching for which I need correct type preservation. But if I'm right this is broken as my dispatch generic function doesn't preserve enough of the type information to perform correct overloading.\r\n\r\nSteps to Reproduce:\r\nPaste the following in a playground:\r\n\r\nclass Base {}\r\nclass Derived : Base {}\r\n\r\nclass Dispatcher {\r\n    \r\n    func dispatch<T: Base>(t: T) {\r\n        // At this point compiler knows that t is an instance of T which *might* be Base or derived from Base.\r\n        // Yet its overload resolution always treats is as Base not as T\r\n        accept(t)\r\n    }\r\n    \r\n    func accept(t: Base) {\r\n        println(\"accept(Base)\")\r\n    }\r\n    func accept(t: Derived) {\r\n        println(\"accept(Derived)\")\r\n    }\r\n    \r\n}\r\n\r\nvar base = Base()\r\nvar derived = Derived()\r\nvar dispatcher = Dispatcher()\r\ndispatcher.dispatch(base)\r\ndispatcher.dispatch(derived)\r\n\r\n\r\nExpected Results:\r\naccept(Base)\r\naccept(Derived)\r\n\r\nActual Results:\r\naccept(Base)\r\naccept(Base)\r\n\r\nVersion:\r\nXcode Version 6.0 (6A215l)\r\nOS X 10.9.3 (13D65)\r\n\r\n\r\nNotes:\r\nI haven't figured out any workaround. I tried explicitly casting \"t\" to \"T\" (\"t as T\") but it didn't help."
+    email: ivan@softwaremarbles.com
+    modified: "2014-06-13T14:58:31.968735Z"
+    number: "17297399"
+    number_intvalue: 17297399
+    originated: "2014-06-13"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode Version 6.0 (6A215l)
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Swift generic function loses type information

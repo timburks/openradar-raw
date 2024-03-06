@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29313386"
+    labels:
+        datastore_id: "4973470274289664"
+data:
+    classification: Serious Bug
+    created: "2016-11-17T18:14:13.55338Z"
+    description: "Summary:\nWhen playing music with MPMusicPlayerController.applicationMusicPlayer(), opening the Control Center displays the correct track info (title, artist, album, album artwork, playback position, and remaining playback time) but using the playback controls does not work as expected.\n\nSteps to Reproduce:\n1. Configure the MPMusicPlayerController.applicationMusicPlayer() and start song playback. Sample code in the context of a view controller:\n\noverride func viewDidLoad() {\n    super.viewDidLoad()\n    MPMediaLibrary.requestAuthorization { (status) in\n        switch status {\n        case .authorized:\n            let musicPlayerController: MPMusicPlayerController = MPMusicPlayerController.applicationMusicPlayer()\n            musicPlayerController.setQueue(with: MPMediaQuery.songs())\n            NSLog(\"About to call prepareToPlay\")\n            musicPlayerController.prepareToPlay(completionHandler: { (error) in\n                guard error == nil else {\n                    let alert = UIAlertController(title: \"Error\", message: \"Error preparing to play. \\(error!.localizedDescription)\", preferredStyle: .alert)\n                    alert.addAction(UIAlertAction(title: \"OK\", style: .default, handler: nil))\n                    self.present(alert, animated: true, completion: nil)\n                    return\n                }\n                NSLog(\"Ready to play\")\n                musicPlayerController.play()\n            })\n            \n        case .denied, .notDetermined, .restricted:\n            let alert = UIAlertController(title: \"Access Denied\", message: \"You need to allow access to the media library.\", preferredStyle: .alert)\n            alert.addAction(UIAlertAction(title: \"Settings\", style: .default, handler: { (action) in\n                UIApplication.shared.open(URL(string:UIApplicationOpenSettingsURLString)!)\n            }))\n            self.present(alert, animated: true, completion: nil)\n        }\n    }\n}\n\n2. Swipe from bottom to open control center\n3. Push the pause button\n\nExpected Results:\nThe MPMusicPlayerController.applicationMusicPlayer() should pause the currently playing song.\n\nActual Results:\nThe song continues to play and the track info displayed in control center changes to a different song.\n\nThere are also problems with the other controls: skip back, skip forward.\n\nThere is also a problem when tapping the album artwork after step 2. It will stop the playing music and open the system Music app.\n\nRegression:\nThese issues exist on iOS 10.1.1.\n\nNotes:\nRemote control commands (e.g. headphone remote) also have similar problems when using MPMusicPlayerController.applicationMusicPlayer()"
+    email: rob@robmaceachern.com
+    modified: "2016-11-17T18:14:13.5536Z"
+    number: "29313386"
+    number_intvalue: 29313386
+    originated: 17-Nov-2016 10:14 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 10.1.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: iOS Control Center doesn't work properly when using MPMusicPlayerController.applicationMusicPlayer()

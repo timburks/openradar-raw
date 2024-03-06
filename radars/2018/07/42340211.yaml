@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "42340211"
+    labels:
+        datastore_id: "4944246436003840"
+data:
+    classification: Other Bug
+    created: "2018-07-18T17:25:13.29184Z"
+    description: "Area:\r\nSomething not on this list\r\n\r\nSummary:\r\n\r\nlibobjc-trampoline.dylib is new in macOS 10.14 (“Mojave”). It’s got a weird symbol table that’s inconsistent with the load commands.\r\n\r\nThe symbol __objc_blockTrampolineEnd_stret, which purports to be in section __TEXT,__text per the symbol table, is at offset 0x3000. This is actually in section __TEXT,__unwind_info.\r\n\r\nI noticed this while testing Crashpad, Google’s crash reporting client, for 10.14 compatibility. The Crashpad crash handler accesses Mach-O images from out of process by reading the crashing process’ memory. It understands the structure of Mach-O images and their symbol tables. Its symbol table reader flags any symbols where there’s a discrepancy between the section that the symbol table says the symbol is in and the section that the symbol is actually in.\r\n\r\nhttps://crashpad.chromium.org/bug/242 tracks the problem on our end.\r\n\r\nAs you can see from the nm invocation below, __objc_blockTrampolineEnd_stret has value 0x3000, and the symbol table says that it’s in __TEXT,__text. However, the otool invocation shows that __TEXT,__text begins at 0x1000 and is length 0x2000, placing 0x3000 one byte outside of this section. 0x3000 is actually the starting address of __TEXT,__unwind_info.\r\n\r\nThis occurs in all three architectures of the fat file.\r\n\r\nI also note that both __objc_blockTrampolineEnd and __objc_blockTrampolineImpl_stret share the same address. This may be fine, but it may also be suspicious.\r\n\r\nlitterbox@litterbox zsh% nm -mp /usr/lib/libobjc-trampolines.dylib\r\n0000000000002000 (__TEXT,__text) external __objc_blockTrampolineEnd\r\n0000000000003000 (__TEXT,__text) external __objc_blockTrampolineEnd_stret\r\n0000000000001000 (__TEXT,__text) external __objc_blockTrampolineImpl\r\n0000000000002000 (__TEXT,__text) external __objc_blockTrampolineImpl_stret\r\n0000000000001020 (__TEXT,__text) external __objc_blockTrampolineStart\r\n0000000000002020 (__TEXT,__text) external __objc_blockTrampolineStart_stret\r\n                 (undefined) external dyld_stub_binder (from libSystem)\r\n\r\nlitterbox@litterbox zsh% otool -l /usr/lib/libobjc-trampolines.dylib\r\n/usr/lib/libobjc-trampolines.dylib:\r\nMach header\r\n      magic cputype cpusubtype  caps    filetype ncmds sizeofcmds      flags\r\n 0xfeedfacf 16777223          3  0x00           6    15        744 0x02100085\r\nLoad command 0\r\n      cmd LC_SEGMENT_64\r\n  cmdsize 232\r\n  segname __TEXT\r\n   vmaddr 0x0000000000000000\r\n   vmsize 0x0000000000004000\r\n  fileoff 0\r\n filesize 16384\r\n  maxprot 0x00000007\r\n initprot 0x00000005\r\n   nsects 2\r\n    flags 0x0\r\nSection\r\n  sectname __text\r\n   segname __TEXT\r\n      addr 0x0000000000001000\r\n      size 0x0000000000002000\r\n    offset 4096\r\n     align 2^12 (4096)\r\n    reloff 0\r\n    nreloc 0\r\n     flags 0x80000400\r\n reserved1 0\r\n reserved2 0\r\nSection\r\n  sectname __unwind_info\r\n   segname __TEXT\r\n      addr 0x0000000000003000\r\n      size 0x0000000000000048\r\n    offset 12288\r\n     align 2^2 (4)\r\n    reloff 0\r\n    nreloc 0\r\n     flags 0x00000000\r\n reserved1 0\r\n reserved2 0\r\n\r\nVersion/Build:\r\n\r\n10.14db4 18A336e"
+    email: mark@chromium.org
+    modified: "2018-07-18T17:25:13.29209Z"
+    number: "42340211"
+    number_intvalue: 42340211
+    originated: "2018-07-18"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.14db4 18A336e
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: libobjc-trampoline.dylib is not a well-formed Mach-O image

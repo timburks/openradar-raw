@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22821196"
+    labels:
+        datastore_id: "5526226441601024"
+data:
+    classification: ""
+    created: "2015-09-23T17:27:18.02621Z"
+    description: "Summary:\r\n`[IKDOMInitializer init]` calls `xmlDeregisterNodeDefault` and `xmlThrDefDeregisterNodeDefault`. This sets global handlers to be called by libxml2 when `xmlFreeDoc` and some other functions are called. `xmlThrDefDeregisterNodeDefault ` sets a global variable that is used when initializing new thread-specific global structures. `xmlDeregisterNodeDefault` is apparently meant to set the callback only in the semi-global state struct belonging the current thread, but due to what appears to be a bug in libxml2, it actually always sets the global variable instead.\r\n\r\nThe callback ITMLKit installs (`IKLibXMLNodeDeregistration`) calls `+[IKDOMNodeData jsNodeDataForNode:create:]`, which throws an Obj-C exception if the document being freed isn't one of IKMLKit's own documents. This makes it effectively impossible to use libxml2 in an application using TVMLKit without a very awkward workaround. I've had to avoid using `xmlDeregisterNodeDefault` when not on the main thread, and set the original callback back when finished to avoid interfering with TVMLKit. The workaround code is below, and currently needs to be replicated everywhere xmlFreeDoc (and possibly some other libxml2 functions) is called:\r\n\r\n```\r\n        xmlDeregisterNodeFunc orig = 0;\r\n        if (xmlIsMainThread())\r\n        {\r\n          orig = xmlDeregisterNodeDefault(0);\r\n        }\r\n        else\r\n        {\r\n          orig = xmlGetGlobalState()->xmlDeregisterNodeDefaultValue;\r\n          xmlGetGlobalState()->xmlDeregisterNodeDefaultValue = 0;\r\n        }\r\n\r\n        xmlFreeDoc(xmlDoc_);\r\n\r\n        if (xmlIsMainThread())\r\n          xmlDeregisterNodeDefault(orig);\r\n        else\r\n          xmlGetGlobalState()->xmlDeregisterNodeDefaultValue = orig;\r\n```\r\n\r\nIt would be preferable for ITMLKit to avoid using these callbacks, or to use them in a library-safe manner (which admittedly could be difficult due to the poor design of libxml2). This could be made easier by patching the bug in `xmlDeregisterNodeDefault`, which is caused by `#undef\txmlDeregisterNodeDefaultValue` being performed before that function's contents in `libxml2/globals.c`.\r\n\r\nSteps to Reproduce:\r\nAttempt to use `xmlFreeDoc` in an app using TVMLKit\r\n\r\nExpected Results:\r\nApp does not crash\r\n\r\nActual Results:\r\nApp crashes with Obj-C exception from surprising source\r\n\r\nVersion:\r\ntvOS 9.0 (13T5347l)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nApple TV TVOS 9.0 Simulator\r\n\r\nAttachments:"
+    email: Rodger.Combs@gmail.com
+    modified: "2015-09-23T17:27:18.02663Z"
+    number: "22821196"
+    number_intvalue: 22821196
+    originated: "2015-09-23"
+    parent_number: '&{NULL_VALUE}'
+    product: tvOS SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: TVML/ITMLKit edits global libxml2 state unsafely

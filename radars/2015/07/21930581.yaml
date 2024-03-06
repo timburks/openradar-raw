@@ -1,0 +1,48 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21930581"
+    labels:
+        datastore_id: "4967722416865280"
+data:
+    classification: Serious Bug
+    created: "2015-07-21T23:03:08.25816Z"
+    description: |-
+        Summary:
+        After enabling iCloud Photo Library. High-resolution images seem mostly accessible, from either Photos.app or through PhotoKit’s requestImageDataForAsset:. However, once the images have been “optimized”, random images will fail to load high resolution versions.
+
+        Steps to Reproduce:
+        1) On a device with photos and videos, enable iCloud Photo Library from Settings.app
+        2) Keep “Optimize Storage” enabled.
+        3) Wait for CPL to finish uploading (and downloading) images.
+        4) Fill up the iOS device to trigger actual image optimization. In my case, I had 16.3 GB free, and I attempted to download 5 ~4.5GB iTunes movies.
+        5) Wait until you get “iPad storage is almost full”
+        6) Cancel any remaining movie downloads. It is ok if you reclaim a lot of space back. In my case, once the free space dropped to zero bytes, I canceled the last movie download, which reclaimed 4.3GB space.
+        7) Go through photos in Photos.app
+        8) On each photo that looks low-resolution, tap “Edit”, or share icon, and attempt to share the photo.
+
+        Expected Results:
+        All photos should be available in high-resolution format when viewing through Photos.app. Editing and sharing the photo should work fine.
+
+        Actual Results:
+        Some photos (many PNG screenshots, in my experience) fail to retrieve high-resolution images. There is no error message. However, if you try and tap “Edit”, you get a “Cannot Download Photo”, “There was an error downloading this photo from your iCloud Photo Library. Please try again later.”. You get another error message if you try and share.
+
+        Regression:
+        Seems to occur mostly on PNG screenshots that were saved on device. On another device (where images were never “forced” to be optimized) the same image also was blurry. However, tapping Share forced a successful download of the image, and from then on was available in high resolution.
+
+        Notes:
+        PhotoKit also has a problem loading this image. requestImageDataForAsset: fails to return the image, and has NO error, no matter what request options are set (this should be a separate bug, IMO). You can observe which photos are “optimized” by plugging the device into OS X, and running Image Capture.app, there will be several images that are not available on device. SOME of those missing images will fail to load successful when requested.
+
+        These kinds of non-sensical syncing issues are what scare people from using promising services like iCloud Photo Library. At the very least if there was some actionable error messaging, it would give us something to do/fix.
+    email: rsattar@gmail.com
+    modified: "2015-07-21T23:03:08.25858Z"
+    number: "21930581"
+    number_intvalue: 21930581
+    originated: 21-Jul-2015 04:02 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iCloud
+    product_version: iCloud Photo Library
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: iCloud Photo Library with "Optimize Storage" enabled fails to load some images

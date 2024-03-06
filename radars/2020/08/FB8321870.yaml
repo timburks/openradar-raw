@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8321870
+    labels:
+        datastore_id: "4961658514440192"
+data:
+    classification: ""
+    created: "2020-08-09T12:17:48.532332Z"
+    description: "UITableView's dequeueReusableCell(withIdentifier:) has a bug when the contentView has a label with the following attributes:\r\n\r\n1. Number of lines to zero\r\n2. Auto Layout constraints\r\n\r\nIn this case, if you try to get the label's intrinsic size, after a certain number of cells the width always returns 65536. This number is 1 more than the maximum value for a UInt16, 65535, but the maximum value of a CGFloat is a lot more so this may just be a strange coincidence.\r\n\r\nI've found you can make the cell's label return an accurate intrinsic size if you call systemLayoutSizeFittingSize on the cell. However, in the \"High Performance Auto Layout talk\", Apple engineer Kasia Wawer advises against calling this frequently, saying \"each time you call this method an engine is being created and discarded. While this is fine for small uses, if you're doing it a lot you can see how it might start to build up over time. So be cautious when calling System Layout Size Fitting Size.\" So this workaround is not ideal.\r\n\r\nSteps to reproduce (I have experienced this on iOS 13.6 and iOS 14 beta, though I imagine it affects other versions):\r\n1. Make a UITableViewCell subclass\r\n2. Add a label as a subview to its content view\r\n3. set the number of lines on the label to zero\r\n4. Add constraints from label to content view (in the example project attached I use top, leading, bottom, trailing so height is not ambiguous, but adding just one constraint seems to lead to same bug e.g. one bottom constraint)\r\n5. Register this cell to the tableview with a reuse identifier\r\n6. in tableView(_:cellForRowAt:) dequeue the cell with this reuse identifier and cast it to your custom cell subclass\r\n7. Print the label's intrinsic size in (_:cellForRowAt:)\r\n8. Set tableView(_:numberOfRowsInSection:) to 1000 (this is an arbitrary number, but on my computer I've found the bug only occurs on cells past 66, perhaps because it starts dequeuing cells instead of making new references, so 1000 should be easily enough to reproduce the bug).\r\n9. Run the app and watch \r\n\r\nExpected results\r\nIntrinsic size to be accurate, as the size is intrinsic so dequeueReusableCell(withIdentifier:) in theory should not have any effect on it. In my project, it should be 41.5 points wide, 20.5 points high.\r\n\r\nWhat you actually saw:\r\nThe intrinsic width of the label becomes 65536.0 as you scroll the tableview, in my case after 66 cells."
+    email: JackGeorgeMarch@gmail.com
+    modified: "2020-08-09T12:17:48.532494Z"
+    number: FB8321870
+    number_intvalue: 8321870
+    originated: 08/09/2020
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: iOS 13.6
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: dequeueReusableCell(withIdentifier:) leads to inaccurate 65536 pt intrinsic width for zero-line labels with Auto Layout constraints

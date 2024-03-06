@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23637848"
+    labels:
+        datastore_id: "6116190900453376"
+data:
+    classification: Feature Request
+    created: "2015-11-20T23:30:04.44723Z"
+    description: "Summary:\r\nCurrently, manual memory allocation in native Swift works by calling UnsafeMutablePointer.alloc(capacity) which returns an UnsafeMutablePointer.\r\n\r\nIn practice, many memory allocators only allocate memory in specific sizes, so the memory we get from UnsafeMutablePointer.alloc(capacity) might actually have a larger capacity than what we asked for. Currently Swift offers no native way to use the actual allocated capacity.\r\n\r\nWhat I'm proposing is that UnsafeMutablePointer offer another method to allocate memory that also returns the actual capacity of the new memory.\r\n\r\nFor example a potential version could look like this:\r\n\r\nextension UnsafeMutablePointer {\r\n    // TODO: find a better name\r\n    static func allocSmart(minimumCapacity: Int) -> (UnsafeMutablePointer<Memory>, Int) {\r\n        // Example implementation using fact that Swift currently uses malloc for memory allocation\r\n        let stride = strideof(Memory)\r\n        let actualCapacity = malloc_good_size(stride * minimumCapacity) / stride\r\n        return (alloc(actualCapacity), actualCapacity)\r\n    }\r\n}\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\nXcode 7.2b4 (7C62b)\r\nApple Swift version 2.1.1 (swiftlang-700.1.101.13 clang-700.1.81)\r\nOS X 10.11.1 (15B42)"
+    email: janoschhildebrand@gmail.com
+    modified: "2015-11-20T23:30:04.4475Z"
+    number: "23637848"
+    number_intvalue: 23637848
+    originated: 21-Nov-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.2b4 (7C62b)
+    reproducible: n/a
+    resolved: ""
+    status: Open
+    title: 'Xcode 7.2b4 (7C62b): [Swift] UnsafeMutablePointer should offer an allocation method that also returns the actual capacity'

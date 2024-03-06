@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25604155"
+    labels:
+        datastore_id: "5009389572325376"
+data:
+    classification: Bug
+    created: "2016-04-07T17:14:33.15085Z"
+    description: "Summary:\r\nXCTest.framework defines an error code `XCTestErrorCodeFailureWhileWaiting` which is documented as follows:\r\n\r\nIndicates that a failure assertion was raised while waiting in `-waitForExpectationsWithTimeout:handler:`.\r\n\r\nHowever, as far as I can tell, this error is not actually produced in this scenario. Instead, when a failure assertion is raised while waiting for expectations, the method continues to wait until the expectation is fulfilled or timeout occurs.\r\n\r\nSteps to Reproduce:\r\n1. Clone the following repository and open the XCTestFailureWhileWaitingBug.xcodeproj project: https://github.com/briancroom/RadarSamples (Note: I have also attached a .zip archive containing this project)\r\n2. Perform a Test action on the XcodeTestFailureWhileWaitingBug scheme. This will execute an XCTestCase subclass with a method which causes a test assertion failure to occur while waiting for expectations.\r\n3. Note the console output printing the error code passed to the handler block provided when waiting for expectations. \r\n\r\nExpected Results:\r\nI would expect that the error passed to the handler has a code of 1, corresponding to `XCTestErrorCodeFailureWhileWaiting`, and that this error would be provided almost immediately.\r\n\r\nActual Results:\r\nInstead, the `-waitForExpectationsWithTimeout:handler:` method continues to wait until the timeout occurs, at which point it calls the handler with the `XCTestErrorCodeFailureWhileWaiting` error code.\r\n\r\nRegression:\r\nI do not know whether this behavior has changed or if it has always behaved this way.\r\n\r\nNotes:\r\nIt is very possible that there are other situations in which this error actually is produced. If that turns out to be the case, it may indicate that the documentation for this error code value should be updated to more clearly explain how it is used. I encountered this issue while working to add the XCTest error constants to swift-corelibs-xctest, and noticing that that library does not currently produce this error either."
+    email: brian.s.croom@gmail.com
+    modified: "2016-04-07T17:14:33.15103Z"
+    number: "25604155"
+    number_intvalue: 25604155
+    originated: 07-Apr-2016
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: XCTest.framework not producing errors with the XCTestErrorCodeFailureWhileWaiting code

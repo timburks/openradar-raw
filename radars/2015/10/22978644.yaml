@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22978644"
+    labels:
+        datastore_id: "6080208335536128"
+data:
+    classification: Other Bug
+    created: "2015-10-05T20:58:38.92781Z"
+    description: "Summary:\r\nThe /usr/bin/login executable sets com.apple.ReportCrash as the task EXC_CRASH handler, but does not set it as the EXC_RESOURCE or EXC_GUARD handler. The user-level crash reporter thus does not receive EXC_RESOURCE or EXC_GUARD exceptions. With no task handler set for these exceptions, for any descendant of the login program, these exceptions are delivered to the host handler, which is com.apple.ReportCrash.Root. Reports for these crashes will thus show up in the root /Library/Logs/DiagnosticReports and will be readable only by root/admin, rather than being stored in the user ~/Library/Logs/DiagnosticReports where they will be readable by the user.\r\n\r\nTerminal.app executes login when establishing its command-line\r\nenvironment, so the exception handlers set for Terminal.app itself\r\n(including EXC_MASK_CRASH, EXC_MASK_RESOURCE, and EXC_MASK_GUARD) are\r\ndiscarded, and then login sets an exception handler only for\r\nEXC_MASK_CRASH.\r\n\r\nBecause of this, the exception handlers will be incompletely set for any program started from Terminal.app, or any program started from an SSH session (sshd also invokes login). EXC_RESOURCE and EXC_GUARD exceptions will not be routed to the user com.apple.ReportCrash for anything started from a Terminal.app window or SSH session, although these exceptions are routed correctly to the user com.apple.ReportCrash for anything started from the GUI environment.\r\n\r\nSteps to Reproduce:\r\nGenerate an EXC_RESOURCE or EXC_GUARD exception from a program descended from /usr/bin/login.\r\n\r\nThe attached test program generates an EXC_GUARD exception. Compile it and run it:\r\n\r\n$ clang++ -g exc_guard_file_descriptor.cc -o exc_guard_file_descriptor\r\n$ ./exc_guard_file_descriptor\r\n\r\nExpected Results:\r\nThe exception should be routed to the user com.apple.ReportCrash, the same as an EXC_CRASH exception. The user ReportCrash should produce a crash report in the user ~/Library/Logs/DiagnosticReports.\r\n\r\nActual Results:\r\nNo task-level EXC_RESOURCE or EXC_GUARD handler is set, so the exception is routed to the host-level EXC_RESOURCE or EXC_GUARD handler, which is the system com.apple.ReportCrash.Root. The root ReportCrash produces a crash report in the root /Library/Logs/DiagnosticReports.\r\n\r\nNote that if the test code from exc_guard_file_descriptor.cc is run from a GUI application not running as a descendant of login, task-level EXC_RESOURCE and EXC_GUARD handlers will be set, and the exception will be correctly routed to the user-level com.apple.ReportCrash, with a crash report produced in the user ~/Library/Logs/DiagnosticReports.\r\n\r\nVersion:\r\n10.11 15A284\r\n\r\nThis bug is present in all previous versions of OS X that define EXC_RESOURCE or EXC_GUARD, back to 10.8. 10.7 and prior are not affected because they define neither EXC_RESOURCE nor EXC_GUARD.\r\n\r\nNotes:\r\nTo fix this bug, change login.c to specify the appropriate exception mask. Based on 10.10.5 system_cmds-643.30.1/login.tproj/login.c, this would involve changing EXC_MASK_CRASH in the task_set_exception_ports() call to be EXC_MASK_CRASH | EXC_MASK_RESOURCE | EXC_MASK_GUARD.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'exc_guard_file_descriptor.cc' was successfully uploaded."
+    email: mark@chromium.org
+    modified: "2015-10-05T20:58:38.92809Z"
+    number: "22978644"
+    number_intvalue: 22978644
+    originated: "2015-10-05"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11 15A284; all since 10.7
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: /usr/bin/login sets an EXC_CRASH handler but not EXC_RESOURCE or EXC_GUARD handlers

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12305923"
+    labels:
+        datastore_id: "1976401"
+data:
+    classification: Serious Bug
+    created: "2012-09-15T02:50:55.440651Z"
+    description: "<Social/SLServiceTypes.h> declares three constants\r\n\r\nSOCIAL_EXTERN NSString *const SLServiceTypeTwitter;\r\nSOCIAL_EXTERN NSString *const SLServiceTypeFacebook;\r\nSOCIAL_EXTERN NSString *const SLServiceTypeSinaWeibo;\r\n\r\nwith no availability attribute, meaning that if they are linked weakly, they don't behave correctly.\r\n\r\nThe following code fails\r\n\r\n#import <Social/Social.h>\r\n\r\n/* Compiled with iOS 6 SDK\r\n * Social.framework weak linked (Optional)\r\n * Run on iOS 5.1 (simulator and device)\r\n * Output is:\r\n * 0x0\r\n * About to crash\r\n * +++ EXC_BAD_ACCESS +++\r\n */\r\n\r\nint main(int argc, char *argv[])\r\n{\r\n\t@autoreleasepool\r\n\t{\r\n\t\tNSLog(@\"%p\", &SLServiceTypeFacebook);\r\n\t\tif (&SLServiceTypeFacebook)\r\n\t\t{\r\n\t\t\tNSLog(@\"About to crash\");\r\n\t\t\tNSString *serviceType = SLServiceTypeFacebook; // crashes here with EXC_BAD_ACCESS (code=2, address=0x0)\r\n\t\t\tNSLog(@\"Not reached %@\", serviceType);\r\n\t\t}\r\n\t}\r\n\treturn 0;\r\n}\r\n\r\nbecause of this incorrect availability.\r\n\r\nThe constants should have a __attribute__((weak_import)) qualifier so that they behave correctly."
+    email: doug@getitdownonpaper.com
+    modified: "2012-09-15T02:50:55.440984Z"
+    number: "12305923"
+    number_intvalue: 12305923
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "6.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SLServicesType don't have correct availability attribute

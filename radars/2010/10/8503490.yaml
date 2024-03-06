@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8503490"
+    labels:
+        datastore_id: "711401"
+data:
+    classification: Serious
+    created: "2010-10-01T19:42:30.203603Z"
+    description: "Summary:\r\n\r\nCertain sizes will cause CATiledLayer to ask for its tiles to be drawn with an incorrect scale and rect. The error appears to be caused by loss of accuracy in floating point calculations. For example, with a size of {width = 4509, height = 7282}, the CATiledLayer will provide CTM scales of [0.124861, 0.249945, 0.499889, 1.000000] instead of [0.125, 0.25, 0.5, 1.0]. \r\n\r\nSteps to Reproduce:\r\n\r\n1. Set a CATiledLayer's size to something like {4509, 7282}. Many other values cause the same behavior.\r\n\r\nExpected Results:\r\n\r\nWhen asked to draw, the CTM's scale be set to a reasonable number like 0.125, 0.25, 0.5, or 1.0.\r\n\r\nActual Results:\r\n\r\nWhen asked to draw, the CTM's scale is a number like 0.124861 instead of 0.125. Additionally, the rect you are asked to draw in is slightly off. This results in the tiles not correctly matching up, usually causing lines (gaps) to appear between rows of tiles.\r\n\r\nRegression:\r\n\r\nI have tested on iOS 4.0 and 4.1, both versions exhibit this problem. This issue arises based on the size of the layer, particularly with larger sizes.\r\n\r\nNotes:\r\n\r\nI have made two minimal changes to the PhotoScroller sample code (http://chrisfarber.net/CATiledLayerBug.zip) that will cause it to show this problem. They are:\r\n1. In the ImageData.plist file, I changed the size of the first photo to {width = 4509, height = 7282} and left all other data the same.\r\n2. In -[TilingView drawRect:] I commented the two lines that would load and draw the tile image. Instead, I added two lines to fill the rect that the image would have been drawn into with solid red.\r\n\r\nFor the first photo that I changed the size of, black lines appear on the screen where there are gaps between the red tiles. The remaining photos whose sizes were not changed do not exhibit this issue as they are being provided correct scales when drawing.\r\n\r\nTo the best of my ability I have not been able to devise a workaround that fully ameliorates this behavior without side effects."
+    email: chris@chrisfarber.net
+    modified: "2011-08-28T05:39:43.058689Z"
+    number: "8503490"
+    number_intvalue: 8503490
+    originated: 01-Oct-2010 03:38 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "4"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CATiledLayer drawing with incorrect scale

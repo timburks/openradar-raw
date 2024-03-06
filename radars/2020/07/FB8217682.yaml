@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8217682
+    labels:
+        datastore_id: "4982143461621760"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2020-07-30T18:23:00.9674Z"
+    description: "When onReceive is used within the body of a ViewModifier, it is not called. I've found a workaround: If I call onAppear (with no arguments) prior to calling onRecieve, it works! (Even though onAppear is documented to have no affect when called with no argument—though I'm unsure why that's an option then.)\r\n\r\nstruct BrokenModifier: ViewModifier {\r\n    func body(content: Content) -> some View {\r\n        content\r\n            .onReceive(Timer.publish(every: 1, on: .main, in: .default).autoconnect()) { _ in\r\n                print(\"This will never print!\")\r\n        }\r\n    }\r\n}\r\n\r\n// Learned workaround from StackOverflow: https://stackoverflow.com/questions/61190398/swiftui-viewmodifier-doesnt-listen-to-onreceive-events\r\nstruct WorkaroundModifier: ViewModifier {\r\n    func body(content: Content) -> some View {\r\n        content\r\n            .onAppear()\r\n            .onReceive(Timer.publish(every: 1, on: .main, in: .default).autoconnect()) { _ in\r\n                print(\"This will print, thanks to the supposed no-op onAppear.\")\r\n        }\r\n    }\r\n}\r\n\r\n\r\nExpected: BrokenModifier, when used, should print every 1 second, just like WorkaroundModifier.\r\nActual: BrokenModifier, when used, never invokes the onReceive closure argument"
+    email: jaden@asana.com
+    modified: "2020-07-30T18:23:00.96755Z"
+    number: FB8217682
+    number_intvalue: 8217682
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI Framework
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: onReceive not invoked in ViewModifier

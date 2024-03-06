@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13103029"
+    labels:
+        datastore_id: "2622401"
+data:
+    classification: Other Bug
+    created: "2013-01-29T08:02:42.312359Z"
+    description: "Summary:\r\n\r\nThe zsh startup file /etc/zshenv alters $PATH using /usr/libexec/path_helper. Since *every* instance of zsh sources /etc/zshenv, $PATH is altered even by non-login shells (e.g., when one runs \"zsh\" from the command-line).\r\n\r\nSteps to Reproduce:\r\n\r\n1. Open a new Terminal window or tab.\r\n2. Prepend a new directory to the $PATH environment variable. For example, run \"export PATH=/usr/local/sbin:${PATH}\"\r\n3. Run a zsh shell that only sources /etc/zshenv and prints $PATH. This can be done by running:\r\n\r\n    /bin/zsh -o NO_RCS -c 'echo $PATH'\r\n\r\nExpected Results:\r\n\r\nNon-login shells should not alter $PATH; they should respect the value of $PATH that they inherit from the parent environment. An instance of zsh started from the command line should therefore have the same value of $PATH as the parent shell had.\r\n\r\nActual Results:\r\n\r\nThe non-login zsh sources /etc/zshenv, which evals \"/usr/libexec/path_helper -s\", which changes $PATH.\r\n\r\nRegression:\r\n\r\nI believe all versions of OS X with zsh have this issue, although I currently cannot verify.\r\n\r\nNotes:\r\n\r\nA similar issue probably exists for bash, since /etc/bashrc also evals path_helper.\r\n\r\nThe simple solution is to run path_helper in /etc/zprofile, which is only sourced by login shells."
+    email: larry.velazquez@gmail.com
+    modified: "2013-01-30T03:06:27.217921Z"
+    number: "13103029"
+    number_intvalue: 13103029
+    originated: 28-Jan-2013 10:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.8.2 (12C60)
+    reproducible: Always
+    resolved: Duplicate
+    status: Closed
+    title: 'OS X 10.8.2: zsh runs path_helper for non-login shells'

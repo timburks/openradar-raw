@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8505850"
+    labels:
+        datastore_id: "704402"
+data:
+    classification: Serious Bug
+    created: "2010-10-02T05:30:37.888685Z"
+    description: "Summary:\r\n\r\nWhen using the Run Shell Script phase in Automator often times one wants to work exclusively on some paths, e.g. the selected Finder items maybe, and do something with those paths. Think renaming them (sidenote: the Rename Finder Items action is pretty much useless anyway). The problem arises when the paths contain characters with ordinal > 128. I'll just let an example speak for itself:\r\n\r\nGiven the path (containing an accented e):\r\n\r\n/some/path/with/accéntedchar\r\n\r\nthe script will see this path as\r\n\r\n/some/path/with/acce\\U0301ntedchar\r\n\r\nThere is no working around this issue unfortunately. My guess would be composed character pairs are wrongfully split. \r\n\r\nSteps to Reproduce:\r\n\r\nUse Automator.\r\n\r\nExpected Results:\r\n\r\nThe shell script should see the path as \r\n\r\n/some/path/with/accéntedchar\r\n\r\nActual Results:\r\n\r\nThe shell script should see the path as\r\n/some/path/with/acce\\U0301ntedchar\r\n\r\nRegression:\r\n\r\nUnknown\r\n\r\nNotes:\r\n\r\nC'mon people. It is 2010 no less. Still so many issues with non ASCII data.\r\nAutomator could be so much more valuable if we had the power to use those shell scripts properly. \r\n\r\n04-Oct-2010 06:45 AM Andre Berg:\r\nI was partially wrong about there being no alternative workaround for this issue. \r\nIn Python at least using the unicodedata module one can convert to other Unicode normalization forms before using these path names in a script. I suspect there exists similar functionality for Perl but for Ruby, since SL uses 1.8 by default, there is no workaround. And I digging further I found out that the HFS filesystem works with decomposed unichar data as prefered format. So the Automator action is not entirely to blame for this. However, the discussion still remains if this should be handled before passing the filenames as text to the inputs of the shell scripts.\r\n\r\n06-Oct-2010 02:57 AM Andre Berg:\r\nIn my testing stage I was passing some paths via Get Specified Text each on their own line. Further along in my original script I was using things like Python's os.path module which for some methods does checks on whether the path exists and refuses to do some processing if it doesn't. In other words, paths are not always treated like pure text. In my Get Specified Text action I had some paths with accented characters in them and even though I copy and pasted the paths directly from the Finder, the os.path module would claim these paths don't exist. By printing the the path strings using Python's unicode_escape codec I saw the path texts were storing the accented characters in decomposed form. \r\n\r\nHowever, just this morning I found one script where all worked well like it was supposed to. Eventually I tracked it down to the working script removing a trailing newline from each path line. \r\n\r\nI should have printed the repr form in my Python script then I would have seen that the text delivered by Get Specified Text was split into multiple lines which where fed to Run Shell Script set to use /usr/bin/python and stdin but keeping the newline character as last character for each line. I guess this would make this bug (that really was none - just my own misinformedness) resolved. \r\n\r\nIn closing a suggestion: I have never developed actions myself so I don't know what facilities already exist, but it would be nice if this behaviour could be mentioned in the Run Shell Script description text (or help if there is such a thing). I guess there are a lot of people that come from AppleScript using Automator and this behaviour is a bit unexpected.\r\n\r\nThanks for getting back to me. If no reply I will mark this bug resolved.\r\n\r\n06-Oct-2010 06:48 PM Andre Berg:\r\nThis issue has been verified as resolved and can be closed."
+    email: andre.bergmedia@googlemail.com
+    modified: "2011-08-28T05:39:42.700896Z"
+    number: "8505850"
+    number_intvalue: 8505850
+    originated: 02-Oct-2010 07:28 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X Automator
+    product_version: 2.1 (247)
+    reproducible: Always
+    resolved: Yes
+    status: Behaves correctly (Closed)
+    title: Automator Shell Script Action Does Not Support Unicode Paths

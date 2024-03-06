@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35826398"
+    labels:
+        datastore_id: "4998688879411200"
+data:
+    classification: Serious Bug
+    created: "2017-12-04T10:39:35.44582Z"
+    description: "Summary:\r\nIn an App released in the Mac App Store, SKReceiptRefreshRequest does not refresh the App’s receipt and does not call either of its delegates. It works only in SandBox and on iOS.\r\n\r\nSteps to Reproduce:\r\nIn a released app on Mac App Store:\r\n1. Create a SKReceiptRefreshRequest\r\n2. Implement its delegate\r\n3. Start the request \r\n4. Wait for delegate callbacks\r\n\r\nExpected Results:\r\n1. One of the two delegate methods should be called eventually:\r\n    a) requestDidFinish(_ request:)\r\n    b) request(_ request:didFailWithError:)\r\n2. The receipt should be refreshed after a) is called\r\n\r\nActual Results:\r\n- Neither of the delegates is called (thus the App is waiting forever)\r\n- The receipt file remains unchanged and is not updated\r\n\r\nVersion:\r\n10.13.2 Beta (17C83a)\r\n\r\nNotes:\r\nWith a development signed App and Sandbox user, the request performs as expected. On iOS it works in Sandbox and Production.\r\n\r\nWorkarounds:\r\n1. Use SKPaymentQueue’s restoreCompletedTransactions(). Problem:\r\n- In Sandbox this however only refreshes the receipt when IAPs were made previously. So when there is no receipt, even after calling restoreCompletedTransactions() there is still no receipt.\r\n2. exit(173). This refreshes the receipt. Problem: The app is forcedly terminated which can lead to data loss, and the user flow is interrupted.\r\n\r\nThe behaviour was observed on 10.13.1 as well as on 10.13.2 betas."
+    email: hannes.oud.dev@gmail.com
+    modified: "2018-02-02T11:31:56.85508Z"
+    number: "35826398"
+    number_intvalue: 35826398
+    originated: 04-Dec-2017 11:39 AM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13.2 Beta (17C83a)
+    reproducible: Always
+    resolved: 04-Dec-2018 08:08 PM
+    status: Closed
+    title: SKReceiptRefreshRequest not working on macOS in production

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7167035"
+    labels:
+        datastore_id: "71420"
+data:
+    classification: Network
+    created: "2009-08-27T06:36:07.499787Z"
+    description: "[ Attachments: See https://issues.alfresco.com/jira/browse/ALFCOM-3321 ]\r\n\r\nAlfresco is an SMB server used by many companies to store their files. Copying files works with all Operating Systems, and works fine with Mac OS X, except when the network is very slow.\r\n\r\nThe uploaded file gets corrupted in this way:\r\n- The beginning of the file (most of it, actually) is filled with zeros.\r\n- The end of the file is fine.\r\n\r\nSteps to reproduce (assuming the server is 192.168.2.3) :\r\n1) On the Mac, reduce the bandwidth with a pipe:\r\nsudo ipfw add pipe 1 ip from me to 192.168.2.3 out\r\nsudo ipfw pipe 1 config bw 56kbit/s\r\n2) Prepare a ~5 MB file (or use the one attached to this bug report)\r\n3) In Mac's Finder, open the server connection dialog\r\n4) Enter smb://192.168.2.3/alfresco\r\n5) A Finder window pops up, showing the server files via SMB\r\n6) Generate some network traffic by launching big file transfers both ways and from the Internet\r\n7) With the mouse, copy the file from the Desktop to the server\r\n8) Compare the original and copied files (hexdump and diff can help to do this)\r\n9) Around 1 time out of 20, the file has been corrupted. Reproduce from step 6 until you get a corruption. At some places with a really slow network, corruption happens nearly every time.\r\n\r\nBug occurs on both Tiger and Leopard. I also reproduced the bug with /bin/cp instead of using the Finder.\r\n\r\n\r\n=== Network packets analysis with Wireshark ===\r\n\r\nI copied the attached file simple.txt while capturing all of the Mac's network traffic by running tcpdump on the Mac. The result is in the attached file bin-cp-patterned-file.pcap.gz\r\nIf you have a look at the attached capture file with Wireshark, you will find that the Mac SMB client behaves strangely, and is sometimes sending zeros instead of real file data. In short:\r\n\r\nFrame #80 to #2335: Copies file data, seems fine.\r\n#2335 to #2837: Jumps from offset 2097152 to offset 2588672 with no obvious reason\r\n#4512: Restarts from scratch, but this time writing zeros instead of file data.\r\n#10705: Still writing the same stream, but suddenly sends real file data instead of zeros.\r\n#11782: Restarts from scratch once again, writing zeros instead of file data.\r\n#19512: Once again, suddenly switches to sending real file data instead of zeros.\r\n\r\nThree things are strange:\r\n- The offset jump\r\n- The fact of restarting the transfer\r\n- The fact of sometimes sending zeros instead of file data"
+    email: nicolas.raoul@gmail.com
+    modified: "2011-08-28T05:45:10.563239Z"
+    number: "7167035"
+    number_intvalue: 7167035
+    originated: 25-Aug-2009 03:57 PM
+    parent_number: "6255159"
+    product: Mac OS X
+    product_version: Tiger, Leopard
+    reproducible: Sometimes
+    resolved: No
+    status: Duplicate/6255159
+    title: File corruption when transfering file via SMB to Alfresco over slow network

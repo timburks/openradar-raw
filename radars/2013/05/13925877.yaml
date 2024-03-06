@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13925877"
+    labels:
+        datastore_id: "2998406"
+data:
+    classification: UI/Usability
+    created: "2013-05-17T19:19:29.500244Z"
+    description: "Summary:\r\nThe IKScannerDeviceView user interface lets the user select a \"Scan To:\" location via a popup menu that includes a certain number of preset locations (Pictures, Documents, Desktop, as well as some applications: iPhoto, Preview, Mail). It also has an \"Other…\" option, which brings up a file open panel where the user can navigate and pick a folder to be used as the Scan To: location.\r\n\r\nIf the IKScannerDeviceView is used inside of a sandboxed application, any of the \"preset\" folder locations will fail to work and result in a \"The selected folder is not writable\" message overlay appearing, unless access to the corresponding location is requested explicitly in the app's entitlements.\r\n\r\nAlso, if the user uses the \"Other…\" location to manually select a folder to scan to, the application will be granted access to this location (via the Powerbox), apparently for the duration of the user's session. The IKScannerDeviceView itself remembers this user-picked location across restarts of the application, but if the computer is restarted, access to the selected location is not preserved and when restarting the application, the user will again be told that the application does not have access to the selected folder.\r\n\r\nSteps to Reproduce:\r\nAttached is the Apple-provided \"Step8\" project files from the ImageKitDemo sample, which has been modified (an Entitlements file was added) for the only purpose of enabling App Sandboxing. No special entitlements rights are requested.\r\n1. Open the project, build and run the application\r\n2. Make sure there is a scanner attached to the system, select it\r\n3. Once the overview scan has completed, click the Scan button\r\n4. The Scan should fail with an overlay appearing with the message \"The selected folder is not writable\"\r\n5. Change the Scan To: location to Other… and select a folder\r\n6. Again, click the Scan button\r\n7. This time, the scan should complete successfully, with the scanned file appearing in the selected folder\r\n8. Restart the computer\r\n9. Reopen the project and run it again\r\n10. Reselect the scanner, where for the overview scan to complete\r\n11. Click the Scan button (the Scan To: location should be the same one that you last selected)\r\n\r\nExpected Results:\r\nIn step 4, preset values, if available, should be granted access. If not possible, then there shouldn't be any preset values — only the \"Other…\" option, forcing the user to select / authorize an output location.\r\nIn Step 11, once a location has been authorized via Powerbox, it should be stored with a security-scoped bookmark such that it continues to be authorized after a computer restart.\r\n\r\nActual Results:\r\nIn step 4, the IKScannerDeviceView preset values are useless and / or a security risk, forcing the app developers to request read / write access in the entitlements file to the application as a whole for them to be useful, let alone the fact that there aren't any entitlements for read/write access the Desktop folder.\r\nIn Step 11, the user will have to reselect a Scan To: location after every restart of his or her computer, which is inconvenient to say the least.\r\n\r\nRegression:\r\n\r\nNotes:"
+    email: eric.trepanier@gmail.com
+    modified: "2013-05-17T19:19:29.500462Z"
+    number: "13925877"
+    number_intvalue: 13925877
+    originated: 17-May-2013
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.8.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: IKScannerDeviceView does not play well with Sandbox

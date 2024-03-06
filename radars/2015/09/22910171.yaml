@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22910171"
+    labels:
+        datastore_id: "4829577645916160"
+data:
+    classification: UI/Usability
+    created: "2015-09-30T04:29:18.52206Z"
+    description: "Summary:\r\nAfter invoking `registerForPreviewingWithDelegate:sourceView:` on a view, the view's `touchesEnded:withEvent:` will get invoked twice instead of once after a long-press.\r\n\r\nSteps to Reproduce:\r\n1. Call `registerForPreviewingWithDelegate:sourceView:` on source view X\r\n2. On the device, long press on view X\r\n3. When releasing view X, its `touchesEnded:withEvent:` method will be called twice\r\n\r\nExpected Results:\r\n`touchesEnded` should only be called once.\r\n\r\nActual Results:\r\n`touchesEnded` called twice in a row.\r\n\r\nLogs as copied from the test project -- note that `touchesBegan` is only called once as expected, but `touchesEnded` is invoked twice. \r\n\r\n2015-09-29 21:17:41.455 TouchTester[43302:4211441] touchesBegan\r\n2015-09-29 21:17:42.307 TouchTester[43302:4211441] touchesEnded\r\n2015-09-29 21:17:42.307 TouchTester[43302:4211441] touchesEnded\r\n\r\n\r\nVersion:\r\niOS 9.0, iOS 9.0.1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 6s\r\n\r\nAttachments:\r\n[Sample code copied below:]\r\n\r\n```\r\n#import \"ViewController.h\"\r\n\r\n@interface TestView : UIView\r\n\r\n@end\r\n\r\n@interface ViewController () <UIViewControllerPreviewingDelegate>\r\n\r\n@end\r\n\r\n@implementation ViewController\r\n{\r\n    TestView *_view;\r\n}\r\n\r\n- (void)viewDidLoad\r\n{\r\n    [super viewDidLoad];\r\n\r\n    _view = [[TestView alloc] initWithFrame:CGRectInset(self.view.bounds, 40, 40)];\r\n    _view.backgroundColor = [UIColor grayColor];\r\n    _view.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;\r\n    [self.view addSubview:_view];\r\n\r\n    [self registerForPreviewingWithDelegate:self sourceView:_view];\r\n}\r\n\r\n- (nullable UIViewController *)previewingContext:(id <UIViewControllerPreviewing>)previewingContext viewControllerForLocation:(CGPoint)location\r\n{\r\n    return nil;\r\n}\r\n\r\n- (void)previewingContext:(id <UIViewControllerPreviewing>)previewingContext commitViewController:(UIViewController *)viewControllerToCommit\r\n{\r\n}\r\n\r\n@end\r\n\r\n@implementation TestView\r\n\r\n- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event\r\n{\r\n    [super touchesBegan:touches withEvent:event];\r\n    NSLog(@\"touchesBegan\");\r\n}\r\n\r\n- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event\r\n{\r\n    [super touchesEnded:touches withEvent:event];\r\n    NSLog(@\"touchesEnded\");\r\n}\r\n\r\n@end\r\n```"
+    email: RichWChan@gmail.com
+    modified: "2015-09-30T04:29:18.52225Z"
+    number: "22910171"
+    number_intvalue: 22910171
+    originated: 29-Sep-2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 9.0, iOS 9.0.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 3D Touch Peek-and-Pop API causes `touchesEnded:withEvent:` to be called multiple times on long press

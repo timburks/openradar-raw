@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "5608163"
+    labels:
+        datastore_id: "2412"
+data:
+    classification: Other Bug
+    created: "2009-01-09T04:44:32.111791Z"
+    description: "vImage_Types.h has the following:\r\n\r\n/*\r\n * This 3x2 matrix is defined to be the same as the CGAffineTransform.\r\n * Some handy functions for creating and manipulating that may be found in CoreGraphics/CGAffineTransform.h.\r\n */\r\ntypedef struct vImage_AffineTransform \r\n{\r\n    float \t\ta, b, c, d;\r\n    float \t\ttx, ty;\r\n}vImage_AffineTransform;\r\n\r\nThis comment is no longer true.  In the 10.5 SDK, CGAffineTransform changed from:\r\n\r\nstruct CGAffineTransform {\r\n    float a, b, c, d;\r\n    float tx, ty;\r\n};\r\n\r\nto\r\n\r\nstruct CGAffineTransform {\r\n    CGFloat a, b, c, d;\r\n    CGFloat tx, ty;\r\n};\r\n\r\nCGFloat is double in 64 bit.  So this will cause real problems if you assume the types are the same, as I was doing.  Happily gcc warned me: \"warning: dereferencing type-punned pointer will break strict-aliasing rules\".\r\n\r\nI propose:\r\n - update the comment\r\n - change vImage_AffineTransform to CGFloat?\r\n - create conversion functions analogous to NSSizeToCGSize()\r\n\r\n\r\n\r\n21-Nov-2007 07:15 AM Sean McBride:\r\nI guess because of binary compatibility, you can't just change vImage_AffineTransform at this point.  That's a pity.  In that case, I'd suggest:\r\n\r\n1) provide a new API to convert between the two, analogous to NSSizeToCGSize(). Since me, and probably others, are currently casting the two types.\r\n2) update the comments in the header about vImage_AffineTransform and CGAffineTransform/NSAffineTransformStruct being the same, point to the new function.\r\n\r\nHere is my sample implementation:\r\ninline vImage_AffineTransform NSAffineTransformStructTovImage_AffineTransform(NSAffineTransformStruct src)\r\n{\r\n#ifdef __LP64__\r\n\tvImage_AffineTransform dst;\r\n\tdst.a = (float)src.a;\r\n\tdst.b = (float)src.b;\r\n\tdst.c = (float)src.c;\r\n\tdst.d = (float)src.d;\r\n\tdst.tx = (float)src.tx;\r\n\tdst.ty = (float)src.ty;\r\n\treturn dst;\r\n#else\r\n\tunion TempUnused {CGAffineTransform cg; NSAffineTransformStruct ns; vImage_AffineTransform vi;};\r\n\treturn ((union TempUnused *)&src)->vi;\r\n#endif\r\n}"
+    email: sean.mcbride42@gmail.com
+    modified: "2011-08-28T05:50:48.235823Z"
+    number: "5608163"
+    number_intvalue: 5608163
+    originated: 19-Nov-2007 11:31 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: vImage_AffineTransform no longer matches CGAffineTransform, 64 bit booby trap

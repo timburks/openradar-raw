@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30186445"
+    labels:
+        datastore_id: "4934326479224832"
+data:
+    classification: Important
+    created: "2017-01-25T19:55:30.21088Z"
+    description: "Summary:\r\nAfter properly scheduling a background refresh for every hour, the task for the refresh doesn't seem to be firing and the completion is never called.  This means that the watch app information is never refreshed unless it is quit and restarted.\r\n\r\nSteps to Reproduce:\r\n1) Install Xcode\r\n2) Open project\r\n3) Schedule a refresh using scheduleBackgroundRefreshWithPreferredDate provided by WKExtension.  This is scheduled in the applicationDidBecomeActive function int the ExtensionDelegate.\r\n4) Run the project on an apple watch (not simulator), with watchOS 3.0.\r\n5) After building and running the project, the logs show that the background refresh has been scheduled.\r\n6) Return to watch face.\r\n7) Drop wrist so that app is backgrounded.\r\n8) Keep it backgrounded for as long as the refresh task is scheduled for.\r\n\r\nExpected Results:\r\nAfter the amount of time has passed that it is time for the scheduled refresh, the task should be fired and received by \"- (void)handleBackgroundTasks:(NSSet<WKRefreshBackgroundTask *> *)backgroundTasks\".  After it is received the completion should be called so that background refresh task is run and the data in the app is updated when it is next opened.\r\n\r\nActual Results:\r\nThe refresh task is never fired from what can be seen on the logs, even if it's scheduled for 5, 10, or 20 seconds after being backgrounded. the \"-(void)handleBackgroundTasks:(NSSet<WKRefreshBackgroundTask *> *)backgroundTasks\" function is never run. When the app is reopened the data is the same as before and does not include new data.\r\n\r\nVersion:\r\nwatchOS 3.0\r\n\r\nNotes:\r\nIt seems that other people are having the same problem:\r\n https://forums.developer.apple.com/message/202902#202902\r\n\r\n\r\nConfiguration:\r\nThis bug occurs using Xcode 8.2.1 and all version 3.0 of watchOS.  The project is written in objective-c."
+    email: sarah.maclean@cbc.ca
+    modified: "2017-01-25T19:55:30.21116Z"
+    number: "30186445"
+    number_intvalue: 30186445
+    originated: 25-Jan-2017 10:34 AM
+    parent_number: '&{NULL_VALUE}'
+    product: watchOS + SDK
+    product_version: watchOS 3.0
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: WKURLSessionRefreshBackgroundTask is not firing after being registered

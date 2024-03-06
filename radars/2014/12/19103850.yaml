@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19103850"
+    labels:
+        datastore_id: "5841815404019712"
+data:
+    classification: Serious Bug
+    created: "2014-12-01T19:17:21.658562Z"
+    description: "Summary:\r\niOS apps that have extensions frequently need to share data with those extensions. To avoid data corruption, coordinated access is required.\r\n\r\nFortunately iOS provides an API for coordinated access to files, via NSFileCoordinator and NSFilePresenter.\r\n\r\nSadly, these classes are specifically documented as being unsafe for use in this situation, e.g. in TN 2048 at https://developer.apple.com/library/ios/technotes/tn2408/_index.html\r\n\r\nThis is, to say the least, extremely unfortunate. This would seem to be a textbook example of a situation where NSFileCoordinator and NSFilePresenter would be ideal. Nay, it would seem to be the primary purpose for those classes to exist. The documentation for NSFileCoordinator even goes so far as to say that \"...NSFileCoordinator class coordinates the reading and writing of files and directories among multiple processes.\" But actually using it between different processes turns out to not be safe.\r\n\r\nThe tech note explains that \"...you are obliged to write to that container in a coordinated manner to avoid data corruption. However, you must not use file coordination APIs directly for this.\" This kind of documentation makes me sad.\r\n\r\nSteps to Reproduce:\r\n1. Develop an iOS app that has an extension which shares data with the containing app.\r\n2. Use NSFileCoordinator and NSFilePresenter to coordinate data access between the app and its extension.\r\n\r\nExpected Results:\r\nCoordinated access would ensure safe access to data with no other ill effects.\r\n\r\nActual Results:\r\nAttempting to use the file coordination API to coordinate file access may result in deadlocks.\r\n\r\nVersion:\r\nAny version of iOS 8 (8.1.1 is current).\r\n\r\nNotes:\r\nThe fact that this is documented does not make it any less of a bug.\r\n\r\nConfiguration:\r\nAny iOS device\r\n\r\nUpdate:\r\n\r\nTo add to this, WatchKit docs directly contradict the TN, and apparently recommend unsafe behavior.\r\n\r\nWatchKit docs state the following at https://developer.apple.com/library/prerelease/ios/documentation/General/Conceptual/WatchKitProgrammingGuide/DesigningaWatchKitApp.html#//apple_ref/doc/uid/TP40014969-CH3-SW1\r\n\r\n\"Always use file presenters and coordinators to access files in a shared container directory. File presenters and coordinators allow for synchronized access to files and directories. Without them, your WatchKit extension and iOS app might make conflicting changes and corrupt the data they share.\"\r\n\r\nWatchKit apps are a special kind of iOS extension. Tech Note 2048 says the following:\r\n\r\n\"Using file coordination in an app extension to access a container shared with its containing app may result in a deadlock.\"\r\n\r\nExperience with app extensions suggests that the tech note is correct, that deadlocks are likely, and that this is extremely bad advice."
+    email: atomicbird@gmail.com
+    modified: "2014-12-01T20:52:41.678365Z"
+    number: "19103850"
+    number_intvalue: 19103850
+    originated: 01-Dec-2014 12:15 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 8.x
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSFileCoordinator is not safe when developing app extensions

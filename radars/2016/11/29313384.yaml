@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29313384"
+    labels:
+        datastore_id: "5015202860892160"
+data:
+    classification: UI/Usability
+    created: "2016-11-17T18:17:23.78516Z"
+    description: "Area:\r\nContacts\r\n\r\nSummary:\r\nWhen searching for any non-telephone number entry on large LDAP directories conforming to RFC 4517 and E.123, Contacts displays no results (even though there are known to be matches on the directory server).\r\n\r\nSteps to Reproduce:\r\n1a. Add an LDAP account for contacts, using:\r\nSettings -> Contacts -> Accounts -> Add Account -> Other -> Add LDAP Account\r\n1b. Add an RFC 4517 compliant LDAP server with a large number of entries\r\n2a. Open the contacts app\r\n2b. Open the groups section\r\n2c. Select the newly configured LDAP server\r\n2d. Search for a contact; e.g. \"foo\"\r\n\r\nExpected Results:\r\nI expect to see relevant results for the search \"foo\"\r\n\r\nActual Results:\r\nThe contacts app does nothing period of time (a spinning wheel is visible in a portion of the UI), then no results are displayed (even though there are known to be matches on the directory server).\r\n\r\nVersion:\r\nVarious releases of iOS 9, 10.1, 10.2\r\n\r\nNotes:\r\nThe underlying issue appears to be the search filter created by the iOS devices:\r\n(|(o=foo*)(cn=foo*)(ou=foo*)(sn=foo*)(mail=foo*)(IMHandle=foo*)(givenname=foo*)(postalAddress=foo*)(telephoneNumber=foo*))\r\n\r\nSpecifically, the problem appears to lie in the subfilter (telephoneNumber=foo*)\r\n\r\nRFC 4517 (4.2.30 telephoneNumberSubstringsMatch, and E.123 as proxy) specifies an insignificant character handling step to occur on an LDAP servers before processing the search filter. Compliant LDAP servers (Oracle, OpenDS, OpenDJ, UnboundID, etc) handle this by stripping out the non-significant characters from the search filter from telephoneNumber filters.\r\n\r\nIn almost all cases where the underlying search is not a phone number (e.g. the case described where a user searches for \"foo\"), the search filter essentially becomes (on the LDAP backend) this: (telephoneNumber=*)\r\n\r\nThis of course results in all entries being returned, which in a large directory takes some time and returns a large amount of data.\r\n\r\n\r\nConfiguration:\r\nNumerous iOS devices; iPhone 6S, SE, iPad Air 2, etc."
+    email: mathew@eisbox.net
+    modified: "2016-12-21T21:39:10.03151Z"
+    number: "29313384"
+    number_intvalue: 29313384
+    originated: 11/17/2016
+    parent_number: "6415979"
+    product: iOS
+    product_version: 10.x
+    reproducible: Yes
+    resolved: 12/21/2016
+    status: Duplicate/6415979
+    title: Contacts displays no results when searching large RFC 4517 compliant LDAP directories

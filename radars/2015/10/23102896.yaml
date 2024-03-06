@@ -1,0 +1,63 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23102896"
+    labels:
+        datastore_id: "5048676376379392"
+data:
+    classification: Feature (New)
+    created: "2015-10-14T03:51:13.72373Z"
+    description: |-
+        One of my least favorite code smells is deeply nested scopes, and in particular the callback-in-a-callback. There are three problem areas.
+
+        * Error handling. Like the if-success-else-error pattern, it moves the error handling code as far away from the source of the error as possible, which is very difficult to read and follow. The more we nest the callbacks, the worse this error becomes.
+        * Cancellation. Each API has a different way of handling cancellation, and if you're between callbacks, you'll need to add your own cancellation code as well.
+        * It's very difficult to write code with multiple dependencies, e g if you're waiting for task A and B to finish before you can do C. This gets much worse with error handling.
+
+        In short, this is a situation that requires abstraction. A single concept that abstracts the four concepts "a value I will get in the future", error handling, cancellation, and dependencies between asynchronous tasks.
+
+        Both GCD and NSOperationQueue can give you a rather awkward API for working with these four concepts, but they're really models for concurrency rather than for asynchrony. In particular, NSOperation does not abstract “value in the future”. Apple tried to convince us otherwise with the “Advanced Operations” talk this year at WWDC, but I feel like value-in-the-future would be much better served by a Promise class. With a Promise, most iOS, Mac and other framework methods that are asynchronous could return a promise instead of taking two callbacks, and the APIs would be easier to work with and compose. You could still layer NSOperation on top of promises to organize the asynchronous structure of the app.
+
+        Asynchronous APIs that should return promises are animation, network operations, file operations, user interactions, database operations, background processing; basically anything that could take longer than 20ms.
+
+        To me, this is the missing piece in iOS development. KVO gives us generic value change callbacks to ANY iOS code, which is amazingly powerful and allows us to layer even more powerful tools on top of it, like RAC. If Apple incorporated promises into the standard libraries, we could have a way to abstract callbacks altogether throughout the platform, and we could build great tools on top of it.
+
+        I have implemented a promise using a very similar API to what the Task class in C# does. It’s available here: https://github.com/nevyn/SPAsync/blob/master/Swift/Task.swift . It’s roughly this:
+
+        public class Task<T> : Cancellable, Equatable
+        {
+        	public func addCallback(on queue: dispatch_queue_t, callback: (T -> Void)) -> Self
+        	public func addErrorCallback(on queue: dispatch_queue_t, callback: (NSError! -> Void)) -> Self
+        	public func addFinallyCallback(on queue: dispatch_queue_t, callback: (Bool -> Void)) -> Self
+        	public func then<T2>(on queue:dispatch_queue_t, worker: (T -> T2)) -> Task<T2>
+        	public func then<T2>(on queue:dispatch_queue_t, chainer: (T -> Task<T2>)) -> Task<T2>
+        	public func cancel()
+        	class func awaitAll(tasks: [Task]) -> Task<[Any]>
+        }
+
+        public class TaskCompletionSource<T>
+         {
+        	public let task = Task<T>()
+        	public func completeWithValue(value: T)
+        	public func failWithError(error: NSError!)
+        	public func completeWithTask(task: Task<T>)
+        	public func onCancellation(callback: () -> Void)
+        }
+
+        I have a Swift Language User Group presentation on it in text form here: https://github.com/nevyn/SPAsync/blob/master/Meta/SLUG%20Lightning%202015%20notes.txt (will attach video when it’s available)
+
+        The basic API is an “addCallback:onQueue:” method. There is no way to synchronously get the value of the promise: it must be retrieved with a callback, and the callback must be executed on a explicitly defined queue. This way, deadlocks and blocked threads are avoided.
+
+        The advanced API also includes methods for composing an asynchronous tree of tasks. See the presentation for more details.
+    email: joachimb@gmail.com
+    modified: "2015-10-14T03:51:13.72395Z"
+    number: "23102896"
+    number_intvalue: 23102896
+    originated: 13-Oct-2015 08:49 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Foundation should have a Promise/Future class

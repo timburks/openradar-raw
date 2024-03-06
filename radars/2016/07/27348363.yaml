@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27348363"
+    labels:
+        datastore_id: "4957160488304640"
+data:
+    classification: Other Bug
+    created: "2016-07-14T14:01:35.00519Z"
+    description: "Summary:\r\nIn previous versions of macOS, ssh-agent used to remember the passphrases for the keys I added to the keychain with “ssh-add -K <key>”. After a reboot (or logout/login), it automatically picked up the passphrases from the keychain with no extra step.\r\n\r\nIn Sierra, I have to manually poke the agent to recognize there are passphrases on the keychain.\r\n\r\nSteps to Reproduce:\r\n1. Create an ssh key with a passphrase\r\n2. Add its passphrase to the keychain using “ssh-add -K <keyfile>”. It prompts for the passphrase and adds it to the keychain.\r\n3. Enjoy passwordless authentication to GitHub, your servers, etc. (“ssh-add -l” confirms ssh-agent knows about the keys.)\r\n4. Reboot your Mac\r\n5. “ssh-add -l” shows the agent is empty. Applications using SSH authentication do not work or constantly prompt for a passphrase.\r\n6. Run “ssh-add -K <keyfile>” again. It returns immediately without a passphrase prompt, as it finds the correct passphrase already on the keychain.\r\n7. SSH authentication now works fine.\r\n\r\nExpected Results:\r\nThe agent should automatically load keys whose passphrases it can access on the keychain.\r\n\r\nActual Results:\r\nI need to manually poke the agent after each logout/login.\r\n\r\nRegression:\r\nThis used to be automatic before the Sierra betas. On one of my secondary Macs running El Capitan, ssh-agent still remembers SSH keys across reboots, with no special configuration (as far as I can tell).\r\n\r\nNotes:\r\n\r\nHere is a metadata dump of the two passphrase entries on my keychain. Keychain access shows that their ACLs always allow access to “ssh-agent”, “ssh-add” and “ssh”.\r\n\r\n$  security find-generic-password -s \"SSH\" -a \"/Users/lorentey/.ssh/id_rsa\" \r\nkeychain: \"/Users/lorentey/Library/Keychains/login.keychain-db\"\r\nversion: 512\r\nclass: \"genp\"\r\nattributes:\r\n    0x00000007 <blob>=\"SSH: /Users/lorentey/.ssh/id_rsa\"\r\n    0x00000008 <blob>=<NULL>\r\n    \"acct\"<blob>=\"/Users/lorentey/.ssh/id_rsa\"\r\n    \"cdat\"<timedate>=0x32303130303932343138333830345A00  \"20100924183804Z\\000\"\r\n    \"crtr\"<uint32>=<NULL>\r\n    \"cusi\"<sint32>=<NULL>\r\n    \"desc\"<blob>=<NULL>\r\n    \"gena\"<blob>=<NULL>\r\n    \"icmt\"<blob>=<NULL>\r\n    \"invi\"<sint32>=<NULL>\r\n    \"mdat\"<timedate>=0x32303130303932343138333830345A00  \"20100924183804Z\\000\"\r\n    \"nega\"<sint32>=<NULL>\r\n    \"prot\"<blob>=<NULL>\r\n    \"scrp\"<sint32>=<NULL>\r\n    \"svce\"<blob>=\"SSH\"\r\n    \"type\"<uint32>=<NULL>\r\n\r\n$  security find-generic-password -s \"SSH\" -a \"/Users/lorentey/.ssah/git-fusion\"\r\nkeychain: \"/Users/lorentey/Library/Keychains/login.keychain-db\"\r\nversion: 512\r\nclass: \"genp\"\r\nattributes:\r\n    0x00000007 <blob>=\"SSH: /Users/lorentey/.ssh/git-fusion\"\r\n    0x00000008 <blob>=<NULL>\r\n    \"acct\"<blob>=\"/Users/lorentey/.ssh/git-fusion\"\r\n    \"cdat\"<timedate>=0x32303133313131353130353430335A00  \"20131115105403Z\\000\"\r\n    \"crtr\"<uint32>=<NULL>\r\n    \"cusi\"<sint32>=<NULL>\r\n    \"desc\"<blob>=<NULL>\r\n    \"gena\"<blob>=<NULL>\r\n    \"icmt\"<blob>=<NULL>\r\n    \"invi\"<sint32>=<NULL>\r\n    \"mdat\"<timedate>=0x32303133313131353130353430335A00  \"20131115105403Z\\000\"\r\n    \"nega\"<sint32>=<NULL>\r\n    \"prot\"<blob>=<NULL>\r\n    \"scrp\"<sint32>=<NULL>\r\n    \"svce\"<blob>=\"SSH\"\r\n    \"type\"<uint32>=<NULL>"
+    email: Karoly.Lorentey@gmail.com
+    modified: "2016-09-14T14:22:08.95875Z"
+    number: "27348363"
+    number_intvalue: 27348363
+    originated: 14-Jul-2016 04:01 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: Mac OS X 10.12 (16A239j)
+    reproducible: Always
+    resolved: Behaves correctly
+    status: Closed
+    title: 'Mac OS X 10.12: ssh-agent does not automatically load passphrases on the keychain during startup'

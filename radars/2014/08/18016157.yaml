@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18016157"
+    labels:
+        datastore_id: "5813140927283200"
+data:
+    classification: Bug
+    created: "2014-08-14T08:05:56.11214Z"
+    description: "I believe I've found an issue with the application of Functions in the case of return values from Floating and Double Precision return types. As I was working with Higher-Order functions to produce a typesafe parser using Tagged Enums & Generics, I was finding that parsing of Double and Floating Point values would result in garbage values.\r\n\r\nThe attatched project will build on its own and has Unit Tests to verify the behaviour of the parsing, I've placed some additional print messages in order to show where the garbage value is introduced. Versions of the Bind and Fmap operators are used to chain Optional and Result (Value v | Error e) values together. The project uses the swiftz library for definitions of these fundemental functional operators.\r\n\r\nThe project has decode functions for Model objects, from a JSON enum tree. When parsing JSON number values I found that I wasn't getting the output I expected, so I broke the problem down into statements of linked expressions with logged output:\r\n\r\n// Number is an NSNumber? as each apply of the bind operator could yield a .None value\r\nlet number = ((json >>= JSON.ParseValue(\"number\")) >>= JSON.ParseNumber)\r\nlet forcedNumber: NSNumber! = number\r\n\r\nlet double = NSNumber.ParseDouble(forcedNumber)\r\nlet fMapDouble = NSNumber.ParseDouble <^> number\r\nlet bindDouble = number >>= NSNumber.ParseDouble //This should result in a compiler error as NSNumber.ParseDouble does not return an Optional value.\r\nlet appliedDouble = forcedNumber |> NSNumber.ParseDouble\r\nprintln(\"Double \\(double) fMap \\(fMapDouble) bind \\(bindDouble) applied \\(appliedDouble)\")\r\n\r\nlet float = NSNumber.ParseFloat(forcedNumber)\r\nlet fMapFloat = NSNumber.ParseFloat <^> number\r\nlet bindFloat = number >>= NSNumber.ParseFloat\r\nlet appliedFloat = forcedNumber |> NSNumber.ParseFloat\r\nprintln(\"Float \\(float) fMap \\(fMapFloat) bind \\(bindFloat) applied \\(appliedFloat)\")\r\n\r\nlet integer = NSNumber.ParseInt(forcedNumber)\r\nlet fMapInteger = NSNumber.ParseInt <^> number\r\nlet bindInteger = number >>= NSNumber.ParseInt\r\nlet appliedInteger = forcedNumber |> NSNumber.ParseInt\r\nprintln(\"Integer \\(integer) fMap \\(fMapInteger) bind \\(bindInteger) applied \\(appliedInteger)\")s\r\n\r\nThe Log Output shows\r\nDouble 1231.0 fMap 1231.0 bind 4.94065645841247e-324 applied 1231.0\r\nFloat 1231.0 fMap 1231.0 bind 1.40129846432482e-45 applied 1231.0\r\nInteger 1231 fMap 1231 bind 1231 applied 1231\r\n\r\nThe Bind (>>=) operator is used to return the value of a function that returns an Optional Value, with an Unboxed Optional input, this makes it very suitable for chaining functions that may return Optional Values from a non-optional input. The definition for the overloaded bund function that the compiler is matching against and executing is:\r\n\r\npublic func >>=<A, B>(a: A?, f: A -> B?) -> B?\r\n\r\nHowever, the ParseDouble/Int/Float functions do not have a non-optional output, so the typechecker should not permit the use of this function. Using fmap (<^>) and apply/thrush (|>) are suitable for use with functions that return non-\r\n\r\nSteps to Reproduce:\r\n1. Run the Unit Test Target in the Sample project\r\n2. Observe the output of the Compiler and Logger for ComplexModel.decode\r\n\r\nExpected Results:\r\nThe compiler to error when applying a function that expects an optional return type, to a function with a non-optional return type.\r\n\r\nActual Results:\r\nThe compiler allows mixing of optional and non-optional types, resulting in garbage values for Floating Point & Double Precision values, but correct values for Integers.\r\n\r\nVersion:\r\nOS X 10.9.4\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nXcode 6 Beta 5 on a Retina MBP\r\n\r\nAttachments:"
+    email: lomax.lawrence@gmail.com
+    modified: "2014-08-14T08:05:56.112362Z"
+    number: "18016157"
+    number_intvalue: 18016157
+    originated: 14-Aug-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Swift
+    product_version: Xcode 6 Beta 5
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Typechecker erroneously ignores non-optional return types in Generic Functions

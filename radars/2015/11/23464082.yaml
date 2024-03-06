@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23464082"
+    labels:
+        datastore_id: "6040500289142784"
+data:
+    classification: ""
+    created: "2015-11-09T18:04:00.17754Z"
+    description: "Summary:\r\nI'm using Xcode 7.1 to develop a project that I'm trying to debug, and have attempted to do so using breakpoint log messages while invoking my functions via unit tests. However, it appears that I've either misunderstood something about breakpoint logging, or uncovered a bug in Xcode: when I attempt to use breakpoint logging within a function, the log message does not include the value of the incoming parameter, although it does include a local variable.\r\n\r\nSteps to Reproduce:\r\nGiven this struct:\r\n\r\n\r\n    struct Foo: CustomStringConvertible  {\r\n        var s: String\r\n    \r\n        func printAFoo(fooToPrint: Foo) {\r\n            let i=1\r\n            // Breakpoint message text:\r\n            //   %B From debugger: fooToPrint=@fooToPrint@; i=@i@\r\n            print(\"printAFoo: From code: \\(fooToPrint); i:\\(i)\")\r\n        }\r\n    \r\n    }\r\n    \r\n    // MARK: - CustomStringConvertible\r\n    extension Foo {\r\n        var description: String {\r\n            return \"\\(s)\"\r\n        }\r\n    }\r\n\r\nI set a breakpoint debugging message at the indicated line and invoke as follows:\r\n\r\n    let foo = Foo(s: \"Original string\")\r\n    foo.printAFoo(foo)\r\n\r\n\r\nAnd get the output:\r\n\r\n    printAFoo(_:) From debugger: fooToPrint=; i=1\r\n    printAFoo: From code: Original string; i:1\r\n\r\n\r\n\r\nExpected Results:\r\nI expect to see in the log console: \r\n\r\n    printAFoo(_:) From debugger: fooToPrint=Original string; i=1\r\n    printAFoo: From code: Original string; i:1\r\n\r\n\r\nActual Results:\r\nI see in the log console:\r\n\r\n    printAFoo(_:) From debugger: fooToPrint=; i=1\r\n    printAFoo: From code: Original string; i:1\r\n\r\n\r\nVersion:\r\nXcode 7.1, OS X 10.11.1\r\n\r\nNotes:\r\nI've noticed this behavior is inconsistent: I originally was troubleshooting this issue against a mutating function and noticed that the breakpoint log message wasn't printing any @expr@ tagged values (including the local i variable), but was printing all of them as expected in a non-mutating function. As I continued to poke around, I saw that the incoming parameter expression stopped logging for the non-mutating function as well."
+    email: tschmelter@gmail.com
+    modified: "2015-11-09T18:04:00.17786Z"
+    number: "23464082"
+    number_intvalue: 23464082
+    originated: 11/9/2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "7.1"
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Xcode 7 breakpoint log message doesn't reliably include expression results

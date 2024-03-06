@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "43564638"
+    labels:
+        datastore_id: "4973927411482624"
+data:
+    classification: Developer Tools
+    created: "2018-09-08T06:05:18.02047Z"
+    description: "Summary:\r\nUpdates to a captured local variable are lost when recursing in a nested function, where the recursive call is from within a closure.\r\n\r\nSteps to Reproduce:\r\nRun the following Swift test case from XCode:\r\n----8<--------8<--------8<--------8<----\r\nimport XCTest\r\n\r\nclass LostUpdateInClosureBugTests: XCTestCase {\r\n    \r\n    // Test OK\r\n    func testControl() {\r\n        let actual = isolate(0)\r\n        XCTAssertEqual(actual, 1)\r\n    }\r\n    \r\n    // Test fails\r\n    func testUpdateInClosure() {\r\n        let actual = isolate(1)\r\n        // update to 'count' below is lost, giving 'actual' of 0\r\n        XCTAssertEqual(actual, 1)\r\n    }\r\n}\r\n\r\nfunc isolate(_ depth: Int) -> Int {\r\n    var count = 0\r\n    \r\n    func traverse(_ subDepth: Int) {\r\n        indirect(subDepth) { value in\r\n            if value > 0 {\r\n                traverse(value - 1)\r\n            } else {\r\n                count += 1\r\n                print(\"Count: \\(count)\\n\")\r\n            }\r\n        }\r\n    }\r\n    traverse(depth)\r\n    return count\r\n}\r\n\r\nprivate func indirect(_ value: Int, handle: (Int) -> Void) {\r\n    handle(value)\r\n}\r\n----8<--------8<--------8<--------8<----\r\n\r\nExpected Results:\r\nTests pass\r\n\r\nActual Results:\r\nTest testUpdateInClosure fails, with the following output (abbreviated):\r\n----8<--------8<--------8<--------8<----\r\nTest Case '-[LostUpdateInClosureBugTests testUpdateInClosure]' started.\r\nCount: 1\r\n\r\nLostUpdateInClosureBugTests.swift:26: error: -[LostUpdateInClosureBugTests testUpdateInClosure] : XCTAssertEqual failed: (\"0\") is not equal to (\"1\") - \r\nTest Case '-[LostUpdateInClosureBugTests testUpdateInClosure]' failed.\r\n----8<--------8<--------8<--------8<----\r\n\r\nVersion/Build:\r\nXCode 9.4.1, Swift 3.3, Swift 4.1\r\n\r\nConfiguration:\r\nTested with iOS 11.4 target in simulator."
+    email: jedwidz@gmail.com
+    modified: "2018-09-08T06:05:18.02072Z"
+    number: "43564638"
+    number_intvalue: 43564638
+    originated: "2018-08-22"
+    parent_number: '&{NULL_VALUE}'
+    product: Swift
+    product_version: "3.3"
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/42742744/Open
+    title: Swift - Updates to captured local variable lost in recursive call to nested function

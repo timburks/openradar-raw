@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "36072590"
+    labels:
+        datastore_id: "5032825413697536"
+data:
+    classification: DUPLICATE OF 21588771
+    created: "2017-12-15T14:00:12.93185Z"
+    description: "Summary:\r\nWhen using an ivfsoverlay to point swift to a modulemap file that describes an objective-c module, if the path to the ivfsoverlay is not absolute this breaks autocomplete in Xcode.\r\n\r\nSteps to Reproduce:\r\n- Create a swift app and a static library dependency with an objective-c class\r\n- Create a modulemap file to describe the dependency, name it dep.modulemap\r\n- Create an ivfsoverlay to expose the modulemap to swift\r\n- Add HEADER_SEARCH_PATHS to the dep headers\r\n- Add swiftc arguments `-Xcc -ivfsoverlay -Xcc dep/module.yaml` to the main swift target\r\n- Add a target dependency in project settings.\r\n- In the main swift target, add an import statement the dependency. \r\n- Start typing some symbol from the dependency. \r\n- Hit cmd + space or esc for autocomplete.\r\n===========\r\n- Autocomplete does not work\r\n===========\r\n- write correct code without autocomplete\r\n- build the project successfully\r\n\r\nSee the attached Xcode project. You'll need to fix the absolute paths present in the module.yaml file before it will build.\r\n\r\n\r\nExpected Results:\r\nXcode autocompletes.\r\n\r\nActual Results:\r\nAutocomplete does not work.\r\n\r\nVersion/Build:\r\nXcode 9.2.0 (9C40b)\r\n\r\nConfiguration:\r\nI found a workaround in changing using an absolute path for the ivfsoverlay:\r\n\r\nOTHER_SWIFT_FLAGS = $(inherited) -Xcc -ivfsoverlay -Xcc dep/module.yaml\r\n\r\nto \r\n\r\nOTHER_SWIFT_FLAGS = $(inherited) -Xcc -ivfsoverlay -Xcc $(PROJECT_DIR)/dep/module.yaml\r\n\r\nThis is odd as one of the arguments passed to swiftc is \r\n```\r\n-Xcc\r\n-working-directory/Users/robbertvanginkel/Desktop/IndexingError\r\n```\r\nIt seems like swift/clang when indexing doesn't respect the `-working-directory` argument when looking for the ivfsoverlay. It does seem to do it for other arguments such as the header search paths."
+    email: robbert@uber.com
+    modified: "2017-12-19T10:27:28.38036Z"
+    number: "36072590"
+    number_intvalue: 36072590
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Using non absolute paths in ivfsoverlay as swiftc argument breaks autocomplete

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18341884"
+    labels:
+        datastore_id: "4953502686117888"
+data:
+    classification: Crash
+    created: "2014-09-15T21:41:58.903313Z"
+    description: "An exception gets thrown by ALAssetsLibrary if more than 16 are created and used. Attempting to enumerate groups with types triggers the following exception:\r\n2014-09-15 13:20:19.000 AssetsTest[3544:1631342] *** Assertion failure in __addContextToList_block_invoke(), /SourceCache/PhotoLibraryServices_Sim/MobileSlideShow-2369/Sources/PLManagedObjectContext.m:2752\r\n\r\nSteps to Reproduce:\r\nIn a stock project template, add this method to the view controller (along with the mutable array ivar and asset library ivar) and call it from viewDidAppear:\r\n\r\n- (void)runTest\r\n{\r\n    static int counter = 1;\r\n\r\n    NSLog(@\"attempt %i\",counter);\r\n    counter++;\r\n\r\n    NSAssert(_library == nil, @\"_libary should be nil\");\r\n\r\n    _library = [[ALAssetsLibrary alloc] init];\r\n\r\n    // uncomment this line and the crash doesn't happen.\r\n//    [_array addObject:_library];\r\n\r\n    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1. * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\r\n        NSLog(@\"%@\",_library);\r\n\r\n        [_library enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos usingBlock:^(ALAssetsGroup *group, BOOL *stop) {\r\n            NSLog(@\"group: %@\",group);\r\n        } failureBlock:^(NSError *error) {\r\n            NSLog(@\"ERROR: %@\",error);\r\n        }];\r\n\r\n        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1. * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\r\n            _library = nil;\r\n\r\n            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1. * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\r\n                [self runTest];\r\n            });\r\n        });\r\n    });\r\n}\r\n\r\nExpected Results:\r\nNo exception should be thrown. Strangely, if you keep the instances of ALAssetsLibrary around (uncomment the line in the code above to add them to an array, effectively 'leaking' the library instances), the crash does not happen.\r\n\r\nActual Results:\r\nThe AssetsLibrary framework throws an exception and the app crashes.\r\n\r\nVersion:\r\niOS 8 GM\r\n\r\nNotes:\r\nA sample project can be provided. I will attempt to attach it to this bug as a comment.\r\n\r\nConfiguration:\r\niPhone 5"
+    email: kbeitz@twitter.com
+    modified: "2014-09-15T21:44:29.026021Z"
+    number: "18341884"
+    number_intvalue: 18341884
+    originated: "2014"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "8.0"
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Exception thrown by ALAssetsLibrary

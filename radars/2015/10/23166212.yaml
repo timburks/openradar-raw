@@ -1,0 +1,59 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23166212"
+    labels:
+        datastore_id: "6120937510404096"
+data:
+    classification: Serious Bug
+    created: "2015-10-19T16:21:32.15057Z"
+    description: |-
+        Summary:
+        When you have two dictionaries whose values are not equatable, but you have an equality function for them, one obvious way to compare them is to check that they have equal keys, and then check that for each key, the values from either dictionary are equal.
+
+        Like so:
+
+        	d1.keys == d2.keys && d1.keys.map { equal(d1[$0]!, d2[$0]!) }.reduce(true) { $0 && $1 }
+
+        However, you can’t do this—.keys returns a `LazyMapCollection<[Key:Value], Key>`, for which there is apparently no `==` function.
+
+        So what I did next was this:
+
+        	Array(d1.keys) == Array(d2.keys)
+
+        Now it compiles and all is well—except for the latent bug: dictionary key/value pair order is undefined, so the order of `keys` is undefined. What I wanted to do was:
+
+        	Set(d1.keys) == Set(d2.keys)
+
+        This is an avoidable bug. `keys` should return an unordered collection (whether a lazy one, a `Set`, or some `Set` analogue) that can be compared with a stdlib-defined `==` function (or better yet, a collection, like `Set`, which is actually Equatable).
+
+
+        Steps to Reproduce:
+        1. Check if there is a well-defined, ordering-insensitive `==` function in Swift’s stdlib for values returned from the `Dictionary.keys` property.
+
+
+        Expected Results:
+        There is.
+
+
+        Actual Results:
+        There is not.
+
+
+        Regression:
+        N/A
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-10-19T16:21:32.15076Z"
+    number: "23166212"
+    number_intvalue: 23166212
+    originated: 19-Oct-2015 12:21 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7B85)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Dictionary.keys should return a collection which can be equated without reference to order

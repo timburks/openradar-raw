@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6671614"
+    labels:
+        datastore_id: "14406"
+data:
+    classification: Other Bug
+    created: "2009-03-11T21:33:03.66679Z"
+    description: "Summary: \r\n\"Chained\" dot notation, where a property of an object returned by a property is accessed (for example: object.a.b.c.d) causes unexpected method calls, without mapping to [[[[object a] b] c] d].\r\n\r\nSteps to Reproduce:\r\n - Run the following piece of code as a Foundation-linked i386 command-line tool, compiled with GCC 4.0.\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\n@interface L0SomeClass : NSObject\r\n{\r\n}\r\n\r\n@property(readonly) L0SomeClass* a;\r\n@property(readonly) L0SomeClass* b;\r\n@property(readonly) L0SomeClass* c;\r\n@property(readonly) L0SomeClass* d;\r\n\r\n@end\r\n\r\n@implementation L0SomeClass\r\n\r\n- (L0SomeClass*) a { NSLog(@\"%s\", __func__); return self; }\r\n- (L0SomeClass*) b { NSLog(@\"%s\", __func__); return self; }\r\n- (L0SomeClass*) c { NSLog(@\"%s\", __func__); return self; }\r\n- (L0SomeClass*) d { NSLog(@\"%s\", __func__); return self; }\r\n\r\n@end\r\n\r\n\r\n\r\nint main (int argc, const char * argv[]) {\r\n    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];\r\n\r\n\tL0SomeClass* x = [L0SomeClass new];\r\n\r\n    NSLog(@\"%@!\", x.a.b.c.d);\r\n\tNSLog(@\"%@!\", [[[[x a] b] c] d]);\r\n\t\r\n    [pool drain];\r\n    return 0;\r\n}\r\n\r\nExpected Results:\r\n - The following sequence of logged lines is expected:\r\n\r\n-[L0SomeClass a]\r\n-[L0SomeClass b]\r\n-[L0SomeClass c]\r\n-[L0SomeClass d]\r\n<L0SomeClass: 0x104af0>!\r\n-[L0SomeClass a]\r\n-[L0SomeClass b]\r\n-[L0SomeClass c]\r\n-[L0SomeClass d]\r\n<L0SomeClass: 0x104af0>\r\n\r\nActual Results:\r\n - The following sequence of lines is actually logged by an invocation of the program above:\r\n\r\n-[L0SomeClass a]\r\n-[L0SomeClass a]\r\n-[L0SomeClass b]\r\n-[L0SomeClass a]\r\n-[L0SomeClass b]\r\n-[L0SomeClass c]\r\n-[L0SomeClass a]\r\n-[L0SomeClass b]\r\n-[L0SomeClass c]\r\n-[L0SomeClass d]\r\n<L0SomeClass: 0x104af0>!\r\n-[L0SomeClass a]\r\n-[L0SomeClass b]\r\n-[L0SomeClass c]\r\n-[L0SomeClass d]\r\n<L0SomeClass: 0x104af0>!\r\n\r\nRegression:\r\nCompiling the program with GCC 4.2 exhibits the expected behavior rather than the observed one. However, as far as I know, GCC 4.2 is not available for building certain types of applications (notably iPhone applications)."
+    email: millenomi@gmail.com
+    modified: "2011-08-28T05:47:38.59591Z"
+    number: "6671614"
+    number_intvalue: 6671614
+    originated: 03/11/2009
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode Tools 3.1.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Dot notation syntax causes unexpected additional method calls.

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29785686"
+    labels:
+        datastore_id: "4978998568288256"
+data:
+    classification: ""
+    created: "2016-12-22T11:02:03.70125Z"
+    description: "Summary:\r\nWhen building and running tests on a slower machine, the test bundle fails to execute. Retrying can fix the issue. But this is particularly problematic when relying on a Continuous Integration service. Flaky test running defeats the purpose of having tests in the first place. Even if you run them on a slow machine, they should still work but just take longer to execute.\r\n\r\nSteps to Reproduce:\r\nPreconditions:\r\nXcode 8.1+\r\nLow resource machine (4GB, single core)\r\n\r\n1. Open the attached workspace\r\n2. Run tests\r\n3. If they succeed, clean and run them again until the test bundle fails to execute.\r\n\r\nExpected Results:\r\nThe test bundle should run every time\r\n\r\nActual Results:\r\nThe test bundle fails to execute. Inside the logs we see:\r\n\r\n2016-12-21 06:13:08.865 xcodebuild[4070:11608] Connection peer refused channel request for \"dtxproxy:XCTestManager_IDEInterface:XCTestManager_DaemonConnectionInterface\"; channel canceled <DTXChannel: 0x7fa41e2a2780>\r\n[06:13:08]: ▸ 2016-12-21 06:13:08.868 xcodebuild[4070:11461] Error Domain=IDETestOperationsObserverErrorDomain Code=3 \"The operation couldn’t be completed. (DTXProxyChannel error 1.) If you believe this error represents a bug, please attach the log file at /Users/distiller/Library/Developer/Xcode/DerivedData/PlayPlex-cgxrnstnbwmdknfkvwpxgpdcqecz/Logs/Test/E2081E04-E22D-471F-B0CA-813C34FD89CB/Session-PlayPlexUnitTests-2016-12-21_061135-H5xOay.log\" UserInfo={NSLocalizedDescription=The operation couldn’t be completed. (DTXProxyChannel error 1.) If you believe this error represents a bug, please attach the log file at /Users/distiller/Library/Developer/Xcode/DerivedData/PlayPlex-cgxrnstnbwmdknfkvwpxgpdcqecz/Logs/Test/E2081E04-E22D-471F-B0CA-813C34FD89CB/Session-PlayPlexUnitTests-2016-12-21_061135-H5xOay.log}\r\n\r\nChecking the log file referenced in this error we see:\r\n\r\n00:53:18.769 xcodebuild[4049:10877] Starting test session with ID <__NSConcreteUUID 0x7f9eaec6ee70> BB412F85-6BAF-4713-916E-D91CB0BFC424\r\n00:53:18.769 xcodebuild[4049:10877] Checking test manager availability..., will wait up to 120s\r\n00:54:33.980 xcodebuild[4049:10958] Closing socket 17 to testmanagerd for Sim iPhone 6s\r\n00:54:33.988 xcodebuild[4049:11100] Error from testmanagerd: The operation couldn’t be completed. (DTXProxyChannel error 1.) ((null))\r\n00:54:33.989 xcodebuild[4049:10877] Test operation failure: The operation couldn’t be completed. (DTXProxyChannel error 1.)\r\n00:54:33.989 xcodebuild[4049:10877] _finishWithError:Error Domain=IDETestOperationsObserverErrorDomain Code=3 \"The operation couldn’t be completed. (DTXProxyChannel error 1.)\" UserInfo={NSLocalizedDescription=The operation couldn’t be completed. (DTXProxyChannel error 1.)} didCancel: 1\r\n\r\nIt seems that the simulator isn't starting in time for testmanagerd to connect to it, and testmanagerd times out.\r\n\r\nVersion:\r\nmacOS 10.12\r\nXcode 8.1 and 8.2\r\n\r\nNotes:\r\nOpening the simulator with a command like:\r\n\r\nxcrun instruments -w 'iPhone 6s (10.1)'\r\n\r\nAnd then waiting for 60s+ before attempting to run the tests will reduce the frequency of the issue but it doesn't eliminate it entirely.\r\n\r\nConfiguration:\r\nHardware:\r\nSingle core\r\n4GB RAM\r\nNon-SSD HD"
+    email: maximilianfc@gmail.com
+    modified: "2016-12-22T11:02:03.70148Z"
+    number: "29785686"
+    number_intvalue: 29785686
+    originated: 22/12/2016
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: "8.1"
+    reproducible: 1/5
+    resolved: ""
+    status: open
+    title: iOS test bundle fails to run on slow machines sometimes

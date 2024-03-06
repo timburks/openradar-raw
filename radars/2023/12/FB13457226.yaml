@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13457226
+    labels:
+        datastore_id: "5544702933729280"
+data:
+    classification: Suggestion
+    created: "2023-12-09T02:37:27.95191Z"
+    description: "`ModelContext` currently has two methods to fetch a model by ID: `model(for:)` and `registeredModel(for:)`. The latter only returns a model that is already in the context. The former may fetch a model from the model container in addition to the context, but it crashes if the model was not found.\r\n\r\nThere should be a third method, similar to `NSManagedObjectContext.existingObject(with:)`, that can fetch a model from the model container but does not crash if the model was not found. Or, perhaps `model(for:)` should be updated to not crash.\r\n\r\nOne use case for such an API would be passing a model ID across concurrency domains. The receiver might use that model ID to fetch the model from the model context/container. However, since this is in a different concurrency domain, the model could have been deleted by the time the receiver tried to fetch the model. This is an expected edge case that should gracefully return `nil` or throw an error rather than crashing.\r\n\r\nExample implementation:\r\n```\r\nextension ModelContext {\r\n   func model<T: PersistentModel>(for persistentModelID: PersistentIdentifier) throws -> T? {\r\n      if let model: T = registeredModel(for: persistentModelID) {\r\n         return model\r\n      }\r\n\r\n      var fetchDescriptor = FetchDescriptor<T>(\r\n         predicate: #Predicate {\r\n            $0.persistentModelID == persistentModelID\r\n         }\r\n      )\r\n      fetchDescriptor.fetchLimit = 1\r\n\r\n      return try fetch(fetchDescriptor).first\r\n   }\r\n}\r\n```"
+    email: darren.mo@me.com
+    modified: "2023-12-09T02:37:27.952032Z"
+    number: FB13457226
+    number_intvalue: 13457226
+    originated: "2023-12-08"
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftData
+    product_version: iOS 17.2 RC Seed (21C62)
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Add `ModelContext` API to gracefully fetch a model by its ID

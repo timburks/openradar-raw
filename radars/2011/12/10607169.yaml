@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10607169"
+    labels:
+        datastore_id: "1474403"
+data:
+    classification: ""
+    created: "2011-12-20T15:40:42.992211Z"
+    description: "Summary:\r\nChanging the @property (nonatomic) MPMovieControlStyle controlStyle of a MPMoviePlayerController produces unexpected notifications to post. Specifically it will post notifications that are in direct conflict with the class reference documentation.\r\n\r\nSteps to Reproduce:\r\n1. alloc & init a MPMoviePlayerController with a valid local or stream movie URL & prepare for playback\r\n2. Change the controlStyle property to MPMovieControlStyleNone\r\n3. Register for the following notifications:\r\n- MPMoviePlayerWillEnterFullscreenNotification\r\n- MPMoviePlayerWillExitFullscreenNotification\r\n- MPMoviePlayerDidEnterFullscreenNotification\r\n- MPMoviePlayerDidExitFullscreenNotification\r\n- MPMoviePlayerPlaybackDidFinishNotification\r\n4. Wire up a UIButton to call setFullscreen:animated: on the movie player controller\r\n5. From within MPMoviePlayerWillEnterFullscreenNotification selector, set controlStyle property to MPMovieControlStyleFullscreen\r\n6. Run app, trigger full screen, tap \"Done\"\r\n7. MPMoviePlayerPlaybackDidFinishNotification is posted, NOT MPMoviePlayer[Will / Did]ExitFullScreenNotifications\r\n\r\nExpected Results:\r\nAccording to class reference documentation:\r\n\"... This notification is not sent in cases where the movie player is displaying in fullscreen mode and the user taps the Done button. In that instance, the Done button causes movie playback to pause while the player transitions out of fullscreen mode. If you want to detect this scenario in your code, you should monitor other notifications such as MPMoviePlayerDidExitFullscreenNotification.\"\r\n\r\nActual Results:\r\nWhat actually happens is that MPMoviePlayerPlaybackDidFinishNotification is posted with MPMoviePlayerPlaybackDidFinishReasonUserInfoKey set to MPMovieFinishReasonUserExited.\r\n\r\nFurthermore, any attempt at calling setFullscreen:NO animated:* results is no change of the MPMoviePlayerController.view frame, bounds, or center.\r\n\r\nIf you don't unregister from MPMoviePlayerPlaybackDidFinishNotification and call setFullscreen:NO animated:* from within the selector registered to fire for ....PlaybackDidFinishNotification you'll get infinitely recursive calls to the registered selector.\r\n\r\nRegression:\r\n\r\nIf you do not modify the controlStyle property, everything works as documented. It's only when you modify the controlStyle property as you enter / exit fullscreen.\r\n\r\nNotes:"
+    email: evan@thinkfishhook.com
+    modified: "2011-12-20T15:40:42.992509Z"
+    number: "10607169"
+    number_intvalue: 10607169
+    originated: 20-Dec-2011 10:39 AM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: MPMoviePlayerController changing controlStyle causes unexpected notifications

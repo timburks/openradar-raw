@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14185614"
+    labels:
+        datastore_id: "3124407"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2013-06-18T06:46:55.541361Z"
+    description: "18-Jun-2013 01:43 AM Rob Mayoff:\r\nSummary:\r\n\r\nCalling CFAllocatorSetDefault with anything but kCFAllocatorSystemDefault causes crashes.\r\n\r\nSteps to Reproduce:\r\n\r\nCall CFAllocatorSetDefault with any (valid) allocator.  Example:\r\n\r\nint main(int argc, char *argv[])\r\n{\r\n    CFAllocatorSetDefault(kCFAllocatorMalloc);\r\n    @autoreleasepool {\r\n        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));\r\n    }\r\n}\r\n\r\nI have attached a test project with this code.  It crashes on both simulator and device.  Changing kCFAllocatorMalloc to kCFAllocatorSystemDefault removes the crash.\r\n\r\nExpected Results:\r\n\r\nNot crash.\r\n\r\nActual Results:\r\n\r\nThe app crashes soon after it changes the default allocator, the next time anything tries to create a Core Foundation object using NULL as the allocator.  The crash is in CFRetain, because CFRetain is being called with a NULL pointer.\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\nThe error is in _CFRuntimeCreateInstance.  When the allocator argument is NULL, and the current default allocator isn't the system default allocator, _CFRuntimeCreateInstance tries to retain the allocator.  But it just tries to retain the NULL instead of retaining the current default allocator.\r\n\r\nSee this stackoverflow question and my answer: http://stackoverflow.com/a/17138252/77567"
+    email: mayoff@dqd.com
+    modified: "2018-08-14T21:35:43.84142Z"
+    number: "14185614"
+    number_intvalue: 14185614
+    originated: 18-Jun-2013 01:43 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 4.6.3
+    reproducible: Always
+    resolved: DUPLICATE OF 13162213 CLOSED
+    status: Closed
+    title: CFAllocatorSetDefault causes crashes

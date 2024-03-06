@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35660658"
+    labels:
+        datastore_id: "5054307766370304"
+data:
+    classification: ""
+    created: "2017-11-21T22:35:46.60774Z"
+    description: "Area:\r\nFoundation\r\n\r\nSummary:\r\n\r\nSetting the `ISO8601DateFormatter.Options.withFractionalSeconds` option for ISO8601DateFormatter causes an exception.\r\n\r\nSteps to Reproduce:\r\n\r\nRun the following code\r\n\r\n\r\nlet cfDateFormatter = CFDateFormatterCreateISO8601Formatter(kCFAllocatorDefault,\r\n                                                            [.withFractionalSeconds, .withInternetDateTime])\r\n\r\nlet string = CFDateFormatterCreateStringWithDate(kCFAllocatorDefault,\r\n                                                 cfDateFormatter,\r\n                                                 CFDateCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent()))!\r\n\r\nprint(\"CFDateFormatter: \\(string)\\n\\n\") // This works\r\n\r\n/* ========================================================================================================== */\r\n\r\nlet isoDateFormatter = ISO8601DateFormatter()\r\n\r\nisoDateFormatter.formatOptions = [.withFullTime, .withFractionalSeconds] // CRASH\r\n\r\nprint(\"ISO8601DateFormatter: \\(isoDateFormatter.string(from: Date()))\\n\\n\")\r\n\r\nExpected Results:\r\n\r\nThe console output must be:\r\nCFDateFormatter: 2017-11-22T01:28:13.584+03:00\r\n\r\n\r\nISO8601DateFormatter: 2017-11-22T01:28:13.584+03:00\r\n\r\n\r\n\r\nActual Results:\r\nThe app crashes with an uncaught exception, the console output is:\r\n\r\nCFDateFormatter: 2017-11-22T01:28:13.584+03:00\r\n\r\n\r\n2017-11-22 01:28:13.597316+0300 ISO8601Test[49583:14603924] *** Assertion failure in -[NSISO8601DateFormatter setFormatOptions:], /BuildRoot/Library/Caches/com.apple.xbs/Sources/Foundation_Sim/Foundation-1445.30/String.subproj/NSISO8601DateFormatter.m:66\r\n2017-11-22 01:29:16.015562+0300 ISO8601Test[49583:14603924] *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'Invalid parameter not satisfying: formatOptions == 0 || !(formatOptions & ~(NSISO8601DateFormatWithYear | NSISO8601DateFormatWithMonth | NSISO8601DateFormatWithWeekOfYear | NSISO8601DateFormatWithDay | NSISO8601DateFormatWithTime | NSISO8601DateFormatWithTimeZone | NSISO8601DateFormatWithSpaceBetweenDateAndTime | NSISO8601DateFormatWithDashSeparatorInDate | NSISO8601DateFormatWithColonSeparatorInTime | NSISO8601DateFormatWithColonSeparatorInTimeZone | NSISO8601DateFormatWithFullDate | NSISO8601DateFormatWithFullTime | NSISO8601DateFormatWithInternetDateTime))'\r\n\r\nVersion/Build:\r\nXcode 9.1 (9B55), iOS 11.1"
+    email: seergypro@gmail.com
+    modified: "2017-11-21T22:35:46.60793Z"
+    number: "35660658"
+    number_intvalue: 35660658
+    originated: November 22 2017
+    parent_number: '&{NULL_VALUE}'
+    product: Foundation
+    product_version: Xcode 9.1 (9B55)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: The `ISO8601DateFormatter.Options.withFractionalSeconds` option for ISO8601DateFormatter causes an exception; CFDateFormatter is fine

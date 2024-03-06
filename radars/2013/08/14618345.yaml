@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14618345"
+    labels:
+        datastore_id: "6119881720201216"
+data:
+    classification: ""
+    created: "2013-08-01T12:19:28.184883Z"
+    description: "Summary:\r\n\r\nUpdating a UITableViewCell's accessoryType in a table view delegate's tableView:didSelectRowAtIndexPath: method causes everything in the cell but the newly set accessory to disappear: the cell background turns grey, and the textLabel and imageView disappear.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a New Project, select Single View Application\r\n2. Open Main.storyboard, add Table View to the scene\r\n3. Connect table view's datasource and delegate to the scene's view controller\r\n4. Make a new referencing outlet from the table view to the view controller called `tableView`\r\n5. Open ViewController.m and add the following code:\r\n\r\nstatic NSString* cellId = @\"TestCell\";\r\n\r\n@implementation ViewController\r\n\r\n- (void)viewDidLoad {\r\n  [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:cellId];\r\n}\r\n\r\n#pragma mark - UITableViewDataSource\r\n\r\n- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {\r\n  return 1;\r\n}\r\n\r\n- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {\r\n  return 1;\r\n}\r\n\r\n- (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {\r\n  UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellId forIndexPath:indexPath];\r\n  if (cell == nil) {\r\n    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];\r\n  }\r\n\r\n  cell.textLabel.text = @\"Test cell\";\r\n\r\n  return cell;\r\n}\r\n\r\n#pragma mark - UITableViewDelegate\r\n\r\n- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {\r\n  UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellId forIndexPath:indexPath];\r\n  cell.accessoryType = UITableViewCellAccessoryCheckmark;\r\n}\r\n\r\nExpected Results:\r\n\r\nTapping on the single cell in the app should cause the checkmark to be displayed in the accessory view at the right of the table view cell.\r\n\r\nActual Results:\r\n\r\nThe checkmark is displayed, but the cell background becomes grey and everything else in the cell disappears.\r\n\r\nRegression:\r\n\r\nIt occurs with iOS 7 beta 4. Not tested on earlier iOS 7 versions, though it did not occur in iOS 6.\r\n\r\nNotes:\r\n\r\nIf the cell's image view is set, it will also disappear when the accessory type is set.\r\n\r\nIf an accessory view was previously set, it will also disappear. This is expected, but it should be emphasized that it seems to have no influence on the problem.\r\n\r\nResolved:\r\n\r\nAs it turns out, I was using dequeueReusableCellWithIdentifier:forIndexPath: incorrectly, using it in tableView:didDeselectRowAtIndexPath: when I should have been using cellForRowAtIndexPath:."
+    email: peter.robinett@gmail.com
+    modified: "2013-08-01T13:40:45.133711Z"
+    number: "14618345"
+    number_intvalue: 14618345
+    originated: "2013-08-01"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 7 beta 4
+    reproducible: Always
+    resolved: ""
+    status: Resolved
+    title: Setting a UITableViewCell accessoryType causes the the cell to disappear

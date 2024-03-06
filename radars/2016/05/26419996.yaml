@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26419996"
+    labels:
+        datastore_id: "5035364192354304"
+data:
+    classification: Other Bug
+    created: "2016-05-23T16:13:38.7133Z"
+    description: "This is a duplicate of rdar://22517297\r\n\r\nSummary:\r\nNew `startosinstall` binary included with OS X 10.11 always attempts to perform a reboot immediately after the installation is prepared, with no option to disable it.\r\n\r\nSteps to Reproduce:\r\n1. Obtain the Beta 7 \"Install OS X\" app.\r\n2. Run the following command:\r\n\r\nsudo /Applications/Install\\ OS\\ X\\ El\\ Capitan\\ Developer\\ Beta.app/Contents/Resources/startosinstall --volume /Volumes/Untitled --applicationpath /Applications/Install\\ OS\\ X\\ El\\ Capitan\\ Developer\\ Beta.app\r\n\r\nExpected Results:\r\nOS X install is prepared, and a message is output similar to when `softwareupdate` is run and installs an update that requires a reboot: \"The system should be restarted immediately.\" The administrator of the machine is expected to perform the reboot manually.\r\n\r\nActual Results:\r\nOS X install is prepared, and a reboot is attempted immediately. If a user is logged in and there is an application that fails to quit (due to dirty state), the command stalls indefinitely.\r\n\r\nRegression:\r\nNone. startosinstall is a new utility in 10.11.\r\n\r\nNotes:\r\nIn scenarios where a systems administrator wishes to perform an OS X upgrade using automated tools such as startosinstall, the behavior of triggering reboot immediately is often undesirable. It is often not the case that an administrator is performing this \"unattended\" install manually with a tool like ARD, but rather that that some environment (either automated or user-driven) is driving the installation and must first finish with other tasks before the machine is rebooted. For example:\r\n\r\n- DeployStudio is a popular tool for deploying OSes, software and configuration from a Netboot environment. After a scripted run of `startosinstall`, the tool must still \"finalize\" the workflow by acknowledging the completion of the last command and reporting the status to the server component.\r\n- Munki and Casper, both tools for managing software installations on OS X, run within the context of a GUI application which, similarly, should be able to exit and submit a status report to a reporting server.\r\n\r\nIn both of the above cases, it is problematic for the tool to assume that a reboot can be triggered immediately. In these cases the deployment tools themselves will manage restarting the computer within a very short time, once they have completed their \"finishing\" tasks.\r\n\r\nAs far as I'm aware the OS X installer is designed to be run immediately after the installation, and if too long has passed since the install was first staged it fails. If a message similar to softwareupdate were printed (as per \"Expected Results\"), this would suffice. It would at least be reasonable for there to be an option like: \"--no-restart\" for scenarios such as the ones described above, even if the default behavior is unchanged."
+    email: escobar6@llnl.gov
+    modified: "2016-09-20T23:42:26.0644Z"
+    number: "26419996"
+    number_intvalue: 26419996
+    originated: 23-May-2016 09:13 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11.5
+    reproducible: Always
+    resolved: ""
+    status: Closed (Duplicate)
+    title: startosinstall command line tool performs immediate reboot with no option to disable

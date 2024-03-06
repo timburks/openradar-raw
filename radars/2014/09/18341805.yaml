@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18341805"
+    labels:
+        datastore_id: "6117739471044608"
+data:
+    classification: Serious Bug
+    created: "2014-09-15T21:01:14.908803Z"
+    description: "Summary:\r\nCalling the PHImageManager to request image data for an asset will return a thumbnail (rather than a high resolution version of the photo) if the call occurs immediately after the photo was taken.\r\n\r\nConcretely, the bug involves passing the following options:\r\n\r\nPHImageRequestOptions *requestOptions = [[PHImageRequestOptions alloc] init];\r\nrequestOptions.synchronous = YES;\r\nrequestOptions.version = PHImageRequestOptionsVersionCurrent;\r\n\r\nthen calling -[PHImageManager requestImageDataForAsset:options:resultHandler:] with an asset that was recently taken by the camera, with a filter applied at time of capture.\r\n\r\nThis call is expected to return \"the largest available representation of the image asset\". Returning a thumbnail from this call breaks expectations and does not provide third-party developers with a consistent way to access high-resolution photo content.\r\n\r\nNote that passing a delivery mode of PHImageRequestOptionsDeliveryModeHighQualityFormat has no effect on this call.\r\n\r\nSteps to Reproduce:\r\n1. Open the camera app and take a photo with filter applied at point of capture.\r\n2. Request image data from the PHImageManager with PHImageRequestOptionsVersionCurrent.\r\n\r\nExpected Results:\r\nThe call should return a high resolution version of the photo with filter applied.\r\n\r\nActual Results:\r\nThe call returns a thumbnail (640x852) with the filter applied. Calling the same method at a later point in time returns the expected result.\r\n\r\nVersion:\r\n8.0 (12A365)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 5\r\n\r\nAttachments:"
+    email: stephenpoletto@gmail.com
+    modified: "2014-09-15T21:01:14.909025Z"
+    number: "18341805"
+    number_intvalue: 18341805
+    originated: 15-Sep-2014 01:58 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 8.0 (12A365)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'iOS 8 GM: -[PHImageManager requestImageDataForAsset:options:resultHandler:] sometimes returns thumbnails for filtered photos'

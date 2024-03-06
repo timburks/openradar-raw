@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10185068"
+    labels:
+        datastore_id: "1363402"
+data:
+    classification: ""
+    created: "2011-09-26T15:33:29.992107Z"
+    description: "Summary:\r\n\r\nWhen a active (kCGEventTapOptionDefault) CGEventTap is created for kCGEventMouseMoved the \"Hot Corners\" Mission Control and the Dock hide/show features no longer work WHILE Finder is the active application (typically clicking on the desktop) AND the mouse movement is a slow one (really fast movements sometimes bypass this issue) \r\n\r\n\r\nSteps to Reproduce:\r\n\r\nCompile and run a application with this code\r\n\r\nCGEventRef tapCallBack(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void* refcon)\r\n{\r\n    return event;\r\n}    \r\n\r\nCGEventMask mask = CGEventMaskBit(kCGEventMouseMoved);    \r\nCFMachPortRef eventTap = CGEventTapCreate(kCGAnnotatedSessionEventTap, kCGHeadInsertEventTap, kCGEventTapOptionDefault, mask, tapCallBack, self);\r\nCFRunLoopSourceRef runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, eventTap, 0);\r\nCFRunLoopAddSource([[NSRunLoop currentRunLoop] getCFRunLoop],runLoopSource, kCFRunLoopCommonModes);\t\t\r\nCGEventTapEnable(eventTap, true);\r\nCFRelease(eventTap);\t\t\r\nCFRelease(runLoopSource);  \r\n\r\nClick on desktop, move cursor to a corner to trigger a hot corner action or to the edge with the dock to show the dock. \r\n\r\nExpected Results:\r\n\r\nThe dock is shown/action is triggered.\r\n\r\nActual Results:\r\n\r\nThe dock is not shown/action is not triggered. \r\n\r\nRegression:\r\n\r\nMoving the mouse/pointer pretty fast sometimes sidesteps the issue, also cycling/changing the active application either sidesteps or is a requisite for the issue to happen with no discern-able pattern.\r\n\r\nNotes:\r\n\r\nExample project attached.\r\n\r\nchanging kCGAnnotatedSessionEventTap to kCGSessionEventTap or kCGHIDEventTap fixes the bug"
+    email: valexa@gmail.com
+    modified: "2012-03-15T14:23:56.856471Z"
+    number: "10185068"
+    number_intvalue: 10185068
+    originated: 06 Sep 2011
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: active CGeventsTap on kCGEventMouseMoved breaks hot corners and dock hiding

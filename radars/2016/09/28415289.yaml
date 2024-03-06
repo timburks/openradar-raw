@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28415289"
+    labels:
+        datastore_id: "6169999978790912"
+data:
+    classification: ""
+    created: "2016-09-22T16:01:24.12832Z"
+    description: "Summary:\r\nEvery time a PDF page is drawn in a CGContextRef, a copy of its resources (images in the PDF etc) are created and retained (probably by the context).\r\n\r\nIn our app we use a CATiledLayer to draw PDFs, which seems to trigger this bug, probably because CATiledLayer uses a pool of CGContextRefs that it reuses when needed. I tried to find a workaround but couldn't find a way to drain that pool.\r\n\r\nSteps to Reproduce:\r\nProfile the attached project using the Allocations Instrument\r\nWatch memory usage go up\r\n\r\n(see ViewController.m for relevant code)\r\n\r\nExpected Results:\r\nMemory usage should only go up during CGContextDrawPDFPage, but then go down immediately, or at least after CGPDFDocumentRelease\r\n\r\nActual Results:\r\nMemory usage goes up with every iteration\r\nMultiple copies of a 7.77MB image are kept in memory\r\n\r\nVersion:\r\niOS 10 \r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPad Mini 2, iPhone SE, iOS Simulator\r\n\r\nAttachments:\r\n'DrawPDFPage.zip' was successfully uploaded.\r\n\r\n\r\nRelevant code:\r\n\r\nUIGraphicsBeginImageContext(CGSizeMake(1024, 768));\r\n    \r\nCGContextRef context = UIGraphicsGetCurrentContext();\r\n\r\nfor (int i = 0; i < 100; ++i)\r\n{\r\n    CGPDFDocumentRef document = CGPDFDocumentCreateWithURL((__bridge CFURLRef)url);\r\n    if (document)\r\n    {\r\n        CGPDFPageRef page = CGPDFDocumentGetPage(document, 1);\r\n        if (page)\r\n        {\r\n            CGContextDrawPDFPage(context, page);\r\n        }\r\n        \r\n        CGPDFDocumentRelease(document);\r\n    }\r\n    \r\n    [NSThread sleepForTimeInterval:1.0];\r\n}\r\n\r\nUIGraphicsEndImageContext();"
+    email: lievendekeyser@gmail.com
+    modified: "2016-09-22T16:01:24.12854Z"
+    number: "28415289"
+    number_intvalue: 28415289
+    originated: 22-Sep-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 10.0 (14A5339a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Memory leak in CGContextDrawPDFPage

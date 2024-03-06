@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "36138159"
+    labels:
+        datastore_id: "4990843182120960"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2017-12-19T20:38:51.4805Z"
+    description: "Summary:\r\nIn macOS 10.13.2, it is very easy to create a deadlock when using NSSpeechSynthesizer. \r\n\r\nSteps to Reproduce:\r\nOn macOS 10.13.2: Create a new macOS Cocoa project in Xcode. In applicationDidFinishLaunching of the AppDelegate, create an NSSpeechSynthesizer, call startSpeaking and pass a url and a long string of text, then wait a few seconds and call stopSpeaking. If you enter the debugger, you’ll see that the NSSpeechSynthesizer is deadlocked in that stopSpeaking call.\r\n\r\nIn my attached example AppDelegate.swift, the alert is never shown.\r\n\r\nExpected Results:\r\nI expect the thread to not deadlock, and to show the alert. This works properly on macOS versions earlier than 10.13.2.\r\n\r\nActual Results:\r\nThe main thread — or whatever thread you call stopSpeaking on — is deadlocked. We never see the alert.\r\n\r\nVersion:\r\n10.13.2\r\n\r\nNotes:\r\nThe code works as desired before macOS 10.13.2.\r\n\r\nCode:\r\n\r\n```\r\nimport Cocoa\r\n\r\n@NSApplicationMain\r\nclass AppDelegate: NSObject, NSApplicationDelegate {\r\n\r\n    @IBOutlet weak var window: NSWindow!\r\n\r\n    let text = \"Lorem ipsum dolor sit amet consectetur adipiscing elit, phasellus elementum lobortis quisque aptent leo a, rutrum dictum velit nostra viverra mollis. Nam pharetra feugiat sollicitudin quisque consequat suspendisse nisi blandit purus nascetur proin mi, fermentum magna felis et aenean condimentum ultrices justo vulputate etiam fusce, turpis id netus tristique porta libero hendrerit scelerisque semper fringilla placerat. Accumsan nisl felis nascetur lorem vulputate metus mauris aliquet purus, rutrum non viverra dictumst mi commodo mollis risus, sociis ullamcorper integer tincidunt donec himenaeos porta vestibulum. Senectus torquent per odio viverra mauris dui lacus nisi ligula porta pretium ornare purus amet, ad cursus suspendisse dis porttitor nec enim class nunc leo ante cras tempor. Mollis posuere cum gravida a primis et donec mauris, sagittis sit duis nulla hac penatibus imperdiet amet montes, libero mattis blandit urna orci fringilla vestibulum. Vehicula porta tempor augue fringilla fames pellentesque feugiat sagittis, quis lobortis lectus phasellus class sapien vulputate senectus, volutpat duis erat tellus fusce ultricies morbi. Id cubilia malesuada consectetur quisque tempus mattis a, vulputate aliquet elementum non laoreet penatibus auctor, hac ad neque pharetra magnis amet.\"\r\n\r\n    var synth: NSSpeechSynthesizer?\r\n\r\n    func applicationDidFinishLaunching(_ aNotification: Notification) {\r\n\r\n        let url = URL(fileURLWithPath: \"\\(NSTemporaryDirectory())/\\(UUID().uuidString).aiff\")\r\n\r\n        synth = NSSpeechSynthesizer()\r\n        synth?.startSpeaking(text, to: url)\r\n\r\n        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {\r\n            self.synth?.stopSpeaking()\r\n            let alert = NSAlert()\r\n            alert.messageText = \"After 'stopSpeaking'\"\r\n            alert.runModal()\r\n        }\r\n    }\r\n}\r\n```"
+    email: steve@descript.com
+    modified: "2017-12-19T20:40:52.78339Z"
+    number: "36138159"
+    number_intvalue: 36138159
+    originated: 19-Dec-2017 12:38 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSSpeechSynthesizer deadlocks when writing to a file and calling stopSpeaking

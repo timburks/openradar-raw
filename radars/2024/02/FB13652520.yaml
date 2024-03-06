@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13652520
+    labels:
+        datastore_id: "5616514786918400"
+data:
+    classification: SearchKit
+    created: "2024-02-25T07:37:46.994872Z"
+    description: "It appears that SearchKit sometimes does not respect the `kSKTermChars` property during indexing, if CJK characters are present in the text. For example, given these index properties:\r\n\r\n    NSDictionary *properties = @{\r\n        (__bridge NSString *)kSKProximityIndexing: @YES,\r\n        (__bridge NSString *)kSKMaximumTerms: @(0),\r\n        (__bridge NSString *)kSKTermChars: @\".\",\r\n    };\r\n\r\nExpected: text \"测试 abc.123\" is indexed as [\"abc.123\", \"测试\"]\r\n\r\nActual result: text \"测试 abc.123\" is indexed as [\"123\", \"abc\", \"测试\"]\r\n\r\nNote: For comparison, \"test abc.123\" is indexed as [\"abc.123\", \"test”], which aligns with expectations.\r\n\r\nImpact: The main motivation for setting kSKTermChars is to allow these characters to be searchable. However, this issue could mean that searching will not yield the expected results. For example, the search query \"abc.123\" is unable to match the document \"测试 abc.123\".\r\n\r\nThis can be minimally reproduced by building an index and examining the indexed terms with `SKIndexCopyTermStringForTermID`. I have attached a reproducer as well."
+    email: renfei.song@gmail.com
+    modified: "2024-02-25T07:38:53.493782Z"
+    number: FB13652520
+    number_intvalue: 13652520
+    originated: 2/24/2024
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: macOS 14
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: SearchKit fails to respect kSKTermChars when CJK characters are present

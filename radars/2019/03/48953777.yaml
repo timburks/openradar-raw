@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "48953777"
+    labels:
+        datastore_id: "4957129874079744"
+data:
+    classification: Severe
+    created: "2019-03-16T16:51:39.099362Z"
+    description: "Summary:\r\nThe ioreg key IOConsoleUsers / kCGSSessionSecureInputPID should hold the process ID of the process which called EnableSecureEventInput(). If an application calls EnableSecureEventInput() while inactive (i.e. in the background), kCGSSessionSecureInputPID will report the PID of the application which is active at the time the inactive application calls EnableSecureEventInput().\r\n\r\nSteps to Reproduce:\r\n1. Download the attached DelayedSecureInput.zip file\r\n<https://smilesoftware.com/openradar/DelayedSecureInput.zip>\r\n2. Unzip the file and note the location of the resulting DelayedSecureInput folder\r\n3. Launch the DelayedSecureInput application\r\n4. Within 5 seconds of #3, click on another app (such as Finder or Xcode)\r\n*. DelayedSecureInput should show \"Secure input is enabled\" before you proceed\r\n5. Launch the \"Secure Input Detective\" script application\r\n\r\nExpected Results:\r\nSecure input has been enabled by the application \"DelayedSecureInput.\"\r\n\r\nActual Results:\r\nSecure input has been enabled by the application \"<active app from step #4>.\"\r\n\r\nVersion/Build:\r\nmacOS 10.14.3 (18D109)\r\n\r\nConfiguration:\r\nMacBook Pro (15-inch, Late 2016)\r\n2.9 GHz Intel Core i7\r\n16GB RAM / 1TB SSD\r\nRadeon Pro 460 4GB\r\n\r\nAlternative Repro Step:\r\nI included the Secure Input Detective script application and its source for convenience.\r\n\r\nIf you'd prefer to use Terminal to see the value of kCGSSessionSecureInputPID, substitute this Terminal command for step #5:\r\n\r\nioreg -l -w 0 | grep kCGSSessionSecureInputPID\r\n\r\nNote that the process ID shown will not match the process ID of the DelayedSecureInput application.\r\n\r\nCommentary:\r\nWhy does this matter? We make TextExpander, which uses a CGEventTap to filter keystrokes. Frequently, TextExpander fails to receive events because another application has called EnableSecureEventInput() and failed to call DisableSecureEventInput(). TextExpander has a timer-based method to check IsSecureEventInputEnabled(), and when true uses kCGSSessionSecureInputPID to determine the name of the process holding us hostage and report that to the user, as the user is the only one who can resolve that situation.\r\n\r\nI ran into this bug because if Chrome is in the background and a service times out and asks for your password (think: online banking / accounting software / etc.), Chrome calls EnableSecureEventInput() while inactive. TextExpander winds up reporting to the user that whatever application was active at the time this occurred is holding secure event input. The user quits that application, but it doesn't resolve the problem. The user gets angry, and rightly so. Unfortunately, they get angry at TextExpander, when it's not really our fault.\r\n\r\nOne can certainly argue that an application should not call EnableSecureEventInput() when inactive, and I'll report that as a Chrome bug. However, given that it is _possible_, even easy to do this, I think it's important that kCGSSessionSecureInputPID accurately reflect the process ID of the application which called EnableSecureEventInput() even if it's inactive at the time of the call.\r\n\r\nThanks!"
+    email: greg@smilesoftware.com
+    modified: "2019-03-16T16:51:39.099564Z"
+    number: "48953777"
+    number_intvalue: 48953777
+    originated: "2019-03-16"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS / Core Graphics
+    product_version: 10.14.3 (18D109)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: kCGSSessionSecureInputPID wrong when secure event input enabled from background app

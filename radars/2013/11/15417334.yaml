@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15417334"
+    labels:
+        datastore_id: "5212459283513344"
+data:
+    classification: Other Bug
+    created: "2013-11-07T21:08:47.413501Z"
+    description: "Summary:\r\nThe mach_ports_register() system call was broken on 10.7 with the introduction of libxpc. Prior to 10.7, you could use mach_ports_register() to pass an array of Mach ports to a child process across fork(). The child could then look up the array of ports with mach_ports_lookup().\r\n\r\nIn 10.7 and higher, however, XPC clobbers this array of ports for its own use, here:\r\n\r\nlibsystem_kernel.dylib`mach_msg_trap+0xa\r\nlibsystem_kernel.dylib`mach_ports_register+0x70\r\nlibxpc.dylib`xpc_atfork_prepare+0x2b\r\nlibSystem.B.dylib`libSystem_atfork_prepare+0x9\r\nlibsystem_c.dylib`fork+0xc\r\nparent`main+0x138\r\nlibdyld.dylib`start\r\nparent`0x1\r\n\r\nThis removes the only non-kludgy way to pass a Mach port from a parent to a child.\r\n\r\nSteps to Reproduce:\r\n1. Unzip the attached program\r\n2. `make`\r\n3. ./parent\r\n\r\nOn 10.6, this works. On 10.7 and higher, it does not.\r\n\r\nExpected Results:\r\nThe ./parent program should exit cleanly with output like:\r\n\r\nSent message to parent on port 519\r\nGot request: I'm a child: 71489\r\nChild exited:1, status:0\r\n\r\nThis works on 10.6.\r\n\r\nActual Results:\r\nOn 10.7 and 10.8, the parent program hangs in mach_msg_receive() because the child program has sent the message to its bootstrap port. This happens because the port array has been replaced by XPC via xpc_atfork_prepare().\r\n\r\nVersion:\r\nWorks: 10.6.8 10K549\r\nBroken: 10.8.5 12F45\r\n\r\nRegressed: 10.7.0\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'mach_ports_register.zip' was successfully uploaded."
+    email: rsesek@gmail.com
+    modified: "2014-07-07T17:34:33.749491Z"
+    number: "15417334"
+    number_intvalue: 15417334
+    originated: 07-Nov-2013
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7+
+    reproducible: Always
+    resolved: "2013-11-11"
+    status: Behaves correctly
+    title: mach_ports_register broken on 10.7+

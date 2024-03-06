@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17054697"
+    labels:
+        datastore_id: "5856131805085696"
+data:
+    classification: serious bug
+    created: "2014-05-28T19:33:12.526436Z"
+    description: "Resolution:\r\nEngineering has determined that there are no plans to address this based on the following:\r\n\r\nThis is a known issue because the audio from the MUXed device is not coming in through the HAL.  \r\n\r\nWe are now closing this bug report.\r\n\r\n\r\nSummary:\r\nThe AVSampleBufferDisplayLayer can be used to draw CMSampleBufferRefs (video frames) to a CALayer, which means you can get a capture frame, apply effects, make a new CMSampleBufferRef, and put that onscreen. It's pretty great.\r\n\r\nProblem! The layer stops updating if the AVCaptureSession that is supplying CMSampleBuffers starts getting audio from a muxed source, such as a DV camcorder. The effect is to freeze the layer on its last displayed video frame. The problem manifests itself regardless of what the video device is (ie, whether it's the same muxed device being used for the audio, or a USB camera)\r\n\r\nSteps to Reproduce:\r\nRun the attached MuxedMicVideoFreezeBuglet project. You will need to have a muxed video device attached (I used an old Canon ZR25 camcorder; we've also seen this problem on a AG-HPX170 DVCPRO HD camera). Make sure OS X can see the camera (ie, bring up QuickTime Player X, do \"new video recording\", and make sure the camera is selectable… you may need to disconnect and reconnect to see the device [this has been my experience with DV on QTX]).\r\n\r\nWhen the app is running there are two views: on the left is a AVCaptureVideoPreviewLayer, and on the right is a AVSampleBufferDisplayLayer. The view on the right is updated by just enqueing video buffers as they come in to -[AVCaptureVideoDataOutputSampleBufferDelegate captureOutput:didOutputSampleBuffer:fromConnection:]. A label on the right side keeps track of how many callback calls have been made.\r\n\r\nTwo popup menus allow you to change video and audio input devices. Switch between your cameras and microphones. Each time there will be a brief pause as the capture session is rebuilt, but it will eventually start updating both views again.\r\n\r\nExpected Results:\r\nBy and large, the two video previews should be the same (perhaps modulo a dropped frame here or there if AVCaptureVideoPreviewLayer is more efficient than my callback).\r\n\r\nActual Results:\r\nThis works as expected until and unless you choose a muxed device for your audio input (these devices are shown as \"Device Name (muxed)\" in the popups). When you do this, the AVSampleBufferDisplayLayer will stop updating. This occurs regardless of what your video device is (ie, whether or not it's the same muxed device you're getting audio from) The AVCaptureVideoPreviewLayer continues to update as normal. The callback count keeps incrementing, meaning that the AVCaptureVideoDataOutputSampleBufferDelegate are still occurring, and setting a breakpoint will show that -[AVSampleBufferDisplayLayer enqueueBuffer:] is still being called… it just doesn't have any visible effect.\r\n\r\nA screen recording of the buglet app in action is available at:\r\nhttps://dl.dropboxusercontent.com/u/12216224/buglets/MuxedMicVideoFreezeBuglet/MuxedMicVideoFreezeBuglet-screenflow.mp4\r\n\r\nVersion:\r\nOS X 10.9.3, build 13D65\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nRunning this on an Early 2008 Mac Pro, using a crappy third-party USB camera, Canon ZR 25 DV camcorder, analog mic for line in, and an Audio Technica USB microphone.\r\n\r\nAttachments:\r\n'MuxedMicVideoFreezeBuglet.zip' was successfully uploaded.\r\n\r\n-----\r\nBonus for OpenRadar readers:\r\nBuglet code: https://dl.dropboxusercontent.com/u/12216224/buglets/MuxedMicVideoFreezeBuglet/MuxedMicVideoFreezeBuglet.zip\r\nDemo video: https://dl.dropboxusercontent.com/u/12216224/buglets/MuxedMicVideoFreezeBuglet/MuxedMicVideoFreezeBuglet-screenflow.mp4"
+    email: invalidname@gmail.com
+    modified: "2014-06-05T18:16:47.795399Z"
+    number: "17054697"
+    number_intvalue: 17054697
+    originated: 5/28/14
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.3
+    reproducible: always
+    resolved: 6/2/14
+    status: closed; won't fix
+    title: AVSampleBufferDisplayLayer does not update when capturing audio from muxed device

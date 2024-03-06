@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18541885"
+    labels:
+        datastore_id: "6185276959358976"
+data:
+    classification: Bug
+    created: "2014-10-14T17:07:30.004249Z"
+    description: "The docs for [UIImage +imageNamed:] were edited in iOS 8 to note \"You can not assume that this method is thread safe.\"\r\n\r\nOur app relied on [UIImage +imageNamed:] being threadsafe, as it was in all recent versions of iOS. Since this regression was introduced in iOS 8, our app has experienced many crashes due to this issue.\r\n\r\nWORKAROUNDS:\r\n- dispatch_sync to the main queue to call [UIImage imageNamed:]. Not viable in general as the calling thread may be holding a lock that the main thread is blocked trying to acquire, triggering deadlock. This also has extremely poor performance.\r\n- Use CGDataProvider and CGImage. Not viable with asset catalogs, which are an opaque file format.\r\n- Stop using asset catalogs (but this presumes [UIImage imageNamed:] is threadsafe for non-asset-catalog images, which the docs now specifically deny)\r\n- Load all images that may be needed off-main-thread on the main queue up front. Not practical as it may not be possible to predict which images are needed off the main thread. Loading the entire set of images is prohibitively expensive.\r\n\r\nSteps to Reproduce:\r\n1. Call [UIImage +imageNamed:] off the main thread.\r\n2. Your app will crash with the attached crash.txt intermittently (but frequently enough that it's a major issue for us).\r\n\r\nExpected Results:\r\nWe expect an API exposed that allows loading asset catalog UIImages without blocking the main thread.\r\n\r\nActual Results:\r\nNo way to load asset catalog UIImages off the main queue at all."
+    email: adamjernst@gmail.com
+    modified: "2014-10-14T17:07:30.004472Z"
+    number: "18541885"
+    number_intvalue: 18541885
+    originated: 10/3/2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "8.0"
+    reproducible: Always
+    resolved: ""
+    status: Duplicate
+    title: iOS 8 changed UIImage imageNamed:, breaking its thread safety

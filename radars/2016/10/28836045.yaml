@@ -1,0 +1,43 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28836045"
+    labels:
+        datastore_id: "4995657672687616"
+data:
+    classification: Other Bug
+    created: "2016-10-19T00:22:27.44049Z"
+    description: |-
+        Summary:
+        When debugging a ReplayKit broadcast extension, every time I step in the debugger, another thread is spawned to deal with an incoming frame.
+
+        Steps to Reproduce:
+        1. Create a ReplayKit UI and broadcast extension
+        2. Configure the extension to use a sample handler
+        3. Launch the broadcast extension into an app, with the debugger active
+        4. Put a breakpoint in the - (void)processSampleBuffer:(CMSampleBufferRef)sampleBuffer withType:(RPSampleBufferType)sampleBufferType method
+        5. Step through that method line by line
+
+        Expected Results:
+        6. A single handler thread is used to process the callbacks into my code, dropping frames if the handler is too slow (e g when slowly stepping through the callback
+
+        Actual Results:
+        6. Each time I step, another thread is spawned to handle incoming frames, all pausing on my breakpoint and it becomes very difficult to follow along what’s actually happening
+
+
+        Notes:
+        Are you just dispatch_async’ing to a delegate queue for every frame? Won’t that completely saturate the CPU if the handler is every too slow in handling just a handfull of frames, spawning threads until a watchdog kills the process?
+
+        I learned a few weeks ago that dispatch_async is really bad for the producer-consumer pattern, as there’s no facility for push-back when the consumer is too slow (causing this exact issue in my own app, eventually watchdog-killing the app).
+    email: joachimb@gmail.com
+    modified: "2016-10-19T00:22:27.44068Z"
+    number: "28836045"
+    number_intvalue: 28836045
+    originated: 18-Oct-2016 05:22 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "10.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Debugging ReplayKit Broadcast samplebuffer extensions spawns hundreds of threads

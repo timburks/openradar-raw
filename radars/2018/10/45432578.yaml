@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "45432578"
+    labels:
+        datastore_id: "4995287290478592"
+data:
+    classification: Enhancement
+    created: "2018-10-20T18:14:54.94267Z"
+    description: "Summary:\r\nIf a share or action or extension calls completeRequestReturningItems:completionHandler: before the view appears, UIKit can attempt to dismiss the extension hosting view controller before presenting it, leaving the host app unresponsive.\n\nThis can happen for extensions that don‘t need any input from the user, such as an app that saves text or URLs for access later.\n\nWhat seems to happen on the second invocation of the share sheet is:\n\n1. Host app presents a UIActivityViewController\n2. When the users selects the share extension, the UIActivityViewController  gets dismissed somehow and UIKit starts the extension process if needed and creates the extension UI.\n3. In the extension, viewDidLoad is called.\n4. The extension completes the request.\n5. Back in the host app UIKit, calls dismissViewController on the topmost view controller to dismiss the extension hosting view controller.\n6. In the host app, UIKit presents the extension hosting view controller on the topmost view controller.\n\nAt step 5, the extension hosting view controller hasn’t been presented yet. The UIActivityViewController is still being dismissed, and there is a warning log about this.\n\nThe end result is touch input is blocked in the host app so it needs to be killed by the user.\n\nUIKit should be able to detect this situation and either wait to dismiss after presenting, or log a warning or assert so developers know they abused the API immediately.\r\n\r\nSteps to Reproduce:\r\n1. Run the share extension in the trivial attached sample. E.g. in Safari.\n2. Invoke the extension twice — the problem does not occur the first time.\n\nThe only thing significant in the example is that the share extension calls completeRequestReturningItems:completionHandler: before viewDidAppear: is called.\r\n\r\nExpected Results:\r\nEither UIKit complains (such as with an assertion or warning log) both times the extension is run, and/or the host app (e.g. Safari) is usable after the second invocation.\r\n\r\nActual Results:\r\nAfter the second invocation of the share extension, the host app is unresponsive.\r\n\r\nVersion:\r\n12.0\r\n\r\nNotes:\r\nRegression: I never observed this problem on iOS 11."
+    email: douglashill@douglashill.co
+    modified: "2018-10-20T18:14:54.942814Z"
+    number: "45432578"
+    number_intvalue: 45432578
+    originated: 20-Oct-2018 07:14 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "12.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIKit should detect if extension completes before view appears

@@ -1,0 +1,58 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24173309"
+    labels:
+        datastore_id: "5064123360477184"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2016-01-13T19:56:54.55316Z"
+    description: |-
+        Summary:
+        Accessing `self.dynamicType` in a protocol extension constrained on Objective-C subclass in Swift causes a bad memory access.
+
+        Steps to Reproduce:
+        Run the following code:
+
+        ```swift
+        import Foundation
+        // doesn't crash when subclassing a non-Objective-C class, or not subclassing
+        class Class1: NSObject, Protocol1 {}
+
+        protocol Protocol1 {}
+        // doesn't crash without the type constraint, or with a different constraint ('Self: Hashable')
+        extension Protocol1 where Self: Class1 {
+            func printType() {
+                print(self.dynamicType)
+                // also crashes:
+                // _ = String(self.dynamicType)
+                // self.dynamicType.description()
+            }
+        }
+
+        Class1().printType() // EXC_BAD_ACCESS
+        ```
+
+        Expected Results:
+        Accessing `self.dynamicType` in a protocol extension constrained on Objective-C subclass in Swift should return the calling type.
+
+        Actual Results:
+        Accessing `self.dynamicType` in a protocol extension constrained on Objective-C subclass in Swift causes a bad memory access.
+
+        Regression:
+        N/A
+
+        Notes:
+        N/A
+    email: jp@jpsim.com
+    modified: "2016-01-13T19:56:54.5535Z"
+    number: "24173309"
+    number_intvalue: 24173309
+    originated: 13-Jan-2016 11:56 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-7.2 (7C68)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Crash when printing `self.dynamicType` in a protocol extension constrained on Objective-C subclass'

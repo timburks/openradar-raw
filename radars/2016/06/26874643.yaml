@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26874643"
+    labels:
+        datastore_id: "6678246628261888"
+data:
+    classification: Serious Bug
+    created: "2016-06-18T01:55:53.37501Z"
+    description: "Summary:\r\nIn macOS 10,12, dyldPath is a new member of dyld_all_image_infos, declared in <mach-o/dyld_images.h>.\r\n\r\nIn testing, I have found that dyld_all_image_infos is not NUL-terminated, rendering this field useless. I can consistently reproduce this when running a 32-bit executable at a relative path from a working directory whose path’s length is longer than dyld’s path’s length.\r\n\r\nSteps to Reproduce:\r\ndyld_path.cc is the attached test program.\r\n\r\n$ mkdir xxxxxxxxxxxxxx\r\n$ clang++ -arch i386 -std=c++11 dyld_path.cc -o xxxxxxxxxxxxxx/dyld_path\r\n$ cd xxxxxxxxxxxxxx\r\n$ pwd\r\n/Users/litterbox/xxxxxxxxxxxxxx\r\n$ ./dyld_path\r\n/usr/lib/dyldbox/xxxxxxxxxxxxxx\r\n\r\nExpected Results:\r\nThe test program should print the path to dyld, normally /usr/lib/dyld.\r\n\r\nActual Results:\r\nThe test program overwrites a buffer containing the working directory with the path to dyld, but does not NUL-terminate dyld’s path, so if the working directory’s path’s length is longer than dyld’s, trailing junk from the working directory’s path will appear appended to dyld’s. In the example, it prints /usr/lib/dyldbox/xxxxxxxxxxxxxx, which is not a valid path to anything, and certainly not dyld’s path.\r\n\r\nVersion:\r\n10.12 16A201w\r\n\r\nConfiguration:\r\nI have observed this bug in a 32-bit process when running the test program at a relative path.\r\n\r\nI have not yet observed this bug in a 64-bit process or when running the test program at an absolute path, although I haven’t tried very hard to trigger the bug in those scenarios.\r\n\r\n--\r\ndyld_path.cc\r\n\r\n// clang++ -arch i386 -std=c++11 dyld_path.cc -o dyld_path\r\n\r\n#include <mach/mach.h>\r\n#include <mach-o/dyld.h>\r\n#include <mach-o/dyld_images.h>\r\n#include <stdio.h>\r\n#include <stdlib.h>\r\n#include <string.h>\r\n\r\nconst dyld_all_image_infos* DyldGetAllImageInfos() {\r\n  // This could call _dyld_get_all_image_infos(), but that's non-public.\r\n\r\n  task_dyld_info_data_t dyld_info;\r\n  mach_msg_type_number_t count = TASK_DYLD_INFO_COUNT;\r\n  kern_return_t kr = task_info(mach_task_self(),\r\n                               TASK_DYLD_INFO,\r\n                               reinterpret_cast<task_info_t>(&dyld_info),\r\n                               &count);\r\n  if (kr != KERN_SUCCESS) {\r\n    return nullptr;\r\n  }\r\n\r\n  return reinterpret_cast<dyld_all_image_infos*>(dyld_info.all_image_info_addr);\r\n}\r\n\r\nint main(int argc, char* argv[]) {\r\n  const dyld_all_image_infos* dyld_image_infos = DyldGetAllImageInfos();\r\n\r\n  bool success = false;\r\n  if (dyld_image_infos->version >= 15) {\r\n    printf(\"%s\\n\", dyld_image_infos->dyldPath);\r\n    if (strcmp(dyld_image_infos->dyldPath, \"/usr/lib/dyld\") == 0) {\r\n      success = true;\r\n    }\r\n  }\r\n\r\n  return success ? EXIT_SUCCESS : EXIT_FAILURE;\r\n}"
+    email: mark@chromium.org
+    modified: "2016-07-12T13:23:20.41275Z"
+    number: "26874643"
+    number_intvalue: 26874643
+    originated: "2016-06-17"
+    parent_number: "27144242"
+    product: OS X
+    product_version: 10.12dp1 16A201w
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/27144242
+    title: dyld_all_image_infos::dyldPath is broken (not NUL-terminated)

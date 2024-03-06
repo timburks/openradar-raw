@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB10086260
+    labels:
+        datastore_id: "5506576886530048"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2022-06-08T01:10:18.9057Z"
+    description: "When a `Button` is nested within another `Button` the `isPressed` state is triggered on the outer button even when the inner button is tapped. \r\n\r\nYou would expect that tapping the inner button would not trigger the `isPressed` state on the out button. This occurs both with a custom button style and the default button style. Notably, the action handlers for the buttons are correctly activated, even though the isPressed state is incorrect.\r\n\r\nYou can see this in the following code example, where pressing the inner (i) button triggers the outer button on the row to be scaled as well, as if it was also being pressed.\r\n\r\nThis behavior was most recently observed in the iOS 16 Beta packaged in the Xcode 14.0 beta (14A5228q).\r\n\r\n```\r\nstruct NestedButtonsTest: View {\r\n  var body: some View {\r\n    Button(action: { print(\"outside\") }) {\r\n      HStack {\r\n        VStack(alignment: .leading) {\r\n          Text(\"Title\").font(.title)\r\n          Text(\"Subtitle\").font(.body)\r\n        }\r\n        Spacer()\r\n        Button(action: { print(\"inside\") }) {\r\n          Image(systemName: \"info.circle\")\r\n        }\r\n      }\r\n    }\r\n    .frame(maxWidth: .infinity, alignment: .leading)\r\n    .padding()\r\n    .buttonStyle(ScaleEffectButtonStyle())\r\n  }\r\n}\r\n\r\nstruct ScaleEffectButtonStyle: ButtonStyle {\r\n  var scale: CGFloat = 0.95\r\n  var animation: SwiftUI.Animation = .easeInOut\r\n\r\n  func makeBody(configuration: Configuration) -> some View {\r\n    configuration.label\r\n      .contentShape(Rectangle())\r\n      .scaleEffect(configuration.isPressed ? scale : 1)\r\n      .animation(animation, value: configuration.isPressed)\r\n  }\r\n}\r\n```"
+    email: eric.horacek@airbnb.com
+    modified: "2022-06-08T01:13:18.366678Z"
+    number: FB10086260
+    number_intvalue: 10086260
+    originated: 6/7/2022
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: iOS 16 Beta
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Nested buttons cause incorrect pressed state on outer button when tapping inner button

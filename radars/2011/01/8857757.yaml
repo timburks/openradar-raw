@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8857757"
+    labels:
+        datastore_id: "1039401"
+data:
+    classification: Performance
+    created: "2011-01-13T03:20:42.502297Z"
+    description: "Summary:\r\nOn iOS devices (iPhone and iPad), calling usleep() consumes a significantly large amount of CPU time when on a background thread. usleep generally should be nicer to the processor.\r\n\r\nIn the open source library ALmixer (attached), there is a worker thread that is created to do some state management bookkeeping. Often, it does not need to actually do anything, so to be nice to the processor, I call usleep(10) to yield the thread. This works on all other systems I've tried (Mac OS, Windows, Linux, FreeBSD), but on iOS, I discovered that a large amount of time is being spent in usleep.\r\n\r\nFor programs that are near maxing out the CPU, this usleep() causes a pathological performance problem. Applications begin to start stuttering as it seems that this background thread keeps waking up.\r\n\r\nTo work around the problem, I change the pthread priority. I discovered that the default was 31 which is the highest or next highest priority. To improve the performance of my program, I had to lower the priority all the way to the lowest (0 I think). Small values above the lowest did not improve the performance.\r\n\r\n\r\nSteps to Reproduce:\r\nAttached is a demo program. It is a simple OpenGL template that activates my background thread. Run the app on a device in Instruments with the Time Profiler. You will see a huge amount of time spent in usleep() called on my worker thread.\r\n\r\nThere is not enough stuff going on in this program to see stuttering. If you could find a stressful program, you would probably see stuttering.\r\n\r\n\r\nExpected Results:\r\nusleep should not be sucking up all the CPU.\r\n\r\nActual Results:\r\nCPU is eaten by usleep.\r\n\r\nRegression:\r\nSeems to always have been bad.\r\n\r\nNotes:\r\nIn ALmixer.c, look for:\r\n#if 0 // DISABLED FOR APPLE BUG DEMONSTRATION\r\n\r\nIf you enable this, you'll enable my thread priority code which sets the level to 0 and the CPU cost goes down significantly.\r\n\r\nAlso attached is a saved Instruments trace."
+    email: ewmailing@gmail.com
+    modified: "2011-08-28T05:38:23.87019Z"
+    number: "8857757"
+    number_intvalue: 8857757
+    originated: "2011-01-12"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 3.1-4.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: usleep eating a large amount of CPU time, thread priorities weird

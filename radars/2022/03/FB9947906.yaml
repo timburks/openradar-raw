@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9947906
+    labels:
+        datastore_id: "5628230451068928"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2022-03-07T19:55:16.026356Z"
+    description: "# Intro\r\n\r\nWe currently work on Wi-Fi transition from SSID: OLDWIFI (WPA2 Personal) to SSID: NEWWIFI (WPA2 Enterprise EAP-TTLS with PAP).\r\nWe want to use EAP-TTLS with PAP inner authentication method so our user can use Okta credentials to authenticate when connecting to Wi-Fi.\r\nmacOS won't connect to EAP-TTLS with PAP by default unless explicitly configured in configuration profile. We provide the configuration profile via MDM (VMware Workspace ONE UEM).\r\n\r\n# Problem\r\n\r\nWhen we push SYSTEM scope configuration profile (wifi_system_scope.mobileconfig) with Wi-Fi payload (EAP-TTLS + PAP configuration) to our devices, they immediately try to connect to the new SSID. However password is not know at this time so this attempts fails. In this situation we would expect macOS to prompt for credentials but that is not the case. Instead macOS reconnect to previously used SSID after this failed attempt.\r\n\r\nImagine you deploy the configuration profile and kick everyone out of the Wi-Fi for about 20-30 seconds. They might be in very important meeting.\r\n\r\n# Steps to reproduce\r\n\r\n1. Send SYSTEM scope configuration profile wifi_system_scope.mobileconfig to managed Macs via MDM\r\n2. Profile is delivered and configuration applied\r\n\r\n# Expected result\r\n\r\nOne of:\r\nA. macOS prompts for credentials when it tries to connect to the newly configured network\r\nB. macOS won't try to connect automatically\r\n\r\n# Actual result\r\n\r\nmacOS tries to connect to the SSID but fails and does not prompt for password.\r\n\r\nFrom m1_eapol.log (see attachment)\r\n2022-03-04 13:53:01.741576+0100 0x6d7d     Default     0x0                  2773   0    eapolclient: [com.apple.eapol:Client] Authenticating: can't prompt for missing properties (\r\n    UserPassword\r\n)\r\n2022-03-04 13:53:01.742627+0100 0x6d7d     Info        0x0                  2773   0    eapolclient: [com.apple.eapol:Client] State=Held Status=UserInputNotPossible (15):\r\n\r\n# Workaround\r\n\r\nWhen we deploy the configuration profile within USER scope instead (wifi_user_scope.mobileconfig) macOS won't try to automatically connect to newly configured network.\r\n\r\n# Affected systems\r\nBoth M1 and Intel MacBook Pro running macOS 12 Monterey. Tested with\r\n- MacBookPro14,1 running 12.2.1 (21D62)\r\n  Test occured at 2022-03-04 15:36:12 CET\r\n- MacBookPro17,1 running 12.3 Beta 5 (21E5227a)\r\n  Test occured at 2022-03-04 13:53:00 CET\r\n\r\nTo provide more detailed logs we turned on extended logging via sudo wdutil log +wifi +eapol."
+    email: michalm.mac@gmail.com
+    modified: "2022-03-07T19:55:16.026509Z"
+    number: FB9947906
+    number_intvalue: 9947906
+    originated: "2022-03-07"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: "12.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: macOS attempts to connect to EAP-TTLS Wi-Fi after profile deployment when password is not known and does not prompt

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7716702
+    labels:
+        datastore_id: "5031111222624256"
+data:
+    classification: Spotlight
+    created: "2020-05-28T00:51:13.903184Z"
+    description: "In macOS you can create a Finder alias to a file on an unmounted encrypted volume (e.g. a disk image), and when you open the alias, it will prompt for the password. The problem is that starting with Mojave, if you use Spotlight to find and open the alias, it generates the password prompt but won't let you type into it.\r\n\r\nFirst we need to create the disk image and alias. The alias must be created on an HFS+ volume due to another issue (see feedback FB7716688).\r\n\r\n1. Create and mount a disk image: hdiutil create -size 5m -fs HFS+ -encryption -volname Secure_Disk -attach Secure_Disk-dmg\r\n\r\n2. Give it a password: This is the password\r\n\r\n3. Create a file on the disk image: echo \"This is some secret text\">/Volumes/Secure_DIsk/super_secret.txt\r\n\r\n4. In the Finder, option-command drag the super_secret.txt file to an HFS+ volume to create a Finder alias to the file.\r\n\r\n5. The HFS+ requirement is due to a bug in alias creation; once the alias is created you are free to copy it to an APFS volume. It should be a volume that is indexed by Spotlight.\r\n\r\n6. Double-click the alias. It will successfully open the super_secret.txt file. Close the Text Edit window.\r\n\r\n7. Dismount the image: hdiutil detach /Volumes/Secure_Disk.\r\n\r\n8. Double-click the alias. It will display the \"Enter password to access Secure_Disk.dmg\". Enter the password from step 2.  Do not save the password in the keychain.\r\n\r\n9. The disk image will mount and the file inside will be opened.  This demonstrates that the alias works as expected in the Finder.\r\n\r\n10. Close the Text Edit window and eject the disk image again.\r\n\r\n11. Open a Spotlight window and search for super_secret. It will find the super_secret.txt alias.\r\n\r\n12. Open the alias from the Spotlight window.  It will display the same password prompt as in step 8, but you can't type in the Password box. Nor does it accept using the keyboard Enter for the OK button.\r\n\r\nAs far as I can tell, it takes all of the specified requirements to create the problem:\r\n- Encrypted volume\r\n- Alias to a file on the volume\r\n- Open alias via Spotlight.\r\n\r\nAs shown above in step #6, the alias will work if it isn't opened from Spotlight. And Spotlight can search for and open the encrypted volume. It just doesn't work when you search for an *alias* to the volume.\r\n\r\nThis same procedure worked in High Sierra."
+    email: msschmitt@gmail.com
+    modified: "2020-05-28T00:51:13.903335Z"
+    number: FB7716702
+    number_intvalue: 7716702
+    originated: 3/27/2020
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: macOS Mojave 10.14.6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Can't use Spotlight to open alias to a file on an encrypted volume

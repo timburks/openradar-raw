@@ -1,0 +1,21 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: ""
+    labels:
+        datastore_id: "1156411"
+data:
+    classification: ""
+    created: "2011-04-11T02:37:19.588602Z"
+    description: "Summary: CFPropertyListCreateWithData should not parse <integer>18446744073709551615</integer> as -1\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create \"helloworld.plist\" as below:\r\n\r\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\r\n<plist version=\"1.0\">\r\n<dict>\r\n        <key>helloworld</key>\r\n        <integer>18446744073709551615</integer>\r\n</dict>\r\n\r\n2. Create \"helloworld.c\" as below:\r\n\r\n#import <Foundation/Foundation.h>\r\n#import <CoreFoundation/CoreFoundation.h>\r\n\r\nint main(void) {\r\n        const void *key;\r\n        const void *value;\r\n        NSAutoreleasePool *pool = [NSAutoreleasePool new];\r\n        NSData *data = [NSData dataWithContentsOfFile:@\"helloworld.plist\"];\r\n        CFPropertyListRef propertyList = CFPropertyListCreateWithData(kCFAllocatorDefault, (CFDataRef)data, kCFPropertyListImmutable, NULL, NULL);\r\n        if (propertyList == NULL) {\r\n                printf(\"[ERROR] CFPropertyListCreateWithData\\n\");\r\n                exit(1);\r\n        }   \r\n        key = CFSTR(\"helloworld\");\r\n        if (!(CFDictionaryGetValueIfPresent(propertyList, key, &value) && CFGetTypeID(value) == CFNumberGetTypeID())) {\r\n                perror(\"[ERROR] CFDictionaryGetValueIfPresent\\n\");\r\n                exit(1);\r\n        }   \r\n        NSInteger helloworld;\r\n        CFNumberGetValue(value, kCFNumberNSIntegerType, &helloworld); // CFNumberGetType(value) returns kCFNumberSInt64Type here...\r\n        NSLog(@\"%ld\", helloworld);\r\n        [pool release];\r\n        return 0;\r\n}\r\n\r\nExpected Results:\r\n\r\nIt should print a line as below:\r\n\r\n[ERROR] CFPropertyListCreateWithData\r\n\r\nActual Results:\r\n\r\nIt prints a line with a number of -1.\r\n\r\nRegression:\r\n\r\nIn the parsed dictionary, key \"helloworld\"'s value has a type of CFNumber, which has a number type of kCFNumberSInt64Type. But the number given is greater than 2^63-1, so it can't be represented as a signed int64. I suppose all string presentation of numbers ≥ 2^63 should be considered as illegal numbers.\r\n\r\nNotes:\r\n\r\nn/a"
+    email: yaohua2000@gmail.com
+    modified: "2011-04-11T02:37:19.588955Z"
+    number: ""
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.7
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: CFPropertyListCreateWithData should not parse <integer>18446744073709551615</integer> as -1

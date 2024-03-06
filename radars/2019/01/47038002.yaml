@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "47038002"
+    labels:
+        datastore_id: "4959213524615168"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2019-01-04T01:32:42.42768Z"
+    description: "== Summary\r\n\r\nThe InstallEnterpriseApplication MDM command will sometimes fail due to a crash in the storedownloadd process.\r\n\r\n== Steps to Reproduce\r\n\r\nBehavior is inconsistent and I have not found a way to reproduce it reliably yet. Steps to cause a chance of failure:\r\n\r\n1. Enroll a device in MDM, either via DEP or UAMDM (configuration profile).\r\n2. Issue a valid InstallEnterpriseApplication command to the enrolled device.\r\n3. Issue a push notification or let the device check in to MDM to receive the command.\r\n\r\n== Expected Results\r\n\r\nThe command is acknowledged, and the package gets downloaded and installed.\r\n\r\n== Actual Results\r\n\r\nSome percentage of the time, the package will not get downloaded or installed, despite the MDM command being acknowledged.\r\n\r\n== Version/Build\r\n\r\nmacOS Mojave 10.14.1 (18B2084)\r\n\r\n== Configuration\r\n\r\nMacBookAir8,1\r\n\r\n== Notes\r\n\r\nOver the last few months, in a fleet of macOS devices with various hardware specs and OS versions, we have seen an increasing number of incidents of failed package installation via MDM. The package being installed is always the same and is smaller than the InstallApplication manifest hash chunk size. Until recently, this package had been successfully downloading and installing on devices via the InstallApplication MDM command consistently for over a year with no issue, aside from the occasional inevitable loss of internet connectivity.\r\n\r\nIt is possible some of the incidents we've seen result from an InstallApplication command, but this report details one which resulted from InstallEnterpriseApplication.\r\n\r\nDescription of incident:\r\n\r\nOn January 3, 2019, a new 13\" MacBook Air enrolled in MDM through DEP. After successful enrollment, an InstallEnterpriseApplication MDM command was immediately issued for the device and a push notification was sent to the device. The command was acknowledged, but after half an hour the package had still not been installed. The failure was eventually detected and a second, similar command was automatically enqueued. This command was also acknowledged as soon as the device went online, but the package failed to install again. I started looking at system logs; meanwhile, a third command was enqueued. The device received this command and quickly succeeded at installing the package.\r\n\r\nThese two log lines show in system.log. The log timestamps are each within one second of the corresponding (failed) MDM command acknowledgement. The attachments in this issue (storedownloadd crash logs) correspond to these times as well.\r\n\r\nJan  3 09:46:13 [...] com.apple.xpc.launchd[1] (com.apple.storedownloadd.daemon[488]): Service exited due to SIGILL | sent by exc handler[488]\r\n...\r\nJan  3 11:02:04 [...] com.apple.xpc.launchd[1] (com.apple.storedownloadd.daemon[851]): Service exited due to SIGILL | sent by exc handler[851]"
+    email: codroid@gmail.com
+    modified: "2019-01-04T01:32:42.427906Z"
+    number: "47038002"
+    number_intvalue: 47038002
+    originated: January 3 2019, 5:09 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.14.1 (18B2084)
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: InstallEnterpriseApplication MDM command will sometimes fail due to storedownloadd crash

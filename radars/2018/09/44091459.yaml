@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "44091459"
+    labels:
+        datastore_id: "5015489138917376"
+data:
+    classification: ""
+    created: "2018-09-04T09:48:29.45487Z"
+    description: "When a view controller is pushed on a UINavigationController while another transition is in progress, the viewControllers property isn't updated synchronously before pushViewController:animated: returns.\r\n\r\nThis can be triggered for example by pushing a view controller shortly after another one (either in the same run loop cycle like in the attached demo app, or with a short delay).\r\n\r\nThe problem can also be triggered when a modal presentation animation is running while pushViewController:animated: is called. This can be tried out by replacing the first push in the demo app (ViewController.m:16) by:\r\n[self presentViewController:blueVc animated:YES completion:nil];\r\n\r\nSteps to Reproduce:\r\n- Build and run the demo app\r\n- Tap the \"Demo!\" button\r\n- Watch the app's logs in Xcode\r\n\r\nExpected Results:\r\nThe last log message should list three view controllers: The original and the two that were pushed.\r\n\r\nActual Results:\r\nThe last log message only lists two view controllers: The original and the first one that was pushed.\r\n\r\nVersion/Build:\r\nXcode 9.4.1 (9F2000)\r\nSimulatorApp-851.2\r\nCoreSimulator-518.22\r\n\r\nConfiguration:\r\niOS 11.4 (15F79) on iPhone X simulator\r\n\r\nOnly for Open Radar, not part of the original radar:\r\nHere's the contents of ViewController.m, the only file with relevant code.\r\n\r\n#import \"ViewController.h\"\r\n\r\n@implementation ViewController\r\n\r\n- (IBAction)demoTapped:(UIButton *)sender {\r\n    UIViewController *blueVc = [UIViewController new];\r\n    blueVc.view.backgroundColor = UIColor.blueColor;\r\n\r\n    UIViewController *redVc = [UIViewController new];\r\n    redVc.view.backgroundColor = UIColor.redColor;\r\n\r\n    UINavigationController *nav = self.navigationController;\r\n    NSLog(@\"[before] navigationController.viewControllers = \\n%@\", nav.viewControllers);\r\n\r\n    NSLog(@\"pushing %@\", blueVc);\r\n    [nav pushViewController:blueVc animated:YES];\r\n\r\n    NSLog(@\"[between] navigationController.viewControllers = \\n%@\", nav.viewControllers);\r\n\r\n    NSLog(@\"pushing %@\", redVc);\r\n    [nav pushViewController:redVc animated:YES];\r\n\r\n    NSLog(@\"[after] navigationController.viewControllers = \\n%@\", nav.viewControllers);\r\n}\r\n\r\n@end"
+    email: tiwocphone@gmail.com
+    modified: "2018-09-04T09:48:29.45519Z"
+    number: "44091459"
+    number_intvalue: 44091459
+    originated: "2018-09-04"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "11.4"
+    reproducible: always
+    resolved: ""
+    status: open
+    title: 'UINavigationController.viewControllers doesn''t update synchronously on pushViewController:animated: when a transition is in progress'

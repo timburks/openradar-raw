@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24973474"
+    labels:
+        datastore_id: "5040105366487040"
+data:
+    classification: ""
+    created: "2016-04-01T12:13:14.73929Z"
+    description: "I am running my Unit Tests on my Teamcity Build Agent which is running as a Launch Daemon.\r\n \r\nMy problem is that sometimes the tests are running successfully, but sometimes I run into a hanging state in the middle of running the tests.\r\nEverything is working fine when I run my tests locally.\r\n \r\nI already tried to create a fresh simulator instance for running my tests but that did not solve the issue.\r\n \r\nHere is the relevant snippet of my build script :\r\n        #Force close the Simulator  \r\n        killall \"Simulator\"  \r\n        local SIMULATOR_DESTINATION_UUID=$($XCODEPATH/usr/bin/xcrun simctl create \"iPhone 6\" com.apple.CoreSimulator.SimDeviceType.iPhone-6 com.apple.CoreSimulator.SimRuntime.iOS-9-2)  \r\n        LOG_FILE_AUTOMATED_TESTS=\"$TEAMCITY_BUILD_CHECKOUTDIR/xcodebuildAutomatedTests.log\"  \r\n        touch \"$LOG_FILE_AUTOMATED_TESTS\"  \r\n        $XCODEPATH/usr/bin/xcodebuild $CLEANBUILD test -destination platform=\"iOS Simulator,id=$SIMULATOR_DESTINATION_UUID\" -project \"$TEAMCITY_BUILD_CHECKOUTDIR/$SCHEME.xcodeproj\" -scheme $SCHEME -configuration \"$BUILD_CONFIG_NAME_CAPITAL\" -derivedDataPath \"$DERIVED_DATA_DIR_DEVICE\" OTHER_CODE_SIGN_FLAGS=\"--keychain $HOME/Library/Keychains/login.keychain\" -parallelizeTargets -jobs `sysctl hw.ncpu | awk '{print 2*$2}'`  2>&1 | tee \"$LOG_FILE_AUTOMATED_TESTS\" | xcpretty --report junit --output automated-test-results/TEST-UnitTests-$BUILD_CONFIG_NAME_CAPITAL.xml  \r\n        $XCODEPATH/usr/bin/xcrun simctl shutdown $SIMULATOR_DESTINATION_UUID  \r\n        $XCODEPATH/usr/bin/xcrun simctl delete $SIMULATOR_DESTINATION_UUID  \r\n        killall \"Simulator\"  \r\n \r\nHere are some example results :\r\nHere the tests ran just fine :\r\n[15:50:58][Step 6/38] All tests  \r\n[15:50:58][Step 6/38] Test Suite MyAppTests.xctest started  \r\n[15:50:58][Step 6/38] MyApp1Tests  \r\n[15:50:58][Step 6/38]     ��� testSomething1 (0.004 seconds)  \r\n[15:51:13][Step 6/38]     ��� testSomething2 (5.608 seconds)  \r\n[15:51:13][Step 6/38]     ��� testSomething3 (0.006 seconds)  \r\n[15:51:13][Step 6/38]     ��� testSomething4 (0.004 seconds)  \r\n[15:51:13][Step 6/38] MyApp2Tests  \r\n[15:51:13][Step 6/38]     ��� testSomethingOther1 (0.005 seconds)  \r\n[15:51:13][Step 6/38] MyApp3Tests  \r\n[15:51:13][Step 6/38]     ��� testSomethingOtherOther1 (0.019 seconds)  \r\n[15:51:13][Step 6/38] MyApp4Tests  \r\n[15:51:13][Step 6/38]     ��� testSomethingOtherOtherOther1 (0.238 seconds)  \r\n[15:51:13][Step 6/38]     ��� testSomethingOtherOtherOther2 (0.112 seconds)  \r\n[15:51:13][Step 6/38] MyApp5Tests  \r\n[15:51:13][Step 6/38]     ��� testSomethingOtherOtherOtherOther1 (0.000 seconds)  \r\n[15:51:17][Step 6/38] Selected tests  \r\n[15:51:17][Step 6/38] Test Suite join.meTests.xctest started  \r\n[15:51:17][Step 6/38]  \r\n[15:51:17][Step 6/38]  \r\n[15:51:17][Step 6/38] Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds  \r\n \r\nHere I had a hang :\r\n[16:15:11][Step 6/38] All tests  \r\n[16:15:11][Step 6/38] Test Suite MyAppTests.xctest started  \r\n[16:15:11][Step 6/38] MyApp1Tests  \r\n[16:15:11][Step 6/38]     ��� testSomething1 (0.003 seconds)  \r\n \r\nDo you know what can cause this issue? I am trying to remove the \"-parallelizeTargets ...\" part now.\r\n \r\n \r\nThanks for any help!\r\n\r\nUPDATE : \r\nRemoving the \"-parallelizeTargets ...\" part did not help... :( Same results... :(\r\n\r\nSIDENOTE : \r\nI couldn't reproduce it locally on my machine yet.\r\n\r\nSteps to Reproduce:\r\nRun Unit Tests multiple time.\r\n\r\nExpected Results:\r\n\"xcodebuild test ...\" should not hang\r\n\r\nActual Results:\r\n\"xcodebuild test ...\" should hangs\r\n\r\nVersion:\r\niOS 9.2, Xcode 7.2.1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 6 simulator\r\n\r\nAttachments:"
+    email: szigetics@gmail.com
+    modified: "2016-04-01T12:13:14.73952Z"
+    number: "24973474"
+    number_intvalue: 24973474
+    originated: 04-Mar-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 9.2, Xcode 7.2.1
+    reproducible: ""
+    resolved: Not yet
+    status: Attention
+    title: xcodebuild test hangs

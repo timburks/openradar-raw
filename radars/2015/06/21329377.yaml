@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21329377"
+    labels:
+        datastore_id: "6662796926255104"
+data:
+    classification: Serious Bug
+    created: "2015-06-10T22:19:40.39019Z"
+    description: "Summary:\r\nThe following example crashes reliably on my machine:\r\n\r\n// Function - fine by itself\r\nfunc notFun(inout target: Array<Int>) {}\r\n// Will wreak havoc when stored in array\r\nlet funs = [notFun]\r\n\r\n// An innocent array\r\nvar target = Array<Int>(count: 42, repeatedValue: 42)\r\n\r\n// Run the function\r\nfuns.first?(&target)\r\n\r\n// Do some more work to trigger crash in this case\r\nprint(target)\r\n\r\n\r\nThe general cause seem to be functions with an inout parameter of type Array that are stored in an array themselves. The array's backing store seems to be mismanaged in some way in that case.\r\n\r\nDepending on the actual code, I have seen this pattern work fine in rare cases or mostly cause crashes by:\r\n* Your average EXC_BAD_ACCESS\r\n* malloc aborting when it detects some corrupted data structures\r\n* fatal error: UnsafeMutablePointer.moveInitializeFrom non-following overlapping range; use moveInitializeBackwardFrom\r\n\r\nAddress sanitizer in some cases detects writes to freed memory, in other cases the code works fine with address sanitizer enabled.\r\n\r\n\r\nAn example project is attached and I can provide more examples if that would be of use.\r\n\r\nSteps to Reproduce:\r\nRun the attached Xcode project\r\n\r\nExpected Results:\r\nFunctions with inout Array<T> parameters that are stored in arrays should have correct memory management\r\n\r\nActual Results:\r\nThey don't ;-)\r\n\r\nVersion:\r\nXcode 7.0 (7A120f)\r\nApple Swift version 2.0 (swiftlang-700.0.38.1 clang-700.0.53)"
+    email: janoschhildebrand@gmail.com
+    modified: "2015-09-23T19:31:55.1432Z"
+    number: "21329377"
+    number_intvalue: 21329377
+    originated: 11-Jun-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0 (7A120f)
+    reproducible: Always
+    resolved: Xcode 7.1b2
+    status: Closed
+    title: 'Xcode 7.0 (7A120f): [Swift] Swift functions accepting an inout Array parameter have memory management issues when stored in an array'

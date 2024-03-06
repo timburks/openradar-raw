@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35972275"
+    labels:
+        datastore_id: "5000009179201536"
+data:
+    classification: Serious Bug
+    created: "2017-12-11T19:06:32.68005Z"
+    description: "Summary:\r\nIt is possible to set up a situation where viewWIllDisappear is called before any of viewDidLoad, viewWillAppear, and viewDidAppear when programmatically switching tabs in UITabBarController.\r\n\r\nSteps to Reproduce:\r\nOur situation involves a UITabBarController with logic in its viewDidLoad to call setSelectedViewController. We also have state restoration that restores tab selection. When both of these fire and select different tabs we get a situation where viewWillDisappear is called on one of our tabs before its view has been loaded. When we then access an implicitly unwrapped optional IBOutlet in viewWillDisappear we crash.\r\n\r\nExpected Results:\r\nThe view to always be loaded before a viewWillDisappear, viewDidDisappear, viewWillAppear, viewDidAppear, events can be called. I have never seen any Apple sample code guarding to ensure the view is loaded before accessing IBOutlets in any of these lifecycle hooks.\n\nAlso, viewWillDisappear should never be called without viewWillAppear being called at some earlier point. This seems to be a direct violation of the view lifecycle documentation.\r\n\r\nActual Results:\r\n- viewWillDisappear is called before viewDidLoad.\n- viewIsLoaded returns false.\n- viewWillAppear, and viewDidAppear are not called before viewWillDisappear, violating lifecycle expectations.\r\n\r\nVersion:\r\niOS 11.2 (15C107)\r\n\r\nNotes:\r\nTo workaround we have used: `guard isViewLoaded else { return }` before accessing any IBOutlets in `viewWillDisappear`."
+    email: crayment16@gmail.com
+    modified: "2017-12-11T19:06:32.68041Z"
+    number: "35972275"
+    number_intvalue: 35972275
+    originated: 11-Dec-2017 12:06 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 11.2 (15C107)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: viewWillDisappear can be called before viewDidLoad violating view lifecycle expectations and causing crashes.

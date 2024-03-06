@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16144455"
+    labels:
+        datastore_id: "5820943674900480"
+data:
+    classification: UI
+    created: "2014-02-24T01:48:41.905559Z"
+    description: "Summary:\r\n\r\nWhen setting a new rootViewController on a window, as the docs suggest, \"If the window has an existing view hierarchy, the old views are removed before the new ones are installed\".\r\n\r\nIn the case where there is a Mail composer presented through a UIActivityViewController, however, it seems like the Mail composer did not destroy itself properly when a new rootViewController is set -- its keyboard will remain on screen despite the composer no longer being present.\r\n\r\n(One workaround is that, prior to setting the new root view controller, we can programmatically dismiss the original modal chain by calling dismissViewController on the old root view controller, but this doesn't seem it it should be necessary according to the documentation).\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n1. Present a UIActivityViewController\r\n2. Have the user choose the Mail option\r\n3. Tap on a field to present the keyboard\r\n4. Programmatically set the rootViewController of the window to a new view controller\r\n\r\n\r\nExpected Results:\r\n\r\nEverything from prior to setting the new root view controller should be removed.\r\n\r\n\r\nActual Results:\r\n\r\nThe Mail composer is no longer present, but its keyboard remains up.\r\n\r\n\r\nSample screen recordings:\r\n\r\nscreen recording demonstrating the bug:\r\nhttps://www.dropbox.com/s/6xxglqcc73kgxpd/bug.mov\r\n\r\nexpected result (using the workaround mentioned in the bug report):\r\nhttps://www.dropbox.com/s/9m8tg9w1qf5adiu/with-workaround.mov\r\n\r\n\r\nAttached sample code:\r\n\r\n```\r\n    // start with a simple root\r\n    self.window.rootViewController = [UIViewController new];\r\n\r\n    // series of ops executed sequentially in 2 sec increments:\r\n    NSArray *ops = @[\r\n    ^{\r\n        // present the UIActivityViewController\r\n\r\n        NSString *shareString = @\"some random string\";\r\n        UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[ shareString ] applicationActivities:nil];\r\n        activityViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;\r\n\r\n        [self.window.rootViewController presentViewController:activityViewController animated:YES completion:nil];\r\n    },\r\n    ^{\r\n        // TESTER SHOULD CLICK ON ONE OF THE FIELDS SO THE KEYOBARD SHOW UP NOW!\r\n    },\r\n    ^{\r\n        // TESTER SHOULD CLICK ON ONE OF THE FIELDS SO THE KEYOBARD SHOW UP NOW! (give a couple extra seconds..)\r\n    },\r\n    ^{\r\n\r\n        // ** NOTE ** If you don't have the following line, the keyboard from the Mail composer will not be dimissed.\r\n        // [self.window.rootViewController dismissViewControllerAnimated:NO completion:nil];\r\n\r\n        self.window.rootViewController = [UIViewController new];\r\n        self.window.rootViewController.view.backgroundColor = [UIColor redColor];\r\n    },\r\n     ];\r\n\r\n\r\n    // run the blocks\r\n    [ops enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {\r\n        void(^blk)() = obj;\r\n        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 + 2.0 * idx * NSEC_PER_SEC));\r\n        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){\r\n            blk();\r\n        });\r\n    }];\r\n```"
+    email: RichWChan@gmail.com
+    modified: "2014-02-24T01:48:41.905708Z"
+    number: "16144455"
+    number_intvalue: 16144455
+    originated: 23-Feb-2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 7.0.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Changing window's rootViewController does not dismiss UIActivityViewController's Mail composer's keyboard

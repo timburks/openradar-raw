@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32516552"
+    labels:
+        datastore_id: "5059074106327040"
+data:
+    classification: ""
+    created: "2018-01-17T07:41:38.49877Z"
+    description: "Area:\r\nCalendar\r\n\r\nSummary:\r\nIn my application I have a static `gregorian` property in `SharedCalendar` class that is defined like this:\r\n\r\n    static let gregorian: Calendar = {\r\n        var calendar = Foundation.Calendar(identifier: .gregorian)\r\n        calendar.timeZone = TimeZone.autoupdatingCurrent\r\n        return calendar\r\n    }()\r\n\r\nWhen I want to access a day of some date in specific time zone I am calling:\r\n\r\n    SharedCalendar.gregorian.dateComponents([ .day ], from: someDate).day!\r\n\r\nLet's say `someDate` is `Date(timeIntervalSinceReferenceDate: 512658000.0)` which is `2017-03-31 13:00:00 +0000`.\r\n\r\nWhen I start the app in Vancouver time zone the `SharedCalendar.gregorian.timeZone` property has value `America/Vancouver (autoupdatingCurrent)` and the result of `SharedCalendar.gregorian.dateComponents([ .day ], from: someDate).day!` is `31` **which is correct**.\r\n\r\nWhen I put the application to background and switch the time zone to Sydney and run the app again the `SharedCalendar.gregorian.timeZone` property has value `Australia/Sydney (autoupdatingCurrent)` (which is correct), but the result of `SharedCalendar.gregorian.dateComponents([ .day ], from: someDate).day!` is `31` **which is wrong (should be `1`)**.\r\n\r\nWhen I change the definition of `gregorian` property to be a `var`:\r\n\r\n    var gregorian: Calendar {\r\n        var calendar = Foundation.Calendar(identifier: .gregorian)\r\n        calendar.timeZone = TimeZone.autoupdatingCurrent\r\n        return calendar\r\n    }\r\n\r\nEverything works properly, which is for `America/Vancouver (autoupdatingCurrent)` I get `31`, and for `Australia/Sydney (autoupdatingCurrent)` I get `1`.\r\n\r\nRight now I don't quite understand how `TimeZone.autoupdatingCurrent` is working. When device's time zone changes the `SharedCalendar.gregorian.timeZone` reflects the device's time zone, but it looks like `SharedCalendar.gregorian` is somehow using the old time zone. I don't know if it's a bug or my lack of knowledge how `static let` variables are working.\r\n\r\nSteps to Reproduce:\r\n1. Run the \"CalendarTest\" app in Vancouver time zone.\r\n2. Tap \"Update Date\" on main screen (you should see \"31\").\r\n3. Change time zone of the device to Sydney (should be one day later when changed, so for example 12pm in Vancouver 5am in Sydney).\r\n4. Tap \"Update Date\" on main screen.\r\n\r\nExpected Results:\r\nThe screen should display \"1\".\r\n\r\nObserved Results:\r\nThe screen displays \"31\".\r\n\r\nVersion:\r\niOS 10.3.2 (14F89)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:"
+    email: aleksander.grzyb@gmail.com
+    modified: "2018-01-17T07:41:38.49902Z"
+    number: "32516552"
+    number_intvalue: 32516552
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: 17.01.2018
+    status: Closed
+    title: static let Calendar variable with autoupdatingCurrent time zone uses wrong time zone

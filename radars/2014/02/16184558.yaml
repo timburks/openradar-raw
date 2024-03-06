@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16184558"
+    labels:
+        datastore_id: "5329139854737408"
+data:
+    classification: ""
+    created: "2014-02-27T16:23:21.159294Z"
+    description: "Summary:\r\nWhen connecting to an untrusted SSL connection, the iOS app receives a challenge via the method:\r\n- (void)connection:(NSURLConnection *)connection willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {\r\n\r\nThe first time the app receives the challenge, and the authentication method is ServerTrust, the user is prompted to proceed to the untrusted server.  When they accept, the protection space is stored, and the challenge is handled via method:\r\n- (void)performDefaultHandlingForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;\r\nwhich results in an error response.  The initial request is reissues in the error handler and when the authentication challenge is presented again, and the protection space matched the one stored, the credentials are set based on the trust to complete the challenge via the method:\r\n- (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;\r\n\r\nAfter clearing the stored protection space and waiting for some time and attempting to connect again (over 10 minutes, the timeout for Secure Transport cache detailed in https://developer.apple.com/library/ios/qa/qa1727/_index.html), an authentication challenge is received again.  This falls into a path in the code where the expected behaviour would be to fall into the HTML error handler as it did on the first challenge when resolving it by calling the method:\r\n- (void)performDefaultHandlingForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;\r\n\r\nHowever, the response returned by the request completes successfully with HTTP 200 status, and never falls into the error handler, and the user is never prompted to proceed to the untrusted server again.  It appears that the credentials for the untrusted SSL connection are cached and reused for this second authentication challenge, when the timeout period of the Secure Transport cache has passed.\r\n\r\nThe second challenge also completes successfully if handled with wither of the following 2 methods:\r\n- (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;\r\nor\r\n- (void)rejectProtectionSpaceAndContinueWithChallenge:(NSURLAuthenticationChallenge *)challenge;\r\n\r\nSteps to Reproduce:\r\n1. Xcode 5.0.2 development environment, application with class handling requests via NSURLConnection, class is an NSURLConnectionDataDelegate.\r\n2. Create a connection to a server with an self-signed certificate via HTTPS, and receive an authentication challenge.\r\n3. Accept the untrusted certificate, and proceed with the connection using the server trust credentials.\r\n4. Wait over 10 minutes.\r\n5. Make a second connection to the same server, and note that there is an authentication challenge again, but the request completed successfully regardless of how is is handled.\r\n\r\nExpected Results:\r\nThe second authentication challenge will result in an error response when handled via - (void)performDefaultHandlingForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;\r\n\r\n\r\nActual Results:\r\nThe second authentication challenge results in a successful response when handled via \r\n- (void)performDefaultHandlingForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;\r\nor\r\n- (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;\r\nor\r\n- (void)rejectProtectionSpaceAndContinueWithChallenge:(NSURLAuthenticationChallenge *)challenge;\r\n\r\n\r\nVersion:\r\niOS 6.1.3 and 7.0.6, iPad and iPod Touch\r\n\r\nNotes:\r\nPossibly related to another Apple Bug Report:\r\n14085020: Unable to cancel authorization when server certificate changes\r\n\r\n\r\nConfiguration:\r\nOccurs in all configurations"
+    email: pat.lalonde87@gmail.com
+    modified: "2014-02-27T16:23:21.159431Z"
+    number: "16184558"
+    number_intvalue: 16184558
+    originated: 27-Feb-2014 11:19 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "7"
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: ""

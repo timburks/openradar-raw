@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24953455"
+    labels:
+        datastore_id: "6106977390297088"
+data:
+    classification: Serious Bug
+    created: "2016-03-03T16:01:13.67848Z"
+    description: "Summary:\r\nWe have classroom with following setup. All Macs are bound to Linux LDAP server. Authentication is sent in cleartext inside TLS connection.\r\n\r\nWe mount home folders with automount via NFSv3 protocol.\r\n\r\nAutomount files looks like this -> \r\n# auto_master\r\n/home/users\t\tauto_home\t-nobrowse,hidefromfinder\r\n# auto_home\r\n*\t-vers=3,async,intr,soft,locallocks,noatime,rw server:/export/home/&\r\n\r\nWe would like to switch to NFSv4.\r\nI can login in through command line:\r\nsu user\r\nand access it's file located in home directory mounted via NFSv4 \r\n\r\nHowever loging in via loginwindow GUI results in infinite hang or even kernel panic.\r\n\r\nWe mount home directories manually for this test like this (same options would be used in auto_home file):\r\n\r\n$ mount -t nfs -o vers=4 -o intr -o soft -o async -o rw -o noatime u-server:/home /home/users\r\n\r\n$ nfsstat -m /home/users/\r\n/home/users from server:/home\r\n  -- Original mount options:\r\n     General mount flags: 0x10000040 async,noatime\r\n     NFS parameters: vers=4,soft,intr\r\n     File system locations:\r\n       /home @ server (10.0.1.123)\r\n  -- Current mount parameters:\r\n     General mount flags: 0x14000040 async,noatime multilabel\r\n     NFS parameters: vers=4.0,tcp,port=2049,soft,intr,noresvport,callback,negnamecache,namedattr,noacl,noaclonly,locks,noquota,rsize=32768,wsize=32768,readahead=16,dsize=32768,nordirplus,nodumbtimr,timeo=10,retrans=10,maxgroups=16,acregmin=5,acregmax=60,acdirmin=5,acdirmax=60,nomutejukebox,noephemeral,nonfc,sec=sys\r\n     File system locations:\r\n       /home @ server (10.0.1.123)\r\n     Status flags: 0x0\r\n\r\nWe tried various combinations of NFS options with no success.\r\n\r\nSteps to Reproduce:\r\n1. Bind Mac to LDAP\r\n2. Mount home directory path via NFSv4 protocol\r\n3. Log in\r\n\r\nExpected Results:\r\nUser logs in normaly.\r\n\r\nActual Results:\r\nA) Infinite hang (most of the times)\r\nB) Kernel panic\r\n\r\nVersion:\r\nOS X 10.11.3\r\nOS X 10.10.5\r\nOS X 10.9.5\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nWe are able to replicate this on both Macs and OS X VMware VMs. This issue persists from OS X 10.9 Mavericks to current OS X version.\r\n\r\nDebug log it attachment is syslog with disabled filter. normalog is regular syslog output."
+    email: michalm.mac@gmail.com
+    modified: "2016-04-16T09:38:12.66132Z"
+    number: "24953455"
+    number_intvalue: 24953455
+    originated: 2.3.2016
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11.3
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 23700068
+    title: NFSv4 network homes infinite hang or kernel panic

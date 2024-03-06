@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19547450"
+    labels:
+        datastore_id: "5345825064484864"
+data:
+    classification: Other Bug
+    created: "2015-01-21T12:53:15.116974Z"
+    description: "Summary:\r\nIn general, integer initialisation from integer literals is guarded by a compile-time range check—trying to fit e.g. 0xf000 into an Int16 correctly gives a compiler error telling there's an overflow:\r\n\r\n    \"Integer literal overflows when stored into 'Int16'\"\r\n\r\nBut somehow, this logic goes wrong when building for a 32-bit target, possibly incorrectly behaving as if Int could fit 64 bits:\r\n\r\n    // Results from a 32-bit build shown in comments.\r\n    let i = 3_000_000_000 //=> i: Int = -1294967296\r\n    let j = Int64(10_000_000_000) //=> j: Int64 = 1410065408\r\n    assert(j == 10_000_000_000) // assertion fails!\r\n\r\nNeither of these should pass the compiler without a notice. And I think they should both cause a compiler error when built for a 32-bit target. (Built in 64-bit mode, both lines behave as could be expected because Int is able to fit both literals.)\r\n\r\nSteps to Reproduce:\r\nTry to compile these following three functions one at a time, first for a 64-bit target and then a 32-bit target.\r\n\r\nfunc worksAsExpected() {\r\n    let x1 = 0x7fffffff              //=> x1: Int = 2147483647\r\n    let x2 = 0x7fffffff as Int32     //=> x2: Int32 = 2147483647\r\n    let x3 = 0x7fff as Int16         //=> x3: Int16 = 32767\r\n    let x4 = 0x7f as Int8            //=> x4: Int8 = 127\r\n    let x5 = 10_000_000_000 as Int64 //=> x5: Int64 = 10000000000\r\n    println(\"\\(x1), \\(x2), \\(x3), \\(x4), \\(x5)\")\r\n}\r\n\r\nfunc failsAsExpected() {\r\n    let _ = 0x8000000000000000  // error: Integer literal overflows when stored into 'Int'\r\n    let _ = 0x80000000 as Int32 // error: Integer literal overflows when stored into 'Int32'\r\n    let _ = 0x8000 as Int16     // error: Integer literal overflows when stored into 'Int16'\r\n    let _ = 0x80 as Int8        // error: Integer literal overflows when stored into 'Int8'\r\n    let _ = Int16(0x8000)       // error: Integer overflows when converted from 'Int' to 'Int16'\r\n    let _ = Int8(0x80)          // error: Integer overflows when converted from 'Int' to 'Int8'\r\n}\r\n\r\nfunc worksUnexpectedly() {\r\n    // Expecting error: Integer literal overflows when stored into 'Int'\r\n    let e1 = Int32(0x80000000)     //=> e1: Int32 = -2147483648\r\n    let e2 = Int32(0xffffffff)     //=> e2: Int32 = -1\r\n    let e3 = 0xffffffff            //=> e3: Int = -1\r\n    let e4 = 0x100000000           //=> e4: Int = 0\r\n    let e5 = 10_000_000_000        //=> e5: Int = 1410065408\r\n    let e6 = Int64(10_000_000_000) //=> e6: Int64 = 1410065408\r\n}\r\n\r\n\r\nExpected Results:\r\n1) The function worksAsExpected() should compile and run, printing:\r\n\r\n    2147483647, 2147483647, 32767, 127, 10000000000\r\n\r\n2) The function failsAsExpected() should fail to compile, with the errors as marked in comments.\r\n\r\n3) The function worksUnexpectedly() should fail to compile for 32-bit, probably with the following error from every statement:\r\n\r\n    Integer literal overflows when stored into 'Int'\r\n\r\nFor 64-bit builds, the lines declaring e1 and e2 should give an error.\r\n\r\nActual Results:\r\n1) Works as expected\r\n\r\n2) Fails as expected\r\n\r\n3) For 32-bit, unexpectedly compiles and runs printing:\r\n\r\n    -2147483648, -1, -1, 0, 1410065408, 1410065408\r\n\r\nFor 64-bit, expectedly gives errors from the lines declaring e1 and e2.\r\n\r\nVersion:\r\n6.1.1 (6A2006)\r\n\r\nNotes:\r\nThis behaviour is very surprising when using the constructor-like syntax to define Int64 values:\r\n\r\n    let i = Int64(10_000_000_000)\r\n\r\nCurrently, my best advice is to do either of these instead:\r\n\r\n    let j = 10_000_000_000 as Int64\r\n    let k: Int64 = 10_000_000_000\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: pyry.jahkola@gmail.com
+    modified: "2015-03-12T12:23:52.777764Z"
+    number: "19547450"
+    number_intvalue: 19547450
+    originated: "2015-01-21"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 6.1.1 (6A2006)
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 17604532 (Closed)
+    title: Swift silently truncates integer literals on 32-bit builds

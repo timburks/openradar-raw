@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17261791"
+    labels:
+        datastore_id: "5843004640198656"
+data:
+    classification: ""
+    created: "2014-06-11T02:28:38.120222Z"
+    description: "Summary:\r\nThe CFHTTPMessageRef, when released, does not release the CFStringRef passed in the statusDescription argument. This causes a memory leak.\r\n\r\nSteps to Reproduce:\r\n1) Create a CFStringRef from CFStringCreateWithCString with a C string of some length greater than the minimum required for a new CFStringRef to be malloc'd.\r\n2) Pass this string into CFHTTPMessageCreateResponse with kCFAllocatorSystemDefault for the first argument, a long like 200 for the second, the string from 1) and another CFStringRef for the final argument (this one does not matter).\r\n3) Release all objects created.\r\n\r\nAttached is a source file which recreates these steps in a loop to exaggerate the leakage.\r\n\r\nExpected Results:\r\nInstruments shows all objects released and deallocated.\r\n\r\nActual Results:\r\nInstruments shows the CFStringRef created in step 1) is not released or dealloced and ends with a retain count of 1.\r\n\r\n\r\nVersion:\r\niOS 7.1 SDK\r\n\r\nNotes:\r\nThe second CFStringRef argument to CFHTTPMessageCreateResponse is properly released, no matter the size.\r\nAlso reproduces when using the OSX SDK.\r\n\r\nConfiguration:\r\niPhone Retina 4 inch simulator\r\n\r\nAttachments:\r\n'main.m' was successfully uploaded.\r\n\r\nmain.m:\r\n\r\n#import <Foundation/Foundation.h>\r\n@import CFNetwork;\r\n\r\nint main(int argc, const char * argv[])\r\n{\r\n  @autoreleasepool {\r\n\t\tfor (int i = 0; i < 1000000; i++) {\r\n\t\t\tCFStringRef str = CFStringCreateWithCString(kCFAllocatorSystemDefault, \"looooooooongdescription\", kCFStringEncodingUTF8);\r\n\t\t\tCFStringRef version = CFStringCreateWithCString(kCFAllocatorSystemDefault, \"looooooooooooooooooooooooooooooooooooooooooooooooongerversion\", kCFStringEncodingUTF8);\r\n      \r\n\t\t\tCFHTTPMessageRef message = CFHTTPMessageCreateResponse(kCFAllocatorSystemDefault, 200, str, version);\r\n\t\t\tif (str != NULL) {\r\n\t\t\t\tCFRelease(str);\r\n\t\t\t}\r\n\t\t\tif (version != NULL) {\r\n\t\t\t\tCFRelease(version);\r\n\t\t\t}\r\n\t\t\t// return message, caller does something like\r\n\t\t\tif (message != NULL) {\r\n\t\t\t\tCFRelease(message);\r\n\t\t\t}\r\n\t\t}\r\n\t}\r\n\treturn 0;\r\n}"
+    email: slizyboy@gmail.com
+    modified: "2014-06-11T02:28:38.120368Z"
+    number: "17261791"
+    number_intvalue: 17261791
+    originated: 6/10/2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK, OSX SDK
+    product_version: 7.1+
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Memory leak in CFHTTPMessageCreateResponse with long description strings

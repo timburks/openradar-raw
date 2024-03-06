@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "45520028"
+    labels:
+        datastore_id: "5038718402428928"
+data:
+    classification: CoreBluetooth
+    created: "2018-10-24T15:04:27.433142Z"
+    description: "Summary:\r\n\r\niPhone 5s iOS 11.4 and 12.0.1 sometimes doesn't connect to Bluetooth Smart peripheral. Obvious Chronic bluetoothd daemon instability.\r\n\r\nSteps to Reproduce:\r\n\r\nScan a device and then try to connect to it. \r\n\r\nExpected Results:\r\n\r\nThe iPhone connects to the peripheral.\r\n\r\nActual Results:\r\n\r\nSometimes, the iPhone 5s will not connect to a bluetooth peripheral. It can be like this for a few minutes, where every connect attempt will result in an infinite wait while other iPhones with the same app can connect to the device. Moreover, while bluetoothd is not connecting, it can still see advertising from the peripheral.\r\n\r\nWe have been able to do bluetooth sniffing to see that when it happens, the iPhone 5s is not sending any connect request to the peripheral while the peripheral is advertising. I have also noticed that everytime this happens, the bluetoothd daemon does exactly the same thing which is:\r\n\r\nSwitching state to connecting, then cancelling, then cancelled, then idle and then on iOS 12.0.1 only back to connecting. On iOS 11.4 it did not even switch back to connecting and stayed idle. (see log file). When this happens, no error is sent to the app and nothing happens.\r\n\r\nReproduced with different iOS apps: our apps, and also nRFConnect and LightBlue.\r\n\r\nWe have been running the tests with apps without restarting them or resetting any memory state, doing you can have connection working correctly for 10-15 minutes and then not work for 5 minutes and then back to normal.\r\n\r\nWhen bluetoothd seemed stuck, it seems that asking to connect from a different centralManager from another app unlocks the issue. Trying to cancel with disconnect and connect again with the same central does NOT work, it has to be another process/centralManager that asks for connect. Still, using another app is not necessary to fix the issue, just trying again a few moments or minutes later with the same app and the same instance of centralManager in the same memory context works.\r\n\r\nWe had an occurence on iOS 11.4 where we kept waiting and the connection happened 7 minutes after requesting the connection.\r\n\r\nWe also had an occurence on iOS 12.0.1 of the bluetoothd daemon being completely lost and unable to connect to any peripheral, maintaining state to connecting for each peripheral even though the apps where telling it to disconnect after a app timeout (that was with the LightBlue app). I had to go in the Settings app to reset Bluetooth to fix the issue.\r\n\r\nPersonally I have used my personal iPhone 5s daily for development with CoreBluetooth apps for 3 years since it came out in 2013 with iOS 8 up to iOS 10 and have never seem anything but stelar performance and reliability while using these APIs. I don't know what happened since iOS 11 but it is very concerning to see the performance and reliability of an Apple device weaken years after release without any apparent reason.\r\n\r\nVersion/Build:\r\n\r\niOS 11.4 and iOS 12.0.1\r\n\r\nConfiguration:\r\n\r\niPhone 5s used only rarely for coding, bugging and testing."
+    email: blackcode.fr@gmail.com
+    modified: "2018-10-24T15:04:27.43346Z"
+    number: "45520028"
+    number_intvalue: 45520028
+    originated: 24/10/2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: ""
+    reproducible: YES
+    resolved: ""
+    status: Opened
+    title: iPhone 5s not connecting to nearby device

@@ -1,0 +1,77 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22818424"
+    labels:
+        datastore_id: "5586374606454784"
+data:
+    classification: Serious Bug
+    created: "2015-09-23T13:04:02.2975Z"
+    description: |-
+        Summary:
+        Sharepoint selection not shown when more than 5 SMB Shares are available to a user.
+
+        Steps to Reproduce:
+        Create 5 empty folders somewhere and configure all of them as AFP and SMB Sharepoints.
+        chown them for a user:group and assign POSIX and ACL privs for that user to access those folders.
+        Activate filesharing.
+        Try to connect to the server via AFP://hostname.example.com/ though the Finder “Go to > Connect to server…”.
+        Enter credentials when prompted, you should get the selection dialog asking you to “Select the volumes you want to mount on <hostname.example.com>” showing you all the 5 sharepoints (and probably the user's home directory). Select all of them to mount, and use them as usual. This should work.
+
+        Eject all the mounted Sharepoints.
+
+        Now mount them like above but with SMB://hostname.example.com/ via SMB2/SMB3.
+        You'll get an error “There was a problem connecting to the server hostname.example.com. There are no shares available or you are not allowed to access them on the server. Please contact your system administrator to resolve the problem.
+
+        Hit OK to dismiss.
+        Now connect again, but append the NAME of one of the sharepoints to the connection URL like so.
+        SMB://hostname.example.com/sharepointname
+        And hit connect, authenticate and voila, you are connected despite the error message told you the bogus error that you're not allowed to access any sharepoint.
+
+        Eject the just mounted Sharepoint again and go back to the server.
+
+        No remove configured Sharepoints.
+        IF you were shown a home directory (you did not configure to be shared by the way) in addition to the 5 SharePoints you created, remove 2 of them so that only 3 SharePoints remain. (3 Shares + home = 4 in total)
+         If you did NOT get an added home directory, remove just one so that 4 SharePoints remain configured on the server. (4 Shares = 4 shares in total.)
+
+        Verify they are working by connecting with AFP again, you should see them working. This is fine.
+
+        Now retry to mount with SMB://hostname.example.com/
+        authenticate and this time you DO get the “select the volumes…” dialog.
+
+
+
+
+        Expected Results:
+        A user should always get the selection dialog to select the available volumes no matter if they use AFP, SMB2 or SMB3.
+        It MUST be possible to configure as many SMB SharePoints as needed, even if it be 20 or more and SMB Sharing MUST be able to cope with that just like AFP always did and still does.
+
+
+
+        Actual Results:
+        As soon as there are more than 4 SharePoints available to a user via SMB and the user tries to mount them via SMB the user is NOT shown a selection dialog and it looks like login was refused to the user.
+
+
+
+
+        Regression:
+        This problem NEVER appeared with AFP.
+        This problem NEVER appeared with the old Samba protocol.
+        This problem ALWAYS appears with SMB2 and SMB on Mavericks and Yosemite clients connecting to Yosemite Server with Server.app 4.1.5, 5.0.3 or 5.0.4.
+
+
+
+        Notes:
+        It took me quite a few days of hair pulling to track that one down. WHY the hell is Apple forcing this incomplete and buggy SMB crap on us when AFP is superior in every respect? This is insane!
+    email: pepi.zawodsky@gmail.com
+    modified: "2015-09-23T13:04:02.29791Z"
+    number: "22818424"
+    number_intvalue: 22818424
+    originated: 23-Sep-2015 03:03 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X Server
+    product_version: 4.1.5, 5.0.3, 5.0.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Sharepoint selection not shown when more than 4 (four) SMB Shares are available to a user.

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32589617"
+    labels:
+        datastore_id: "4986381684178944"
+data:
+    classification: ""
+    created: "2017-06-06T15:50:40.11576Z"
+    description: "When I receive a NOTE_FORK event from a kqueue, then both data and udata are empty. I expect them to have a pid of the child process, otherwise it is not very useful.\r\n\r\nSteps to Reproduce:\r\nTake an attachment, compile it using the following command:\r\n\r\nclang++ main.cpp\r\n\r\nRun the a.out:\r\n\r\n./a.out\r\n\r\nObserved Results:\r\npid 47151 called fork()\r\n\tdata: 0\r\n\tudata: 0x0\r\n\r\nExpected Results:\r\npid 47151 called fork()\r\n\tdata: <pid of a child process here>\r\n\tudata: <or here>\r\n\r\nThe source code:\r\n\r\n#include <err.h>\r\n#include <iostream>\r\n#include <thread>\r\n#include <signal.h>\r\n#include <sys/event.h>\r\n#include <sys/time.h>\r\n#include <sys/types.h>\r\n#include <unistd.h>\r\n\r\nusing namespace std;\r\n\r\nvoid observer_main() {\r\n  pid_t pid = getpid();\r\n  int queue = kqueue();\r\n  if (queue == -1) {\r\n    err(1, \"kqueue\");\r\n  }\r\n\r\n  struct kevent ke;\r\n\r\n  EV_SET(&ke, pid, EVFILT_PROC, EV_ADD,\r\n         NOTE_EXIT | NOTE_FORK | NOTE_EXEC | NOTE_SIGNAL, 0, NULL);\r\n\r\n  int i = kevent(queue, &ke, 1, NULL, 0, NULL);\r\n  if (i == -1)\r\n    err(1, \"proc kevent!\");\r\n\r\n  while (true) {\r\n\r\n    memset(&ke, 0x00, sizeof(struct kevent));\r\n\r\n    i = kevent(queue, NULL, 0, &ke, 1, NULL);\r\n    if (i == -1) {\r\n      err(1, \"kevent!\");\r\n    }\r\n\r\n    printf(\"%d\\n\", ke.flags);\r\n\r\n    if (ke.fflags & NOTE_FORK) {\r\n      printf(\"pid %lu called fork()\\n\", ke.ident);\r\n      printf(\"\\tdata: %lu\\n\", ke.data);\r\n      printf(\"\\tudata: %p\\n\", ke.udata);\r\n    }\r\n    if (ke.fflags & NOTE_CHILD)\r\n      printf(\"pid %lu has %lu as parent\\n\", ke.ident,\r\n             ke.data);\r\n  }\r\n}\r\n\r\nint main(int argc, const char * argv[]) {\r\n  thread t(observer_main);\r\n\r\n  printf(\"Hello, World!\\n\");\r\n\r\n  sleep(2);\r\n\r\n  pid_t child = fork();\r\n  if (child != 0) {\r\n    sleep(2);\r\n    kill(child, 9);\r\n  }\r\n\r\n  while (true) {}\r\n\r\n  return 0;\r\n}"
+    email: 1101.debian@gmail.com
+    modified: "2017-06-06T15:51:19.74762Z"
+    number: "32589617"
+    number_intvalue: 32589617
+    originated: June 6 2017, 5:45 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: macOS Sierra 10.12.5 (16F73)
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: kevent with NOTE_FORK does not have child pid attached

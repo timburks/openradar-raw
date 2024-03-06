@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16301054"
+    labels:
+        datastore_id: "5833219765174272"
+data:
+    classification: Other Bug
+    created: "2014-03-14T17:47:22.509359Z"
+    description: "- Register a file presenter using [NSFileCoordinator addFilePresenter: self]\r\n- the documentation states that on ARC and Garbage Collection, -removeFilePresenter must not be called\r\n- it states that -removeFilePresenter is automatically performed if the presenter is deallocated\r\n\r\nHowever, this seems not to be true, as the following example shows:\r\n\r\n- The presenter is created inside an @autorelease pool\r\n- A weak reference of the presenter is kept outside the autorelease\r\n- The code waits until the weak reference is set to nil\r\n- This never happens...\r\n\r\nPlease fix the documentation or the implementation.\r\n\r\n-----\r\n@interface MyPresenter : NSObject <NSFilePresenter>\r\n{\r\n\tNSURL *_url;\r\n\tNSOperationQueue *_queue;\r\n}\r\n\r\n- (id)initWithURL:(NSURL *)url;\r\n\r\n@end\r\n\r\n@implementation MyPresenter\r\n\r\n- (id)initWithURL:(NSURL *)url\r\n{\r\n\tself = [self init];\r\n\t\r\n\tif (self) {\r\n\t\t_url = url;\r\n\t\t_queue = [NSOperationQueue new];\r\n\t\t_queue.maxConcurrentOperationCount = 1;\r\n\t\t\r\n\t\t// According to documentation, -addFilePresenter should not require a remove. This is done automatically for ARC...\r\n\t\t[NSFileCoordinator addFilePresenter: self];\r\n\t}\r\n\t\r\n\treturn self;\r\n}\r\n\r\n- (NSURL *)presentedItemURL\r\n{\r\n\treturn _url;\r\n}\r\n\r\n- (NSOperationQueue *)presentedItemOperationQueue\r\n{\r\n\treturn _queue;\r\n}\r\n\r\n@end\r\n\r\n\r\n\r\nint main(int argc, const char * argv[])\r\n{\r\n\t@autoreleasepool {\r\n\t\t__weak MyPresenter *weakPresenter;\r\n\t\t\r\n\t\t@autoreleasepool {\r\n\t\t\tNSURL *url =  [NSURL fileURLWithPath: @\"test.txt\"];\r\n\t\t\t[@\"abc\" writeToURL:url atomically:YES encoding:NSUTF8StringEncoding error:NULL];\r\n\r\n\t\t\t// Create and register a presenter.\r\n\t\t\tMyPresenter *presenter = [[MyPresenter alloc] initWithURL: url];\r\n\t\t\tweakPresenter = presenter;\r\n\t\t\t\r\n\t\t\t// The presenter should be released when leaving the autoreleasepool. Seems not to happen.\r\n\t\t}\r\n\t    \r\n\t\twhile(1) {\r\n\t\t\t// The presenter should be released eventually. However, this never happens\r\n\t\t\tif (weakPresenter == nil)\r\n\t\t\t\tbreak;\r\n\t\t\t\r\n\t\t\t[[NSRunLoop mainRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 0.001]];\r\n\t\t}\r\n\t\t\r\n\t}\r\n    return 0;\r\n}"
+    email: graeter@hydrixos.net
+    modified: "2014-03-14T17:47:22.509541Z"
+    number: "16301054"
+    number_intvalue: 16301054
+    originated: 12-Mar-2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: removeFilePresenter is never called on ARC

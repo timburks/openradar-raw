@@ -1,0 +1,50 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22200179"
+    labels:
+        datastore_id: "6731369132589056"
+data:
+    classification: UI/Usability
+    created: "2015-08-08T01:12:26.25448Z"
+    description: |-
+        Summary:
+        Passing UIView’s initializer an expression that cannot be itself be initialized gives a misleading error, and an amusingly wrong hint.
+
+        Trivial test case:
+
+        let dimension = 44
+        let view = UIView(frame: CGRectMake(10, 10, 10, dimension))
+          // Error: Cannot invoke initializer for type ‘UIView’ with an argument list of type ‘(frame: CGRect)’
+          //   Expected an argument list of type ‘(frame: CGRect)’
+
+        The error complains that you can’t use (frame: CGRect) and suggests you instead use (frame: CGRect).
+
+        This is a particularly confusing version of the general problem when you refactor a CGFloat from a parameter list into a variable. When you do this, the type gets inferred to Int instead of CGFloat and will fail to compile.
+
+        This, however, will get an understandable error message:
+
+        let rect = CGRectMake(10, 10, 10, dimension)
+          // Error: Cannot invoke ‘CGRectMake’ with an argument list of type (Int, Int, Int, Int)
+
+        Steps to Reproduce:
+        Paste the two lines of code above into a playground or sample project, and build.
+
+        Expected Results:
+        The error message complains that dimension has been inferred to be an Int and therefore it can’t create the CGRect.
+          Bonus awesomeness: the compiler realizes that you meant to create a CGFloat and the code compiles.
+
+        Actual Results:
+        The error message complains that you should instantiate UIView with a CGRect instead of a CGRect.
+    email: ajpike@gmail.com
+    modified: "2015-08-08T01:12:26.2547Z"
+    number: "22200179"
+    number_intvalue: 22200179
+    originated: 07-Aug-2015 06:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 7.0b5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Misleading "Cannot invoke initializer for type" error

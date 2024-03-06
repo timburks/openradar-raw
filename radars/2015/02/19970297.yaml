@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19970297"
+    labels:
+        datastore_id: "5287863675518976"
+data:
+    classification: ""
+    created: "2015-02-26T16:54:37.801737Z"
+    description: "Summary:\r\nAn NSTextView that is unarchived from a xib will have settings including e.g. dash substitution and smart quote substitution enabled by default, even though they were explicitly unchecked in the Interface Builder UI.\r\n\r\nI'm not sure whether the bug here lies in Xcode's assumptions about AppKit defaults, or in AppKit's assumption that missing values in a xib should imply \"default\" values from NSTextView.\r\n\r\nThe problem occurs because Interface Builder saves the attributes for an NSTextView in such a way that unchecking a box for e.g. smart quotes simply removes the attribute entirely from the resulting XML. The following text view has been configured in Xcode to have the smart quotes and smart dashes turned of, but notice there are no \"NO\" attributes:\r\n\r\n<textView importsGraphics=\"NO\" findStyle=\"panel\" continuousSpellChecking=\"YES\" allowsUndo=\"YES\" usesRuler=\"YES\" usesFontPanel=\"YES\" verticallyResizable=\"YES\" allowsNonContiguousLayout=\"YES\" spellingCorrection=\"YES\" smartInsertDelete=\"YES\" id=\"zb0-g3-xCb\">\r\n\r\nPreviously this wasn't a problem, and I don't know when it became a problem but I suspect that starting in 10.10 AppKit changed the default behavior for NSTextView such that some of these attributes, including smart quotes, should be turned on by default. I also suspect that a \"linked on or after\" check was included for this so that the default only applies if the app was build with a certain SDK or higher (the problem doesn't affect my apps built on older SDKs).\r\n\r\nI think the solutions could include:\r\n\r\n1. Interface Builder should write out attributes with explicit \"NO\" values corresponding to the unchecked boxes in the UI.\r\n\r\n2. AppKit should assume, for the sake of decoding coded objects from xibs at least, the absence of a key value for many of these options should imply a NO setting.\r\n\r\nIn any case I think we can agree that a checkbox being checked \"off\" in Interface Builder needs to end up in causing the runtime NSTextView to have that option disabled by default.\r\n\r\nThe attached project shows a trivial example of a new app created in Xcode to include a single NSTextView, whose smart dashes and smart quotes were then turned off. The result at runtime is a text view whose smart dashes and smart quotes are in fact enabled.\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\n10.10.3 (14D72i)\r\nVersion 6.3 (6D520o)\r\n\r\nUnfortunately it is not trivial for me to downgrade to or test on 10.10.2 or earlier at this time.\r\n\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'TestAutomaticSubstition.zip' was successfully uploaded."
+    email: jalkut@gmail.com
+    modified: "2015-02-26T16:54:37.801926Z"
+    number: "19970297"
+    number_intvalue: 19970297
+    originated: 26-Feb-2015 11:54 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: NSTextView defies intent of xibs with default attributes for quote, dash substitution

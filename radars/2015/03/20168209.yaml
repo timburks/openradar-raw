@@ -1,0 +1,56 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20168209"
+    labels:
+        datastore_id: "5270566768476160"
+data:
+    classification: UI/Usability
+    created: "2015-03-16T01:17:02.126968Z"
+    description: |-
+        Summary:
+        Clang assumes that, if you specify the nullability of one pointer in a file, you intend to specify all of them, and any missing ones are mistakes. This is way too aggressive.
+
+        Steps to Reproduce:
+
+        1. Write some Objective-C code with a value that Swift treats as implicitly unwrapped, along the lines of:
+
+            @property (readonly, weak) Foo * parent;
+            @property (readonly, weak) Foo * root;
+
+        2. Write some Swift code that causes an implicit unwrapping:
+
+            let otherFoo: Foo = …
+            if myFoo.parent == otherFoo {     // This is implicitly myFoo.parent! == otherFoo
+
+        3. Run this code and discover that it crashes when parent is nil.
+
+        4. Try to add a nullability specifier to turn .root into an explicit optional, which will choose a nil-safe version of ==:
+
+            @property (readonly, weak, nullable) Foo * parent;
+            @property (readonly, weak) Foo * root;
+
+        Expected Results:
+        The code compiles without warnings, and parent’s Swift type is now Foo? instead of Foo!.
+
+        Actual Results:
+        You get a warning not only for “root”, but for every other pointer type in the same file.
+
+        Notes:
+        In my actual project, I tried to add one “nullable” and got 38 warnings and 503 errors. (I compile with “treat warnings as errors” enabled, so the warnings were from Swift interop and the errors were from Objective-C #imports.)
+
+        I do eventually want to audit all of my APIs for nullability. But I don’t want to do that *today*; right now, I just want to fix this one bug so my testers stop seeing weird crashes.
+
+        For now, I’ve had to add an ugly “as Foo?” cast to my Swift code. It bugs me that, instead of getting started with a process I eventually intend to complete, I have to insert a temporary workaround because doing it the “right” way would trigger hundreds of errors I don’t want to deal with right now.
+    email: brent@architechies.com
+    modified: "2015-03-16T01:17:02.127104Z"
+    number: "20168209"
+    number_intvalue: 20168209
+    originated: 15-Mar-2015 06:16 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (6D543q)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '"Pointer is missing a nullability type specifier" warning is way too aggressive'

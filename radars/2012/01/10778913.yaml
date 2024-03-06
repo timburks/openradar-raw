@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10778913"
+    labels:
+        datastore_id: "1497402"
+data:
+    classification: Serious Bug
+    created: "2012-01-31T00:27:34.81356Z"
+    description: "Summary:\r\nRight now it is possible for an App to pollute the UTI space. An app can redefine what a particular, well known, extension conforms to which can have a huge impact on a separate app. I think there needs to be some type of protection from apps that misuse UTI declarations.\r\n\r\nI am submitting two app that show off what I'm talking about.\r\nUTIBadCitizen - This app contains no code other then what the Xcode template contained. All it does is declare a bad UTI in it's Info.plist. Specifically, it declares a custom UTI 'com.utibadcitizen.badtype' that conforms to 'public.text' and 'public.plain-text' with the extensions 'png', 'jpg' and 'zip'. Obviously all of these extensions are associated with well knows types of files and none of them are actually text files.\r\n\r\nUTITester - This app lets you type in a UTI or a file extension. For a UTI, it will grab it's declaration using UTTypeCopyDeclaration() and also ask if the UTI conforms to kUTTypeText. For a file extension the app will use UTTypeCreateAllIdentifiersForTag() to get all UTIs for the given extension and then preform the previous requests for each UTI returned. This is where the problem comes in. If you enter 'png', 'jpg' or 'zip', one of the UTIs you get back will be 'com.utibadcitizen.badtype' which clams that the types associated with these extension conform to kUTTypeText.\r\n\r\n\r\nUnfortunately there is nothing to stop this kind of app from getting into the iOS App Store. I have run into an issue with one such app.\r\n\r\n\r\nSteps to Reproduce:\r\nDeclare a bad UTI in one app.\r\nIn a second app, inspect the file extension associated with the bad UTI in the first app.\r\n\r\nExpected Results:\r\nThe bad UTI should not be able to incorrectly redeclare what someone else's UTI conforms to.\r\n\r\nActual Results:\r\nUTITester may now incorrectly believe that a file with the 'zip' extension conforms to kUTTypeText.\r\n\r\nNotes:\r\nIf this can't be fixed mechanically (at compile or runtime) then perhaps it should be screened for during the app review process. It may also be beneficial to educate developers about the side effects that can be caused by declaring a bad UTI or even a good UTI. I'd be willing to bet that the developer who writes these UTIBadCitizen type apps doesn't even realize that they are causing issues for other developers."
+    email: averagejake@gmail.com
+    modified: "2012-03-01T22:36:49.578231Z"
+    number: "10778913"
+    number_intvalue: 10778913
+    originated: 1/30/2012
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: N/A
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Apps can declare bad UTIs that redefine what a file extension conforms to.

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10932851"
+    labels:
+        datastore_id: "1529406"
+data:
+    classification: Regression
+    created: "2012-02-25T17:00:06.513168Z"
+    description: "25-Feb-2012 11:58 AM Miguel De Icaza:\r\nSummary:\r\nThe 32-bit LLVM C compiler shipped with Xcode 4.3 (build 4E109) returns the wrong value for __alignof__(int64_t), it returns the value 8, but actually uses 4 to align data in structures\r\n\r\nSteps to Reproduce:\r\nCompile the attached program using:\r\n\r\ncc -m32 demo.c\r\n\r\n=== demo.c ===\r\n#include <stdio.h>\r\n#include <stdint.h>\r\n\r\nstruct {\r\n\tint32_t first;\r\n\tint64_t second;\r\n} a;\r\n\r\n\r\nint main ()\r\n{\r\n\tvoid *pfirst = (void *) &a.first;\r\n\tvoid *psecond = (void *) &a.second;\r\n\r\n\tprintf (\"The 64 bit value is aligned at %d\\n\", (int) (psecond-pfirst));\r\n\tprintf (\"The compiler reports: %d\\n\", (int) __alignof__(long long));\r\n\treturn 1;\r\n}\r\n============\r\n\r\nExpected Results:\r\nThe 64 bit value is aligned at 4\r\nThe compiler reports: 8\r\n\r\nActual Results:\r\nThe 64 bit value is aligned at 4\r\nThe compiler reports: 4\r\n\r\nRegression:\r\n\r\nBefore Xcode 4.2, __alignof__ of a 64-bit integer on 32-bit environments returned 4, now it returns 8.\r\n\r\nThis is at odds with the actual convention implemented by the compiler.   As the sample shows, the first field in the structure is a 32-bit value and the second is a 64-bit value.   The compiler aligns the second value at a 4-byte boundary, instead of the reported 8.\r\n\r\nNotes:\r\n\r\nThis regresses code that marshalls structures and depends on __alignof__ reporting the actual platform sizes.   \r\n\r\n25-Feb-2012 11:58 AM Miguel De Icaza:\r\n'demo.c' was successfully uploaded"
+    email: miguel.de.icaza@gmail.com
+    modified: "2012-02-25T17:00:06.513334Z"
+    number: "10932851"
+    number_intvalue: 10932851
+    originated: 25-Feb-2012
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: "4.3"
+    reproducible: yes
+    resolved: ""
+    status: Open
+    title: 32-bit LLVM C compiler reports incorrect value for __alignof__(int64_t)

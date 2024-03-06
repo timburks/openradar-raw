@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "43009124"
+    labels:
+        datastore_id: "4999232930971648"
+data:
+    classification: Enhancement
+    created: "2018-08-07T17:17:51.17969Z"
+    description: "Summary:\r\nFiles.app fails to correctly handle drops from other applications if at least one of the items being dropped wasn't created with an `NSItemProvider` with a registered file type. I don't think this is specifically an app-level issue, but rather an API limitation one.\n\nIn the source app, within the context of `UICollectionView`, if the drag delegate methods return a list of `UIDragItem`s, but at least one of them was created with an \"empty\" `NSItemProvider`:\n\n```\n- (NSArray<UIDragItem *> *)collectionView:(UICollectionView *)collectionView itemsForAddingToDragSession:(id<UIDragSession>)session atIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point {\n    return @[[[UIDragItem alloc] initWithItemProvider:[NSItemProvider new]]];\n}\n```\n\nand a drop is attempted in Files.app, none of the valid drag items in the session will be dropped either, effectively behaving as if the drop operation was `UIDropOperationCancel`.\n\nPhotos.app does not behave like this. If one of the providers associated with the dropping drag items is not available to provide information about the item being dropped, Photos.app will still import the \"valid\" items and display a message \"Some Items Not Imported\", which is IMO a nice compromise (way better than cancelling the whole drop operation altogether).\n\nI believe a way for the source application to play a role in how the destination application handles drops could be really useful, if not by providing a fallback in case the drop can't be performed for any reason (i.e., an \"empty\" item provider), at least by allowing it to determine wether a message should be shown to the user or not/customize it.\n\nWe ran into this while trying to work around rdar://41790438. Returning a `UIDragItem` with an empty `NSItemProvider` makes the collection view lift the item, making it appear as valid. However, the \"validity\" of the item is delegated to the destination application, making it effectively impossible to foresee what the result will be if the drop location can't handle at least one of the items in the drag session.\n\nOur very specific use case would be to effectively allow our application to export a single file from a multiple-item drag session drop, by returning (valid) drag items with \"empty\" item providers and doing bookkeeping internally of the index paths to export. Then, Files.app would let our application try to fix the drop session somehow when it determined that a drag item does not contain a valid item provider.\n\n\r\n\r\nSteps to Reproduce:\r\n1. Download the attached project and run side-by-side with Photos.app.\n2. Start a drag session from the sample app, and add two or more items to it.\n3. Drop the dog pictures in Photos.app. Notice how only one photos is imported and a \"Some Items Not Imported\" is displayed.\n4. Now open Files.app side-by-side with the sample application.\n5. Start a drag session from the sample app, and add two or more items to it.\n6. Attempt to drop the items into a Files.app folder. Notice how there's no import error message, and the drop just plainly fails.\r\n\r\nExpected Results:\r\nIdeally, the API would allow the source application play a role in the dropping operation for the destination application so that both applications can coordinate about the correct result for a specific drop attempt.\r\n\r\nActual Results:\r\nThere's no visibility for the source application into wether the exported data is handled correctly, thus hampering our ability to provide a good user experience when offering Drag and Drop features.\r\n\r\nVersion:\r\n11.4\r\n\r\nNotes:\r\nI'm aware that this is a super-specific, super obscure enhancement request, but I do think that the iOS ecosystem could benefit greatly from improved, more flexible, Drag and Drop APIs."
+    email: oscar@swanros.com
+    modified: "2018-08-07T17:17:51.17993Z"
+    number: "43009124"
+    number_intvalue: 43009124
+    originated: 07-Aug-2018 12:17 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "11.4"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Drag and Drop source application can't play a role in to the drop session/has no visibility into what the result of the drop session was on the destination application

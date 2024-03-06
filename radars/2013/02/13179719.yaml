@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13179719"
+    labels:
+        datastore_id: "2689401"
+data:
+    classification: UI/Usability
+    created: "2013-02-08T12:50:03.03308Z"
+    description: "ummary:\r\n\r\nWhen creating a UITableViewCell in a xib with AutoLayout on, all constraints created in IB are created for the view and not the contentView of the cell. This has the effect of mangling the layout when entering edit mode.\r\n\r\nSteps to Reproduce:\r\n\r\nCreate UITableView xib, load with UInib\r\n\r\nExpected Results:\r\n\r\nConstraints should be created for the view not the contentView\r\n\r\nActual Results:\r\n\r\nConstraints are created for the view\r\n\r\nNotes:\r\n\r\nAfter much saerching i found this post\r\n\r\n<http://stackoverflow.com/a/13893146/1983506>\r\n\r\nand the following snippet in the UITableViewCell's subclass \r\n\r\n- (void) awakeFromNib {\r\n    \r\n\t[super awakeFromNib];\r\n\r\n\tfor(NSLayoutConstraint *cellConstraint in self.constraints){\r\n\t\t[self removeConstraint:cellConstraint];\r\n\t\tid firstItem = cellConstraint.firstItem == self ? self.contentView : cellConstraint.firstItem;\r\n\t\tid seccondItem = cellConstraint.secondItem == self ? self.contentView : cellConstraint.secondItem;\r\n\t\tNSLayoutConstraint* contentViewConstraint =\r\n\t\t[NSLayoutConstraint constraintWithItem:firstItem\r\n\t\t\t\t\t\t\t\t\t attribute:cellConstraint.firstAttribute\r\n\t\t\t\t\t\t\t\t\t relatedBy:cellConstraint.relation\r\n\t\t\t\t\t\t\t\t\t\ttoItem:seccondItem\r\n\t\t\t\t\t\t\t\t\t attribute:cellConstraint.secondAttribute\r\n\t\t\t\t\t\t\t\t\tmultiplier:cellConstraint.multiplier\r\n\t\t\t\t\t\t\t\t\t  constant:cellConstraint.constant];\r\n\t\t[self.contentView addConstraint:contentViewConstraint];\r\n\t}\r\n\r\n}\r\n\r\n\r\nfixes the problem"
+    email: darxmac@gmail.com
+    modified: "2013-02-08T12:50:03.035122Z"
+    number: "13179719"
+    number_intvalue: 13179719
+    originated: 08-Feb-2013 01:46 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "6.1"
+    reproducible: yes
+    resolved: ""
+    status: Open
+    title: UITableView loaded from NIB with autoLayout has wrong constraints

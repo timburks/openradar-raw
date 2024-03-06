@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19593095"
+    labels:
+        datastore_id: "6336286130438144"
+data:
+    classification: Serious Bug
+    created: "2015-01-25T19:12:19.147119Z"
+    description: "Summary:\n\nIn the function test of the (arguably useless) Swift program below all code is reachable (depends on the value of the boolean parameter `b`):\n\n--- SNIP ---\nimport Darwin.C.stdlib\n\nfunc test(b:Bool) -> ((), ()) {\n    return (b ? exit(1) : (), ())\n}\n\nprint(\"\\(test(true))\\n\")\n--- SNAP ---\n\nHowever the compiler pretends that `exit(1)` would be unreachable:\n\n$ xcrun -sdk macosx swiftc main.swift \nmain.swift:4:17: warning: will never be executed\n    return (b ? exit(1) : (), ())\n                ^ (this carent points the the \"e\" of \"exit(1)\")\nmain.swift:4:17: note: a call to a noreturn function\n    return (b ? exit(1) : (), ())\n                ^ (this carent points the the \"e\" of \"exit(1)\")\n\nSteps to Reproduce:\n1. Download the attached swift program (main.swift) and save as /tmp/main.swift\n2. xcrun -sdk macosx swiftc /tmp/main.swift\n\nExpected Results:\nswiftc exits successfully and doesn't output anything\n\nActual Results:\nswiftc outputs a warning about unreachable code but still compiles the program\n\nRegression:\nnot that I'd be aware of"
+    email: weissismail@gmail.com
+    modified: "2015-01-25T19:12:19.147346Z"
+    number: "19593095"
+    number_intvalue: 19593095
+    originated: 25-Jan-2015 07:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 6.1.1: Swift compiler pretends that code is unreachable but it is'

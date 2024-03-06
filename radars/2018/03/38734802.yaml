@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "38734802"
+    labels:
+        datastore_id: "6100797150461952"
+data:
+    classification: Bug
+    created: "2018-03-22T02:46:07.92177Z"
+    description: "Area:\r\nAppKit\r\n\r\nSummary:\r\n\r\nNSOutlineView has a very flexible data source protocol that in Swift 3+ allows providing items with type Any. This works well for me in most cases where I can provide data in a Swift value type like a struct and the outline view displays and selects items correctly.\r\n\r\nThe one case where this failed was when I needed to look up the row for one of those structs with row(forItem:), and it would always return -1 indicating the item wasn't found.\r\n\r\nMaking the struct conform to Equatable didn't work, but changing the struct to a class did. It seems that despite the NSOutlineView (and related protocol APIs) constraining item arguments to Any, reference equality is used internally for some operations, at least one of which is row(forItem:).\r\n\r\nThe automatic boxing of value types done starting in Swift 3 seems like a bit of a trap when paired with reference equality, because it _mostly_ works here.\r\n\r\nI'm not sure what the best solution is, but three ideas in order of preference are:\r\n\r\n- Constrain items to Equatable types and use that definition of equality\r\n- Constrain items to AnyObject and continue to use reference equality\r\n- Continue to allow Any items, and document that reference equality is used internally\r\n\r\nI understand that the use of reference equality is probably rooted in NSOutlineView only ever having to work with objects. I also understand that any changes to this behaviour could have _lots_ of implications for existing code and that something like the last option might be all that could realistically be done.\r\n\r\nOther reports I saw of this online:\r\n- https://forums.developer.apple.com/thread/68477\r\n- https://stackoverflow.com/questions/41056547/using-a-swift-struct-in-an-nsoutlineview\r\n\r\nSteps to Reproduce:\r\n\r\nI've attached a playground that demonstrates this. Changing the type parameter of the generic data source between StructItem and ClassItem will cause different results when row(forItem:) is invoked at the bottom.\r\n\r\n(I'm not sure if the fact that I used a protocol that doesn't require Equatable conformance means the provided implementation could somehow be a reason for StructItem's == not being invoked, but if you manually replace the T type parameter with StructItem in `items` the same effect is seen.)\r\n\r\nExpected Results:\r\n\r\nAn API that allows value types as arguments should have the same behaviour for both value and reference types.\r\n\r\nActual Results:\r\n\r\nThe row(forItem:) method doesn't work with value types.\r\n\r\nVersion/Build:\r\n\r\nmacOS 10.13 SDK\r\n\r\nConfiguration:\r\n\r\nXcode 9.2 (9C40b)"
+    email: brandon@brandonevans.ca
+    modified: "2018-03-26T21:34:12.95472Z"
+    number: "38734802"
+    number_intvalue: 38734802
+    originated: 2018/03/21
+    parent_number: '&{NULL_VALUE}'
+    product: AppKit
+    product_version: "10.13"
+    reproducible: Always
+    resolved: ""
+    status: Closed, Duplicate Of 36113646
+    title: NSOutlineView row(forItem:) doesn't work when the view's items are Swift value types

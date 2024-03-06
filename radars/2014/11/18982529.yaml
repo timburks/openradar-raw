@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18982529"
+    labels:
+        datastore_id: "5290127391719424"
+data:
+    classification: Serious Bug
+    created: "2014-11-14T12:37:31.205188Z"
+    description: "We have a bug report in our application that memory is not freed when deleting nodes from an outline view.\r\nI have reproduced the issue with a small sample app. The class used as the object model has log messages on init and dealloc, so you'll be able to see which objects get deallocated.\r\nAlso, there's a global allocation count displayed in the app window.\r\n\r\nUnder certain circumstances the tree nodes are not deallocated. I'm not entirely sure why, but the steps below will allow to reproduce:\r\n\r\nSteps to Reproduce:\r\n- Build and run sample app\r\n- press \"Add\" button to create root node\r\n- press \"Add Child Hierarchy\" button to add a child items with one sub-item\r\n- disclose the new child item, but don't change selection (important!)\r\n- disclose the new child item's child, but don't change selection (important!)\r\n- delete the new child item by pressing the \"Remove\" button\r\n\r\n\r\nExpected Results:\r\nAll model objects (OutlineObject class instances) and NSTreeNode objects that are contained in the deleted object should be deallocated.\r\n\r\n\r\nActual Results:\r\nOnly the object that was selected when the \"Remove\" button was pressed is actually deallocated, the child items are not deallocated.\r\n\r\n\r\nNotes:\r\nWhen changing the selection and selecting each child item at least once, all child items are deallocated when removing the container item.\r\n\r\nThe way we add child items in this case is to modify the model in a KVO-compliant way. The changes are propagated to the NSTreeController / NSTreeNodes via KVO. Since the changes are displayed, I assume that this way should work correctly."
+    email: jum@mac.com
+    modified: "2014-11-14T12:43:21.731147Z"
+    number: "18982529"
+    number_intvalue: 18982529
+    originated: "2014-11-14"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: "10.10"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSTreeController not deallocating NSTreeNodes and attached objects

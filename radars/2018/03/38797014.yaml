@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "38797014"
+    labels:
+        datastore_id: "4957377535148032"
+data:
+    classification: Suggestion
+    created: "2018-03-23T16:59:10.64281Z"
+    description: "Area:\r\nNetwork Extensions Framework\r\n\r\nThe NEHotspotConfiguration APIs make it really easy to configure a network both for developers and end users. It's possible to get feedback from the API and related ones for issues like: \r\n\r\n- can't find the SecCertificate to be trusted with the Keychain APIs\r\n- malformed NEHotspotConfiguration or NEHotspotEAPSettings\r\n- errors applying a configuration\r\n\r\nEverything that happens beyond the apply step is hidden from API users, which on one hand is great. I would much rather let the OS handle network management in a consistent way without needing to write something like a NEHotspotHelperHandler. But sometimes there are issues after the apply step where it would be very helpful to have feedback about the network that the app has configured. Some examples:\r\n\r\n- Invalid EAP credentials\r\n- Authentication server certificate validation failed\r\n- Something more internal like \"RSSI too low\" or \"detected known SSID but it was geotagged at a different location\" (I don't have a lot of general networking knowledge let alone the implementation details on iOS so maybe this isn't something that would actually happen, but hopefully you get the idea)\r\n\r\nI'm currently trying to troubleshoot flaky join behaviour using the NEHotspotConfiguration APIs in a few different ways (rdar://38765658) and although the APIs are very easy to use when things go right, when they go wrong it's very difficult to troubleshoot.\r\n\r\nIt would be useful from a development standpoint to know why an attempt to join and authenticate on a network failed, whether it's the reasons above or others. This would also be useful from a network operator's perspective for ongoing maintenance and troubleshooting of the network. It can also allow us to provide valuable feedback to end users.\r\n\r\nI don't have a specific suggestion as to what this additional API functionality would look like, and I can imagine it might be tricky to implement in a way that would seem obvious (like providing a callback for error notification via closure, selector, notification, etc.).\r\n\r\nCompared to the NEHotspotHelper behaviour where the app will be woken in the background to process commands, NEHotspotConfigurationManager is expected to be invoked only when the app is in the foreground. Perhaps:\r\n\r\n- When the app is in the foreground, allow getting previous errors even if they occurred when the app was in the background or suspended (relies on the user launching an app that might not be intended to be used after initial configuration application)\r\n- Change the API behaviour to launch the app in order to invoke error handling code (probably defeats any power use benefits of the NEHotspotConfiguration API)\r\n- Add an extension type that could be launched in the background without involving the app (maybe less of a power impact than launching the whole app, but increases the work for developers with coordinating between the extension and the app if needed)\r\n- Simply log these failures to the system logs with actionable information"
+    email: brandon@brandonevans.ca
+    modified: "2018-03-23T16:59:10.64302Z"
+    number: "38797014"
+    number_intvalue: 38797014
+    originated: 2018/03/23
+    parent_number: '&{NULL_VALUE}'
+    product: Network Extensions Framework
+    product_version: iOS 11
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Network joining and authentication failures are difficult to troubleshoot with existing NEHotspotConfiguration APIs

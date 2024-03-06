@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "42225473"
+    labels:
+        datastore_id: "4996901569036288"
+data:
+    classification: ""
+    created: "2018-07-16T03:26:19.62176Z"
+    description: "Area:\r\nAppKit\r\n\r\nSummary: An MTKView with a non-opaque layer in a non-opaque window should blend its contents with the windows behind it according to the alpha value produced by the fragment shader, but it appears much more opaque than it should be.\r\n\r\nThe attached screenshot shows the modified HelloTriangle over a PixelMator window with a half black, half white image, demonstrating that black pixels are transformed to red while white is almost unchanged.\r\n\r\nSteps to Reproduce:\r\n\r\nModify the HelloTriangle demo to:\r\n1. Set the MTKView's layer's opaque property to NO\r\n2. Set the window's opaque property to NO\r\n3. Set the window's hasShadow property to NO\r\n4. Set the window's backgroundColor to NSColor.clearColor\r\n5. Modify the fragment shader to return float4(1, 0, 0, 0.1)\r\n6. Run it and place it over a window that is part white, part black.\r\n\r\nSee the attached code.\r\n\r\nExpected Results:\r\nThe area inside the triangle should be 99% transparent, adding a barely noticeable red color to its contents. Pixels behind it that are white should be just barely pink, while pixels behind it that are black should be a very dark black.\r\n\r\nActual Results:\r\nBlack pixels behind the triangle become bright red. White pixels are still nearly white (going from 255,255,255 to 255,254,255 according to digital color meter).\r\n\r\nVersion/Build:\r\nmacOS 10.14 Beta (18A326h)\r\nXcode Version 10.0 beta 3 (10L201y)\r\n\r\nConfiguration:\r\n\r\n---\r\n\r\nApple Developer Relations\r\nJuly 17 2018, 9:37 AM\r\nWe have determined that this is an issue for you to resolve.\r\n\r\nThe CoreAnimation compositor requires all of its inputs be premultipled by alpha. See these references for more information:\r\nhttps://en.wikipedia.org/wiki/Alpha_compositing\r\nhttps://blogs.msdn.microsoft.com/shawnhar/2009/11/06/premultiplied-alpha/\r\n\r\nWhen RGB are premultipled by alpha, then any RGB component that is > the alpha component is undefined through the hardware’s blending.\r\n\r\nModifying your fragment shader to return (0.1, 0, 0, 0.1), which is “0.1 alpha, full red” produces the expected results.\r\n\r\nPlease let us know whether the issue is resolved for you by updating your bug report."
+    email: gnachman@gmail.com
+    modified: "2018-07-20T02:16:42.91297Z"
+    number: "42225473"
+    number_intvalue: 42225473
+    originated: 7/15/2018
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.14 beta 3
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: Non-opaque windows blend incorrectly with other windows when using MTKView

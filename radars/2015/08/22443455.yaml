@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22443455"
+    labels:
+        datastore_id: "4875281835753472"
+data:
+    classification: UI/usability
+    created: "2015-08-26T20:41:54.89963Z"
+    description: "Summary:\r\nInitial text provided to an SLComposeController of type SLServiceFacebook present in the compose controller only if the native Facebook app is *not* installed. If the app is present, the controller is empty.\r\n\r\nSteps to Reproduce:\r\n1. Remove Facebook app if it is present\r\n2. Run attached sample app (*)\r\n3. Press \"compose\"\r\n4. Notice that the text \"This is the text I want to post\" is pre-populated in the share sheet\r\n5. Kill the app\r\n6. Install Facebook app. Sign in to Facebook via the app.\r\n7. Run attached sample app again\r\n8. Press \"compose\"\r\n\r\n* - only interesting part of the sample app is this event-handler:\r\n\t@IBAction func handleComposeTapped(sender: AnyObject) {\r\n\t\tif SLComposeViewController.isAvailableForServiceType(SLServiceTypeFacebook) {\r\n\t\t\tlet composer = SLComposeViewController(forServiceType: SLServiceTypeFacebook)\r\n\t\t\tcomposer.setInitialText(\"This is the text I want to post\")\r\n\t\t\tpresentViewController(composer, animated: true, completion: nil)\r\n\t\t} else {\r\n\t\t\tlet alert = UIAlertController(title: \"Can't post\",\r\n\t\t\t\tmessage: \"Composer not available\",\r\n\t\t\t\tpreferredStyle: .Alert)\r\n\t\t\talert.addAction(UIAlertAction(title: \"OK\", style: .Cancel, handler: nil))\r\n\t\t\tpresentViewController(alert, animated: true, completion: nil)\r\n\t\t}\r\n\t}\r\n\r\n\r\nExpected Results:\r\nThe test \"This is the text I want to post\" should be in the share sheet, as before\r\n\r\nActual Results:\r\nThe share sheet is empty\r\n\r\nVersion:\r\niOS 8.4.1\r\n\r\nNotes:\r\nApparently, this is a deliberate action by Facebook. See the discussion in a bug report here: https://developers.facebook.com/bugs/962985360399542/\r\n\r\nFacebook's position is apparently that pre-populating a share sheet is against their developer polices, shown here: https://developers.facebook.com/docs/apps/review/prefill\r\n\r\nBut HOLY CRAP ON A CRACKER, since when does Facebook get veto power over iOS system APIs?!!\r\n\r\nIf they're really going to do this, it would be better for SLComposeViewController.isAvailableForServiceType(SLServiceTypeFacebook) to return false, because the share sheet is completely useless in this scenario.\r\n\r\nConfiguration:\r\niPhone 5s, 64 GB, AT&T\r\n\r\nAttachments:\r\n'FacebookComposeBuglet.zip' was successfully uploaded."
+    email: invalidname@gmail.com
+    modified: "2017-12-05T19:16:12.04915Z"
+    number: "22443455"
+    number_intvalue: 22443455
+    originated: 8/26/15
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 8.4.1
+    reproducible: always
+    resolved: ""
+    status: dupe/20960895
+    title: SLComposeController.setInitialText fails for Facebook when app present

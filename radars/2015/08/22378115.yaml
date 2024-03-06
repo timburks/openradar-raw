@@ -1,0 +1,80 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22378115"
+    labels:
+        datastore_id: "4981479096451072"
+data:
+    classification: Other Bug
+    created: "2015-08-21T13:13:10.63215Z"
+    description: |-
+        Summary:
+        In the attached example you can find the following basic setup:
+        * A UINavigationController containing a UIPageViewController.
+        * A page which is a subclass of a UICollectionViewController.
+
+        When the view loads the loading sequence is such that the collection view is empty by the time the UICollectionViewController `viewDidAppear` method is called
+
+        Steps to Reproduce:
+        Open the attached project. Start the application. Look at the call trace
+
+        Expected Results:
+        The method `collectionView(_:cellForItemAtIndexPath:)` would be called between the `viewWillAppear` and `viewDidAppear` calls on the `UICollectionViewController`
+
+        PageViewController.swift:viewDidLoad()
+        PageViewController.swift:viewWillAppear
+        CollectionViewController.swift:viewWillAppear
+        CollectionViewController.swift:numberOfSectionsInCollectionView
+        CollectionViewController.swift:collectionView(_:numberOfItemsInSection:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:viewDidAppear
+        PageViewController.swift:viewDidAppear
+
+
+        Actual Results:
+        The calls to `collectionView(_:cellForItemAtIndexPath:)` occur after the call to `viewDidAppear` on the `UIPageViewController`
+
+        PageViewController.swift:viewDidLoad()
+        PageViewController.swift:viewWillAppear
+        CollectionViewController.swift:viewWillAppear
+        CollectionViewController.swift:numberOfSectionsInCollectionView
+        CollectionViewController.swift:collectionView(_:numberOfItemsInSection:)
+        CollectionViewController.swift:viewDidAppear
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        CollectionViewController.swift:collectionView(_:cellForItemAtIndexPath:)
+        PageViewController.swift:viewDidAppear
+
+        Regression:
+
+
+        Notes:
+        This is obviously a very simplified example. It can create real issues with initialization when the `UICollectionViewCell` contain nested view controllers (such as a video view controller). You may then end up with a complete controller subtree not being initialized properly because their `viewWillAppear` and `viewDidAppear` methods are not called.
+    email: 6sixbe@gmail.com
+    modified: "2015-08-21T13:13:10.6324Z"
+    number: "22378115"
+    number_intvalue: 22378115
+    originated: 21-Aug-2015 03:13 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "8"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UICollectionViewController does not setup cell when within a UIPageViewController

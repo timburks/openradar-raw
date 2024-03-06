@@ -1,0 +1,67 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21645883"
+    labels:
+        datastore_id: "6326161516789760"
+data:
+    classification: Serious Bug
+    created: "2015-07-02T02:15:27.06141Z"
+    description: |-
+        Summary:
+        I have two protocols with one inheriting from the other. I would like to have the child specialize the typealias of its parent, but this doesn’t work.
+
+
+        Steps to Reproduce:
+        1. This code:
+
+        protocol A {
+        	typealias B
+        	init(B)
+
+        	var b: B { get }
+        }
+
+        protocol C: A {
+        	typealias B = Int
+        }
+
+        struct S: C {
+        	let b: Int
+        	init(_ x: Int) { b = x }
+        }
+
+        func f<T: C>(x: T) -> Int {
+        	return x.b
+        }
+
+
+
+        Expected Results:
+        should compile
+
+
+        Actual Results:
+        but does not:
+
+        boom2.swift:18:11: error: cannot convert return expression of type 'T.B' to expected return type 'Int'
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        It appears that the T.B typealias is just silently dropped. You can’t refer to it or use it, since it’s shadowed by the protocol it inherits from (which is counterintuitive to say the least).
+    email: rix.rob@gmail.com
+    modified: "2015-07-02T02:15:27.06159Z"
+    number: "21645883"
+    number_intvalue: 21645883
+    originated: 01-Jul-2015 10:15 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A121l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2b2: Protocol inheritance cannot specialize'

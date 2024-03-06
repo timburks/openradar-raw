@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "37714680"
+    labels:
+        datastore_id: "4969016359649280"
+data:
+    classification: ""
+    created: "2018-02-20T20:05:27.77544Z"
+    description: "Same as https://bugreport.apple.com/web/?problemID=37714680\r\n\r\nI'm trying to get the progress by KVO's on URLSessionDataTask's progress variable which is available in iOS 11. But I see that for downloads, I'm getting the exact progress but for uploads, I only get progress of 0, 0.95 and 1. \r\nI'm using below sample code (https://github.com/simplyi/ImageUploadExampleWithProgressBar), and changed it for my needs as in here.\r\nhttps://stackoverflow.com/questions/48874967/ios-11-urlsessiondatatasks-progress-variable-is-not-showing-right-progress created.\r\n\r\nSteps to Reproduce:\r\nI'm using below sample code (https://github.com/simplyi/ImageUploadExampleWithProgressBar), and changed it for my needs \r\n\r\nCreate a session and a sessionDataTask to upload a file as below. And start KVO \r\n\r\nlet configuration = URLSessionConfiguration.default\r\n    let session = URLSession(configuration: configuration)\r\n    let task = session.dataTask(with: request) { (data, urlResp, error) in\r\n        print(\"\\(String(describing: data))\")\r\n    }\r\n    if #available(iOS 11.0, *) {\r\n        task.progress.addObserver(self, forKeyPath: #keyPath(Progress.fractionCompleted), options: [.new], context: &progressKVOContext)\r\n        print(\"KVO set here\")\r\n\r\n    } else {\r\n        // Fallback on earlier versions\r\n    }\r\nlet configuration = URLSessionConfiguration.default\r\n    let session = URLSession(configuration: configuration)\r\n    let task = session.dataTask(with: request) { (data, urlResp, error) in\r\n        print(\"\\(String(describing: data))\")\r\n    }\r\n    if #available(iOS 11.0, *) {\r\n        task.progress.addObserver(self, forKeyPath: #keyPath(Progress.fractionCompleted), options: [.new], context: &progressKVOContext)\r\n        print(\"KVO set here\")\r\n\r\n    } else {\r\n        // Fallback on earlier versions\r\n    }\r\n    task.resume()\r\n\r\n\r\noverride func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {\r\n    if context == &progressKVOContext && keyPath == #keyPath(Progress.fractionCompleted), let progress = object as? Progress {\r\n        var progressFractionCompleted = (progress.totalUnitCount == -1) ? 1.0 : progress.fractionCompleted\r\n\r\n        print(\"progressFractionCompleted = \\(progressFractionCompleted)\")\r\n    } else {\r\n        super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)\r\n    }\r\n}\r\n\r\nExpected Results:\r\nI should get exact upload progress printed.\r\n\r\nActual Results:\r\nI only see a progress of 0, 0.95 and 1 % \r\n\r\nVersion/Build:\r\niOS 11"
+    email: rpatnayakuni@salesforce.com
+    modified: "2018-02-20T20:06:27.57354Z"
+    number: "37714680"
+    number_intvalue: 37714680
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: ios
+    product_version: "11"
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: ""

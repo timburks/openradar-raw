@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23973685"
+    labels:
+        datastore_id: "4993405381771264"
+data:
+    classification: ""
+    created: "2015-12-21T16:03:12.82508Z"
+    description: "Summary:\r\nIn Xcode 7.1.1 and earlier, passing -sdk iphonesimulator to xcodebuild would imply a suitable destination. In Xcode 7.2, this is no longer the case and the inferred destination is a generic iOS device rather than a simulator.\r\n\r\nIt is hard to imagine a case where this would be desired behaviour.\r\n\r\nSteps to Reproduce:\r\n1. Create a new iOS project with Xcode 7.1.1 or earlier.\r\n2. With Xcode 7.1.1 or earlier selected through xcode-select or DEVELOPER_DIR, build it from the command line: xcodebuild -configuration Release -scheme <scheme> -sdk iphonesimulator clean build\r\n3. Run the same build with Xcode 7.2\r\n\r\nExpected Results:\r\nThe build should succeed in both cases.\r\n\r\nActual Results:\r\nXcodebuild infers a valid SDK root (iphonesimulator9.2) and sets -isysroot to -isysroot $DEVELOPER_DIR/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.2.sdk. However, it selects architectures armv7 and arm64, and puts $DEVELOPER_DIR/Platforms/iPhoneOS.platform/Developer/usr/bin in $PATH.\r\n\r\nThis results in the compiler trying to use the simulator version of sys/cdefs.h to build with armv7 and arm64 architectures, which produces errors like:\r\n\r\nIn file included from <module-includes>:1:\r\n/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.2.sdk/usr/include/sys/cdefs.h:707:2: error: Unsupported architecture\r\n#error Unsupported architecture\r\n ^\r\n\r\nNotes:\r\nThe attached archive contains:\r\n* A sample project (just a Single View App template with the deployment target lowered to 9.0)\r\n* A script to run test builds consistently and gather versioned logs\r\n* Example output from Xcode 7.1.1 and 7.2.\r\n\r\nConfiguration:\r\nHappens consistently in all tested configurations involving Xcode 7.2."
+    email: google.j@ayton.se
+    modified: "2016-01-06T15:02:56.51493Z"
+    number: "23973685"
+    number_intvalue: 23973685
+    originated: "2015-12-22"
+    parent_number: "22993940"
+    product: Developer Tools
+    product_version: 7.2/7C68 & 10.11.2/15C50
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/22993940
+    title: 'Regression: xcodebuild no longer infers destination platform from -sdk parameter'

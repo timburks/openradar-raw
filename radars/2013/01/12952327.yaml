@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12952327"
+    labels:
+        datastore_id: "2503402"
+data:
+    classification: Other Bug
+    created: "2013-01-03T20:59:34.986404Z"
+    description: "Summary:\r\nWhen using Core Motion with CMAttitudeReferenceFrameXTrueNorthZVertical some devices consistently return a CMErrorTrueNorthNotAvailable (error code 102) in the in the CMDeviceMotionHandler block. It can be reproduced in 100% of the cases on affected devices. A reset of the iOS settings solves the problem.\r\n\r\nSteps to Reproduce:\r\nRun the pARk sample app on an affected device.\r\n\r\nExpected Results:\r\nThe labels should move on the screen depending on the orientation of the device.\r\n\r\nActual Results:\r\nThe labels stay in the center of the screen and never move. (Screenshot: http://d.pr/i/dyjI)\r\n\r\nRegression:\r\nThis happens at least since iOS 6.0. It happens only on a tiny fraction of devices but on those devices it is 100% reproducible. We've reports from only a handful of devices out of a user base of many thousands (the Augmented Reality mode in Where To? http://itunes.apple.com/app/id314785156?mt=8).\r\n\r\nNotes:\r\nTo actually obtain the NSError object the pARk app has to be modified to use \r\n\r\n-startDeviceMotionUpdatesUsingReferenceFrame:toQueue:withHandler: instead of\r\n-startDeviceMotionUpdatesUsingReferenceFrame:\r\n\r\nThis is the NSError received:\r\n\tError Domain=CMErrorDomain Code=102 \"The operation couldn’t be completed. (CMErrorDomain error 102.)\"\r\n\r\nAfter receiving the error callback, no further callbacks are received. cmMotionManager.deviceMotion is always nil.\r\n\r\nThe error (CMErrorTrueNorthNotAvailable) hints at a Core Location problem. Therefore we had the customer test Core Location on the affected device and verified it's working correctly: CMLocationManager updates are received and MKMapView displays the blue userLocation dot.\r\n\r\nWe tried a little modification of the pARk app: We replaced CMAttitudeReferenceFrameXTrueNorthZVertical by CMAttitudeReferenceFrameXMagneticNorthZVertical and it worked fine. So only the CMAttitudeReferenceFrameXTrueNorthZVertical mode is affected.\r\n\r\nThen we had the customer reset \"All Settings\" using General => Reset => All Settings and the problem disappeared. Apparently there is some corrupt system setting that triggers this bug."
+    email: futuretap@googlemail.com
+    modified: "2018-02-22T13:21:07.7663Z"
+    number: "12952327"
+    number_intvalue: 12952327
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone/iPod touch
+    product_version: 6.0.2
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: Core Motion mode CMAttitudeReferenceFrameXTrueNorthZVertical not working on specific devices

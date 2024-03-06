@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29986681"
+    labels:
+        datastore_id: "4937241352732672"
+data:
+    classification: ""
+    created: "2017-03-08T10:49:05.57654Z"
+    description: "Summary:\r\nThe attached sample project runs into a deadlock, as soon as TimeMachine is performing a backup.\r\n\r\nTo explain it:\r\n\r\n- The project creates two NSFilePresenter for the file \"~/Desktop/presenter-problem.txt\"\r\n- One file presenter is constantly writing a file (as coordinated write)\r\n- The other file presenter is just waiting for changes through -presentedItemDidChange (coordinated, with NSFileCoordinatorReadingWithoutChanges)\r\n\r\nBoth file presenter implement at least one of the callback delegates (e.g. -relinquishPresentedItemToReader:).\r\n\r\nIf Time Machine is not performing backups, the sample app works: One presenter is writing, the other is reading. You'll see a progressing output on the Console.\r\n\r\nHowever, if Time Machine is performing backups, the app hangs while attempting to perform a coordinated read or a coordinated write (in -updateContents and presentedItemDidChange). \r\n\r\nI've attached sysdiagnose logs. Please have a special look at \"filecoordination-dump.txt\", which shows that the subarbiter \"backupd\" is somehow invovled in the file lock.\r\n\r\nSteps to Reproduce:\r\n1. Start a Time Machine backup and wait until the actual backup starts (the Time Machine menu should show \"Backing up: X of Y MB\")\r\n2. Start the sample app\r\n\r\n\r\nExpected Results:\r\nThe sample app should show an infinite loop of write operations and read operations.\r\n\r\nActual Results:\r\nOnly a few write / read operations are performed. After some steps, the app stops and hangs forever in -updateContents and -presentedItemDidChange."
+    email: graeter@hydrixos.net
+    modified: "2017-03-08T10:49:05.57708Z"
+    number: "29986681"
+    number_intvalue: 29986681
+    originated: 12-Jan-2017 09:14 AM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.12.2
+    reproducible: Always
+    resolved: ""
+    status: Closed (Duplicate)
+    title: Time Machine causes NSFileCoordinator to deadlock

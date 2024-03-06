@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19930069"
+    labels:
+        datastore_id: "6367414442786816"
+data:
+    classification: Serious bug
+    created: "2015-02-24T00:15:35.509963Z"
+    description: "Summary:\r\nThe H.264 video compressor on iOS devices (silently) ignores properties set with VTSessionSetProperty. The output bitstream seems unaffected and VTSessionCopyProperty copies a NULL value. No error is returned in either case.\r\n\r\nSteps to Reproduce:\r\nThe attached project contains two targets. The iOS target demonstrates the problem, while the Mac target demonstrates the expected results. [OpenRadar note I will upload the sample project to github and add a link as soon as I get a chance.]\r\n\r\n1. Create a compression session:\r\nVTCompressionSessionRef CompressionSessionCreate(CMVideoCodecType codecType)\r\n{\r\n    NSDictionary* encoderSpecification = nil;\r\n    CFDictionaryRef sourceImageBufferAttributes = NULL;\r\n    CMTimebaseRef timebase;\r\n    OSStatus status = CMTimebaseCreateWithMasterClock(kCFAllocatorDefault, CMClockGetHostTimeClock(), &timebase);\r\n    // CIF: 352x288\r\n    int32_t width = 352;\r\n    int32_t height = 288;\r\n    VTCompressionSessionRef compressionSession;\r\n    void *outputCallbackRefCon = NULL;\r\n    status = VTCompressionSessionCreate(kCFAllocatorDefault,\r\n                                        width, height,\r\n                                        codecType,  (__bridge CFDictionaryRef)encoderSpecification,\r\n                                        sourceImageBufferAttributes, NULL,\r\n                                        CompressionOutputTestCallback, outputCallbackRefCon, &compressionSession);\r\n    NSCAssert(status == noErr, @\"Created compression session successfully (%d).\", status);\r\n    return compressionSession;\r\n}\r\n\r\n2. Attempt to set and read back some supported properties:\r\nvoid H264CompressionPropertiesTest()\r\n{\r\n    OSStatus status;\r\n    \r\n    CMVideoCodecType codecType = kCMVideoCodecType_H264;\r\n    VTCompressionSessionRef compressionSession = CompressionSessionCreate(codecType);\r\n    \r\n    CFDictionaryRef supportedProperties;\r\n    status = VTSessionCopySupportedPropertyDictionary(compressionSession, &supportedProperties);\r\n    NSCAssert(status == noErr, @\"Retrieved supported properties successfully.\");\r\n    //NSLog(@\"Supported properties: %@\", supportedProperties);\r\n    \r\n    CFStringRef propertyKey = kVTCompressionPropertyKey_ProfileLevel;\r\n    status = VTSessionSetProperty(compressionSession, propertyKey, kVTProfileLevel_H264_High_AutoLevel);\r\n    NSCAssert(status == noErr, @\"Allegedly set property.\");\r\n    \r\n    CFTypeRef value = NULL;\r\n    status = VTSessionCopyProperty(compressionSession, propertyKey, kCFAllocatorDefault, &value);\r\n    NSCAssert(status == noErr, @\"Allegedly copied property.\");\r\n    \r\n    NSLog(@\"H264: %@: %@\", propertyKey, value);\r\n    \r\n    propertyKey = kVTCompressionPropertyKey_MaxKeyFrameInterval;\r\n    status = VTSessionSetProperty(compressionSession, propertyKey, (__bridge CFNumberRef)@(1.0));\r\n    NSCAssert(status == noErr, @\"Allegedly set property.\");\r\n    \r\n    value = NULL;\r\n    status = VTSessionCopyProperty(compressionSession, propertyKey, kCFAllocatorDefault, &value);\r\n    NSCAssert(status == noErr, @\"Allegedly copied property.\");\r\n    \r\n    NSLog(@\"H264: %@: %@\", propertyKey, value);\r\n}\r\n\r\nExpected Results:\r\nThe read back values of the properties should match those set:\r\n\r\nH263: MaxKeyFrameInterval: 1\r\nH264: ProfileLevel: H264_High_AutoLevel\r\nH264: MaxKeyFrameInterval: 1\r\n\r\nActual Results:\r\nThe read back properties for H.264 are null:\r\n\r\nH263: MaxKeyFrameInterval: 1\r\nH264: ProfileLevel: (null)\r\nH264: MaxKeyFrameInterval: (null)\r\n\r\nVersion:\r\niOS 8.1.2 (12B440), iOS 8.2 (12D5480a)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 6 iOS 8.1.2 (12B440), iPhone 6 iOS 8.2 (12D5480a)"
+    email: iosdeveloperzone@gmail.com
+    modified: "2015-06-14T01:32:49.97443Z"
+    number: "19930069"
+    number_intvalue: 19930069
+    originated: 23-Feb-2015 04:11 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 8.1.2 (12B440), iOS 8.2 (12D5480a)
+    reproducible: Always
+    resolved: iOS 9.0 beta (13A4254v)
+    status: Closed
+    title: The H.264 video compressor ignores properties set with VTSessionSetProperty

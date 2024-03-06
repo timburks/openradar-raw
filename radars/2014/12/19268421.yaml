@@ -1,0 +1,91 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19268421"
+    labels:
+        datastore_id: "6107621266292736"
+data:
+    classification: Other Bug
+    created: "2014-12-16T20:40:53.245682Z"
+    description: |-
+        Summary:
+        Function application and function types are inconsistent with one another, and function application is especially different for prefix operators.
+
+
+        Steps to Reproduce:
+        1. Code:
+        prefix operator %% {}
+        prefix func %% <A, B, C> (x: (A, B, C)) -> (C, B, A) {
+        	return (x.2, x.1, x.0)
+        }
+
+        let a = %%("1", "2", "3")
+        let b = %%(("1", "2", "3"))
+        let c = (%%)("1", "2", "3")
+        let d = (%%)(("1", "2", "3"))
+
+
+        Expected Results:
+        I expected each let to compile.
+
+
+        Actual Results:
+        Only d compiles.
+
+
+        Regression:
+        With an ordinary function, f1, which takes a tuple of (A, B, C), b and d compile.
+        With an ordinary function, f2, which takes A, B, and C, a and c compile.
+        These are both inconsistent with the docs (see Notes, below). %%, f1, and f2 are all inconsistent with generic function application:
+
+        infix operator <| {}
+        func <| <A, B> (left: A -> B, right: A) -> B { // like $ in Haskell
+        	return left(right)
+        }
+
+        let e = (%%) <| ("1", "2", "3")
+        let f = (%%) <| (("1", "2", "3"))
+        let g = (%%) <| ((("1", "2", "3")))
+
+        These compile for %%, f1, and f2.
+
+
+        Notes:
+        The Swift Programming Language, in the Types > Tuple Types section, states that (Int) is the same as Int, and in the next section that the parameter type and the return type can be a tuple type. That implies that f1 and f2 described in Regression, above, are only different in the notation used to get at the tuple elements, e.g. f2 would use a, b, and c, whereas f1 would use x.0, x.1, x.2.
+
+        Given that <| works in all of these cases I have to assume that the documentation is correct when it comes to the types themselves, but that function application is inconsistent with the types because it’s referring to e.g. parameter labels and inferring structure that is actually only syntactic sugar.
+
+        This is actually visible at link time too:
+
+        public func foo(a: Int, b: Int) {}
+        public func bar(x: (Int, Int)) {}
+
+        1. If both of those functions are named `foo` then compilation fails and you have no explanation of why:
+
+        Command /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc failed with exit code 1
+
+        2. …but maybe it’s because the mangled symbols are the same except in function name, so you wouldn’t be able to link:
+
+        _TF7Prelude3fooFTSiSi_T_
+        _TF7Prelude3barFTSiSi_T_
+
+        I think there are a couple of different problems to be solved here:
+
+        1. There needs to be a compiler error for the Int, Int vs. (Int, Int) case
+        2. Ideally, %%, f1, and f2 should all be applicable in each case given that there are no external labels involved in any of these cases. That would mean function application would be consistent with function types, and that we could all be happy.
+        3. Failing that, %% and f1 should be treated consistently.
+        4. Failing that, at least the errors could be better. “extra argument in call” is bad if accurate, but “%% is not a prefix unary operator” is extremely misleading. I assume it means “is not being used as…” in that it has >1 operand? Really really unclear.
+
+        ❤️
+    email: rix.rob@gmail.com
+    modified: "2014-12-16T20:40:53.24595Z"
+    number: "19268421"
+    number_intvalue: 19268421
+    originated: 16-Dec-2014 03:40 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Function application & types are inconsistent, especially so with prefix operators'

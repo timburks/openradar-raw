@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9175898"
+    labels:
+        datastore_id: "1144408"
+data:
+    classification: ""
+    created: "2011-03-23T18:05:19.423278Z"
+    description: "Summary:\r\nIn a project that contains targets for multiple platforms, I require a way to separate iOS code from Mac code. I found the way out in TargetConditionals.h which defines handy TARGET_OS_IPHONE and TARGET_OS_MAC macros. While editing iOS target, these macros get randomly not-defined in various stages of compiling; in Xcode3 I experienced issues with CompileXIB build phase. \r\n\r\nBut in Xcode4, one crucial thing happens: refactoring gets either stopped (if class method in @interface is #if'd), or creates a mess (if certain uses are #if'd, they get missed).\r\n\r\nOf course, this is in Objective-C.\r\n\r\nSteps to Reproduce:\r\nCreate an iOS target (any type).\r\n\r\na) Complete failure of refactoring.\r\n1. Create a class header and source. In header, #import <TargetConditionals.h>\r\n2. Declare a method in @interface.\r\n3. Surround the method declaration in @interface with #if TARGET_OS_IPHONE/#endif\r\n4. Define the method in @implementation - Do not surround it with #ifdef.\r\n5. Make use of the method (for example, in -init).\r\n6. Try to refactor the method name.\r\n\r\nb) Partial failure\r\n1. Create a class header and source. In header, #import <TargetConditionals.h>\r\n2. Declare a method in @interface - do not surround it with #ifdef.\r\n3. Define the method in @implementation.\r\n4. Make use of the method (for example, in -init). \r\n5. Surround the aforementioned use with #if TARGET_OS_IPHONE/#endif\r\n6. Try to refactor the method name.\r\n\r\nExpected Results:\r\nRefactoring succeeds as usual.\r\n\r\nActual Results:\r\na) Complete failure of refactoring\r\nPreview dialog shows up, works a while on \"Finding files…\" but eventually fails with \"The selection is not a type that can be renamed. Make a different selection and try again.\"\r\n\r\nb) Partial failure.\r\nPreview dialog shows up. Instead of actually showing correct renames, it conveniently misses any usage that was #if TARGET_OS_IPHONE.\r\n\r\nRegression:\r\n...\r\n\r\nNotes:\r\nI will be ready to respond if sample code is required."
+    email: ivucica@gmail.com
+    modified: "2011-08-28T05:37:26.157113Z"
+    number: "9175898"
+    number_intvalue: 9175898
+    originated: 23-Mar-2011 07:03 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 4.0/4A304a
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'Failure when refactoring symbol that is #if''d for a platform'

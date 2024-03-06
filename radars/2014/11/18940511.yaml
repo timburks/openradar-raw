@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18940511"
+    labels:
+        datastore_id: "5243977968123904"
+data:
+    classification: Security
+    created: "2014-11-11T16:46:34.921145Z"
+    description: "Summary:\r\nThe attached program (mem-leaker.c (EDIT: for openradar: https://gist.github.com/weissi/50930f3898bdc18c63e0 )) which does the following:\r\n\r\n- shm_open a shared memory segment\r\n- shm_unlink it immediately\r\n- ftruncate the file descriptor referencing the shm segment to 100MiB\r\n- mmap the shared memory\r\n- fork\r\n- parent: munmap & close shared mem immediately\r\n- child: sleep 10, munmap & close shared mem (which should release all the shared memory as the last reference to it did now vanish)\r\n\r\nwill leak 100MiB per invocation of the program (compile eg as `clang -Wall -Werror -o mem-leaker mem-leaker.c`). The memory is not reclaimable in any way.\r\n\r\nThe bug is in the shm_truncate function in bsd/kern/posix_shm.c [1]\r\n\r\nit sets the pshm_flags to PSHM_ALLOCATED (pinfo->pshm_flags = PSHM_ALLOCATED;) overriding any other flags that have possibly been set. For example PSHM_REMOVED (which is set by shm_unlink(2)). In the pshm_close function however the (shared) memory is only freed iff the PSHM_REMOVED flag is set [2].\r\n\r\nThis bug is extremely easy to use as a denial-of-service (DOS) exploit since it creates an arbitrary amount of wired memory from userspace (for an unprivileged user). It therefore is a major security issue. After enough invocations of the program, the machine will freeze and not recover. The bug affects at least OS X 10.10 and 10.9.5 but I suspect many more versions are affected.\r\n\r\nThe easiest way to reproduce is by switching off the dynamic pager and the memory compressor. Then the host machine will freeze after a maximum of (physical memory size in GiB)*10 invocations of the program even with an arbitrarily long pause between the invocations (even though the program should release all memory after 10s).\r\n\r\nHowever. if you take the attached program and swap ftruncate and shm_unlink, it doesn't leak memory at all.\r\n\r\n[1]: https://github.com/opensource-apple/xnu/blob/10.10/bsd/kern/posix_shm.c#L745\r\n[2]: https://github.com/opensource-apple/xnu/blob/10.10/bsd/kern/posix_shm.c#L1175\r\n\r\nSteps to Reproduce:\r\n1. switch off the dynamic pager (sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.dynamic_pager.plist)\r\n2. switch off the memory compressor (sudo nvram boot-args=vm_compressor)\r\n3. reboot\r\n4. Download the attached program mem-leaker.c\r\n5. Compile it using clang -Wall -Werror -o mem-leaker mem-leaker.c\r\n6. Run the program a lot of times, eg for f in $(seq $(( $(sysctl hw.memsize | cut -d: -f2) / 1024/1024/1024 * 10 )) ); do echo \"Run $f\"; ./mem-leaker; sleep 5; done \r\n\r\nExpected Results:\r\nNothing should happen\r\n\r\nActual Results:\r\nMachine will freeze\r\n\r\nVersion:\r\nThe MacBook Pros running 10.9.5 -- 13F34 and the Mac mini running 10.10\r\n\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nMacBook Pro Retina 13\" early 2013 and MacBook Pro Retina 15\" late 2013 and new Mac mini.\r\n\r\nAttachments:\r\n'mem-leaker.c' was successfully uploaded."
+    email: weissismail@gmail.com
+    modified: "2014-11-11T16:46:34.92136Z"
+    number: "18940511"
+    number_intvalue: 18940511
+    originated: "2014-11-11"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: "10.10"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Calling ftruncate(2) after shm_unlink(2) leaks shared memory -- DOS vulnerability (very easy to trigger)

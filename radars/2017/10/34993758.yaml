@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34993758"
+    labels:
+        datastore_id: "5029020475326464"
+data:
+    classification: Bug
+    created: "2017-10-14T11:47:32.15941Z"
+    description: "Summary:\r\nGiven a protocol and a class that implements this protocol. Creating an object casting the class to the protocol and invoking init on the protocol, creates an object that is never released if the protocol is tagged with @objc\r\n\r\nSteps to Reproduce:\r\nExecuting the following code:\r\n\r\n@objc\r\nprotocol P: class, NSObjectProtocol {\r\n    init(name: String)\r\n    var name: String { get }\r\n}\r\n\r\nclass A: NSObject, P {\r\n    required init(name: String) {\r\n        self.name = name\r\n        super.init()\r\n    }\r\n    \r\n    deinit {\r\n        print(\"A deinit\")\r\n    }\r\n\r\n    let name: String\r\n}\r\n\r\nlet c: AnyClass = A.self\r\n\r\nif let proto = c as? P.Type {\r\n    print(\"Proto\")\r\n    _ = proto.init(name: \"Hi\")\r\n}\r\n\r\n\r\nExpected Results:\r\nConsole show:\r\nProto\r\nA deinit\r\n\r\nActual Results:\r\nConsole show:\r\nProto\r\n\r\nVersion/Build:\r\niOS 11.0\r\n\r\nNotes:\r\nIf the protocol is not tagged with @objc the console shows the expected results.\r\nComments\r\nNo Comments"
+    email: Antonio.Cabezuelo@gmail.com
+    modified: "2017-10-14T11:47:32.15968Z"
+    number: "34993758"
+    number_intvalue: 34993758
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Swift
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: Object created through protocol not released if protocol tagged with @objc

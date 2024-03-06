@@ -1,0 +1,120 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27544962"
+    labels:
+        datastore_id: "6126236359196672"
+data:
+    classification: Serious Bug
+    created: "2016-07-26T12:24:55.19279Z"
+    description: |-
+        Summary:
+        When you enable the “Gather coverage data” for a target’s test action in the Xcode scheme editor, coverage data for Objective–C files is displayed incorrectly on every inline block:
+        The baseline call count for a line as displayed in the editor gutter is always the call–count of the method with the block parameters. Each invocation of a block then adds to that. As such, even blocks that are never called at all appear to be covered — that is: the code lines do not get highlighted in red if you hover over the gutter.
+        This sounds a bit convoluted, but I think the example code under “Steps to Reproduce” illustrates it nicely.
+
+        Note that this issue only affects Objective–C(++) code: the coverage data for Swift is actually accurate.
+
+        Steps to Reproduce:
+        0. In Xcode, create a new “iOS Framework” project, and ensure the “Include unit tests” checkbox is checked.
+        1. In the scheme editor, select the “Info” tab of the test action and check the “Gather coverage data” checkbox.
+        3. Add a new Objective–C unit test class to the tests target, and replace everything in that file with the code between the triple backticks
+        ```
+        #import <XCTest/XCTest.h>
+
+        @interface Worker : NSObject @end
+        @implementation Worker
+
+        - (void)executeHappyPath:(BOOL)shouldExecuteHappyPath {
+            [self blockToCall:shouldExecuteHappyPath blockA:^{
+                NSLog(@"Executing block a");
+            } blockB:^{
+                NSLog(@"Executing block b");
+            }];
+        }
+
+        - (void)blockToCall:(BOOL)shouldCallA blockA:(dispatch_block_t)a blockB:(dispatch_block_t)b {
+            if (shouldCallA) {
+                a();
+            } else {
+                b();
+            }
+        }
+
+        @end
+
+        #pragma mark -
+
+        @interface CoverUpTests : XCTestCase @end
+        @implementation CoverUpTests
+
+        - (void)testThatOnlyCoversHappyPath {
+            Worker *subject = [[Worker alloc] init];
+
+            XCTAssertNoThrow([subject executeHappyPath:YES]);
+        }
+
+        @end
+        ```
+
+        4. Add a new Swift test class to the tests target, and replace everything in that file with the code between the triple backticks
+        ```
+        import XCTest
+
+        class SwiftTest: XCTestCase {
+            class Canary {
+                func callOne(somethingSomething: Bool) {
+                    notCalledDirectly(first: somethingSomething, a: {
+                        print("Executing block a")
+                    }, b: {
+                        print("Executing block b")
+                    })
+                }
+                func notCalledDirectly(first: Bool, a: (Void) -> Void, b: (Void) -> Void) {
+                    if first {
+                        a();
+                    } else {
+                        b();
+                    }
+                }
+            }
+            func testThatOnlyCoversHappyPath() {
+                let subject = Canary()
+                subject.callOne(somethingSomething: true)
+            }
+        }
+        ```
+
+        5. Select “Editor” > “Show Code Coverage” if that option is not already enabled.
+        6. Run the tests.
+
+        Expected Results:
+        1. In the Swift test file, lines 5 through 7 have a reported call count of 1.
+        2. In the same file, lines 9 and 10 have a reported call count of 0.
+        3. In the Objective–C test file line 10 (`NSLog(@"Executing block b")`) has a reported call count of 0.
+        4. In the same file, lines 6 through 9, as well as 11 and 12 have a reported call count of 1.
+        5. When you select the “Coverage” tab in the test report, `-[Worker executeHappyPath:]` has a coverage significantly less than 100% (you need to have the “Show Test Bundles” checkbox enabled to see those)
+
+        Actual Results:
+        1. and 2. are as described above — that’s great!
+        3. line 10 — `NSLog(@"Executing block b")` — in the Objective–C file has a reported call count of 1 — that’s incorrect!
+        4. lines 7 through 9 in the Objective–C file have a reported call count of 2 — now that’s just ridiculous! (Call counts on all lines not mentioned are reasonable.)
+        5. When you select the “Coverage” tab in the test report, `-[Worker executeHappyPath:]` has a coverage of 100%. There are additional entries for `${mangled_name}_block_invoke${suffix}` — one with a 100% coverage, and one with 0% — which then result in a reasonable overall coverage for that file.
+
+        Regression:
+        This happens in Xcode 7 as well as all public betas of Xcode 8.
+
+        Notes:
+        In the coverage report, the numbers make much more sense and also kind of hint at that this inaccuracy stems from the __SomethingMangled_block_invoke calls. But still: this behavior is pretty misleading if you want use the gutter to guide your efforts of increasing test coverage.
+    email: daniel@puppiesonacid.de
+    modified: "2016-07-26T12:24:55.19296Z"
+    number: "27544962"
+    number_intvalue: 27544962
+    originated: 26-Jul-2016 02:24 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8 beta3 (8S174q)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode: Code coverage overreports for blocks in Objective-C in the editor gutter'

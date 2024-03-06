@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13281763"
+    labels:
+        datastore_id: "2768402"
+data:
+    classification: Serious Bug
+    created: "2013-02-24T22:34:47.112245Z"
+    description: "Summary:\r\n\r\nSufficiently long entries in the system hosts file cause long hangs in\r\nsystem resolver operation, resulting in an effective maximum of 11\r\nentries per line in the hosts file.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Add an entry to /etc/hosts with N hostname entries, where N >= 12.\r\nFor example:\r\n\r\n  echo '1.2.3.4 bar0 bar1 bar2 bar3 bar4 bar5 bar6 bar7 bar8 bar9\r\nbar10 bar11' | sudo tee -a /etc/hosts >/dev/null\r\n\r\n2. Attempt to resolve the second to (N - 10)th entries via gethostbyname:\r\n\r\n  python -c 'import socket; print socket.gethostbyname(\"bar1\")'\r\n\r\nExpected Results:\r\n\r\nNear instant resolution, returning \"1.2.3.4\"\r\n\r\nActual Results:\r\n\r\nLong hangs in the syscall, up to 40 seconds in duration, before\r\nreturning the correct response:\r\n\r\n    $ time python -c 'import socket; print socket.gethostbyname(\"bar1\")'\r\n    1.2.3.4\r\n    0.03s user 0.01s system 0% cpu 4532M memory 35.047 total\r\n    $ time python -c 'import socket; print socket.gethostbyname(\"bar1\")'\r\n    1.2.3.4\r\n    0.03s user 0.01s system 0% cpu 4532M memory 35.043 total\r\n    $ time python -c 'import socket; print socket.gethostbyname(\"bar1\")'\r\n    1.2.3.4\r\n    0.03s user 0.01s system 0% cpu 4532M memory 35.047 total\r\n    $ time ruby -e \"require 'socket'; p Socket.gethostbyname('bar1')\"\r\n    [\"bar0\", [], 2, \"\\x01\\x02\\x03\\x04\"]\r\n\r\n    real\t0m35.063s\r\n    user\t0m0.034s\r\n    sys\t0m0.025s\r\n\r\nRegression:\r\n\r\nNotes:"
+    email: james.abley@gmail.com
+    modified: "2013-02-24T22:34:47.112477Z"
+    number: "13281763"
+    number_intvalue: 13281763
+    originated: "2013-02-24"
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.8.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Long entries in /etc/hosts cause long hangs in system resolver

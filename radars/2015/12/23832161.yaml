@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23832161"
+    labels:
+        datastore_id: "5031812724162560"
+data:
+    classification: Other Bug
+    created: "2015-12-10T00:55:37.29915Z"
+    description: "This is a duplicate of rdar://22708537\n\nSummary:\r\nCasting an NSError that's in a generic function with type parameter `<E: ErrorType>` to an NSError strips the error's UserInfo dictionary.\r\n\r\nSteps to Reproduce:\r\nlet userInfo: [NSObject: AnyObject] = [\"TestKey\": \"TestValue\"]\r\n\r\nlet e = NSError(domain: \"TestDomain\", code: 1, userInfo: userInfo)\r\n\r\nfunc doSomethingGeneric<E: ErrorType>(error: E) -> Void {\r\n    print(error) // ✅ user info present\r\n    print(error as NSError)  // ❌ user info missing ❌\r\n}\r\n\r\ndoSomethingGeneric(e)\r\n\r\nExpected Results:\r\nExpect the NSError to retain its UserInfo dictionary during the cast\r\n\r\nActual Results:\r\nThe NSError loses its UserInfo dictionary. There are many similar cases where casting an ErrorType variable that contains an NSError to an NSError variable _doesn't_ lose the userInfo dictionary. The attached playground has many more examples where this casting works and retains the NSError's UserInfo, as well as the above example and one more that also involves generic functions where the casting loses the UserInfo dictionary.\r\n\r\nVersion:\r\nXcode 7.0 (7A218)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'ErrorCastingBug.playground.zip' was successfully uploaded."
+    email: info@nachosoto.com
+    modified: "2015-12-10T00:55:37.29939Z"
+    number: "23832161"
+    number_intvalue: 23832161
+    originated: 09-Dec-2015 04:55 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0 (7A218)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UserInfo of NSError is discarded during type conversion in a generic function

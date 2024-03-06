@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11209322"
+    labels:
+        datastore_id: "1650402"
+data:
+    classification: Serious Bug
+    created: "2012-04-09T12:05:33.20652Z"
+    description: "Summary:\r\n\r\nA versioned .xcdatamodeld bundle that is compiled with MOMC results in a .momd resource bundle which crashes NSManagedObjectModel's -initWithContentsOfURL: \r\n\r\nSteps to Reproduce:\r\n\r\n1) Create a versioned Data Model (.xcdatamodeld) using Xcode 4.3.2 running on Lion.\r\n2) Compile the application.\r\n3) Load the resource for the compiled Data Model (.momd) using NSManagedObjectModel's -initWithContentsOfURL:\r\n\r\nSee the attached project: http://files.iconfactory.net/craig/bugs/Vershunning.zip\r\n\r\nThe sample project loads the unversioned Data Model (AccountDocument.mom) and the data model compiled with Xcode 4.2 (AccountDocument2.momd). It crashes with the data model compiled with Xcode 4.3 (AccountDocument3.momd).\r\n\r\nExpected Results:\r\n\r\nThe application should load the managed object model.\r\n\r\nActual Results:\r\n\r\nThe application crashes with EXC_BAD_ACCESS while loading the data in the .momd resource. The stack trace is:\r\n\r\n* thread #1: tid = 0x2103, 0x00007fff931d9350 libobjc.A.dylib`objc_msgSend_vtable13 + 16, stop reason = EXC_BAD_ACCESS (code=13, address=0x0)\r\n    frame #0: 0x00007fff931d9350 libobjc.A.dylib`objc_msgSend_vtable13 + 16\r\n    frame #1: 0x00007fff8935e975 CoreData`-[NSKnownKeysDictionary1 _setValues:retain:] + 197\r\n    frame #2: 0x00007fff8935f288 CoreData`_newReadModelFromBytes + 648\r\n    frame #3: 0x00007fff8935b93e CoreData`+[NSManagedObjectModel(_NSManagedObjectModelPrivateMethods) _newModelFromOptimizedEncoding:error:] + 9310\r\n    frame #4: 0x00007fff89359451 CoreData`-[NSManagedObjectModel(_NSManagedObjectModelPrivateMethods) initWithContentsOfOptimizedURL:] + 305\r\n    frame #5: 0x00007fff89358d7b CoreData`-[NSManagedObjectModel initWithContentsOfURL:] + 443\r\n    frame #6: 0x000000010edb43da Vershunning`-[AppDelegate applicationDidFinishLaunching:] + 554 at AppDelegate.m:54\r\n\r\nRegression:\r\n\r\nThe same code works fine on Xcode 4.2 on Snow Leopard. Also, if the .momd resources that are compiled with 4.2 are used in the project as a Copy Files build phase (instead of having MOMC generate them) the application works fine.\r\n\r\nNotes:\r\n\r\nIf you'd like to see the history of events that led up to this report, check out this StackOverflow question:\r\n\r\nhttp://stackoverflow.com/questions/10001026/lightweight-migration-of-a-nspersistentdocument\r\n\r\n----\r\n\r\nAppended the following information on 4/4/2012:\r\n\r\n\r\nThe compiled .momd resources can be loaded after the \"existingPartner\" fetch request is changed from:\r\n\r\nname == $name\r\n\r\nto:\r\n\r\nname == $NAME\r\n\r\nYour mission, should you choose to accept it, is to figure out why a part of the object model that does not affect the persistence of data breaks versioning and lightweight migration. It's clear from the documentation that this should not be the case:\r\n\r\n\"Core Data’s perspective on versioning is that it is only interested in features of the model that affect persistence.\""
+    email: tony@thecocoabots.com
+    modified: "2012-04-19T00:13:23.770752Z"
+    number: "11209322"
+    number_intvalue: 11209322
+    originated: 09-Apr-2012 10:04 PM
+    parent_number: "11181046"
+    product: Developer Tools
+    product_version: 4.3.2 / 4E2002
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/11181046
+    title: 'SERIOUS BUG: Xcode 4.3.2 creates invalid .momd resources'

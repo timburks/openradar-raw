@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17181951"
+    labels:
+        datastore_id: "6677007832186880"
+data:
+    classification: serious bug
+    created: "2014-06-05T19:00:31.927383Z"
+    description: "/* \r\nSummary:\r\n\"let\" is supposed to define constant values, but in fact it defines mutable, fixed-size arrays, as in C. This yields aliasing problems, allows functions to mutate their arguments (so you cannot know if they are pure functions), and plays havoc with clear reasoning.\r\n\r\n\"let\"-defining an array should produce a truly constant value.\r\n\r\nInstead, it now produces a constant reference to a mutable, fixed-size array.\r\n\r\nThis is just like C. So it is no better than C. And it's worth than \r\nObjective-C, where you could produce a reliably constant array with code like:\r\n\r\n  NSArray * const ar = @[foo,bar,baz];\r\n\r\n*/\r\n\r\nimport Cocoa\r\n\r\n// 1. non-constant arrays produce unnecessary aliasing problems:\r\n\r\n// w is a constant array\r\nlet w:Int[] = [10,10]\r\n// v is a constant array\r\nlet v = [w,w]\r\nv\r\n// but I am plainly allowed to mutate their contents!\r\nv[0][0]=20\r\n// and I see the aliasing problems associated with mutability:\r\nv\r\n\r\n// 2. non-constant arrays undermine the purpose of the inout parameter\r\n\r\n// this is a non-inout parameter, so this function should not mutate its arguments\r\nfunc mutateFirstParam(arr:Int[]) -> () {\r\n  arr[0] = 20\r\n}\r\nlet Z:Int[] = [10,10]\r\nZ\r\nmutateFirstParam(Z)\r\nZ // => Z has not been changed\r\n\r\n\r\n// 3. non-constant arrays are inconsistent with Swift's constant dictionaries\r\n\r\n// this dictionary is a variable, so I get to mutate it\r\nvar D = [\"a\":1]\r\nD[\"a\"]=2\r\nD\r\n\r\n// this dictionary is a constant, so I do not\r\nlet d = [\"a\":1, \"b\":2, \"c\":3]\r\nd\r\nd[\"a\"] = 5  // this line produces an error, as it should"
+    email: alexisgallagher@gmail.com
+    modified: "2014-06-05T19:00:31.927554Z"
+    number: "17181951"
+    number_intvalue: 17181951
+    originated: "2014-06-05"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "8.0"
+    reproducible: always
+    resolved: Unresolved
+    status: Open
+    title: Swift "let" statement should define constant not mutable array

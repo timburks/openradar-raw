@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14468891"
+    labels:
+        datastore_id: "3191402"
+data:
+    classification: Other Bug
+    created: "2013-07-17T15:45:31.959865Z"
+    description: "Summary:\n\nClang 4.2 and 5.0 successfully compiles C++ lambdas that are capturing local reference variables by value even if the variable's type is an abstract class. At runtime, the abstract class is instantiated via its copy constructor when the closures are initialized, leading to pure virtual method calls and, thus, crashes.\n\nSteps to Reproduce:\n\nTry compiling the following (illegal) sample code:\n\n\t#import <string>\n\t#import <iostream>\n\n\tclass Abstract\n\t{\n\tpublic:\n\t    virtual ~Abstract() {};\n\t    virtual std::string Foo() const = 0;\n\t};\n\n\tclass Concrete : public Abstract\n\t{\n\tpublic:\n\t    std::string Foo() const override { return \"Concrete\"; }\n\t};\n\n\tint main(int argc, const char * argv[])\n\t{\n\t    \n\t    Concrete c;\n\t    Abstract &aref = c;\n\t    \n\t    std::cout << c.Foo() << std::endl;\n\t    std::cout << aref.Foo() << std::endl;\n\t    \n\t    auto lambda = [aref]{  // Clang should refuse to compile this line\n\t        std::cout << aref.Foo() << std::endl;\n\t    };\n\t    lambda();\n\t    return 0;\n\t}\n\nExpected Results:\n\nA compile-time error message complaining that the [aref] capture scope instantiates an abstract base class.\n\nActual Results:\n\nThe (illegal) code compiles successfully crashes at runtime:\n\n$ clang --version\nApple LLVM version 5.0 (clang-500.1.61) (based on LLVM 3.3svn)\nTarget: x86_64-apple-darwin12.4.0\nThread model: posix\n$ clang -std=c++11 -stdlib=libc++ -lc++ main.cpp\n$ /a.out \nConcrete\nConcrete\nlibc++abi.dylib: pure virtual method called\nfish: Job 1, './a.out ' terminated by signal SIGABRT (Abort)\n\nRegression:\nUnknown; Clang 4.2 in Xcode 4.6.3 has the same issue.\n\nNotes:\n\nAlso see rdar://14261999 for a somewhat similar issue in Objective-C++."
+    email: Karoly.Lorentey@gmail.com
+    modified: "2013-07-17T15:45:31.959987Z"
+    number: "14468891"
+    number_intvalue: 14468891
+    originated: 17-Jul-2013 05:45 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode5-DP3 (5A11344j)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode5-DP3 (5A11344j): C++11 lambda closures can capture references to abstract classes by value, instantiating the abstract class at runtime'

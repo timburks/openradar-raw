@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "40129673"
+    labels:
+        datastore_id: "5052043043536896"
+data:
+    classification: Bug/Serious
+    created: "2018-05-10T16:19:21.96741Z"
+    description: "Summary:\r\nWhen a C-function is passed a weak variable for a nonnull argument the compiler should elicit a warning that the provided variable could be `nil` and therefore is not save to pass to a nonnull argument.\r\n\r\nExample:\r\n\r\n\r\n// Function\r\nstatic void _Foo(MyObject * __nonnull bar)\r\n{\r\n    bar->_fooCount++;\r\n}\r\n\r\n// MyObject\r\n@implementation MyObject\r\n{\r\n    NSInteger _fooCount;\r\n}\r\n\r\n- (void)asyncFoo\r\n{\r\n    __weak typeof(self) weakSelf = self;\r\n    dispatch_async(SomeQueue(), ^{\r\n        _Foo(weakSelf); // <-- should warn against nil being passed!  Will crash!\r\n    });\r\n}\r\n\r\n@end\r\n\r\n\r\nSteps to Reproduce:\r\nImplement code like the example above\r\n\r\nExpected Results:\r\nCompiler elicits a warning (which we'd elect to treat as an error)\r\n\r\nActual Results:\r\nNo compiler warning.  In fact, the static analyzer does not yield a warning either!\r\n\r\nNotes:\r\nWe consider this critical to safety and stability\r\n\r\nVersion/Build:\r\nXcode 9.3\r\n\r\nConfiguration:\r\nmacOS High Sierra"
+    email: nobrien@twitter.com
+    modified: "2018-05-10T16:19:21.96779Z"
+    number: "40129673"
+    number_intvalue: 40129673
+    originated: 05/10/2018
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 9.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Calling a C-function that takes a __nonnull argument and passing a weak variable does not yield compiler warning

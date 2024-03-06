@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35241091"
+    labels:
+        datastore_id: "5002743999627264"
+data:
+    classification: Other Bug
+    created: "2017-10-29T15:30:04.95913Z"
+    description: "Summary:\r\nCLKRelativeDateTextProvider provides a timer mode where developers can have a complication count up or down from a specified date. It also provides a calendarUnits variable that allows developers to specify which units we wish to have displayed in the complication. \r\n\r\nHowever, when providing units of [.hour, .minute] in timer mode, with a relative date less than an hour from the current date, the behavior of the CLKRelativeDateTextProvider becomes broken in two ways: \r\n\r\n1. The requested units are not respected. The complication displays minutes and seconds until the relative difference is greater than one hour, at which point the complication begins correctly displaying hours and minutes.\r\n2. Despite displaying seconds, the complication only updates once per minute, freezing the MM:SS display in place until the user causes the complication to redraw (raises wrist, invokes Time Travel, etc).\r\n\r\n\r\nSteps to Reproduce:\r\n1. Create a CLKRelativeDateTextProvider with the following options: CLKRelativeDateTextProvider(date: Date(), style: .timer, units: [.hour, .minute])\r\n2. Install that date provider in a CLKComplicationTemplate and set it on the watch face.\r\n\r\nExpected Results:\r\nThe complication will count up minutes from the current date: 0:01, 0:02, 0:03, until it reaches the one hour mark, at which point it will continue: 0:59, 1:00, 1:01\r\n\r\nActual Results:\r\nWhen there is only room for two units, the complication will begin displaying the number of minutes and seconds from the timer start, frozen in place until the user raises their wrist (potentially displaying numbers like 2:37, 21:35, 56:47) until it reaches the one hour mark, at which point it will begin counting the time 1:00, 1:01, 1:02. \r\n\r\n\r\nNotes: \r\nI have provided a test project that demonstrates this issue. It displays a two line complication, where the first line counts up from the start time, and the second line counts down to the end time. You can set the complication in the Modular Large/Small, Circular or X-large slot. \r\n\r\nIn the watch app, tap the \"Start 10m Timer\" button to see the intended behavior. It configures the timers with units of [.minute, .second]. The first line correctly counts up from 0:00 and the second line correctly counts down from 10:00.\r\n\r\nTap the \"Start 3h Timer\" button to see the bug. It configures the timers with [.hour, .minute] units. In the small slots, you'll see the top line stuck at some number of minutes and seconds, while the bottom line counts down from 2:59. In the Modular Large slot, you will also notice that both lines display seconds (2:59:45), despite the fact that we asked for them to be omitted. Both lines incorrectly display the seconds as frozen, and only update the labels once per minute.\r\n\r\n\r\nVersion/Build:\r\nwatchOS 4.0 (15R372)\r\n\r\n\r\nConfiguration:\r\nApple Watch Series 2 SS running watchOS 4.0 (15R372), iPhone 8 Plus running iOS 11.0.3 (15A432)"
+    email: jose.castillo@gmail.com
+    modified: "2017-10-29T15:30:04.95935Z"
+    number: "35241091"
+    number_intvalue: 35241091
+    originated: 10/29/2017
+    parent_number: '&{NULL_VALUE}'
+    product: watchOS + SDK
+    product_version: watchOS 4.0 (15R372)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CLKRelativeDateTextProvider in timer mode displays inaccurate information when [.hour, .minute] units are set

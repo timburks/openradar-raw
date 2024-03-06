@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32024200"
+    labels:
+        datastore_id: "4996883684524032"
+data:
+    classification: Other Bug
+    created: "2017-05-11T04:54:49.56678Z"
+    description: "Area:\r\nFoundation\r\n\r\nSummary:\r\nThe documentation states that the use of DateComponentsFormatter.allowsFractionalUnits should allow output to include fractional units (like 1.5h). I cannot find any combination of flags that provide that output.\r\n\r\nI would expect that this code would produce that output:\r\n\r\nlet formatter = DateComponentsFormatter()\r\nformatter.allowedUnits = [.hour]\r\nformatter.allowsFractionalUnits = true\r\nformatter.unitsStyle = .abbreviated\r\nformatter.string(from: DateComponents(minute: 90)) // 1h\r\n\r\nI also tried allowing minutes but restricting the maximum number of units to 1:\r\n\r\nlet formatter = DateComponentsFormatter()\r\nformatter.allowedUnits = [.hour, .minute]\r\nformatter.allowsFractionalUnits = true\r\nformatter.unitsStyle = .abbreviated\r\nformatter.maximumUnitCount = 1\r\nformatter.string(from: DateComponents(minute: 90)) // 2h\r\n\r\nI tried to use DateComponentsFormatter.collapsesLargestUnit as well with no luck.\r\n\r\nIt looks like either the documentation is wrong (or is at least very unclear) or the implementation does not match the documented behavior.\r\n\r\nSteps to Reproduce:\r\nAttempt to use DateComponentsFormatter to format a fractional number of units.\r\n\r\nExpected Results:\r\nProvide a fractional unit to the user.\r\n\r\nActual Results:\r\nVarious combinations of settings either round the unit up or down to the next whole unit. Fractional units are not returned.\r\n\r\nVersion:\r\niOS 10, Xcode 8.3, Swift 3\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niOS 10, Xcode 8.3, Swift 3\r\n\r\nAttachments:\r\n\r\nFollow up:\r\n\r\nAfter doing some digging (disassembling Foundation), it looks like every call to -[_unitFormatter stringFromNumber:] in -[NSDateComponentsFormatter _stringFromDateComponents:] is passed an +[NSNumber numberWithInteger:] which drops floating point data.\r\n\r\nA quick Objective-C example shows how this behavior could break allowsFractionalUnits:\r\n\r\n        NSNumberFormatter *formatter = [NSNumberFormatter new];\r\n        formatter.maximumFractionDigits = 1;\r\n\r\n        NSNumber *first = [NSNumber numberWithInteger:5.5];\r\n        NSLog(@\"%@\", [formatter stringFromNumber:first]); // 5\r\n\r\n        NSNumber *second = [NSNumber numberWithDouble:5.5];\r\n        NSLog(@\"%@\", [formatter stringFromNumber:second]); // 5.5"
+    email: calebmdavenport@gmail.com
+    modified: "2017-05-11T04:55:27.91618Z"
+    number: "32024200"
+    number_intvalue: 32024200
+    originated: 5 May 2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "10"
+    reproducible: Always
+    resolved: ""
+    status: Open (Duplicate of 22660145)
+    title: DateComponentsFormatter.allowsFractionalUnits does not work as advertised.

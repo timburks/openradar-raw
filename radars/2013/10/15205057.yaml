@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15205057"
+    labels:
+        datastore_id: "5841971566346240"
+data:
+    classification: ""
+    created: "2013-10-11T04:48:49.721369Z"
+    description: "Summary:\r\nNSNumber is a class cluster, consequently to create a subclass a developer needs to create their own storage and implement the primitive methods. Indeed the NSNumber docs specify that it is the primitive methods of NSValue that need to be implemented.\r\n\r\n> As with any class cluster, if you create a subclass of NSNumber, you have to override the primitive methods of its superclass, NSValue. \r\n\r\nFirstly, the NSValue documentation makes no mention of what are its primitive methods. Based on NSValue.h I assumed getValue: and objcCType are.\r\n\r\nThe next problem is that implementing these is not sufficient to create a functioning subclass of NSNumber (ie. one that doesn't beach-ball the app). A functioning subclass that only ever deals with int values requires intValue, but that will fail (hang) for eg. double values, which require doubleValue.\r\n\r\nSo the documentation is incorrect (methods off NSNumber as well as NSValue are required) as well as incomplete.\r\n\r\nI'm also wondering why methods like intValue aren't implemented in terms of getValue: and objCType. I understand there are performance considerations but would have thought that any special fast paths would be avoided for non-Apple subclasses.\r\n\r\nConsequently I'm not sure whether this is a documentation or functionality bug - your call I guess :)\r\n\r\nSteps to Reproduce:\r\n1. Subclass NSNumber\r\n2. Realise that the docs don't fully specify which NSValue primitive methods need implementing\r\n3. Assuming the worst, implement *all* NSValue methods\r\n\r\nExpected Results:\r\nA functioning NSNumber class cluster subclass.\r\n\r\nActual Results:\r\nA class which hangs your app when attempting to call eg. description or hangs Xcode when inspecting an instance in the debugger.\r\n\r\n\r\nVersion:\r\nXcode 5.0 (5A1413)\r\n\r\nNotes:\r\nIf I implement all of the below, my class seems to function correctly, although the description and comparison methods seem unnecessary:\r\n\r\n- (void)getValue:(void *)value { return [_number getValue:value]; }\r\n- (const char *)objCType { return [_number objCType]; }\r\n- (char)charValue { return [_number charValue];  }\r\n- (unsigned char)unsignedCharValue { return [_number unsignedCharValue]; }\r\n- (short)shortValue { return [_number shortValue]; }\r\n- (unsigned short)unsignedShortValue { return [_number unsignedShortValue]; }\r\n- (int)intValue { return [_number intValue]; }\r\n- (void *)pointerValue { return [_number pointerValue]; }\r\n- (unsigned int)unsignedIntValue { return [_number unsignedIntValue]; }\r\n- (long)longValue { return [_number longValue]; }\r\n- (unsigned long)unsignedLongValue { return [_number unsignedLongValue]; }\r\n- (long long)longLongValue { return [_number longLongValue]; }\r\n- (unsigned long long)unsignedLongLongValue { return [_number unsignedLongLongValue]; }\r\n- (float)floatValue { return"
+    email: aufflick@gmail.com
+    modified: "2013-10-11T04:48:49.721566Z"
+    number: "15205057"
+    number_intvalue: 15205057
+    originated: "2013-10-11"
+    parent_number: '&{NULL_VALUE}'
+    product: OSX & iOS SDKs
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSNumber documentation/header does not specify which methods are the primitive ones

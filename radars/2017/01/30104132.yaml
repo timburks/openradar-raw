@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30104132"
+    labels:
+        datastore_id: "5014540630622208"
+data:
+    classification: ""
+    created: "2017-01-19T22:01:12.75615Z"
+    description: "Summary:\r\nOccasionally our watch app does not show updates from the phone anymore. This is visible by having no or outdated data.\r\nThe problem resolves itself usually within 5 to 10 minutes and communication starts to work again. Sometimes also an app restart seems to help.\r\nDuring this the watch did never show a \"disconnected to phone\" state, bluetooth and wifi was on and phone and watch were in close proximity (< 0.5 meters). They were also connected to the local wifi most of the time.\r\n\r\nTo transmit data to the watch we are sending messages to it using the WatchConnectivity framework. If this problem occurs we can see from our logs that the watch app does not receive messages anymore. On the phone side the error handler is occasionally called but not reliably. If it’s called there are different error messages: timeout or even “watch not reachable”. These error messages happen although the WatchConnectivity framework (WCSession) still reports the watch as reachable. Interestingly the watch can still successfully send messages to the phone. The communication only breaks in one direction - phone to watch.\r\n\r\nSteps to Reproduce:\r\nThere’s no reliable way to reproduce it but repeating the following procedure eventually leads to the broken state:\r\n1.) Kill the watch app\r\n2.) Start the phone app and hard kill it. Do this AFTER the watch app is dead such that it isn’t relaunching the phone app in the background immediately through a message.\r\n3.) Lock the phone (optional but seems to increase the failure rate)\r\n4.) Start the watch app\r\n5.) Observe if you get messages on the watch from the phone app\r\n\r\nExpected Results:\r\nThe watch app receives messages from it's phone app. Meaning delegate callbacks being called and so on.\r\n\r\nActual Results:\r\nThe messages that the phone app sends are not received. Occasionally the error handler on the phone side is called but not reliably.\r\n\r\nVersion:\r\nWe saw this with different Watches and iPhones running watchOS 3.X and iOS 10.X - also the latest versions as of this writing (iOS 10.2 and watchOS 3.1.1). \r\n\r\nNotes:\r\nThings we tried that did not help:\r\n- Trying to “reactivate” the WCSession via “activateSession” whenever we detect a problem (error handler called).\r\n- Use the application context mechanism to transmit the information instead of the message mechanism. Didn’t help since both seem to break simultaneously.\r\n- Sending messages from the watch to the phone in a regular interval and use the reply handler to get the latest state information. Didn’t help since the replies get lost as well if messages and application context don’t work.\r\n- Reducing the amount of communication between watch and phone.\r\n- Add a pinging from the watch to the phone to keep the phone app more alive in the background.\r\n- Retry to send messages if the error handler is called.\r\n- Add a reply handler to each message and retry to send it if we don’t get the reply within a certain timeframe.\r\n\r\nConfiguration:\r\nUsed iPhones: iPhone 6S and iPhone 7\r\nUsed watches: original Apple Watch and Series 2 Apple Watch\r\nWe are building against watchOS 3.0 and up and iOS 10.0 and up only. Using Swift 3 of course and Xcode 8.2.1."
+    email: florian.goessler@googlemail.com
+    modified: "2017-01-19T22:01:12.75642Z"
+    number: "30104132"
+    number_intvalue: 30104132
+    originated: 19. Jan 2017
+    parent_number: '&{NULL_VALUE}'
+    product: watchOS + SDK
+    product_version: 3.X
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: Communication between iPhone and Apple Watch breaks down occasionally

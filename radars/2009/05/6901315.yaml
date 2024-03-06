@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6901315"
+    labels:
+        datastore_id: "39413"
+data:
+    classification: Other Bug
+    created: "2009-05-19T08:09:25.169023Z"
+    description: "Summary: \r\nThe perl script \"symbolicatecrash\" does not correctly find symbol file + executable successfully if the bundle ID contains periods \".\" in them. (Eg. my.cool.game.app)\r\n\r\nSteps to Reproduce:\r\nLet's use an example here. We create an application with a bundle ID of my.cool.game (which does not fall out of the guide of UTI naming convention, nor gets rejected by the iTunes connect app submission gateway).\r\n\r\nRunning the symbolicatecrash script with -Av flags will produce verbose output similar to the following:\r\nSearching in Spotlight for dsym with UUID of /var/mobile/Applications/7DD43812-BC0E-4EF0-8BE5-797977A97692/my.cool.game.app/my.cool.game\r\nRunning mdfind \"com_apple_xcode_dsym_uuids == FA2DAAB3-BB9D-2B42-5065-25E6747E868E\"\r\n.\r\n.\r\nDid not find executable for dsym\r\n## Warning: Can't find any unstripped binary that matches version of /var/mobile/Applications/7DD43812-BC0E-4EF0-8BE5-797977A97692/my.cool.game.app/my.cool.game\r\n\r\nExpected Results:\r\nFound executable ***path to successful find***/my.cool.game.app/my.cool.game\r\n-- MATCH\r\ndone.\r\n1 binary images were found.\r\n\r\nActual Results:\r\nWhat happens is that the script is stripping as follows:\r\n\"my.cool.game.app\" becomes \"my\"\r\nIt should only strip \".app\" away, so that the search will be successful.\r\n\r\nRegression:\r\nThis is not a regression.\r\n\r\nNotes:\r\nI've attached a modified script that fixes the problem.\r\nThe single most important change is in this line:\r\n    $executable =~ s/\\.[^.]*$//;\t# strip off the suffix, if any\r\n\r\nWhat this does is that it looks for the last period in the executable and remove it and everything to the right of it.\r\n\r\nIf this change is accepted, it should be introduced into 3.0 SDK too.\r\n\r\nAttached is the revised script:\r\nhttp://www.tangentsoftware.net/shared/symbolicatecrash_TS20090519.zip"
+    email: tan.michael@mac.com
+    modified: "2011-08-28T05:46:48.565361Z"
+    number: "6901315"
+    number_intvalue: 6901315
+    originated: 19-May-2009 03:54 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 2.2.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SymbolicateCrash doesn't find existing symbol for apps with periods in bundle ID

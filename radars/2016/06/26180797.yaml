@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26180797"
+    labels:
+        datastore_id: "6070699747704832"
+data:
+    classification: Bug
+    created: "2016-06-16T23:46:51.42143Z"
+    description: "Summary:\r\nWhen creating a new HTML note in Notes.app with AppleScript, Notes.app re-formats the inserted note text inappropriately. This bug only presents itself when creating new notes in an iCloud folder. Creating notes in a non-iCloud folder appears to present no issues.\r\n\r\nSteps to Reproduce:\r\n1. Open Notes.app.\r\n2. Create a folder called “Radar Test”.\r\n3. Run the following in a terminal to bring up the interactive AppleScript interpreter:\r\n\r\n$ osascript -il JavaScript\r\n\r\n4. Paste the following code into the interpreter.\r\n\r\n    var app = Application('Notes');\r\n    app.includeStandardAdditions = true;\r\n    app.activate();\r\n\r\n    var folder = app.folders.byName(\"Radar Test\");\r\n    folder.notes.push(app.Note({\r\n        'name': \"My New Note\",\r\n        'body': \"<ul><li>One</li><li>Two</li></ul>\"\r\n    }));\r\n\r\n5. Read HTML content of note by pasting the following into the interpreter:\r\n\r\n    app.notes.byName(\"My New Note\").body()\r\n\r\n\r\n\r\nExpected Results:\r\nThe note body should be “<div>My New Note</div>\\n<div><br></div>\\n<ul>\\n<li>One</li>\\n<li>Two</li>\\n</ul>\\n”, the same output which occurs if you manually edit the created note to contain a bulleted list with the same items (“One” and “Two”).\r\n\r\nActual Results:\r\nThe note body is \"<div>My New Note</div>\\n<div><br></div>\\n<div>\\t•\\tOne</div>\\n<div>\\t•\\tTwo</div>\\n”.\r\n\r\nAlso observe that the original line breaks have been removed.\r\n\r\nVersion:\r\nNotes.app 4.2 (555.10.42)"
+    email: dloewenherz@gmail.com
+    modified: "2016-06-16T23:46:51.42167Z"
+    number: "26180797"
+    number_intvalue: 26180797
+    originated: 09-May-2016 04:38 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: Notes.app 4.2 (555.10.42)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Creating new notes in Notes.app botches note body when body is provided as HTML

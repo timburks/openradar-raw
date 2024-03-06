@@ -1,0 +1,69 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22676864"
+    labels:
+        datastore_id: "5513257620078592"
+data:
+    classification: Other Bug
+    created: "2015-09-13T14:35:43.56133Z"
+    description: |-
+        Summary:
+        If Module A defines this operator:
+
+        ```swift
+        infix operator <^> { precedence 100 }
+        ```
+
+        and then Module B defines this operator:
+
+        ```swift
+        infix operator <^> { precedence 110 }
+        ```
+
+        then these two modules become incompatible with each other, and attempting to use the `<^>` operator results in the following error messaging:
+
+        ```
+        Ambiguous operator declarations found for operator
+        Operator is not a known binary operator
+        ```
+
+        This is made worse by the additional messaging for the ambiguous operator declarations (Two instances of `Found this matching operator declaration`), which simply point at the usage of the operator.
+
+        Steps to Reproduce:
+        1. Create frameworks that both export the same operator with different precedence/associativity settings
+        2. Try to use the operator when both frameworks are imported
+
+        Expected Results:
+        Ideally: some way to disambiguate the operator definitions
+        Short term: Better error messaging about where the operators are defined and what the difference is (and possibly how to resolve the issue)
+
+        Actual Results:
+        Ambiguous error messaging that doesn’t explain the issue very well.
+
+        Regression:
+        N/A
+
+        Notes:
+        For a real world example:
+
+        Runes (https://github.com/thoughtbot/Runes) is a framework that defines some custom operators for monadic functions
+        SwiftCheck (https://github.com/typelift/SwiftCheck) is a framework that allows you to do property based testing in Swift. SwiftCheck depends on Swiftz (https://github.com/typelift/Swiftz) a functional programming lib for Swift.
+
+        Runes and Swiftz both define operators (`<^>`) for `map`. However, Runes sets the precedence to 130, where Swiftz sets the precedence to 140.
+
+        The result of this is that when trying to use SwiftCheck to test Runes, I am unable to, because the operator definitions are ambiguous.
+
+        To see this in action, you can look at the `gf-swiftcheck-bugreport` branch of Runes: https://github.com/thoughtbot/Runes/tree/gf-swiftcheck-bugreport
+    email: gordon@thoughtbot.com
+    modified: "2015-09-13T14:35:43.56154Z"
+    number: "22676864"
+    number_intvalue: 22676864
+    originated: 13-Sep-2015 10:35 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Swift 2.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Conflicting operator definitions result in ambiguous errors

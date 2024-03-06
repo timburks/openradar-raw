@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19831709"
+    labels:
+        datastore_id: "5246417777983488"
+data:
+    classification: ""
+    created: "2015-02-13T21:28:33.468855Z"
+    description: "Summary:\r\nThe 'dynamicType' special keyword/property can be used to retrieve the runtime type of an object (as an AnyClass). The type can then be downcast using as? to produce a T.Type object, on which initializers and class methods can be called.\r\n\r\nIt's possible to construct a simple program which perform the above operation on an NSString, and then attempts to initialize a new NSString, and successfully compile this program. However, this program crashes when run because it cannot find the proper initializer to use.\r\n\r\nSteps to Reproduce:\r\nRun the sample project enclosed.\r\n\r\nExpected Results:\r\nXcode produces an error when trying to compile the program, or program successfully compiles and runs and is able to use stringTypeValue() to instantiate a new NSString instance.\r\n\r\nActual Results:\r\nApplication crashes when trying to instantiate a new NSString instance (line 22), with the error message in the console: \"/SourceCache/swiftlang/swiftlang-602.0.37.3/src/swift/stdlib/core/StringBridge.swift: 128: 20: fatal error: use of unimplemented initializer 'init()' for class 'Swift._NSContiguousString'\"\r\n\r\nVersion:\r\nBoth Xcode 6.1 and 6.2 beta (6D520o), running on OS X Yosemite (10.10.2).\r\n\r\nNotes:\r\nI don't think this is isolated to NSStrings; I think it may be an issue for all Foundation bridged classes that are implemented using Objective-C class clusters.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'SwiftMetaclass.zip' was successfully uploaded.\r\n\r\nNote: SwiftMetaclass's single source file is reproduced below in its entirety:\r\n\r\nimport Foundation\r\n\r\nprintln(\"Hello, World!\")\r\n\r\nfunc classForObject(object: AnyObject) -> AnyClass {\r\n    return object.dynamicType\r\n}\r\n\r\nlet anyTypeValue : AnyClass = classForObject(\"hello world\")\r\n\r\nif let stringTypeValue = anyTypeValue as? NSString.Type {\r\n    println(\"classForObject returned a NSString.Type\")\r\n    // Crashes here\r\n    let newString = stringTypeValue()\r\n}"
+    email: AustinZheng@gmail.com
+    modified: "2015-02-27T23:33:25.62084Z"
+    number: "19831709"
+    number_intvalue: 19831709
+    originated: February 13, 2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: '[Swift] Crash when constructing an NSString by calling init() on a downcasted instance of AnyClass'

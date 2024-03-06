@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "47670895"
+    labels:
+        datastore_id: "4971747984015360"
+data:
+    classification: Other bug
+    created: "2019-01-30T18:28:09.490771Z"
+    description: "Summary:\r\n\r\nWe are developing an iOS application that uses image classification to identify products in a large catalog. We originally had 30-60 products -- and thus, 30-60 output labels -- but as we scale up to the full catalog of 400+ products, we’ve encountered an issue where the confidence values output by the model are all NaN when using the GPU for on-device inference on iOS.\r\n\r\nInitially, we believed that this was an issue with one specific CoreML file that resulted from a training session, as the following model did not experience this issue. However, we have now seen this issue recur with numerous models, leaving us to believe that this represents a bug in iOS. This does not occur when performing inference on the CPU, and does not seem to be affected by compiling the mlmodel file on device or as part of Xcode's build process.\r\n\r\nSteps to Reproduce:\r\n\r\nThese steps are dependent on the exact model used, as only some have this issue.\r\n\r\n1. Use Turi Create to create a CoreML file based on resnet-50 (most likely to occur with a high number of output labels)\r\n2. Import this CoreML file into a new Xcode project using standard settings\r\n3. Add an image to the Xcode project\r\n4. In the default ViewController, add code to viewDidLoad that performs the following:\r\n  a. Read the image into a CVPixelBuffer\r\n  b. Create the MLModel from the included mlmodel file\r\n  c. Perform prediction on the given image\r\n  d. Either print the label/confidence outputs of the model to the log, or display in a UILabel\r\n\r\nExample project attached.\r\n\r\nExpected Results:\r\n\r\nWe would expect all confidence values to be non-NaN, as we have seen in the past, and as we see when performing inference on the CPU.\r\n\r\nActual Results:\r\n\r\nOn certain devices, the output confidence values will be NaN. As noted in the “Configuration” section below, this does not occur on all devices that run iOS.\r\n\r\nVersion/Build:\r\n\r\nThe term “valid” below means that all output confidence values were normal floating-point values, and were not NaN or infinite. In one case the results array was empty, and no error was given.\r\n\r\niPhone 8 Plus, iOS 12.1.2: Valid on CPU, NaN on GPU\r\niPhone XR, iOS 12.1.3: Valid on CPU, Valid on GPU\r\niPad Pro (9.7 inch), iOS 12.0: Valid on CPU, NaN on GPU\r\niPhone 6s Plus, iOS 12.1.2: Valid on CPU, Valid on GPU\r\niPhone XS Max, iOS 12.1.3: Valid on CPU, Valid on GPU\r\niPhone 7 Plus, iOS 12.1.3: Valid on CPU, NaN on GPU\r\niPhone 7, iOS 12.1: Valid on CPU, NaN on GPU\r\niPad Air 2, iOS 12.1.1: Valid on CPU, NaN on GPU\r\niPad mini 3, iOS 11.2.5: Valid on CPU, Valid on GPU\r\niPad Pro (12.9 inch), iOS 11.0.1: Valid on CPU, Empty on GPU\r\niPad Pro (11 inch), iOS 12.1.1: Valid on CPU, Valid on GPU\r\n\r\nConfiguration:\r\n\r\niMac Pro 2017\r\nmacOS Mojave 10.14\r\nTuri Create 5.2.1\r\nPython 2.7\r\n\r\nImage classifier uses resnet-50 as the base model. We have over 100,000 images with over 200 output labels."
+    email: srichey@gowithfloat.com
+    modified: "2019-01-30T18:28:09.490995Z"
+    number: "47670895"
+    number_intvalue: 47670895
+    originated: 01/30/2019
+    parent_number: '&{NULL_VALUE}'
+    product: CoreML
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: CoreML reports NaN confidence values when performing inference on GPU

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19289025"
+    labels:
+        datastore_id: "5528212998193152"
+data:
+    classification: ""
+    created: "2014-12-18T03:03:35.741937Z"
+    description: "Summary:\r\nIn iOS 8, we have UIAlertController. In iOS 7, we do not. I wrote a wrapper class to handle these, and inside it. It was working with optimizations turned off (-Onone), but then when trying to run the same code with optimizations turned on (-O), I was getting a number of different errors, but it was always crashing.\r\n\r\nSteps to Reproduce:\r\nThe following code triggers the error: \r\n\r\n1 let hasAlert = NSClassFromString(\"UIAlertController\")\r\n2 // NSLog(\"What is alert? \\(hasAlert)\")\r\n3 if hasAlert != nil {\r\n4      NSLog(\"We have UIAlertController\")\r\n5 //    let alert = UIAlertController()\r\n6 //    self.presentViewController(alert, animated: true, completion: nil)\r\n7 } else {\r\n8     NSLog(\"We do not have UIAlertController\")\r\n9 }\r\n\r\nRunning this exact code on iOS 7, with optimizations turned on, will log out: \r\n\"We have UIAlertController\" which is clearly incorrect. \r\n\r\nUncommenting lines 5 and 6 will produce an error about trying to present nil onto a view controller.\r\n\r\nUncommenting line 2 will produce an EXC_BAD_ACCESS on line 1. This can also be reproduced by casting \"hasAlert\" to AnyClass? AnyClass!, or trying to use it in any sense that is more than checking its nilness.\r\n\r\n\r\nExpected Results:\r\nThe NSClassFromString method to return AnyClass? rather than AnyClass!, and to actually return the correct value when code optimizations are turned on. That is, not crash.\r\n\r\nActual Results:\r\nIt crashes.\r\n\r\nVersion:\r\nVersion 6.2 (6C86e)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 5s (7.1) Simulator\r\n\r\n\r\nUpdate: \r\nI was asked to provide crash logs, so I sent them the following data:\r\nhttp://s000.tinyupload.com/index.php?file_id=55773461656617445657\r\n\r\n\r\nUpdate: \r\nFixed in Xcode 6.3 beta 3 (6D543q)"
+    email: wirth_caesar@cyberagent.co.jp
+    modified: "2015-03-18T09:20:39.860608Z"
+    number: "19289025"
+    number_intvalue: 19289025
+    originated: 18-Dec-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Version 6.2 (6C86e)
+    reproducible: Always
+    resolved: Yes
+    status: Closed
+    title: '[Swift] NSClassFromString("UIAlertController") crashes on iOS 7 with optimizations turned on'

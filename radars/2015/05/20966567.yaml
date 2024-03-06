@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20966567"
+    labels:
+        datastore_id: "6101174654599168"
+data:
+    classification: Data Loss
+    created: "2015-05-14T23:58:33.04763Z"
+    description: "Summary:\r\nTrying to use copyfile() to combine an AppleDouble file and a data fork file into a single file only works if the AppleDouble table of contents contains two entries and the first entry must be AD_FINDERINFO (= 9)\r\n\r\nSteps to Reproduce:\r\nOpen the attached Xcode project and build and run. This will attempt to combine the copyfile.jpg.AppleDouble and copyfile.jpg.DataFork in to copyfile.jpg.\r\n\r\nYou will see that copyfile(src, dest, NULL, COPYFILE_UNPACK) will fail with -1. Unfortunately, errno is not set so will not a valid value.\r\n\r\nThe supplied copyfile.jpg.AppleDouble is valid it just has a AD_FILEDATES (=8) entry as well as the Finder Info and AD_RESOURCE (=2) entries\r\n\r\nI worked around by rewriting the Apple Double TOC to contain just the two expected entries and leaving gaps in the file (so just setting number of entries to 2 and the offsets correct for Finder Info and resource).\r\n\r\nExpected Results:\r\nA valid copyfile.jpg is produced. You can see this outcome by replacing copyfile.jpg.AppleDoube from testfiles/originals/succeeds to testfiles and running again.\r\n\r\nActual Results:\r\ncopyfile returns -1 but errno is not set.\r\n\r\nVersion:\r\nXcode 6.3/6D570 tested with 10.10 SDK\r\nOS X 10.10.3 (14D136)\r\ncopyfile-118.1.2\r\n\r\nNotes:\r\ncopyfile() appears to be in iOS too and has the same implementation and therefore bug.\r\n\r\nI figured everything out using the implementation at <http://www.opensource.apple.com/source/copyfile/copyfile-118.1.2/>\r\n\r\nIf you just ignore Apple Double TOC entries other than Finder Info and resource fork this is probably an easy enough fix.\r\n\r\nLooking back through the implementations of copyfile() it appears that this has been an issue for some time (maybe since the beginning).\r\n\r\nConfiguration:\r\nOccurs in all configurations where the AppleDouble file is not in the format expected.\r\n\r\nSample project: <https://dl.dropboxusercontent.com/u/56582/copyfile-radar-20966567.zip>"
+    email: nbeadman@gmail.com
+    modified: "2015-05-15T00:01:51.22794Z"
+    number: "20966567"
+    number_intvalue: 20966567
+    originated: 14-May-2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.10.3 (14D136)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: copyfile(src, dest, NULL, COPYFILE_UNPACK) only handles very limited subset of AppleDouble files

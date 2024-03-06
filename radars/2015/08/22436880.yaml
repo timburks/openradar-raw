@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22436880"
+    labels:
+        datastore_id: "5545211270791168"
+data:
+    classification: Serious Bug
+    created: "2015-08-26T13:57:57.80494Z"
+    description: "Summary:\r\nThere is a case when function that accepts UnsafeMutablePointer can change value of immutable variable declared with let. The following code will compile and run successfully. It will show 2 and 3.\r\n\r\nfunc bug(x: UnsafeMutablePointer<Int>) {\r\n    x.memory += 1\r\n}\r\n\r\nfunc test() {\r\n    let x: Int\r\n    x = 1\r\n    bug(&x)\r\n    print(x)\r\n    bug(&x)\r\n    print(x)\r\n}\r\n\r\nNothing must be able to change value of let, so I consider this behavior as bug.\r\n\r\nTo compare, if you'll try to assign 'x = 2' after 'x = 1' line, compilation will fail with \"Immutable value 'x' may only be initialized once\". But for some reason calling 'bug(&x)' is allowed to mutate immutable value.\r\n\r\nAlso, the strange thing is if I replace two lines 'let x: Int' and 'x = 1' by 'let x: Int = 1', compilation also fails with \"Cannot pass immutable value as inout argument: 'x' is a 'let' constant\" on lines where 'bug(&x)' is called. This is correct behavior, and the same error message should appear in the very first case.\r\n\r\nSteps to Reproduce:\r\n1. Install Xcode 7.0b6 (7A192o).\r\n2. Create a playground for iOS, paste my code snippet in playground. Code compiles successfully.\r\n3. Look at output: \"2\\n\" and \"3\\n\" are printed.\r\n\r\nExpected Results:\r\nCompilation error should occur. It should be \"Cannot pass immutable value as inout argument: 'x' is a 'let' constant\" on lines where 'bug(&x)' is called.\r\n\r\nActual Results:\r\nCode compiles fine, immutable value is changed after its initialization.\r\n\r\nVersion:\r\nXcode 7.0b6 (7A192o), OS X 10.10.5.\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nSwift 2.0, Xcode 7.0b6 (7A192o), OS X 10.10.5, building for iOS 9.0.\r\n\r\nAttachments:"
+    email: maxtram95@gmail.com
+    modified: "2015-08-26T13:59:08.14573Z"
+    number: "22436880"
+    number_intvalue: 22436880
+    originated: 26-Aug-2015 04:51 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0b6 (7A192o)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Function accepting UnsafeMutablePointer is able to change value of immutable value

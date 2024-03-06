@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28726736"
+    labels:
+        datastore_id: "4935146415325184"
+data:
+    classification: Serious Bug
+    created: "2016-10-12T00:50:45.90988Z"
+    description: "Felix Krause\r\n\r\nSummary:\r\nThe Ruby script \"ipatool\" bundled in Xcode tries to `require` third party Ruby gems, which causes issues when using a different Ruby environment (e.g. bundler, rvm or rbenv). \r\n\r\nThere are 3 third party gems required by the `ipatool` (located in \".../Xcode.app/Contents/Developer/usr/bin/ipatool\")\r\n\r\n- [CFPropertyList](https://github.com/ckruse/CFPropertyList)\r\n- [sqlite3](https://github.com/sparklemotion/sqlite3-ruby)\r\n- [digest](https://rubygems.org/gems/digest)\r\n\r\nSteps to Reproduce:\r\n1. Setup a ruby script that just shells out to `xcodebuild` to archive the app, e.g.\r\n```\r\nxcodebuild -exportArchive -exportOptionsPlist '/tmp/my.plist' -archivePath /Users/.../something.xcarchive  -exportPath '/tmp/output' \r\n```\r\n2. Create a Gemfile in the same directory\r\n3. Run `bundle install`\r\n4. Run `bundle exec [ruby script]`\r\n\r\nExpected Results:\r\nThe `ipatool` should either properly bundle the required third party gems, or unset the environment variables.\r\n\r\nDepending on third party gems, without actually locking their version is risky. Users can easily uninstall system gems, or update them, which may lead to a broken Xcode. \r\n\r\nActual Results:\r\nThe `ipatool` throws an exception that it can't `require` the third party gem 'cfpropertylist'\r\n\r\n```\r\n2016-10-11 03:05:13 +0000  /Applications/Xcode.app/Contents/Developer/usr/bin/ipatool:15:in `require': cannot load such file -- cfpropertylist (LoadError)\r\n  from /Applications/Xcode.app/Contents/Developer/usr/bin/ipatool:15:in `<main>'\r\n2016-10-11 03:05:13 +0000 [MT] /Applications/Xcode.app/Contents/Developer/usr/bin/ipatool exited with 1\r\n2016-10-11 03:05:13 +0000 [MT] ipatool JSON: (null)\r\n```\r\n\r\nVersion:\r\nXcode 8\r\n\r\nNotes:\r\nYou can find more information about how to debug and reproduce the issue on GitHub: https://github.com/fastlane/fastlane/issues/6495.\r\n\r\nWorkaround we're using is to unset certain Ruby environment variables, see https://github.com/fastlane/fastlane/blob/master/gym/lib/assets/wrap_xcodebuild/xcbuild-safe.sh\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: KrauseFx@gmail.com
+    modified: "2016-10-12T23:58:03.03259Z"
+    number: "28726736"
+    number_intvalue: 28726736
+    originated: 11-Oct-2016 05:48 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Xcode's ipatool depends on gems installed on system ruby, crashes with bundler, rbenv or rvm

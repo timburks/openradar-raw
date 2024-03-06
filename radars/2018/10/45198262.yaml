@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "45198262"
+    labels:
+        datastore_id: "6126222979366912"
+data:
+    classification: Serious Bug
+    created: "2018-10-11T18:02:01.574422Z"
+    description: "Summary:\r\n\r\nI'm working on a hardware device that broadcasts its own wireless access point (with no access to the open Internet) and hosts its own HTTP and WebSocket servers for users to connect to via MobileSafari. \r\n\r\nIn iOS 11 and earlier (and Android devices), I am able to successfully connect to both the HTTP server and the WS server locally. In iOS 12, I am no longer able to connect to the web socket server.\r\n\r\nSteps to Reproduce:\r\n\r\nRun a local wireless network without access to the open Internet. It cannot be a network created using macOS's \"Create Network\" feature. (In my case, it's an Android device using Android's provided Access Point APIs).\r\n\r\nHave one device host an HTTP server that serves up a web page / JS bundle that instructs the browser to connect via WebSockets to a WS server hosted on that same server (I have tested both with the WS and HTTP servers on the same port and on different ports).\r\n\r\nA sample project exists at https://github.com/lazerwalker/ios-12-websocket-bug. It has a node.js server with an HTTP endpoint that returns some JS that connects to a WS server it also provides.\r\n\r\nFor that sample project:\r\n\r\n1. Connect to the network via a desktop computer with the sample project. Run `npm install`, then `node server.js`.\r\n\r\n2. On an iOS 12 device, connect to the network and go to `http://SERVER-IP:3000`.\r\n\r\nExpected Results:\r\n\r\nThe HTTP request is completed successfully, and the browser client is able to establish a connection with the WebSocket server.\r\n\r\nFor the sample project: the console log for the iOS 12 device will contain some benign log messages, but no errors. The console for the server process will show the text \"Hi server!\"\r\n\r\nActual Results:\r\n\r\nOn iOS 12, the HTTP request is successful, and loads the website, but the WS connection fails with the error “No route to host” (visible via a remote web inspector window).\r\n\r\nThe given sample project works for me on iOS 12 if I navigate to the server via hostname rather than IP address (e.g. my Mac's hostname is \"ono-sendai\". `http://ono-sendai.local:3000` works, whereas `http://192.168.43.177:3000` fails as described above.\r\n\r\nThis sample project works perfectly for me on (a) iOS devices running iOS 11 or earlier, (b) every Android device I have tested, and (c) laptops running macOS.\r\n\r\nAdditionally, this works as expected when the wireless network is being provided by the Mac that is running the sample project server, via the \"Create Network\" option in the menu. This means that to test/reproduce, you'll need an external network.\r\n\r\nVersion/Build:\r\n\r\niPhone XS Max running iOS 12.0 (16A366)\r\nServer: MacBook Pro 2018 running macOS 10.14 (18A391). \r\nI am running the sample node project via node.js v8.11.3, but the issue was initially discovered via a Java HTTP and WS server running on the Android tablet also providing my access point."
+    email: michael@lazerwalker.com
+    modified: "2018-10-11T18:02:01.57478Z"
+    number: "45198262"
+    number_intvalue: 45198262
+    originated: 10/11/2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK + Safari
+    product_version: "12.0"
+    reproducible: Always
+    resolved: ""
+    status: OPEN
+    title: '"No route to host" when trying to make WebSocket connection to a locally-hosted server without Internet access'

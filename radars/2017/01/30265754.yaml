@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30265754"
+    labels:
+        datastore_id: "5047141781209088"
+data:
+    classification: Enhancement
+    created: "2017-01-30T18:10:28.77903Z"
+    description: "Area:\r\nMusic\r\n\r\nSummary:\r\nAs of 10.3 b1, there's no way to tell if the SKCloudServiceSetupViewController delegate method is called because the user tapped the Cancel button or if they successfully signed up for the Apple Music trial.  When the delegate method is called, we have to check whether they now have the SKCloudServiceCapabilityMusicCatalogPlayback regardless of if the user cancelled, completed the flow, or errored in order to tell the current state.  This makes it impossible to handle the experience differently if the user tapped Cancel vs if an error occurred.\r\n\r\nIt would greatly improve the user experience of the signup process if one of these options happened:\r\n1. There were two delegate methods, one for if the user cancelled the flow and one for if the user successfully completed the flow.\r\n2. There was a BOOL on the existing delegate method that said whether the user cancelled.\r\n\r\nWhen referring to the \"existing delegate method\", I'm talking about this one:\r\n- (void)cloudServiceSetupViewControllerDidDismiss:(SKCloudServiceSetupViewController *)cloudServiceSetupViewController\r\n\r\nSteps to Reproduce:\r\nNSDictionary<SKCloudServiceSetupOptionsKey, id> *options = @{ SKCloudServiceSetupOptionsActionKey : SKCloudServiceSetupActionSubscribe,\r\n                                                              SKCloudServiceSetupOptionsAffiliateTokenKey : kiTunesAffiliateCode };\r\n[setupController loadWithOptions:options completionHandler:^(BOOL result, NSError * _Nullable error) {\r\n    if (result) {\r\n        [weakSelf.viewController presentViewController:setupController animated:YES completion:nil];\r\n        // wait for delegate call\r\n    } else {\r\n        // something bad happened\r\n    }\r\n}];\r\n\r\nExpected Results:\r\nOne or more delegate methods that let me know if the user cancelled, successfully signed up, or errored.\r\n\r\nActual Results:\r\nI'm just told that the flow is done, not the current state."
+    email: jay.whitsitt@vertigomusic.com
+    modified: "2017-01-30T18:10:28.77927Z"
+    number: "30265754"
+    number_intvalue: 30265754
+    originated: 30 Jan 2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: Music
+    reproducible: N/A
+    resolved: ""
+    status: Open
+    title: Better SKCloudServiceSetupViewController action handling

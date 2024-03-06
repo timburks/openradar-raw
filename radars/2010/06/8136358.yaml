@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8136358"
+    labels:
+        datastore_id: "442402"
+data:
+    classification: Serious Bug
+    created: "2010-06-28T12:01:14.704771Z"
+    description: "Summary:\r\n\r\nCFArrayBSearchValues produces incorrect results on iOS 4 when searching on a range of the array.\r\n\r\nSteps to Reproduce:\r\n\r\nCompile and run the following test:\r\n\r\nNSString *kSTJsonKeySent = @\"sent\";\r\n\r\nNSDictionary *createDate(NSUInteger value)\r\n{\r\n    return [NSDictionary dictionaryWithObject:[NSNumber numberWithLongLong:value] forKey:kSTJsonKeySent];\r\n}\r\n\r\nCFComparisonResult STMessagesDataSourceSortBySentDate(const void *val1, const void *val2, void *context)\r\n{\r\n    long long date1 = [[(id)val1 valueForKey:kSTJsonKeySent] longLongValue];\r\n    long long date2 = [[(id)val2 valueForKey:kSTJsonKeySent] longLongValue];\r\n    \r\n    // NOTE: The list is sorted by DESENDING sent date!\r\n    return (date1 == date2) ? kCFCompareEqualTo : ((date1 > date2) ? kCFCompareLessThan : kCFCompareGreaterThan);\r\n}\r\n\r\nCFIndex STMessagesDataSourceFindInsertionPoint(NSArray *data, NSDictionary *values, NSUInteger startIndex)\r\n{\r\n    if(startIndex >= data.count) {\r\n        return data.count;\r\n    }\r\n    \r\n    return CFArrayBSearchValues((CFArrayRef)data,\r\n                                CFRangeMake(startIndex, data.count-startIndex),\r\n                                values,\r\n                                &STMessagesDataSourceSortBySentDate,\r\n                                NULL);\r\n}\r\n\r\n- (void)testFindInsertionPoint\r\n{\r\n    NSMutableArray *data = [NSMutableArray arrayWithObjects:createDate(30), createDate(20), createDate(10), nil];\r\n    NSArray *adds = [NSArray arrayWithObjects:createDate(50), createDate(40), createDate(25), createDate(2), createDate(1), nil];\r\n    \r\n    CFIndex startIndex = 0;\r\n    \r\n    for(NSDictionary *add in adds) {\r\n        CFIndex insertionPoint = STMessagesDataSourceFindInsertionPoint(data, add, startIndex);\r\n        \r\n        [data insertObject:add atIndex:insertionPoint];\r\n        \r\n        startIndex = insertionPoint+1;\r\n    }\r\n    \r\n    NSArray *expected = [NSArray arrayWithObjects:createDate(50), createDate(40), createDate(30), \r\n                         createDate(25), createDate(20), createDate(10), createDate(2), createDate(1), nil];\r\n    \r\n    if([expected isEqualToArray:data]) {\r\n        NSLog(@\"Test passed\");\r\n    } else {\r\n        NSLog(@\"expected: %@ actual: %@\", expected, data);\r\n    }\r\n}\r\n\r\nExpected Results:\r\n\r\nThe test should print \"Test passed\".\r\n\r\nActual Results:\r\n\r\nThe test prints:\r\n\r\n expected: (\r\n        {\r\n        sent = 50;\r\n    },\r\n        {\r\n        sent = 40;\r\n    },\r\n        {\r\n        sent = 30;\r\n    },\r\n        {\r\n        sent = 25;\r\n    },\r\n        {\r\n        sent = 20;\r\n    },\r\n        {\r\n        sent = 10;\r\n    },\r\n        {\r\n        sent = 2;\r\n    },\r\n        {\r\n        sent = 1;\r\n    }\r\n) actual: (\r\n        {\r\n        sent = 50;\r\n    },\r\n        {\r\n        sent = 40;\r\n    },\r\n        {\r\n        sent = 30;\r\n    },\r\n        {\r\n        sent = 20;\r\n    },\r\n        {\r\n        sent = 25;\r\n    },\r\n        {\r\n        sent = 10;\r\n    },\r\n        {\r\n        sent = 2;\r\n    },\r\n        {\r\n        sent = 1;\r\n    }\r\n)\r\n\r\nRegression:\r\n\r\nThe same code worked correctly on iOS 3 (tested using 3.1.3 (7E18))."
+    email: thomask42@googlemail.com
+    modified: "2011-08-28T05:40:54.722836Z"
+    number: "8136358"
+    number_intvalue: 8136358
+    originated: 28-Jun-2010 01:57 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CFArrayBSearchValues broken on iOS 4

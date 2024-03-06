@@ -1,0 +1,84 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18189274"
+    labels:
+        datastore_id: "5322284147408896"
+data:
+    classification: UI/Usability
+    created: "2014-08-31T16:45:45.942182Z"
+    description: |-
+        Summary:
+        Xcode’s indentation of array/dictionary literals is never what I want. It seems to want to align everything to the opening character of the collection, but I want everything indented by one level. These are (or can be) mutually unambiguous code styles—both could be supported.
+
+
+        Steps to Reproduce:
+        1. In an Objective-C method, type out or copy/paste the following code:
+
+        NSArray *things = @[
+        	@1,
+        	@2,
+        	@3
+        ];
+
+
+        Expected Results:
+        I expected Xcode to work with me, allowing the code to be indented the way I’ve demonstrated above. Note that this is how it works for static arrays (see Regression, below).
+
+
+        Actual Results:
+        Xcode actually wants to format it like this:
+
+        NSArray *things = @[
+        					@1,
+        					@2,
+        					@3,
+        					];
+
+
+        Regression:
+        C arrays are indented as I intend:
+
+        NSNumber *things[] = {
+        	@1,
+        	@2,
+        	@3,
+        };
+
+
+        Notes:
+        Code style is, obviously, subjective. The issue is not that Xcode prefers a different code style by default so much as that it actively fights me when I’m trying to edit the thing in question.
+
+        For example, I typically will place the cursor before the first character of an element on a line, and type ⇧⌘← to select all the whitespace to the beginning of the line. Then I’ll delete it, and ⌥⇥ my way to the indentation level I want.
+
+        However, if the array literal is being passed as an argument to a verbose method, the method might get wrapped onto a new line, meaning that each element now takes up multiple lines with the leading whitespace which Xcode inserts, at which point it’s much more typing and figuring until I have it where I want it.
+
+        I think it would be reasonable to support both, either by configuration, or by inferring intent. If the user types the first element on the same line as the @[, then indent the way Xcode currently does; otherwise indent as for C arrays. I.e., this style:
+
+        NSArray *things = @[ @1,
+        					 @2,
+        					 @3];
+
+        is unambiguous with this style:
+
+        NSArray *things = @[
+        	@1,
+        	@2,
+        	@3
+        ];
+
+        (Note: the elements in the former are correctly aligned when rendered in a monospace font.)
+
+        Either way (configuration or convention), please, please help me to spend less time reindenting array/dictionary literals to conform with a code style guide I may not have any control over (and which is, in any case, something my editor shouldn’t be making harder for me).
+    email: rix.rob@gmail.com
+    modified: "2014-08-31T16:45:45.942352Z"
+    number: "18189274"
+    number_intvalue: 18189274
+    originated: 31-Aug-2014 12:45 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta6 (6A280e)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode6-Beta6 (6A280e): Array/dictionary literal indentation is frustrating'

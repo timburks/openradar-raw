@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22814975"
+    labels:
+        datastore_id: "6741443515252736"
+data:
+    classification: ""
+    created: "2015-09-23T05:43:36.17638Z"
+    description: "Summary:\r\nBackground information:\r\n\r\nOur application's main interface is dark, and hence we use UIStatusBarStyleLightContent for our main view controller's -preferredStatusBarStyle.\r\n\r\nOften, we will present child view controller as a modal form sheet.  \r\n\r\nAs a form sheet, we still want UIStatusBarStyleLightContent (as the dark parent controller is visible).  However, in a horizontal compact environment, the view controller will appear full screen.  Due to the whiteness of the VC, it returns UIStatusBarStyleDefault for -preferredStatusBarStyle to make the status bar black.\r\n\r\nUnfortunately, UIKit will often get very confused whether it should be displaying the white status bar or black status bar.  After a lot of diagnosis, we traced this to orientation changes that result in different horizontalSizeClass.\r\n\r\nTo demonstrate this, run the attached sample project on an iPad Air 2 or iPhone 6 Plus.\r\n\r\n1. Start in portrait orientation (on the 6 Plus), or portrait 438w on the iPad.\r\n2. Show the child VC\r\n3. Rotate the device to landscape\r\n4. Dismiss the child VC\r\n\r\nThe status bar is now black-on-dark-gray until the reverse steps are taken:\r\n\r\n5. Show the child VC\r\n6. Rotate back to portrait\r\n7. Dismiss the child VC\r\n\r\nUnder the hood, step #2 sets the ChildVC as the -_presentedStatusBarViewController of the root view controller.  This would normally be set to nil in step #4; however, due to the orientation change, it is never cleared.\r\n\r\nSince _presentedStatusBarViewController is a strong reference, UIKit will keep ChildVC alive even after the main view controller is dismissed/popped.  This burned us multiple times during iOS 9 adoption, as one of our VCs deep in the hierarchy was still alive even when the user returned to our root.\r\n\r\nSteps to Reproduce:\r\n(See description)\r\n\r\nExpected Results:\r\n1. The status bar always uses the -preferredStatusBarStyle of the view controller underneath it.\r\n2. UIKit doesn't keep a strong reference to my child view controller long after it has been dismissed.\r\n\r\nActual Results:\r\n1. Status bar is the wrong color\r\n2. My view controller is kept alive until something knocks it out of _presentedStatusBarViewController\r\n\r\nVersion:\r\niOS 9.0, iOS 9.1 beta 1"
+    email: ricciadams@gmail.com
+    modified: "2015-09-23T05:52:04.17576Z"
+    number: "22814975"
+    number_intvalue: 22814975
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Status bar issues with orientation change and adaptive interface

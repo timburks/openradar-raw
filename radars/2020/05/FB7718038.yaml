@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7718038
+    labels:
+        datastore_id: "6178834529386496"
+data:
+    classification: ""
+    created: "2020-05-29T12:09:26.509505Z"
+    description: "This seems somehow similar to this question (https://apple.stackexchange.com/questions/153809/usbmuxd-takes-all-sockets-no-other-network-connection-possible). While diagnosing some weird application behaviour on my MacBook Pro and the dreaded \"too many open files\" errors appearing in the shell out of nowhere, I came to find out that ath, an executable component of AirTrafficHost.framework, keeps a huge number of open sockets in CLOSE_WAIT state. The number tends to only increase in time until it hits the system limit for open file descriptors. I use my MBP docked most of the time and it is always on, so the limit is reached after a couple of days.\r\n\r\nAirTrafficHost.framework is a private Apple framework and seems to be part of the wireless communcation with iOS devices. There are two iOS devices for which I've enabled network sync - an iPad Pro and an iPhone. It seems that ath tries to talk to them and at some point the connection is terminated, but the network sockets are never closed and just keep piling up. lsof shows:\r\n\r\nath  627 hristo   7u  IPv6 0x2e106590d5ff22b3  0t0  TCP [fe80:5::xxx]:49280->[fe80:5::yyy]:57461 (CLOSE_WAIT)\r\nath  627 hristo   8u  IPv6 0x2e106590d6aea413  0t0  TCP [fe80:5::xxx]:49300->[fe80:5::yyy]:57464 (CLOSE_WAIT)\r\nath  627 hristo  10u  IPv6 0x2e106590d7a65c93  0t0  TCP [fe80:5::xxx]:49529->[fe80:5::yyy]:57482 (CLOSE_WAIT)\r\nath  627 hristo  11u  IPv6 0x2e106590d4fe9a33  0t0  TCP [fe80:5::xxx]:49574->[fe80:5::yyy]:57486 (CLOSE_WAIT)\r\nath  627 hristo  13u  IPv6 0x2e106590d5feeb93  0t0  TCP [fe80:5::xxx]:49609->[fe80:5::yyy]:57490 (CLOSE_WAIT)\r\nath  627 hristo  14u  IPv6 0x2e106590d18e7b93  0t0  TCP [fe80:5::xxx]:49656->[fe80:5::yyy]:57494 (CLOSE_WAIT)\r\n... many more ...\r\n\r\nRight now, it's been 5 hrs since the last reboot and the number of socket descriptors is already 162 in two ath processes (one for each iOS device, I guess) and growing:\r\n\r\n$ lsof -n | grep ^ath | grep TCP | wc -l\r\n    162\r\n\r\nIt also seems that for each disconnect, there is an entry in /var/log/system.log:\r\n\r\nMar 17 01:15:23 MacBook-Pro AMPDeviceDiscoveryAgent[433]: Entered:_AMMuxedDeviceDisconnected, mux-device:159\r\nMar 17 01:15:23 MacBook-Pro AMPDeviceDiscoveryAgent[433]: Entered:__thr_AMMuxedDeviceDisconnected, mux-device:159\r\nMar 17 01:15:23 MacBook-Pro AMPDeviceDiscoveryAgent[433]: tid:7387 - Mux ID not found in mapping dictionary\r\nMar 17 01:15:23 MacBook-Pro AMPDeviceDiscoveryAgent[433]: tid:7387 - Can't handle disconnect with invalid ecid\r\n\r\nThe OS is a fully updated macOS Catalina 10.15.4.\r\n\r\nIs anyone else seeing the same problem and are you aware of a solution that does not involve increasing the system limits or performing a clean OS install? I already have a launchd job to increase kern.maxfiles and kern.maxfilesperproc, but that's not really a solution - it just postpones the problem. And I'd prefer not to disable network synchronisation, because I'm out of USB ports."
+    email: sopl.wang@gmail.com
+    modified: "2020-05-29T12:09:26.509669Z"
+    number: FB7718038
+    number_intvalue: 7718038
+    originated: May 29, 2020 at 8:07 PM
+    parent_number: '&{NULL_VALUE}'
+    product: AirTrafficHost.framework
+    product_version: ""
+    reproducible: yes
+    resolved: ""
+    status: Open
+    title: AirTrafficHost.framework ath leaves many open sockets make my Mac file resource insufficient

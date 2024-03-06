@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32564327"
+    labels:
+        datastore_id: "4961762260549632"
+data:
+    classification: Serious Bug
+    created: "2017-06-05T10:28:59.74133Z"
+    description: "Summary:\r\nLet’s assume we have a collection view with more cells than fit in its visible bounds and UICollectionView.isPrefetchingEnabled is true (which is a default).\r\n\r\nWhen we call:\r\n- selectItem(at:animated:scrollPosition:) or\r\n- deselectItem(at:animated:)\r\n\r\non all cells, the following happens:\r\n\r\n1. isSelected is correctly set on cells that are visible on screen.\r\n2. isSelected is correctly set on cells during dequeueing.\r\n3. isSelected isn’t set properly on prefetched cells, i.e. cells that were already dequeued (collectionView(_:cellForItemAt:) was called for them) but they aren’t visible on screen yet.\r\n\r\nSteps to Reproduce:\r\n1. Set up a collection view with 20 items, with 8 items visible at once on screen.\r\n2. Call selectItem(at: indexPath, animated: false, scrollPosition: []) on all index paths in the collection view.\r\n3. Scroll to the bottom of collection view.\r\n4. Call deselectItem(at: indexPath, animated: false) on all index paths in the collection view.\r\n5. Scroll collection view up.\r\n\r\nExpected Results:\r\nAll cells should be deselected.\r\n\r\nActual Results:\r\nCells that are immediately out of visible bounds will be selected, even though we deselected them.\r\n\r\nVersion:\r\n10.3.2\r\n\r\nNotes:\r\nWorkaround:\r\n\r\nManually configure isSelected on cells in willDisplay:\r\n\r\n    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {\r\n        cell.isSelected = collectionView.indexPathsForSelectedItems?.contains(indexPath) ?? false\r\n    }"
+    email: arkadiusz.holko@gmail.com
+    modified: "2017-06-05T10:38:00.34734Z"
+    number: "32564327"
+    number_intvalue: 32564327
+    originated: 05-Jun-2017 12:28 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 10.3.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Incorrect isSelected state of prefetched cells in UICollectionView after manually selecting/deselecting them

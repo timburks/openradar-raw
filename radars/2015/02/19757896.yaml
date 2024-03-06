@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19757896"
+    labels:
+        datastore_id: "5680039823671296"
+data:
+    classification: Serious Bug
+    created: "2015-02-07T20:47:18.985766Z"
+    description: "Instruments v6.1 (56160) and v6.2 (56717) detect a memory leak when creating SecTransformRef with kSecBase32Encoding and using it to encode a data into Base32.\r\n\r\nIf pass the parameter except kSecBase32Encoding, for example kSecBase64Encoding, does not happen memory leak. This happens only when specify a kSecBase32Encoding.\r\n\r\nSteps to Reproduce:\r\n1. Create a new project targeted for Mac application.\r\n2. Type following code in AppDelegate.m.\r\n\r\n#import \"AppDelegate.h\"\r\n#import <Security/Security.h>\r\n\r\n@interface AppDelegate ()\r\n\r\n@property (weak) IBOutlet NSWindow *window;\r\n\r\n@end\r\n\r\n@implementation AppDelegate\r\n\r\n- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {\r\n    NSData *data = [@\"test\" dataUsingEncoding:NSUTF8StringEncoding];\r\n    [self encodeData:data];\r\n}\r\n\r\n- (NSData *)encodeData:(NSData *)data {\r\n    SecTransformRef encoder = SecEncodeTransformCreate(kSecBase32Encoding, nil);\r\n    SecTransformSetAttribute(encoder, kSecTransformInputAttributeName, (__bridge CFDataRef)data, nil);\r\n    NSData *encodedData = (__bridge_transfer NSData *)SecTransformExecute(encoder, nil);\r\n    \r\n    CFRelease(encoder);\r\n    \r\n    return encodedData;\r\n}\r\n\r\n@end\r\n\r\n3. Build and run the project using the Instruments.\r\n4. Choose Leaks template.\r\n\r\n\r\nExpected Results:\r\nNo memory leaks.\r\n\r\nActual Results:\r\nLeaked object Malloc 32 bytes with __EncodeTransform_block_invode60 as responsible caller\r\n\r\nVersion:\r\nOS X 10.10.2 (14C109)\r\n\r\nXcode 6.1.1 (6A2008a)\r\nXcode 6.2 (6C107a)\r\nXcode 6.2 (6C121)\r\n\r\nInstruments Version 6.1 (56160)\r\nInstruments Version 6.2 (56717)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nMacBookPro10,1, 16GB RAM"
+    email: kishikawakatsumi@gmail.com
+    modified: "2015-02-07T20:47:18.985982Z"
+    number: "19757896"
+    number_intvalue: 19757896
+    originated: 08-Feb-2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Memory leaks when using SecTransformRef with kSecBase32Encoding

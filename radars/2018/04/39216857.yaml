@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39216857"
+    labels:
+        datastore_id: "5021042506465280"
+data:
+    classification: ""
+    created: "2018-04-05T20:05:06.48036Z"
+    description: "Summary:\r\nWhen playgrounds and modules and files are set up just so (described below), if code in a playground source file calls an initializer (from the module) which has a parameter whose default value is an array literal, the playground refuses to build but no error is shown on the offending line (which is, btw, valid Swift, but commenting that line allows the playground to build as normal). There is no issue when calling the same code from a non-playground module (nor even from the Contents.swift of the playground, only from files in its Sources).\r\n\r\nSteps to Reproduce:\r\n(I attach a zip file with a workspace configured this way, as it's rather complex.)\r\n1. Create a workspace containing a playground and a framework target, set up so that the playground can import the framework's module. I followed the instructions here, if you need to exactly reproduce my setup: \r\n  https://useyourloaf.com/blog/adding-playgrounds-to-xcode-projects/\r\n2. Add to the framework a public struct whose public initializer has a parameter whose default value is an array literal. (Various other generic types seem to trigger the bug also, but Int with an Int literal does not.)\r\n3. Create a file in the playground's Sources directory. (The bug is not triggered if the problematic code is in the playground's Contents.swift file.)\r\n3. From the file in Sources, call the struct initializer without giving a value to the parameter. (The bug is not triggered if you give a value, only if it must use the default.)\r\n4. From the playground's Contents.swift file, call some function defined in the file in Sources. (The bug is still triggered if the problematic struct-initializer call is not executed.)\r\n\r\nExpected Results:\r\nOne of:\r\n- The playground runs successfully (it's all valid Swift, after all), or\r\n- The playground shows an error at the line it apparently can't process.\r\n\r\nActual Results:\r\nVariously:\r\n- Debug area: \"Playground execution failed\" where whatever we tried to run from the file in Sources is an \"unresolved identifier\". (Triggered frequently by explicitly running the playground.)\r\n- A dialog popup \"Compiling the auxiliary source module failed due to invalid active developer path.\" (This seems to be triggered by editing the file in Sources and not navigating away.)\r\n- A header on the playground editor pane saying \"The auxiliary source module did not compile successfully.\" and offering \"Report a bug ->\" (Seems to be triggered by editing the file in Sources then rapidly navigating to Contents.swift.)\r\n- Occasionally Xcode simply goes (and stays) unresponsive"
+    email: tdejager@minddistrict.com
+    modified: "2018-04-05T20:05:06.48061Z"
+    number: "39216857"
+    number_intvalue: 39216857
+    originated: "2018-04-05"
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 9.3 (9E145)
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: Playgrounds fail when calling initializer with default value which is an array literal

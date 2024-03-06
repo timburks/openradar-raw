@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13519730"
+    labels:
+        datastore_id: "2892402"
+data:
+    classification: Feature Request
+    created: "2013-03-27T22:38:05.700911Z"
+    description: "27-Mar-2013 06:34 PM Jonathon Rubin:\r\nSummary:\r\nXcode allows a foolish developer to set minimum deployment OS targets for kernel extensions that are older than the linked base SDK's OS. So, for example, it will let you set a deployment target of 10.4 with a base SDK of 10.8. It will merrily go about its job compiling a kext. Even though there is no guarantee it will work. Xcode generates no errors or warnings indicating this. Instead, it should forbid this configuration or at least warn the developers they are being idiots and taking huge risks.\r\n\r\nSteps to Reproduce:\r\nIn Xcode 4.x, build a 32/64 kext that calls lck_mtx_unlock(). Use a minimum deployment target of 10.4 and a base SDK of 10.8.\r\n\r\nExpected Results:\r\nXcode refuses to allow these settings to persist, or at least warns about them, because they are crazy and do not work.\r\n\r\nActual Results:\r\nXcode spits out a kext which, when installed on a 10.5 Mac, fails to load:\r\nkld(): Undefined symbols:\r\n_lck_mtx_unlock_darwin10\r\n\r\nThis is because modern versions of kern/locks.h include this block of code:\r\n#if\tdefined(__i386__)\r\nextern void\tlck_mtx_unlock(lck_mtx_t\t\t*lck) __DARWIN10_ALIAS(lck_mtx_unlock);\r\n#else\r\nextern void\t\t\t\tlck_mtx_unlock(\r\n\t\t\t\t\t\t\t\t\tlck_mtx_t\t\t*lck);\r\n#endif\t/* __i386__ */\r\n\r\nAll of this info is available to Xcode at build time, so it should prevent the developer from shooting themselves in the foot.\r\n\r\nRegression:\r\nThis is a request for new functionality.\r\n\r\nNotes:"
+    email: jb.rubin@gmail.com
+    modified: "2014-07-23T02:39:29.048435Z"
+    number: "13519730"
+    number_intvalue: 13519730
+    originated: 3/27/2013
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "4"
+    reproducible: ""
+    resolved: ""
+    status: Closed
+    title: Xcode should not allow kexts to have deployment targets older than the base SDK

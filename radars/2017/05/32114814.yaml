@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32114814"
+    labels:
+        datastore_id: "5041489335812096"
+data:
+    classification: Crash
+    created: "2017-05-10T19:46:38.27671Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nWhen using \"embedded\" UICollectionViews and UICollectionViewFlowLayout (e.g. a vertical, full-width collection view that has cells with horizontal UICollectionViews in them), if you change the contentInset property of one of the embedded collection views _before_ changing the data source (changed because the cells are reused), UICollectionView will throw when validating layout attributes.\r\n\r\nThis seems to be because changing the contentInset triggers an invalidation pass, setting some internal state that disallows another invalidation after changing the dataSource (which _should_ trigger an internal reloadData and invalidation).\r\n\r\nThis issue can be avoided by using a custom UICollectionViewFlowLayout subclass and overriding:\r\n\r\n- (BOOL)invalidateFlowLayoutDelegateMetrics {\r\n  return YES;\r\n}\r\n\r\nBut that is both undocumented and unexpected behavior.\r\n\r\nThis also only occurs when changing the contentInset.top between reused collection views.\r\n\r\nSteps to Reproduce:\r\n1. Open uploaded example app.\r\n2. Scroll to bottom.\r\n3. Crash (100% of the time)\r\n\r\nExpected Results:\r\nUICollectionView shouldn't throw an exception, the views should be laid out with the correct contentInset, and the dataSource change should result in a reloadData call that invalidates on layoutSubviews.\r\n\r\nActual Results:\r\nUICollectionView crashes, throwing an exception like:\r\n\r\n'NSInternalInconsistencyException', reason: 'UICollectionView received layout attributes for a cell with an index path that does not exist:\r\n\r\nVersion:\r\niOS 10.3.2\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 7+, iPhone 7 Simulator\r\n\r\nAttachments:\r\n'UICollectionViewContentInsetCrash.zip' and 'UICollectionViewContentInsetCrash  5-10-17, 3-41 PM.crash' were successfully uploaded."
+    email: rnystrom@whoisryannystrom.com
+    modified: "2017-05-10T19:46:38.27701Z"
+    number: "32114814"
+    number_intvalue: 32114814
+    originated: 10-May-2017
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: 10.3.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UICollectionView crashes when changing contentInset before changing its dataSource

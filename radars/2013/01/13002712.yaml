@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13002712"
+    labels:
+        datastore_id: "2568401"
+data:
+    classification: ""
+    created: "2013-01-16T16:34:29.867518Z"
+    description: "11-Jan-2013 09:57 PM Landon Fuller:\r\nSummary:\r\n\r\nThe kernel appears to have stopped respecting sigaltstack()/SA_ONSTACK.\r\n\r\nSteps to Reproduce:\r\n\r\nTest code that will demonstrate this bug. It will configure an alternative stack, a signal handler, and then trigger a stack overflow. If you uncomment the raise() call, it will instead simply raise SIGABRT.\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\n#include <signal.h>\r\n#include <stdio.h>\r\n#include <stdint.h>\r\n#include <string.h>\r\n#include <stdlib.h>\r\n#include <execinfo.h>\r\n#include <unistd.h>\r\n#include <errno.h>\r\n\r\nstatic void signal_handler (int signal, siginfo_t *info, void *uap) {\r\n    /*\r\n     * If we're actually running on a new stack, this should:\r\n     * A) Not crash, if a stack overflow occured.\r\n     * B) Show an empty stack trace.\r\n     *\r\n     * Yes, this is not async-safe. It's demo code.\r\n     */\r\n    NSLog(@\"Handler ran\\n\");\r\n    NSLog(@\"%@\", [NSThread callStackSymbols]);\r\n    _exit(0);\r\n}\r\n\r\nvoid stackFrame (void) {\r\n    stackFrame();\r\n}\r\n\r\nint main (int argc, char *argv[]) {\r\n    /* Configure signal stack */\r\n    stack_t sigstk;\r\n    sigstk.ss_size = SIGSTKSZ;\r\n    sigstk.ss_sp = malloc(sigstk.ss_size);\r\n    sigstk.ss_flags = 0;\r\n    if (sigaltstack(&sigstk, 0) < 0) {\r\n        fprintf(stderr, \"sigaltstack() failed: %s\\n\", strerror(errno));\r\n        _exit(1);\r\n    }\r\n    \r\n    /* Configure action */\r\n    struct sigaction sa;\r\n    memset(&sa, 0, sizeof(sa));\r\n    sa.sa_flags = SA_SIGINFO|SA_ONSTACK;\r\n    sigemptyset(&sa.sa_mask);\r\n    sa.sa_sigaction = &signal_handler;\r\n    sigaction(SIGABRT, &sa, NULL);\r\n    sigaction(SIGSEGV, &sa, NULL);\r\n    sigaction(SIGBUS, &sa, NULL);\r\n\r\n    //raise(SIGABRT);\r\n    stackFrame();\r\n\r\n    return 0;\r\n}\r\n\r\nExpected Results:\r\n\r\nThe signal handler executes, printing an empty call stack.\r\n\r\nActual Results:\r\n\r\nOn iOS, the stack is left unchanged, and the signal handler either doesn't run (in the case of a stack overflow), or runs on the old stack (in the case of SIGABRT).\r\n\r\nOn Mac OS X, the thread's stack is switched to the alternative stack, and the test passes successfully.\r\n\r\nRegression:\r\n\r\nI believe the tests pass on iOS 4.x and earlier. I know they pass in iOS 2.x.\r\n\r\nNotes:\r\n\r\nI've previously reproduced this on earlier devices, including the iPhone 4."
+    email: landon.j.fuller@gmail.com
+    modified: "2015-11-17T00:18:11.82461Z"
+    number: "13002712"
+    number_intvalue: 13002712
+    originated: 11-Jan-2013 09:57 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: ""
+    reproducible: ""
+    resolved: Won't Fix
+    status: Closed
+    title: SA_ONSTACK/sigaltstack() ignored on iOS

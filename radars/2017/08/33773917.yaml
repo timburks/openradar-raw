@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33773917"
+    labels:
+        datastore_id: "6087481510330368"
+data:
+    classification: Serious Bug
+    created: "2017-08-08T12:27:30.58665Z"
+    description: "Summary:\r\nIn iOS 11 Beta 5 there was a change in NSManagedObjectModel’s API:\r\n\r\nFrom\t- (nullable instancetype)initWithContentsOfURL:(nonnull NSURL *)url\r\nTo\t- (nonnull instancetype)initWithContentsOfURL:(nonnull NSURL *)url\r\n\r\nThis is incorrect - we can get a nil when we pass an incorrect URL. I noticed this because I’m observing issues with failures to load .omo file under iOS 11 (related radar: 33573724).\r\n\r\nSteps to Reproduce:\r\n1. Create a new empty iOS project (e.g. from a “Single View App” template).\r\n2. Add this line somewhere `let model = NSManagedObjectModel(contentsOf: URL(fileURLWithPath: \"\"))` so that it executes when the app runs (e.g. in `application(:didFinishLaunchingWithOptions:)`).\r\n3. Run the app in Simulator or on a device.\r\n\r\n\r\nExpected Results:\r\nAccording to the nullability annotation, `model` variable should never be nil.\r\n\r\nActual Results:\r\n`model` variable is actually nil, even though the API tells that it shouldn’t be. These messages are printed to the standard output:\r\n\r\n```\r\n2017-08-08 14:10:29.239494+0200 ManagedObjectModelRadar[3172:45012499] [error] error:  Failed to load NSManagedObjectModel with URL './ -- file:///'\r\nCoreData: error:  Failed to load NSManagedObjectModel with URL './ -- file:///'\r\n```\r\n\r\nIf the initializer can return nil, it should be annotated properly. If there are some errors, they should be returned by throwing (in Swift), not printing to the stdout.\r\n\r\nVersion:\r\niOS 11 beta 5\r\n\r\nNotes:\r\nCan be worked around by manually annotating the variable type as optional, e.g.:\r\n\r\n```\r\nlet model: NSManagedObjectModel? = NSManagedObjectModel(contentsOf: url)\r\n```\r\n\r\nI haven’t looked into those but I think similar issues occur in other CD-related changes in iOS 11 beta 5: http://codeworkshop.net/objc-diff/sdkdiffs/ios/11.0b5/CoreData.html"
+    email: arkadiusz.holko@gmail.com
+    modified: "2017-10-02T13:15:15.41738Z"
+    number: "33773917"
+    number_intvalue: 33773917
+    originated: 08-Aug-2017 02:27 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 11 beta 5
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: NSManagedObjectModel(contentsOf:) is incorrectly marked as returning non-optional

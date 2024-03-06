@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "42411126"
+    labels:
+        datastore_id: "4937155109453824"
+data:
+    classification: ""
+    created: "2018-07-20T02:16:12.25053Z"
+    description: "Area:\r\nAppKit\r\n\r\nSummary:\r\nRemove a subview from an NSSplitView while it is being dragged. It throws an exception.\r\n\r\nSteps to Reproduce:\r\n1. Install https://developer.apple.com/library/archive/samplecode/SplitViews/Introduction/Intro.html\r\n2. Modify -[AppDelegate doVerticalSplit:] to remove the second subview of the splitview after a delay*\r\n3. Run the app\r\n4. Open the vertical split window\r\n5. Drag the divider and keep dragging until the subview is removed\r\n\r\n* Add this to -doVerticalSplit:\r\n\r\n    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\r\n        NSView *view = _verticalSplitWindController.window.contentView.subviews[0].subviews[1];\r\n        [view removeFromSuperview];\r\n    });\r\n\r\nExpected Results:\r\nA graceful exit.\r\n\r\nWhile dragging happens in a tracking runloop, the application still has plenty of opportunities to modify its view hierarchy. In my case, a subview is removed when a child process terminates. It's overly burdensome to expect the application to check if a drag is in progress when it modifies a split view's subviews. This is also hard to work around because once -[NSSplitView mouseDown:] is called the application has way to tell the splitview to cancel an ongoing drag. Catching the exception is risky since it could leave the splitview in an inconsistent state.\r\n\r\nActual Results:\r\n    frame #0: 0x00007fff68543c46 libobjc.A.dylib`objc_exception_throw\r\n    frame #1: 0x00007fff41489b6f CoreFoundation`-[__NSSingleObjectArrayI objectAtIndex:] + 111\r\n    frame #2: 0x00007fff3ea962e5 AppKit`-[NSSplitView _presentDividerDragResult:withParams:] + 1558\r\n    frame #3: 0x00007fff3ec6ab76 AppKit`-[NSSplitView mouseDown:] + 1504\r\n    frame #4: 0x00007fff3f211d6d AppKit`-[NSWindow(NSEventRouting) _handleMouseDownEvent:isDelayedEvent:] + 5891\r\n    frame #5: 0x00007fff3f20e9c4 AppKit`-[NSWindow(NSEventRouting) _reallySendEvent:isDelayedEvent:] + 2359\r\n    frame #6: 0x00007fff3f20dc70 AppKit`-[NSWindow(NSEventRouting) sendEvent:] + 497\r\n    frame #7: 0x00007fff3f06f236 AppKit`-[NSApplication(NSEvent) sendEvent:] + 2462\r\n    frame #8: 0x00007fff3e8cf8b5 AppKit`-[NSApplication run] + 812\r\n    frame #9: 0x00007fff3e89ea72 AppKit`NSApplicationMain + 804\r\n  * frame #10: 0x0000000100001df2 SplitViews`main(argc=3, argv=0x00007ffeefbff5e8) at main.m:13\r\n    frame #11: 0x0000000100001dc4 SplitViews`start + 52\r\n\r\n\r\nVersion/Build:\r\n10.13 SDK\r\nmacOS 10.13.5\r\n\r\nConfiguration:"
+    email: gnachman@gmail.com
+    modified: "2018-07-20T02:16:12.25087Z"
+    number: "42411126"
+    number_intvalue: 42411126
+    originated: 7/19/2018
+    parent_number: '&{NULL_VALUE}'
+    product: AppKit
+    product_version: "10.13"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSSplitViewCrashes when subview is removed during drag

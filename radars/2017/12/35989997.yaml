@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35989997"
+    labels:
+        datastore_id: "6057250477047808"
+data:
+    classification: Bug
+    created: "2017-12-12T09:54:11.31176Z"
+    description: "Summary:\r\n\r\nWhen using a custom font in a storyboard, Xcode has a feature where this custom font is automatically added to the UIAppFonts array of the Info.plist (although this should be something already done by the developper).\r\n\r\nIn Xcode 8.3, if you select custom font in the right panel, you can choose between many fonts. It is expected that these fonts are provided by the system, meaning you can use them without providing the font file in your app resources.\r\nIn this list, you will also see any custom font that you have added to your project. When selecting one of these fonts, you will see that Xcode adds the following to the storyboard file:\r\n    <customFonts key=\"customFonts\">\r\n        <mutableArray key=\"MyCustomFont.otf\">\r\n            <string>MyCustomFont</string>\r\n        </mutableArray>\r\n    </customFonts>\r\nWhen building your project with such a storyboard, the font name (here MyCustomFont.otf) will be added automatically to UIAppFonts. Although this is something that should be done manually by the developper, this is most probably an intended feature.\r\n\r\nIn Xcode 9.2, whenever you select *any* font (including system fonts), the  <customFonts>...</customFonts> section is always added to the storyboard, and as a result the font file name is added to UIAppFonts.\r\nAt runtime, this triggers an exception deep inside UIKit because the file is missing from app resources. This exception is automatically caught, so this doesn't trigger a crash, however if you have an all exceptions breakpoint enabled, it stops your app every time you launch it, which quickly becomes annoying...\r\n\r\nSteps to Reproduce:\r\n - Create a new single page iOS app\r\n - Add a label to the main storyboard and set a system custom font (Helvetica Neue for example)\r\n - Build the app and check the the generated Info.plist file contains a UIAppFonts font entry with the custom font (in this case: HelveticaNeue.ttc).\r\n - Add an all exceptions breakpoint and launch the app\r\n\r\nExpected Results:\r\n - The Info.plist doesn't contain a UIAppFonts entry\r\n - The app launches and doesn't hit the breakpoint\r\n\r\nActual Results:\r\n - The Info.plist contains a UIAppFonts entry\r\n - The app launches and hits the breakpoint\r\n\r\nVersion/Build:\r\nXcode 9.2, iOS 11.2"
+    email: hugues.guillaume@gmail.com
+    modified: "2017-12-15T17:37:11.38051Z"
+    number: "35989997"
+    number_intvalue: 35989997
+    originated: December 12 2017
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: "9.2"
+    reproducible: Always
+    resolved: No
+    status: Duplicate of 35126633
+    title: Xcode 9 adds system fonts to the list of custom fonts

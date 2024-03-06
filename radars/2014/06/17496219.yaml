@@ -1,0 +1,56 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17496219"
+    labels:
+        datastore_id: "5280575451561984"
+data:
+    classification: Serious Bug
+    created: "2014-06-28T17:05:38.854481Z"
+    description: |-
+        Summary:
+        An Optional type guarded by a ternary operator is known to be safe, but it still requires explicit unwrapping.
+
+
+        Steps to Reproduce:
+        1. Write the following type:
+
+        struct Thing {
+        	var next: Thing? {
+        	get { return _next?[0] }
+        	// Note that newValue, which is of type `Thing?`, is safe to access in the then clause of the ternary operator
+        	set { _next = newValue ? [ newValue ] : nil }
+        	}
+        	var _next: Thing[]?
+        }
+
+        2. Note that newValue is correctly guarded by the ternary operator (which tests it for nil-ness).
+        3. Try to compile it.
+
+
+        Expected Results:
+        I expected it to compile—after all, newValue in [ newValue ] can be implicitly unwrapped since this usage is guarded by the ternary operator.
+
+
+        Actual Results:
+        It doesn’t compile; you have to do [ newValue! ], explicitly unwrapping it.
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        The ternary operator doesn’t provide a way to bind to a new name, and if let foo = bar { … } is not an expression. Thus, since there is no explicit promotion of newValue from Thing? to the implicitly unwrapped Thing!, you have to deal with this detail yourself.
+    email: rix.rob@gmail.com
+    modified: "2014-06-28T17:05:38.85459Z"
+    number: "17496219"
+    number_intvalue: 17496219
+    originated: 28-Jun-2014 01:05 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta2 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Optionals guarded by ternary operators require explicit unwrapping'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39242494"
+    labels:
+        datastore_id: "6189448630894592"
+data:
+    classification: Bug
+    created: "2018-04-11T13:32:55.30309Z"
+    description: "Area:\r\nSwift\r\n\r\nSummary:\r\nI found undefined behavior (crash sometimes / wrong result) when use mutating func with compiler optimizations.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create src.swift:\r\n\r\nimport Foundation\r\n\r\nextension Array {\r\n    mutating func mutatingFunc(_ object: Any) {\r\n        return\r\n    }\r\n}\r\n\r\nfunc someFunc() -> [[String]] {\r\n    var arr = [\"1\", \"2\", \"3\"]\r\n    let str = \"5\"\r\n    if arr.contains(str) {\r\n        arr.mutatingFunc(str)\r\n        return [arr, [str]]\r\n    }\r\n\r\n    return [arr]\r\n}\r\n\r\nprint(someFunc())\r\n\r\n2. Compile with optimizations:\r\nswiftc src.swift -O\r\n\r\n3. Run\r\n\r\nExpected Results:\r\n[[\"1\", \"2\", \"3\"]]\r\n\r\nActual Results:\r\n[[]]\r\nOR\r\n51638 segmentation fault\r\nOR\r\n[[\"1\", \"2\", \"3\"]]\r\n\r\nVersion/Build:\r\nApple Swift version 4.1 (swiftlang-902.0.48 clang-902.0.37.1)\r\nTarget: x86_64-apple-darwin17.5.0\r\nXCode 9.3\r\n\r\nConfiguration:\r\nmacOS 10.13.4 (17E199)\r\n\r\nRelated links:\r\nhttps://bugs.swift.org/browse/SR-7354\r\nhttps://github.com/apple/swift/pull/15840"
+    email: gvr.oleg@gmail.com
+    modified: "2018-04-14T18:21:22.86561Z"
+    number: "39242494"
+    number_intvalue: 39242494
+    originated: 06.04.2018
+    parent_number: '&{NULL_VALUE}'
+    product: Swift
+    product_version: Apple Swift version 4.1 (swiftlang-902.0.48 clang-902.0.37.1)
+    reproducible: Always
+    resolved: Swift 4.2
+    status: Resolved
+    title: Undefined behavior in simple optimized code with mutating function

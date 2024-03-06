@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22634495"
+    labels:
+        datastore_id: "4934003970801664"
+data:
+    classification: Serious Bug
+    created: "2015-09-09T22:44:25.33922Z"
+    description: "Summary:\r\nIt is not possible to build and run unit tests on a physical iOS device using Xcode 7.\r\n\r\nSteps to Reproduce:\r\n1. Create a new iOS project (any template, e.g. \"single view application\").\r\n2. Attach a hardware device, and select it in the run destination menu.\r\n3. Run unit tests.\r\n\r\n\r\nExpected Results:\r\nThe empty test suite, provided by the Xcode project template, runs successfully on the device.\r\n\r\nActual Results:\r\nXcode fails to deploy the test bundle to the device, and tests do not run.\r\n\r\nAn EXC_ARM_BREAKPOINT is reached; continuing past it, the run aborts with a message logged to console:\r\n\r\ndyld: could not load inserted library '/private/var/mobile/Containers/Data/Application/616B220C-B8EF-4D25-84DA-064401FE55A7/tmp/IDEBundleInjection.framework/IDEBundleInjection' because no suitable image found.  Did find:\r\n\t/private/var/mobile/Containers/Data/Application/616B220C-B8EF-4D25-84DA-064401FE55A7/tmp/IDEBundleInjection.framework/IDEBundleInjection: mmap() errno=1 validating first page of '/private/var/mobile/Containers/Data/Application/616B220C-B8EF-4D25-84DA-064401FE55A7/tmp/IDEBundleInjection.framework/IDEBundleInjection'\r\n\r\nExamining the build product, it is obvious the code signature is broken:\r\n\r\nretinafey:Kashoo ben$ codesign -vv /private/tmp/Test/build/Test/Build/Products/Debug-iphoneos/TestTests.xctest\r\n/private/tmp/Test/build/Test/Build/Products/Debug-iphoneos/TestTests.xctest: a sealed resource is missing or invalid\r\nfile added: /private/tmp/Test/build/Test/Build/Products/Debug-iphoneos/TestTests.xctest/TestTests-EFFB6ADD-A953-430A-8454-438682317D22.xctestconfiguration\r\n\r\nXcode has contaminated the .xctest package with an .xctestconfiguration file which invalidates the code signature.\r\n\r\nManually deleting the .xctestconfiguration file causes code signature validation to pass. However, this cannot be worked around even using a build phase shell script, since the latter runs prior to Xcode's code signing, and the molestation of the package occurs thereafter.\r\n\r\n\r\nVersion:\r\nXcode 7 GM. First observed in Xcode 7 beta 6. May well have existed in many versions prior to that; have not tried running unit tests on hardware in quite some time.\r\n\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nMac OS 10.10.5.\r\nXcode 7 GM.\r\niOS test devices 8.4.1 and 9.0 (13A4325c)."
+    email: ben.kennedy@kashoo.com
+    modified: "2015-09-09T22:44:25.33945Z"
+    number: "22634495"
+    number_intvalue: 22634495
+    originated: 09-Sep-2015 03:29 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "7.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Xcode 7 fails to run unit tests on iOS device due to broken code signature (7A218)

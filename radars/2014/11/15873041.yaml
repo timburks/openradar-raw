@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15873041"
+    labels:
+        datastore_id: "5268845828767744"
+data:
+    classification: Pretty serious
+    created: "2014-11-12T02:13:22.850386Z"
+    description: "Jerome Krinock   21-Jan-2014 04:04 PM\r\n\r\nSummary:\r\nTrouble occurs if a developer updates an older SQLite document-based Core Data app, and in so doing links against the 10.9 SDK, but does not update the app’s document to use the new package-based \"file wrapper\".  By default, the new build will adopt the new default journal mode = write-ahead logging (WAL).\r\n\r\nMac users associate documents with files.  As far as the app user is concerned, the document file is still the sqlite database file.  However, the updated app will produce -shm and -wal files, along side the document file, are junk.  The user will likely think that these files are temporary junk, and may move the document file without moving the -shm or -wal file, or else trash the -shm or -wal file.  In either case, document data will be corrupted.\r\n\r\nSo there are two ways for the developer to solve this problem, either (1) update app to file wrappers or (2) opt out of WAL journal mode.\r\n\r\n(1) Updating to file wrappers is not easy because, according to NSPersistentDocument Class Documentation, \"NSPersistentDocument does not support … File wrappers … See 'File Wrappers with Core Data Documents' for an example of how you can add support for file wrappers.\"  There is no hyperlink and I cannot find such a document, although Sean McBride says he did find it, and it was labelled \"\"Retired Document.  This sample code may not represent best practices for current development\".  An alternative may be to use Mike Abdullah's BSManagedDocument from github.com.  However I presume that, however this is done, it will  break compatibility with old documents, requiring a migration process of some kind.  So developers may choose the next method instead.\r\n\r\n(2) The Core Data Release Notes for 10.9 explain how to opt out of WAL by passing a pragma to SQLite.  This appears to work at first.  However, if Lion Autosave (+autosavesInPlace) is opted in to, when the user duplicates the document, unexpectedly, the duplicated document apparently defaults back to WAL journal mode.  The duplicated document is therefore subject to corruption and data loss, as explained above.\r\n\r\nSteps to Reproduce:\r\nPRE-WORK\r\n\r\nDownload the Apple Sample Project named \"Reviews\".  In the Info.plist, delete the \"Binary\" and \"XML\" document types, so that \"SQLite\" is used.  Also add two implementations in Reviews.m, to activate Lion Autosaving and to opt the SQLite journal mode back to the old \"DELETE\" mode.\r\n\r\nThis work has already been done for you in the attached sample project.  So, here's where you start…\r\n\r\n1.  Build and Run the product.\r\n2.  Click in the menu: File > New.  A document will open.\r\n3.  Click in the menu: File > Duplicate.  A new document will very cutely pop out of the first document.\r\n4.  Click in the menu: File > Close.  A \"Do you want to keep this…\" sheet appears.\r\n5.  Note where the document is going to be located.\r\n6.  Name the document: \"Test.review\"\r\n7.  Click the \"Save\" button.\r\n8.  Open a Finder window to the folder where the document is located.\r\n\r\nExpected Results:\r\nYou should see one document file named \"Test.review\".\r\n\r\nActual Results:\r\nYou see three document files: \"Test.review\", \"Test.review-shm\",  and \"Test.review-wal\".\r\n\r\nVersion:\r\nOS X 10.9.1\r\n\r\nNotes:\r\nThis may be a duplicate of Bug 15854533 filed by Romain Piveteau.  But in case he didn't include a sample project, I have.\r\n\r\nConfiguration:\r\nAlways.\r\n\r\nAttachments:\r\n'CoreDataNoWAL.zip' was successfully uploaded."
+    email: jerrykrinock@gmail.com
+    modified: "2014-11-12T02:13:22.850629Z"
+    number: "15873041"
+    number_intvalue: 15873041
+    originated: 2014 Jan 21
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.9.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Duplicated Non-WAL NSPersistentDocument Has WAL

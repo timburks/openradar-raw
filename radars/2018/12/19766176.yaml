@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19766176"
+    labels:
+        datastore_id: "4945837452951552"
+data:
+    classification: ""
+    created: "2018-12-05T17:41:37.404114Z"
+    description: "Summary:\r\n@encode is supposed to provide a description of a given data type. However it does not work for CLLocationCoordinate2D, instead of returning \"{CLLocationCoordinate2D =dd}\" (which is what it should be), it returns \"{??=dd}\". \r\nThis actually happens with *ANY* struct which has been defined anonymously with a typedef.  Hence, for:\r\ntypedef struct MyStruct {\r\n    double aDouble;\r\n    double anotherDouble;\r\n} MyStruct;\r\n@encode(MyStruct) will work correctly, returning \"{MyStruct=dd}\".\r\nBut this (note the missing first \"MyStruct\" in the definition):\r\ntypedef struct {\r\n    double aDouble;\r\n    double anotherDouble;\r\n} MyStruct;\r\nwill NOT work, and returns \"{??=dd}\".\r\nCLLocationCoordinate2D (in <CoreLocation/CLLocation.h>) is defined in this way, and so it does not work.\r\n***Note that an \"#import <CoreLocation/CLLocation.h>\" in the relevant header file does NOT fix the problem.***\r\n\r\nSteps to Reproduce:\r\nIn an active Xcode debugger window, type:\r\npo @encode(CLLocationCoordinate2D)\r\n\r\nExpected Results:\r\n\"{CLLocationCoordinate2D=dd}\"\r\n\r\nActual Results:\r\n\"{??=dd}\"\r\n\r\nVersion:\r\nAny\r\n\r\nNotes:\r\nTwo possible fixes, for CLLocationCoordinate2D, correct the definition of it to:\r\ntypedef struct CLLocationCoordinate2D {\r\n\tCLLocationDegrees latitude;\r\n\tCLLocationDegrees longitude;\r\n} CLLocationCoordinate2D;\r\n(Note the extra CLLocationCoordinate2D in the definition).\r\n\r\nOR (better) fix the implementation of @encode so that it is clever enough to look for typedef's with anonymous structs in the general case.\r\n\r\nConfiguration:\r\nAny configuration, the problem is with the implementation of the @encode objective-C compiler directive."
+    email: joemuers.developer@gmail.com
+    modified: "2018-12-05T17:44:17.196145Z"
+    number: "19766176"
+    number_intvalue: 19766176
+    originated: 09/02/2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: ""
+    reproducible: Always
+    resolved: No
+    status: '?'
+    title: '@encode() is broken for CLLocationCoordinate2D'

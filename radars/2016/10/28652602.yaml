@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28652602"
+    labels:
+        datastore_id: "5002038064709632"
+data:
+    classification: Serious Bug
+    created: "2016-10-06T16:03:12.85587Z"
+    description: "Summary:\r\nOur app uses iPhone in BLE Central role and connects to a remote device (an Android 5+ device) in Peripheral role.\r\nOur code works great on every combination of iOS 8.1 - 10.0.2 and iPhone 4S - 6S that we have tried, but fails with the iPhone 7 and 7+. \r\n\r\nAfter successfully discovering, connecting to the peripheral and retaining a reference to it, we call -discoverServices on the CBPeripheral, but the corresponding CBPeripheralDelegate didDiscoverServices method is never called (yes i triple checked the delegate property is set \U0001F607)… eventually after 30sec the didDisconnect delegate method is called with error 0 \"Unknown Error\". \r\n\r\nThe specific hardware combination that fails is:\r\niPhone 7 iOS 10.0, 10.0.1, 10.0.2 and iPhone7+ 10.0.1 in Central role. Connecting to any Android device in Peripheral mode, except the Samsung S6 Edge.\r\n\r\nWe have tested:\r\niPhone 4S, 5, 5S, 6, 6+, 6S with various versions of iOS from 8.1 through 10.0.2, and these have all happily connected to a wide variety of Android 5.0+ devices.\r\n\r\nWe typically call -discoverServices with our expected ServiceUUID. I have tried setting this to nil, but it made no difference. I have tried checking before calling discoverServices if the .services property on the CBPeripheral is already populated… it's not.\r\n\r\nI have raised the issue in the developer forums:\r\nhttps://forums.developer.apple.com/thread/63815\r\n\r\nI believe this report is a duplicate of:\r\nrdar://28479978\r\nhttps://openradar.appspot.com/28479978\r\n\r\nSteps to Reproduce:\r\nIn code:\r\n\r\nimport CoreBluetooth\r\n1. CBCentralManager -scanForPeripheralsWithServices:nil options:nil\r\n2. wait for delegate -centralManager:didDiscoverPeripheral: to be called, retain the CBPeripheral\r\n3. -connectPeripheral:options:\r\n4. wait for delegate -didConnectPeripheral: to be called\r\n5. -discoverServices:\r\n6. …\r\n\r\nExpected Results:\r\nDelegate method -didDiscoverServices: should be called with the discovered services.\r\n\r\nActual Results:\r\nWith the combination of iPhone 7 and 7+ and any Android device we tested except the Samsung S6 Edge, -didDiscoverServices: is never called.\r\nRather delegate method -didDisconnectPeripheral:error: gets called after 30sec with Error 0 Unknown Error.\r\n\r\nOn any other iPhone I've tried, down to a iPhone 4S, -didDiscoverServices: is called promptly.\r\n\r\nVersion:\r\niPhone 7, 10.0.0, 10.0.1, 10.0.2. iPhone 7+ 10.0.1. Xcode 7.3.1, Swift 2.2, OSX 10.11.6\r\n\r\nNotes:\r\nAndroid devices we have tested in Peripheral role:\r\nSamsung Galaxy S7 Android 6.0.1\r\nSamsung Note 4 Android 6.0.1\r\nCyanogen OnePlus One Android 6.0.1\r\nLG G5 Android 6.0.1\r\nSony Xperia Z1 Android 5.0.2\r\nSamsung Galaxy S5 Android 5.0\r\nNexus 6 Android 6.0.1\r\nSamsung S6 Edge\r\n\r\nConfiguration:\r\niPhone 7 and 7+ purchased in Sweden, unlocked.\r\n\r\nAttachments:"
+    email: alxknt@gmail.com
+    modified: "2016-10-06T16:03:12.85624Z"
+    number: "28652602"
+    number_intvalue: 28652602
+    originated: 6/10/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CBPeripheral unable to discover services on iPhone7 and iPhone7+

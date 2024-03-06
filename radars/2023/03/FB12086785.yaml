@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB12086785
+    labels:
+        datastore_id: "5506635631951872"
+data:
+    classification: ""
+    created: "2023-03-30T13:34:46.834058Z"
+    description: "We have a number of UIViews which back various creative effects (e.g. text overlays) that get burned into videos for upload. In order to have these views show up with a similar brightness to HDR video, I have ported these views to use EDR colors.\r\n\r\nI have verified that I can correctly snapshot such a view, draw it in HLG color space, and generate a CVPixelBuffer out of it, as the buffer does render correctly via an HLG MTKView. \r\n\r\nHowever, I am observing that such buffers, when exported via AVAssetWriter (or directly through VTCompressionSession), have correct or nearly-correct colors, but are not rendering at the expected levels of brightness.\r\n\r\nI can validate that the pipeline supports EDR levels of brightness as I can create brighter images by running the image within the buffer through a CIExposureAdjust filter.\r\n\r\n---\r\n\r\n    func makeBuffer(image: UIImage) -> CVPixelBuffer {\r\n        let attributes: [CFString: Any] = [\r\n            kCVPixelBufferIOSurfacePropertiesKey: [:],\r\n            kCVPixelBufferMetalCompatibilityKey: true,\r\n        ]\r\n        var buffer: CVPixelBuffer? = nil\r\n        CVPixelBufferCreate(nil,\r\n                            Int(image.size.width * image.scale),\r\n                            Int(image.size.height * image.scale),\r\n                            kCVPixelFormatType_64RGBAHalf,\r\n                            attributes as CFDictionary,\r\n                            &buffer)\r\n        \r\n        CVPixelBufferLockBaseAddress(buffer!, CVPixelBufferLockFlags(rawValue: 0))\r\n        \r\n        let info = CGBitmapInfo(rawValue: kCGBitmapByteOrder16Host.rawValue |\r\n                                CGImageAlphaInfo.premultipliedLast.rawValue |\r\n                                CGBitmapInfo.floatComponents.rawValue)\r\n        let ctx = CGContext(data: CVPixelBufferGetBaseAddress(buffer!),\r\n                            width: Int(image.size.width * image.scale),\r\n                            height: Int(image.size.height * image.scale),\r\n                            bitsPerComponent: 16,\r\n                            bytesPerRow: CVPixelBufferGetBytesPerRow(buffer!),\r\n                            space: CGColorSpace(name: CGColorSpace.itur_2100_HLG)!,\r\n                            bitmapInfo: info.rawValue)\r\n\r\n        ctx?.draw(image.cgImage!, in: CGRect(x: 0, y: 0, width: image.size.width * image.scale, height: image.size.height * image.scale))\r\n        \r\n        CVBufferSetAttachment(buffer!, kCVImageBufferCGColorSpaceKey, CGColorSpace(name: CGColorSpace.itur_2100_HLG)!, .shouldPropagate)\r\n        CVBufferSetAttachment(buffer!, kCVImageBufferColorPrimariesKey, kCVImageBufferColorPrimaries_ITU_R_2020, .shouldPropagate)\r\n        CVBufferSetAttachment(buffer!, kCVImageBufferTransferFunctionKey, kCVImageBufferTransferFunction_ITU_R_2100_HLG, .shouldPropagate)\r\n        CVBufferSetAttachment(buffer!, kCVImageBufferYCbCrMatrixKey, kCVImageBufferYCbCrMatrix_ITU_R_2020, .shouldPropagate)\r\n        \r\n        CVPixelBufferUnlockBaseAddress(buffer!, CVPixelBufferLockFlags(rawValue: 0))\r\n        \r\n        // this can be done to synthetically increase the brightness\r\n//        let ciImage = CIImage(cvPixelBuffer: buffer!)\r\n//        let ciFilter = CIFilter(name: \"CIExposureAdjust\")\r\n//        ciFilter?.setValue(ciImage, forKey: \"inputImage\")\r\n//        ciFilter?.setValue(2.0, forKey: \"inputEV\")\r\n//        let adjusted = ciFilter?.outputImage\r\n//        let context = CIContext()\r\n//        context.render(adjusted!, to: buffer!)\r\n        \r\n        return buffer!\r\n    }"
+    email: cellsworth@gmail.com
+    modified: "2023-03-30T13:34:46.834239Z"
+    number: FB12086785
+    number_intvalue: 12086785
+    originated: "2023-03-30"
+    parent_number: '&{NULL_VALUE}'
+    product: AVFoundation
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: EDR UIView will not export to HLG video at correct brightness

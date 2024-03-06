@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12905972"
+    labels:
+        datastore_id: "2456401"
+data:
+    classification: Crash
+    created: "2012-12-19T00:06:30.338396Z"
+    description: "19-Dec-2012 11:04 AM Aidan Steele:\r\nSummary:\r\nThe following code crashes on the property setter line only under the following circumstances: ARC is enabled and the code is running on an iOS device. It does not crash on the simulator with ARC (en|dis)abled nor does it crash on the device with ARC disabled. The crash within the setter is sending a -retain message to an already-deallocated object -- as determined by debugging with NSZombieEnabled=YES.\r\n\r\nSteps to Reproduce:\r\n@interface Crasher ()\r\n@property (nonatomic, strong) NSArray *array;\r\n@end\r\n\r\n@implementation Crasher\r\n\r\n- (void)crash;\r\n{\r\n  NSMutableArray *mutable = [NSMutableArray array];\r\n  NSArray *items = @[@0, @1, @2, @3];\r\n\r\n  if ([@YES boolValue])\r\n  {\r\n    [items enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {\r\n      [mutable addObject:obj];\r\n    }];\r\n  }\r\n  else\r\n  {\r\n    [items enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {\r\n      [mutable addObject:obj];\r\n    }];\r\n  }\r\n\r\n  [self setArray:mutable];\r\n}\r\n\r\n@end\r\n\r\nExpected Results:\r\nCode to not crash.\r\n\r\nActual Results:\r\nCode does crash.\r\n\r\nRegression:\r\nThis happens in at least Xcode 4.5.0 and 4.5.2. It does not happen in Xcode 4.6 DP3. \r\n\r\nNotes:\r\nI have posted a sample project to demonstrate this crash at https://github.com/aidansteele/arc-crash. It is reproducible every time."
+    email: aidansteele@gmail.com
+    modified: "2012-12-19T00:06:30.338573Z"
+    number: "12905972"
+    number_intvalue: 12905972
+    originated: 19-Dec-2012 11:04 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 4.5.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: iOS crash on device with ARC enabled

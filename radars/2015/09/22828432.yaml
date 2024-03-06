@@ -1,0 +1,59 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22828432"
+    labels:
+        datastore_id: "4939203968237568"
+data:
+    classification: Serious Bug
+    created: "2015-09-23T22:12:12.21839Z"
+    description: |-
+        Summary:
+        Authentication refused for AFP/SMB when more than 1 Share should be available
+
+        Steps to Reproduce:
+        In Server 5.0.4
+
+        Create: 1 User, Allow that user to use filesharing services.
+        Create: 1 Group, assign that user to that group.
+        Create: 2 Folders
+        	Folder A: chown user:group to the user and group you just created.
+        	Folder B: chown admin:group where admin is the local first admin User of OS X (usually uid 501) and the group is the group you just created.
+        	chmod both folders 770.
+        Create 2 SharePoints from these folders!
+        	Assign Everyone: non, user: r/w, group r/w, no ACLs should be necessary, Spotlight can be ignored.
+        Start File Sharing service.
+
+        Try to connect to these SharePoints via AFP and SMB.
+
+        Expected Results:
+        Both SharePoints should be available to the user.
+        Folder A: Because the user is the POSIX owner of that folder.
+        Folder B: Because the user is in the POSIX group of that folder.
+
+
+        Actual Results:
+        AFP: Server refuses authentication and just shakes the password dialog.
+        SMB: Server refuses authentication and shows a dialog that you've been denied access.
+
+        Both are incorrect. The user should absolutely be allowed to access said sharepoints.
+        This makes File Sharing completely unusable (also many other bugs apply which aid to this result. See my other RDARs on OS X Server in the past few days.)
+
+
+        Regression:
+        This has been mostly working in 4.1.5 and even in ASIP Server this was just fine.
+
+        Notes:
+        sysdiagnose attached.
+    email: pepi.zawodsky@gmail.com
+    modified: "2015-09-23T22:12:12.21871Z"
+    number: "22828432"
+    number_intvalue: 22828432
+    originated: 24-Sep-2015 12:10 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X Server
+    product_version: 5.0.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Authentication refused for AFP/SMB when more than 1 Share should be available

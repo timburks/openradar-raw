@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "50553219"
+    labels:
+        datastore_id: "4989715623182336"
+data:
+    classification: ""
+    created: "2019-05-07T20:39:22.963093Z"
+    description: "Summary:\r\n\r\nThe FileManager url(for:in:appropriateFor:create:) method, when configured to create a temporary directory, fails after 1000 calls with: Error Domain=NSCocoaErrorDomain Code=512 \"The file couldn’t be saved.\"\r\n\r\nSteps to Reproduce:\r\n\r\n\tfunc test_FileManager_url_for() {\r\n\t\t\r\n\t\tfor num in 1...10000 {\r\n\t\t\tdo {\r\n\t\t\t\tlet relativeURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)\r\n\t\t\t\tprint(\"\\(num): \\(relativeURL)\")\r\n\t\t\t\tlet tempDirURL = try FileManager.default.url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: relativeURL, create: true)\r\n\t\t\t\tprint(tempDirURL)\r\n\t\t\t}\r\n\t\t\tcatch {\r\n\t\t\t\tXCTFail(\"\\(error)\")\r\n\t\t\t\treturn\r\n\t\t\t}\r\n\t\t}\r\n\t}\r\n\r\n\r\nExpected Results:\r\n\r\nThere should be no (reasonable) limit to the number of temporary directories which can be created.\r\n\r\nActual Results:\r\n\r\nOnly 1000 directories can be created and then an error is generated: Error Domain=NSCocoaErrorDomain Code=512 \"The file couldn’t be saved.\"\r\n\r\nTest Case '-[test_FileManager_url_for]' started.\r\n1: file:///Users/levi/Library/Developer/CoreSimulator/Devices/B36B631A-CA93-4155-A676-345CCBC5DBF4/data/tmp/4C04A494-A861-4DAD-9DCF-1F9175214345\r\nfile:///Users/levi/Library/Developer/CoreSimulator/Devices/B36B631A-CA93-4155-A676-345CCBC5DBF4/data/tmp/(A%20Document%20Being%20Saved%20By%20xctest)/\r\n2: file:///Users/levi/Library/Developer/CoreSimulator/Devices/B36B631A-CA93-4155-A676-345CCBC5DBF4/data/tmp/2CCD122D-ABAD-465C-89BB-810F3CDE9090\r\nfile:///Users/levi/Library/Developer/CoreSimulator/Devices/B36B631A-CA93-4155-A676-345CCBC5DBF4/data/tmp/(A%20Document%20Being%20Saved%20By%20xctest%202)/\r\n...\r\n1000: file:///Users/levi/Library/Developer/CoreSimulator/Devices/B36B631A-CA93-4155-A676-345CCBC5DBF4/data/tmp/0B5973DC-C1BC-4F46-BBE3-4DB574DBFAD6\r\nfile:///Users/levi/Library/Developer/CoreSimulator/Devices/B36B631A-CA93-4155-A676-345CCBC5DBF4/data/tmp/(A%20Document%20Being%20Saved%20By%20xctest%201000)/\r\n1001: file:///Users/levi/Library/Developer/CoreSimulator/Devices/B36B631A-CA93-4155-A676-345CCBC5DBF4/data/tmp/23203909-2CD8-4B91-982C-51849A5F1851\r\nerror: -[test_FileManager_url_for] : failed - Error Domain=NSCocoaErrorDomain Code=512 \"The file couldn’t be saved.\"\r\n\r\nVersion/Build:\r\n\r\nXcode 10.2.1, Swift 5\r\n\r\nSpeculation:\r\n\r\nThe FileManager code which attempts to create a uniquely named temporary directory only attempts a unique name 1000 times, then fails.\r\n\r\n\"(A Document Being Saved By xctest #NUM#)\"\r\n\r\nMy concerns are:\r\n\r\n1) The number of attempts to create a unique name is undoubtably hardcoded to the arbitrarily small value of 1000.\r\n\r\n2) The code is apparently trying to create a unique directory, starting with \"(A Document Being Saved By xctest)\" as the name and then making sequential attempts ( \"(A Document Being Saved By xctest 2)\", (A Document Being Saved By xctest 3)\", etc.) until it finds one which is available, which is a performance issue since it will have to repeat these attempts each call, going over every possibility every time."
+    email: levigroker@gmail.com
+    modified: "2019-05-07T20:39:22.963256Z"
+    number: "50553219"
+    number_intvalue: 50553219
+    originated: "2019-05-07"
+    parent_number: '&{NULL_VALUE}'
+    product: Foundation
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: FileManager.url(for:in:appropriateFor:create:) Fails After 1000 Calls

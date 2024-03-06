@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32485852"
+    labels:
+        datastore_id: "6170114130968576"
+data:
+    classification: Feature (New)
+    created: "2017-05-31T14:17:29.25589Z"
+    description: "Summary:\r\nSwift has [`defer`](https://andybargh.com/swift-defer-statement/) to schedule blocks of work to clean up when you leave the current scope. This is great for cleanup when you can exit/throw in multiple places and both simplifies code and helps to reduce leaks. See https://pspdfkit.com/blog/2017/even-swiftier-objective-c/\r\n\r\nSteps to Reproduce:\r\nTry to use @defer.\r\n\r\nExpected Results:\r\nBlock in @defer should be called when the scope exits\r\n\r\nActual Results:\r\nCompiler error. Feature isn’t there ;)\r\n\r\nVersion:\r\nXcode 8.3.2\r\n\r\nNotes:\r\nCGImageSourceRef imageSource = CGImageSourceCreateWithURL((CFURLRef)fileURL, NULL);\nif (!imageSource) {\n    return NO;\n}\n \nCGImageRef image = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, NULL);\nif (!image) {\n    return NO;\n}\n \nthumbnail = [UIImage imageWithCGImage:image scale:scale orientation:UIImageOrientationUp];\nCFRelease(imageSource);\nCFRelease(image);\nreturn YES;\n \nNotice the leak? If creating the image fails, we leak imageSource as we exit early. Of course that’s fixable we special-handle the first exit condition, but that’s hard and easy to get wrong. Better: Use defer to declare what needs to happen when things go out of scope.\n\nCGImageSourceRef imageSource = CGImageSourceCreateWithURL((CFURLRef)fileURL, NULL);\nif (!imageSource) {\n    return NO;\n}\npspdf_defer { CFRelease(imageSource); }\n\nBut I don’t think I need to convince anyone how useful defer is, as it’s part of Swift.\nSee https://pspdfkit.com/blog/2017/even-swiftier-objective-c/"
+    email: steipete@gmail.com
+    modified: "2017-05-31T14:17:29.25621Z"
+    number: "32485852"
+    number_intvalue: 32485852
+    originated: 31-May-2017 04:17 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.3.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Add support for @defer Objective-C compiler directive

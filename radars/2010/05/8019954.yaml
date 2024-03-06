@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8019954"
+    labels:
+        datastore_id: "374401"
+data:
+    classification: UI/Usability
+    created: "2010-05-24T16:07:37.602125Z"
+    description: "Summary:\r\nApplications that try to open files using -[NSWorkspace openFile:] and variants will remain active if the file being open has a com.apple.quarantine extended attribute. We see this in both Safari and Chrome when the user downloads a file (a PDF, for example) and then tries to open it from within the browser by clicking on the file's icon in the downloads window/shelf. If Preview is not running, it will then open the file as expected, but the original application (the browser) will remain the active application. When the quarantine flag is not set and the above process is repeated, Preview will become the active application, as it should.\r\n\r\nSteps to Reproduce:\r\n1. Make sure Preview is NOT running.\r\n2. Go to www.irs.gov and Option-Click the \"Form 941\" link to download the file.\r\n3. After it has been downloaded, double-click the file in the Downloads window.\r\n4. Preview will open the file, but Safari will remain the active application.\r\n5. Quit Preview.\r\n6. Option-Click the \"Form W-9\" link.\r\n7. In Terminal, type \"xattr -d com.apple.quarantine ~/Downloads/fw9.pdf\" to clear the quarantine bit.\r\n8. Double-click the file in Safari's downloads window.\r\n9. Preview opens the file and is the active application.\r\n\r\nAlternatively, you can use the reduced test case application attached. It will copy (with extended attrs) a test.pdf file (downloaded with Chrome) that has the quarantine flag. Be sure to quit Preview and rebuild in between uses of the test app (so that the file is recopied with its extended attribute each time). There are two buttons: one that will open the file normally via -[NSWorkspace openFile:withApplication:andDeactivate], and one that uses removexattr() to programmatically clear the quarantine bit before opening the file.\r\n\r\nExpected Results:\r\nIn step (4), Preview should become the active application, regardless of the quarantine flag.\r\n\r\nActual Results:\r\nAs mentioned in step (4), the original application (Safari or Chrome) keeps its active state, rather than deactivating.\r\n\r\nRegression:\r\nMay also happen on 10.5.\r\n\r\nNotes:\r\nWe are tracking this as a Chrome bug at http://code.google.com/p/chromium/issues/detail?id=32921."
+    email: rsesek@gmail.com
+    modified: "2011-08-28T05:41:29.102864Z"
+    number: "8019954"
+    number_intvalue: 8019954
+    originated: 24-May-2010 12:06 PM
+    parent_number: "8089263"
+    product: Mac OS X
+    product_version: 10.6.3 10D2063a
+    reproducible: Always
+    resolved: 17-Jun-2010 07:30 PM
+    status: Duplicate/8089263
+    title: Opening files with com.apple.quarantine flag results in incorrect app activation

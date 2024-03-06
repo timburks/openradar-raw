@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "5828463"
+    labels:
+        datastore_id: "78"
+data:
+    classification: ""
+    created: "2008-11-17T02:36:54.740521Z"
+    description: "28-Mar-2008 10:50 AM Alexander Strange:\r\nSummary:\r\nGiven:\r\nint a(int v)\r\n{\r\n    int temp[4];\r\n    \r\n    asm volatile(\"mov %0, 4+%1\"\r\n                 :\r\n                 : \"r\"(v), \"o\"(*temp));\r\n    \r\n    return temp[1];\r\n}\r\n\r\ngcc/llvm will output 'mov %eax, 4+(%esp)'. Under other systems, this compiles to '4(%esp)', but Darwin compiles to 0(%esp), which is wrong.\r\n\r\nSteps to Reproduce:\r\n1. Under some other i386 system: gcc -O -fomit-frame-pointer -c asm-offset.c (attached)\r\n2. Check with objdump -d:\r\nDisassembly of section .text:\r\n\r\n00000000 <a>:\r\n   0:   83 ec 10                sub    $0x10,%esp\r\n   3:   8b 44 24 14             mov    0x14(%esp),%eax\r\n   7:   89 44 24 04             mov    %eax,0x4(%esp)\r\n   b:   8b 44 24 04             mov    0x4(%esp),%eax\r\n   f:   83 c4 10                add    $0x10,%esp\r\n  12:   c3                      ret    \r\n\r\n\r\n3. Under Darwin: gcc -arch i386 -O -fomit-frame-pointer -c asm-offset.c (attached)\r\n4. Check the output with otool -tv.\r\n\r\nExpected results:\r\nThe same assembly.\r\n\r\nActual results:\r\n_a:\r\n00000000\tsubl\t$0x1c,%esp\r\n00000003\tmovl\t0x20(%esp),%eax\r\n00000007\tmovl\t%eax,0x00(%esp)\r\n0000000b\tmovl\t0x04(%esp),%eax\r\n0000000f\taddl\t$0x1c,%esp\r\n00000012\tret\r\n\r\nRegression:\r\nChecked with:\r\nApple Computer, Inc. version cctools-667.3~112, GNU assembler version 1.38\r\nGNU assembler version 2.18 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.18\r\n\r\nNotes:\r\nThere seems to be a problem with the definition of \"o\" constraints in gcc - shouldn't it always output 0(%esp) in this case?"
+    email: astrange@gmail.com
+    modified: "2011-08-28T05:50:26.408164Z"
+    number: "5828463"
+    number_intvalue: 5828463
+    originated: 28-Mar-2008 02:50 PM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: as/i386 compiles 4+(%esp) to 0(%esp)

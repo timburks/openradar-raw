@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27633221"
+    labels:
+        datastore_id: "4955269679284224"
+data:
+    classification: ""
+    created: "2016-09-21T07:02:54.89774Z"
+    description: "Chaoqun Zou03-Aug-2016 10:21 AM\r\n\r\nHi, there is not really related logs for this issue. I am not very sure what you are looking for. Can you please provide some more details?\r\nApple Developer Relations02-Aug-2016 03:36 AM\r\n\r\nPlease attach any relevant crash logs, panic logs, stackshots, baseband logs, etc which may have been generated automatically. If none were, install the appropriate logging profile, reproduce the issue, then attach relevant logs.\r\n\r\nProfiles and directions are available at:\r\n\r\nhttps://developer.apple.com/bug-reporting/profiles-and-logs/\r\n\r\nPlease provide your response or results by updating your bug report.  If uploading files, please compress first.\r\nChaoqun Zou01-Aug-2016 01:28 PM\r\n\r\nArea:\r\nBluetooth\r\n\r\nSummary:\r\nThis issue relates to #27579701.\r\n\r\nThe issue happens like this:\r\n\r\n(1) Pair the iPhone to the peripheral for the first time and it works fine (our peripheral rejects the read request with Insufficient Authentication correctly and we can see the iOS Pairing popup and Pairing succeeds)\r\n(2) Remove the bonding record of the iPhone from the peripheral (the iPhone still remembers the peripheral)\r\n(3) Use the same iPhone to connect to the device again and our peripheral still rejects the read request with Insufficient Authentication correctly but iOS does not show the Pairing popup anymore\r\n(4) The only way to make iOS show the pairing popup again is to forget the device in Settings - Bluetooth first\r\n\r\nI can reproduce the same behaviour between two iPhones (tried iOS 9 and 10 beta). e.g. pair two iphones first, then forget the other party on one phone, when the other phone tries to connect again it can't connect and it does not show the Pairing popup either.\r\n\r\nThere are some screenshots in #27579701 of the packets capture.\r\n\r\nSteps to Reproduce:\r\n(1) Run BLE test app on two iPhones, one as central the other as peripheral. the test app should include at least one characteristic with GATT_PERMIT_AUTHEN_READ and  GATT_PERMIT_AUTHEN_WRITE\r\n(2) From the central role, connect to the peripheral role and try to read that characteristic\r\n(3) there should be a pairing dialog asking for pairing, pair\r\n(4) verify the central can read and write correctly\r\n(5) on the peripheral go to Settings - Bluetooth and forget the central iPhone\r\n(6) use the central iPhone to connect and read the characteristic again, you will see it can't read, but the pairing dialog is not displayed anymore\r\n\r\nExpected Results:\r\nIn step (6) the central iPhone better to show the Bluetooth Pairing popup again so the user can choose to pair again conveniently.\r\n\r\nIf there are security or privacy concerns that there might be spoofing attacks, the second Bluetooth Pairing popup can be a bit different from the first one, e.g. \r\nTitle: Bluetooth Pairing Request\r\nMessage: \"xxx\" would like to pair with your iPhone again. {red}If you can't verify whether it is the same device your iPhone has paired to, it might be a malicious device.{red}\r\nButtons: \"Cancel\" and \"Pair\"\r\n\r\nI do agree drafting such a message might not be very easy and professionals may have better ideas.\r\n\r\n\r\nActual Results:\r\nIn step (6) the central iPhone does not show the Pairing popup, and the user has to go to System settings -> Bluetooth to manually forget the peripheral which is not very convenient\r\n\r\nVersion:\r\niOS 9.3.3 iOS 10 beta 3\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 5S iPad Pro 9.7\r\n\r\nAttachments:"
+    email: max.zou.se@gmail.com
+    modified: "2016-09-21T07:02:54.89801Z"
+    number: "27633221"
+    number_intvalue: 27633221
+    originated: 01-Aug-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "10"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Would be better for iOS to show the Bluetooth pairing popup again after the peripheral removes the bonding record

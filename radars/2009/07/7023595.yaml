@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7023595"
+    labels:
+        datastore_id: "57414"
+data:
+    classification: Other Bug
+    created: "2009-07-01T14:03:41.746139Z"
+    description: "Summary:\r\nAn application UIPasteboard marked as persistent is persistent even across app deletes\r\n\r\nSteps to Reproduce:\r\n1. Compile test project\r\n2. Run program\r\n3. Tap on text view and enter text\r\n4. Tap Done button\r\n5. Close app\r\n6. Remove app\r\n6a. Optionally power-cycle device\r\n7. Reinstall app\r\n8. Run app and see that pasteboard contents are still preserved.\r\n\r\nExpected Results:\r\nI expected the pasteboard created by the application to be removed once the last application that had referenced it was removed from the device.\r\n\r\nActual Results:\r\nThe pasteboard seems to live forever once its created if removePasteboardWithName: is never called.\r\n\r\nRegression:\r\nn/a\r\n\r\nNotes:\r\nAccording to the documentation for the persistent property, \"A persistent application pasteboard is removed when the owning application is uninstalled.\" This is clearly not happening.\r\n\r\nHaving pasteboards available to be shared between apps, especially persistent across reboots is a huge win and I'd hate to see this bug closed only to interfere with that behavior. So, here are my thoughts on this issue:\r\n\r\nTo remove a pasteboard once the creating app is gone is not entirely correct, especially with a shared pasteboard. Therefore, any apps using a pasteboard should have the pasteboard names declared in their Info.plist or be marked as co-owner on initial access. On the removal of the last of these apps, the pasteboard could be removed. The Info.plist method allows apps that have not run yet to still hold a claim on a pasteboard created within another app. While marking apps as co-owners on access allows the limited use of dynamically named pasteboards; they would still be removed if the second app had not accessed them but I see no easy way around that.\r\n\r\nA possible solution to dynamically named pasteboards is have the ability to specify a lifetime for the pasteboard such that even if the owning app is deleted immediately after its' creation, the pasteboard could live for 10-30 minutes or some other value until it can be used by the second application."
+    email: ashleycodes@gmail.com
+    modified: "2011-08-28T05:46:04.838361Z"
+    number: "7023595"
+    number_intvalue: 7023595
+    originated: 01-Jul-2009 08:59 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "3.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Persistent Application UIPasteboards are not removed on application removal

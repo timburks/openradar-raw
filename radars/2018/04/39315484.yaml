@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39315484"
+    labels:
+        datastore_id: "4941712447242240"
+data:
+    classification: Serious Bug
+    created: "2018-04-10T15:48:33.46064Z"
+    description: "Summary:\r\nThis is a duplicate of radar #39209026\n\nDescription:\nStart with 10.12.6 enrolled in MDM and has a Kernel Extension Policy (PayloadType = com.apple.syspolicy.kernel-extension-policy) whitelisting approved Team Identifiers (including G7HH3F8CAK for this example) delivered via the MDM.\n\nAfter upgrading to 10.13.4 (17E199) the MDM enrollment and KEXT profile are still installed and \"Verified\" per System Preferences->Profiles, yet when I try and load a KEXT from an approved vendor (Dropbox) I still get prompted by the system to allow the extension in the System Preferences.\n\nIn this example I'm signing into Dropbox and enabling the Smart Sync capabilities which use a KEXT. The Team Identifier is G7HH3F8CAK and can be seen in the whitelist. \n\nThe prompt to allow the KEXT should not appear and the KEXT should load automatically which is not happening.\n\r\n\r\nSteps to Reproduce:\r\nSteps: \n0) Setup a computer with < 10.13.2 that has never run Dropbox before \n1) Enroll the < 10.13.2 OS into MDM and apply a Kernel Extension Policy (PayloadType = com.apple.syspolicy.kernel-extension-policy) approving just the Team Identifier G7HH3F8CAK in this example.  Choose whatever TeamID you have a KEXT for. \n2) Upgrade the computer to 10.13.4 via App Store update \n3) Authenticated restart signs the user back in after installing \n4) Sign into a Dropbox account that has Smart Sync capabilities to have it load the KEXT\r\n\r\nExpected Results:\r\nThe Dropbox KEXT would load during the setup process without user interaction since it is approved via com.apple.syspolicy.kernel-extension-policy.\r\n\r\nActual Results:\r\nThe system prompts the user to allow the Dropbox KEXT in System Preferences->Security during the setup process\r\n\r\nVersion:\r\n10.13.4 17e199\r\n\r\nNotes:\r\nI setup a brand new machine using 10.13.4 as the starting OS, activating in DEP, enrolling in the MDM and getting the KEXT policy. \nKEXT policy _IS_ respected and does not prompt to allow TeamID whitelisted kexts.\n \nI upgraded a 10.12.6 machine with UAMDM and KEXT policy to 10.13.4, logged in as a user\nKEXT policy _NOT_ respected\n \nI upgraded a 10.12.6 machine to 10.13.4. Before logging a user in I restarted the computer again to verify it was a clean restart and not an authenticated restart from the installation process.\nKEXT policy _NOT_ respected\n \nI upgraded a 10.12.6 machine with UAMDM and KEXT policy to 10.13.4. Before logging a user in I made a change to the KEXT policy in the MDM, verified that 10.13.4 received the new MDM payload changes, then logged in as a user\nKEXT policy _IS_ respected\n \nEven though the 4th testing workflow resulted in positive results the process of having to change the MDM payload to get there is not acceptable but sheds some light on the issue."
+    email: clburlison@gmail.com
+    modified: "2018-04-10T15:48:33.46091Z"
+    number: "39315484"
+    number_intvalue: 39315484
+    originated: 10-Apr-2018 10:48 AM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13.4 17e199
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Existing Kernel Extension policy not respected on update to 10.13

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12116431"
+    labels:
+        datastore_id: "1858409"
+data:
+    classification: Security
+    created: "2012-08-16T22:10:26.271809Z"
+    description: "Summary:\r\n--------\r\nHelpViewer ignores the com.apple.help.plist in the <sandbox>/Library/Preferences directory, but instead always uses the ~/Library/Preferences/com.apple.help.plist public version.\r\n\r\nSteps to Reproduce:\r\n-----------------\r\n1) Create a sandboxed app.\r\n\r\n2) Create a plug-in bundle, which has its own help book inside.\r\n\r\n3) Have the app load the bundle, and invoke -registerBooksInBundle: on the shared NSHelpManager for the bundle. Returns YES, so seemingly registration was successful. Using AHRegisterHelpBookWithURL() yields same results.\r\n\r\n4) Check <sandbox>/Library/Preferences/com.apple.help.plist. It will show the registered help book from the bundle.\r\n\r\n5) Check ~/Library/Preferences/com.apple.help.plist. It shows no trace of the bundle's help book.\r\n\r\n6) Invoke openHelpAnchor:inBook:, AHGotoPage(), or any other method to show the bundle's help book.\r\n\r\nExpected Results:\r\n---------------\r\nThe help book should open in HelpViewer.\r\n\r\nActual Results:\r\n-------------\r\n\"The selected topic is currently unavailable.\"\r\n\r\nRegression:\r\n----------\r\nn.a.\r\n\r\nNotes:\r\n------\r\nWhen the app itself contains a help book, it is registered in ~/Library/Preferences/com.apple.help.plist, and HelpViewer therefore finds it. The contents of <sandbox>/Library/Preferences/com.apple.help.plist seem never to be evaluated by HelpViewer?\r\n\r\nThe ~/Library/Preferences/com.apple.help.plist references the help books of installed apps, and the <sandbox>/Library/Preferences/com.apple.help.plist should reference help books which are only useful while the respective app is running (e.g. for its plugins). This is the current scheme and seems very appropriate.\r\n\r\nHelpViewer loads ~/Library/Preferences/com.apple.help.plist at startup. We think that when an app invokes -registerBooksInBundle:, HelpViewer should check the app's sandbox, and if it contains a separate <sandbox>/Library/Preferences/com.apple.help.plist, it should load that on top of the startup configuration. When the app terminates, HelpViewer should re-remove the help books referenced in the <sandbox>/Library/Preferences/com.apple.help.plist, and revert back to only the entries in ~/Library/Preferences/com.apple.help.plist.\r\n\r\nThat way it seems that the sandbox approach would be maintained (what's in the sandbox stays in the sandbox). Help books for plugins would only be available when the app is running, but this would seem an acceptable limitation?"
+    email: alexander.adolf@me.com
+    modified: "2012-08-16T22:10:26.272464Z"
+    number: "12116431"
+    number_intvalue: 12116431
+    originated: "2012-08-17"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: "10.8"
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: HelpViewer ignores sandbox plist

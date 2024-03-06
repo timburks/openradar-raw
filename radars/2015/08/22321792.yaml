@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22321792"
+    labels:
+        datastore_id: "5613466991722496"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-08-18T08:16:43.7193Z"
+    description: "Summary:\r\nI make a Swift class and uses alternative Obj name for it with @objc() attribute\r\nWhen I make swift extension the Objc generated header uses Swift class name instead of alternative name for that extension.\r\n\r\nSteps to Reproduce:\r\n- Make a swift class with alternative name and expose it to Objc\r\n- Make an extension \r\n- Try to use this class in Objc\r\n\r\n\r\nCode:\r\n\r\n@objc(KOKBird) public class Bird: NSObject {\r\n  let name = \"Swift\"\r\n}\r\n\r\npublic extension Bird {\r\n  func fly() {\r\n    print(\"I can Fly!!!\")\r\n  }\r\n}\r\n\r\n/// #import \"ExtensionTest-Swift.h\"\r\n\r\nSWIFT_CLASS_NAMED(\"Bird\")\r\n@interface KOKBird : NSObject\r\n@property (nonatomic, readonly, copy) NSString * __nonnull name;\r\n- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;\r\n@end\r\n\r\n\r\n@interface Bird (SWIFT_EXTENSION(ExtensionTest)) // Wrong name Here!!! \r\n- (void)fly;\r\n@end\r\n\r\nExpected Results:\r\nIt should work and use an alternative name for extension when generating Objc header\r\n\r\nActual Results:\r\nIt can't compile\r\n\r\nNotes:\r\n- Example project is attached"
+    email: konstantin.koval1@gmail.com
+    modified: "2015-08-18T09:15:57.02583Z"
+    number: "22321792"
+    number_intvalue: 22321792
+    originated: 18-Aug-2015 10:17 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A165t)
+    reproducible: Always
+    resolved: 18-Aug-2015
+    status: Closed
+    title: 'Xcode-beta (7A165t): Swift class extension with custom obj name use a wrong name when generating Objc header'

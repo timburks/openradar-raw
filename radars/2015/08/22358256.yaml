@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22358256"
+    labels:
+        datastore_id: "4942146423488512"
+data:
+    classification: Serious Bug
+    created: "2015-08-20T08:33:49.4966Z"
+    description: "This is the OS X version of rdar://22358140\r\n\r\nSummary:\r\nGiven an XML file with internal entity definitions, NSXMLParser ignores entity references, that is it never calls parser:foundCharacters: with the entity reference expansion.\r\n\r\nFor example, given the file:\r\n\r\n<?xml version=\"1.0\" standalone=\"yes\" ?>\r\n<!DOCTYPE foo [\r\n  <!ENTITY bar \"Johnnie Fox's\">\r\n]>\r\n<foo>\r\n  Entity expansion test begin &bar; end.\r\n</foo> \r\n\r\nThe parser will make the following delegate calls (ellipses indicate places where  parameters have been removed for clarity):\r\n\r\n-[… parserDidStartDocument:…]\r\n-[… foundInternalEntityDeclarationWithName:@\"bar\" value:@\"Johnnie Fox's\"]\r\n-[… didStartElement:@\"foo\" namespaceURI:nil qualifiedName:nil attributes:{\r\n}]\r\n-[… foundCharacters:@\" Entity expansion test begin \"]\r\n-[… foundCharacters:@\" end. \"]\r\n-[… didEndElement:@\"foo\" namespaceURI:nil qualifiedName:nil]\r\n-[… parserDidEndDocument:…]\r\n\r\nThe parser exits successfully and no error is reported.\r\n\r\nSteps to Reproduce:\r\nRun any XML that contains an internal entity reference (such as the example above) through NSXMLParser and observe the delegate calls.\r\n\r\nAlternatively, run the test testInternalEntityReference in the attached Xcode workspace and examine the NSLog and/or notice the test fails.\r\n\r\nExpected Results:\r\nGiven that NSXMLParser has no delegate method that is called when an internal entity reference is encountered, it is reasonable to expect that the expanded entity would be passed to the delegate in a call to parser:foundCharacter.\r\n\r\nUsing the example above and ignoring some irrelevant calls this would look like this:\r\n…\r\n-[… foundCharacters:@\" Entity expansion test begin \"]\r\n-[… foundCharacters:@\"Johnnie Fox's\"]\r\n-[… foundCharacters:@\" end. \"]\r\n…\r\n\r\nActual Results:\r\nSee summary above\r\n\r\nRegression:\r\nI could not find a version of NSXMLParser where this worked.\r\nBoth libxml2 and expat handle this correctly.\r\n\r\nNotes:\r\nProvide additional information, such as references to related problems, workarounds and relevant attachments."
+    email: iosdeveloperzone@gmail.com
+    modified: "2019-06-16T05:02:45.440972Z"
+    number: "22358256"
+    number_intvalue: 22358256
+    originated: 20-Aug-2015 01:33 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.4
+    reproducible: Always
+    resolved: ""
+    status: Closed as Duplicate
+    title: NSXMLParser silently drops internal entities (OS X)

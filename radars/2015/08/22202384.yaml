@@ -1,0 +1,101 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22202384"
+    labels:
+        datastore_id: "4590476011241472"
+data:
+    classification: Serious Bug
+    created: "2015-08-08T13:46:27.04955Z"
+    description: |-
+        The following piece of code crashes the Swift compiler:
+
+        enum Event<T> {
+        	case Value(T)
+        	case Completion
+        	case Error(ErrorType)
+        }
+
+        class Stream<T> {
+        	private let callback: (Event<T> -> Void) -> Void
+        	
+        	internal init(callback: (Event<T> -> Void) -> Void) {
+        		self.callback = callback
+        	}
+        	
+        	func map<U>(transform: T -> U) -> Stream<U> {
+        		return Stream<U> { sink in
+        			self.onValue { value in
+        				sink(transform(value))
+        			}
+        		}
+        	}
+        	
+        	func onValue(valueClosure: T -> Void) {
+        	}
+        }
+
+        The stack trace of the crash is:
+
+        Assertion failed: (DC == closure->getParent() && "Decl context isn't correct"), function walkToClosureExprPre, file /Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-700.0.52.2/src/swift/lib/Sema/TypeCheckConstraints.cpp, line 673.
+        0  swift                    0x00000001057cdbbb llvm::sys::PrintStackTrace(__sFILE*) + 43
+        1  swift                    0x00000001057ce2fb SignalHandler(int) + 379
+        2  libsystem_platform.dylib 0x00007fff89b3deaa _sigtramp + 26
+        3  libsystem_platform.dylib 0x00007fff5c46e668 _sigtramp + 3532851160
+        4  libsystem_c.dylib        0x00007fff906923fb abort + 129
+        5  libsystem_c.dylib        0x00007fff90659a44 basename + 0
+        6  swift                    0x0000000103e33021 (anonymous namespace)::PreCheckExpression::walkToExprPre(swift::Expr*) + 609
+        7  swift                    0x0000000103ef2b9b (anonymous namespace)::Traversal::visit(swift::Expr*) + 107
+        8  swift                    0x0000000103ef4a00 (anonymous namespace)::Traversal::visitApplyExpr(swift::ApplyExpr*) + 128
+        9  swift                    0x0000000103ef2c0b (anonymous namespace)::Traversal::visit(swift::Expr*) + 219
+        10 swift                    0x0000000103ef1ff5 swift::Expr::walk(swift::ASTWalker&) + 53
+        11 swift                    0x0000000103e298b5 swift::TypeChecker::solveForExpression(swift::Expr*&, swift::DeclContext*, swift::Type, swift::Type, swift::FreeTypeVariableBinding, swift::ExprTypeCheckListener*, swift::constraints::ConstraintSystem&, llvm::SmallVectorImpl<swift::constraints::Solution>&, swift::OptionSet<swift::TypeCheckExprFlags, unsigned int>) + 149
+        12 swift                    0x0000000103e2f502 swift::TypeChecker::typeCheckExpression(swift::Expr*&, swift::DeclContext*, swift::Type, swift::Type, swift::OptionSet<swift::TypeCheckExprFlags, unsigned int>, swift::ExprTypeCheckListener*) + 450
+        13 swift                    0x0000000103dc9a00 (anonymous namespace)::FailureDiagnosis::typeCheckChildIndependently(swift::Expr*, bool) + 384
+        14 swift                    0x0000000103dcb4f0 std::__1::__function::__func<(anonymous namespace)::FailureDiagnosis::visitExpr(swift::Expr*)::$_7, std::__1::allocator<(anonymous namespace)::FailureDiagnosis::visitExpr(swift::Expr*)::$_7>, void (swift::Expr*)>::operator()(swift::Expr*&&) + 32
+        15 swift                    0x0000000103f567b7 swift::Expr::forEachChildExpr(std::__1::function<void (swift::Expr*)> const&)::ChildWalker::walkToExprPre(swift::Expr*) + 39
+        16 swift                    0x0000000103ef471f (anonymous namespace)::Traversal::visit(swift::Expr*) + 7151
+        17 swift                    0x0000000103ef1ff5 swift::Expr::walk(swift::ASTWalker&) + 53
+        18 swift                    0x0000000103f53b3c swift::Expr::forEachChildExpr(std::__1::function<void (swift::Expr*)> const&) + 44
+        19 swift                    0x0000000103dc76b9 swift::ASTVisitor<(anonymous namespace)::FailureDiagnosis, bool, void, void, void, void, void>::visit(swift::Expr*) + 9753
+        20 swift                    0x0000000103dc228b swift::constraints::ConstraintSystem::diagnoseFailureForExpr(swift::Expr*) + 923
+        21 swift                    0x0000000103dc36e7 swift::constraints::ConstraintSystem::salvage(llvm::SmallVectorImpl<swift::constraints::Solution>&, swift::Expr*, bool) + 4343
+        22 swift                    0x0000000103e29b30 swift::TypeChecker::solveForExpression(swift::Expr*&, swift::DeclContext*, swift::Type, swift::Type, swift::FreeTypeVariableBinding, swift::ExprTypeCheckListener*, swift::constraints::ConstraintSystem&, llvm::SmallVectorImpl<swift::constraints::Solution>&, swift::OptionSet<swift::TypeCheckExprFlags, unsigned int>) + 784
+        23 swift                    0x0000000103e2f502 swift::TypeChecker::typeCheckExpression(swift::Expr*&, swift::DeclContext*, swift::Type, swift::Type, swift::OptionSet<swift::TypeCheckExprFlags, unsigned int>, swift::ExprTypeCheckListener*) + 450
+        24 swift                    0x0000000103dc9a00 (anonymous namespace)::FailureDiagnosis::typeCheckChildIndependently(swift::Expr*, bool) + 384
+        25 swift                    0x0000000103dc7c24 swift::ASTVisitor<(anonymous namespace)::FailureDiagnosis, bool, void, void, void, void, void>::visit(swift::Expr*) + 11140
+        26 swift                    0x0000000103dc228b swift::constraints::ConstraintSystem::diagnoseFailureForExpr(swift::Expr*) + 923
+        27 swift                    0x0000000103dc36e7 swift::constraints::ConstraintSystem::salvage(llvm::SmallVectorImpl<swift::constraints::Solution>&, swift::Expr*, bool) + 4343
+        28 swift                    0x0000000103e29b30 swift::TypeChecker::solveForExpression(swift::Expr*&, swift::DeclContext*, swift::Type, swift::Type, swift::FreeTypeVariableBinding, swift::ExprTypeCheckListener*, swift::constraints::ConstraintSystem&, llvm::SmallVectorImpl<swift::constraints::Solution>&, swift::OptionSet<swift::TypeCheckExprFlags, unsigned int>) + 784
+        29 swift                    0x0000000103e2f502 swift::TypeChecker::typeCheckExpression(swift::Expr*&, swift::DeclContext*, swift::Type, swift::Type, swift::OptionSet<swift::TypeCheckExprFlags, unsigned int>, swift::ExprTypeCheckListener*) + 450
+        30 swift                    0x0000000103dc9a00 (anonymous namespace)::FailureDiagnosis::typeCheckChildIndependently(swift::Expr*, bool) + 384
+        31 swift                    0x0000000103dc2202 swift::constraints::ConstraintSystem::diagnoseFailureForExpr(swift::Expr*) + 786
+        32 swift                    0x0000000103dc36e7 swift::constraints::ConstraintSystem::salvage(llvm::SmallVectorImpl<swift::constraints::Solution>&, swift::Expr*, bool) + 4343
+        33 swift                    0x0000000103e29b30 swift::TypeChecker::solveForExpression(swift::Expr*&, swift::DeclContext*, swift::Type, swift::Type, swift::FreeTypeVariableBinding, swift::ExprTypeCheckListener*, swift::constraints::ConstraintSystem&, llvm::SmallVectorImpl<swift::constraints::Solution>&, swift::OptionSet<swift::TypeCheckExprFlags, unsigned int>) + 784
+        34 swift                    0x0000000103e2f502 swift::TypeChecker::typeCheckExpression(swift::Expr*&, swift::DeclContext*, swift::Type, swift::Type, swift::OptionSet<swift::TypeCheckExprFlags, unsigned int>, swift::ExprTypeCheckListener*) + 450
+        35 swift                    0x0000000103e9426a swift::ASTVisitor<(anonymous namespace)::StmtChecker, void, swift::Stmt*, void, void, void, void>::visit(swift::Stmt*) + 4154
+        36 swift                    0x0000000103e93369 swift::ASTVisitor<(anonymous namespace)::StmtChecker, void, swift::Stmt*, void, void, void, void>::visit(swift::Stmt*) + 313
+        37 swift                    0x0000000103e92789 (anonymous namespace)::StmtChecker::typeCheckBody(swift::BraceStmt*&) + 25
+        38 swift                    0x0000000103e9184f swift::TypeChecker::typeCheckFunctionBodyUntil(swift::FuncDecl*, swift::SourceLoc) + 415
+        39 swift                    0x0000000103e91661 swift::TypeChecker::typeCheckAbstractFunctionBodyUntil(swift::AbstractFunctionDecl*, swift::SourceLoc) + 49
+        40 swift                    0x0000000103e9238a swift::TypeChecker::typeCheckAbstractFunctionBody(swift::AbstractFunctionDecl*) + 138
+        41 swift                    0x0000000103e1767c typeCheckFunctionsAndExternalDecls(swift::TypeChecker&) + 220
+        42 swift                    0x0000000103e184a9 swift::performTypeChecking(swift::SourceFile&, swift::TopLevelContext&, swift::OptionSet<swift::TypeCheckingFlags, unsigned int>, unsigned int) + 1913
+        43 swift                    0x0000000103c1ecf5 swift::CompilerInstance::performSema() + 4357
+        44 swift                    0x000000010378e50c performCompile(swift::CompilerInstance&, swift::CompilerInvocation&, llvm::ArrayRef<char const*>, int&) + 748
+        45 swift                    0x000000010378dfc8 frontend_main(llvm::ArrayRef<char const*>, char const*, void*) + 2728
+        46 swift                    0x000000010378a02f main + 2015
+        47 libdyld.dylib            0x00007fff98f965ad start + 1
+        48 libdyld.dylib            0x0000000000000044 start + 1728486040
+    email: david.w.hart@gmail.com
+    modified: "2015-08-08T13:46:27.04976Z"
+    number: "22202384"
+    number_intvalue: 22202384
+    originated: 08-Aug-2015 03:46 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A176x)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode-beta (7A176x): Swift compiler crash in walkToClosureExprPre'

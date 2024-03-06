@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20596408"
+    labels:
+        datastore_id: "6123772356591616"
+data:
+    classification: Duplicate of 19985330
+    created: "2015-04-18T00:15:31.63497Z"
+    description: "Summary:\r\nProgrammer can still specify 'nonnull' annotation to a weak pointer. This is in conflict with the real behaviour of weak pointers being implicitly always nullable.\r\n\r\nSteps to Reproduce:\r\nCompile this code:\r\n\r\nNS_ASSUME_NONNULL_BEGIN\r\n \r\n@interface ViewController : UIViewController\r\n \r\n// Note it's a weak property and compiler does not complain. \r\n// Anyway the property will be nullified by the runtime as it has always been. Annotations don't affect generated code.\r\n@property (nonatomic, weak) id delegate;\r\n \r\n@end\r\n \r\nNS_ASSUME_NONNULL_END\r\n \r\n \r\n// Using it:\r\nid delegate = [[NSObject alloc] init];\r\nViewController *controller = [[ViewController alloc] initWithNibName:nil bundle:nil];\r\ncontroller.delegate = delegate;\r\ndelegate = nil;  // controller.delegate is nil as expected. Generated code does not change.\r\ncontroller.delegate = nil; // Generates warning at compile time\r\n\r\nExpected Results:\r\nIt would be good if weak pointers are always implicitly anotated as nullable, or compiler generate a warning if programmer does not annotate as such in an annotated region.\r\n\r\nActual Results:\r\nCompiler does not complain, but behaviour is correct at run time.\r\n\r\nVersion:\r\nXCode 6.3 (6D570)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: m.quinones.garcia@gmail.com
+    modified: "2015-09-24T08:49:22.54792Z"
+    number: "20596408"
+    number_intvalue: 20596408
+    originated: 18/04/2015
+    parent_number: '&{NULL_VALUE}'
+    product: XCode
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: Weak pointers are not implicitly annotated as nullable

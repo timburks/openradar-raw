@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7198997"
+    labels:
+        datastore_id: "73413"
+data:
+    classification: Serious bug
+    created: "2009-09-04T16:05:20.297152Z"
+    description: "* Description\r\n\r\nThis bug is probably the same as the one I submitted as http://openradar.appspot.com/radar?id=69403, but the cause is now (hopefully) explained more clearly (and the code is i386 rather than ARM).\r\n\r\nThe basic problem is that if multiple global symbols are associated with a single atom and the atom is moved around, then only symbols referenced in the current object file (or possibly also from object files read before the current one) are moved along.\r\n\r\nThe result is that the automatic init code reordering causes errors in case one of the functions called from a .mod_init_func has multiple global symbols associated with its start address, and some of these symbols are only referred from other object files\r\n\r\n\r\n* Steps to reproduce\r\n\r\n1) unpack the attached archive\r\n2) cd ldreorderbug\r\n3) ./build.sh\r\n4) ./runtestc\r\n\r\n* Expected results\r\n\r\nThis output:\r\n---\r\nHere\r\nin callee\r\nHere\r\nHere prog\r\nin callee\r\nHere prog\r\n---\r\n\r\n\r\n* Actual results\r\nThis output:\r\n---\r\nHere\r\nin callee\r\nHere\r\nHere prog\r\nIllegal instruction\r\n---\r\n\r\nThe problem in short:\r\n1) both _callee and _callee_alias are global symbols pointing to the same code\r\n2) \"_callee\" is called from the library's initialiser function \"_libmain\", and these two functions are in the source/object file (clib.c/o)\r\n3) \"_callee_alias\" is called from the function \"_myextern\", which resides a different source/object file (clib2.c/o)\r\n4) A dylib is created from clib.o and clib2.o.\r\n5) ld reorders \"_callee\" to the front of the text section (because it's called from an initialiser), but does not move the \"_callee_alias\" symbol that referred to the same code (but now no longer does)\r\n6) when the \"_myextern\" function is called from the main program, it now jumps to the invalid opcode coming after the original \"callee\" function rather than the \"callee\" function itself, because of the misplaced \"_callee_alias\" symbol.\r\n\r\n\r\n* Notes\r\n\r\nThe overal \"project\" looks like this:\r\na) clib.c: contains the initialiser (libmain) and function called from the initialiser (callee) for the library\r\nb) clib2.c: contains another function for the library (myextern), which also calls callee via an alias\r\nc) runtest.c: a test program that is linked against the library. It calls the myextern() function from main.\r\n\r\nThe interesting file in the archive is clib.s. It has been generated from clib.c using \"gcc -arch i386 -S -o clib.s clib.c\", and was then slightly modified. All modifications are marked using #-comments. The modifications I made were\r\na) add a global alias for the \"_callee\" symbol called \"_callee_alias\"\r\nb) add a dummy routine after the \"_callee\" function called \"dummy\", which consists of a single illegal instruction (along with a .reference to it, so the linker doesn't discard it)\r\nc) add a .mod_init_func section that designates the \"_libmain\" function as initialiser (which in turn calls callee)"
+    email: jmaebe@gmail.com
+    modified: "2011-08-28T05:44:55.517928Z"
+    number: "7198997"
+    number_intvalue: 7198997
+    originated: 04-Sep-2009 06:00 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 3.2/ld64-95.2.12
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '[ld] Alias symbols of reordered code are not migrated to new location'

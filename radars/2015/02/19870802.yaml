@@ -1,0 +1,61 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19870802"
+    labels:
+        datastore_id: "5342457541689344"
+data:
+    classification: Other Bug
+    created: "2015-02-18T03:46:03.67545Z"
+    description: |-
+        Summary:
+        I’m trying to write the &&& operator I describe here: http://intersections.tumblr.com/post/111240204394/the-sum-is-more-than-the-hole-of-its-parts-while
+
+        I want to use @autoclosure so it’ll act like Swift’s && over Bool, but the natural implementation using Optional.map() is impossible, because Optional.map() doesn’t mark its function as @noescape, so Swift doesn’t know that the function parameter can be passed in without allowing it to escape.
+
+
+        Steps to Reproduce:
+        1. Write this:
+        infix operator &&& { associativity left precedence 120 }
+        public func &&& <T, U> (left: T?, @autoclosure right: () -> U?) -> (T, U)? {
+        	return left.map { x in right().map { y in (x, y) } } ?? nil
+        }
+
+
+        Expected Results:
+        I expected to be able to call right in the left.map closure.
+
+
+        Actual Results:
+        “Closure use of @noescape parameter 'right' may allow it to escape”
+
+
+        Regression:
+        Using this instead of map works just fine:
+
+        extension Optional {
+        	func fmap<U>(@noescape f: T -> U) -> U? {
+        		switch self {
+        		case let Some(x):
+        			return f(x)
+        		case None:
+        			return nil
+        		}
+        	}
+        }
+
+
+        Notes:
+        I really loathe how Swift 1.2 ties @autoclosure to @noescape. It’s an exercise in frustration every time I try to use @autoclosure, now, and it had previously been one of my favourite bits of the language.
+    email: rix.rob@gmail.com
+    modified: "2015-02-18T03:46:03.675678Z"
+    number: "19870802"
+    number_intvalue: 19870802
+    originated: 17-Feb-2015 10:45 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-Beta (6D520o)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2: Optional.map()’s parameter isn’t marked as @noescape & can’t be used with @autoclosure'

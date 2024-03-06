@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32698202"
+    labels:
+        datastore_id: "6097818020216832"
+data:
+    classification: Serious Bug
+    created: "2017-06-11T07:16:47.62795Z"
+    description: "Summary:\r\nDear AppKitterinos,\r\n\r\nI have a view in a storyboard. The view’s wantsLayer is true in the View Effects inspector.\r\n\r\nWhen the view controller’s viewDidLoad runs, the view’s layer is usually (but not always) still nil even though the view’s wantsLayer is always true at this point.\r\n\r\nThe behavior arises because the view sets its layer in its _finishMakingConnections method, and the view controller sends itself viewDidLoad from its own _finishMakingConnections method. Since the _finishMakingConnections messages are sent using -[NSSet makeObjectsPerformSelector:], the order in which the messages are sent is non-deterministic and (probably due to address space layout randomization) indeed varies across executions.\r\n\r\nI’ve attached a project that demonstrates the problem. You may need to run the project many times to reproduce the problem. If you’re having trouble reproducing, try changing the objects in the storyboard, adding instance variables to MyView and/or ViewController, or changing the order in which the classes are defined in ViewController.swift.\r\n\r\nWhen the problem occurs, the output of the test project looks like this:\r\n\r\n-------- in viewDidLoad() \r\nview.wantsLayer=true\r\nview.layer=nil ‼️\r\n\r\n-------- in viewDidLoad() (after view.wantsLayer = true)\r\nview.wantsLayer=true\r\nview.layer=0x000060800004e7c0\r\nbootstrap_check_in():  (os/kern) unknown error code (44c)\r\n\r\nLove,\r\nRob\r\n\r\n\r\nSteps to Reproduce:\r\n \r\n\r\nExpected Results:\r\n \r\n\r\nActual Results:\r\n \r\n\r\nVersion:\r\nVersion 9.0 beta (9M136h) / 10.13 Beta (17A264c)\r\n\r\nNotes:"
+    email: mayoff@dqd.com
+    modified: "2018-12-11T17:18:11.378405Z"
+    number: "32698202"
+    number_intvalue: 32698202
+    originated: 11-Jun-2017 12:16 AM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: Version 9.0 beta (9M136h) / 10.13 Beta (17A264c)
+    reproducible: Sometimes
+    resolved: ""
+    status: CLOSED
+    title: NSView.layer not reliably set in viewDidLoad

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10036406"
+    labels:
+        datastore_id: "1580403"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2012-03-07T12:43:13.207923Z"
+    description: "Summary:\r\n/bin/zsh crashes with a segmentation fault when running the attached shell script.\r\n\r\nSteps to Reproduce: \r\n\r\nSave the attached script \"zsh-crash.zsh\" to ~/Desktop/zsh-crash.zsh.\r\n\r\nOpen Terminal and make script executable: \r\n\r\nchmod +x ~/zsh-crash.zsh\r\n\r\nThen run script:\r\n~/zsh-crash.zsh\r\n\r\nExpected Results: Script finishes without a segmentation fault.\r\n\r\nActual Results:/bin/zsh crashes with a segmentation fault\r\n\r\nRegression:\r\nIf run in GDB, crash does not occur.\r\nUsing a zsh 4.3.11 or 4.3.12 compiled via homebrew fixes the problem.\r\nRunning the same script on Debian Stable with the same ZSH version 4.3.11, the script returns 1 and does not print anything. It does not crash, either.\r\nI have made a fresh installation of Lion to an external USB hard drive and the crash occurs with that as well. In fact, the attached crash report is front that installation, not my main installation.\r\n\r\nNotes:\r\nRemoving a single line from the script may fix the problem -- even if the removed line is a comment line. So it clearly is rather unrelated to the actual contents of the script.\r\n\r\nI have previously had zsh crashing in different circumstances when calling a function recursively. The same script  led zsh on Debian to not crash but report an error. So there is definitely something wrong in the zsh that shipped with Lion.\r\n\r\n\r\nUPDATE 7 March 2012:\r\n\r\nThis issue still exists in 10.7.3.\r\n\r\nHow to reproduce: Download the attached shell script and make it executable. Become root and run the file.\r\n\r\n# sudo -s\r\n#  uname -a\r\nDarwin simac.srvr.ch 11.3.0 Darwin Kernel Version 11.3.0: Thu Jan 12 18:47:41 PST 2012; root:xnu-1699.24.23~1/RELEASE_X86_64 x86_64\r\n#  /Users/shz/Downloads/zsh-crash.zsh\r\n*** \r\n*** Number of arguments: 0\r\n[1]    37746 segmentation fault  /Users/shz/Downloads/zsh-crash.zsh\r\n\r\nTo run in LLDB (from Xcode 4.3):\r\n#  lldb /bin/zsh\r\nCurrent executable set to '/bin/zsh' (x86_64).\r\n(lldb) run /Users/shz/Downloads/zsh-crash.zsh\r\nProcess 37530 launched: '/bin/zsh' (x86_64)\r\n*** \r\n*** Number of arguments: 0\r\nProcess 37530 stopped\r\n* thread #1: tid = 0x1c03, 0x00007fff9ae5f4f0 libsystem_c.dylib`strlen + 16, stop reason = EXC_BAD_ACCESS (code=1, address=0x122cde630)\r\n    frame #0: 0x00007fff9ae5f4f0 libsystem_c.dylib`strlen + 16\r\nlibsystem_c.dylib`strlen + 16:\r\n-> 0x7fff9ae5f4f0:  pcmpeqb (%rdi), %xmm0\r\n   0x7fff9ae5f4f4:  andl   $15, %ecx\r\n   0x7fff9ae5f4f7:  shll   %cl, %eax\r\n   0x7fff9ae5f4f9:  pmovmskb %xmm0, %ecx\r\n(lldb) bt\r\n* thread #1: tid = 0x1c03, 0x00007fff9ae5f4f0 libsystem_c.dylib`strlen + 16, stop reason = EXC_BAD_ACCESS (code=1, address=0x122cde630)\r\n    frame #0: 0x00007fff9ae5f4f0 libsystem_c.dylib`strlen + 16\r\n    frame #1: 0x0000000100058494 zsh`getpermtext + 412\r\n    frame #2: 0x0000000100058804 zsh`getredirs + 690\r\n    frame #3: 0x0000000100058ef3 zsh`getredirs + 2465\r\n    frame #4: 0x000000010005980a zsh`getjobtext + 122\r\n    frame #5: 0x0000000100015de4 zsh`execlist + 2058\r\n    frame #6: 0x000000010001623b zsh`execlist + 3169\r\n    frame #7: 0x00000001000158d6 zsh`execlist + 764\r\n    frame #8: 0x000000010001237d zsh`execode + 229\r\n    frame #9: 0x000000010002668a zsh`loop + 753\r\n    frame #10: 0x00000001000278b9 zsh`zsh_main + 2304\r\n    frame #11: 0x0000000100000ae0 zsh`start + 52\r\n(lldb)"
+    email: shmlchr@gmail.com
+    modified: "2012-03-07T12:43:13.208113Z"
+    number: "10036406"
+    number_intvalue: 10036406
+    originated: 28-Aug-2011 07:10 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: /bin/zsh crashes running simple shell script

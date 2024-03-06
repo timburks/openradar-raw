@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "47433272"
+    labels:
+        datastore_id: "4990990981005312"
+data:
+    classification: ""
+    created: "2019-01-22T00:59:31.750899Z"
+    description: "Area:\r\nImage I/O\r\n\r\nSummary:\r\nIn our app, we need to strip off GPS data from HEIC photos. The `CGImageDestinationFinalize` method in Image I/O will re-encode the HEIC photos, which is very slow and the threads get stuck if I run multiple tasks (>=3 on iPhone XS Max) concurrently. \r\n\r\nAfter some research, I found this Technical Q&A QA1895. https://developer.apple.com/library/archive/qa/qa1895/_index.html. Here it suggests \"CGImageDestinationCopyImageSource\" to copy image source without recompressing the image data. However, apparently, HEIC format is not supported in \"CGImageDestinationCopyImageSource\". \r\n\r\nHere is the error I got:\r\nError Domain=kCFErrorDomainCGImageMetadata Code=1 \"image type 'public.heic' is not supported for lossless metadata modification at this time.\r\n\r\nGiven HEIC is the default option on iPhone, and gets more and more popular, please add the support in \"CGImageDestinationCopyImageSource\".\r\n\r\nSteps to Reproduce:\r\n\r\n1, Given a HEIC image data source created from local device\r\n2, Run the following code to strip off GPS metadata\r\n\r\n        CGImageDestinationRef destination = CGImageDestinationCreateWithURL((__bridge CFURLRef)URL, AVFileTypeHEIC, size, NULL);\r\n        if (destination) {\r\n                CFErrorRef errorRef = NULL;\r\n                CGImageMetadataRef sourceMetadata = CGImageSourceCopyMetadataAtIndex(source, 0, NULL);\r\n                NSDictionary *options = @{(__bridge NSString *)kCGImageMetadataShouldExcludeGPS : @(YES)\r\n                                          (__bridge NSString *)kCGImageDestinationMergeMetadata : @(YES);\r\n                                          (__bridge NSString *)kCGImageDestinationMetadata, (__bridge id)sourceMetadata};\r\n                isExportedSuccessfully = CGImageDestinationCopyImageSource(destination, source, (__bridge CFDictionaryRef)options, &errorRef);\r\n                \r\n            }\r\n            \r\n            CFRelease(destination);\r\n        }\r\n\r\nExpected Results:\r\nThe HEIC format photo should be Losslessly copied (without re-encoding) along with the new options/metadatas\r\n\r\nActual Results:\r\nIt fails with the following error:\r\n\r\nError Domain=kCFErrorDomainCGImageMetadata Code=1 \"image type 'public.heic' is not supported for lossless metadata modification at this time.\r\nVersion/Build:\r\n\r\nConfiguration:\r\niOS 11 and above"
+    email: simonwjw@gmail.com
+    modified: "2019-01-22T00:59:31.75115Z"
+    number: "47433272"
+    number_intvalue: 47433272
+    originated: 22/1/2019
+    parent_number: '&{NULL_VALUE}'
+    product: iOS Image I/O
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: submitted
+    title: HEIC format is not supported in modifying Image Metadata Without Recompressing Image

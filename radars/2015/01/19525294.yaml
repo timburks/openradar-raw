@@ -1,0 +1,58 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19525294"
+    labels:
+        datastore_id: "5099608279613440"
+data:
+    classification: Other Bug
+    created: "2015-01-20T00:01:56.254525Z"
+    description: |-
+        Summary:
+        I’m trying to overload but Swift thinks I’m trying to override.
+
+        My use case: XCTestCase has a method named measureBlock taking (() -> ())!. My XCTestCase subclass has a method named measureBlock taking Int -> () which calls the () -> () one passing in { block(n) } with some n.
+
+
+        Steps to Reproduce:
+        Write this code:
+
+        @objc class A {
+        	func f(x: () -> ()) {}
+        }
+
+        class B: A {
+        	func f(x: Int -> ()) {}
+        }
+
+
+
+        Expected Results:
+        I expected this to work.
+
+
+        Actual Results:
+        Error:
+
+        ./overload-ride.swift:8:7: error: overriding method with selector 'f:' has incompatible type '(Int -> ()) -> ()'
+        ./overload-ride.swift:4:7: note: overridden declaration here has type '((() -> ())) -> ()'
+
+
+        Regression:
+        Only occurs if the superclass is @objc; pure Swift classes are fine.
+
+
+        Notes:
+        Have a lovely day! <3
+    email: rix.rob@gmail.com
+    modified: "2015-01-20T00:01:56.254774Z"
+    number: "19525294"
+    number_intvalue: 19525294
+    originated: 19-Jan-2015 07:01 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Overload of method taking T -> () misinterpreted as override of @objc superclass method taking (() -> ())!'

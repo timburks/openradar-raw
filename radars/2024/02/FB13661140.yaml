@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13661140
+    labels:
+        datastore_id: "5565290700079104"
+data:
+    classification: ""
+    created: "2024-02-28T04:10:08.074929Z"
+    description: "The sample code obtained different mac address to address that was used to validate the receipt. Due to this customer experiences unrecoverable issue with message that app is damaged. Airplay/reboot did not solve the problem.\r\n\r\nUpon checking internal Apple implementation in AppleMediaServices.framework (+[AMSDevice macAddressData]) I have noticed differences that caused this problem:\r\n\r\nSample Code\r\n\r\nif wantBuiltIn == CFBooleanGetValue(isBuiltIn) {\r\n  return candidate\r\n}\r\n\r\nInternal Code\r\n\r\nif CFBooleanGetValue(isBuiltIn) == true {\r\n  return candidate\r\n} else if wantBuiltIn == false {\r\n  return candidate\r\n} else { //interface is not build in but we want build in\r\n  continue\r\n}\r\n\r\nAnother difference is:\r\n\r\nguard let service = io_service(named: \"en0\", wantBuiltIn: true)\r\n?? io_service(named: \"en1\", wantBuiltIn: false) //instead of true\r\n?? io_service(named: \"en0\", wantBuiltIn: false)\r\n\r\nDue to the difference I would even rename wantBuiltIn to shouldFailIfNotBuiltIn\r\n\r\nThe same differences are also present in the new implementation (suspected that it will move to new framework)\r\nAMSCore::NetworkUtils::CopyInterfaceMACAddress(unsigned int)\r\n\r\n\r\nWhile technically the sample code is correct, it’s not what Apple is using behind the curtains."
+    email: xhruso00@gmail.com
+    modified: "2024-02-28T04:10:08.075357Z"
+    number: FB13661140
+    number_intvalue: 13661140
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Sample code for obtaining mac address is different to internal implementation

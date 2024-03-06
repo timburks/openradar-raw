@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12220933"
+    labels:
+        datastore_id: "1916402"
+data:
+    classification: Serious Bug
+    created: "2012-09-01T08:51:05.861839Z"
+    description: "Summary:\r\nI'm using AVCaptureScreenInput to record portions of the screen. (and thus using AVCaptureMovieFileOutput through AVCaptureSession). My code is based on AVScreenShack 1.0, which exhibits the same issue under 10.8. (AVScreenShack 2.0 has other bugs I will report in a subsequent radar)\r\n\r\nWhen the AVCaptureMovieFileOutput should write a quicktime file with frames larger than 1280x720 (in either dimension), no file is written and no error is reported.\r\n\r\nI'm using AVCaptureSessionPresetHigh, which does not scale down the source frames.\r\nThe AVCaptureScreenInput is initialized with a display that is larger than 1280x720, and either has no cropRect set, or has a cropRect set that is larger than 1280x720.\r\n\r\nSteps to Reproduce:\r\n(in AVScreenShack) Hit \"Start\"\r\n(specifically) call -startRecordingToOutputFileURL:recordingDelegate: with a valid file URL,on an otherwise correctly setup instance of AVCaptureMovieFileOutput that's an output of instance of AVCaptureSession with a session preset of AVCaptureSessionPresetHigh which has an input of at least a AVCaptureScreenInput that's sending frames larger than 1280x720\r\n\r\nExpected Results:\r\nA video file would be written to the specified URL, or failing that some sort of error would be reported.\r\n\r\nActual Results:\r\nNothing.\r\n\r\nRegression:\r\nAVCaptureMovieFileOutput successfully exported frames larger than 1280x720 under 10.7.0, and I first observed this bug under 10.8.0. However, customers have reported bugs resulting from this in my app running under 10.7.4. I don't have the resources to test further.\r\n\r\nNotes:\r\nIf AVCaptureScreenInput is sending frames smaller than 1280x720 (either due to the size of the screen or the size of the cropRect), everything works as expected.\r\n\r\nIf the sessionPreset is not AVCaptureSessionPresetHigh (all other session presets scale the exported frames to <= 1280x270), everything works as expected regardless of the size of the frames sent by AVCaptureScreenInput."
+    email: krisharris@improbablesciences.com
+    modified: "2012-09-01T08:51:05.862011Z"
+    number: "12220933"
+    number_intvalue: 12220933
+    originated: 01-Sep-2012 01:17 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X SDK
+    product_version: "10.8"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AVCaptureMovieFileOutput fails to export with larger than 720p frames

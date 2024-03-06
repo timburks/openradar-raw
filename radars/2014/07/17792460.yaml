@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17792460"
+    labels:
+        datastore_id: "5820118370091008"
+data:
+    classification: ""
+    created: "2014-07-24T11:18:11.096042Z"
+    description: "Summary:\r\nQLPreviewController on iOS 8 beta 4 has display issue when embedded and presented modally in a navigation controller. The issue can be easily reproduce using Apple sample DocInteraction https://developer.apple.com/library/prerelease/ios/samplecode/DocInteraction/Introduction/Intro.htm\r\nOn the simulator QLPreviewController works fine; on an iPhone 5 / iOS 8 beta 4, the preview is white.\r\n\r\nSteps to Reproduce:\r\n1. Download the Apple DocInteraction sample that uses QLPreviewController https://developer.apple.com/library/prerelease/ios/samplecode/DocInteraction/Introduction/Intro.html\r\n2. Build it with Xcode 5.1.1 (5B1008), and install it on a real device in iOS 8 beta 4 (for instance, iPhone 5)\r\n3. Run the sample on the device, tap on 'PDF document.pdf' to open the preview view controller, the PDF document is shown\r\n4. In the file DITableViewController.m, instead pushing the preview controller on the current navigation controller, present it modally:\r\n\r\nOriginal code:\r\n\t// for case 3 we use the QuickLook APIs directly to preview the document -\r\n\tQLPreviewController *previewController = [[QLPreviewController alloc] init];\r\n\tpreviewController.dataSource = self;\r\n\tpreviewController.delegate = self;\r\n\t\r\n\t// start previewing the document at the current section index\r\n\tpreviewController.currentPreviewItemIndex = indexPath.row;\r\n\t[[self navigationController] pushViewController:previewController animated:YES];\r\n\t\r\nModified code:\r\n\t// for case 3 we use the QuickLook APIs directly to preview the document -\r\n\tQLPreviewController *previewController = [[QLPreviewController alloc] init];\r\n\tpreviewController.dataSource = self;\r\n\tpreviewController.delegate = self;\r\n \r\n\t// start previewing the document at the current section index*/\r\n\tUINavigationController *previewNavigationController = [[UINavigationController alloc] initWithRootViewController:previewController];\r\n \r\n\tpreviewController.currentPreviewItemIndex = indexPath.row;\r\n\t[[self navigationController] presentViewController:previewNavigationController animated:YES completion:nil];\r\n\r\n5. Run the sample on the same device, tap on 'PDF document.pdf' to open the preview view controller, a white screen is shown.\r\n\r\n\r\nExpected Results:\r\nThe PDF document should be displayed.\r\n\r\nActual Results:\r\nA white view is displayed.\r\n\r\nVersion:\r\niOS 8.0 (12A4331d)\r\n\r\nNotes:\r\nThe QLPreviewController has issue with txt, jpg, pdf and html.\r\n\r\nConfiguration:\r\niPhone 5 16Go using iOS 8 beta 4"
+    email: contact@manbolo.com
+    modified: "2014-07-24T11:18:11.09621Z"
+    number: "17792460"
+    number_intvalue: 17792460
+    originated: 24-Jul-2014 10:57 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "8"
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: QLPreviewController View is all White when Embedded and Presented Modally in a Navigation Controller (iOS 8 b4)

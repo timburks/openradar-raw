@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24654420"
+    labels:
+        datastore_id: "4959387898609664"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2016-02-15T15:05:33.05573Z"
+    description: "Summary:\n========\nCreating an empty std::list of std::string (e.g. `std::list<std::string> groups;`) and running the program in optimisation mode -Os, it just crashes.\n\nSteps to Reproduce:\n1. Download the attached file test.mm as /tmp/test.mm\n2. Compile it as follows:\n    clang -o /tmp/test -Os -fsanitize=object-size -fsanitize-undefined-trap-on-error -framework Foundation -ggdb -lstdc++ /tmp/test.mm\n3. Run it with\n    /tmp/test\n    \nExpected Results:\n================\nProgram exits and returns zero.\n\nActual Results:\n===============\nProgram crashes with SIGILL.\n\nThe reason is that this:\n\n   215 \t    _LIBCPP_INLINE_VISIBILITY\n   216 \t    pointer __self()\n   217 \t    {\n-> 218 \t        return static_cast<pointer>(pointer_traits<__base_pointer>::pointer_to(*this));\n   219 \t    }\n   220 \t};\n\nin C++ STM (/Applications/Xcode.app/Contents//Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/list) the line 218 comes out as a straight UD2 in the compiled output.\n\nAlso see the output of the disassembly:\n\n$ otool -tV /tmp/test\n/tmp/test:\n(__TEXT,__text) section\n_main:\n0000000100000f9a    pushq\t%rbp\n0000000100000f9b    movq\t%rsp, %rbp\n0000000100000f9e    ud2\n\nRegression:\n===========\ndon't know\n\nNotes:\n======\nThe attached program in text form:\n---\n#include <string>\n#include <list>\n\nint main(int argc, char **argv)\n{\n    std::list<std::string> groups;\n    return 0;\n}\n---"
+    email: weissismail@gmail.com
+    modified: "2016-02-15T15:05:33.05607Z"
+    number: "24654420"
+    number_intvalue: 24654420
+    originated: 15-Feb-2016 03:03 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.2 (7C68)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 7.2: clang/STM: Crash when using -fsanitize=object-size and std::list<std::string>'

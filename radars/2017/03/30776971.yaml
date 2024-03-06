@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30776971"
+    labels:
+        datastore_id: "4996731548729344"
+data:
+    classification: ""
+    created: "2017-03-01T07:05:28.69606Z"
+    description: "Summary:\r\nWhen getting dateComponents from past date and the current date crosses February 28th, the dateComponents are calculated incorrectly.\r\n\r\nSteps to Reproduce:\r\n1. Set the computer's date to February 28th 2017\r\n2. Open the attached project and run the test\r\n3. Change computer's date to March 1st 2017\r\n4. Run the test again\r\n\r\nThe test is essentially this code snippet and can be run in the Playgrounds as well:\r\n\r\nimport Foundation\r\n\r\nlet dateFormatter = DateFormatter()\r\ndateFormatter.dateFormat = \"y-MM-dd HH:mm:ssZ\"\r\ndateFormatter.timeZone = TimeZone(secondsFromGMT: 0)\r\n\r\nlet february28th = dateFormatter.date(from: \"2017-02-28 15:18:00 +0000\")!\r\nlet march3rd = dateFormatter.date(from: \"2017-03-03 15:18:00 +0000\")!\r\n\r\nlet testDateStrings =\r\n  [\r\n   \"2017-01-31 16:51:00 +0000\",\r\n   \"2017-01-30 16:51:00 +0000\",\r\n   \"2017-01-29 16:51:00 +0000\",\r\n   \"2017-01-28 16:51:00 +0000\",\r\n]\r\n\r\nlet testDates = testDateStrings.map { dateFormatter.date(from: $0)! }.sorted {$0.compare($1) == .orderedDescending}\r\n\r\ntestDates.forEach { (date) in\r\n var dateComponents = Calendar.current.dateComponents([.second, .minute, .hour, .day, .month, .year], from: date, to: february28th)\r\n  dateComponents.timeZone = TimeZone(secondsFromGMT: 0)\r\n  print(date)\r\n  print(dateComponents)\r\n}\r\n\r\nprint(\"----------------\")\r\nprint(\"----------------\")\r\nprint(\"----------------\")\r\n\r\n\r\ntestDates.forEach { (date) in\r\n  var dateComponents = Calendar.current.dateComponents([.second, .minute, .hour, .day, .month, .year], from: date, to: march3rd)\r\n  dateComponents.timeZone = TimeZone(secondsFromGMT: 0)\r\n  print(date)\r\n  print(dateComponents)\r\n}\r\n\r\n\r\n\r\nExpected Results:\r\nExpect both tests to pass\r\n\r\nActual Results:\r\nThe second test fails without changing anything but the \"current date\"\r\n\r\nVersion:\r\nVersion 8.2.1 (8C1002)\r\n\r\nNotes:\r\nI encountered this bug when our NSFetchedResultController started crashing on February 28th, 2017. We were using it to divide the objects into sections based on their timestamps, which was working fine until that date (and by changing the date of the device also after).\r\n\r\nThe problem was that we were sorting the objects by the timestamp and then creating more readable format for the sectionTittle, using dateComponents. But when the sectionTitles were being created the app crashed with an error message \"The fetched object at index 2885 has an out of order section name '4 weeks ago. Objects must be sorted by section name’\", and after investigation the dateComponent was indeed out of the sorted order.\r\n\r\nThe issue might not be exactly the same, but this test was the simplest way to show that there is a serious issue with dateComponents around February and March."
+    email: kirill.pahnev@gmail.com
+    modified: "2017-03-01T07:05:28.69644Z"
+    number: "30776971"
+    number_intvalue: 30776971
+    originated: 01-Mar-2017
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Version 8.2.1 (8C1002)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Getting dateComponents out of date produces wrong results

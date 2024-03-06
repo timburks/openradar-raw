@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15263662"
+    labels:
+        datastore_id: "6400501998419968"
+data:
+    classification: ""
+    created: "2013-10-18T17:53:13.819906Z"
+    description: "XCTestAssertionsImpl.h includes a bunch of @catch blocks that look like:\r\n\r\n    @catch (id exception) { \\\r\n        _XCTRegisterFailure(_XCTFailureDescription(_XCTAssertion_False, 1, @#expression, [exception reason]),format); \\\r\n    }\\\r\n\r\nBecause exception is typed as id, #import'ing another header with a method named \"reason\" can cause this compilation error.  \r\n\r\n\r\nSteps to reproduce:\r\n\r\n// xctest.m\r\n#import <Foundation/Foundation.h>\r\n#import <XCTest/XCTest.h>\r\n\r\n@interface MyObject : NSObject\r\n@property(nonatomic, assign) NSInteger reason;\r\n@end\r\n@implementation MyObject\r\n@end\r\n\r\n@interface MyTest : XCTestCase\r\n@end\r\n\r\n@implementation MyTest\r\n\r\n- (void)testFoo {\r\n  id foo = nil;\r\n  XCTAssertNil(foo, @\"foo should be nil\");\r\n}\r\n@end\r\n\r\nint main() {\r\n}\r\n\r\n\r\n\r\nxctest.m:18:3: warning: multiple methods named 'reason' found\r\n  XCTAssertNil(foo, @\"foo should be nil\");\r\n  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n/Applications/Xcode.app/Contents/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestAssertions.h:47:5: note: expanded from macro 'XCTAssertNil'\r\n    _XCTPrimitiveAssertNil(a1, ## format)\r\n    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n/Applications/Xcode.app/Contents/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestAssertionsImpl.h:94:80: note: expanded from macro '_XCTPrimitiveAssertNil'\r\n        _XCTRegisterFailure(_XCTFailureDescription(_XCTAssertion_Nil, 1, @#a1, [exception reason]),format); \\\r\n                                                                               ^~~~~~~~~~~~~~~~~~\r\n/Applications/Xcode.app/Contents/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestAssertionsImpl.h:70:91: note: expanded from macro '_XCTFailureDescription'\r\n    [NSString stringWithFormat:_XCTFailureFormat(assertion_type, uncaught_exception), @\"\" format]; \\\r\n                                                                                          ^\r\n/Applications/Xcode.app/Contents/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestAssertionsImpl.h:39:55: note: expanded from macro '_XCTRegisterFailure'\r\n    _XCTFailureHandler(self, YES, __FILE__, __LINE__, condition, @\"\" format); \\\r\n                                                      ^\r\n/System/Library/Frameworks/Foundation.framework/Headers/NSException.h:50:1: note: using\r\n- (NSString *)reason;\r\n^~~~~~~~~~~~~~~~~~~~~\r\nxctest.m:6:40: note: also found\r\n@property(nonatomic, assign) NSInteger reason;\r\n                                       ^~~~~~\r\n1 warning generated."
+    email: jonwall@google.com
+    modified: "2014-10-02T17:24:45.282247Z"
+    number: "15263662"
+    number_intvalue: 15263662
+    originated: 10/18/2013
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "5.0"
+    reproducible: Always
+    resolved: Fixed in SDK 8
+    status: Closed
+    title: multiple methods named 'reason' found when importing XCTest/XCTest.h

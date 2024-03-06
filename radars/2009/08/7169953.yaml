@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7169953"
+    labels:
+        datastore_id: "71418"
+data:
+    classification: ""
+    created: "2009-08-27T02:51:50.976976Z"
+    description: "25-Aug-2009 05:07 PM W Lewis:\r\nSummary: \r\n\r\nRetrieving a URL using the NSURL machinery will occasionally result in retrieved data which has the redirect's response-body prepended to the actual document's response-body.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Choose a nearby webserver which does a redirect (preferably to a fairly small page). An ideal case is a webserver which directs from http://foo.com/blah to http://foo.com/blah/  ---  the example code attached to this bug points to a page at omnigroup.com which does that, which might work fine for you.\r\n2. Compile and run the attached C program.\r\n\r\nExpected Results:\r\n\r\nThe program sits in a loop and downloads a URL using -stringWithContentsOfURL:, printing out the length of the retrieved string each time.\r\n\r\nFor a normal, non-dynamic page, one expects the page contents (and therefore its length) to be the same each time through the loop, so you'll just get a stream of the same number over and over.\r\n\r\nActual Results:\r\n\r\nRoughly 2% of the time, the downloaded file will be different (a few hundred bytes longer). Investigation shows that the HTTP redirect's body is being prepended to the actual response.\r\n\r\nRegression:\r\n\r\nThis happens on 10.5.8 and 10.5.7.\r\n\r\nI found this while checking on the status of a different Foundation bug (reported as RADARs 6932684, 6936109,  presumably others). Although I am not able to reproduce that bug on 10.5.8, I now get this data-corruption bug with about the same frequency I used to get that bug.\r\n\r\nI have also been able to reproduce this bug on 10.5.7, although usually the test program crashes due to 6932684 before it can return corrupted data.\r\n\r\nWe've also seen this once or twice in the wild in deployed apps. \r\n\r\nI have not checked against the 10.6. seeds.\r\n\r\nNotes:\r\n\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\nint main()\r\n{\r\n  int i;\r\n  NSUInteger benchmark = 0;\r\n\r\n  i = 1;\r\n  for(;;) {\r\n    NSAutoreleasePool *p = [[NSAutoreleasePool alloc] init];\r\n\r\n    NSString *currinfo = [NSString stringWithContentsOfURL:[NSURL URLWithString:@\"http://www.omnigroup.com/ftp\"]];\r\n\r\n    NSLog(@\"%u\", [currinfo length]);\r\n\r\n    if ([currinfo length] != benchmark) {\r\n        [currinfo writeToFile:[NSString stringWithFormat:@\"out-%d\", i] atomically:NO encoding:NSUTF8StringEncoding error:NULL];\r\n        if (!benchmark)\r\n\t    benchmark = [currinfo length];\r\n    }\r\n\r\n    [p release];\r\n    i ++;\r\n  }\r\n}\r\n\r\n\r\n03-Nov-2010 11:23 AM W Lewis:\r\nProblem still occurs in 10.6.4 / 10F569. Garbled result seems to be returned about 1 time in 700.\r\n\r\n\r\n\r\n03-Nov-2010 12:07 PM W Lewis:\r\nHere's an updated version of the test using 10.6's API (the problem doesn't depend on whether you go through NSString or NSData, since it's a CoreFoundation bug, obviously)\r\n\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\nint main()\r\n{\r\n  int i;\r\n  NSUInteger benchmark = 0;\r\n\r\n  i = 1;\r\n  for(;;) {\r\n    NSAutoreleasePool *p = [[NSAutoreleasePool alloc] init];\r\n\r\n    NSError *err = nil;\r\n    NSData *currinfo = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:@\"http://www.omnigroup.com/ftp\"]];\r\n\r\n    printf(\"%4d: length=%u\\n\", i, (unsigned)[currinfo length]);\r\n\r\n    if ([currinfo length] != benchmark) {\r\n        [currinfo writeToFile:[NSString stringWithFormat:@\"out-%d\", i] options:0 error:NULL];\r\n        if (!benchmark) {\r\n\t    benchmark = [currinfo length];\r\n        }\r\n    }\r\n\r\n    [currinfo release];\r\n\r\n    [p release];\r\n    i ++;\r\n  }\r\n}"
+    email: wiml@omnigroup.com
+    modified: "2011-08-28T05:45:09.743384Z"
+    number: "7169953"
+    number_intvalue: 7169953
+    originated: 25-Aug-2009 05:07 PM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: 10.5.8 - 10.6.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '-{init,string,data}WithContentsOfURL: returns garbled result after redirerct'

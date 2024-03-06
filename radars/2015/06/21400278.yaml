@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21400278"
+    labels:
+        datastore_id: "5046757331304448"
+data:
+    classification: Bug
+    created: "2015-06-16T11:38:02.60593Z"
+    description: "Summary:\r\nGiven an iOS device and an accessory that is connected over Bluetooth LE (as slave) to the iOS device (as master): the accessory can send a \"Connection Parameter Update Request\" over the Signaling L2CAP channel, to ask the iOS device to change the connection parameters, for example to save power or to make the connection more responsive.\r\n\r\niOS will always send a \"Connection Parameter Update Response\" message, accepting the request if the requested parameters conform to the Bluetooth Design Guidelines as set by Apple (https://developer.apple.com/hardwaredrivers/BluetoothDesignGuidelines.pdf, chapter 3.6 Connection Parameters).\r\n\r\nHowever, the update request does not always take effect. According to the Bluetooth 4.0 specification: \"If the LE master Host accepts the request it shall send the connection parameter update to its Controller.\"\r\n\r\nThis does not appear to happen in this edge case: If a previous update request is still in progress (for example, if both controllers are still waiting for the \"instant\" to arrive): a \"Connection Parameter Update Response\" accepting the request will be sent, but no matching LL_CONNECTION_UPDATE_REQ follows in this case. A LL_CONNECTION_UPDATE_REQ will only follow for the previous request.\r\n\r\nSteps to Reproduce:\r\n1. Connect an accessory to an iOS device over Bluetooth LE\r\n2. Let the accessory request a connection interval of 600ms, 0 slave latency and 6000ms supervision timeout.\r\n3. Wait for the LL_CONNECTION_UPDATE_REQ to be received by the accessory.\r\n4. Let the accessory request a connection interval of 24ms, 0 slave latency and 600ms supervision timeout.\r\n5. Immediately hereafter, let the accessory request a connection interval of 600ms, 0 slave latency and 6000ms supervision timeout.\r\n6. Observe that a \"Connection Parameter Update Response\" is received, accepting the request.\r\n7. Observe that a LL_CONNECTION_UPDATE_REQ happens for the 24ms request, but not for the final 600ms request.\r\n\r\nExpected Results:\r\nIn step 7. it's expected that the last request (600ms interval) is applied, since it has been accepted by the host (iOS) in step 6.\r\n\r\nActual Results:\r\nLL_CONNECTION_UPDATE_REQ does not happen for the final set of requested parameters (600ms connection interval, 0 slave latency and 6000ms supervision timeout).\r\n\r\nThe connection stays in the high-power set (24ms interval) that was requested before the final set.\r\n\r\nVersion:\r\niOS 9 beta 1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 5 (A1429)\r\n\r\nAttachments:"
+    email: martijn@pebble.com
+    modified: "2015-06-16T11:38:02.60626Z"
+    number: "21400278"
+    number_intvalue: 21400278
+    originated: 16-Jun-2015 01:32 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 9 beta 1
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: Bluetooth LE Connection Parameter Update Request accepted, but LL_CONNECTION_UPDATE_REQ does not occur

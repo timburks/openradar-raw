@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39731627"
+    labels:
+        datastore_id: "4926048969949184"
+data:
+    classification: Bug, UI/Usability
+    created: "2018-04-25T20:09:26.21367Z"
+    description: "Area:\r\nNetwork Extensions Framework\r\n\r\nSummary:\r\n\r\nNEHotspotConfigurationManager.apply documentation indicates it will update configurations, but this always fails if the device is currently associated with the network.\r\n\r\n> Adds or updates a Wi-Fi network configuration after prompting the user for permission, and then attempts to join the network under certain conditions.\r\n\r\nI acknowledge that this might be expected behaviour based on the way that NEHotspotConfigurationManager and NEHotspotConfigurationError are documented, and in that there is an error case specifically for this situation.\r\n\r\nI've opened this radar for two reasons:\r\n\r\n1. If this really is the expected behaviour then I think the documentation for NEHotspotConfigurationManager.apply should be more specific about when it can successfully update a configuration if it's not always. For example:\r\n\r\n> Adds or updates a Wi-Fi network configuration after prompting the user for permission, and then attempts to join the network under certain conditions. If the device is currently associated with the network being updated, applying the new configuration will fail. In this case you should remove the existing configuration with removeConfiguration(forSSID:) or removeConfiguration(forHS20DomainName:)\r\n\r\n2. Our use case involves updating only the EAP username and password of a configuration. Given that this API is fairly high-level, it would be ideal if updating the username and password for a configuration, even when the device is currently associated with the network, would succeed and re-associate with the new credentials behind the scenes when needed. I think this would be more appropriate especially since this API doesn't provide users a way to see whether the device is currently associated updating a configuration (although others do.)\r\n\r\nOur current workaround for this involves attempting to remove any configurations that have the same SSID as the one that we're updating, and then applying the updated configuration. This means that users will always be prompted to join the network, which seems out of place when the app is only updating credentials and not adding a new network.\r\n\r\nSteps to Reproduce:\r\n\r\nSee attached sample project.\r\n\r\n1. apply a configuration for a network that can be joined immediately\r\n2. apply the same configuration with different credentials\r\n3. note that the second application fails\r\n\r\nIf the first pair of credentials are now invalid, this means that the device won't be able to associate with the network. I found this was the case after toggling WiFi off and on, presumably because otherwise the device would continue the existing association with the old credentials until some future time.\r\n\r\nExpected Results:\r\n\r\nI expect that updating (valid) credentials for a configuration should always succeed, even if the device is already associated with the network.\r\n\r\nActual Results:\r\n\r\nIf the device is already associated with the network being updated, it's required that the configuration is removed first.\r\n\r\nVersion/Build:\r\n\r\niOS 11"
+    email: brandon@brandonevans.ca
+    modified: "2018-04-25T20:09:26.21392Z"
+    number: "39731627"
+    number_intvalue: 39731627
+    originated: "2019-04-25"
+    parent_number: '&{NULL_VALUE}'
+    product: Network Extensions Framework
+    product_version: iOS 11
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Documentation for NEHotspotConfigurationManager.apply indicates it can update configurations, but this always fails if the device is currently associated with the network

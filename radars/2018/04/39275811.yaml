@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39275811"
+    labels:
+        datastore_id: "5062523300610048"
+data:
+    classification: Bug
+    created: "2018-04-13T10:09:23.91521Z"
+    description: "Summary:\r\n\r\nThe stack view adds an undocumented optional constraint that pulls the views to an equal width when using multi-line text labels. This constraint has a higher priority than the default content hugging/compression priorities causing unexpected behavior.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Add a label and a switch to a horizontal stack view in Interface Builder. Set the number of lines for the label to zero. Add text to the label sufficient to fill the width of the screen.\r\n\r\n2. Add constraints to pin the stack view to the leading, top and trailing margins of the superview. Configure the stack view:\r\n- distribution: fill\r\n- alignment: top\r\n- spacing: standard.\r\n\r\n3. Change the content layout priorities for the label as follows:\r\nhorizontal content hugging priority: 251\r\nhorizontal content compression resistance priority: 749\r\n\r\n(The default values for the switch are both 750 so the label should be stretched or squeezed to fit and the switch should stay as its intrinsic content size).\r\n\r\n4. Build and run on iPhone 8 simulator (or device) in portrait.\r\n\r\nExpected Results:\r\n\r\nThe switch should stay at its intrinsic content size and the label should fill the available space flowing over multiple lines as required.\r\n\r\nActual Results:\r\n\r\nThe label and switch are sized equally to fill half of the available width.\r\n\r\nVersion/Build:\r\nXcode Version 9.3 (9E145)\r\niOS 11.3 (15E217)\r\n\r\nWorkaround\r\n\r\nUsing the view debugger you an observe that the stack view has added an optional constraint labelled \"UISV-text-width-disambiguation\":\r\n\r\nlabel.width = 0.5 * stackView.width - 0 @ 759\r\n\r\nThis constraint has a higher priority than the default content hugging priority for the switch so it wins and pulls the width of the views to be half the width of the stack view.\r\n\r\nTo fix the issue you can raise the content hugging priority of the switch to be greater than 759.\r\n\r\nThis constraint is not documented and it should not be necessary to use the view debugger to discover what the stack view is doing before setting the priorities of the arranged subviews.\r\n\r\nSee Also\r\n\r\n* https://github.com/kharrison/radar/tree/master/39275811"
+    email: keith@useyourloaf.com
+    modified: "2018-04-13T10:18:28.56429Z"
+    number: "39275811"
+    number_intvalue: 39275811
+    originated: 9 April 2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK UIKit
+    product_version: "11.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Stack View Unexpected Behaviour With Multi-Line Text Label

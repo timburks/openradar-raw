@@ -1,0 +1,63 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13886790"
+    labels:
+        datastore_id: "3013406"
+data:
+    classification: UI/Usability
+    created: "2013-05-14T14:31:15.941255Z"
+    description: |-
+        Summary:
+        Various UIKit (and AppKit, for that matter) methods only do the correct thing when called on the main thread. The API would ideally proxy all calls onto the main thread, but given the compatibility problems that would introduce it should at least signal to the programmer that the call was made on the wrong thread.
+
+        Steps to Reproduce:
+
+        UILabel *label = [UILabel new];
+        label.text = @"Hello, world";
+        [anotherView addSubview: label];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{[label removeFromSuperview];}];
+
+        Expected Results:
+        The -removeFromSuperview call is done incorrectly. Either UIKit should arrange for the real work to be done on the main thread, or it should signal that the programmer (me) has made an error by calling UIKit off the main thread.
+
+        Actual Results:
+        UIKit just executes the code away from the main thread. The result is unpredictable: I have seen cases where the view is correctly removed from the view hierarchy but is still drawn.
+
+        Regression:
+        N/A
+
+        Notes:
+        It's possible to redirect all messages to an object onto a given queue, as described here: http://blog.securemacprogramming.com/2012/03/confine-all-the-things/. However, in general UIKit can't know that the client programmer hasn't occupied the main thread with some other work, or arranged some application-level locks such that dispatching back to the main thread could deadlock. I therefore think a reasonable approach to take would be one of the other patterns evinced in first-party frameworks for reporting programmer error:
+
+        Example 1.
+        - (void)removeFromSuperview {
+            NSAssert([NSThread isMainThread], @"UIKit calls should only be made on the main thread.");
+            [self _removeFromSuperview];
+        }
+
+        Example 2.
+        - (void)removeFromSuperview {
+            if (![NSThread isMainThread]) {
+              UIKitLogWrongThreadError();
+            }
+            [self _removeFromSuperview];
+        }
+
+        void UIKitLogWrongThreadError() {
+            NSLog(@"You called a UIKit method from the wrong thread. Set a breakpoint in UIKitLogWrongThreadError to debug.");
+        }
+
+        The current behaviour is hard to diagnose, because the symptoms don't immediately make the problem clear. It's easy to accidentally call UIKit from non-main contexts, but hard to realise that you did it.
+    email: iamleeg@gmail.com
+    modified: "2013-05-14T14:31:15.941415Z"
+    number: "13886790"
+    number_intvalue: 13886790
+    originated: 14-May-2013 03:31 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: Any
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Dispatch UIKit actions to the main thread, or assert that I'm not on it.

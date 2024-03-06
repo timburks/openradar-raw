@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12242425"
+    labels:
+        datastore_id: "5019167711297536"
+data:
+    classification: ""
+    created: "2018-11-01T00:02:39.160252Z"
+    description: "Summary:\r\n\r\nWhen the \"Define NetRestore Source\" action is used (along with the \"Create Image\" action) it fails with a generic error.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n1.  Open  System Image Utility\r\n2.  Create a custom workflow\r\n3.  Delete any \"Define Image Source\" action\r\n4.  Insert a \"Define NetRestore Source\" action at the top of the workflow\r\n5.  Configure the \"Create Image\" action to make a NetRestore image and provide an image name, index number, etc.\r\n5.  Click \"Run\"\r\n\r\n\r\nExpected Results:\r\n\r\nIt should create a new NetRestore image configured to use the NetRestore source(s) defined in the \"Define NetRestore Source\" action (or allow the user to select one at runtime, if so configured)\r\n\r\n\r\nActual Results:\r\n\r\nAn alert sheet titled \"Image creation failed.\" will appear, with the message \"An unknown error has occured.\"\r\n\r\nThe log (attached to this report) shows that it failed at this point in the createRestoreFromSources.sh script:\r\n\r\n\r\n# If we don't have a BaseSystem.dmg available to us fail now.\r\nif [ ! -e \"${1}/BaseSystem.dmg\" ]; then\r\necho \"There is no BaseSystem.dmg (Recovery HD) associated with the source ${restoreSource}.\"\r\ncrfsErrExit\r\nfi\r\n\r\nAs far as I can tell, when using the \"Define NetRestore Source\" action it never sets things up so that BaseSystem.dmg can be found.\r\n\r\n\r\n\r\n\r\nRegression:\r\n\r\nI know I was able to make a working NetRestore image that would prompt the user to select an ASR source in Snow Leopard.  I plan to double-check Lion, as I'm not sure I ever made such an image on Lion.  (I think I may have used my pre-existing Snow Leopard image along with ASR multicast to deploy Lion.)\r\n\r\n\r\n\r\nNotes:\r\n\r\nI worked around this by modifying the script at\r\n\r\n/System/Library/CoreServices/System Image Utility.app/Contents/Library/Automator/Create Image.action/Contents/Resources/createRestoreFromSources.sh\r\n\r\nI stuck the following at the top of the file:\r\n\r\nln -s /path/to/BaseSystem.dmg \"${1}/BaseSystem.dmg\"\r\n\r\nThis is obviously an ugly hack and the wrong thing to do.  But I needed to make a NetRestore image today that would allow the user to select an ASR multicast stream and this got the job done."
+    email: tim1724@gmail.com
+    modified: "2018-11-01T00:02:39.160552Z"
+    number: "12242425"
+    number_intvalue: 12242425
+    originated: 9/5/2012
+    parent_number: '&{NULL_VALUE}'
+    product: 'macOS: Server'
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Duplicate/11919162 (closed)
+    title: System Image Utility fails when using Define Netrestore Source

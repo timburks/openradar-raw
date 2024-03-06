@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7751530"
+    labels:
+        datastore_id: "187401"
+data:
+    classification: Serious Bug
+    created: "2010-03-13T22:17:58.430419Z"
+    description: "Summary:\r\nThe cursor structure returned to applications by the IOFramebuffer API is missing the number of frames in the cursor.\r\n\r\nSteps to Reproduce:\r\n1. Call CGDisplayIOServicePort to get a service port for a display.\r\n2. Call IOFramebufferOpen to get a connection port to its framebuffer.\r\n3. Call IOConnectMapMemory with the kIOFBCursorMemory mapping type to map the cursor structure into application memory.\r\n\r\nExpected Results:\r\nThe structure includes, in the third byte (that is to say, in the bits that are set in kIOFBShmemCursorNumFramesMask) of the version member, the number of frames in the cursor.\r\n\r\nActual Results:\r\nThe version member includes the version number and nothing but.\r\n\r\nRegression:\r\nUnknown.\r\n\r\nNotes:\r\nIOFramebufferShared.h implies by proximity that I can get the number of frames by bitwise-ANDing the version with kIOFBShmemCursorNumFramesMask and shifting the result right by kIOFBShmemCursorNumFramesShift. As noted above, this does not work: The result is zero, as that byte of the version is zero.\r\n\r\nIt is impossible to even make an educated guess at the pixel format (x-radar://problem/7751503) without knowing how many frames there are, especially since the structure appears to be significantly larger than any probable number of frames. Dividing the number of bytes past the end of the fixed-size portion of the structure (as measured by subtracting the size of that fixed-size portion from the number in the structSize member) by 4 (guessed number of bytes per pixel) by width by height gives me 120 for the Mac OS X arrow cursor.\r\n\r\nThe index of the current frame is indicated in the frame member, but the number of frames is absent."
+    email: boredzo@gmail.com
+    modified: "2011-08-28T05:42:17.015451Z"
+    number: "7751530"
+    number_intvalue: 7751530
+    originated: 2010-03-13T14:09-0800
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.1/10B504
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: IOFramebuffer does not return number of frames

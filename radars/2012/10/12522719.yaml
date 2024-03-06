@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12522719"
+    labels:
+        datastore_id: "2188401"
+data:
+    classification: Performance
+    created: "2012-10-23T13:29:19.50974Z"
+    description: "It appears there is a memory leak in the Security framework (at least) when using TLS1 mutual authentication (or NSURLAuthenticationMethodServerTrust).  Every connection, a CFArray gets leaked, usually containing a SecCertificateRef.  The Leaks instrument reported the memory was originally allocated by SSLProcessCertificate().  It seems to be the peer certificate which gets leaked.\r\n\r\nJudging by the opensource version at http://opensource.apple.com/source/Security/Security-55179.1/libsecurity_ssl/lib/sslCert.c , it seems to be the peerCert member of the SSLContext structure which gets leaked.  The problem seems to be in the SSLInstallSessionFromData() function (http://opensource.apple.com/source/Security/Security-55179.1/libsecurity_ssl/lib/sslSession.c ), which gets called later in the handshake process and replaces the peerCert array without first checking to see if there was an existing value, and releasing it if so.\r\n\r\nThe structure headers do not match up with iPad reality, but I could see a CFArrayRef member of the structure (which contained a SecCertificateRef) getting changed during SSLInstallSessionFromData(), and the retain count was still 1 following the handshake.\r\n\r\nThis is with iOS 6.0.   I did see similar leaks with iOS 5.x as well, though the behavior seemed to be a little different."
+    email: lindberg+openradar@clindberg.org
+    modified: "2012-10-23T13:29:19.510118Z"
+    number: "12522719"
+    number_intvalue: 12522719
+    originated: "2012-10-17"
+    parent_number: '&{NULL_VALUE}'
+    product: iPad SDK
+    product_version: "6.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Memory leak in Security framework with TLS1 mutual authentication

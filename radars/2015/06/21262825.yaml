@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21262825"
+    labels:
+        datastore_id: "5037426682626048"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-06-05T18:30:33.66529Z"
+    description: "Summary:\nAfter git merging a .storyboard file, an invalid reference in the inferredMetricsTieBreakers section will make the app fail to compile.\n\nSteps to Reproduce:\nTo emulate a merge:\n\n1. Open a valid .storyboard file’s XML\n2. In the inferredMetricsTieBreakers section, add an incorrect reference, for example:\n\n        <segue reference=“abc-de-fgh”/>\n\n3. Try to compile the app\n4. Try running the storyboard through ibtool (`ibtool Main.storyboard`)\n\nExpected Results:\n\nI expect an error like: \n\n“Invalid segue reference “abc-de-fgh” in inferredMetricsTieBreakers section. If you deleted a segue during a source control merge, try deleting the segue reference.”\n\nActual Results:\n\nInstead, I get this ibtool output with an NSArray exception:\n\n2015-06-05 13:15:54.628 ibtoold[73000:8343663] Exception raised while unarchiving document objects - *** -[__NSArrayM insertObject:atIndex:]: object cannot be nil\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>com.apple.ibtool.errors</key>\n\t<array>\n\t\t<dict>\n\t\t\t<key>description</key>\n\t\t\t<string>The document \"Main.storyboard\" could not be opened. The operation couldn’t be completed. (com.apple.InterfaceBuilder error -1.)</string>\n\t\t\t<key>recovery-suggestion</key>\n\t\t\t<string>Check the console log for additional information.</string>\n\t\t</dict>\n\t</array>\n</dict>\n</plist>\n\nRegression:\nUnknown\n\nNotes:\n\nIt appears the parser assumes interpreting the segue reference will return a non-nil value. Instead, the parser should check for nil, and then return a helpful error message if the segue identified isn’t found."
+    email: getaaron@gmail.com
+    modified: "2015-06-05T18:30:33.66556Z"
+    number: "21262825"
+    number_intvalue: 21262825
+    originated: 05-Jun-2015 01:30 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode Version 6.3.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Invalid storyboard segue reference causes ibtool failure with obscure error message

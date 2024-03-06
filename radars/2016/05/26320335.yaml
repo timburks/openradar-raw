@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26320335"
+    labels:
+        datastore_id: "4930049715208192"
+data:
+    classification: Serious Bug
+    created: "2016-05-17T12:35:19.33677Z"
+    description: "Summary:\r\nIn some cell-backed table views, whose scroll view is configured to allow responsive scrolling, dynamic table content may not be redrawn as expected when the view is resized.\r\n\r\nI discovered this behavior in NSTableView while debugging a behavior in my long-shipping app, FlexTime. Because of time constraints, I abandoned pursuit of a concise, reproducable test case, but I thought I'd report the bug so somebody on the AppKit team can hopefully review whether the behavior I'm seeing is indeed an Appkit bug, and whether it has wider implications than just the cell-backed table view issue I'm seeing.\r\n\r\nSteps to Reproduce:\r\n1. Download FlexTime: https://www.red-sweater.com/flextime/FlexTime1.3.zip\r\n\r\n2. Open the app and create a new, default document.\r\n\r\n3. Press the Play button to start the default, boilerplate document \"running.\" Witness the animated pie chart in the last column of the main window's table view.\r\n\r\n4. Resize the window by grabbing the lower right corner and expanding to make the window much larger.\r\n\r\nExpected Results:\r\nThe animating pie chart should continue drawing.\r\n\r\nActual Results:\r\nThe animating pie chart ceases to draw. It turns out this is because the preparedContentRect for the view has gone stale and reflects the old rectangle. Consequently when the view is internally asked to determine visible columns needing redrawing, it disregards the column containing the constantly-updating pie-chart progres indicator. \r\n\r\nIf you set a breakpoint on prepareContentInRect: you will see that the preparedContentRect is often only updated at the beginning of a live resize and not at the end. I suspect something in NSTableView's handling of the live resize is overly-certain that the resize does not affect the visible content of the table view, particularly when growing the table to larger than its previously \"prepared\" size.\r\n\r\nI've worked around the issue in my app by overriding -[NSTableView preparedContentRect] to return -[NSTableView visibleRect].\r\n\r\n\r\nVersion:\r\n10.11.4 (15E65) \r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nMacBook Pro 2014 edition 15\"\r\n\r\nAttachments:"
+    email: jalkut@gmail.com
+    modified: "2016-05-17T12:35:19.33697Z"
+    number: "26320335"
+    number_intvalue: 26320335
+    originated: 17-May-2016 08:34 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11.4 (15E65)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Cell-backed table view doesn't update its preparedContentRect aggressively enough

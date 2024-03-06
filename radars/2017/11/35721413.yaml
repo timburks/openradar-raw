@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35721413"
+    labels:
+        datastore_id: "5057432891949056"
+data:
+    classification: Enhancement
+    created: "2017-11-28T13:58:52.43209Z"
+    description: "Summary:\r\nThis is a duplicate of radar #35721149\r\n[I vote for proposed solution #2. This would allow us to completely customize the position and size of both scroll indicators.]\r\n\r\nIf I opt out of automatic scroll view content inset adjustment behavior by setting it to .never, it is currently _impossible_ to get scrolling indicators right on the iPhone X with public API, they are always cut off at the round corners of the iPhone X (see attached image “current none-situation - broken.png”). \r\n\r\nThis is the combination of several facts:\r\n\r\n1. if `contentInsetAdjustmentBehavior` is != .never, there is some automatic magic going on that adjusts the indicators in a way that they stop right before the round edges (which is the desired behavior)\r\n2. setting it to .never, removes this automagic and suddenly scrollingIndicatorInsets of UIEdgeInsets.zero will ignore any round corners and just pretend there are none, making them cut off at the corners\r\n3. there is little control over the scrollingIndicatorInsets/placement. Adjusting for example the bottom inset, s.t. the vertical scrolling indicator would stop before the round corner results in the horizontal indicator being moved up, which is not desired (see attached image “broken_insetsSet.jpg”)\r\n\r\n\r\nSteps to Reproduce:\r\n1. create a ViewController which a UIScrollView as its root view\r\n2. set `scrollView.contentInsetAdjustmentBehavior  = .never`\r\n3. set `scrollView.scrollingIndicatorInsets = .zero`\r\n\r\nExpected Results:\r\nScrolling indicators stop before they reach the round corner, just as they do when the `contentInsetAdjustmentBehavior` is set to .automatic (see attached image “correct.jpg”)\r\n\r\nActual Results:\r\nScrolling indicators happily pretend there are no round edges on the iPhone X and go as far as the actual rectangle would go, resulting in cut off indicators at the edges. I can’t think of any reason why this would be the desired behavior, even if I opt out of automatic scroll view content inset adjustment.\r\n\r\nVersion:\r\niOS 11.2 Beta\r\n\r\nNotes:\r\nThere are 2 solutions to this problem, which are not mutually exclusive but IMO should both be implemented.\r\n\r\n1. fix indicators, if contentInsetAdjustmentBehavior == .never and scrollingIndicatorInsets == .zero\r\nEven with this combination, the scrolling indicators should stop before the round corners, as I can’t think of any situation where the current behavior would be preferred over this\r\n\r\n2. offer a more flexible API and give developers more control over the position of the scrolling indicators\r\nInstead of simply offering `scrollingIndicatorInsets`, where one property (e.g. bottom) effects both the horizontal and the vertical indicator, offer 2 properties `horizontalScrollingIndicatorInsets` and `verticalScrollingIndicatorInsets`. This would allow me to fix the indicators in my case, where I really want to have automatic adjustment set to .none"
+    email: futuretap@googlemail.com
+    modified: "2017-12-04T10:07:09.74795Z"
+    number: "35721413"
+    number_intvalue: 35721413
+    originated: 28-Nov.-2017 02:58 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 11.2 Beta
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/35721149/Open
+    title: Scrolling Indicator Insets are broken on iPhone X

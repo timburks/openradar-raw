@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9241512"
+    labels:
+        datastore_id: "1157401"
+data:
+    classification: Serious Bug
+    created: "2011-04-06T09:30:23.150551Z"
+    description: "06-Apr-2011 10:26 AM Dair Grant:\r\nSummary:\r\nSeveral math.h functions (isnormal, isfinite, isinf, isnan, signbit) are implemented as inlines on arm, and as either inlines or real functions on x86 depending on the -ffast-math flag (the x86 version of math.h declares them as inlines by default, but as external functions when -ffast-math is enabled).\r\n\r\nThe Simulator traps calls to these functions and calls abort(), presumably to ensure code doesn't make any reference to them.\r\n\r\nHowever since the Simulator is running x86 code, if that code is compiled with -ffast-math then these symbols should be allowed (since they are present in the x86 libSystem, and they will always be inlined on arm).\r\n\r\n\r\nSteps to Reproduce:\r\nCreate a new iPhone project, add a reference to isnan(42) in didFinishLaunchingWithOptions.\r\n\r\n\r\nExpected Results:\r\nThe project should compile and run in the Simulator.\r\n\r\n\r\nActual Results:\r\nIf the project does not use -ffast-math, the Simulator will execute it correctly.\r\n\r\nIf -ffast-math is added as a compiler option, the Simulator will kill the app on the call to isnan() with:\r\n\r\n---------------------------------\r\nDetected an attempt to call a symbol in system libraries that is not present on the iPhone:\r\n__isnand called from function -[FastMathAppDelegate application:didFinishLaunchingWithOptions:] in image FastMath.\r\nIf you are encountering this problem running a simulator binary within gdb, make sure you 'set start-with-shell off' first.\r\n---------------------------------\r\n\r\n\r\nRegression:\r\nThis validation didn't happen prior to 3.2.6 (it may have been added earlier, but I think I was using 3.2.4 before and it didn't happen).\r\n\r\n\r\n------------------\r\n11-Apr-2011 18:16 Dair Grant:\r\n\r\nClosed by Apple as duplicate of rdar://8158484."
+    email: dairgrant@gmail.com
+    modified: "2011-08-28T05:37:13.954822Z"
+    number: "9241512"
+    number_intvalue: 9241512
+    originated: 06-Apr-2011
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 3.2.6
+    reproducible: Always
+    resolved: ""
+    status: Duplicate
+    title: Xcode 3.2.6 Simulator incompatible with -ffast-math

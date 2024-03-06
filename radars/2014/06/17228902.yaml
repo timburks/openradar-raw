@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17228902"
+    labels:
+        datastore_id: "4973391874359296"
+data:
+    classification: Enhancement
+    created: "2014-06-09T08:10:04.494763Z"
+    description: "The Swift language does not support exceptions, which makes it easier to reason about the behavior of code.  However, the current standard library lacks an easy mechanism to propagate errors from computations with results.  \r\n\r\nThe existing NSErrorPointer mechanism forces code to manually pass the error result holder to every call that can result in an error.  This mechanism works, but it clutters up the code with error-handling boilerplate.\r\n\r\nIt would be more elegant to return errors as part of a union type. Haskell and Scala have the “Either” type for that; the “Left” case holds errors, and the “Right” case holds success results.  Scala also has the “Try” type, which has monadic behavior like Swift’s Optional type.\r\n\r\nI propose adding an enum type called “Result” to the standard Swift library.  It would have “Success” and “Error” cases.  Like Scala’s “Try” monad, it applies functions to “Success” results and simply propagates “Error” results.\r\n\r\nIn addition, I propose extending Swift’s conditional member access “?.” syntax to work with the “Result” monad.  \r\n\r\nThe following code sample shows a possible declaration of “Result” along with sample code to exercise it.  It also shows the ideal “?.” syntax in a comment.  \r\n(Note that it currently fails to compile; I have reported that at rdar://17228613)\r\n\r\nenum Result<SuccessType, ErrorType> {\r\n    case Success(SuccessType)\r\n    case Error(ErrorType)\r\n\r\n    func getLogicValue() -> Bool {\r\n        switch self {\r\n        case .Success(_):\r\n            return true\r\n        case .Error(_):\r\n            return false\r\n        }\r\n    }\r\n    \r\n    func map<U>(f: (SuccessType) -> U) -> Result<U,ErrorType> {\r\n        switch self {\r\n        case let .Success(value):\r\n            return .Success(f(value))\r\n        case let .Error(error):\r\n            return .Error(error)\r\n        }\r\n    }\r\n    \r\n    func bind<U>(f: (SuccessType) -> Result<U,ErrorType>) -> Result<U,ErrorType> {\r\n        switch self {\r\n        case let .Success(value):\r\n            return f(value)\r\n        case let .Error(error):\r\n            return .Error(error)\r\n        }\r\n    }\r\n}\r\n\r\n/* Ideal syntax: \r\nlet result = NSData.myApp_dataWithContentsOfFile(\"filename.json\")?.myApp_parseJSON()?.myApp_lookupString(\"name\")?.uppercaseString\r\n*/\r\nlet result = NSData.myApp_dataWithContentsOfFile(\"filename.json\")\r\n    .bind({$0.myApp_parseJSON()})\r\n    .bind({$0.myApp_lookupString(\"name\")})\r\n    .map({$0.uppercaseString})\r\n\r\nswitch result {\r\ncase let .Success(value):\r\n    println(\"Success: \"+value)\r\ncase let .Error(error):\r\n    println(\"Error: \"+error.localizedDescription)\r\n}"
+    email: jlieske@gmail.com
+    modified: "2014-06-21T19:39:53.70617Z"
+    number: "17228902"
+    number_intvalue: 17228902
+    originated: 09-Jun-2014 01:08 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 'Xcode6 beta: Version 6.0 (6A215l)'
+    reproducible: Always
+    resolved: ""
+    status: Duplicate
+    title: Swift should implement "Either" type with "?." operator for functional error propagation

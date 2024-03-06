@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "44895456"
+    labels:
+        datastore_id: "4936139349688320"
+data:
+    classification: ""
+    created: "2018-09-30T18:01:17.232971Z"
+    description: "Area:\r\nSiriKit\r\n\r\nSummary:\r\n\r\nI'm trying to implement support for INPlayMediaIntent voice shortcuts for a podcast player. When the Siri command is invoked,  the audio session gets suspended (AVAudioSession.InterruptionType.began notification) and doesn't get resumed (.ended) until the siri response panel is hidden. Sometimes the .ended notification isn't received at all.\r\n\r\nSequence\r\n\r\n1. User triggers Siri\r\n\r\n2. AVAudioSession.interruptionNotification is received  with InterruptionType.began\r\n\r\n3. User speaks the invocation phrase\r\n\r\n4. The Intent extension is asked for a handler\r\n\r\n5. The intent handler responds to with INPlayMediaIntentResponse(code: .handleInApp, userActivity: nil)\r\n\r\n6. The main app implements application(UIApplication, handle: INIntent, completionHandler: (INIntentResponse) -> Void) in the AppDelegate, where the class that manages audio playback will be given the context of what to play, activates the audio session and begins playback.\r\n\r\n7. A second AVAudioSession.interruptionNotification is received by the app with InterruptionType.began, which the app responds to by pausing playback.\r\n\r\n8. AVAudioSession.interruptionNotification InterruptionType.ended doesn't get called for many seconds if the user doesn't dismiss the Siri panel. Sometimes it doesn't get called at all. (eg. when invoking Siri from the home button with the app  in foreground and the device unlocked + auto lock set to never).\r\n\r\nIMPORTANT: notice this behaviour only happens on real devices. On iOS simulator everything works like a charm, and AVAudioSession.interruptionNotification of type .began is never sent. (maybe interruption notifications don't exist on the simulator).\r\n\r\nI tested on both iPhone X and iPhone 6S, both with iOS 12.\r\n\r\nAs a workaround I tried a different workflow, delaying starting the player and only activating the audio session following the application(UIApplication, handle: ) method, delaying the start of the playback when the interruption .ended notification comes. Nothing changes: an AVAudioSession.interruptionNotification of type .began is received but the .ended notification never comes until the Siri UI is dismissed.\r\n\r\nApple DTS suggested to start playback when the (second) interruption.began notification comes. This works with the device attached to the simulator, but randomly fails when the device is run by itself, especially when invoking the Siri command while the app has not been running for sometime.\r\n\r\nSteps to Reproduce:\r\n\r\na. Download the sample project: http://media.digitalia.fm/misc/AudioIntent2.zip\r\n\r\nb. Build and run on a real device\r\n\r\nc. Touch \"Record Voice Shortcut\" and record an invokation phrase\r\n\r\nd. Invoke Siri\r\n\r\ne. Say the invokation phrase\r\n\r\nExpected Results:\r\n\r\nThe song starts immediately and is never interrupted\r\n\r\nActual Results:\r\n\r\nThe song doesn't start until the user dismisses the Siri UI, maybe pressing the home button."
+    email: franco@solerio.net
+    modified: "2018-09-30T18:01:17.23319Z"
+    number: "44895456"
+    number_intvalue: 44895456
+    originated: 09/30/2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "12.0"
+    reproducible: alwas
+    resolved: ""
+    status: Open
+    title: 'INPlayMediaIntent: Siri interrupts the audio session'

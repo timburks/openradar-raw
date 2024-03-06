@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28361550"
+    labels:
+        datastore_id: "6130898596528128"
+data:
+    classification: Serious bug
+    created: "2016-09-19T10:37:15.43226Z"
+    description: "Summary:\r\nAfter mutating the fetchRequest on a fetchedResultsController, each save of the managed object context will open one or more file descriptors pointing to the sectionInfo cache file of the fetchedResultsController.\r\nWhen hitting 255 open files, no new resources may be opened (on iOS devices), causing any subsequent opening of xib files, images, etc. to fail.\r\n\r\nSteps to Reproduce:\r\n1. Build the project in Xcode 8\r\n2. Install on an iPad running iOS 10\r\n3. Launch the app.\r\n4. Tap 'Add Entity' a few times\r\n5. Tap 'Mutate Fetch Request' once\r\n6. Continue tapping 'Save Context (x 20)' until 255 file descriptors are open (they will be shown in a UITextView)\r\n7. Tap 'Load Resource' - just to see that the loading of the resource will fail.\r\n8. The force-unwrapping of the resource causes the app to crash. This is intentional to show problems that are likely to occur as a side effect of this issue.\r\n\r\nExpected Results:\r\nNSFetchedResultsController section cache does not leak file descriptors.\r\n\r\nActual Results:\r\nNSFetchedResultsController section cache leaks file descriptors.\r\n\r\nVersion:\r\niOS 10.0.1\r\n\r\nNotes:\r\nThis happens in simulator as well, but on MacOS you can open 1024 files without running into the issue.\r\nThis also happens with apps built using Xcode 7 but running on iOS 10.\r\n\r\nConfiguration:\r\niPad Pro 12.9 inc\r\n\r\nLink to project demonstrating the issue:\r\nhttps://github.com/mortenbekditlevsen/CoreDataFDLeak"
+    email: mbd@wallmob.com
+    modified: "2016-11-17T13:20:58.8157Z"
+    number: "28361550"
+    number_intvalue: 28361550
+    originated: 19/09-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "10"
+    reproducible: Always
+    resolved: 17/11-2016
+    status: Closed
+    title: On iOS 10, NSFetchedResultsController leaks 'open file descriptors'

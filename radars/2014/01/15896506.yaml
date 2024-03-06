@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15896506"
+    labels:
+        datastore_id: "5896186401652736"
+data:
+    classification: Performance
+    created: "2014-01-29T01:00:17.147327Z"
+    description: "Summary:\r\nAs a result of change in 10.9 and the 10.9 SDK, applications that relied on CARemoteLayerClient for performance from 10.7 through 10.8 are broken in 10.9. This is the result of the confluence of two issues.\r\n\r\nIssue 1: Applications written using the 10.8 SDK that use CoreAnimation run extremely slowly on 10.9 (like, only one layer can be redrawn per vsync).\r\n- This appears to be the case because NSWindowHostsLayersInWindowServer is set to NO by when using the 10.8 SDK.\r\n\r\nThis can be fixed by switching to the 10.9 SDK, except, some functionality that the application relies on is broken by the 10.9 SDK. In particular:\r\n\r\nIssue 2: Applications that use CARemoteLayerClient that worked when using the 10.8 SDK are broken when using the 10.9 SDK\r\n- This appears to be because the 10.9 SDK sets NSWindowHostsLayersInWindowServer to YES by default\r\n- Specifying setLayerUsesCoreImageFilters:YES in the client application, or setting NSWindowHostsLayersInWindowServer:NO will make the application run, but will now encounter the terrible performance mentioned above.\r\n\r\nAs a result of these two bugs, applications that relied on CARemoteLayerClient for good performance in 10.8 are broken in 10.9 -- there is no way to get them to both function and be performant.\r\n\r\nIs this a bug in the OS that can be fixed, or is there a new API that can be exposed to accomplish this in 10.9 (perhaps by communicating through the window server)?\r\n\r\nSteps to Reproduce:\r\nFor issue 1: CoreAnimation is slow (with the 10.8 SDK, NSWindowHostsLayersInWindowServer:NO, or setLayerUsesCoreImageFilters:YES)\r\n1. download the attached ca_slow.mm\r\n2. build using \"clang++ -o ca_slow ca_slow.mm -framework Cocoa -framework Quartz\"\r\n3. run using “./ca_slow”, the application will create ~20 windows (use ctrl-C to quit)\r\nExpected results:\r\n-The windows all update simultaneously from green to red and back.\r\nActual results:\r\n- Four the windows will update simultaneously (the ones for which setLayerUsesCoreImageFilters:YES is not set). The other 16 will update extremely slowly, in a cascade. Trying to get those windows to animate at 30-60fps is an impossibility.\r\nNotes: Calling setLayerUsesCoreImageFilters:YES produces the same results as NSWindowHostsLayersInWindowServer:NO, or building using the 10.8 SDK\r\n\r\nFor issue 2: CARemoteLayerClient is broken on the 10.9 SDK\r\n1. download the attached ca_remote.mm\r\n2. build using “g++ -o ca_remote ca_remote.mm -framework Cocoa -framework Quartz\"\r\n3. run using “./ca_remote”, the application will create 1 window (use ctrl-C to quit)\r\nExpected results:\r\n- The application will show a green layer. This occurs if you compile with the 10.8 SDK, specify setLayerUsesCoreImageFilters:YES, or use NSWindowHostsLayersInWindowServer:NO).\r\nActual results:\r\n- The application will show a red layer.\r\nNotes: Instructions for testing with the 10.8 SDK are in the top of the file.\r\n\r\nExpected Results:\r\nFor the ca_slow program, the application should update all windows simultaneously.\r\n\r\nFor the ca_remote program, the application should show a green window.\r\n\r\nActual Results:\r\nFor ca_slow, the windows update extremely slowly.\r\n\r\nFor the ca_remote program, the application shows a red window.\r\n\r\nVersion:\r\nOS: 10.9.1 (13B42)\r\nXCode: 5.0.2 (5A3005)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nThis occurs on all hardware on 10.9. This does not happen on any hardware on 10.8.\r\n\r\nAttachments:\r\n'ca_slow.mm' and 'ca_remote.mm' were successfully uploaded."
+    email: ccameron@chromium.org
+    modified: "2014-01-29T01:00:17.147452Z"
+    number: "15896506"
+    number_intvalue: 15896506
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: "10.9"
+    reproducible: Yes
+    resolved: ""
+    status: ""
+    title: Regression - CALayers unusably slow in 10.9 (and CARemoteLayerClients sometimes breaks)

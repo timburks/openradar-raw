@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB10003729
+    labels:
+        datastore_id: "5600492210094080"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2022-05-02T01:45:47.767745Z"
+    description: "The documentation for `objc_lookUpClass` states:\r\n\r\n> objc_getClass(_:) is different from this function in that if the class is not registered, objc_getClass(_:) calls the class handler callback and then checks a second time to see whether the class is registered. *****This function does not call the class handler callback.*****\r\n\r\nNot only does the documentation explicitly guarantee that this function shouldn’t call the class handler callbacks, it’s in fact the sole difference between `objc_lookUpClass` and `objc_lookUpClass`.\r\n\r\nAs it turns out, both APIs call the handler chain. This violates the documented behaviour, and makes these two functions are exactly identical in behaviour.\r\n\r\nI’ve isolated the change as occurring between these two versions of the open-sourced ObjC runtime:\r\n\r\n* https://opensource.apple.com/source/objc4/objc4-274/runtime/objc-runtime.m.auto.html\r\n* https://opensource.apple.com/source/objc4/objc4-371/runtime/objc-runtime-new.m.auto.html\r\n\r\nI’ve attached a really simple snippet that replicated the issue.\r\n\r\n\r\nSample:\r\n\r\n```swift\r\nimport ObjectiveC\r\nimport Foundation\r\n\r\nvar thePrevHook: objc_hook_getClass? = nil\r\n\r\nfunc myGetClassHook(className: UnsafePointer<Int8>, outClass: AutoreleasingUnsafeMutablePointer<AnyClass?>) -> ObjCBool {\r\n    fatalError(\"This should never have been called, because `objc_lookUpClass` is not supposed to call the class callbacks.\")\r\n}\r\n\r\nobjc_setHook_getClass(myGetClassHook, &thePrevHook)\r\n\r\nlet newClass: AnyClass? = objc_lookUpClass(\"NoClassExistsWithThisName\") // \U0001F4A5\r\nprint(\"This should be nil:\", newClass as Any)\r\n```"
+    email: AlexanderMomchilov@gmail.com
+    modified: "2022-05-02T01:45:47.767913Z"
+    number: FB10003729
+    number_intvalue: 10003729
+    originated: May 1, 2022
+    parent_number: '&{NULL_VALUE}'
+    product: Objective-C Runtime
+    product_version: ""
+    reproducible: Yes
+    resolved: Not yet
+    status: Open
+    title: objc_lookUpClass does not behave as documented

@@ -1,0 +1,160 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22800610"
+    labels:
+        datastore_id: "6095549321183232"
+data:
+    classification: Security
+    created: "2015-09-22T15:04:11.63971Z"
+    description: |-
+        Summary:
+        Calendar server: A secure connection can't be made
+
+        Steps to Reproduce:
+        Start Calendar Server in 5.0.4. Have it available for all users on all networks. (Yes, insecure, but I don't want any other things to prevent login.)
+
+        Expected Results:
+        When configuring Calendar service in Calendar.app one should be able to get a working CalDAV server account.
+        Certificate for FQDN is installed. (But can't be selected due to RDAR 22800164)
+
+        Actual Results:
+        Calenar server is shown as running. There is a (terribly configured) TLS server answering on FQDN port 8443. Accessing that with a browser gives me a 401 which is expected. Configuring said account in Calendar.app results in the error message that a secure connection cannot be made.
+
+        Server with secure communication unavailable.
+        Your calendar account isn't on a server that can receive your calendar information securely.  If a server isn't secure, others may be able to view your calendar information.  To continue searching for your account on servers that may not be secure, and then set up the account if it's found, click Continue.
+
+        I can click continue and Caledar says: An unknown error occured.
+
+        Very “funny” since I just read in another RDAR that Apple switched to HTTPS only for Calendar.
+
+
+
+
+
+
+        Regression:
+        This did work in 4.1.5, Calendar server did not launch at all in 5.0.3.
+
+        Notes:
+
+        Access.log:
+
+        Log opened - server start: [Tue Sep 22 16:52:35 2015].
+        10.11.2.10 - - [22/Sep/2015:16:52:59 +0200] "PROPFIND /.well-known/caldav HTTP/1.1" 301 169 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=0 or=1 t=3.2 fwd=10.11.2.10 unix=true
+        10.11.2.10 - - [22/Sep/2015:16:53:00 +0200] "PROPFIND /.well-known/caldav HTTP/1.1" 301 169 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=0 or=1 t=1.6 fwd=10.11.2.10 unix=true
+        10.11.2.10 - - [22/Sep/2015:16:53:00 +0200] "PROPFIND /principals/ HTTP/1.1" 401 141 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=1 or=1 t=6.6 fwd=10.11.2.10 unix=true
+        10.11.2.10 - - [22/Sep/2015:16:53:00 +0200] "PROPFIND /principals/ HTTP/1.1" 401 141 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=2 or=1 t=6.7 fwd=10.11.2.10 unix=true
+        10.11.2.10 - - [22/Sep/2015:16:53:10 +0200] "PROPFIND / HTTP/1.1" 401 141 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=1 or=1 t=2.2 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:53:22 +0200] "PROPFIND /principals/ HTTP/1.1" 207 469 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=3 or=1 t=22662.7 responses=1 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:53:22 +0200] "PROPFIND /principals/ HTTP/1.1" 207 469 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=0 or=1 t=22660.1 responses=1 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:54:07 +0200] "PROPFIND /principals/ HTTP/1.1" 207 469 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=2 or=2 t=47359.7 responses=1 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:54:07 +0200] "PROPFIND /principals/users/pepi/ HTTP/1.1" 207 638 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=2 or=1 t=57770.9 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:54:26 +0200] "PROPFIND / HTTP/1.1" 207 458 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=1 or=2 t=76385.2 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:54:26 +0200] "PROPFIND /calendar/dav/pepi/user/ HTTP/1.1" 404 225 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=1 or=1 t=65931.6 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:54:26 +0200] "PROPFIND /dav/principals/ HTTP/1.1" 404 217 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=3 or=2 t=35803.7 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:54:26 +0200] "PROPFIND /principals/ HTTP/1.1" 207 469 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=3 or=2 t=45840.3 responses=1 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:54:26 +0200] "PROPFIND /principals/users/pepi/ HTTP/1.1" 207 638 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=0 or=1 t=55870.6 fwd=10.11.2.10 unix=true
+        10.11.2.10 - - [22/Sep/2015:16:56:59 +0200] "GET / HTTP/1.1" 401 141 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/600.8.9 (KHTML, like Gecko) Version/8.0.8 Safari/600.8.9" i=3 or=1 t=2.3 fwd=10.11.2.10 unix=true
+        10.11.2.10 - - [22/Sep/2015:16:56:59 +0200] "GET / HTTP/1.1" 401 320 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/600.8.9 (KHTML, like Gecko) Version/8.0.8 Safari/600.8.9" i=3 or=1 t=7.7 fwd=10.11.2.10 unix=true
+        10.11.2.10 - - [22/Sep/2015:16:58:32 +0200] "PROPFIND /.well-known/caldav HTTP/1.1" 301 169 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=3 or=1 t=1.8 fwd=10.11.2.10 unix=true
+        10.11.2.10 - - [22/Sep/2015:16:58:32 +0200] "PROPFIND /principals/ HTTP/1.1" 401 141 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=3 or=1 t=4.4 fwd=10.11.2.10 unix=true
+        10.11.2.10 - - [22/Sep/2015:16:58:32 +0200] "PROPFIND /.well-known/caldav HTTP/1.1" 301 169 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=0 or=1 t=2.2 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:58:39 +0200] "PROPFIND /principals/ HTTP/1.1" 207 469 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=3 or=1 t=6947.0 responses=1 fwd=10.11.2.10 unix=true
+        10.11.2.10 - - [22/Sep/2015:16:58:42 +0200] "PROPFIND / HTTP/1.1" 401 141 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=2 or=1 t=2.2 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:58:49 +0200] "PROPFIND /principals/ HTTP/1.1" 207 469 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=0 or=1 t=17220.2 responses=1 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:59:14 +0200] "OPTIONS /principals/__uids__/DDAB87FB-DDCA-4D60-AC1F-91FBE2D02954/ HTTP/1.1" 200 0 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=1 or=1 t=35124.3 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:59:31 +0200] "PROPFIND / HTTP/1.1" 207 458 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=2 or=1 t=48523.4 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:59:31 +0200] "PROPFIND /calendar/dav/pepi/user/ HTTP/1.1" 404 225 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=3 or=1 t=38481.0 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:59:39 +0200] "PROPFIND /dav/principals/ HTTP/1.1" 404 217 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=1 or=1 t=16539.6 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:59:39 +0200] "PROPFIND /principals/ HTTP/1.1" 207 469 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=0 or=2 t=26574.7 responses=1 fwd=10.11.2.10 unix=true
+        10.11.2.10 - pepi [22/Sep/2015:16:59:39 +0200] "PROPFIND /principals/users/pepi/ HTTP/1.1" 207 638 "-" "Mac+OS+X/10.10.5 (14F27) Calendar/2034.9-Calendar" i=0 or=1 t=36606.1 cached=1 fwd=10.11.2.10 unix=true
+
+
+
+
+        error.log
+
+        2015-09-22 16:52:21+0200 [-] [caldav-2]  [-] Log opened.
+        2015-09-22 16:52:21+0200 [-] [twext.enterprise.jobs.queue#error] workCheck: jobqueue is no longer overloaded
+        2015-09-22 16:52:31+0200 [-] [twext.application.service.ReExecService#warn] SIGHUP received - restarting
+        2015-09-22 16:52:31+0200 [-] (UNIX Port '/var/run/caldavd_requests/unsecured.sock' Closed)
+        2015-09-22 16:52:31+0200 [-] (UNIX Port '/var/run/caldavd_requests/secured.sock' Closed)
+        2015-09-22 16:52:31+0200 [-] (UNIX Port '/var/run/caldavd/caldavd.sock' Closed)
+        2015-09-22 16:52:31+0200 [-] [directoryproxy] 2015-09-22 16:52:31+0200 [-] Received SIGTERM, shutting down.
+        2015-09-22 16:52:31+0200 [-] [directoryproxy] 2015-09-22 16:52:31+0200 [-] (UNIX Port '/var/run/caldavd/directory-proxy.sock' Closed)
+        2015-09-22 16:52:31+0200 [-] [directoryproxy] 2015-09-22 16:52:31+0200 [-] Main loop terminated.
+        2015-09-22 16:52:31+0200 [-] [directoryproxy] 2015-09-22 16:52:31+0200 [-] Server Shut Down.
+        2015-09-22 16:52:35+0200 [-] Log opened.
+        2015-09-22 16:52:35+0200 [-] ControlSocket starting on '/var/run/caldavd/caldavd.sock'
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseSchemaStep#warn] Beginning database schema check.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseSchemaStep#warn] Required database key VERSION: 58.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseSchemaStep#warn] Actual database key VERSION: 58.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseSchemaStep#warn] Schema version check complete: no upgrade needed.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseSchemaStep#warn] Database schema check complete.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseAddressBookDataStep#warn] Beginning database addressbook data check.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseAddressBookDataStep#warn] Required database key ADDRESSBOOK-DATAVERSION: 2.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseAddressBookDataStep#warn] Actual database key ADDRESSBOOK-DATAVERSION: 2.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseAddressBookDataStep#warn] Addressbook data version check complete: no upgrade needed.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseAddressBookDataStep#warn] Database addressbook data check complete.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseCalendarDataStep#warn] Beginning database calendar data check.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseCalendarDataStep#warn] Required database key CALENDAR-DATAVERSION: 6.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseCalendarDataStep#warn] Actual database key CALENDAR-DATAVERSION: 6.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseCalendarDataStep#warn] Calendar data version check complete: no upgrade needed.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseCalendarDataStep#warn] Database calendar data check complete.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseNotificationDataStep#warn] Beginning database notification data check.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseNotificationDataStep#warn] Required database key NOTIFICATION-DATAVERSION: 1.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseNotificationDataStep#warn] Actual database key NOTIFICATION-DATAVERSION: 1.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseNotificationDataStep#warn] Notification data version check complete: no upgrade needed.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseNotificationDataStep#warn] Database notification data check complete.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseOtherStep#warn] Beginning database other upgrades check.
+        2015-09-22 16:52:37+0200 [-] [txdav.common.datastore.upgrade.sql.upgrade.UpgradeDatabaseOtherStep#warn] Database other upgrades check complete.
+        2015-09-22 16:52:37+0200 [-] [twext.enterprise.jobs.queue#error] workCheck: jobqueue is overloaded
+        2015-09-22 16:52:37+0200 [-] LimitingInheritingProtocolFactory starting on '/var/run/caldavd_requests/secured.sock'
+        2015-09-22 16:52:37+0200 [-] LimitingInheritingProtocolFactory starting on '/var/run/caldavd_requests/unsecured.sock'
+        2015-09-22 16:52:43+0200 [-] [directoryproxy] 2015-09-22 16:52:43+0200 [-] Log opened.
+        2015-09-22 16:52:43+0200 [-] [directoryproxy] 2015-09-22 16:52:43+0200 [-] twistd 15.2.1 (/System/Library/Frameworks/Python.framework/Versions/2.7/Resources/Python.app/Contents/MacOS/Python 2.7.10) starting up.
+        2015-09-22 16:52:43+0200 [-] [directoryproxy] 2015-09-22 16:52:43+0200 [-] reactor class: twisted.internet.kqreactor.KQueueReactor.
+        2015-09-22 16:52:43+0200 [-] [directoryproxy] 2015-09-22 16:52:43+0200 [-] DirectoryProxyAMPFactory starting on '/var/run/caldavd/directory-proxy.sock'
+        2015-09-22 16:52:43+0200 [-] [directoryproxy] 2015-09-22 16:52:43+0200 [-] set uid/gid 93/93
+        2015-09-22 16:52:44+0200 [-] [caldav-2] Reading configuration from file: /Applications/Server.app/Contents/ServerRoot/private/etc/caldavd/caldavd-apple.plist
+        2015-09-22 16:52:44+0200 [-] [caldav-2] Adding configuration from file: /Library/Server/Preferences/Calendar.plist
+        2015-09-22 16:52:44+0200 [-] [caldav-2] Adding configuration from file: /Volumes/Server/Library/Server/Calendar and Contacts/Config/caldavd-system.plist
+        2015-09-22 16:52:44+0200 [-] [caldav-2] Missing configuration file: /Volumes/Server/Library/Server/Calendar and Contacts/Config/caldavd-user.plist
+        2015-09-22 16:52:44+0200 [-] [caldav-2]  [-] Log opened.
+        2015-09-22 16:52:44+0200 [-] [caldav-0] Reading configuration from file: /Applications/Server.app/Contents/ServerRoot/private/etc/caldavd/caldavd-apple.plist
+        2015-09-22 16:52:44+0200 [-] [caldav-0] Adding configuration from file: /Library/Server/Preferences/Calendar.plist
+        2015-09-22 16:52:44+0200 [-] [caldav-0] Adding configuration from file: /Volumes/Server/Library/Server/Calendar and Contacts/Config/caldavd-system.plist
+        2015-09-22 16:52:44+0200 [-] [caldav-0] Missing configuration file: /Volumes/Server/Library/Server/Calendar and Contacts/Config/caldavd-user.plist
+        2015-09-22 16:52:44+0200 [-] [caldav-0]  [-] Log opened.
+        2015-09-22 16:52:44+0200 [-] [caldav-3] Reading configuration from file: /Applications/Server.app/Contents/ServerRoot/private/etc/caldavd/caldavd-apple.plist
+        2015-09-22 16:52:44+0200 [-] [caldav-3] Adding configuration from file: /Library/Server/Preferences/Calendar.plist
+        2015-09-22 16:52:44+0200 [-] [caldav-3] Adding configuration from file: /Volumes/Server/Library/Server/Calendar and Contacts/Config/caldavd-system.plist
+        2015-09-22 16:52:44+0200 [-] [caldav-3] Missing configuration file: /Volumes/Server/Library/Server/Calendar and Contacts/Config/caldavd-user.plist
+        2015-09-22 16:52:44+0200 [-] [caldav-3]  [-] Log opened.
+        2015-09-22 16:52:44+0200 [-] [caldav-1] Reading configuration from file: /Applications/Server.app/Contents/ServerRoot/private/etc/caldavd/caldavd-apple.plist
+        2015-09-22 16:52:44+0200 [-] [caldav-1] Adding configuration from file: /Library/Server/Preferences/Calendar.plist
+        2015-09-22 16:52:44+0200 [-] [caldav-1] Adding configuration from file: /Volumes/Server/Library/Server/Calendar and Contacts/Config/caldavd-system.plist
+        2015-09-22 16:52:44+0200 [-] [caldav-1] Missing configuration file: /Volumes/Server/Library/Server/Calendar and Contacts/Config/caldavd-user.plist
+        2015-09-22 16:52:44+0200 [-] [caldav-1]  [-] Log opened.
+        2015-09-22 16:52:44+0200 [-] [twext.enterprise.jobs.queue#error] workCheck: jobqueue is no longer overloaded
+        2015-09-22 16:53:00+0200 [-] [directoryproxy] 2015-09-22 16:53:00+0200 [txdav.dps.server.DirectoryProxyAMPFactory] DirectoryProxyAMPProtocol connection established (HOST:UNIXAddress('/var/run/caldavd/directory-proxy.sock') PEER:UNIXAddress(None))
+        2015-09-22 16:53:00+0200 [-] [directoryproxy] 2015-09-22 16:53:00+0200 [txdav.dps.server.DirectoryProxyAMPFactory] DirectoryProxyAMPProtocol connection established (HOST:UNIXAddress('/var/run/caldavd/directory-proxy.sock') PEER:UNIXAddress(None))
+        2015-09-22 16:53:22+0200 [-] [directoryproxy] 2015-09-22 16:53:22+0200 [txdav.dps.server.DirectoryProxyAMPFactory] DirectoryProxyAMPProtocol connection established (HOST:UNIXAddress('/var/run/caldavd/directory-proxy.sock') PEER:UNIXAddress(None))
+        2015-09-22 16:53:22+0200 [-] [directoryproxy] 2015-09-22 16:53:22+0200 [txdav.dps.server.DirectoryProxyAMPFactory] DirectoryProxyAMPProtocol connection established (HOST:UNIXAddress('/var/run/caldavd/directory-proxy.sock') PEER:UNIXAddress(None))
+        2015-09-22 16:54:26+0200 [-] [caldav-1]  [PooledMemCacheProtocol,client] [txweb2.dav.method.propfind#error] File not found: <RootResource: /Volumes/Server/Library/Server/Calendar and Contacts/Data/Documents/calendar/dav/pepi/user>
+        2015-09-22 16:54:26+0200 [-] [caldav-3]  [PooledMemCacheProtocol,client] [txweb2.dav.method.propfind#error] File not found: <RootResource: /Volumes/Server/Library/Server/Calendar and Contacts/Data/Documents/dav/principals>
+        2015-09-22 16:59:31+0200 [-] [caldav-3]  [PooledMemCacheProtocol,client] [txweb2.dav.method.propfind#error] File not found: <RootResource: /Volumes/Server/Library/Server/Calendar and Contacts/Data/Documents/calendar/dav/pepi/user>
+        2015-09-22 16:59:39+0200 [-] [caldav-1]  [PooledMemCacheProtocol,client] [txweb2.dav.method.propfind#error] File not found: <RootResource: /Volumes/Server/Library/Server/Calendar and Contacts/Data/Documents/dav/principals>
+    email: pepi.zawodsky@gmail.com
+    modified: "2015-09-22T15:04:11.63994Z"
+    number: "22800610"
+    number_intvalue: 22800610
+    originated: 22-Sep-2015 05:03 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X Server
+    product_version: 5.0.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Calendar server: A secure connection can''t be made'

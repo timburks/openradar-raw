@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27656235"
+    labels:
+        datastore_id: "5022734169931776"
+data:
+    classification: ""
+    created: "2016-08-02T11:54:37.77067Z"
+    description: "One of my apps, when it detects it's running translocated, asks the user to move itself to the Applications folder. If the user confirms, my app starts an AppleScript that tells the Finder to move my app to the Apps folder. That part works fine.\r\n\r\nThe problem is that this move does not remove the \"translocation needed\" state from the quarantine attribute. Which means that when my app then gets relaunched in the Apps folder, it again asks the user to move the app to the Apps folder because my app doesn't see itself there, as it's still being translocated to a random path instead.\r\n\r\nSo, this ends up in an endless loop, confusing my users.\r\n\r\nAs this issue did not occur with previous OSX versions, and as I cannot see any reason why fixing this would make my app vulnerable to the \"dylib hijacking\" attack that translocation is supposed to protect against,\r\n\r\nI therefore ask that the Finder's AppleScript \"move\" command gets fixed to perform the same de-quarantining actions that an interactive move in the Finder would do, i.e. remove the app's need to run translocated.\r\n\r\nSteps to Reproduce:\r\nTest this on Sierra (10.12).\r\n\r\nDownload any app that's delivered as a zip file.\r\nI use http://mizage.com/divvy/\r\nIt should get downloaded to your Downloads folder.\r\nIf it's not yet extracted, double click the zip file to do so.\r\nDo not start it (we won't have to).\r\n\r\nOpen Terminal. Enter:\r\n\r\nxattr -pl com.apple.quarantine ~/Downloads/Divvy.app\r\n\r\nUpdate the name of the downloaded app if you chose another app.\r\n\r\nThis will show:\r\n\r\ncom.apple.quarantine: 0083;57a08470;Safari.app;E40D8A37-15F5-4BA2-9609-24F5BF532848\r\n\r\nOr something similar. Important is the first (hex) number: 0083. That contains some flags (bits) that indicate the quarantine state of the file. 0083 means it's quarantined (needing verification at start) and needing translocation (on Sierra and later).\r\n\r\nNow move the app to the Desktop by dragging with the mouse. Use the same Terminal cmd again, updating the path to the new location on the Desktop:\r\n\r\nxattr -pl com.apple.quarantine ~/Desktop/Divvy.app\r\n\r\nThis time, the first value is 0183 - the 0100 means it doesn't need translocation any more as it's been moved.\r\n\r\nSo far so good. Now let's move the app with AppleScript instead.\r\n\r\nDownload and extract the app again. Verify that the xattr state is 0083.\r\n\r\nThen open Script Editor and enter:\r\n\r\ntell application \"Finder\"\r\n\tmove alias (((path to downloads folder) as string) & \"Divvy.app\") to desktop\r\nend tell\r\n\r\nRun it. This should move the app to the Desktop.\r\n\r\nCheck the quarantine flags with the xattr command again. It's 0083, but should be 0183.\r\n\r\nThe means that the app will still run translocation after being moved to the Desktop, even though there's no risk of dylib hijacking any more in the way it was when it was downloaded and unzipped in the Downloads folder."
+    email: tempelmann@gmail.com
+    modified: "2017-02-14T19:06:51.12927Z"
+    number: "27656235"
+    number_intvalue: 27656235
+    originated: 02-Aug-2016
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.12 (16A270f)
+    reproducible: Always
+    resolved: ""
+    status: Behaves correctly
+    title: '10.12 beta: App Translocation still happening after moving app using AppleScript'

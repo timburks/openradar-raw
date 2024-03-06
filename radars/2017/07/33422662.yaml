@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33422662"
+    labels:
+        datastore_id: "5062348515573760"
+data:
+    classification: Other Bug
+    created: "2017-07-20T08:13:54.4068Z"
+    description: "Summary:\r\nIf you create a NSDocument subclass, and override `canClose` the method signature currently looks like this:\n\n```\noverride func canClose(withDelegate delegate: Any, shouldClose shouldCloseSelector: Selector?, contextInfo: UnsafeMutableRawPointer?)\n```\n\nIn this case it seems as though:\n\n1. The `delegate` argument should be a NSObject(Protocol), since you're expected to perform the passed Selector on it\n2. Both the `shouldCloseSelector` and `contextInfo` should be nonnull since passing nil to either `super`'s implementation of this, or the passed Selector, results in a crash.\n\n\r\n\r\nSteps to Reproduce:\r\n1. Create a new Swift project with a NSDocument subclass that you can open new documents for (this involves creating a document type and UTI)\n2. Override `canClose`\n3a. Call super, passing nil for either of the last 2 arguments\n3b. Attempt to call the passed Selector on the delegate manually in Swift\r\n\r\nExpected Results:\r\n3a. If you pass nil for either of the last 2 arguments it should not compile\n3b. `delegate` is a NSObject(Protocol) so you can more easily call the passed Selector on it without casting from Any\r\n\r\nActual Results:\r\n3a. It compiles and crashes at runtime\n3b. `delegate` is an Any, and you must cast it as a NSObject(Protocol) in order to use it\r\n\r\nVersion:\r\nmacOS 10.12\r\n\r\nNotes:\r\nSee the attached project for an example."
+    email: keithbsmiley@gmail.com
+    modified: "2017-07-20T08:13:54.407Z"
+    number: "33422662"
+    number_intvalue: 33422662
+    originated: 20-Jul-2017 01:13
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: macOS 10.12
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSDocument's canClose in Swift is incorrectly annotated

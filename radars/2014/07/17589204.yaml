@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17589204"
+    labels:
+        datastore_id: "5248263875723264"
+data:
+    classification: UI/Usability
+    created: "2014-07-08T13:22:28.692884Z"
+    description: "Summary:\r\nEntering full-screen mode with a window that has attached a standard NSToolbar with at least one space item (NSToolbarSpaceItemIdentifier) yields an \"unsatisfiable constraints\" error.\r\nThe problem occurs as soon as a toolbar contains a space item and as long as the window contains at least one other NSControl. It didn't occur in earlier versions of OS X.\r\nThe offending constraints are created automatically by App Kit, thus the bug is not caused by custom constraints created by the user.\r\n\r\nSteps to Reproduce:\r\nPlease examine the attached demo project or create one by yourself:\r\n\r\n1. In Terminal.app, set user defaults so that ambiguous constraints are made visible:\r\ndefaults write NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints -bool YES\r\n\r\n2. Open a new „Cocoa Application“ project in Xcode, set language to Objective-C and don’t use Storyboards\r\n\r\n3. In MainMenu.xib, set the main window’s Full Screen capability from „Unsupported“ to „Primary window“\r\n\r\n4. Drag a standard NSToolBar from the IB palette into the main window\r\n\r\n5. Customize this toolbar by double clicking it: Add a „Space“ item between the first two toolbar items, i.e. between „Colors“ and „Fonts“\r\n\r\n6. Drag a NSButton item (or any other control) from the IB palette into the main window and place it somewhere below the toolbar \r\n\r\n7. Build and run the application\r\n\r\n8. Enter full screen mode and notify that there is a visual warning about constraints that cannot be satisfied simultaneously. Clicking those constraints identifies them in the console log.\r\n\r\nExpected Results:\r\nThe window should go full screen without yielding constraints errors as it did in OS X versions before 10.10.\r\n\r\nActual Results:\r\nThe window goes full screen but simultaneously issues warnings about constraints that cannot be satisfied simultaneously in the console log:\r\n\r\n08.07.14 10:46:00,405 demo[5100]: Unable to simultaneously satisfy constraints:\r\n(\r\n    \"<NSAutoresizingMaskLayoutConstraint:0x6080000838e0 h=--& v=--& V:[NSToolbarItemViewer:0x10010d650(5)]>\",\r\n    \"<NSAutoresizingMaskLayoutConstraint:0x6080000836b0 h=--& v=-&- V:|-(10)-[_NSToolbarSpace:0x608000141080]   (Names: '|':NSToolbarItemViewer:0x10010d650 )>\",\r\n    \"<NSAutoresizingMaskLayoutConstraint:0x608000083660 h=--& v=-&- V:[_NSToolbarSpace:0x608000141080]-(11)-|   (Names: '|':NSToolbarItemViewer:0x10010d650 )>\"\r\n)\r\n\r\nWill attempt to recover by breaking constraint \r\n<NSAutoresizingMaskLayoutConstraint:0x6080000836b0 h=--& v=-&- V:|-(10)-[_NSToolbarSpace:0x608000141080]   (Names: '|':NSToolbarItemViewer:0x10010d650 )> \r\n\r\nVersion:\r\nXcode 6.0 DP 3 (6A254o)\r\nOS X 10.10 DP 3 (14A283o)\r\n\r\nConfiguration:\r\nThe problem seems to be caused by space items in the toolbar. As long as there are no space items all constraints are satisfied. Also, there needs to be at least one additional NSControl on the window besides the NSToolbar in order to trigger the bug."
+    email: kastansn@gmail.com
+    modified: "2014-08-14T07:08:54.758395Z"
+    number: "17589204"
+    number_intvalue: 17589204
+    originated: "2014-07-08"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: "10.10"
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: 'OS X 10.10: Space items in NSToolbar cause unsatisfiable constraints in full-screen mode'

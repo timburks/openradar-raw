@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17806477"
+    labels:
+        datastore_id: "5825968115548160"
+data:
+    classification: Other Bug
+    created: "2014-07-25T06:11:09.368764Z"
+    description: "Summary:\r\nXcode 6’s clang with “-Wselector” enabled now emits a warning when you reference an @selector() that is not implemented—not just not defined, but not implemented—in the same file. This is a very noisy error that doesn’t ever seem to indicate a bug in my code.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create an Objective-C project.\r\n\r\n2. Enable a reasonable amount of warnings to ensure safety, including -Wselector.\r\n\r\n3. Create an NSArray of NSStrings.\r\n\r\n4. Set out to sort the array like so:\r\n\r\n    array = [array sortedArrayUsingSelector:@selector(localizedStandardCompare:)];\r\n\r\n5. Build.\r\n\r\nExpected Results:\r\nThis perfectly sensible sort does not cause any warnings or errors.\r\n\r\nActual Results:\r\nclang emits a warning on that line:\r\n\r\n    No method with selector ‘localizedStandardCompare:’ is implemented in this translation unit\r\n\r\nRegression:\r\nPrevious versions of Xcode warned for selectors that were not declared, but that encompassed selectors used in the frameworks or in other imported headers. The new behavior is much more aggressive.\r\n\r\nNotes:\r\nI assume that the warning was introduced with the idea that @selector() was mainly used to register actions and the like. While this is one common use, the frameworks, and especially the Foundation collections, are also full of methods that take a selector and perform it on objects under their control. NSObject and the Objective-C runtime also include a suite of methods and functions that are often used with selectors you don’t implement yourself.\r\n\r\nWithout excluding cases like these, this warning is uselessly noisy—it appears eight times in my code, never flagging an actual error—and turning it off will disable related warnings I really *do* want, leaving my code *less* safe than in Xcode 5. This warning should be reined in, removed, or given a separate flag from other -Wselector warnings."
+    email: brent@architechies.com
+    modified: "2014-07-28T20:29:58.299601Z"
+    number: "17806477"
+    number_intvalue: 17806477
+    originated: 24-Jul-2014 11:11 PM
+    parent_number: "16600230"
+    product: Developer Tools
+    product_version: Xcode6-Beta4 (6A267n)
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/16600230
+    title: '"No method with selector ''%s'' is implemented in this translation unit" warning is too aggressive'

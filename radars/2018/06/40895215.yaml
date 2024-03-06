@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "40895215"
+    labels:
+        datastore_id: "5009335499358208"
+data:
+    classification: Bug
+    created: "2018-06-07T15:15:34.68194Z"
+    description: "Summary:\r\n\r\nAttempting to build my framework project using Xcode 10 with \"carthage\" for a single platform, the build fails because the new build system attempts to build schemes for the wrong platforms.\r\n\r\nCarthage uses xcodebuild to build shared schemes in a workspace for specific platforms. In Xcode 9.4 and previous it works fine. With Xcode 10, if I try to build for iOS only, it fails because the new build system goes off and tries to build schemes for macOS, and this fails because there are dependencies for macOS missing (because I only built other dependencies for iOS).\r\n\r\nI have isolated this to an xcodebuild command you can run and use to verify this - almost eliminating Carthage. That is still required to fetch and build a small dependency of my framework.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Clone this branch of Flint framework from Github: https://github.com/MontanaFlossCo/Flint/tree/xcode10-build-bug\r\n\r\n2. With a recent build of Carthage installed, in the checkout folder run this to get the single ZIPFoundation dependency but for iOS *only*:\r\n\r\ncarthage update --platform iOS\r\n\r\nThat will build ZIPFoundation for a single platform.\r\n\r\n3. Now try to build Flint's FlintUI framework targt for iOS only: Run the xcodebuild command that Carthage uses but without having to use Carthage to eliminate that as a cause, in the main project folder:\r\n\r\n/usr/bin/xcrun xcodebuild -workspace <PATH-TO_-YOUR-CLONE>/Flint.xcworkspace -scheme FlintUI-iOS -configuration Release -sdk iphoneos ONLY_ACTIVE_ARCH=NO BITCODE_GENERATION_MODE=bitcode CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= archive SKIP_INSTALL=YES GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=NO CLANG_ENABLE_CODE_COVERAGE=NO STRIP_INSTALLED_PRODUCT=NO\r\n\r\n\r\nExpected Results:\r\n\r\nFlint should build and archive for iOS.\r\n\r\nActual Results:\r\n\r\nIt fails, complaining about a missing dependency of ZIPFoundation (error: no such module \"ZIPFoundation\").\r\n\r\nIt turns out this is because it is seemingly looking for a version of ZIPFoundation for another non-iOS platform, as the build appears to build tvOS, macOS or watchOS versions, as can be seen from the output where it has attempted to build the FlintCore-tvOS scheme:\r\n\r\nCompileSwift normal arm64 (in target: FlintCore-tvOS)\r\n    cd /Users/marc/Projects/checkout/xcode10-build-bug-test\r\n    /Applications/Xcode-10-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift -frontend -emit-bc -filelist /var/folders/0v/626mc7q94fnd6zmh6z6b8qm40000gq/T/sources-aef7f1 -supplementary-output-file-map /var/folders/0v/626mc7q94fnd6zmh6z6b8qm40000gq/T/supplementaryOutputs-446591 -target arm64-apple-ios11.0 -Xllvm -aarch64-use-tbi -enable-objc-interop -sdk /Applications/Xcode-10-beta.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk -I /Users/marc/Library/Develop\r\n\r\nNote that when building inside Xcode 10 IDE, FlintUI-iOS builds fine. It only fails from the CLI.\r\n\r\nVersion/Build:\r\n\r\nXcode 10.0 beta (10L176w) on High Sierra 10.13.4\r\n\r\nConfiguration:"
+    email: wangjammer5@googlemail.com
+    modified: "2018-06-07T15:15:34.68215Z"
+    number: "40895215"
+    number_intvalue: 40895215
+    originated: "2018-06-07"
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: "10.0"
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: Xcode 10 beta 1 new build system appears to build incorrect schemes

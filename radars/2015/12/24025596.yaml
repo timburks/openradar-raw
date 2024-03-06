@@ -1,0 +1,60 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24025596"
+    labels:
+        datastore_id: "4948927774195712"
+data:
+    classification: Serious Bug
+    created: "2015-12-30T13:15:42.31902Z"
+    description: |-
+        Summary:
+        This crashes with EXC_BAD_ACCESS:
+
+        	let myqueue = dispatch_queue_create("myqueue", dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_DEFAULT, 0))
+        	dispatch_sync(myqueue) {
+        	if NSThread.isMainThread() {
+        		mapView.addOverlay(polyline, level: .AboveRoads)
+        	} else {
+        		dispatch_async(dispatch_get_main_queue()) {
+        			mapView.addOverlay(polyline, level: .AboveRoads)
+        		}
+        	}
+        	
+        I’m attaching an iOS playground which demonstrates the issue.
+
+        Is this expected behavior? My understanding was, as long as UI related code is executed on the main thread, it is safe. This case lets me assume this is not always the case.
+
+        Notes:
+        See https://github.com/ReactiveCocoa/ReactiveCocoa/issues/2635 on why this might be a problem
+
+        Crash:
+
+        Crashed Thread:        0  Dispatch queue: myqueue
+
+        Exception Type:        EXC_BAD_ACCESS (SIGSEGV)
+        Exception Codes:       KERN_INVALID_ADDRESS at 0x0000000000000000
+        Exception Note:        EXC_CORPSE_NOTIFY
+
+        Thread 0 Crashed:: Dispatch queue: myqueue
+        0   libdispatch.dylib             	0x0000000108256906 dispatch_retain + 0
+        1   com.apple.VectorKit           	0x000000010b029353 -[VKRasterOverlayTileSource init] + 163
+        2   com.apple.VectorKit           	0x000000010ac51451 -[VKMapModel _rasterOverlayTileSourceForLevel:] + 289
+        3   com.apple.VectorKit           	0x000000010ac51bd4 -[VKMapModel addRasterOverlay:] + 52
+        4   com.apple.MapKit              	0x0000000105fd532f -[MKOverlayContainerView _insertDrawable:forOverlay:atIndex:level:] + 1365
+        5   com.apple.MapKit              	0x0000000105fd31a5 -[MKOverlayContainerView _configureAndAddDrawable:forOverlay:level:] + 401
+        6   com.apple.MapKit              	0x0000000105fd338e -[MKOverlayContainerView _considerAddingDrawable:inAddRect:level:] + 461
+        7   com.apple.MapKit              	0x0000000105fd3b6d -[MKOverlayContainerView addOverlay:level:] + 198
+        8   com.apple.MapKit              	0x0000000105fc6c94 -[MKMapView(OverlaysAPI) addOverlay:level:] + 85
+    email: dieter.komendera@gmail.com
+    modified: "2015-12-30T13:15:42.31921Z"
+    number: "24025596"
+    number_intvalue: 24025596
+    originated: 30-Dec-2015 02:15 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "9.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'MapKit: It''s not safe to call MKMapView''s addOverlay on a non-main-queue, even if it is executed on the main thread'

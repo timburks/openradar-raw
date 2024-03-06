@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12330955"
+    labels:
+        datastore_id: "2005401"
+data:
+    classification: Serious Bug
+    created: "2012-09-19T20:30:08.06508Z"
+    description: "NOTE: This appears to be a regression to the behaviour reported in bug report #12005271\r\n\r\nSummary:\r\n\r\nZippity (http://itunes.apple.com/gb/app/zippity/id513855390?ls=1&mt=8) is an app for opening Zip files (also gzip, bzip2 and tar files). It registers itself as a default handler for the following UTIs:\r\n\r\ncom.pkware.zip-archive\r\norg.gnu.gnu-zip-archive\r\norg.gnu.gnu-zip-tar-archive\r\npublic.bzip2-archive\r\npublic.tar-archive\r\npublic.tar-bzip2-archive\r\npublic.zip-archive\r\n\r\nWhen a file with a .zip file extension is received by email the user can tap the file attachment icon and choose \"Open in Zippity\" to open the zip file.\r\n\r\nIn iOS 6 this doesn't always work. Zippity is offered as a handler for some zip files received by email but not others.\r\n\r\nI've attached the source for a simple demo app (ZipOpener) that illustrates the problem. I've also attached the raw message source of a message with two zip files, one of which exhibits the problem and one of which doesn't.\r\n\r\nSteps to Reproduce:\r\n\r\n- Install the attached demo app (ZipOpener) on a device running iOS 6\r\n- Mail yourself a copy of the attached email \r\n- Open the email and tap the file attachments\r\n\r\nExpected Results:\r\n\r\nYou should be prompted to open the files in ZipOpener\r\n\r\nActual Results:\r\n\r\nZipOpener is not offered as an option for Markdown_1.0.1.zip\r\n\r\nRegression:\r\n\r\nThis worked fine in iOS 5. It was broken in iOS 6 beta 3 (See bug report 12005271), and appeared to be fixed in iOS 6 beta 4.\r\n\r\nI don't know if it worked in earlier iOS 6 betas, I didn't test them I'm afraid.\r\n\r\nNotes:\r\n\r\nI'm unclear which UTI should be used for zip files. public.zip-archive and com.pkware.zip-archive both exist. The documentation at https://developer.apple.com/library/ios/#documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html#//apple_ref/doc/uid/TP40009259-SW1 says the correct UTI is com.pkware.zip-archive, but UTTypeCreateAllIdentifiersForTag(kUTTagClassFilenameExtension, \"zip\", nil) returns only public.zip-archive. In any case, adding com.pkware.zip-archive to Zippity's UTI list doesn't solve the problem.\r\n\r\n04-Dec-2012 09:32 AM Simon Whitaker:\r\nProblem still exists in iOS 6.1 beta 3\r\n\r\nNote: I've figured out the conditions under which the bug occurs. If the zip file has a dot in its filename (e.g. Foobar_1.2.zip) then Mail offers up a URL that excludes the file extension and has a UTI of public.data. Since my app (correctly) doesn't register itself for that UTI, it isn't being included in the list of handler apps offered to the user."
+    email: simon@goosoftware.co.uk
+    modified: "2012-12-04T09:39:20.696483Z"
+    number: "12330955"
+    number_intvalue: 12330955
+    originated: 19/9/2012
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: iOS 6.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Mail can't open some .zip files although a handler app is installed

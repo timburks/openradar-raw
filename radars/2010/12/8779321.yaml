@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8779321"
+    labels:
+        datastore_id: "969401"
+data:
+    classification: Enhancement
+    created: "2010-12-16T23:00:32.428797Z"
+    description: "16-Dec-2010 10:54 PM Graham Lee:\r\nSummary:\r\n\r\nMany applications need to use enumerated types, often to implement some variant of the State pattern. An obvious example in iOS would be requiring different view controller behaviour depending on screen orientation. Traditional C enumerations would look like this:\r\n\r\nenum { GLScreenOrientationLandscape, GLScreenOrientationPortrait };\r\n\r\nbut these have various problems: binary compatibility is hard, the size of storage used is not well-defined (hence Foundation using typedefs for its enums), the types are unbounded, nonsensical operations are possible like:\r\n\r\nx = GLScreenOrientationLandscape * GLScreenOrientationPortrait;\r\n\r\nand most annoyingly for Objective-C code, to work with these enums means repetitive, error-prone and inefficient boxing code using NSNumber or NSValue.\r\n\r\nProposed solution:\r\n\r\nAn Objective-C specific @enum type, which creates static, immutable instances. So you could have:\r\n\r\n@enum GLScreenOrientation {Landscape, Portrait};\r\n\r\nwhich creates a class like this:\r\n\r\n@interface GLScreenOrientation: NSObject <NSCopying>\r\n+ (GLScreenOrientation *)Landscape;\r\n+ (GLScreenOrientation *)Portrait;\r\n+ (NSSet *)values;\r\n@end\r\n\r\nBenefits: the main benefit is code brevity. Here is some code using C enums:\r\n\r\nNSNumber *viewHeight = [heights objectForKey: [NSNumber numberWithInteger: GLScreenOrientationLandscape]];\r\n\r\nif ([orientation integerValue] == GLScreenOrientationLandscape) {\r\n\r\nswitch ([orientation integerValue]) {\r\ncase (GLScreenOrientationLandscape):\r\nbreak;\r\ncase (GLScreenOrientationPortrait):\r\nbreak;\r\ndefault: //handle surprising value\r\n}\r\n\r\nfor (NSInteger i=GLScreenOrientationLandscape; i <=GLScreenOrientationPortrait; i++) {\r\n  // hope I got those the right way around, that there are no gaps, and that I didn't miss any....\r\n}\r\n\r\nand a case-by-case replacement with my proposed enumeration type:\r\n\r\nNSNumber *viewHeight = [heights objectForKey: [GLScreenOrientation Landscape]];\r\n\r\nif (orientation == [GLScreenOrientation Landscape]) //as the instances are static, this is permitted\r\n\r\nif (orientation == [GLScreenOrientation Landscape]) {}\r\nelse if (orientation == [GLScreenOrientation Portrait]) {}\r\n//no need to handle the default case, there isn't one\r\n\r\nfor (GLScreenOrientation *orientation in [GLScreenOrientation values]) {}\r\n\r\nThe other benefit is safety. Notice that in the case of the switch and for expressions, using C enumerated types is awkward because in each case you might encounter values that aren't part of the enumeration. Using my proposed type, this problem is mitigated. It is not possible to request a value that isn't part of the enumeration because you are restricted to using the class methods. The use of the new types can be checked by the compiler in a way that C-style enums can't: if your code expects a GLScreenOrientation instance, then that is what it must get.\r\n\r\nThe amount of storage used in each case isn't going to differ much, as the enumeration instances are Flyweights so there just needs to be one static instance per value written into the compiled object."
+    email: iamleeg@gmail.com
+    modified: "2011-08-28T05:38:41.385385Z"
+    number: "8779321"
+    number_intvalue: 8779321
+    originated: 16/12/2010
+    parent_number: '&{NULL_VALUE}'
+    product: iPad SDK
+    product_version: N/A
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: Request for a simple, Foundation-friendly enumerated type

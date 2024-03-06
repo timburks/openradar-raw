@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16597440"
+    labels:
+        datastore_id: "5881896777023488"
+data:
+    classification: Serious Bug
+    created: "2014-04-12T14:39:33.995925Z"
+    description: "Summary:\r\nCTFontManagerRegisterFontsForURL always fails on real device(though works on simulator) when registering downloaded font with such errors:\r\nError Domain=com.apple.coretext Code=101 \"The operation couldn’t be completed. (com.apple.coretext error 101 - Could not register the font file 'file:///private/var/mobile/Library/Assets/com_apple_MobileAsset_Font/6d88595cff5e67eb57545959f9fff6060644ea6d.asset/AssetData/Xingkai.ttc')\" UserInfo=0x178264740 {NSDescription=Could not register the font file 'file:///private/var/mobile/Library/Assets/com_apple_MobileAsset_Font/6d88595cff5e67eb57545959f9fff6060644ea6d.asset/AssetData/Xingkai.ttc', CTFailedFontFileURL=file:///private/var/mobile/Library/Assets/com_apple_MobileAsset_Font/6d88595cff5e67eb57545959f9fff6060644ea6d.asset/AssetData/Xingkai.ttc}\r\n\r\nI looked up. Error 101 is kCTFontManagerErrorFileNotFound.\r\n\r\nIt makes font reusing across sessions very difficult. I have to call CTFontDescriptorMatchFontDescriptorsWithProgressHandler every time my app launches and but still can not assure the font is available for my user to use immediately since CTFontDescriptorMatchFontDescriptorsWithProgressHandler is async. \r\n\r\nIf CTFontManagerRegisterFontsForURL can be used to register the downloaded font, I can cache the font URL and try CTFontManagerRegisterFontsForURL first on launch. If it succeeds — most of the time it should be the case — I just use it. If not, I then prompt my user to re-download the font. I believe it is the way the API is designed to be used. Otherwise, it is almost useless.\r\n\r\nFor reference, the same issue described by other people:\r\n1. http://prod.lists.apple.com/archives/cocoa-dev/2014/Jan/msg00269.html\r\n2. http://www.objc.io/issue-5/iOS7-hidden-gems-and-workarounds.html\r\n\"On the Mac or in the Simulator you can obtain the kCTFontURLAttribute to get the absolute path of the font and speed up loading time, but this won’t work on iOS, since the folder is outside of your app - you need to call CTFontDescriptorMatchFontDescriptorsWithProgressHandler again.\"\r\n\r\nSteps to Reproduce:\r\n1. Launch app.\r\n2. Tap any font to download it.\r\n3. Relaunch app.\r\n4. Tap the just downloaded font.\r\n5. Read the console log to see how CTFontManagerRegisterFontsForURL fails.\r\n\r\nSample Project: http://cl.ly/0S0Q323D3C3p"
+    email: an00na@gmail.com
+    modified: "2017-06-23T16:49:46.91163Z"
+    number: "16597440"
+    number_intvalue: 16597440
+    originated: 11-Apr-2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.1"
+    reproducible: Always
+    resolved: iOS 11
+    status: Closed
+    title: Font downloaded with CTFontDescriptorMatchFontDescriptorsWithProgressHandler can not be registered using CTFontManagerRegisterFontsForURL

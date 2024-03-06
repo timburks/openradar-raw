@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27749182"
+    labels:
+        datastore_id: "4964706745843712"
+data:
+    classification: Serious Bug
+    created: "2016-08-08T17:50:12.1488Z"
+    description: "Summary:\r\nMultipeerConnectivity is finally available on tvOS 10 - hooray!\r\nUnfortunately it is broken, because peers cannot connect to each other. When a peer sends an invitation to another peer the status of that peer changes to .connecting, stays like that for a couple of seconds and then instead of changing to .connected, it changes to .notConnected.\r\n\r\nThe objective of the app is to have a macOS app to act as a server, which accepts all connection invitations, and a tvOS app which browses for Macs running the macOS app and connects to them.\r\n\r\nI’ve tested my two apps on a Macbook Pro and the tvOS simulator as well as two different Apple TVs. As described above the devices have big trouble to connect with each other. In about 95% of the cases the connection goes to the .connecting and then to .notConnected state. On random occasions (I have yet to find out under which circumstances) the connection is successful, even though I didn’t change anything in my app or network setup. Of course I ensured that both devices are on the same network and tested both wired and wireless connections. The same tests with an iOS device and Apple TV have showed the same results.\r\n\r\nI have created a demo project for you. It has three targets. One for iOS, one for tvOS and one for macOS. \r\nThe demo app shows you the discovered peers. When you tap/click on a discovered peer an invitation is sent to it and the invited peer accepts the invitation. During the connection process two labels show you which peers are in .connecting and .connected state.\r\n\r\nSteps to Reproduce:\r\n1. Download my demo project.\r\n2. Run the tvOS target and any of the iOS and macOS targets.\r\n3. Ensure that the test devices are on the same network.\r\n4. You should see the discovered devices in the table.\r\n5. Select one of them and observe the connection process in the status labels “Connected peers: ” and “Connecting peers: ”\r\n6. You’ll observe that the invited peer goes to .connecting state and then changes to .notConnected.\r\n7. (optional) If you are lucky the devices connect to each other. As I said this happened to me sometimes as well, but it is only about 5% of the times. Please retry the process. You’ll eventually see the bug.\r\n\r\nExpected Results:\r\nThe peers should connect to each other flawlessly (> 99% of the time).\r\n\r\n\r\nActual Results:\r\nThe peers only connect in about 5% of the case, although they are on the same network or even on the same machine, in case you run the macOS app and tvOS app in the simulator on the same machine.\r\n\r\nThe console log is full of diagnostics that the session is not in the connected state:\r\n2016-08-08 17:16:12.395869 MultipeerConnectivityBug[11418:2389470] [GCKSession] Not in connected state, so giving up for participant [01E1F311] on channel [5].\r\n\r\nThis bug is basically a show stopper for my app and I hope this works by the release of tvOS 10.\r\n\r\n\r\nVersion:\r\ntvOS 10.0 Beta 4 (14T5308d)\r\n\r\nNotes:\r\nIt seems that the MultipeerConnectivity framework is working on versions prior to iOS 10 and macOS 10.12. Since the frameworks introduction on the Apple TV it does not work anymore.\r\n\r\nThere is a StackOverflow question from a different developer who has the same problem as me: http://stackoverflow.com/questions/38745370/multipeer-connectivity-not-connecting-programmatically#comment64961777_38745370\r\n\r\nConfiguration:\r\nOS X El Capitan 10.11.6 / iOS 10 Beta 4 / tvOS 10.0 Beta 4 (14T5308d)\r\n\r\nAttachments:\r\n'MultipeerConnectivityBug.zip' was successfully uploaded."
+    email: kai.engelhardt93@gmail.com
+    modified: "2016-08-08T17:50:12.14904Z"
+    number: "27749182"
+    number_intvalue: 27749182
+    originated: 8/8/2016
+    parent_number: '&{NULL_VALUE}'
+    product: tvOS SDK
+    product_version: 10.0 Beta 4 (14T5308d)
+    reproducible: Sometimes
+    resolved: No
+    status: Open
+    title: MultipeerConnectivity is broken / cannot connect

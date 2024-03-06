@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18347673"
+    labels:
+        datastore_id: "5782051269640192"
+data:
+    classification: UI/Usability
+    created: "2014-09-20T07:15:10.021124Z"
+    description: "Summary:\r\niOS allows identity certificates (a private key and matching certificate in an encrypted PKCS#12 container) to be installed using a Configuration Profile (specifically, the \"com.apple.security.pkcs12\" payload type).  When an identity certificate is included in a profile, that certificate may have the password included, but it is not required.  If the PKCS#12 file's password is not included in the profile, the user is prompted for the password during profile installation.\r\n\r\nIt seems to me that iOS is not working correctly when the user has to enter a password to install the identity certificate:  Even if the user enters the correct password, iOS will think that the password was wrong.  This only happens if the PKCS#12 file is part of a configuration profile.  If a .p12 file is installed directly, the password is accepted.\r\n\r\nSteps to Reproduce:\r\n1) Run Keychain Access, go to the \"Keychain Access\" menu, then \"Certificate Assistant\", and then \"Open…\".\r\n2) Go through the Certificate Assistant, creating a new self-signed S/MIME certificate for yourself.\r\n3) Export the newly-created certificate and the private key as a .p12 file.  When exporting, set a password.\r\n4) Create a Configuration Profile containing the .p12 file, but _without_ setting the Password attribute.\r\n5) Create a second Configuration Profile, except this configuration profile _does_ have the PKCS#12 payload's Password attribute set.\r\n6) Using email or web, transfer the three files to the iPhone.  Attempt to install each file.\r\n\r\nExpected Results:\r\n• For the .p12 file (from Step 3) and the .mobileconfig file without password embedded (from Step 4), iOS should ask for the password.  Once the password is entered, iOS installs the .p12 or .mobileconfig file and makes the key and certificate available to the user.\r\n• For the .mobileconfig file with password embedded (from Step 5), iOS should immediately install the certificate.\r\n\r\nActual Results:\r\n• When installing the .p12 file, iOS works as expected, prompting for the password and then installing the private key & certificate.\r\n• When installing the .mobileconfig file that DOES have the password included, iOS (again) works as expected.\r\n• When installing the .mobileconfig file that does NOT have the password included, iOS will constantly ask for the password, claiming that the password entered is incorrect."
+    email: karl@kornel.us
+    modified: "2014-09-20T07:15:10.021372Z"
+    number: "18347673"
+    number_intvalue: 18347673
+    originated: 15-Sep-2014 11:51 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 7.1.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Profile-contained PKCS12 import fails when password required

@@ -1,0 +1,53 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20661375"
+    labels:
+        datastore_id: "5543444160184320"
+data:
+    classification: Other Bug
+    created: "2015-04-23T01:07:27.08794Z"
+    description: |-
+        Summary:
+        In Xcode 6.3.1, incremental builds spend more than 20 seconds in MergeSwiftModule.
+
+
+        Steps to Reproduce:
+        1. Compile a Swift program consisting of multiple files I guess? I don’t really know what all the necessary preconditions are.
+        2. Pick a file which, when changed, will not require other files to be rebuilt.
+        3. Add a character to that file, delete it again, and save.
+        4. Build.
+
+
+        Expected Results:
+        I expected the build to be so quick as to be unnoticeable.
+
+
+        Actual Results:
+        Rebuilding the file incrementally: ultraspeedy. But then upwards of 20 seconds spent in “MergeSwiftModule”:
+
+            MergeSwiftModule normal x86_64 /Users/rob/Library/Developer/Xcode/DerivedData/Tesseract-ayeelaykavrrpeemymskjterqjzv/Build/Intermediates/Tesseract.build/Debug/Tesseract.build/Objects-normal/x86_64/Tesseract.swiftmodule
+
+
+        Regression:
+        This didn’t happen in 6.3, or any other previous version of Xcode.
+
+
+        Notes:
+        I’ve attached a sample of the swift process which is doing this merge.
+
+        Enabling Whole Module Optimization does not improve matters, it makes it worse. Of course it does; it throws away incremental builds altogether! (cf https://twitter.com/satefan/status/586235706395258881 for context)
+
+        Please, if there is a workaround, I’d love to hear it. This delay is making it very difficult for me to continue working on things that make me happy.
+    email: rix.rob@gmail.com
+    modified: "2015-04-23T01:07:27.08813Z"
+    number: "20661375"
+    number_intvalue: 20661375
+    originated: 22-Apr-2015 09:06 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.3.1 (6D1002)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: MergeSwiftModule takes 20+ seconds after incremental builds'

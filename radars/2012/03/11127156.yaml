@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11127156"
+    labels:
+        datastore_id: "1620412"
+data:
+    classification: Other Bug
+    created: "2012-03-27T08:06:37.422532Z"
+    description: "Summary:\r\n\r\nSetting the AVMutableVideoComposition's frameDuration has no effect when exporting the video (using AVAssetExportSession).\r\n\r\nI'm playing with the AVEditDemo project, from Apple's WWDC 2010 sample pack, and I'm trying to change the frame rate of the exported video. The video is exported using an AVMutableCompositionon which the frameDuration is set like that:\r\n\r\nvideoComposition.frameDuration = CMTimeMake(1, 30); // 30 fps\r\n\r\nFor some reason, changing the 30 to 25 does not change the framerate of the video exported with the AVAssetExportSession. Do you have an advice to help me solving this issue? I really need to be able to export a 25fps image…\r\n\r\nThanks in advance!\r\n\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n- Download the AVEditDemo project from the WWDC 2010 Sample Test Code iOS.\r\n- Open the project and go to the SimpleEditor.m file.\r\n- Change this line:\r\nvideoComposition.frameDuration = CMTimeMake(1, 30); // 30 fps\r\ninto this line:\r\nvideoComposition.frameDuration = CMTimeMake(1, 25); // 25 fps\r\n- Run the app in the simulator, select two clips, add a transition. Export the movie.\r\n- Open the movie from the Finder, in QuickTime Player. Check the frame rate: it is 30 and not 25 fps! Argh…\r\n\r\n\r\n\r\nExpected Results:\r\n\r\nThe generated movie should be running at 25fps.\r\n\r\n\r\n\r\nActual Results:\r\n\r\nThe generated movie runs at 30fps. According to an answer I got from Apple DTS (see bellow): \"The current behavior is that the export preset's framerate takes precedence over the AVVideoComposition frameDuration during export.\" But in my humble opinion, as the ASExportSession doesn't allow to set the frame rate, it should not overwrite the setting from the composition.\r\n\r\nThis behaviour even brings visual glitches in some cases, for example : when incorporating images in the video which are supposed to follow a tracked object, the object's trajectory seems shaky. This is explained by: the CAKeyframeAnimation interpolates the new positions of the moving object, are not coherent with the position of the tracked object on the duplicated frames (duplicated because of the 25 to 30 frame transformation).\r\n\r\n\r\n\r\nRegression:\r\nn/a\r\n\r\n\r\n\r\nNotes:\r\nA support ticket has been open with the follow up number: XXXXXX."
+    email: mathieu@atelierdumobile.com
+    modified: "2012-04-11T08:46:16.028029Z"
+    number: "11127156"
+    number_intvalue: 11127156
+    originated: 27-Mar-2012 10:01 AM
+    parent_number: "11112250"
+    product: iOS SDK
+    product_version: 4.3 to 5.1
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/11112250
+    title: AVMutableVideoComposition's frameDuration has no effect

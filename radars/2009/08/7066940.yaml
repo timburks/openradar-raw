@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7066940"
+    labels:
+        datastore_id: "69408"
+data:
+    classification: Serious Bug
+    created: "2009-08-17T08:56:10.307583Z"
+    description: "17-Jul-2009 12:04 AM Jonas Maebe:\r\n* Summary\r\n\r\nPascal knows the concept of so-called \"absolute variables\". An absolute variable is basically a typed language-level alias for another variable. E.g., this:\r\n\r\nvar\r\n  globalstr: string[3];\r\n  globalint: longint absolute globalstr;\r\n\r\nwould correspond more or less to this in C:\r\n\r\nchar globalstr[4]; // length byte included\r\n#define globalint (*(int*)&globalstr;\r\n\r\nThe difference is that because the alias definition happens at the language level, the compiler can generate debug information for both names. The problem is that in this case two debug names are generated for the same symbol, and dsymutil then discards one of them. If more than two names are generated, usually all but one are discarded by dsymutil.\r\n\r\n\r\n* Steps to reproduce\r\n\r\n1) unpack the attached archive (it's x86_64 code)\r\n2) cd dwarfabsvar\r\n3) ./ppas.sh\r\n4) gdb dwarfabsvar\r\n5) b PASCALMAIN\r\n6) run\r\n7) next\r\n8) p conststr\r\n9) p/x constint\r\n10) p a\r\n11) p b\r\n12) p c\r\n(print d, e, f, g, h, i, j, k, l, m)\r\n13) You can step into \"local\" and do the same there to print the local versions of these symbols)\r\n14) quit gdb, run dsymutil on dwarfabsvar and repeat steps 4 till 12 (except for 7-9, those variables are not declared in the local scope)\r\n\r\n\r\n* Expected results\r\n\r\nIn all cases, the symbols should be found and the correct value be printed (see the absolute variable declarations or the check() calls in the program for the expressions to which these absolute variables are aliased).\r\n\r\n\r\n* Actual results\r\n\r\nAfter running dsymutil, only \"a\" and constint still recognized in the global scope. The debug information for all other global absolute variables has been removed. The debug info for the local scope is still intact.\r\n\r\n\r\n* Notes\r\n\r\nThe reason that the debug information for most global absolute variable symbols is removed, may be because the address expressions for them point to addresses that do not correspond exactly to a symbol address (thereby triggering the issue described in rdar://problem/5643496). I first tried using a DW_OP_addr with the start symbol and then using plus_uconst expressions to encode the offset, but that is not supported by gdb. See the thread at http://sourceware.org/ml/gdb/2009-03/msg00085.html\r\n\r\nAdditionally, even if two debug symbols point to the start of the symbol (and hence both can be directly associated with a debug map entry), one of them is still discarded by dsymutil. This can be seen in the conststr/constint case, whereby after running dsymutil conststr has disappeared. So even if you would patch your gdb fork to support plus_uconst in location descriptions, dsymutil would still need to be patched as well.\r\n\r\n\r\n\r\n\r\n'dwarfabsvar.tbz' was successfully uploaded\r\n\r\n17-Jul-2009 10:30 AM Jonas Maebe:\r\nThis comment in step 14: \"(except for 7-9, those variables are not declared in the local scope)\" was supposed to refer to step 13. In step 14, steps 7-9 *are* quite relevant (as mentioned in the last paragraph of the \"notes\" section)."
+    email: jmaebe@gmail.com
+    modified: "2011-08-28T05:45:49.036749Z"
+    number: "7066940"
+    number_intvalue: 7066940
+    originated: 17-Jul-2009 12:04 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 3.1.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '[gdb/dsymutil] Not possible to generate debug information for symbol aliases'

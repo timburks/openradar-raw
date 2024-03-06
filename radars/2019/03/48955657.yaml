@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "48955657"
+    labels:
+        datastore_id: "5023315789873152"
+data:
+    classification: Bug
+    created: "2019-03-16T20:11:33.39526Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nWhen an unsized supplementary view slides into view due to a section delete above it (via batch update), UICollectionView may pass preferred attributes for the supplementary view to the layout with the supplementary view's original, pre-batch-update index path set on the attributes. It's unclear how the layout should handle this, since that index path is now invalid / possibly out of bounds. \r\n\r\nIn the attached sample project, there are three sections, each with headers and items. If section 0 is scrolled off screen, section 1 is visible, and section 2 is below the bottom edge, remove section 0 results in the following facts:\r\n- The collection view goes from 3 sections to 2\r\n- The unsized header that was in the 3rd section (section index 2) before the batch update will now have section index equal to 1\r\n- shouldInvalidateLayout(forPreferredLayoutAttributes:withOriginalAttributes:) is invoked for a supplementary view with section index equal to 2 - section 2 is not valid, this should be section 1 at this point\r\n\r\nThis issue is very similar to rdar://41492798. The only reason flow layout is fine is because it doesn't support self-sizing headers.\r\n\r\nSteps to Reproduce:\r\n1. Open sample project\r\n2. Deploy to iPhone 8 simulator (that screen size makes it easier to get things lined up correctly)\r\n3. Scroll down so that section 0's header is completely off-screen, section 1's header is on screen, and section 2's header is still off screen below the bottom edge. Make sure to not scroll down to far, since if section 2's header comes onto screen, it will receive preferred attributes and prevent this issue. *This issue only happens when the supplementary view sliding onto screen has not been sized yet.*\r\n3. Tap anywhere to execute the batch update\r\n4. Observe issue\r\n\r\nExpected Results:\r\nUICollectionView should never ask for information about an invalid / non-existent / old section index\r\n\r\nActual Results:\r\nUICollectionView asks for information about an invalid / non-existent / old section index\r\n\r\nVersion/Build:\r\niOS 12\r\n\r\nConfiguration:\r\niPhone 8 screen size makes it easier to repro\r\n\r\nSample project: https://drive.google.com/file/d/1Q6fSCwWax93E7vumuy8N3W9V-bHptW1n/view?usp=sharing"
+    email: kellerbryan19@gmail.com
+    modified: "2019-03-16T20:11:33.39543Z"
+    number: "48955657"
+    number_intvalue: 48955657
+    originated: 3/16/19
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: iOS 12
+    reproducible: Yes
+    resolved: No
+    status: Open
+    title: Invalid supplementary view index path passed to layout

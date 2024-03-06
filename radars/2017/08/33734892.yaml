@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33734892"
+    labels:
+        datastore_id: "4965728495075328"
+data:
+    classification: Other Bug
+    created: "2017-08-08T21:02:25.22331Z"
+    description: "Something is wrong with the `mtime` handling of Ruby on AFPS, and it looks like a float precision error as the deltas are usually around 4e-7 seconds.\r\n\r\nSteps to Reproduce:\r\n1. Download the attached script to a APFS volume\r\n2. Run it using the Ruby interpreter (e.g.: `ruby ruby-mtime-test.rb`)\r\n\r\nExpected Results:\r\nThe output should be \"All good\"\r\n\r\nObserved Results:\r\nA message like \"The timestamps were 2.15e-07 seconds off\"\r\n\r\nNotes:\r\nThe script creates the two temp files it uses (and subsequently deletes) in the same folder as it is placed.\r\n\r\nConfiguration:\r\nIf the script (and thus the temp files it create) is on a HFS+ volume (e.g.: a mounted HFS+ disk image) then the test passes. If it is on APFS then it fails.\r\n\r\n===== Script\r\n\r\n#!/usr/bin/env ruby\r\n\r\nrequire 'tempfile'\r\n\r\nthis_dir     = File.dirname(__FILE__)\r\n\r\n# create a file\r\nsource_file  = Tempfile.new('source', this_dir)\r\nsleep(1)\r\ntarget_file  = Tempfile.new('target', this_dir)\r\nsource_mtime = File.mtime(source_file)\r\n\r\n# make sure the MTimes are different\r\nraise 'The timestamps were somehow the same' unless source_mtime != File.mtime(target_file)\r\n\r\n# set the file times\r\nFile.utime(source_mtime, source_mtime, target_file)\r\ntarget_mtime = File.mtime(target_file)\r\n\r\n# check if they are equal\r\nif target_mtime == source_mtime\r\n  print \"All good\"\r\nelse\r\n  STDERR.puts \"The timestamps were #{(target_mtime - source_mtime).abs} seconds off\"\r\n  exit 1\r\nend"
+    email: kuehn.karl@gmail.com
+    modified: "2017-08-08T21:02:25.22349Z"
+    number: "33734892"
+    number_intvalue: 33734892
+    originated: 8/4/2017
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13 Beta (17A315i)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Ruby mtime not working correctly on APFS

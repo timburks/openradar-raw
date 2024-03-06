@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33454616"
+    labels:
+        datastore_id: "5007677071556608"
+data:
+    classification: Bug
+    created: "2017-07-21T15:39:12.58123Z"
+    description: "Area:\r\nSomething not on this list\r\n\r\nSummary:\r\nAPFS breaks code that works just fine with HFS+ volumes, even on latest 10.12.6 and 10.13b3.\r\n\r\nWhen calling FSCatalogSearch and passing 0x200 (kFSCatInfoBackupDate) to its whichInfo parameter, the error code -50 (paramErr) is returned.\r\n\r\nThat's not good as it's unexpected:\r\n1. Even on HFS Std vols, which have no backup time field, this works without error, and simply returns a \"not available\" value in the FSCatalogInfo field.\r\n2. The constant \"kFSCatInfoGettableInfo\" includes this field, suggesting it should always work.\r\n3. It breaks existing code.\r\n\r\nPlease consider this a regression and fix this in 10.13, at least. I can work around it by not requesting this info any more, but it's still not right that it breaks existing apps.\r\n\r\nSteps to Reproduce:\r\nAttached is an Xcode project to demonstrate the issue.\r\n\r\nIt's a cmdline tool, with the first arg being the search text (i.e. a partial file name to find), the second the path to the volume, such as \"/Volumes/TestVol\".\r\n\r\nIf you run it to search on a HFS+ volume, it'll work. Running on a APFS volume will lead to a paramErr.\r\nIf you remove the \"kFSCatInfoBackupDate\" bit from the code, it'll run without error on APFS.\r\n\r\nHere's an example of using the cmd in Terminal on a HFS and a APFS volume:\r\n\r\n$ ./catsearch /\r\nSearching on '/'...\r\nResult: 0\r\n\r\n$ ./catsearch /Volumes/APFS1\r\nSearching on '/Volumes/APFS1'...\r\nResult: -50\r\n\r\nExpected Results:\r\nRequesting kFSCatInfoBackupDate should not stop with an error.\r\n\r\nObserved Results:\r\nRequesting kFSCatInfoBackupDate returns error code -50.\r\n\r\nVersion:\r\nSame behavior on 10.12.6 and 10.13b3"
+    email: tempelmann@gmail.com
+    modified: "2017-08-30T04:14:41.09445Z"
+    number: "33454616"
+    number_intvalue: 33454616
+    originated: July 21 2017
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.12.6 + 10.13b3
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: FSCatalogSearch returns paramErr for APFS vols when requesting backup date

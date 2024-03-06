@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "5177598"
+    labels:
+        datastore_id: "70412"
+data:
+    classification: ""
+    created: "2009-08-27T02:57:16.64983Z"
+    description: "02-May-2007 02:27 PM W Lewis:\r\nSummary:\r\n\r\nCalling CFReadStreamGetBuffer() on a memory-buffer stream returns a length of 0, but still consumes the entire input.\r\n\r\nDescription:\r\n\r\nSee the attached C program for an example. This is just the code from 5177472 translated into CF calls (and I had such high hopes, too ...)\r\n\r\nBasically:\r\n  - Create a CFReadStream using CFReadStreamCreateWithBytesNoCopy()\r\n  - Open it (CFReadStreamOpen())\r\n  - Call CFReadStreamGetBuffer()\r\n  - The numBytesRead values will be 0, but all of the data will have been consumed from the stream anyway.\r\n\r\nNotes:\r\n\r\nYou can read the stream just fine using CFReadStreamRead() as long as you never call CFReadStreamGetBuffer().\r\n\r\nIf you create the stream from a file (CFReadStreamCreateWithFile( file:///blah... )) then CFReadStreamGetBuffer() still returns 0, but does not throw away the input data; it is then readable using CFReadStreamRead(). So this bug seems to be specific to memory-buffer streams.\r\n\r\nThis bug might be the underlying cause of RADAR #5177472.\r\n\r\nIt looks like the problem is in the function dataGetBuffer() in CFConcreteStreams.c, where it's using the expression \"dataCtxt->loc - bytes\" to compute the number of bytes remaining in the buffer, when actually that expression computes the number of bytes that have been read from the buffer so far.\r\n\r\nHave you guys considered doing some sort of formalized testing on your fundamental APIs before releasing them? Code-coverage tests, perhaps?\r\n\r\nWorkaround:\r\n\r\nJust give up entirely on zero-copy data processing, and always use the CFReadStreamRead() or -[NSStream read:maxLength:] calls. Weep quietly.\r\n\r\n\r\n\r\n\r\n\r\n'cfs.c' and 'slowpoke.spx'were successfully uploaded\r\n\r\n10-Mar-2009 05:39 PM W Lewis:\r\nNo change in 10.6/10A286; still shows the bug.\r\n\r\n13-Jul-2010 02:40 PM W Lewis:\r\nproblem still exists in 10.6.4 / 10F569.\r\n\r\n25-Sep-2012 04:45 PM Apple Developer Relations:\r\nMarked as duplicate of 9179106\r\n\r\n29-Dec-2014 03:19 PM W Lewis:\r\nThis bug still exists in 10.10/14A389 and 10.9.5/13F34; no apparent change."
+    email: wiml@omnigroup.com
+    modified: "2014-12-29T23:24:59.894292Z"
+    number: "5177598"
+    number_intvalue: 5177598
+    originated: 02-May-2007 02:27 PM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: 10.5.x, 10.6, 10.9.x, 10.10.x
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '8P4037: CFReadStreamGetBuffer() on a buffer stream returns no data, but discards'

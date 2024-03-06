@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12151446"
+    labels:
+        datastore_id: "1876402"
+data:
+    classification: Serious Bug
+    created: "2012-08-22T17:43:40.670997Z"
+    description: "22-Aug-2012 01:32 PM Daniel Jalkut:\r\nTracking down a crash report from a customer on 10.6.8, I traced it, with the help of friends Mark Dalrymple and Mike Ash, to a compiler behavior with clang, having to do with its treatment of the $rax register, specifically %al, before calling through to a varargs method.\r\n\r\nFrom http://www.x86-64.org/documentation/abi.pdf:\r\n\r\n\"For calls that may call functions that use varargs or stdargs (prototype-less calls or calls to functions containing ellipsis (. . . ) in the declaration) %al16 is used as hidden argument to specify the number of vector registers used.\"\r\n\r\nThe attached source file \"PunkItUp.m\" contains a succinct example of code that, when compiled with -Os optimization using clang, presents a scenario where -[NSString stringWithFormat:] is called without initializing %al to 0.\r\n\r\nAs it happens, the failure to do this causes a predictable crash on 10.6.8, where apparently the implementation of stringWithFormat: makes unfortunate use of this uninitialized value.\r\n\r\nI was able to confirm that breaking in the debugger on 10.6.8, just before the msgSend, and setting $rax to 0 before continuing with the method call does work around the crash.\r\n\r\nI confirmed this bug still exists in clang built from SVN as of today's revision #162362.\r\n\r\n\r\n22-Aug-2012 01:32 PM Daniel Jalkut:\r\n'PunkItUp.m' was successfully uploaded\r\n\r\n[PunkItUp.m source pasted below]\r\n\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\n//\r\n// This code was collaboratively written by Daniel Jalkut and Mark Dalrymple.\r\n// The root cause of the bug was opined by Mike Ash.\r\n//\r\n// Demonstrates an x86_64 ABI violation wherein a method that calls the\r\n// vararg -[NSString stringWithFormat:] does not specify as ZERO the number\r\n// of vector registers being used.\r\n//\r\n// Runs fine everywhere:\r\n// clang -g -Wall -framework Foundation -o PunkItUp PunkItUp.m\r\n//\r\n// Crashes on 10.6.8, runs on 10.7+:\r\n// clang -Os -Wall -framework Foundation -o PunkItUp PunkItUp.m\r\n//\r\n// The source of this particular crash seems to be peculiar to the implementation\r\n// of stringWithFormat: on 10.6.8, but the problematic uninitialization of %al could\r\n// have implications on other frameworks in 10.7+.\r\n//\r\n\r\n@interface PunkItUp : NSObject\r\n@end\r\n\r\n@implementation PunkItUp\r\n\r\n- (NSString*) formattedTimeStringForSeconds:(NSTimeInterval)timeInSeconds\r\n{\r\n    NSUInteger integralTime = (NSUInteger)timeInSeconds;\r\n    NSUInteger HOURS = 3600;\r\n    NSUInteger MINUTES = 60;\r\n\r\n    NSUInteger hours = (integralTime / HOURS);\r\n    NSUInteger minutes = (integralTime % HOURS) / MINUTES;\r\n    NSUInteger seconds = (integralTime % HOURS) % MINUTES;\r\n\r\n    return [NSString stringWithFormat:@\"%lu:%lu:%lu\", hours, minutes, seconds];\r\n}\r\n\r\n- (id) init\r\n{\r\n    if (self = [super init])\r\n\t{\r\n        NSTimeInterval ook = 1.0;\r\n        NSString *blah = [self formattedTimeStringForSeconds: ook];\r\n        NSLog (@\"blah: %@\", blah);\r\n    }\r\n    return self;\r\n\r\n}\r\n\r\n@end\r\n\r\nint main (void)\r\n{\r\n    [[NSAutoreleasePool alloc] init];\r\n\r\n\t(void) [[PunkItUp alloc] init];\r\n\t\r\n    return 0;\r\n}"
+    email: jalkut@gmail.com
+    modified: "2012-08-22T17:43:40.671311Z"
+    number: "12151446"
+    number_intvalue: 12151446
+    originated: 22-Aug-2012 01:32 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 4.4.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Clang-generated code violates x86_64 varargs ABI

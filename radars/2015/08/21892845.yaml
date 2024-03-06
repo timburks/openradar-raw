@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21892845"
+    labels:
+        datastore_id: "4522029902462976"
+data:
+    classification: ""
+    created: "2015-08-17T20:27:33.75259Z"
+    description: "Summary:\r\nWhen an identifier is bound in a case-let expression the exhaustiveness checker does not appear to consider it covered as in\r\n\r\nfunc op(this : Optional<Bool>, other : Optional<Bool>) -> Optional<Bool> {\r\n\tswitch (this, other) {\r\n\tcase let (.None, w):\r\n\t\treturn w\r\n\tcase let (w, .None):\r\n\t\treturn w\r\n\tcase let (.Some(e1), .Some(e2)):\r\n\t\treturn .Some(e1 && e2)\r\n\t} // cases are non-exhaustive, consider adding default clause\r\n}\r\n\r\nDespite such a definition being acceptable in languages like ML and Haskell.  However, when the case-lets are changed to simple cases the exhaustiveness checker stops complaining about the same expression.\r\n\r\nfunc op(this : Optional<Bool>, other : Optional<Bool>) -> Optional<Bool> {\r\n\tswitch (this, other) {\r\n\tcase (.None, _):\r\n\t\treturn .None\r\n\tcase (_, .None):\r\n\t\treturn .None\r\n\tcase let (.Some(e1), .Some(e2)):\r\n\t\treturn .Some(e1 && e2)\r\n\t} // All clear\r\n}\r\n\r\nThe checker should consider tuple expressions with identifiers bound in case-lets as wildcards in plain cases.\r\n\r\nSteps to Reproduce:\r\n1. Declare both of those functions in a playground.\r\n\r\nExpected Results:\r\nThe exhaustiveness checker reports both as exhaustive.\r\n\r\nActual Results:\r\nThe exhaustiveness checker rejects the former and accepts the latter.\r\n\r\nVersion:\r\nXcode 7.0 beta 3 (7A152u)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: widmannrobert@gmail.com
+    modified: "2015-08-17T20:28:49.19598Z"
+    number: "21892845"
+    number_intvalue: 21892845
+    originated: 19-Jul-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 7.0 Beta 3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Exhaustiveness Checker does not consider bound identifiers in tuples in checks

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9695698"
+    labels:
+        datastore_id: "1229415"
+data:
+    classification: ""
+    created: "2011-07-04T13:28:38.572972Z"
+    description: "29-Jun-2011 01:16 PM Heiko Wichmann:\r\nSummary: On re-purchase of a non-consumable item, the app receives a failure message that cannot be distinguished from the user cancel event\r\n\r\nSteps to Reproduce: \r\n1. Setup your app for In-App purchase with non-consumable items\r\n2. Purchase an item\r\n3. Apple dialog appears: \"Purchase was successful\"\r\n3. Purchase the same item again\r\n4. Apple dialog appears: \"Item was purchased already. Tap OK to re-download\".\r\n\r\nExpected Results: App re-downloads the purchased digital good\r\n\r\nActual Results: App does not re-download because it cannot distinguish the received failure message from a user cancel event\r\n\r\nRegression: -\r\n\r\n\r\nNotes: \r\n\r\nThese are the calls received in the app (in StoreKit callback (void)paymentQueue:updatedTransactions:):\r\n\r\nSKPaymentTransactionStatePurchasing\r\nSKPaymentTransactionStateFailed\r\n\r\nThe received error code 2 is the same as when the user cancels the purchase. The SKPaymentTransaction does not have a receipt either.\r\nSo there is no way for the app to know that a re-download is requested here although Apple's StoreKit dialog tells the user differently.\r\n\r\n\r\n30-Jun-2011 02:45 AM Heiko Wichmann:\r\nProblem still exists. Provided sample app.\r\n\r\n30-Jun-2011 02:46 AM Heiko Wichmann:\r\nProblem still exists. Provided sample app for demonstration purposes.\r\n\r\n30-Jun-2011 02:52 AM Heiko Wichmann:\r\nTested with iOS 5b2. Same behavior as with iOS4.\r\n\r\n04-Jul-2011 11:19 AM Heiko Wichmann:\r\nIs this a iap sandbox only defect??\r\nToday I experienced these two different sequences on re-purchase of an in-app-purchase item:\r\n\r\n1. (as described in this bug)\r\ni. SKPaymentTransactionStatePurchasing\r\nii. SKPaymentTransactionStateFailed\r\n\r\n2. (expected behavior)\r\ni. SKPaymentTransactionStatePurchasing\r\nii. SKPaymentTransactionStatePurchased\r\niii. removedTransactions\r\n\r\n\r\n04-Jul-2011 11:23 AM Heiko Wichmann:\r\nWhat is the sequence of updatedTransactions callbacks we can expect to receive on re-purchase?\r\n\r\n04-Jul-2011 03:08 PM Heiko Wichmann:\r\nSteps to Reproduce [Updated]:\r\n\r\n1. Setup your app for In-App purchase with non-consumable items\r\n2. Launch app\r\n3. Purchase an item\r\n4. Apple dialog appears: \"Purchase was successful\"\r\n5. Quit app\r\n6. Make sure to not be logged in at Settings > Store\r\n7. Launch app\r\n8. Purchase the same item again\r\n9. Apple dialog appears: \"Item was purchased already. Tap OK to re-download\".\r\n10. -> SKPaymentTransactionStateFailed\r\n\r\nThis bug is in sandbox and production environment of iap. It seems to be caused by internal session management. With a stable session established already (logged in via Settings > Store), on re-purchase the app receives SKPaymentTransactionStatePurchased after SKPaymentTransactionStatePurchasing (as expected)."
+    email: heiko.wichmann@lb-lab.de
+    modified: "2011-08-28T05:36:00.643677Z"
+    number: "9695698"
+    number_intvalue: 9695698
+    originated: 29-Jun-2011 01:16 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 4.3.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'StoreKit: Unable to re-download purchased content on re-purchase of non-consumable'

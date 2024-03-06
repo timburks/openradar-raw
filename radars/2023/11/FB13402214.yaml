@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13402214
+    labels:
+        datastore_id: "5517385465331712"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2023-11-23T00:59:16.364495Z"
+    description: "I have attached a sample project that contains a `ProgressView` that is initialized with a `Progress` object. The `Progress` object’s `completedUnitCount` property is incremented as background tasks complete, updating the `ProgressView` automatically.\r\n\r\nAfter pressing the Start button in the sample app, the progress bar should reach 100% within roughly a second. However, the main thread keeps hanging, causing the progress bar to move extremely slowly.\r\n\r\nI have attached a Time Profiler trace. The trace shows that the main thread is hanging because SwiftUI is repeatedly calling the `localizedDescription` and `localizedAdditionalDescription` methods of the `Progress` object. The repetition is happening because SwiftUI calls those `Progress` methods on every KVO notification that is sent by the `Progress` object in order to update the `ProgressView` state.\r\n\r\nInstead, SwiftUI should coalesce the updates in the following way:\r\n- The KVO notifications from the `Progress` object should just mark the `ProgressView` as dirty without doing any other work.\r\n- `ProgressView` should get the values from the `Progress` object from within its view body implementation.\r\n\r\nThis way, KVO notifications are coalesced via SwiftUI’s existing update coalescing mechanism and the expensive `Progress` methods are called at most once per SwiftUI update. This should avoid the main thread hang demonstrated by the sample project."
+    email: darren.mo@me.com
+    modified: "2023-11-23T00:59:16.364632Z"
+    number: FB13402214
+    number_intvalue: 13402214
+    originated: "2023-11-22"
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: iOS 17.2 Seed 3 (21C5046c)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '`ProgressView` can cause hangs if initialized with a `Progress` object'

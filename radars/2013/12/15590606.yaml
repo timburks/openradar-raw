@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15590606"
+    labels:
+        datastore_id: "5221181825220608"
+data:
+    classification: Serious Bug
+    created: "2013-12-05T05:25:01.258746Z"
+    description: "Summary:\r\nWhen a custom navigation controller transition animation is used to present a new viewcontroller, the destination view controller's views are laid out incorrectly if any autolayout constraints reference the layout guides.\r\n\r\nIn these cases, the layout guides are incorrectly zero points high, rather than the height needed to layout below the navigation bar and above the toolbar.\r\n\r\nThe layout does not match the result of the same view controller presented by the default navigation controller transition (i.e. when no custom animation used).\r\n\r\nSteps to Reproduce:\r\n1. Set up a navigation controller with a delegate returning a custom UIViewControllerAnimatedTransitioning object.\r\n\r\n2. In the custom UIViewControllerAnimatedTransitioning object, implement any animation to transition to the destination view controller.\r\n\r\n3. Create a destination view controller with a view containing subviews laid out relative to the top and/or bottom layout guides. For example:\r\n\r\n    UILabel *contentLabel = [[UILabel alloc] initWithFrame:CGRectZero];\r\n    contentLabel.text = @\"Top Content\";\r\n    contentLabel.font = [self contentFont];\r\n    contentLabel.translatesAutoresizingMaskIntoConstraints = NO;\r\n    [self.view addSubview:contentLabel];\r\n\r\n    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:contentLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.topLayoutGuide attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0]];\r\n    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:contentLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0f constant:0]];\r\n\r\n4. In code, push the destination view controller on to the navigation stack.\r\n\r\n5. Compare the resulting layout with that of pushing the same destination view controller when no custom transition is set.\r\n\r\nExpected Results:\r\nThe destination view should appear with subviews laid out below the top layout guide (or above bottom layout guide) as expected. The layout should match the layout when no custom transition is used.\r\n\r\nIn other words, the layout guides should correctly reflect the overlapping sizes of the top/bottom bars.\r\n\r\n\r\nActual Results:\r\nWhen a custom transition is used, the destination view layout is incorrect, and does not match the layout when no custom transition is used. The layout incorrectly calculates top/bottom layout guides with heights of zero, causing subviews to be incorrectly placed under navigation bars and toolbars.\r\n\r\n\r\nVersion:\r\nReproduced on iOS 7.0.3 (11B508) Simulator, and 7.0.4 (11B554a) iPad Air device.\r\n\r\n\r\nNotes:\r\nA sample project is attached, demonstrating the difference when presenting the same view via custom navigation controller transition vs default transition."
+    email: miles.chris@gmail.com
+    modified: "2013-12-19T21:16:32.495351Z"
+    number: "15590606"
+    number_intvalue: 15590606
+    originated: 05-Dec-2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: Always
+    resolved: 20-Dec-2013
+    status: Duplicate
+    title: Layout guides are incorrect when view presented by custom navigation controller transition

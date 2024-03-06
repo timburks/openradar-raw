@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18525028"
+    labels:
+        datastore_id: "6412304434331648"
+data:
+    classification: Other Bug
+    created: "2014-10-02T12:33:32.978916Z"
+    description: "Summary:\r\nSo here's a tricky one. Taken a while to track down, but essentially, drawViewHierarchyInRect will sometimes return a UIImage instance of the correct size but missing the contents of the view, at least in a unit testing target.\r\n\r\nSteps to Reproduce:\r\n- Create a new app project (iOS)\r\n- Got to the unit tests created \r\n- Now create a simple test that generates a UIView instance, renders it to a UIImage, and turns that image into a PNG:\r\n\r\nlet sut = UIView(frame: CGRectMake(0, 0, 100, 100))\r\nsut.backgroundColor = UIColor.purpleColor()\r\n\r\nUIGraphicsBeginImageContextWithOptions(sut.frame.size, false, 0)\r\nsut.drawViewHierarchyInRect(sut.bounds, afterScreenUpdates: true)\r\nlet image = UIGraphicsGetImageFromCurrentImageContext()!\r\nUIGraphicsEndImageContext()\r\n\r\nlet data = UIImagePNGRepresentation(image)\r\n\r\nprintln(\"byte length: \\(data.length)\")\r\n\r\n- Easy, and this will likely work. Now repeat that exact same code in three different test methods.\r\n\r\nfunc testExample1() { ... }\r\nfunc testExample2() { ... }\r\nfunc testExample3() { ... }\r\n\r\nThen you'll get the following logging:\r\n\r\nTest Suite 'All tests' started at 2014-10-02 12:26:18 +0000\r\nTest Suite 'TestTestTests.xctest' started at 2014-10-02 12:26:18 +0000\r\nTest Suite 'TestTestTests' started at 2014-10-02 12:26:18 +0000\r\nTest Case '-[TestTestTests.TestTestTests testExample1]' started.\r\nbyte length: 1411\r\nTest Case '-[TestTestTests.TestTestTests testExample1]' passed (0.175 seconds).\r\nTest Case '-[TestTestTests.TestTestTests testExample2]' started.\r\nbyte length: 1411\r\nTest Case '-[TestTestTests.TestTestTests testExample2]' passed (0.017 seconds).\r\nTest Case '-[TestTestTests.TestTestTests testExample3]' started.\r\nbyte length: 887\r\nTest Case '-[TestTestTests.TestTestTests testExample3]' passed (0.002 seconds).\r\nTest Suite 'TestTestTests' passed at 2014-10-02 12:26:19 +0000.\r\n\t Executed 3 tests, with 0 failures (0 unexpected) in 0.194 (0.195) seconds\r\nTest Suite 'TestTestTests.xctest' passed at 2014-10-02 12:26:19 +0000.\r\n\t Executed 3 tests, with 0 failures (0 unexpected) in 0.194 (0.196) seconds\r\nTest Suite 'All tests' passed at 2014-10-02 12:26:19 +0000.\r\n\t Executed 3 tests, with 0 failures (0 unexpected) in 0.194 (0.197) seconds\r\n\r\nThe byte lengths are inconsistent, and if you pause the debugger to quick look the image, you'll see it's empty (usually in the second or third test) – see attached screenshot.\r\n\r\nExpected Results:\r\nViews rendered with drawViewHierarchyInRect should always return a valid snapshot of that view, not a transparent image of the correct size.\r\n\r\nActual Results:\r\nFrequently, though intermittently, this API fails. \r\n\r\nVersion:\r\nVerified on Xcode 6.0.1 and 6.1 beta 3\r\n\r\nAttachments:\r\nSample project: http://cloud.ashfurrow.com/2D1d28151R47\r\nScreenshot: http://cloud.ashfurrow.com/image/0Y0h1F2I3727"
+    email: ash.furrow@gmail.com
+    modified: "2014-10-02T12:33:32.979069Z"
+    number: "18525028"
+    number_intvalue: 18525028
+    originated: October 2, 2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer tools
+    product_version: 6.1/6.0.1
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: drawViewHierarchyInRect sometimes returns transparent image

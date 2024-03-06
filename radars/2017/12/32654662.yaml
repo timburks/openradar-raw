@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32654662"
+    labels:
+        datastore_id: "4927456712589312"
+data:
+    classification: Bug
+    created: "2017-12-15T15:24:00.40394Z"
+    description: "Area:\r\nInstallation\r\n\r\nSummary:\r\nWe have run into a blocker issue with the InstallApplication command. If we queue two+ IA commands for a device, so that they are received within a short time of each other, only the most recently received command will actually attempt to download and the previous ones will never begin. Furthermore. every command returns Acknowledged, so we have no visibility on if the issue occurred other than having the device in front of us.\r\n\r\nSteps to Reproduce:\r\nSteps to Reproduce\r\n1. Queue multiple InstallApplication commands for a different manifest + pkg for each command\r\n2. Device will receive each command and Acknowledge each one.\r\n3. Storedownloadd will throw a message like: storedownloadd    DownloadQueue: Could not add download\r\n4. storedownloadd    DownloadQueue: Will start any ready downloads anyways.\r\n5. Only the last IA will actually download the manifest, grab the pkg url, then download the pkg and install.\r\n\r\nExpected Results:\r\nBoth Packages should install\r\n\r\nObserved Results:\r\nOnly one package installs though both install application commands are acknowledged\r\n\r\nVersion:\r\nWe have tested this on 10.12.5 and on 10.12.6 Beta 6 with mdm debugging profile installed\r\n\r\nAttached logs were generated with sudo log collect\r\n\r\nNotes:\r\nNotes:\r\nRelated Radars: \r\nrdar://26408264\r\nrdar://26517261\r\nIf the first IA is a super small package and it downloads the manifest/app before the second IA command comes in this issue will not occur. But for most pkgs it will happen because the size is large enough to cause a few second delay, in which another IA command could come in during this time.\r\n\r\nBusiness Impact : With APFS in High Sierra, Organizations will have to disown their imaging tools and use DEP as their primary deployment method. InstallApplication will play a key role in this transition as this would be the API that developers can build to deploy the necessary tools onto the machine on enrollment for streamlined user experience. This issue is currently a BLOCKER due to the high dependency on this API for admins around the world to build their new enterprise deployment strategy with High Sierra."
+    email: eriknicolasgomez@gmail.com
+    modified: "2017-12-15T15:24:00.40412Z"
+    number: "32654662"
+    number_intvalue: 32654662
+    originated: 06-08-2017
+    parent_number: '&{NULL_VALUE}'
+    product: Installation
+    product_version: 10.12.5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Sending multiple InstallApplication commands to a macOS device causes only one to download/install despite responding Acknowledged to each command

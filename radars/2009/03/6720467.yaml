@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6720467"
+    labels:
+        datastore_id: "21402"
+data:
+    classification: Other Bug
+    created: "2009-03-26T14:04:56.338204Z"
+    description: "Summary: \r\nBundle targets used purely to convey resources to users of static libraries, thus lacking Compile and Link phases, fail a required code signing step when built.\r\n\r\nSteps to Reproduce:\r\n1. Download the MuiKit library's source code from http://github.com/millenomi/muikit/tree/master with your method of choice.\r\n2. Open the MuiKit.xcodeproj file.\r\n3. Try to build the \"MuiKit (Resources)\" target by overriding its built-in base SDK setting to be one of the iPhone Device SDKs (iphoneos*). The fastest way to do so is to select a Device SDK in the Xcode project's Overview pop-up.\r\n\r\nOptionally, repeat step 3 after having inserted a valid signing identity for iPhone projects as part of the target's build settings.\r\n\r\nExpected Results:\r\nThe target builds a resource-only, unsigned bundle that will be then used within (and subsequently signed as part of) an iPhone application.\r\n\r\nActual Results:\r\nThe target, not containing a Compile or a Link phase, fails with one of the following errors:\r\n\r\n - If code signing isn't set up correctly for the target, as is the case with the attached project, an Xcode error happens, stating that code signing is required for bundle targets, and the build process is stopped.\r\n\r\n - If code signing is set up correctly for the target, a codesign error happens, stating that the format is invalid or unsupported. This is likely because the bundle, as intended, contains no executable.\r\n\r\nRegression:\r\nNo other SDK exhibits this behavior, including Mac OS X and iPhone Simulator SDKs.\r\n\r\nAs part of a workaround, the project sets the target's base SDK to \"macosx\". This allows the target to have the intended behavior and the product to be referenced in an interproject dependency as indicated in the README attached to the sources. However, this also breaks the \"Device\" SDK selections in the Xcode UI, since this overrides the base SDK and makes this bug surface once again. The README advises the third parties using the code to use the \"Project Setting\" choice instead, but this prevents the programmer from easily switching Device SDKs for testing.\r\n\r\nNotes:\r\nIf you are unable or unwilling to turn this off, or even if you are, please consider providing a different officially supported method of providing third parties with both code and resources; the currently supported system of only providing static linking is woefully inadequate. A viable solution would be supporting embedded frameworks in iPhone OS applications."
+    email: millenomi@gmail.com
+    modified: "2011-08-28T05:47:25.494848Z"
+    number: "6720467"
+    number_intvalue: 6720467
+    originated: 25-Mar-2009 11:29 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: withheld
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: Code signing required for no-executable-code bundles with iphoneos* SDKs.

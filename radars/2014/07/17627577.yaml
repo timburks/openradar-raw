@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17627577"
+    labels:
+        datastore_id: "6346637337165824"
+data:
+    classification: Enhancement
+    created: "2014-07-10T19:11:12.16578Z"
+    description: "Summary:\r\nCurrently NSControl’s API for receiving clicks requires the developer to set multiple sendActionOn: masks, which resolves to sending an action when any of the optioned actions occur. This requires the developer to then differentiate within the action method, to find which option mask occurred. Like below:\r\n\r\n- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {\r\n\tself.statusItem.action = @selector(clickStatusItem:);\r\n\t[self.statusItem sendActionOn:(NSLeftMouseDownMask|NSRightMouseDownMask)];\r\n}\r\n\r\n- (void)clickStatusItem:(id)sender {\r\n\tBOOL rightClick = (([[NSApp currentEvent] modifierFlags] & NSControlKeyMask) == NSControlKeyMask) || ([[NSApp currentEvent] type] == NSRightMouseDown);\r\n\tif (rightClick) {\r\n\t\t[self singleRightClickedStatusItem:sender];\r\n\t} else {\r\n\t\t[self singleLeftClickedStatusItem:sender];\r\n\t}\r\n}\r\n\r\nInstead, the API could be similar to iOS’ UIControl, which uses an API like so\r\n\r\naddTarget:action:forControlEvents:\r\n\r\nallowing the above code to be transformed into the much more readable:\r\n\r\n- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {\r\n\t[self.statusItem addTarget:self action:@selector(clickStatusItem) forControlEvents:NSLeftMouseDownMask];\r\n\t[self.statusItem addTarget:self action:@selector(rightClickStatusItem) forControlEvents:NSRightMouseDownMask];\r\n}\r\n\r\n- (void)clickStatusItem:(id)sender {\r\n\t[self singleLeftClickedStatusItem:sender];\r\n}\r\n\r\n- (void)rightClickStatusItem:(id)sender {\r\n\t[self singleRightClickedStatusItem:sender];\r\n}"
+    email: joeljfischer@gmail.com
+    modified: "2014-07-10T19:11:12.165998Z"
+    number: "17627577"
+    number_intvalue: 17627577
+    originated: 7/10/2014
+    parent_number: '&{NULL_VALUE}'
+    product: OSX SDK
+    product_version: 10.10 beta3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSControl API should allow for semantic target-action API

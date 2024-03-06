@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13197951
+    labels:
+        datastore_id: "5587330014380032"
+data:
+    classification: ""
+    created: "2023-09-22T19:27:12.591341Z"
+    description: "There is a system setting in System Settings > Accessibility > Spoken Content that allows the user to select which voice they want to use for TTS scenarios. `NSSpeechSynthesizer.defaultVoice` returns that voice, and `[NSSpeechSynthesizer initWithVoice:nil]` uses that voice. However, NSSpeechSynthesizer is deprecated.\r\n\r\nThe replacement API is the AVSpeech family. However, there is no way to obtain the AVSpeechSynthesisVoice corresponding to the user’s choice. One would think that `[AVSpeechSynthesisVoice voiceWithLanguage:nil]` would return a voice that corresponded to the user’s choice, but that instead returns “the default voice for the system’s language and region” as stated in the documentation.\r\n\r\nTo repro:\r\n1. Set a non-default voice in System Settings > Accessibility > Spoken Content\r\n2. Run:\r\n\r\n        NSString* ns_voice = NSSpeechSynthesizer.defaultVoice;\r\n        NSString* av_voice = [AVSpeechSynthesisVoice voiceWithLanguage:nil].identifier;\r\n        assert([ns_voice isEqual:av_voice]);\r\n\r\nIf you want to keep the existing behavior of `[AVSpeechSynthesisVoice voiceWithLanguage:nil]`, that would be fine, just document its behavior and how it does not obey the user choice, and provide new, non-deprecated API to obtain the user’s choice."
+    email: avi@google.com
+    modified: "2023-09-22T19:27:12.591659Z"
+    number: FB13197951
+    number_intvalue: 13197951
+    originated: September 22
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: No way to obtain user's chosen TTS voice with AVSpeech

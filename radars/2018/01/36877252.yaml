@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "36877252"
+    labels:
+        datastore_id: "5001341894131712"
+data:
+    classification: Serious Bug
+    created: "2018-01-25T19:57:05.02114Z"
+    description: "Summary:\r\nWhen using __auto_type, Clang ignores nullability annotations if -fobjc-arc is enabled, but it observes them if -fobjc-arc is disabled.\r\n\r\nSteps to Reproduce:\r\nCompile the following code with -Wnullable-to-nonnull-conversion:\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\nvoid foo(NSObject * _Nullable x) {\r\n\t__auto_type _Nullable y = x;\r\n\tNSObject * _Nonnull z = y;\r\n\t// this should warn about nullable-to-nonnull conversion\r\n}\r\n\r\nvoid bar(NSObject * _Nullable x) {\r\n\t__auto_type _Nonnull y = x;\r\n\t// this should warn about nullable-to-nonnull conversion\r\n}\r\n\r\nint main(int argc, char *argv[]) {\r\n}\r\n\r\nIf you compile without -fobjc-arc you get the expected warnings. If you compile with -fobjc-arc there are no warnings.\r\n\r\nI've attached a zip that contains this code and a Makefile. Run `make` and it will compile this with and without -fobjc-arc.\r\n\r\nExpected Results:\r\nRegardless of the presence or absence of -fobjc-arc, it should produce nullable-to-nonnull warnings.\r\n\r\nActual Results:\r\nWhen compiled without -fobjc-arc it produces the expected warnings. When compiled with -fobjc-arc there are no warnings.\r\n\r\nVersion/Build:\r\nApple LLVM version 9.0.0 (clang-900.0.39.2)\r\nTarget: x86_64-apple-darwin16.7.0\r\n\r\nConfiguration:"
+    email: kevin@sb.org
+    modified: "2018-01-25T19:57:05.02148Z"
+    number: "36877252"
+    number_intvalue: 36877252
+    originated: January 25 2018, 11:54 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: __auto_type ignores nullability annotations with -fobjc-arc

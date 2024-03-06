@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21153772"
+    labels:
+        datastore_id: "6056291977920512"
+data:
+    classification: Bug
+    created: "2015-05-29T03:28:16.90686Z"
+    description: "My app modifies photo location info and modifies the original copy using Photos framework, by creating PHAssetChangeRequest, and assign new location to PHAssetChangeRequest.location.\r\n\r\nWhen I try to revert the photo back to original by calling revertAssetContentToOriginal(), all changes made are reverted, but the location property remained with the changed value.\r\n\r\nSteps to Reproduce:\r\nSave the new location by the following block of codes:\r\n\r\nPHPhotoLibrary.sharedPhotoLibrary().performChanges({\r\n                    var changeRequest = PHAssetChangeRequest(forAsset: self.selectedPhotoAsset)\r\n                    changeRequest.contentEditingOutput = contentEditingOutput\r\n                    changeRequest.location = CLLocation(latitude: self.annotation.coordinate.latitude, longitude: self.annotation.coordinate.longitude)\r\n                    }, completionHandler: {\r\n                        (success, error) in\r\n                        if success {\r\n                            println(\"Changes made\")\r\n                        } else {\r\n                            println(\"Failed to edit image: \\(error)\")\r\n                        }\r\n                    }\r\n                )\r\n\r\nWhen revertAssetContentToOriginal() being called, all changes in contentEditingOutput are reverted, but location property is still using the changed value.\r\n\r\nExpected Results:\r\nlocation property should also be reverted back to its original value\r\n\r\nActual Results:\r\nlocation property is not reverted, still using the changed location.\r\n\r\nVersion:\r\niOS 8.3\r\n\r\nNotes:\r\nI have to manually assign the original location back to location property when revertAssetContentToOriginal() is being called, and it works only if revert is being done within my app. If the user revert changes in Photos.app, then location property will not be reverted.\r\n\r\nConfiguration:\r\niPhone 4S, iPhone 6 Plus"
+    email: l3rhua@gmail.com
+    modified: "2015-05-29T03:28:16.90728Z"
+    number: "21153772"
+    number_intvalue: 21153772
+    originated: 29 May 2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 8.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Photos Framework revertAssetContentToOriginal won't revert location property

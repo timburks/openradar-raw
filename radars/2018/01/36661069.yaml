@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "36661069"
+    labels:
+        datastore_id: "5013412362846208"
+data:
+    classification: Change Request / Bug
+    created: "2018-01-19T17:49:12.36339Z"
+    description: "Area:\r\nHealthKit\r\n\r\nI am developing a workout app specifically for paddle sports, namely kayaking and crew rowing, and have come across an issue while saving the HKWorkout using the HealthKit SDK on watchOS.\r\n\r\nThe issue is assigning totalDistance to the HKWorkout both using the convenience initializer (illustrated below) or after workout is successfully saved and calling the HKHealthStore func add([HKSample], to: HKWorkout, completion: (Bool, Error?) -> Void) function.\r\n\r\nCode snippet:\r\n            let workoutDistance = HKQuantity(unit: HKUnit.meter(), doubleValue: routeManager.routingData.distance.value)\r\n            let energyBurned = HKQuantity(unit: HKUnit.kilocalorie(), doubleValue: 250.0) // TODO: ?? calculated value?\r\n            let metadata = [HKMetadataKeyIndoorWorkout : false]\r\n            // TODO: need workout events - pause etc.\r\n            // save session\r\n            let paddleWorkout = HKWorkout(activityType: .paddleSports,\r\n                                          start: workoutSession.startDate!,\r\n                                          end: workoutSession.endDate!,\r\n                                          workoutEvents: nil,\r\n                                          totalEnergyBurned: energyBurned,\r\n                                          totalDistance: workoutDistance,\r\n                                          metadata: metadata)\r\n            self.healthStore.save(paddleWorkout) { (success, error) -> Void in\r\n                guard success else {\r\n                    if let sessionSaveError = error {\r\n                        debugPrint(\"*** An error occurred while saving the workout: \\(sessionSaveError.localizedDescription)\")\r\n                    }\r\n                    return\r\n                }\r\n}\r\n\r\nBy simply changing \".paddleSport\" to \".running\" in the HKWorkout instantiation both distance and pace are available in iOS Activity app under Workouts. If paddle sport, no distance/pace is available. HK access permissions are correct so it is not a issue there.\r\n\r\nHere is the HK authorization code that gets called earlier in the app lifecycle:\r\nlet shareTypes: Set<HKSampleType> = [HKWorkoutType.workoutType(),\r\n                                                 HKSeriesType.workoutRoute(),\r\n                                                 HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!]\r\n            healthKitStore.requestAuthorization(toShare: shareTypes, read: sampleTypes, completion: { (success, error) in\r\n...\r\n}\r\n\r\nNotice in the shareTypes I had to use \".distanceWalkingRunning\" since there is no option for distance for paddle sports."
+    email: bbuck911@gmail.com
+    modified: "2018-01-19T17:49:12.36357Z"
+    number: "36661069"
+    number_intvalue: 36661069
+    originated: 1/19/18
+    parent_number: '&{NULL_VALUE}'
+    product: watchOS + SDK HealthKit
+    product_version: "4.2"
+    reproducible: Yes
+    resolved: No
+    status: Open
+    title: Creating a HKWorkout of type HKWorkoutActivityType.paddleSports does not allow sharing distance or other HKQuantity types

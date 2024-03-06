@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16680390"
+    labels:
+        datastore_id: "5781671030816768"
+data:
+    classification: Enhancement
+    created: "2014-04-21T22:55:50.04266Z"
+    description: "Summary:\r\nFor reasons not explained in the documentation, UIViewController presents an irrationally inconsistent behaviour of refusing keyboard dismissal when presented modally as UIModalPresentationFormSheet. In order to achieve standard behaviour, the view controller must override -disablesAutomaticKeyboardDismissal to return YES. Unfortunately, everything falls apart when the view controller in question exists within a UINavigationController stack that is presented modally UIModalPresentationFormSheet (because the latter returns NO per its superclass implementation), despite the wishes of the salient view controller. To mitigate this, a view controller presented modally within a navigation stack is forced to first subclass UINavigationController—a poor workaround.\r\n\r\nTo address this, two options are obvious:\r\n\r\n1. UINavigationController could pass through -disablesAutomaticKeyboardDismissal to its topViewController, thus allowing the latter UIViewController to make its own decision about keyboard handling.\r\n\r\n2. The obscure UIModalPresentationFormSheet behaviour could be abandoned entirely.\r\n\r\n\r\nExample workaround in the mean time:\r\n\r\n@interface KeyboardDismissibleNavigationController : UINavigationController\r\n@end\r\n\r\n@implementation KeyboardDismissibleNavigationController\r\n\r\n- (BOOL)disablesAutomaticKeyboardDismissal\r\n{\r\n    return NO;\r\n}\r\n\r\n@end\r\n\r\n…\r\n\r\nUIViewController *vc = [MyUIViewController alloc] init]; // …\r\nUINavigationController *nav = [[KeyboardDismissibleNavigationController alloc] initWithRootViewController:vc];\r\nnav.modalPresentationStyle = UIModalPresentationFormSheet;\r\n[self presentViewController:nav animated:YES completion:nil];\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\niOS 7.1 (11D167) and probably earlier.\r\n\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: ben.kennedy@kashoo.com
+    modified: "2014-04-21T22:55:50.042831Z"
+    number: "16680390"
+    number_intvalue: 16680390
+    originated: 21-Apr-2014 03:54 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 7.1 (11D167) and probably earlier.
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UINavigationController should delegate -disablesAutomaticKeyboardDismissal to its top view controller

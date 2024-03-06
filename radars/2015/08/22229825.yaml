@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22229825"
+    labels:
+        datastore_id: "5065403394949120"
+data:
+    classification: Crash
+    created: "2015-08-11T12:38:36.22074Z"
+    description: "Summary:\r\nI'm experiencing a constant kernel panic when using dtrace probes with speculations. It also doesn't matter what target I attach dtrace to.\r\n\r\nSteps to Reproduce:\r\n1. Create (or download the attached) file `speculations.d` with the following contents:\r\n----------------- speculations.d begins ----------------\r\nsyscall::open:entry\r\n{\r\n\tself->spec = speculation();\r\n\tspeculate(self->spec);\r\n\tprintf(\"open(%s)\\n\", copyinstr(arg0));\r\n}\r\n\r\nsyscall::open:return\r\n/self->spec && errno == 0/\r\n{\r\n\tcommit(self->spec);\r\n\tself->spec = 0;\r\n}\r\n----------------- speculations.d ends ------------------\r\nThis simple dtrace script should log every successfull open() syscall.\r\n\r\n2. Now run dtrace, compile the script above and attach to any target. I prefer `/usr/bin/file` because it actually open()s something:\r\n\t\r\n\t$ sudo dtrace -qs ./spec.d -c \"/usr/bin/file /etc/passwd\"\r\n\t\r\n\r\nExpected Results:\r\nThe following output expected:\r\n\t\r\n\t/etc/passwd: ASCII English text\r\n\topen(/usr/share/file/magic.mgc)\r\n\topen(/etc/passwd)\r\n\r\nActual Results:\r\nThe OS X kernel panics (sample crash reports attached).\r\n\r\nVersion:\r\nOS X 10.10.4 (14E46), not sure about other 10.10.x revisions.\r\n\r\nNotes:\r\nWhen I remove everything related to speculations from the script above, *it works fine*:\r\n\t\r\n        ----------------- speculations.d begins ----------------\r\n\tsyscall::open:entry\r\n\t{\r\n\t\tprintf(\"open(%s)\\n\", copyinstr(arg0));\r\n\t}\r\n        ----------------- speculations.d ends -------------------\r\n\r\nConfiguration:\r\nI was able to reproduce this crash on both real (MacBookPro9,2 and MacBookPro11,2) and virtual machines with OS X 10.10(.4) installed. \r\n\r\nI've also tried to trigger it on OS X 10.8 and 10.9 (both on virtual machines), but had no success there.\r\n\r\n\r\nAttachments:\r\n'speculations.d', 'Kernel_2015-08-11-145337_Dmitrys-MacBook-Pro.panic' and 'Kernel_2015-08-11-051630_VirtualBox.panic' were successfully uploaded."
+    email: i.am.rodionovd@gmail.com
+    modified: "2015-08-11T12:39:16.60939Z"
+    number: "22229825"
+    number_intvalue: 22229825
+    originated: 11-Aug-2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: "10.10"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Constant kernel panic when using dtrace with speculations

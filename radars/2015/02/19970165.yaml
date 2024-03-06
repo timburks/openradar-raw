@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19970165"
+    labels:
+        datastore_id: "5906527944704000"
+data:
+    classification: Other Bugs
+    created: "2015-02-26T16:45:02.672692Z"
+    description: "Kent Humphries\r\n\r\n26-Feb-2015 04:41 PM\r\n\r\nSummary:\r\nThis is likely a compiler issue rather than an Xcode issue, but it manifests itself when building projects from Xcode.\r\n\r\nOur app project includes two build configurations. One configuration builds for all architectures, one builds for active architectures only.\r\n\r\nWhen building for active architecture (simulator on x86_64 architecture), build runs and compiles without warnings. When building for all architectures (which includes armv7), warning is generated for int-conversion.\r\n\r\nThe culprit code is:\r\n\r\n    BOOL myBool = [self performSelector:@selector(methodThatReturnsBool)];\r\n\r\nEffectively, this potential bug in code (it rightly warrants an int-conversion warning) is hidden on arm64 and x86_64 (possibly others too) architectures.\r\n\r\nNote that the following code:\r\n\r\n    int myInt = [self performSelector:@selector(methodThatReturnsBool)];\r\n\r\nDoes generate an int-conversion warning on all architectures tested.\r\n\r\nWe wish to have reliable warnings generated across build configurations, irrespective of the build architecture.\r\n\r\nThank you for your time.\r\n\r\nSteps to Reproduce:\r\n1. Download attached sample project: int-coversion. <https://github.com/kenthumphries/int-conversion-demo>\r\n2. Setup provisioning so that project can be run on a device.\r\n3. Run the app on an armv7 architecture - int-conversion warning prevents compilation. [OK]\r\n4. Run the app on an arm64 architecture - int-conversion warning not generated [NOT OK]\r\n\r\nExpected Results:\r\nOn every architecture, implicitly converting an id to a BOOL should cause a warning to be generated.\r\n\r\nActual Results:\r\nOn architecture armv7, int-conversion warning is generated.\r\nOn architecture arm64, int-conversion warning is not generated.\r\n\r\nVersion:\r\nXcode 6.1.1\r\nOS X 10.10.1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:"
+    email: kent.humphries@gmail.com
+    modified: "2015-02-26T16:46:00.187826Z"
+    number: "19970165"
+    number_intvalue: 19970165
+    originated: 26-Feb-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: int-conversion warning ignored for BOOL on arm64 architecture

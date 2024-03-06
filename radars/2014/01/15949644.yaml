@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15949644"
+    labels:
+        datastore_id: "4910948821237760"
+data:
+    classification: ""
+    created: "2014-01-30T20:43:41.12826Z"
+    description: "Summary:\r\nMy iPad application opens modal view controller with 'Page' presentation style. As you know 'Page' presentation style doesn't cover status bar of presenting view controller to indicate page presentation.\r\n\r\nFrom the modal view controller the app opens UIImagePickerController to make photo. UIImagePickerController has 'Full screen' presentation style. After dismissing image picker presenting modal view controller become 20px taller and overlaps status bar of the initial view controller.\r\n\r\nI tried to replace UIImagePickerController with simple UINavigationController and it breaks my modal view controller too.\r\n\r\nI used such weird code to solve my problem:\r\n\r\n#define STATUS_BAR_HEIGHT 20\r\n#define IPAD_PORTRAIT_HEIGHT 1004\r\n#define IPAD_LANDSCAPE_HEIGHT 748\r\nUIView *superview = nil;\r\n\r\n// In case of this view controller included in navigationController we have to use superview of navigation's controller view\r\nif (self.navigationController)\r\n    superview = self.navigationController.view.superview;\r\nelse\r\n    superview = self.view.superview;\r\n\r\nCGRect r = superview.frame;\r\n\r\n// Sometimes we have to fix height + origin, sometimes only height (becase view has bottom magnifying)\r\n// In landscape orientation we have to fix 'width' instead of 'height', because that view controller always works in 'portrait' mode\r\nif (self.interfaceOrientation == UIInterfaceOrientationPortrait && r.size.height > IPAD_PORTRAIT_HEIGHT) {\r\n    r.origin.y = STATUS_BAR_HEIGHT;\r\n    r.size.height = IPAD_PORTRAIT_HEIGHT;\r\n}\r\nelse if (self.interfaceOrientation == UIInterfaceOrientationMaskPortraitUpsideDown && r.size.height > IPAD_PORTRAIT_HEIGHT) {\r\n    r.size.height = IPAD_PORTRAIT_HEIGHT;\r\n}\r\nelse if (self.interfaceOrientation == UIInterfaceOrientationLandscapeLeft && r.size.width > IPAD_LANDSCAPE_HEIGHT) {\r\n    r.size.width = IPAD_LANDSCAPE_HEIGHT;\r\n    r.origin.x = STATUS_BAR_HEIGHT;\r\n}\r\nelse if (self.interfaceOrientation == UIInterfaceOrientationLandscapeRight && r.size.width > IPAD_LANDSCAPE_HEIGHT) {\r\n    r.size.width = IPAD_LANDSCAPE_HEIGHT;\r\n}\r\n\r\nsuperview.frame = r;\r\n\r\nSteps to Reproduce:\r\n1) Create iPad project\r\n2) Present 'Page' modal view controller from initial view controller\r\n3) Present 'Full screen' modal view controller from 'Page' modal view controller\r\n4) Dismiss 'Full screen' modal view controller\r\n\r\n\r\nExpected Results:\r\n'Page' modal view controller remains at the same place\r\n\r\nActual Results:\r\n 'Page' modal view controller shifts 20px up\r\n\r\n\r\nVersion:\r\nIt's reproducible on any iOS7 real iPad or iPad simulator\r\n\r\nStackoverflow link: http://stackoverflow.com/questions/21146801/ipad-ios7-page-modal-view-controller-strange-behaviour-after-presenting-full"
+    email: vitalys@gmail.com
+    modified: "2014-01-30T20:43:41.128429Z"
+    number: "15949644"
+    number_intvalue: 15949644
+    originated: 30-Jan-2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 7.x
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '''Page'' modal view controller strange behaviour after presenting ''Full screen'' view controller from it'

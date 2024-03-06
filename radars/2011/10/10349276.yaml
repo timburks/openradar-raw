@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10349276"
+    labels:
+        datastore_id: "1402408"
+data:
+    classification: UI/Usability
+    created: "2011-10-26T18:47:58.88931Z"
+    description: "Summary:\r\n\r\nInterface Builder's defaults for NSWindows don't reflect modern best practices. New NSWindows created from the object library or from the \"Window\" template have the \"Release when Closed\" attribute set (-setReleasedWhenClosed:YES), and the class of File's Owner for the Window template is assumed to be an NSObject.\r\n\r\nThe \"Release when Closed\" attribute should not be set by default. If one is using an NSWindowController to manage the window, then NSWindowController will disable the Release when Closed attribute and correctly manage the window's lifecycle itself. This leads to the misleading scenario of the Object Inspector indicating that the window will be released when closed, but the window actually not being released and therefore functioning correctly if ordered back onscreen after being sent a -close message.\r\n\r\nEven if the window is not being managed by an NSWindowController, ARC prohibits unbalanced -retain and -release. To deal with the extra retain given to top-level NIB objects, the Resource Programming Guide encourages creating outlets from File's Owner to top-level objects, casting them to CFType, and calling CFRelease. To promote consistency, windows should not be given the \"Release when Closed\" flag by default. The option can remain there for those who understand it to turn on, but the true solution should be to encourage using NSWindowController or NSViewController to own and load the NIB file.\r\n\r\nThis best practice can be further encouraged by making NSWindowController the default class of File's Owner for the Window NIB template, and hooking up the window outlet to the window. It would also save me much repeated embarrassment and frustration since I constantly forget to hook up the window outlet. I'm sure I'm not alone.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Choose File > New > New File.\r\n2. Choose the Mac OS X > User Interface > Window template.\r\n3. Give a name to the NIB file and choose Save.\r\n4. Select the window object and note the state of its \"Release when closed\" checkbox on the Attributes Inspector.\r\n5. Select the File's Owner proxy and note its class on the Identity Inspector.\r\n\r\nExpected Results:\r\n\r\nThe window's \"Release when closed\" checkbox is unchecked, and the class of File's Owner is set to NSWindowController.\r\n\r\nActual Results:\r\n\r\nThe window's \"Release when closed\" checkbox is checked, and the class of File's Owner is set to NSObject."
+    email: kyle.sluder@gmail.com
+    modified: "2011-10-26T18:47:58.889605Z"
+    number: "10349276"
+    number_intvalue: 10349276
+    originated: 10/26/2011
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 4.2/4D199
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Modernize Window NIBs: use NSWindowController, uncheck "Release when Closed"'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7182937"
+    labels:
+        datastore_id: "71427"
+data:
+    classification: Other Bug
+    created: "2009-08-31T09:44:09.132571Z"
+    description: "**** UPDATE ****\r\nNote, essentially this wasn't a bug - at least not the one originally thought. The two test machines had different DNS configurations. The PPC machine forwarded to OpenDNS which - although it couldn't resolve a host from the URL - returned an IP address for it's advertising/possible alternatives apge. This resulted in SCNetworkCheckReachabilityByName() returning that the host was reachable. The Radar bug has been closed.\r\n** END UPDATE **\r\n\r\n\r\nSummary: \r\nWhen SCNetworkCheckReachabilityByName(const char *nodename, SCNetworkConnectionFlags *flags) is called on an Intel based Mac, under certain conditions different results are obtained for the same call. Specifically when nodename is a URL instead of a plain hostname the call returns that the host is reachable when made on a PPC Mac, but unreachable when made on an Intel Mac.\r\n\r\nSteps to Reproduce:\r\n1. Build the following code as universal:\r\n\t\r\n\tBOOL result;\r\n\tSCNetworkConnectionFlags flags;\r\n\tconst char *testHost1 = \"homepage.mac.com\";\r\n\tconst char *testHost2 = \"http://homepage.mac.com/kcall/\";\r\n\t\r\n\tresult = SCNetworkCheckReachabilityByName(testHost1, &flags);\r\n\tNSLog(@\"\\t Test 1: 'result' is: %d; 'flags' is: %d\\n\", result, flags);\r\n\t\r\n\tresult = SCNetworkCheckReachabilityByName(testHost2, &flags);\r\n\tNSLog(@\"\\t Test 2: 'result' is: %d; 'flags' is: %d\\n\", result, flags);\r\n\t\r\n\tRun the code on:\r\n\t\t1] PPC Mac\r\n\t\t2] Intel Mac\r\n\t\t3] Intel Mac under Rosetta\r\n\t\t(ensuring that each test machine has an active internet connection.)\r\n\t\t\r\nExpected Results:\r\nThis is arguable, but following the documentation strictly which specifies nodename as an host domain name and the return value being YES if the call can determine whether the host is reachable all three test environments should output:\r\n\tTest 1: 'result' is: 1; 'flags' is: 2\r\n\tTest 2: 'result' is: 0; 'flags' is: 0\r\n\r\nTest 1 gets a valid hostname and so can determine reachability\r\nTest 2 gets an invalid hostname and so cannot determine reachability.\r\n\t\r\nActual Results:\r\nThe PPC machine will output:\r\n\tTest 1: 'result' is: 1; 'flags' is: 2\r\n\tTest 2: 'result' is: 1; 'flags' is: 2\r\n\r\nThe Intel machine and PPC code under Rosetta on the Intel machine will output:\r\n\tTest 1: 'result' is: 1; 'flags' is: 2\r\n\tTest 2: 'result' is: 1; 'flags' is: 0\r\n\r\nRegression:\r\nI see it consistently under several version of 10.5.x. I haven't been able test on 10.4 or Snow Leopard \r\n\r\nNotes:\r\nSince the library code called by SCNetworkCheckReachabilityByName() on PPC Macs can handle URLs in the nodename param it could be said to be working correctly.\r\n\r\nOn Intel Macs the libray code clearly cannot handle URLs when ppassed in the nodename parameter. WHile it is therefore quite correct to return 0 in the SCNetworkConnectionFlags, shouldn't it really return NO as the result as the meaning in this case is actually that it cannot determine reachability of the host?"
+    email: apollonia.uk@googlemail.com
+    modified: "2011-08-28T05:45:04.21525Z"
+    number: "7182937"
+    number_intvalue: 7182937
+    originated: "2009-08-31"
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.x
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: SCNetworkCheckReachabilityByName() behaves differently on PPC and Intel Macs.

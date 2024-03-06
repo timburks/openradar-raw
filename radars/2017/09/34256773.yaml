@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34256773"
+    labels:
+        datastore_id: "5042230989422592"
+data:
+    classification: Bug
+    created: "2017-09-05T15:44:03.71406Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nI have a custom transition that zooms out a bit the current controller, and then presents on top another controller. It is working as expected under the iOS 10 SDK, but it is awful on the iOS 11 SDK.\r\n\r\nI am going to attach several videos for you to see the difference & the issues. Also, I've attached a minimal project that actually shows the issue in a brand new scene.\r\n\r\nWe have two main issues:\r\n1. On one hand we have a controller that has `edgesForExtendedLayout = [.left, .bottom, .right]`, having a scrollView with the size of the view\r\n\r\nIn this case, the issue is that the presentation transition is working correctly on presentation, but on dismissal it does not show the status bar until the animation is completed, leaving a black area in the place of it.\r\n\r\n2. On the other hand, controller that have the default value for `edgesForExtendedLayout` also having a scrollView with the size of the view.\r\n\r\nIn this case, the issue is that on presentation, the feeling is that the content inset on top is reduced, and on dismissal is reset to its default value. But it is actually never changing. The result you see onscreen is that there's a weird jumping going on there.\r\nIn the attached video/project you can see that the UITableView separators are jumping up and down on presentation and dismissal.\r\n\r\nAlso, you can see that after the presentation of the controller, the presenting controller's navigation bar size is not the same. It is actually leaving the top part (the one that \"belongs\" to the status bar) transparent. So you can see the controller that's behind the navigation bar.\r\n\r\nI've also seen this last issue about seeing the controller that's behind on the Apple Music app. See apple-music-issue.png\r\n\r\nThe logic that performs the dismiss is the same as the one that does the presentation, but inverted.\r\n\r\nSteps to Reproduce:\r\n\r\nExtract contents of TransitionDemo.zip, open TransitionDemo.xcodeproj with Xcode 9 Beta 6, and run. The demo has a \"Click me\" button that will perform the presentation.\r\nIn the case of testing the edgesForExtendedLayout version, add `edgesForExtendedLayout = [.left, .bottom, .right]` on ViewController.swift - Line 35.\r\n\r\nExpected Results:\r\nThe transition should look as iOS10.mov\r\n\r\nActual Results:\r\nThe transition is not performed correctly, exposing the previous explained issues.\r\n\r\nVersion/Build:\r\nXcode 9 Beta 6 (9M214v)\r\nmacOS Sierra 10.12.6 (16G29)"
+    email: pol.quintana1@gmail.com
+    modified: "2017-09-05T15:44:03.71437Z"
+    number: "34256773"
+    number_intvalue: 34256773
+    originated: September 5 2017, 5:40 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "11.0"
+    reproducible: Always
+    resolved: ""
+    status: open
+    title: Navigation Bar is detaching from status bar when applying a scale transform on custom transition

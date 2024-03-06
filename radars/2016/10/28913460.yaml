@@ -1,0 +1,43 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28913460"
+    labels:
+        datastore_id: "5038366827479040"
+data:
+    classification: Other Bug
+    created: "2016-10-24T10:01:46.9823Z"
+    description: |-
+        Summary:
+        Trying to align a UILabel and a UITextView by baseline is no funny matter. Turns out, UILabel clamps its baseline to pixel values using round (UIViewRoundToScale), while UITextView uses ceil, but this doesn't seem to be documented anywhere. One would expect the calculation to be done in a consistent way.
+
+        Steps to Reproduce:
+        1. Try to align the text in a UILabel and UITextView on baselines, with font size = 17.0
+        2. Have pixel differences between the two, depending on font-size and the line number in UITextView one is trying to align to
+        3. Dive into disassembly of CoreText, CoreGraphics, UIKit. (Apple engineers can skip this step and look at the actual code directly, likely)
+        4. Take hours to figure out why a UILabel is sometimes misaligned with respects to a UITextView baseline
+
+        Expected Results:
+        1. UILabel and UITextView calculate their baselines in the same way
+
+        Actual Results:
+        - UILabel calculates its baseline position by taking the actual fractional baseline and rounding it to pixel values. A Baseline of 16.12 comes out as 16
+        - UITextView (CoreText) calculates its baseline position by taking the actual fractional baseline and ceil()-ing it to pixel values. A baseline of 16.12 comes out as 16.5 on 2x devices.
+        - This results in pixel differences sometimes, depending on font-size and where the actual line starts
+        - Developer goes crazy and knows more about the inner workings of text rendering on IOS than they want
+
+        Regression:
+
+        Notes:
+    email: avedesk@gmail.com
+    modified: "2016-10-24T10:01:46.98247Z"
+    number: "28913460"
+    number_intvalue: 28913460
+    originated: 24-Oct-2016 12:01 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UILabel and UITextView calculate baselines in a different way

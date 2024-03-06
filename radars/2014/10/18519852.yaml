@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18519852"
+    labels:
+        datastore_id: "5033390151565312"
+data:
+    classification: Other Bug
+    created: "2014-10-01T22:18:31.461051Z"
+    description: "Summary:\r\nin iOS 7, ALAssetsLibrary -addAssetsGroupAlbumWithName:resultBlock:failureBlock: returns either nil if the group already exists, or an ALAssetsGroup if the group was created.\r\n\r\nin iOS 8, this behavior has changed - it returns the group the first time, and returns nil on subsequent calls, but if you delete the album, it still returns nil, and does not call the failureBlock when the group was not created. Notably, on iOS 7 it creates the album again and performs as expected.\r\n\r\nSteps to Reproduce:\r\n\r\nGiven the following code:\r\n\r\nvoid (^complete)(BOOL, NSError *) = ^(BOOL exists,NSError *error){\r\n        NSString *message = [NSString stringWithFormat:@\"Image saved : %@, errored : %@\",\r\n                           exists ? @\"YES\" : @\"NO\",\r\n                           error ? @\"YES\" : @\"NO\"];\r\n        UIAlertView *statusAlert = [[UIAlertView alloc] initWithTitle:@\"Group Creation Results:\" message:message delegate:nil cancelButtonTitle:@\"OK\" otherButtonTitles:nil];\r\n        [statusAlert show];\r\n    };\r\n    if (!self.lib) {\r\n        self.lib = [ALAssetsLibrary new];\r\n    }\r\n    __weak ALAssetsLibrary *lib = self.lib;\r\n    static NSString *groupName = @\"Test album\";\r\n    [lib addAssetsGroupAlbumWithName:groupName resultBlock:^(ALAssetsGroup *group) {\r\n        NSLog(@\"group : %@\",group);\r\n        //Check if album was previous created\r\n        if(group == nil) {\r\n            //Enumerate through albums\r\n            [lib enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *album, BOOL *stop) {\r\n                NSLog(@\"album : %@\",[album valueForProperty:ALAssetsGroupPropertyName]);\r\n                //Found Album\r\n                if ([[album valueForProperty:ALAssetsGroupPropertyName] isEqualToString:groupName]) {\r\n                    complete(YES,nil);\r\n                }\r\n            } failureBlock:^(NSError *error){\r\n                complete(NO, error);\r\n            }];\r\n        } else {\r\n            complete(YES,nil);\r\n        }\r\n    } failureBlock:^(NSError *error) {\r\n        complete (NO, error);\r\n    }];\r\n\r\n1. execute this code once\r\n2. delete the created group from your photos\r\n3. execute the code again (it will never hit the complete block)\r\n\r\nExpected Results:\r\nI expect that the above code would act like it does on iOS 7:\r\n\r\n1. execute the code\r\n2. delete the created group from your photos\r\n3. execute the code again, it will hit the complete block and recreate the group.\r\n\r\nActual Results:\r\non any iOS 8 device/sim:\r\n\r\n1. execute the code\r\n2. delete the created group from your photos\r\n3. execute the code again\r\n4. group is nil, but the group was neither created nor pre-existing, so we can never re-create the album once it's deleted.\r\n\r\nVersion:\r\nReproduced on all simulators and devices\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nAny device running iOS 8.0\r\n\r\nAttachments:"
+    email: jesse.ditson@gmail.com
+    modified: "2014-10-01T22:18:31.461292Z"
+    number: "18519852"
+    number_intvalue: 18519852
+    originated: 12/01/2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "8.0"
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: iOS 8 ALAssets create group not API compatible with iOS 7 ALAssets create group

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16234527"
+    labels:
+        datastore_id: "5240790229975040"
+data:
+    classification: Other Bug
+    created: "2014-03-05T13:58:49.903276Z"
+    description: "This is a duplicate of rdar://16224269\n\nA temporary exception is currently needed for an app that wants to arrange and organize windows in another app. There are several tools on the Mac App Store that aid the user in this way:\r\n\r\nhttps://itunes.apple.com/us/app/cinch/id412529613?mt=12\r\nhttps://itunes.apple.com/us/app/divvy-window-manager/id413857545?mt=12\r\n\r\nAs an example of how I'd like this enhancement to work, assume there's an app that assists a web developer by resizing Safari windows to specific sizes for testing responsive web designs. The app would use AppleScript that looks something like this:\r\n\r\n\ttell application \"System Events\"\r\n\t\ttell process \"Safari\"\r\n\t\t\tset theWindow to window 1\r\n\t\t\tset position of theWindow to {100, 100}\r\n\t\t\tset size of theWindow to {800, 600}\r\n\t\tend tell\r\n\tend tell\r\n\r\nThat app needs the following temporary exception in its entitlements:\r\n\r\n\t<key>com.apple.security.temporary-exception.apple-events</key>\r\n\t<array>\r\n\t\t<string>com.apple.systemevents</string>\r\n\t</array>\r\n\r\nIn addition, user intent is controlled by System Preferences with Accessibility settings. (Accessibility > \"Enable access for assistive devices\" on 10.8 or Security & Privacy > Privacy > Accessibility > \"Allow the apps below to control your computer\" on 10.9).\r\n\r\nDisallowing an app from controlling another is a good idea (I sure don't want an app selecting menu items for me!) and the App Sandbox Design Guide's statements about accessibility make complete sense:\r\n\r\nhttps://developer.apple.com/library/mac/documentation/security/conceptual/AppSandboxDesignGuide/DesigningYourSandbox/DesigningYourSandbox.html#//apple_ref/doc/uid/TP40011183-CH4-SW6\r\n\r\nThat being said, automatically moving windows around on my screen is something that helps me do my job and something I can explicitly control using Accessibility in System Preferences. As a user, this type of \"controlling my app\" means \"making my work easier\".\r\n\r\nI propose that an access group identifier be added to the Processes Suite in the \"sdef\" for /System/Library/CoreServices/System Events.app that just allows the rect of window to be adjusted. Something like this:\r\n\r\n\t<access-group identifier=\"com.apple.systemevents.window\" access=\"rw\">\r\n\t\t<property name=\"position\" code=\"posn\" type=\"list\" description=\"the position of the UI element\" />\r\n\t\t<property name=\"size\" code=\"ptsz\" type=\"list\" description=\"the size of the UI element\" />\r\n\t</access-group>\r\n\r\nIdeally, privileges would be limited to just these properties on the window UI element. (Most of the other elements and properties on the process and window objects are read-only already.)\r\n\r\nThen an app that wants to use the System Events to place windows can add it to their scripting targets:\r\n\r\n\t<key>com.apple.security.scripting-targets</key>\r\n\t<dict>\r\n\t\t<key>com.apple.systemevents</key>\r\n\t\t<array>\r\n\t\t\t<string>com.apple.systemevents.window</string>\r\n\t\t</array>\r\n\t</dict>\r\n\r\nAnd we all live happily ever after."
+    email: timothy.broder@gmail.com
+    modified: "2014-03-05T13:58:49.903456Z"
+    number: "16234527"
+    number_intvalue: 16234527
+    originated: 05-Mar-2014 08:58 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Add security access groups to System Events for Accessibility APIs

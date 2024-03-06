@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13109826"
+    labels:
+        datastore_id: "2624403"
+data:
+    classification: Crash
+    created: "2013-01-29T22:40:21.973137Z"
+    description: "29-Jan-2013 02:37 PM Brian Webster:\r\nSummary:\r\nIf you build a Cocoa application that uses ARC with a deployment target of 10.6, and compiler optimizations are enabled, the app will crash when launched on 10.6.8.\r\n\r\nSteps to reproduce:\r\nThe included sample project (SnowLeopardARCTest) is a basic Cocoa application with a small amount of code in -applicationDidFinishLaunching: There are three schemes set up in the project that will compile and run this code in slightly different ways, demonstrating which parameters cause a crash and which do not. The criteria that combine to lead to a crash are:\r\n \r\n - The app is linked against the 10.8 SDK with a 10.6 deployment target\r\n - Optimizations are turned _on_ (e.g. -Os sent to the compiler)\r\n - There is at least one attempt in the code to call objc_retainAutoreleasedReturnValue()\r\n - The resulting app is run on a 10.6.8 system (both 10.7.x and 10.8.x work fine)\r\n \r\n There may be other objc runtime functions that trigger a similar crash, but this is the one that was easiest to discover to demonstrate the problem.\r\n \r\n There are three schemes that compile and run this application in different ways:\r\n \r\n - SnowLeopardARCTest-unoptimized-autorelease-nocrash: this builds using the Debug configuration and passes in an env var that chooses the code path to retain an autoreleased object. Because optimizations are turned off in the debug build, this does not cause a crash.\r\n - SnowLeopardARCTest-optimized-noautorelease-nocrash: this builds using the Release configuration, but chooses the code path that does not retain an autoreleased object. This scheme also does not crash on 10.6.8.\r\n - SnowLeopardARCTest-optimized-autorelease-crash: this builds using the Release build and chooses the autorelease code path. This will crash in -applicationDidFinishLaunching: when run on 10.6.8.\r\n \r\n This project was created and built using Xcode 4.6, though I was using 4.5.2 at the time I originally encountered this problem.\r\n\r\nNotes:\r\nIn trying various things to debug this, I tried putting a symbolic breakpoint on __ARCLite__load to see whether and where it was called in the variations above. The breakpoint would only resolve with the app compiled with optimizations off. The breakpoint would be hit in the process of dyld loading images for the application. If optimizations were turned on, the debugger could not resolve the breakpoint and it would never be hit. However, the output of the 'nm' command line tool seems to indicate that __ARCLite__load is present in the executable for both optimized and unoptimized builds, so I'm at a loss for why the breakpoint can't be resolved with optimizations on.\r\n\r\nThe system configuration attached is the one from the 10.6.8 machine I've been using to test the crashes. The builds have been done using a separate machine running 10.8.2 and Xcode 4.6.\r\n\r\n29-Jan-2013 02:37 PM Brian Webster:\r\n'SnowLeopardARCTest.zip' and 'MacBook Pro.spx' were successfully uploaded\r\n\r\nhttps://s3.amazonaws.com/bwebster/SnowLeopardARCTest.zip"
+    email: bewebste@gmail.com
+    modified: "2013-01-29T22:40:21.973302Z"
+    number: "13109826"
+    number_intvalue: 13109826
+    originated: 29-Jan-2013 02:37 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 4.6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ARC application crashes on 10.6.8 when compiler optimizations are on

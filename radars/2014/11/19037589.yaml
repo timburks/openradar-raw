@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19037589"
+    labels:
+        datastore_id: "5291584996245504"
+data:
+    classification: UI/Usability
+    created: "2014-11-20T00:15:55.916279Z"
+    description: "Summary:\r\nPresenting a view from a UIAlertController moves the alert to a buggy position at the top-left corner of the screen. iOS 8.1, device and simulator.\r\n\r\nWe have noticed this in an app when we attempt to present a view from the current \"top-most\" view. If a UIAlertController happens to be the top-most view we get this behavior. We have changed our code to simply ignore UIAlertControllers, but I'm posting this in case others hit the same issue (as I couldn't find anything).\r\n\r\nWe have isolated this to a simple test project, as seen below. Simply implement viewDidAppear: on the View Controller in a new Single View Xcode project and insert the following.\r\n\r\nSample Xcode Project attached.\r\n\r\nSteps to Reproduce:\r\n1. Present a UIAlertController alert.\r\n2. Present a view from the alert\r\n3. Dismiss the view.\r\n4. The UIAlert has now moved to a buggy position at the top of the screen.\r\n\r\nBetter formatting here:\r\nhttp://stackoverflow.com/questions/27028983/uialertcontroller-is-moved-to-buggy-position-at-top-of-screen-when-it-calls-pre\r\n\r\nAdd the following code to `viewDidAppear:` on the View Controller in a new Single View Xcode project and insert the following.\r\n\r\n- (void)viewDidAppear:(BOOL)animated {\r\n    // Display a UIAlertController alert\r\n    NSString *message = @\"This UIAlertController will be moved to the top of the screen if it calls `presentViewController:`\";\r\n    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@\"UIAlertController iOS 8.1\" message:message preferredStyle:UIAlertControllerStyleAlert];\r\n    [alert addAction:[UIAlertAction actionWithTitle:@\"I think that's a Bug\" style:UIAlertActionStyleCancel handler:nil]];\r\n    [self presentViewController:alert animated:YES completion:nil];\r\n\r\n    // Present and then Dismiss a view\r\n    UIViewController *viewController = [[UIViewController alloc] init];\r\n    viewController.view.backgroundColor =  = self.view.tintColor;\r\n    [alert presentViewController:viewController animated:YES completion:^{\r\n        dispatch_after(0, dispatch_get_main_queue(), ^{\r\n            [viewController dismissViewControllerAnimated:YES completion:nil];\r\n        });\r\n    }];\r\n\r\n    // RESULT:\r\n    // UIAlertController has been moved to the top of the screen.\r\n    // http://i.imgur.com/KtZobuK.png\r\n}\r\n\r\nExpected Results:\r\nUIAlertController stays in normal position in center of screen.\r\n\r\nActual Results:\r\nUIAlertController is moved to buggy position at top of screen.\r\n\r\nVersion:\r\nios 8.1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niOS 8.1 on iPad/iPhone Simulator and iPhone 6 hardware.\r\n\r\nAttachments:\r\n'alert.png', 'alert_moved.png', 'alert_end_end.png' and 'UIAlertControllerTest.zip' were successfully uploaded."
+    email: peter.kamb@gmail.com
+    modified: "2015-02-25T23:00:32.68679Z"
+    number: "19037589"
+    number_intvalue: 19037589
+    originated: 19-Nov-2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 8.1
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: UIAlertController is moved to buggy position at top of screen when it calls `presentViewController:`

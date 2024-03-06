@@ -1,0 +1,56 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17499629"
+    labels:
+        datastore_id: "5871358403674112"
+data:
+    classification: Serious Bug
+    created: "2014-06-29T18:42:23.582664Z"
+    description: |-
+        Summary:
+        A where clause cannot use tuples to relate type parameters to one another.
+
+
+        Steps to Reproduce:
+        Try to write one of the following functions:
+
+        /// Returns a sequence containing the elements of the cartesian product of its elements.
+        func cartesianProduct<A : Sequence, B : Sequence, C : Sequence where C.GeneratorType.Element == (A.GeneratorType.Element, B.GeneratorType.Element)> (a: A, b: B) -> C
+
+        /// Returns a sequence consisting of the heads of the pairs.
+        /// Note that it’s also unclear whether the _ is at all valid, but you could always represent it with an otherwise unused type parameter.
+        func heads<A : Sequence, B : Sequence where A.GeneratorType.Element == (B.GeneratorType.Element, _)>(pairs: A) -> B
+
+        /// Returns true if the pairs in `left` are flipped versions of the pairs in `right`.
+        func flipped<A : Sequence, B : Sequence, T, U where A.GeneratorType.Element == (T, U), B == (U, T)>(left: A, right: B) -> Bool
+
+
+        Expected Results:
+        I expected these type signatures to be acceptable.
+
+
+        Actual Results:
+        The compiler complains that it expected an identifier for a type name.
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        Tuples are not first-class in the type system: you can’t extend them; you can’t typically construct 1-tuples; etc.
+
+        Tuples are *incredibly* useful for defining ad hoc relationships between types (e.g. multiple returns), so it’s a shame that this isn’t taken further.
+    email: rix.rob@gmail.com
+    modified: "2014-06-29T18:42:23.582777Z"
+    number: "17499629"
+    number_intvalue: 17499629
+    originated: 29-Jun-2014 02:42 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta2 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Associated types cannot be related through tuples.'

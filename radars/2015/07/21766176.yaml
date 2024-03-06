@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21766176"
+    labels:
+        datastore_id: "5935552394166272"
+data:
+    classification: Other Bug
+    created: "2015-07-10T15:05:39.92711Z"
+    description: "When defining a method with nullability specifiers which takes a NSError** as a parameter, it shows a compiler warning stating that “Pointer is missing a nullability type specifier (__nonnull or __nullable)”.  As far as I can tell there is no way to annotate it with such a declaration.\r\n\r\nIt is my understanding based on https://developer.apple.com/swift/blog/?id=25 - “The particular type NSError ** is so often used to return errors via method parameters that it is always assumed to be a nullable pointer to a nullable NSError reference.” that this should both pointers should be assumed to be nullable.\r\n\r\nExample:\r\n\r\n- (void)exampleMethod:(nonnull id)aParameter error:(NSError **)error;\r\n//Pointer is missing a nullability type specifier (__nonnull or __nullable)\r\n\r\nChange this to:\r\n\r\n- (void)exampleMethod:(nonnull id)aParameter error:(nullable NSError **)error\r\n//Pointer is missing a nullability type specifier (__nonnull or __nullable)\r\n//Nullability keyword 'nullable' cannot be applied to multi-level pointer type 'NSError *__autoreleasing *' (fix it?)\r\n\r\nTapping fix it generates\r\n\r\n- (void)exampleMethod:(nonnull id)aParameter error:(__nullable NSError **)error; \r\n//Pointer is missing a nullability type specifier (__nonnull or __nullable)\r\n\r\nIt should be possible to annotate both pointers in a double pointer.\r\nThe NSError** type specifically could be made to be assumed nullable"
+    email: stephen.groom@me.com
+    modified: "2015-07-16T16:16:49.18841Z"
+    number: "21766176"
+    number_intvalue: 21766176
+    originated: 10-Jul-2015 04:05 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0 beta (7A121l)
+    reproducible: Always
+    resolved: 15-Jul-2015 03:42 PM
+    status: Behaves correctly
+    title: NSError** without a nullability type shows as a warning which can't be suppressed

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32659047"
+    labels:
+        datastore_id: "5060572680814592"
+data:
+    classification: Bug
+    created: "2017-06-08T21:33:23.2515Z"
+    description: "Area:\r\nCore Location\r\n\r\nSummary:\r\nApplication gets gets into a state where CLBeaconRegion monitoring callbacks do not occur.\r\nThe iOS app is monitoring for beacons, but not ranging for beacons. The behavior is affected by the application itself or other applications on the device initiating ranging for beacons. The behavior is affected by the user's interaction with the lock screen.\r\n\r\nSteps to Reproduce:\r\nThis is a problem that is difficult to reproduce as the underlying CoreLocation and/or CoreBluetooth services get into a degraded state that affects the applications behavior. I have observed the Bluetooth status bar indicator go into a grey state prior to recognizing that the application exhibits the degraded CoreLocation beacon behavior.\r\n\r\nExpected Results:\r\nImmediate didEnter and didDetermineState callbacks upon coming within proximity of a valid beacon\r\n\r\nCallbacks to didExit and didDetermineState approximately 30s after exiting the proximity of a valid beacon\r\n\r\nObserved Results:\r\nApplication gets gets into a state where CLBeaconRegion monitoring callbacks do not occur.\r\nThe iOS app is monitoring for beacons, but not ranging for beacons.\r\n\r\n1. When a beacon is within valid proximity delegate callbacks do not occur\r\n    1. didEnter\r\n    2. didExit\r\n    3. didDetermineState\r\n\r\n2. The behavior alters if another app on the device starts ranging.\r\n    1. If the iOS device is in proximity to a beacon\r\n        1. didEnter callback occurs immediately\r\n        2. didDetermineState callback with a state of CLRegionStateInside will be received\r\n    2. If the iOS device is not in proximity to a beacon\r\n        1. didExit callback occurs at 5s\r\n        2. didDetermineState callback with a  state of CLRegionStateOutside occurs at 5s\r\n\r\n3. The behavior can also be altered in the following conditions:\r\n    1. If the iOS device is in proximity to a beacon\r\n    2. If the beacon region state is CLRegionStateOutside\r\n    3. If the iOS device is locked with a non-illuminated screen\r\nUpon waking up the device...\r\n        1. didEnter callback occurs immediately\r\n        2. didDetermineState callback with a state of CLRegionStateInside will be received\r\n\r\n4. The behavior returns to normal for a finite amount of time if Bluetooth is disabled and re-enabled\r\n\r\nVersion:\r\n10.3.2(14F89)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nThis has been observed by our customers and multiple colleagues across the range of available iOS devices. In my personal testing I have observed this on an iPhone 6s Model MKT32LL/A"
+    email: dhelms@radiusnetworks.com
+    modified: "2017-06-08T21:34:38.76481Z"
+    number: "32659047"
+    number_intvalue: 32659047
+    originated: June 8 2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 10.3.2(14F89)
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: iBeacon region monitoring delegate callbacks not occurring

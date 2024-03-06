@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7685059
+    labels:
+        datastore_id: "5044941017317376"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2020-05-02T12:33:25.710506Z"
+    description: "Description:\r\nUsing a NavigationLink on iPad landscape inside a NavigationView with DoubleColumnNavigationViewStyle, the selection parameter get setted to nil when you try to select another link and there is already a selected item.\r\n\r\nSteps to reproduce:\r\nI have attached the minimum ContentView code to reproduce the issue.\r\nYou have to create NavigationLinks using `init<V>(destination: Destination, tag: V, selection: Binding<V?>, label: () -> Label) where V : Hashable`\r\n\r\nExpected:\r\nThe selection Binding should be updated accordingly to the current selected item.\r\n\r\nActual result:\r\nThe selection Binding is updated correctly only when the selection is currently nil. Otherwise it is setted to nil instead of the actual selection tag value.\r\n\r\n```\r\nimport SwiftUI\r\n\r\nstruct ContentView: View {\r\n    var body: some View {\r\n        NavigationView {\r\n            MasterView()\r\n                .navigationBarTitle(Text(\"Master\"))\r\n            DetailView()\r\n        }.navigationViewStyle(DoubleColumnNavigationViewStyle())\r\n    }\r\n}\r\n\r\nstruct MasterView: View {\r\n    private var dates = [\"First\", \"Second\", \"Third\"]\r\n    \r\n    @State var selection: Int? = nil\r\n\r\n    var body: some View {\r\n        VStack(alignment: .leading, spacing: 10) {\r\n            NavigationLink(destination: DetailView(selectedViewName: dates[0]), tag: 0, selection: $selection) {\r\n                Text(dates[0])\r\n                if (selection == 0) {\r\n                    Text(\"SELECTED\")\r\n                }\r\n            }\r\n            NavigationLink(destination: DetailView(selectedViewName: dates[1]), tag: 1, selection: $selection) {\r\n                Text(dates[1])\r\n                if (selection == 1) {\r\n                    Text(\"SELECTED\")\r\n                }\r\n            }\r\n            NavigationLink(destination: DetailView(selectedViewName: dates[2]), tag: 2, selection: $selection) {\r\n                Text(dates[2])\r\n                if (selection == 2) {\r\n                    Text(\"SELECTED\")\r\n                }\r\n            }\r\n            \r\n//            Spacer()\r\n        }\r\n    }\r\n}\r\n\r\nstruct DetailView: View {\r\n    var selectedViewName: String?\r\n\r\n    var body: some View {\r\n        Group {\r\n            if selectedViewName != nil {\r\n                Text(selectedViewName!)\r\n            } else {\r\n                Text(\"Detail view content goes here\")\r\n            }\r\n        }.navigationBarTitle(Text(\"Detail\"))\r\n    }\r\n}\r\n\r\n\r\nstruct ContentView_Previews: PreviewProvider {\r\n    static var previews: some View {\r\n        ContentView()\r\n    }\r\n}\r\n\r\n```"
+    email: nossa.dev@gmail.com
+    modified: "2020-05-02T12:34:39.969151Z"
+    number: FB7685059
+    number_intvalue: 7685059
+    originated: 2020/05/02
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI Framework
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: NavigationLink selection wrong behavior on iPad

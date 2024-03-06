@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12214822"
+    labels:
+        datastore_id: "2015401"
+data:
+    classification: other bug
+    created: "2012-09-20T18:47:30.807951Z"
+    description: "31-Aug-2012 09:55 AM Chris Adamson:\r\nSummary:\r\nCompletion handler block provided to -[UIDocument closeWithCompletionHandler:] is called on iOS 5, not on iOS 6\r\n\r\nSteps to Reproduce:\r\nBuild the attached UIDocument-close-buglet-Recipes_01 project, which is an example from our upcoming \"iOS SDK Development\" book (http://pragprog.com/book/adios/ios-sdk-development) and has been built out over the course of several chapters. The app uses a UIDocument subclass to save user-created recipes. In this chapter, we use a unit test to make sure the persistence works as expected.\r\n\r\nHere is the first part of a test method:\r\n-(void) testPersistence2 {\r\n  NSURL *docDir = [[[NSFileManager defaultManager]\r\n                    URLsForDirectory:NSDocumentDirectory\r\n                    inDomains:NSUserDomainMask] lastObject];\r\n  NSURL *docURL = [docDir URLByAppendingPathComponent:@\"Recipes.recipes\"];\r\n  PRPRecipesDocument *recipesDocForSaving = [[PRPRecipesDocument alloc] initWithFileURL:docURL];\r\n  PRPRecipe *recipeToSave = [recipesDocForSaving createNewRecipe];\r\n  STAssertNotNil(recipeToSave, @\"Failed to create recipe from document\");\r\n  recipeToSave.title = NSLocalizedString(@\"Nachos\", nil);\r\n  recipeToSave.directions = NSLocalizedString(@\"Open bag\\nOpen jar of salsa\\nEnjoy\", nil);\r\n  recipeToSave.preparationTime = [NSNumber numberWithInt:1];\r\n  [recipesDocForSaving recipesChanged];\r\n  __block BOOL blockDone = NO;\r\n  [recipesDocForSaving closeWithCompletionHandler:^(BOOL success) {\r\n\tNSLog (@\"completion handler!\");\r\n    STAssertTrue(success, @\"failed to save recipes doc\");\r\n    blockDone = YES;\r\n  }];\r\n  while (!blockDone) {\r\n    [[NSRunLoop currentRunLoop] runUntilDate:\r\n     [NSDate dateWithTimeIntervalSinceNow:0.1]];\r\n  }\r\n...\r\n\r\nThis creates a document, creates a recipe object to be saved as part of the document, and sets its fields programmatically. It then closes the document with -[UIDocument closeWithCompletionHandler:], which takes a block to set a \"blockDone\" flag, which we then poll to hold the test until we know the document has been saved.\r\n\r\nExpected Results:\r\nWhen the test is run with Cmd-U in the RecipesUnitTests target (or, optionally, the Recipes target), the document is saved, the completion handler is called, and we can then attempt to read the document back in to continue our tests.\r\n\r\nActual Results:\r\nThe completion handler is never called, so the while block around runUntilDate runs forever. Set a breakpoint in the completion handler to confirm this: the breakpoint is never hit.\r\n\r\nRegression:\r\nThis code works as expected in iOS 5. Running in Xcode 4.5-DP4, you can run in the iPhone 5.1 simulator and the test will work, then switch to the iPhone 6 simulator and watch it hang.\r\n\r\nNotes:\r\nCommented out in the code, you'll see our workaround: a 30-second wait. We've found that the document does eventually save, but it takes up to 30 seconds to do so, and the completion handler is never called.\r\n\r\n31-Aug-2012 09:55 AM Chris Adamson:\r\n'UIDOcument-close-buglet-Recipes_01.zip' was successfully uploaded"
+    email: invalidname@gmail.com
+    modified: "2012-09-20T18:47:30.808244Z"
+    number: "12214822"
+    number_intvalue: 12214822
+    originated: 8/31/12
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 6.0b4
+    reproducible: always
+    resolved: ""
+    status: open
+    title: UIDocument closeWithCompletionHandler block never called (regression from iOS 5)

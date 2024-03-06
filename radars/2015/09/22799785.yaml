@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22799785"
+    labels:
+        datastore_id: "4996074301292544"
+data:
+    classification: Swift compiler
+    created: "2015-09-22T13:28:06.11787Z"
+    description: "Summary:\r\nSee attached playground for minimal reproducing example.\r\nProtocol P has a get-only variable declaration.\r\nAnother variable has type P and a set/didSet.\r\nWhenever the variable from the protocol is accessed via the protocol-typed variable, setter and didSet for the latter variable are called.\r\n\r\nSteps to Reproduce:\r\nOpen and run the attached playground in Xcode 7.\r\nNotice that \"didSet\" is printed 42 times.\r\n\r\nExpected Results:\r\ndidSet is expected to never be called\r\n\r\nActual Results:\r\ndidSet is called each time variable is accessed (42 times)\r\n\r\nVersion:\r\nXcode 7.0 (7A220)\r\nOS X 10.10.5 (14F27)\r\n\r\nNotes:\r\nDidSet no longer gets unexpectedly called if the protocol P is restricted to AnyObject or—surprisingly—the variable \"x\" declaration in protocol is changed from {get} to {get set}.\r\nI suspect that variable \"x\" getter is erroneously treated as a mutating function, in which case the setter invocation would be due.\r\n\r\nConfiguration:\r\nXcode 7 playground, iOS 9 simulator and iOS 9 devices\r\n\r\nAttachment:\r\n\r\nprotocol P {\r\n\tvar x: Bool { get }\r\n}\r\nclass A: P {\r\n\tvar x = true\r\n}\r\nvar variable: P = A() {\r\n\tdidSet {\r\n\t\tprint(\"didSet\")\r\n\t}\r\n}\r\nfor _ in 1...42 {\r\n\tvariable.x // prints \"didSet\"\r\n}"
+    email: Vadim.Yelagin@gmail.com
+    modified: "2015-09-25T09:43:03.28917Z"
+    number: "22799785"
+    number_intvalue: 22799785
+    originated: 22 Sep 2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0 (7A220)
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 22676810 (Open)
+    title: 'Swift 2: setter of protocol-typed variable is invoked unexpectedly'

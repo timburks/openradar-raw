@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22220025"
+    labels:
+        datastore_id: "6187969870299136"
+data:
+    classification: Enhancement
+    created: "2015-08-10T22:08:17.47561Z"
+    description: "Summary:\r\nArray<T> a.k.a [T] is special cased by the compiler to enable easy interoperability with APIs expecting a pointer to contiguous element storage.\r\n\r\nArray instances can be passed directly to functions expecting an argument of type UnsafePointer<T> or UnsafePointer<Void> or to functions expecting an UnsafeMutablePointer<T> or UnsafeMutablePointer<Void> by marking it as inout using &.\r\nThe compiler automatically converts this so that a pointer to the first element in a contiguous buffer containing the array's elements is passed.\r\n\r\n\r\nThe other array types in the Swift standard library, ArraySlice<T> and ContiguousArray<T>, however do not receive this special treatment. I think it would be both convenient and safer to extend this behaviour to these other array types.\r\n\r\nCurrently the situation can be confusing as one might reasonably expect the same syntax to work with all array types and extra typing is required when one is not working with an Array<T> instance.\r\nAdditionally passing an ArraySlice<T> or ContiguousArray<T> to a function taking an Unsafe(Mutable)Pointer<Void> can lead to unexpected results. As this falls back to the \"general\" special case for UnsafePointer<Void>, a pointer to the array buffer storage object is passed instead of a pointer to the first array element in the buffer which results in \"wrong\" elements and can lead to unexpected crashes when writing to the pointer.\r\n\r\n\r\nHere is a short snippet demonstrating this potentially confusing issue:\r\n\r\nimport Foundation\r\n\r\nvar data = NSData(base64EncodedString: \"dGVzdA==\", options:[])!\r\n\r\nvar arrayBuffer = [UInt8](count: data.length, repeatedValue:0)\r\ndata.getBytes(&arrayBuffer, length: data.length)\r\narrayBuffer\r\n\r\nvar contigBuffer = ContiguousArray<UInt8>(count: data.length, repeatedValue:0)\r\ndata.getBytes(&contigBuffer, length: data.length)\r\ncontigBuffer // crash\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nExpected Results:\r\nIdeally, all standard library array types should provide identical behaviour in this case for consistency and ease of use.\r\n\r\nActual Results:\r\nCurrently Array<T> behaviour differs from ArraySlice<T> and ContiguousArray<T> behaviour in this case.\r\n\r\nVersion:\r\nXcode 7 (7A176x)\r\nApple Swift version 2.0 (swiftlang-700.0.52.2 clang-700.0.65)"
+    email: janoschhildebrand@gmail.com
+    modified: "2015-08-10T22:08:17.47597Z"
+    number: "22220025"
+    number_intvalue: 22220025
+    originated: 11-Aug-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7 (7A176x)
+    reproducible: N/A
+    resolved: ""
+    status: Open
+    title: 'Xcode 7 (7A176x): [Swift] Extend special [T] behaviour when passing to a function expecting a Unsafe(Mutable)Pointer to ContiguousArray<T> and ArraySlice<T>'

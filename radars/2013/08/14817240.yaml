@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14817240"
+    labels:
+        datastore_id: "6374710719807488"
+data:
+    classification: Crash/hang/data loss
+    created: "2013-08-23T13:34:02.972736Z"
+    description: "Summary: NSLinguisticTagger can cause a segmentation violation with certain, apparently valid input.\r\n\r\nSteps to Reproduce:\r\nExecute the attached code. This can be reproduced on either OS X or iOS.\r\n\r\nExpected Results:\r\nThe code asks an NSLinguisticTagger for the tag at range {.location=13, .range=1} which is a newline character in the input string. The result should be that the function goes into the true case of the if at line 22, then the else clause at line 30.\r\n\r\nActual Results:\r\nCrash.\r\n\r\nRegression:\r\nUnknown.\r\n\r\nNotes:\r\nThe length of the string after the two newline characters at line 15 doesn't seem to change the behaviour, except that if it is zero-length then the function (deliberately) doesn't trigger the described behaviour. One or more characters in this position will trigger the crash.\r\n\r\nI think this case is consistent with expected usage of NSLinguisticTagger, and therefore that the behaviour should be as described in \"Expected Behaviour\" above. While it's possible that I'm holding it wrong and that this is actually programmer error, I would expect that case to generate either an NSInvalidArgumentException or NSRangeException, instead of crashing in the way actually demonstrated.\r\n\r\n[the attached source code contained this function:\r\n\r\n//\r\n//  main.m\r\n//  LinguisticTagCheck\r\n//\r\n//  Created by Graham Lee on 23/08/2013.\r\n//  Copyright (c) 2013 Graham Lee. All rights reserved.\r\n//\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\nint main(int argc, const char * argv[])\r\n{\r\n\r\n    @autoreleasepool {\r\n        NSString *data = @\"0123456789ab\\n\\nc\";\r\n        NSRange newlineCharacter = NSMakeRange(13, 1);\r\n        NSLinguisticTagger *tagger = [[NSLinguisticTagger alloc] initWithTagSchemes: @[NSLinguisticTagSchemeTokenType] options: 0];\r\n        tagger.string = data;\r\n        \r\n        NSRange rangeToExamine = newlineCharacter;\r\n        \r\n        if (rangeToExamine.location != NSNotFound && rangeToExamine.location + rangeToExamine.length < [data length]) {\r\n            //assumption that the addition in the if statement didn't overflow is acceptable in this demo\r\n            NSRange rangeOfWord = {0};\r\n            NSString *tag = [tagger tagAtIndex: rangeToExamine.location scheme: NSLinguisticTagSchemeTokenType tokenRange: &rangeOfWord sentenceRange: NULL];\r\n            if ([tag isEqualToString: NSLinguisticTagWord]) {\r\n                NSString *editedWord = [data substringWithRange: rangeOfWord];\r\n                NSLog(@\"word: %@\", editedWord);\r\n            }\r\n            else {\r\n                NSLog(@\"tag found: %@\", tag);\r\n            }\r\n        }\r\n        else {\r\n            NSLog(@\"Bad range\");\r\n        }\r\n    }\r\n    return 0;\r\n}\r\n\r\n\r\n]"
+    email: iamleeg@gmail.com
+    modified: "2013-08-23T13:34:02.972899Z"
+    number: "14817240"
+    number_intvalue: 14817240
+    originated: "2013-08-23"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: Multiple
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSLinguisticTagger crash on iOS or OS X

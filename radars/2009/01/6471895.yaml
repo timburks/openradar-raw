@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6471895"
+    labels:
+        datastore_id: "2416"
+data:
+    classification: Other Bug
+    created: "2009-01-10T22:52:33.253587Z"
+    description: "Summary:\r\n\r\nThe 'codesign' utility fails with the error 'object file format invalid or unsuitable' when called on a thin i386 Mach-O file on a PowerPC host.\r\n\r\nSteps to Reproduce:\r\n\r\n1. On a PowerPC system running Mac OS X 10.5.5, execute the following commands to create thin Mach-O files (non-universal binaries) for Intel and PowerPC systems. Here, /bin/ls is used for convenience, but any universal binary could be used.\r\n\r\n% lipo -thin i386 /bin/ls -output ls.i386\r\n% lipo -thin ppc7400 /bin/ls -output ls.ppc7400\r\n\r\n2. Execute the following commands to sign the Mach-O files, replacing <signing-identity> with a valid signing identity:\r\n\r\n% codesign -f -s '<signing-identity>' ls.ppc7400 \r\n% codesign -f -s '<signing-identity>' ls.i386 \r\n\r\nExpected Results:\r\n\r\n'codesign' should succeed in both cases.\r\n\r\nActual Results:\r\n\r\n'codesign' fails on the file ls.i386 with the error \"ls.i386: object file format invalid or unsuitable\", as shown below:\r\n\r\n% lipo -thin i386 /bin/ls -output ls.i386\r\n% lipo -thin ppc7400 /bin/ls -output ls.ppc7400\r\n% codesign -f -s '<signing-identity>' ls.ppc7400 \r\nls.ppc7400: replacing existing signature\r\n% codesign -f -s '<signing-identity>' ls.i386 \r\nls.i386: replacing existing signature\r\nls.i386: object file format invalid or unsuitable\r\n\r\nRegression:\r\n\r\nN/A\r\n\r\nNotes:\r\n\r\nUniversal (FAT) binaries are unaffected.\r\n\r\nAfter looking at the Darwin source code, I believe that the problem may lie in line 300 of the file macho++.cpp in the libsecurity_codesigning-33803 project (http://www.opensource.apple.com/darwinsource/10.5.6/libsecurity_codesigning-33803/lib/macho++.cpp):\r\n\r\nmThinArch = Architecture(ntohl(reinterpret_cast<mach_header &>(header).cputype));\r\n\r\nThe 'ntohl' call above will byte swap on an Intel system but will not byte swap on a PowerPC system. However, in this case swapping should always be performed, since the Mach-O header for little-endian architectures uses little-endian byte order. I suspect that the code should be something like the following:\r\n\r\nmThinArch = Architecture(Security::flip(reinterpret_cast<mach_header &>(header).cputype));\r\n\r\nIf the above analysis is correct, then the problem should not occur on an Intel system when signing a PowerPC Mach-O file. However, I do not have an Intel machine to confirm this."
+    email: tkmcintosh@gmail.com
+    modified: "2011-08-28T05:48:37.825328Z"
+    number: "6471895"
+    number_intvalue: 6471895
+    originated: 03-Jan-2009 09:22 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.5
+    reproducible: Always
+    resolved: Yes
+    status: Closed
+    title: codesign utility fails on PowerPC with thin i386 Mach-O file (or arm/iPhone)

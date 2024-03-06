@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34137842"
+    labels:
+        datastore_id: "4966469276270592"
+data:
+    classification: Other Bug
+    created: "2017-08-30T04:07:13.62655Z"
+    description: "Summary:\r\nWhen using the searchfs() function on an APFS volume that contains hard links, only one of the hard link entries is returned - the others are missing from the results.\r\n\r\nSteps to Reproduce:\r\nSee attached archive. It contains an Xcode project with my \"searchfs\" tool and two disk images, HFS+ and APFS formatted.\r\n\r\nUnpack and mount both images. Note that both contain a folder \"hard and soft linked items\", each with 3 times 3 files in it, some of them hard linked with each other (if you do not see any files inside this folder, it probably means you're using 10.12.6 - then please switch to 10.13 - I guess that's another bug in 10.12.6 that it's not able to show this directory, but I guess no one will bother with that any more).\r\n\r\nNow use my tool \"searchfs\" to find all files containing \"hardlinked\" in their name. If you do this on the HFS volume, you get all 9 items listed, as expected:\r\n\r\n$ Build/Products/Debug/searchfs \"hardlinked\" /Volumes/HFS4_small/\r\n/Volumes/HFS4_small/hard and soft linked items/hardlinked-1-acoelomate.txt-softlink\r\n/Volumes/HFS4_small/hard and soft linked items/hardlinked-1-acoelomate.txt-v1\r\n/Volumes/HFS4_small/hard and soft linked items/hardlinked-1-acoelomate.txt-v2\r\n/Volumes/HFS4_small/hard and soft linked items/hardlinked-2-bioscopic.txt-softlink\r\n/Volumes/HFS4_small/hard and soft linked items/hardlinked-2-bioscopic.txt-v1\r\n/Volumes/HFS4_small/hard and soft linked items/hardlinked-2-bioscopic.txt-v2\r\n/Volumes/HFS4_small/hard and soft linked items/hardlinked-3-frondous.txt-softlink\r\n/Volumes/HFS4_small/hard and soft linked items/hardlinked-3-frondous.txt-v1\r\n/Volumes/HFS4_small/hard and soft linked items/hardlinked-3-frondous.txt-v2\r\n\r\nBut on the APFS volume, the second set of hard link entries are missing:\r\n\r\n$ Build/Products/Debug/searchfs \"hardlinked\" /Volumes/APFS4_small/\r\n/Volumes/APFS4_small/hard and soft linked items/hardlinked-1-unnative.txt-v1\r\n/Volumes/APFS4_small/hard and soft linked items/hardlinked-1-unnative.txt-softlink\r\n/Volumes/APFS4_small/hard and soft linked items/hardlinked-2-subpyramidal.txt-v1\r\n/Volumes/APFS4_small/hard and soft linked items/hardlinked-2-subpyramidal.txt-softlink\r\n/Volumes/APFS4_small/hard and soft linked items/hardlinked-3-dissonance.txt-v1\r\n/Volumes/APFS4_small/hard and soft linked items/hardlinked-3-dissonance.txt-softlink\r\n\r\nMy tool has also the option \"-l\" to add the ATTR_CMNEXT_LINKID parameter (and the option \"-i\" to show the inode numbers instead of the resolved paths), but that makes no difference - 3 entries remain missing from the results.\r\n\r\nExpected Results:\r\nI should get all 9 matching dir entries, like it always worked on HFS volumes."
+    email: tempelmann@gmail.com
+    modified: "2017-08-30T04:07:13.62681Z"
+    number: "34137842"
+    number_intvalue: 34137842
+    originated: August 29 2017
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.13 beta 8 (17A358a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: searchfs on APFS does not return all hard link entries

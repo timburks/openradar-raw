@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11900695"
+    labels:
+        datastore_id: "2395401"
+data:
+    classification: Bug
+    created: "2012-12-06T18:14:51.487196Z"
+    description: "18-Jul-2012 08:40 AM Jason Perkins:\r\nSummary:\r\nMy application uses an embedded WebView. The content shown in the WebView requires a plugin, which I distribute as part of my application bundle, in the Contents/Plugins folder. Under the 10.7 Lion sandbox, using the temporary mach-lookup exception for com.apple.WebKit.PluginAgent, this works fine. Under 10.8 Mountain Lion, the plugin is reported as available, but never loads. This is the same behavior I would see on 10.7 if I tried to run without the mach-lookup exception.\r\n\r\nSteps to Reproduce:\r\n- Create a Cocoa application\r\n\r\n- Drag a WebView into the window\r\n\r\n- Load a site which requires a plugin into the WebView. Pandora Radio needs Flash; it should fail to load.\r\n\r\n   NSURL* url = [NSURL URLWithString:@\"http://pandora.com\"];\r\n   NSURLRequest* req = [NSURLRequest requestWithURL:url];\r\n   [[_webView mainFrame] loadRequest:req];\r\n\r\n- Add a Copy Files build step to copy the (Flash, in this case) plugin to the bundle's Plugins folder.\r\n\r\n- Try to run it again\r\n\r\nExpected Results:\r\nThe website should load successfully, just as it would if the plugin was installed system-wide.\r\n\r\nActual Results:\r\nThe website will try to load (because WebKit reports the plugin as available) and then eventually fail when the plugin never loads.\r\n\r\nRegression:\r\nPlugins in the bundle's Contents/Plugins folder used to be found and loaded automatically.\r\n\r\nNotes:\r\nRunning the same app as 32-bit works around the problem, presumably by never involving WebKit.PluginAgent.\r\n\r\nSummary:\r\nWebKit plugins placed in an application bundle's Contents/Plugins folder should be found and loaded automatically by WebKit.PluginAgent in Mountain Lion.\r\n\r\n31-Jul-2012 10:16 AM Jason Perkins:\r\nThere is some feedback on the Apple forums that indicates that this might be the desired behavior, for sandboxing reasons: https://devforums.apple.com/message/703128\r\n\r\nMy \"mental model\" was that the bundled plugin would run within the same sandbox as the WebKit host, with the same permissions. Alternatively (and perhaps better), the plugin would run within its own sandbox (which would be great for system-wide plugins in /Library/Internet Plug-Ins). \r\n\r\nAt the least, a sandbox violation should be reported to the Console when trying to load a plugin from the application bundle. And the plugin should not be reported as available to WebKit."
+    email: starkos@gmail.com
+    modified: "2012-12-06T18:14:51.487672Z"
+    number: "11900695"
+    number_intvalue: 11900695
+    originated: 7/18/2012
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: "10.8"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Unable to load bundled WebKit plugins under 10.8 Mountain Lion

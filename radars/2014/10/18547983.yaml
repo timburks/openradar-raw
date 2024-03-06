@@ -1,0 +1,79 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18547983"
+    labels:
+        datastore_id: "5325441485242368"
+data:
+    classification: Other Bug
+    created: "2014-10-04T19:56:44.136609Z"
+    description: |-
+        Summary:
+        ExtensibleCollectionType requires init(). I want my default initializer to optionally take a collection to initialize with. I can’t do this via default arguments; I have to provide two initializers instead.
+
+        The same applies to function requirements.
+
+        This is surprising and necessitates boilerplate.
+
+
+        Steps to Reproduce:
+        1. Try to compile this code:
+
+        protocol P {
+        	init()
+
+        	func f()
+        }
+
+        struct S1 : P {
+        	init() {}
+        	func f() {}
+        }
+
+        struct S2 : P {
+        	init(_ x: Int = 0) {}
+        	func f(_ x: Int = 0) {}
+        }
+
+
+
+        Expected Results:
+        “Build succeeded”
+
+
+        Actual Results:
+        ./Protocol-default-args.swift:14:1: error: type 'S2' does not conform to protocol 'P'
+        struct S2 : P {
+        ^
+        ./Protocol-default-args.swift:4:2: note: protocol requires initializer 'init()' with type '()'
+                init()
+                ^
+        ./Protocol-default-args.swift:15:2: note: candidate has non-matching type '(Int)'
+                init(_ x: Int = 0) {}
+                ^
+        ./Protocol-default-args.swift:6:7: note: protocol requires function 'f()' with type '() -> ()'
+                func f()
+                     ^
+        ./Protocol-default-args.swift:16:7: note: candidate has non-matching type '(Int) -> ()'
+                func f(_ x: Int = 0) {}
+                     ^
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2014-10-04T19:56:44.136868Z"
+    number: "18547983"
+    number_intvalue: 18547983
+    originated: 04-Oct-2014 03:56 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-6.1 (6A1042b)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Protocol requirement for nullary init/func cannot be met with default arguments'

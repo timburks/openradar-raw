@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7663947
+    labels:
+        datastore_id: "5015844862033920"
+data:
+    classification: ""
+    created: "2020-04-15T00:21:09.821702Z"
+    description: "Important: this is a regression in iPadOS 13.4. This has worked with previous versions of iPadOS, since beta versions of 13.2.\r\n\r\nOn iPadOS, ICCameraFile's `requestReadData(atOffset:length:completion:)` method does not read data from the camera file.\r\n\r\nWhen `requestReadData` is called with an offset of 0 and a length corresponding to the size of the file, the completion block is executed with a non-nil, 0 byte Data object. (The error is nil.) The expected result is a Data object with the actual contents of the camera file (and a nil error), not a 0 byte Data object.\r\n\r\nThe attached project reproduces this sample issue. (There is no app UI; see the messages logged to the console.) This project:\r\n\r\n- Instantiates an ICDeviceBrowser, sets its delegate, and starts its browser.\r\n- (User must tap OK at the permission prompt to access files on connected cameras and storage.)\r\n- When an ICCameraDevice (such as an SD card) is connected, the code automatically sets its delgate, and opens a session.\r\n- When the ICCameraDeviceDelegate's `deviceDidBecomeReady(withCompleteContentCatalog:)` delegate method is called, `requestReadData(atOffset:length:completion:)` is called with on the first ICCameraFile object. (Using the first ICCameraFile is arbitrary; the results are the same regardless of which file is chosen.)\r\n- The `requestReadData(atOffset:length:completion:)` completion block is subsequently called with a Data object that is 0 bytes in length.\r\n\r\nExample console output:\r\n\r\n> [DeviceFinder] started ICDeviceBrowser; connect camera device now\r\n> [CameraDevice] session opened\r\n> [CameraDevice] device ready, with complete catalog of 178 items\r\n> [CameraDevice] about to requestReadData for file '　 　 \U0001F141 |    DSCF2030.RAF | 0 |                ' with size 50544640\r\n> [CameraFile] in requestReadData completion block\r\n> *** [CameraFile] data read via requestReadData is empty!\r\n\r\nInstead, the expected output is:\r\n\r\n> [DeviceFinder] started ICDeviceBrowser; connect camera device now\r\n> [CameraDevice] session opened\r\n> [CameraDevice] device ready, with complete catalog of 178 items\r\n> [CameraDevice] about to requestReadData for file '　 　 \U0001F141 |    DSCF2030.RAF | 0 |                ' with size 50544640\r\n> [CameraFile] in requestReadData completion block\r\n> *** [CameraFile] data read via requestReadData has 50544640 bytes!\r\n\r\nFor Open Radar: The minimum code sample to reproduce this is at https://gist.github.com/mjrusso/b223bf8db93e64d858e80b6fb8ab6ef8"
+    email: mjrusso@gmail.com
+    modified: "2020-04-25T17:49:04.757898Z"
+    number: FB7663947
+    number_intvalue: 7663947
+    originated: "2020-04-14"
+    parent_number: '&{NULL_VALUE}'
+    product: Image I/O
+    product_version: iPadOS 13.4
+    reproducible: 100%
+    resolved: "2020-04-17"
+    status: Investigation complete - Works as currently designed
+    title: 'ImageCaptureCore: ICCameraFile requestReadData(atOffset:length:completion:) always passes empty Data object to completion block'

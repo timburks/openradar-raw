@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8683835"
+    labels:
+        datastore_id: "881401"
+data:
+    classification: Enhancement
+    created: "2010-11-18T19:14:53.87212Z"
+    description: "ER: provide API to detect Core Data thread-safety violation\r\n\r\nSummary: \r\n\r\nPlease provide some way to detect whether an NSManagedObjectContext was created on the thread that is actually using the MOC. I'd like to be able to do something like this:\r\n\r\nNSAssert(self.workingMOC.thread == [NSThread currentThread], @\"you have switched threads you idiot\");\r\nor perhaps\r\nNSAssert(!self.workingMOC.creastedOnMainThread, @\"you can't use that MOC on a worker thread\");\r\n\r\nSteps to Reproduce:\r\nIf an NSManagedObjectContext is created on the main thread and then passed to a worker thread, bad things happen (usually EXC_BAD_ACCESS during a context save). \r\n\r\nIt's well-documented that a program must not do this. Yet I just got bitten yet again by a violation of this rule, while converting some code from single-threaded to multi-threaded. I was inadvertently creating the worker thread's MOC in the main thread's initialization (via a lazy initializer that I didn't notice was being triggered).\r\n\r\nPerusal of developer forums and mailing lists shows that this is a fairly common error. The only tool I have to detect this is manual inspection of my code. If I could throw in an NSAssert, I could at least know that I had jumped threads with the MOC. In my most recent encounter, I was absolutely certain that I was following the one-thread-per-MOC rules, so I was searching elsewhere for the problem. But I was wrong.\r\n\r\nExpected Results:\r\nHappier programmers and fewer Core Data threading bugs.\r\n\r\nActual Results:\r\n\r\nRegression:\r\n\r\nNotes:"
+    email: hal@mobilegeographics.com
+    modified: "2011-08-28T05:39:01.045461Z"
+    number: "8683835"
+    number_intvalue: 8683835
+    originated: 18-Nov-2010 11:11 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Core Data
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'ER: provide API to detect Core Data thread-safety violation'

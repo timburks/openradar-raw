@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28209432"
+    labels:
+        datastore_id: "4947817642590208"
+data:
+    classification: Serious
+    created: "2016-09-08T17:39:43.98742Z"
+    description: "-- Update:\r\nSo after some more investigation we were able to find out the cause and create an isolated reproduction case.\r\nWe were instantiating our applications root view controller in the init method of our application delegate. This is something that worked for us in iOS 8 and 9 and only started causing problems on iOS 10.\r\nUnfortunately i've deleted all my Xcode 8 betas and cannot provide any suggestions as to when this change was introduced.\r\n\r\n'UIGestureGraphEdge-Crash.zip' was successfully uploaded.\r\n\r\nSummary:\r\nAlmost any interaction in our app will trigger an assertion failure in UIGestureGraphEdge.\r\nCrash occurs both in simulator and on device.\r\n\r\nForum post about issue: https://forums.developer.apple.com/thread/61432\r\n\r\n*** Assertion failure in -[UIGestureGraphEdge initWithLabel:sourceNode:targetNode:directed:], /BuildRoot/Library/Caches/com.apple.xbs/Sources/UIKit_Sim/UIKit-3599.6/Source/GestureGraph/UIGestureGraphEdge.m:25\r\n\r\nSteps to Reproduce:\r\nUnfortunately I have not been able to reproduce this issue in a sample application but can reliably reproduce it in our app with almost any interaction including\r\n- UIBarBarButtonItems\r\n- Scrollview Interactions (swipes, pans, etc)\r\n- Maybe taps that are un-handled and propagating up to the window (suspicion, based on debug values.)\r\n\r\nUITabBar interactions appear to be unaffected at least in my particular case\r\n\r\n\r\nExpected Results:\r\nPrivate classes that call other private classes methods do so with the correct parameters\r\n\r\nActual Results:\r\nIt appears as though a nil value is occurring in the stack trace in [UIGestureEnvironment _addDynamicRequirementForGestureRecognizer:requiringGestureRecognizerToFail:] which later propagates down to [UIGestureGraphEdge initWithLabel:sourceNode:targetNode:directed:] where the crash occurs.\r\n\r\nI put the UIKit simulator SDK through Hopper and looked at the methods preceding the method that crashed to help me step through the assembly while debugging.\r\n\r\nThe bug looks like it comes from the following method\r\nvoid -[UIGestureEnvironment _addDynamicRequirementForGestureRecognizer:requiringGestureRecognizerToFail:](void * self, void * _cmd, void * arg2, void * arg3) {\r\n    r15 = [arg2 retain];\r\n    r14 = [[self _nodeForGestureRecognizer:arg3] retain];\r\n    r12 = [self _nodeForGestureRecognizer:r15];\r\n    [r15 release];\r\n    r15 = [r12 retain];\r\n    rax = [self->_dependencyGraph addUniqueEdgeWithLabel:@\"dynamicFailureRequirement\" sourceNode:r14 targetNode:r15 directed:0x1 properties:stack[2048]];\r\n    objc_unsafeClaimAutoreleasedReturnValue(rax);\r\n    [r15 release];\r\n    rdi = r14;\r\n    [rdi release];\r\n    return;\r\n}\r\n\r\nNote that the second call to _nodeForGestureRecognizer is not followed immediately by a retain the way the first call is. Putting a symbolic breakpoint at [UIGestureEnvironment _addDynamicRequirementForGestureRecognizer:requiringGestureRecognizerToFail:]+84 in both my app and a sample app with a similar UI setup. In the sample app the register r12 has a value that survives long enough to make it further down the call stack to the UIGestureGraphEdge method. In my app however register r12 is nil which eventually leads to the crash.\r\n\r\nVersion:\r\nSimulator iOS10(14A345), Device iOS10(14A403)\r\n\r\nNotes:\r\nAttached:\r\n- log of printed values from debug session\r\n- screen shot of debugging session\r\n- stack trace\r\n\r\nConfiguration:\r\niPhone 6 Plus Simulator, iPhone 6\r\n\r\nAttachments:\r\n'Screen Shot 2016-09-08 at 12.28.00 PM.png', 'Stack trace' and 'debug values from log' were successfully uploaded."
+    email: tapi@simplemind.ca
+    modified: "2016-09-15T19:24:41.33939Z"
+    number: "28209432"
+    number_intvalue: 28209432
+    originated: September 8 2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 10
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: User Interaction sometimes triggers a crash in UIGestureGraphEdge

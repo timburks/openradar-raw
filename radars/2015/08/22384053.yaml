@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22384053"
+    labels:
+        datastore_id: "6148087240196096"
+data:
+    classification: Other Bug
+    created: "2015-08-21T20:11:59.69368Z"
+    description: "Summary:\nWith preprocessor definition DNS_BLOCK_ASSERTIONS, NSAssert and NSCAssert emit a warning \n\"Must specify at least one argument for '...' parameter of variadic macro\" when not specifying a printf-style argument.\n\nSteps to Reproduce:\nNSAssert(NO, @\"This is an assert without printf args\");\n\nCompile with -DNS_BLOCK_ASSERTIONS=1\n\nExpected Results:\nNo warning.\n\nActual Results:\nWarning: Must specify at least one argument for '...' parameter of variadic macro.\n\nRegression:\nAlso exists in iOS 8.\n\nNotes:\nProbably just need to change lines 134-136 of Foundation/NSException.h to something like the following, to match the style used for when NS_BLOCK_ASSERTIONS is not defined:\n\n#if !defined(_NSAssertBody)\n#define NSAssert(condition, desc, ...)\t\\\n    do {\t\t\t\t\\\n\t__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \\\n        __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS \\\n    } while(0)\n#endif\n\n...similarly for NSCAssert."
+    email: greg@gregfiumara.com
+    modified: "2015-08-21T20:11:59.69392Z"
+    number: "22384053"
+    number_intvalue: 22384053
+    originated: 21-Aug-2015 04:11 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: Xcode-beta (7A176x)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSAssert/NSCAssert with NS_BLOCK_ASSERTIONS defined emits warning when assert has no variadic parameters

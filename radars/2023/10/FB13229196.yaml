@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13229196
+    labels:
+        datastore_id: "5501987135160320"
+data:
+    classification: ""
+    created: "2023-10-03T19:28:21.828119Z"
+    description: "grep is broken on Sonoma:\r\n\r\n    printf '%s' '3.2.57(1)-release' | grep -o '[0-9.]*'\r\n    Assertion failed: (advance > 0), function procline, file util.c, line 732.\r\n    zsh: done       printf '%s' '3.2.57(1)-release' | \r\n    zsh: abort      grep -o '[0-9.]*'\r\n\r\nThis bug breaks our automation scripts for bringing up new dev machines,\r\nand I imagine that this will cause other critical (but difficult to pinpoint)\r\nproblems for others as well.\r\n\r\nFor minimal reproducers, see:\r\n\r\n    # fails\r\n    printf '%s' 'a' | grep -o 'b*'\r\n    \r\n    # works\r\n    printf '%s' 'a' | grep -o 'b'\r\n    \r\n    # also works (note: without -o flag)\r\n    printf '%s' 'a' | grep 'b*'\r\n\r\nThis is the source for the assertion: https://github.com/apple-oss-distributions/text_cmds/blob/c0780aa3432383e0acde7dc7cf42972716925de6/grep/util.c#L732\r\n\r\nFor your convenience, the surrounding code:\r\n\r\n\t\t\t\t/*\r\n\t\t\t\t * rdar://problem/86536080 - if our first match\r\n\t\t\t\t * was 0-length, we wouldn't progress past that\r\n\t\t\t\t * point.  Incrementing nst here ensures that if\r\n\t\t\t\t * no other pattern matches, we'll restart the\r\n\t\t\t\t * search at one past the 0-length match and\r\n\t\t\t\t * either make progress or end the search.\r\n\t\t\t\t */\r\n\t\t\t\tif (pmatch.rm_so == pmatch.rm_eo) {\r\n\t\t\t\t\tif (MB_CUR_MAX > 1) {\r\n\t\t\t\t\t\twchar_t wc;\r\n\t\t\t\t\t\tint advance;\r\n\r\n\t\t\t\t\t\tadvance = mbtowc(&wc,\r\n\t\t\t\t\t\t    &pc->ln.dat[nst],\r\n\t\t\t\t\t\t    MB_CUR_MAX);\r\n\r\n\t\t\t\t\t\tassert(advance > 0);\r\n\t\t\t\t\t\tnst += advance;\r\n\t\t\t\t\t} else {\r\n\t\t\t\t\t\tnst++;\r\n\t\t\t\t\t}\r\n\t\t\t\t}\r\n\r\nMy guess would be that attempting to fix rdar://problem/86536080 resulted in a new bug."
+    email: charles@fullstory.com
+    modified: "2023-10-03T19:28:21.828337Z"
+    number: FB13229196
+    number_intvalue: 13229196
+    originated: 10/03/2023
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'grep has a bug on Sonoma (an assertion failure: advance > 0)'

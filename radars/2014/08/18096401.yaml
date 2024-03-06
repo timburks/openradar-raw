@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18096401"
+    labels:
+        datastore_id: "6150029572046848"
+data:
+    classification: Other Bug
+    created: "2014-08-21T23:59:36.03441Z"
+    description: "Summary:\r\n-[NSLinguisticTagger enumerateTagsInRange:scheme:options:usingBlock:] and repeated use of -[NSLinguisticTagger possibleTagsAtIndex:scheme:tokenRange:sentenceRange:scores:] do not find the same lexical class tags when used on the same text. In particular, possibleTags appears to work much more reliably than enumerateTags. enumerateTags often finds nouns when it should be finding verbs, and often finds Other Words when it should be finding anything else. For instance, on the sentence fragment \"describe Contents\", enumerateTags finds both words are nouns. possibleTags correctly finds a verb and a noun, the former with score 1, so enumerateTags should definitely be finding that. Sometimes the opposite is true as well (e.g. \"start Write\" works better with enumerateTags than possibleTags).\r\n\r\nSteps to Reproduce:\r\n1. Open the attached Xcode project\r\n2. Run the attached Xcode project\r\n\r\n\r\nExpected Results:\r\nThe pairs of output lines should be the same\r\n\r\nActual Results:\r\nThe pairs of output lines are different. \r\n\r\nVersion:\r\n10.9.3/13D65, Xcode 5.1.1 5B1008\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n#import <Foundation/Foundation.h>\r\n\r\nint main(int argc, const char * argv[])\r\n{\r\n\r\n    @autoreleasepool\r\n    {\r\n        NSString *names = @\"describe Contents\\nfind View By Id\\nstart Write\";\r\n        NSMutableArray *wordsByPartOfSpeech;\r\n        for (NSString *spaceyString in [names componentsSeparatedByString:@\"\\n\"])\r\n        {\r\n            NSLinguisticTagger *lingusticTagger = [[NSLinguisticTagger alloc] initWithTagSchemes:@[NSLinguisticTagSchemeLexicalClass] options:NSLinguisticTaggerOmitWhitespace];\r\n            [lingusticTagger setString:spaceyString];\r\n            \r\n            wordsByPartOfSpeech = [NSMutableArray array];\r\n            NSInteger searchIndex = 0;\r\n            while (searchIndex < [spaceyString length])\r\n            {\r\n                NSArray *scores = nil;\r\n                NSRange tokenRange;\r\n                NSRange sentenceRange;\r\n                \r\n                NSArray *possibleTags = [lingusticTagger possibleTagsAtIndex:searchIndex scheme:NSLinguisticTagSchemeLexicalClass tokenRange:&tokenRange sentenceRange:&sentenceRange scores:&scores];\r\n                NSDictionary *dict;\r\n                dict = @{ @\"partOfSpeech\" : possibleTags.count == 0 ? NSLinguisticTagOtherWord : possibleTags[0], @\"word\" : [spaceyString substringWithRange:tokenRange]};\r\n                [wordsByPartOfSpeech addObject:dict];\r\n                searchIndex += tokenRange.length + 1;\r\n            }\r\n            NSLog(@\"possibleTags: %@\", wordsByPartOfSpeech);\r\n            wordsByPartOfSpeech = [NSMutableArray array];\r\n            [lingusticTagger enumerateTagsInRange:NSMakeRange(0, spaceyString.length) scheme:NSLinguisticTagSchemeLexicalClass options:NSLinguisticTaggerOmitWhitespace usingBlock:^(NSString *tag, NSRange tokenRange, NSRange sentenceRange, BOOL *stop) {\r\n                NSDictionary *dict = @{ @\"partOfSpeech\" : tag, @\"word\" : [spaceyString substringWithRange:tokenRange]};\r\n               [wordsByPartOfSpeech addObject:dict];\r\n            }];\r\n            NSLog(@\"enumerateTags: %@\", wordsByPartOfSpeech);\r\n\r\n        }\r\n    }\r\n    return 0;\r\n}"
+    email: chaos42@gmail.com
+    modified: "2014-08-21T23:59:36.034613Z"
+    number: "18096401"
+    number_intvalue: 18096401
+    originated: 21-Aug-2014 04:55 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.9.3/13D65, Xcode 5.1.1 5B1008
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: '10.9 SDK NSLinguisticTagger -enumerateTagsInRange:scheme:options:usingBlock: and possibleTagsAtIndex:scheme:tokenRange:sentenceRange:scores: do not find the same results'

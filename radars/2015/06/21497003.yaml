@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21497003"
+    labels:
+        datastore_id: "5506295108993024"
+data:
+    classification: ""
+    created: "2015-06-23T04:56:41.91486Z"
+    description: "Summary:\r\nWhen executing a batch operation using CKModifyRecordsOperation it is not possible to retrieve CKRecords for CKErrorCodeServerRecordChanged. According to the docs and WWDC sessions it should be possible to get 3 records out of the dictionary with the keys:\r\n\r\n* CKRecordChangedErrorServerRecordKey\r\n* CKRecordChangedErrorAncestorRecordKey\r\n* CKRecordChangedErrorClientRecordKey\r\n\r\nbut those keys do not exist in the userInfo dictionary.\r\n\r\nSteps to Reproduce:\r\nfunc pushRecordChangesForZoneID(recordZoneID: CKRecordZoneID) {  \r\n    // ...  \r\n    modifyRecordsOperation.modifyRecordsCompletionBlock = { (savedRecords, deletedRecordIDs, error) -> Void in  \r\n        if (error != nil) {  \r\n            if error.code == CKErrorCode.PartialFailure.rawValue {  \r\n                if let errorDict = error.userInfo?[CKPartialErrorsByItemIDKey] as? [CKRecordID : NSError] {  \r\n                    for (recordID, partialError) in errorDict {  \r\n                        if partialError.code == CKErrorCode.ServerRecordChanged.rawValue {  \r\n                            if let userInfo = partialError.userInfo {  \r\n                                if let serverRecord = userInfo[CKRecordChangedErrorServerRecordKey] as? CKRecord  \r\n                                // no Value  \r\n                            }  \r\n                                if let ancestorRecord = userInfo[CKRecordChangedErrorAncestorRecordKey] as? CKRecord  \r\n                                // no Value  \r\n                            }  \r\n                                if let clientRecord = userInfo[CKRecordChangedErrorClientRecordKey] as? CKRecord  \r\n                                // no Value  \r\n                            }  \r\n                        }  \r\n                    }  \r\n                }  \r\n            }  \r\n        }  \r\n    }  \r\n}  \r\n\r\nExpected Results:\r\nThe constants serverRecord, ancestorRecord and clientRecord should hold the respective CKRecords.\r\n\r\nActual Results:\r\nThe constants serverRecord, ancestorRecord and clientRecord are not being populated. The userInfo dictionary appears not to carry the CKRecords.\r\n\r\nThe content of the userInfo dictionaries of partialError:\r\n\r\n[NSDebugDescription: CKInternalErrorDomain: 2037, NSLocalizedDescription: Error saving record <CKRecordID: 0x7fb41bf7e640; DA39FE08-AB0B-4F07-A42E-F5732B114706:(userData:__defaultOwner__)> to server: Protection data didn't match, NSUnderlyingError: <CKError 0x7fd89a92d370: \"Unknown Error\" (2037)>]\r\n\r\nThe content of the userInfo dictionary of errorDict:\r\n\r\n[<CKRecordID: 0x7fb5bb88afa0; C1575083-F992-448A-8D77-D62C4A42D696:(userData:__defaultOwner__)>: <CKError 0x7fb5b961c6a0: \"Batch Request Failed\" (22/2024); server message = \"Atomic failure\"; uuid = 1E4C0FD5-EC10-4071-B277-102A9F1B0E5E; container ID = \"iCloud.net.neverthesamecolor.atsumeru\">, <CKRecordID: 0x7fb5bb848ad0; DA39FE08-AB0B-4F07-A42E-F5732B114706:(userData:__defaultOwner__)>: <CKError 0x7fb5b9653060: \"Server Record Changed\" (14/2037); \"Error saving record <CKRecordID: 0x7fb41bd9ca50; DA39FE08-AB0B-4F07-A42E-F5732B114706:(userData:__defaultOwner__)> to server: Protection data didn't match\">]"
+    email: saschaholesch@gmail.com
+    modified: "2015-06-23T04:56:41.91513Z"
+    number: "21497003"
+    number_intvalue: 21497003
+    originated: 23-Jun-2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "8.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'CloudKit: Retrieval of CKRecords for conflict resolution on CKErrorCodeServerRecordChanged in CKModifyRecordsOperation does not work.'

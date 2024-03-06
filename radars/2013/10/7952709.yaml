@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7952709"
+    labels:
+        datastore_id: "6402578615107584"
+data:
+    classification: ""
+    created: "2013-10-29T15:48:04.137564Z"
+    description: "Summary:\r\nThe read() system call does not appear to be restarted when interrupted by SIGTTIN.  Instead, read() returns EINTR, which many programs do not expect.\r\n\r\nSteps to Reproduce:\r\nThis is trivially repeatable with cat(1) by putting it in the background, and then foregrounding the process.\r\n\r\nExpected Results:\r\nOther operating systems restart the read(), and cat resumes, like so:\r\n\r\nbash-3.2$ cat &\r\n[1] 13082\r\nbash-3.2$ fg\r\ncat\r\n\r\nActual Results:\r\nbash-3.2$ cat &\r\n[1] 46363\r\nbash-3.2$ %1\r\ncat\r\ncat: stdin: Interrupted system call\r\nbash-3.2$\r\n\r\nRegression:\r\n\r\nNotes:\r\nThis is not a bug in cat.\r\n\r\nIt's worth noting that this happens regardless of whether SA_RESTART is set.\r\n\r\nFom a quick scan of the xnu tty code the problem may simply be that ttread(), ttywrite() and ttioctl() return EINTR instead of ERESTART.  Other BSD tty implementations use ttysleep() in these locations."
+    email: indieami@gmail.com
+    modified: "2013-10-29T15:48:04.137771Z"
+    number: "7952709"
+    number_intvalue: 7952709
+    originated: 05/06/2010
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: read() system call is not restarted when interrupted by SIGTTIN

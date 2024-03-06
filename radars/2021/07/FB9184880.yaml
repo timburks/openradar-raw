@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9184880
+    labels:
+        datastore_id: "5035852967182336"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2021-07-09T16:35:12.727281Z"
+    description: "Link to our app for initial reproduction: https://apps.apple.com/us/app/sparta-scan/id1538862847?mt=12\r\n \r\nExpected Behavior:\r\n    Choosing a password to fill should fill both the username field AND the password field.\r\n\r\nObserved Behavior:\r\n    Choosing a password to fill only fills out the individual field that was active/focused before going into the \"Passwords...\" flow that allows the user to autofill credentials that were previously saved in Safari. We have tried on iMac and MacBook Pro (intel) and it is reproducible for us 100% of the time.\r\n\r\nReproduction Steps:\r\n1. Have some passwords saved in Safari to allow the \"Passwords...\" modal to pop up when clicking on the username or password fields in the form\r\n2. Bring up the \"Passwords...\" modal by clicking on the form and beginning to type and click on it\r\n3. Authenticate with the computer user's password to allow access to saved passwords\r\n4. Pick a password\r\n5. Observe that only the username OR password field are filled out\r\n\r\nimport SwiftUI\r\nimport Testable\r\n\r\nstruct LoginPanelView: View {\r\n    @Binding var email: String\r\n    @Binding var password: String\r\n    @Binding var serverEnvironment: ServerEnvironment\r\n    let onLoginAction: ActionCompletion\r\n\r\n    var body: some View {\r\n        VStack(spacing: 8) {\r\n            Text(\"Sparta Scan\")\r\n                .font(.largeTitle)\r\n                .padding(.bottom, 20)\r\n            #if DEBUG\r\n            Picker(selection: $serverEnvironment, label: EmptyView()) {\r\n                ForEach(ServerEnvironment.allCases) {\r\n                    Text($0.rawValue).tag($0)\r\n                }\r\n            }.accessibilityIdentifier(\"select server\")\r\n            #endif\r\n            TextField(\"Email\", text: $email)\r\n                .textContentType(.username)\r\n            SecureField(\"Password\", text: $password)\r\n                .textContentType(.password)\r\n            Button(\"Login\", action: onLoginAction)\r\n                .padding(.top, 20)\r\n                .disabled(email.isEmpty || password.isEmpty)\r\n                .keyboardShortcut(.defaultAction)\r\n        }\r\n        .padding()\r\n        .background(Color.panelBackground)\r\n        .cornerRadius(8)\r\n    }\r\n}"
+    email: developer.computers@spartascience.com
+    modified: "2021-07-09T16:35:12.727435Z"
+    number: FB9184880
+    number_intvalue: 9184880
+    originated: "2021-06-16"
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI/Password Autofill
+    product_version: SwiftUI 2.0
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Username & Password Autofill on Mac Application From Safari Only Fills 1 Field at a Time

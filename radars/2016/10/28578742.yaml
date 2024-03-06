@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28578742"
+    labels:
+        datastore_id: "4981366437445632"
+data:
+    classification: ""
+    created: "2016-10-01T17:30:28.10097Z"
+    description: "Summary:\r\nAn app that has explicitly disabled window tabbing by setting:\r\n\r\nNSWindow.allowsAutomaticWindowTabbing = NO;\r\n\r\nWill nonetheless have window tabbing imposed on a document window that is restored by default document restoration.\r\n\r\nSteps to Reproduce:\r\n1. Open attached sample project.\r\n2. Build and run.\r\n3. Create a new  document if needed.\r\n4. Select View -> Show Tab Bar\r\n5. Quit, leaving the document open\r\n6. Uncomment the line of code in AppDelegate.m that sets the NSWindow.allowsAutomaticWindowTabbing property to NO\r\n7. Build and run the app.\r\n\r\nExpected Results:\r\nThe window should not be allowed to show tabbing UI. \r\n\r\nActual Results:\r\nThe window shows window tabbing UI even though it has been explicitly forbidden.\r\n\r\nVersion:\r\n10.12 (16A323) \r\n\r\nNotes:\r\nI think it must be because the window restoration happens so early in launch, that the setting to allowsAutomaticWindowTabbing is too late to catch the creation of the restored document window. Setting the NSWindow property in main.m does prevent the UI from being shown.\r\n\r\nThe problem is made worse by the fact that with tabbing disabled, there is no menu item to hide the window tabbing bar. It could put a user in a predicament where, if an app previously allowed window tabbing but then disabled it, they will always be cursed with window tabbing on restored documents, and never have any way of turning it off.\r\n\r\nPerhaps when the window NSWindow.allowsAutomaticWindowTabbing is set to NO, any open windows that have tabbing enabled should have it immediately set to disabled?\r\n \r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'WindowTabbingBug.zip' was successfully uploaded.\r\n\r\nThe gist of WindowTabbingBug.zip is that in the project's AppDelegate.m, the following method is implemented:\r\n\r\n- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {\r\n\r\n\t// 1. Run the app once and turn on the tab bar using \"View\" -> \"Show Tab Bar\"\r\n\t// 2. Quit the app with the document window open\r\n\t// 3. Uncomment the following line.\r\n\t// 4. Rebuild and run the app\r\n\r\n\t//NSWindow.allowsAutomaticWindowTabbing = NO;\r\n}"
+    email: jalkut@gmail.com
+    modified: "2016-10-01T17:30:28.10131Z"
+    number: "28578742"
+    number_intvalue: 28578742
+    originated: 01-Oct-2016 01:29 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Window restoration imposes tab bar even if window tabbing disabled

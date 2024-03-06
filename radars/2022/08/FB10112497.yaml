@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB10112497
+    labels:
+        datastore_id: "5573857683439616"
+data:
+    classification: ""
+    created: "2022-08-08T20:56:49.298951Z"
+    description: "Our app uses a lot of SwiftUI code, and crashes on launch when running from Xcode14. Exact same code runs fine on Xcode13.\r\nThe crash prints the call stack but it’s all internal and Xcode didn’t point me to any point in my code so I can’t tell where it comes from. \r\nThe crash reason is “scale must be > 0” but I can’t find anywhere in our code where we specify 0 scale (in the 2 places we use `.scaleEffect` we provide specifically one of 0.1, 0.5, or 1).\r\n\r\nThis is on simulator (tried iPhone 13 pro, and iPhon 12 mini), running Xcode 13 on macOS 12.4\r\n\r\n\r\nI think I found the root cause - the crash happens when resizing a UIImage to a fraction (something between 0 and 1, like 0.5 or 0.75). Could be that iOS 16 casts the scale to Int or drops the fraction value somehow?\r\nNote that the UIImage resizing works fine - the app only crashes when trying to present it (in SwiftUI: `Image(uiImage: someResizedImage)`…)\r\n\r\nThis is how I resize the image:\r\n\r\nextension UIImage {\r\n    /// Works on iOS 15 with eg scale: 0.5, crashes on iOS 16. Works on iOS 16 with eg scale: 1\r\n    func resized(for size: CGSize, scale: CGFloat = UIScreen.main.scale) -> UIImage? {\r\n        let format = UIGraphicsImageRendererFormat()\r\n        format.opaque = false\r\n        format.scale = scale\r\n\r\n        let renderer = UIGraphicsImageRenderer(size: size, format: format)\r\n        return renderer.image { _ in\r\n            self.draw(in: CGRect(origin: .zero, size: size))\r\n        }\r\n    }\r\n}"
+    email: avielgross@gmail.com
+    modified: "2022-08-08T20:56:49.299089Z"
+    number: FB10112497
+    number_intvalue: 10112497
+    originated: June 8, 2022
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: SwiftUI Code crashes in CUIMutableThemeRendition

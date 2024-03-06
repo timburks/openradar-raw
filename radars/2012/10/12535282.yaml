@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12535282"
+    labels:
+        datastore_id: "2174401"
+data:
+    classification: Serious Bug
+    created: "2012-10-19T15:30:00.687702Z"
+    description: "Summary:\r\nXcode fails to rebuild an application when a static library on which it depends is rebuilt because its source code is updated.  The expectation is that the implicit dependency tracking should detect this case.  Although the static library does get rebuilt, this does not trigger a relink of the application.\r\n\r\nSteps to Reproduce:\r\nThe problem is illustrated by the attached sample workspace (\"LibraryBug\"), which contains an application project (\"DepBugApp\") and a static library project (\"DepBugLib\"). The application calls a library function (DBLHelloer::hello()) to obtain the text of a message to display.\r\n1) Open LibraryBug.xcworkspace; build and run the application. Observe that this behaves properly; the application displays the text message that is returned by the library function.\r\n2) In the file LibraryBug/Library/DepBugLib/DBLHelloer.cpp, locate the DBLHelloer::hello() function and edit the string literal (for example, change the word \"Hello\" to \"Goodbye\").\r\n3) Build and run the application again.\r\n\r\nExpected Results:\r\nThe application should now display the modified message.  Xcode should rebuild the library, then relink the application before running it.\r\n\r\nActual Results:\r\nThe application displays the previous version of the message.  Examining the build transcript shows that although Xcode has recompiled the modified source file and rebuilt the static library, it has failed to update the application by relinking it with the updated library.\r\n\r\nRegression:\r\nUnknown. Anecdotally, I found a mention of a very similar issue in a posting to the xcode-users mailing list in April 2012; the exact version of Xcode is not mentioned, but I would guess it is probably 4.3.2.  I am not aware of an Xcode version which handles this situation properly.\r\n\r\nNotes:\r\nI understand this is not a common usage pattern, but it corresponds to the code structure used at my new employer, where I am porting an existing Visual Studio code base to the Mac (hence the use of C++ as well as static libraries). Regardless, it seems that it should work properly, and there is no obvious workaround short of cleaning and rebuilding from scratch."
+    email: rsfinn@gmail.com
+    modified: "2017-01-17T22:30:14.72175Z"
+    number: "12535282"
+    number_intvalue: 12535282
+    originated: 19-Oct-2012 11:28 AM
+    parent_number: "8836361"
+    product: Xcode
+    product_version: 4.5.1 (4G1004)
+    reproducible: Yes
+    resolved: Closed
+    status: Duplicate/8836361 (Closed)
+    title: Xcode does not rebuild app when source file updated in dependent static library

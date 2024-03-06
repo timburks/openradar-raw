@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22436079"
+    labels:
+        datastore_id: "4631111334363136"
+data:
+    classification: Serious Bug
+    created: "2015-08-26T12:12:12.12964Z"
+    description: "Summary:\r\nThe following function crashes the compiler when Whole Module Optimization is enabled:\r\n\r\nfunc crash() {\r\n    let valNodesLarge = 0..<global\r\n    \r\n    _ = { () -> [UnsafeMutablePointer<Int>] in\r\n        let nodes = UnsafeMutablePointer<Int>.alloc(global)\r\n        nodes.initializeFrom(valNodesLarge)\r\n        \r\n        return (0..<global).map { _ in nodes }\r\n    }()\r\n    \r\n    _ = [Int]()\r\n    for val in valNodesLarge {\r\n        print(val)\r\n    }\r\n}\r\n\r\nIt needs to be in a separate file from the main swift file in which the global variable is defined and the function is called:\r\n\r\nlet global = 1000000\r\ncrash()\r\n\r\n\r\nI tried to pinpoint the exact problem by further reducing the function but I hit a point where pretty much any change to the code makes it compile successfully.\r\n\r\nAn example project and crash report are attached.\r\n\r\nSteps to Reproduce:\r\n1. Run the attached project\r\n\r\n\r\nExpected Results:\r\nThe code should compile successfully\r\n\r\nActual Results:\r\nCompiler segfaults:\r\n\r\n0  swift                    0x0000000102d19edb llvm::sys::PrintStackTrace(__sFILE*) + 43\r\n1  swift                    0x0000000102d1a61b SignalHandler(int) + 379\r\n2  libsystem_platform.dylib 0x00007fff95333eaa _sigtramp + 26\r\n3  libsystem_platform.dylib 000000000000000000 _sigtramp + 1791803760\r\n4  swift                    0x0000000100f26977 swift::irgen::IRGenDebugInfo::getOrCreateScope(swift::SILDebugScope*) + 519\r\n5  swift                    0x0000000100f26b5a swift::irgen::IRGenDebugInfo::setCurrentLoc(swift::irgen::IRBuilder&, swift::SILDebugScope*, llvm::Optional<swift::SILLocation>) + 58\r\n6  swift                    0x0000000100f3b9bb swift::irgen::IRGenModule::emitSILFunction(swift::SILFunction*) + 10619\r\n7  swift                    0x0000000100ea3c93 swift::irgen::IRGenModuleDispatcher::emitLazyDefinitions() + 307\r\n8  swift                    0x0000000100f221c4 swift::performIRGeneration(swift::IRGenOptions&, swift::ModuleDecl*, swift::SILModule*, llvm::StringRef, llvm::LLVMContext&) + 1508\r\n9  swift                    0x0000000100e2a7dd performCompile(swift::CompilerInstance&, swift::CompilerInvocation&, llvm::ArrayRef<char const*>, int&) + 13757\r\n10 swift                    0x0000000100e2700a frontend_main(llvm::ArrayRef<char const*>, char const*, void*) + 2682\r\n11 swift                    0x0000000100e23697 main + 2247\r\n12 libdyld.dylib            0x00007fff8b77f5ad start + 1\r\n\r\nVersion:\r\nXcode 7.0b6 (7A192o)\r\nApple Swift version 2.0 (swiftlang-700.0.57.3 clang-700.0.72)\r\n\r\nNotes:\r\nThis might be related to some other crashes (with different stack traces) that I encountered while trying to reduce this issue.\r\n\r\nI will update this report with the respective radars once I have filed them."
+    email: janoschhildebrand@gmail.com
+    modified: "2015-09-23T19:21:25.3877Z"
+    number: "22436079"
+    number_intvalue: 22436079
+    originated: 26-Aug-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0b6 (7A192o)
+    reproducible: Always
+    resolved: Xcode 7.1b2
+    status: Closed
+    title: 'Xcode 7.0b6 (7A192o): [Swift] Compiler crash using Whole Module Optimization involving global variable, directly executed closure'

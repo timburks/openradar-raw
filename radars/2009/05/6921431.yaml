@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6921431"
+    labels:
+        datastore_id: "38419"
+data:
+    classification: ""
+    created: "2009-05-26T15:57:37.989264Z"
+    description: "I write the A52Codec as well as Perian.  This is listed under QuickTime, but it may be a Core Audio bug (I cannot tell with information here).\r\n\r\nBoth A52Codec and Perian contain multi-channel core audio decoders.  QuickTime expect the output of the Core Audio component to have channels in a certain order.  This order is sent to the Core Audio component via kAudioCodecPropertyInputChannelLayout, and the output is queried via kAudioCodecPropertyOutputChannelLayout (code for handling these is not committed to our repository, but I can make it available upon request).  However, in trying to track down the issue, I noticed that this data is sent to one instance of the decoder, while a different instance is used for decode.  The instance of the decoder which is actually responsible for decompressing the audio data is *never* told the order of the channels.  So, the decoder happily decodes using its default layout, which as I reported in 5799879 is different from Apple's QuickTimes .ac3 importer (which wasn't available until after A52Codec was written and in wide use).  The only workaround I can see here is to make the layout a class variable, which goes against the entire object oriented design of core audio.\r\n\r\nPerhaps this is merely a documentation issue, as channel layout is horribly undocumented.  What is the proper course of action here?  As A52Codec will soon be scrapped and AC3 will become part of Perian's binary (http://trac.perian.org/ticket/408), this is the opportune time to express the intent of multi-channel layouts within QuickTime/Core Audio.\r\n\r\nI'm really starting to tire of users complaining about these issues which seem to be a bug in QuickTime or Core Audio.  Please respond with the proper course of action.\r\n\r\n26-May-2009 10:54 AM Graham Booker:\r\nForgot to include the logging information.  Notice, only the third instance does decoding of any data, and only the second is told the channel layout.\r\n\r\nLoaded a52\r\nInstance 0x16a000f0 alloced\r\nACShepA52Decoder::Destructor: Total Frames: 0\r\nACShepA52Decoder::Destructor: Total Output Bytes: 0\r\nInstance 0x16a000f0 freed\r\nLoaded a52\r\nInstance 0x16a11f90 alloced\r\nACShepA52Decoder::SetFormats: input set to 61632d33, channels: 6\r\nACShepA52Decoder::SetFormats: output set to 6c70636d, channels: 6\r\nInstance 0x16a11f90 told that input tag is 7b0006\r\nACShepA52Decoder::Destructor: Total Frames: 0\r\nACShepA52Decoder::Destructor: Total Output Bytes: 0\r\nInstance 0x16a11f90 freed\r\nLoaded a52\r\nInstance 0x16aa68e0 alloced\r\nACShepA52Decoder::SetFormats: input set to 61632d33, channels: 6\r\nACShepA52Decoder::SetFormats: output set to 6c70636d, channels: 6\r\nACShepA52Decoder::Destructor: Total Frames: 290\r\nACShepA52Decoder::Destructor: Total Output Bytes: 10690560\r\nInstance 0x16aa68e0 freed"
+    email: gbooker@gmail.com
+    modified: "2011-08-28T05:46:44.848086Z"
+    number: "6921431"
+    number_intvalue: 6921431
+    originated: 26-May-2009 10:11 AM
+    parent_number: '&{NULL_VALUE}'
+    product: QuickTime
+    product_version: "7.6"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Channel layout not set in Core Audio decoders

@@ -1,0 +1,70 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19116900"
+    labels:
+        datastore_id: "5897426640568320"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2014-12-02T19:12:59.790542Z"
+    description: |-
+        Summary:
+        I’m composing the first function from Swift‘s stdlib with == over T? using a left-to-right composition operator, >>>. When I call it, it crashes if its second operand is typed as Int but not if it’s typed as Int?, but both compile just fine *and* both work when defined manually.
+
+
+        Steps to Reproduce:
+        Run this:
+        infix operator >>> {}
+        public func >>> <T, U, V, W> (f: T -> U, g: (U, V) -> W) -> (T, V) -> W {
+        	return { g(f($0), $1) }
+        }
+
+        let array = [1, 2, 3]
+
+        let manualOptional: ([Int], Int?) -> Bool = { (==)(first($0), $1) }
+        if manualOptional(array, 1) {
+        	println("manual optional")
+        }
+
+        let manualNonOptional: ([Int], Int) -> Bool = { (==)(first($0), $1) }
+        if manualNonOptional(array, 1) {
+        	println("manual nonoptional")
+        }
+
+        let composedOptional: ([Int], Int?) -> Bool = (first >>> (==))
+        if composedOptional(array, 1) {
+        	println("composed optional")
+        }
+
+        let composedNonOptional: ([Int], Int) -> Bool = (first >>> (==))
+        if composedNonOptional([1, 2, 3], 1) {
+        	println("composed nonoptional")
+        }
+
+
+        Expected Results:
+        I expected it to print all four strings.
+
+
+        Actual Results:
+        It prints the first three, and then crashes.
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        Crash log attached.
+    email: rix.rob@gmail.com
+    modified: "2014-12-02T19:12:59.790762Z"
+    number: "19116900"
+    number_intvalue: 19116900
+    originated: 02-Dec-2014 02:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2006)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: runtime crash in non-optional binary function made with generic composition operator'

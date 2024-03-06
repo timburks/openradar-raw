@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21888110"
+    labels:
+        datastore_id: "5313069362184192"
+data:
+    classification: Enhancement
+    created: "2015-07-18T16:48:26.66219Z"
+    description: "Summary:\n\nYou cannot set the tag of a custom NSView in Interface Builder. This is a pain :) (Especially now that more people will be using them thanks to @IBDesignable and @IBInspectable support)\n\nSteps to Reproduce:\n\n1. Create a custom NSView \n2. Try to set its tag via the Attributes Inspector\n\nExpected Results:\n\nIt just works, like with any other NSView.\n\nActual Results:\n\nIt doesn’t work — the option is greyed out.\n\nWorkaround:\n\nI actually had to do this :)\n\nextension NSView\n{\n    func viewWithCustomTag(customTag:Int) -> NSView?\n    {\n        //\n        // Iterates over subviews and returns the view with the specified custom tag.\n        // The custom view must implement the CustomTaggable protocol.\n        //\n        // (Why we can’t use regular tags in custom NSViews is beyond me.)\n        //\n        for view in subviews\n        {\n            if let view = view as? NSView, customTaggableView = view as? CustomTaggable\n            {\n                if customTaggableView.customTag == customTag\n                {\n                    return view\n                }\n            }\n        }\n        return nil\n    }\n}\n\nprotocol CustomTaggable\n{\n    var customTag:Int {get set}\n}\n\n\n@IBDesignable\nclass MyView: NSView, CustomTaggable\n{\n    \n    @IBInspectable var customTag:Int = -1\n\n    // …"
+    email: aralbalkan@gmail.com
+    modified: "2015-07-18T16:48:26.66242Z"
+    number: "21888110"
+    number_intvalue: 21888110
+    originated: 18-Jul-2015 05:48 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.4 (6E35b)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 6.4: You should be able to set the tag of a custom NSView in Interface Builder'

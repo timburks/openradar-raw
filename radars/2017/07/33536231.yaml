@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33536231"
+    labels:
+        datastore_id: "5042471943798784"
+data:
+    classification: Security
+    created: "2017-07-26T11:02:20.85271Z"
+    description: "Summary:\r\nObject is overreleased under special conditions\r\n\r\nSteps to Reproduce:\r\nRun attached code and execute buttonBreakObjectPressed.\r\n\r\nExpected Results:\r\ntestObject variable is not deallocated.\r\n\r\nActual Results:\r\ntestObject constant is deallocated still being strongly referenced by MainViewController.\r\n\r\nVersion:\r\n10.3\r\n\r\nNotes:\r\nThere is slight difference between Holder’s getObject and getCrashingObject methods - last one is contained inside switch case block.\r\nTo reproduce this issue, few things required: \r\n- TestProtocol must be class\r\n- TestClass must be NSObject descendant.\r\n\r\n\r\nclass Holder {\r\n    fileprivate weak var reference: AnyObject?\r\n    \r\n    init(reference: AnyObject) {\r\n        self.reference = reference\r\n    }\r\n    \r\n    func getObject<T>() -> T? {\r\n        return self.reference as? T\r\n    }\r\n    \r\n    func getCrashingObject<T>() -> T? {\r\n        switch (self.reference) {\r\n            case is T:\r\n                return self.reference as? T\r\n            default:\r\n                return nil\r\n        }\r\n    }\r\n}\r\n\r\npublic protocol TestProtocol: class {\r\n    func foo()\r\n}\r\n\r\nclass TestClass: NSObject, TestProtocol {\r\n    deinit {\r\n        print(\"TestClass deinit!\")\r\n    }\r\n\r\n    func foo() {\r\n        \r\n    }\r\n}\r\n\r\nclass MasterViewController: UIViewController {\r\n    \r\n    let testObject = TestClass()\r\n    \r\n    @IBAction func buttonBreakObjectPressed() {\r\n        print(\"buttonBreakObjectPressed\")\r\n        \r\n        let holder = Holder(reference: self.testObject)\r\n        \r\n        guard let testProtocol: TestProtocol = holder.getCrashingObject() else {\r\n            return\r\n        }\r\n        \r\n        testProtocol.foo()\r\n    }\r\n    \r\n    @IBAction func buttonUseObjectPressed() {\r\n        print(\"buttonUseObjectPressed\")\r\n        \r\n        let holder = Holder(reference: self.testObject)\r\n        \r\n        guard let testProtocol: TestClass = holder.getObject() else {\r\n            return\r\n        }\r\n        \r\n        testProtocol.foo()\r\n    }\r\n}"
+    email: 666tos@gmail.com
+    modified: "2017-07-26T11:05:51.90854Z"
+    number: "33536231"
+    number_intvalue: 33536231
+    originated: 26-Jul-2017 13:02
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "10.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ARC issue when casting NSObject to class protocols

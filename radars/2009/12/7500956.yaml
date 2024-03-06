@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7500956"
+    labels:
+        datastore_id: "135407"
+data:
+    classification: UI/Usability
+    created: "2009-12-29T03:53:06.510534Z"
+    description: "Summary: \r\nIf you change the name of the Current Core Data Model in a project containing the a multiple versions of a data model, the compiler doesn't update the value for the NSManagedObjectModel_CurrentVersionName key in <DataModel>.momd/VersionInfo.plist\r\n\r\nSteps to Reproduce:\r\n1. Create a new Cocoa Application named CoreDataVersioning. Select the Use Core Data for Storage checkbox.\r\n2. Select the CoreDataVersioning.xcdatamodel entry under the Models group in the Groups & Files list.\r\n3. Select Design->Data Model->Add Model Version\r\n4. Select CoreDataVersioning.xcdatamodel and change the name to CoreDataVersioning_v1.xcdatamodel.\r\n5. Build\r\n\r\nExpected Results:\r\nI expect to have a functioning data model that's accessible via the standard APIs.\r\n\r\nActual Results:\r\nThe VersionInfo.pist file in the compiled .momd file contains a reference to the old model name as the current model version. If you try to access the model in code, you won't be able to. Calling [[NSManagedObjectModel alloc] initWithContentsOfURL:url] (where url points to the .momd file) will return nil and calling [NSManagedObjectModel mergedModelFromBundles:nil] prints and exception that \"[NSCFArray insertObject:atIndex:]: attempt to insert nil\".\r\n\r\nThe only way to resolve this is to change the active data model, then switch back to your desired data model.\r\n\r\nRegression:\r\n\r\nNotes:\r\nOnce you've created the versioned data model, you can simulate the bug by renaming the active data model. You don't need to go through the trouble of recreating the project.\r\n\r\nThe attached project demonstrates the problem. It also attempts to the model once the application has finished launching to demonstrate the problem in-application.\r\n\r\nNot surprisingly, this also impacts iPhone projects."
+    email: eric.s.blair@gmail.com
+    modified: "2011-08-28T05:43:06.092528Z"
+    number: "7500956"
+    number_intvalue: 7500956
+    originated: 12/28/2009
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 3.2.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Changing name of Current Core Data Model version not reflected in built product

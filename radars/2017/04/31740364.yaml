@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31740364"
+    labels:
+        datastore_id: "5569754743963648"
+data:
+    classification: ""
+    created: "2017-04-25T22:49:32.04572Z"
+    description: "I saw this thread in where you helped someone debug a watchOS background URL session issue:\r\n\r\nhttps://forums.developer.apple.com/thread/70682\r\n\r\nI believe we are hitting a similar issue.  I've included a summary of our issue below, and more details in radar #31740364, but am hoping you can answer:\r\n \r\n- What was the resolution for iosmarkjim's radar #30553839?\r\n- Any code-level changes we can make to change this behavior?\r\n- If not, are there any mitigations?\r\n \r\nWe have a watchOS app that is using background URL Sessions and `scheduleBackgroundRefresh` to periodically schedule upload tasks to send sensor data to our servers for processing.\r\n \r\nEverything works great in development and testing locally, however it's very clear from our server logs that some users' watch are getting into a state where they repeatedly send the same request to our server over and over, even though based on the server logs the server is responding with a 200 http status in a timely manner (less than 2 seconds).\r\n \r\nThe upload task's payload is multi-part form data, and I'm using some helper methods from Alamofire to generate the on-disk fileURL to upload, but am not using Alamofire for any actual traffic (in this code path, but it is used in other parts of the app).\r\n \r\nThe code for generating the upload task is:\r\n \r\n            try mfd.writeEncodedData(to: fileURL)\r\n            var request = try URLRequest(\r\n                url: url,\r\n                method: .post,\r\n                headers: headers\r\n            )\r\n            let uploadTask = self.backgroundSession.uploadTask(\r\n                with: request,\r\n                fromFile: fileURL\r\n            )\r\n \r\n            uploadTask.resume()\r\n \r\nWhere `url` is the server endpoint and `fileURL` is the local multipart-form-data file generated using Alamofire's MultipartFormData class (instance mfd above).\r\n \r\nThe background session is configured like so:\r\n \r\n      let backgroundConfigObject = URLSessionConfiguration.background(\r\n        withIdentifier: \"WatchBackgroundRefreshManager\"\r\n    )\r\n    var backgroundSession: URLSession!\r\n    var backgroundURLTask: WKURLSessionRefreshBackgroundTask? = nil\r\n    override init() {\r\n        super.init()\r\n        backgroundConfigObject.sessionSendsLaunchEvents = true\r\n        backgroundConfigObject.timeoutIntervalForRequest = 5.0 * 60.0\r\n        backgroundConfigObject.timeoutIntervalForResource = 30.0 * 60.0\r\n        backgroundSession = URLSession(\r\n            configuration: backgroundConfigObject,\r\n            delegate: self,\r\n            delegateQueue: nil\r\n        )\r\n    }\r\n \r\nNOTE: I have run this same code on the watchOS simulator included in Xcode Version 8.2 (8C38) and the experience seems to reproduce the issue 100%, in that even though the server responds w/ a 200 my delegate methods are never called and the simulator continues to hit the server every 15 seconds until the Resource timeout is hit.\r\n \r\nIs there a way to get a system log from the watchOS simulator that might contain debug info on the url session behavior that I can attach to the radar?\r\n \r\nI haven't yet reproduced the issue on an actual device, even if I introduce arbitrary lag on the development server, but can confirm it's happening on real devices in the wild based on server logs (examples are in the radar)."
+    email: ryanleeschneider@gmail.com
+    modified: "2017-04-25T22:49:32.046Z"
+    number: "31740364"
+    number_intvalue: 31740364
+    originated: "2017-04-20"
+    parent_number: '&{NULL_VALUE}'
+    product: watchOS + SDK
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Background URL Session upload tasks retry even if server responds

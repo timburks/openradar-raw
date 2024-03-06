@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "37308258"
+    labels:
+        datastore_id: "4980399633596416"
+data:
+    classification: Enhancement
+    created: "2018-02-07T10:35:49.27617Z"
+    description: "Summary:\r\nI think it would be a great addition to GCD if I could elevate a block to become a barrier block after it started to execute.\n\nGiven a concurrent queue, dispatching a block on it, at some point I want to call something like dispatch_barrier_wait(); or something similar that elevates the current block to a barrier block, waits for other concurrently executing blocks to finish and than continues like a regular barrier block. There is the case where multiple blocks try this at the same time though, so this method would need to return a BOOL, communicating if this worked or if the block is still a concurrently executing block.\n\nThis would be very helpful for cases like lazy getters in a parallel environment. It would be beneficial in a lot of cases that use the pattern to read synchronously and parallel but write in a barrier block.\n\nFor example:\n\n```\n- (NSUInteger)someValue {\n    __block NSUInteger value;\n    dispatch_sync(self.lockQueue, ^{\n        if (self->_value == NSUIntegerMax) {\n            BOOL success = dispatch_barrier_wait();\n            if (success) {\n                self->_value = [self calculateSomeValue];\n            } else {\n                // fall back to current behavior: leave queue, dispatch into it again with a barrier block\n            }\n        }\n        value = self->_value;\n    });\n    return value;\n}\n```\n\nIn cases like this it is acceptable to wait for the barrier to take effect because the other option would be to leave the queue and dispatch into it again in a barrier block, which presumably would take more time.\n\nAnother benefit of this approach is: Due to the business logic in cases like these I know for sure that when this succeeds no other barrier block could have been executed in the meantime; so for my use case I know for sure that the ivar has not been altered in the meantime. This means I save the extra time to read the ivar again, which I would need to do if I leave the block and dispatch into it again in a barrier block to alter the ivar.\r\n\r\nSteps to Reproduce:\r\n \r\n\r\nExpected Results:\r\n \r\n\r\nActual Results:\r\n \r\n\r\nVersion:\r\n11\r\n\r\nNotes:"
+    email: michaelhochs@googlemail.com
+    modified: "2018-02-07T10:35:49.2764Z"
+    number: "37308258"
+    number_intvalue: 37308258
+    originated: 07-Feb-2018 11:35 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "11"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Option to elevate a running block to a barrier block

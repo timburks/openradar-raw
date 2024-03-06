@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9990674
+    labels:
+        datastore_id: "5537735490142208"
+data:
+    classification: Bug
+    created: "2022-09-27T10:29:15.441605Z"
+    description: "Hi I noticed in the SwiftUI map when it is used with coordinateRegion binding and userTracking binding, e.g.\r\n\r\n Map(coordinateRegion: $region, interactionModes: .all, showsUserLocation: true, userTrackingMode: $tracking)\r\n\r\nWhen a button is used to set the userTrackingMode, SwiftUI attempts to update the MKMapView calling [MKMapView _setUserTrackingMode:...] which results in mapLayerDidChangeVisibleRegion which unfortunately results in it setting the coordinateRegion binding. Of course we aren't supposed to update state when SwiftUI is trying to update the view, and it results in the the warning output to console:\r\n\r\n[SwiftUI] Modifying state during view update, this will cause undefined behavior.\r\n\r\nHope this can be fixed!\r\n\r\nI discovered this when I answered this Stackoverflow question\r\n\r\nhttps://stackoverflow.com/questions/71953853/swiftui-map-causes-modifying-state-during-view-update/71954884#71954884\r\n\r\nXcode Version 13.3.1 (13E500a)\r\niPhone 13 simulator\r\n\r\nHere is a View you can use\r\n\r\nstruct MapTestView: View {\r\n    @State var region: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 47.3769, longitude: 8.5417), latitudinalMeters: 2000, longitudinalMeters: 2000)\r\n    @State var tracking = MapUserTrackingMode.follow\r\n    \r\n    var body: some View {\r\n        let _ = Self._printChanges()\r\n        VStack {\r\n            Map(coordinateRegion: $region, interactionModes: .all, showsUserLocation: true, userTrackingMode: $tracking)\r\n                .ignoresSafeArea()\r\n                .task {\r\n                    let locationManager = CLLocationManager()\r\n                    locationManager.requestWhenInUseAuthorization();\r\n                }\r\n            Button {\r\n                tracking = .follow\r\n            } label: {\r\n                Image(systemName: tracking == .follow ? \"location.fill\" : \"location\")\r\n                    .padding()\r\n            }\r\n            .background(.white)\r\n        }\r\n    }\r\n}"
+    email: indiekiduk@gmail.com
+    modified: "2022-09-27T10:29:15.441751Z"
+    number: FB9990674
+    number_intvalue: 9990674
+    originated: "2022-04-22"
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: ""
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: 'SwiftUI Map: setting userTrackingMode causes console warning'

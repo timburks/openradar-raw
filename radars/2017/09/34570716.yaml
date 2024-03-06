@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34570716"
+    labels:
+        datastore_id: "5610714471333888"
+data:
+    classification: ""
+    created: "2017-09-21T12:12:49.43237Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nA table view with section index titles cannot have  a single section index title consisting of the • character. \r\n\r\nSteps to Reproduce:\r\nSet up a table view with one section and return section title and section index titles where the single section title is \"•\". If any other section index title except • is returned alongside the existing index title, the table view behaves as expected.\r\nSee attached file. Can be pasted over MasterViewController.swift from a default Master-Detail iOS app created with Xcode.\r\n\r\nExpected Results:\r\nThe table will show the dot character as a section index title on the right of the table view.\r\n\r\nActual Results:\r\nThe application crashes with the following exception:\r\n*** Terminating app due to uncaught exception 'NSRangeException', reason: '*** -[__NSArrayM objectAtIndex:]: index 0 beyond bounds for empty array'\r\n*** First throw call stack:\r\n(\r\n\t0   CoreFoundation                      0x0000000103e6fb0b __exceptionPreprocess + 171\r\n\t1   libobjc.A.dylib                     0x00000001038db141 objc_exception_throw + 48\r\n\t2   CoreFoundation                      0x0000000103da4ffb -[__NSArrayM objectAtIndex:] + 203\r\n\t3   UIKit                               0x000000010469526b -[UITableViewIndex _displayTitles] + 292\r\n\t4   UIKit                               0x0000000104695692 -[UITableViewIndex _cacheAndMeasureTitles] + 165\r\n\t5   UIKit                               0x00000001046967b6 -[UITableViewIndex setTitles:] + 119\r\n\t6   UIKit                               0x00000001043cca09 -[UITableView _updateIndexDisplayedTitles] + 65\r\n\t7   UIKit                               0x00000001043ccf90 -[UITableView _updateIndex] + 308\r\n\t8   UIKit                               0x00000001043e5ede -[UITableView noteNumberOfRowsChanged] + 159\r\n\t9   UIKit                               0x00000001043e5508 -[UITableView reloadData] + 2013\r\n\r\nVersion/Build:\r\niOS 10.3.3\r\n\r\nAttached file:\r\nimport UIKit\r\n\r\nclass MasterViewController: UITableViewController {\r\n\r\n    var detailViewController: DetailViewController? = nil\r\n    var objects = [Any]()\r\n\r\n\r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n\r\n        for  _ in 0..<10 {\r\n            objects.insert(NSDate(), at: 0)\r\n        }\r\n        tableView.reloadData()\r\n    }\r\n    \r\n    func insertNewObject(_ sender: Any) {\r\n        objects.insert(NSDate(), at: 0)\r\n    }\r\n    \r\n    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {\r\n        return sectionIndexTitles(for: tableView)![section]\r\n    }\r\n    \r\n    override func sectionIndexTitles(for tableView: UITableView) -> [String]? {\r\n        return [\r\n            \"•\", // this will crash. uncomment the line below and it will not crash any more.\r\n//            \"A\",\r\n        ]\r\n    }\r\n\r\n    override func numberOfSections(in tableView: UITableView) -> Int {\r\n        return sectionIndexTitles(for: tableView)!.count\r\n    }\r\n\r\n    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {\r\n        return objects.count\r\n    }\r\n\r\n    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {\r\n        let cell = tableView.dequeueReusableCell(withIdentifier: \"Cell\", for: indexPath)\r\n\r\n        let object = objects[indexPath.row] as! NSDate\r\n        cell.textLabel!.text = object.description\r\n        return cell\r\n    }\r\n}"
+    email: alin.claudiu.radut@gmail.com
+    modified: "2017-09-21T12:12:49.43264Z"
+    number: "34570716"
+    number_intvalue: 34570716
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: UITableView section index titles array cannot consist of a single "•" index title.

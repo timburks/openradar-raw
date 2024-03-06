@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14461599"
+    labels:
+        datastore_id: "3189401"
+data:
+    classification: Data loss
+    created: "2013-07-16T22:56:00.265077Z"
+    description: "Summary:\r\nI've been working on storing some logging info using ASL in our iPhone app, and have come across a problem where my ASL search just doesn't seem to be able to find records that I have previously logged using asl_log(). At its most basic level, this is the code I am using:\r\n\r\n        const char *facility = \"blah\";\r\n        NSString *message = @\"hi there\";\r\n\r\n        // write an entry\r\n        aslmsg msg = asl_new(ASL_TYPE_MSG);\r\n        asl_set(msg, ASL_KEY_FACILITY, facility);\r\n        asl_log(NULL, msg, ASL_LEVEL_CRIT, [message UTF8String], nil);\r\n       \r\n        // try to read\r\n        aslmsg query = asl_new(ASL_TYPE_QUERY);\r\n        asl_set_query(query, ASL_KEY_FACILITY, facility, ASL_QUERY_OP_EQUAL);\r\n        aslresponse response = asl_search(NULL, query);\r\n        while (NULL != (msg = aslresponse_next(response))) {\r\n            const char *m = asl_get(msg, ASL_KEY_MSG);\r\n            NSLog(@\"XXX %s\", m);\r\n        }\r\n        NSLog(@\"Done\");\r\n\r\n\r\nIf I run this code on Mac OS X or in the simulator, it works perfectly.  If I run it on my device, no entries are output (other than the \"Done\" at the end).\r\n\r\nNote that I am not attempting to read entries written by other applications.  I am attempting to read back my own log entries.\r\n\r\n\r\nSteps to Reproduce:\r\nExecute the above snippet of code in an application running on a device.\r\n\r\nExpected Results:\r\nThe application should display:\r\n  XXX hi there\r\n  Done\r\n\r\nActual Results:\r\nThe application displays:\r\n  Done\r\n\r\nRegression:\r\n\r\nNotes:\r\nI posted a question on the dev forums about this, and had several others also saying they had the same problem.  I got some good feedback from Quinn (DTS) saying that ASL probably isn't a good choice for logging due to some undocumented differences between platforms (I've raised a documentation radar - 14461411), however, I haven't seen any statements saying that asl_search shouldn't actually work within the confines of the limitations that Quinn spells out.\r\n\r\nNote that I've classified as Crash/Hang/Data Loss.  It doesn't actually Crash or Hang, but we definitely lose data."
+    email: craig@hae.com.au
+    modified: "2013-07-16T22:56:00.265237Z"
+    number: "14461599"
+    number_intvalue: 14461599
+    originated: 17/07/2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "6.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: asl_log not logging on iOS 6.x (on device)

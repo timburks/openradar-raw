@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13044763"
+    labels:
+        datastore_id: "2577404"
+data:
+    classification: Serious Bug
+    created: "2013-01-18T21:41:41.352449Z"
+    description: "18-Jan-2013 02:39 PM Tom Harrington:\r\nSummary:\r\n\r\nIncoming iCloud updates break round-tripping of NSManagedObjectID.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Build an app that uses Core Data's iCloud integration.\r\n\r\n2. Listen for NSPersistentStoreDidImportUbiquitousContentChangesNotification in this app.\r\n\r\n3. When this notification is posted, get one of the NSManagedObjectID instances contained in the notification.\r\n\r\n4. Use the NSManagedObjectID to look up the corresponding NSManagedObject, using -[NSManagedObjectContext existingObjectWithID:error:]\r\n\r\n5. Get the NSManagedObjectID for the object found in step 4.\r\n\r\nExpected Results:\r\n\r\nThe managed object ID found in step 5 would match the one looked up from the incoming notification in step 3. Specifically:\r\n\r\na. -[NSObject isEqual:] would return YES when comparing the two NSManagedObjectIDs.\r\n\r\nb. If one NSManagedObjectID were used as a key in an NSMutableDictionary, the other one could be used to look up the value for the key.\r\n\r\n\r\nActual Results:\r\n\r\nThe two managed object IDs do not match. Specifically,\r\n\r\na. isEqual: returns NO.\r\n\r\nb. If one is used as a key in a mutable dictionary, the other one cannot be used to look up the value.\r\n\r\nOn investigation it develops that both the entity and URIRepresentation properties of the object IDs are identical (or at least that isEqual: returns YES when they are compared). However the persistentStore properties do not match.\r\n\r\nThe two NSPersistentStore objects use the same persistent store, have the same URL, identifier, etc. However the options dictionaries differ. For the NSManagedObjectID obtained in step 3 above, the persistent store's options dictionary contains a key named NSUbiquityImporterPrivateStoreKey. This key is not present in the corresponding dictionary for the persistent store for the NSManagedObjectID obtained in step 5.\r\n\r\nOn the basis of this difference, the two NSManagedObjectIDs don't match, even though they refer to the same instance in the same data store.\r\n\r\nRegression:\r\n\r\nNone that I know of.\r\n\r\nNotes:\r\n\r\nThe same issue exists if the NSManagedObjectID from step 5 were found by other means-- any managed object ID that is looked up from the data store would also fail to match for the same reason."
+    email: atomicbird@gmail.com
+    modified: "2013-01-18T21:41:41.352664Z"
+    number: "13044763"
+    number_intvalue: 13044763
+    originated: 18-Jan-2013 02:39 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.8.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Incoming iCloud updates break round-tripping of NSManagedObjectID.

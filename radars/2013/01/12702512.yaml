@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12702512"
+    labels:
+        datastore_id: "2542401"
+data:
+    classification: ""
+    created: "2013-01-10T19:53:50.745512Z"
+    description: "14-Nov-2012 12:31 PM Jason Gregori:\r\nSummary:\r\nWe're not able to start any new HTTP network connections if we have 5 running connections to a very slow HTTP URL. In code, the new NSURLConnection's appear to have started. On Charles, I can't see any network connection actually go out until the slow ones finish. We're using Charles to see the network connections and artificially slow some of them down. I run into this limit on the simulator in iOS 5.1 and 6.0.\r\n\r\nSteps to Reproduce:\r\n1. Create and start 5 NSURLConnections to a very slow HTTP URL (something that will take minutes to return). This connections may have different paths but must have the same domain. (We used to Charles to throttle the connections).\r\n2. Create and start an NSURLConnection to any other HTTP URL.\r\n\r\nExpected Results:\r\nI expect the new connection to return from start right away. I expect the connection to go out right away and to be able to see it on Charles.\r\n\r\nActual Results:\r\nThe new connection does return from start right away. The new connection appears to wait until the slow ones have returned before actually going out into the world. I don't see it on Charles until then.\r\n\r\nRegression:\r\nIf I change the slow URL to HTTPS, other connections can start fine while the slow ones are running. I would also like to know why this is the case.\r\n\r\n\r\n14-Nov-2012 05:40 PM Jason Gregori:\r\nI realized that the 5 slow connections do not have to be on the same domain, they can be on different domains.\r\n\r\n\r\n\r\n\r\n10-Jan-2013 11:25 AM Apple Developer Bug Reporting Team :\r\nEngineering has determined that this issue behaves as intended based on the following information:\r\n\r\nThis is the effect of our NSURLConnection connection cache. It is expected. We expect to address this type of configuration with new API.\r\n\r\n\r\n\r\n\r\n10-Jan-2013 12:49 PM Jason Gregori:\r\nThanks for the response!\r\n\r\nCan you tell me some specifics about this limit? Is it always 5 connections? Or does it vary depending on if you're using wifi, edge, 3g, or LTE?\r\n\r\n\r\n\r\n\r\n15-Jan-2013 09:13 AM Apple Developer Bug Reporting Team :\r\nEngineering has determined that this issue behaves as intended based on the following information:\r\n\r\nUnfortunately, we can't give details about the connection limit behavior.\r\n\r\nUser agents in general (Chrome, Firefox, Safari) use six simultaneous TCP connections per hostname, with potential one-offs."
+    email: jasongregori@gmail.com
+    modified: "2013-04-04T17:42:47.184262Z"
+    number: "12702512"
+    number_intvalue: 12702512
+    originated: 14-Nov-2012 12:31 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "6.0"
+    reproducible: Yes
+    resolved: Yes
+    status: Behaves Correctly
+    title: Hitting low level network connection limit

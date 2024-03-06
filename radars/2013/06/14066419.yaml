@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14066419"
+    labels:
+        datastore_id: "3069401"
+data:
+    classification: Serious Bug
+    created: "2013-06-05T03:37:34.082685Z"
+    description: "Summary: \r\nCreating a CIContext with the software rendering option turned on causes the output on retina displays to render incorrectly.  It looks like the image is being downsampled, and then upsampled incorrectly.\r\n\r\nThe CGContext being used is from [[NSGraphicsContext currentContext] graphicsPort] in an NSView subclass:\r\n\r\nNSDictionary *options = @{kCIContextUseSoftwareRenderer: @(YES)};\r\n_cpuContext = [CIContext contextWithCGContext:[[NSGraphicsContext currentContext] graphicsPort] options:options];\r\n\r\nSteps to Reproduce:\r\nRun the enclosed sample on a Retina display.  Toggle the button in the window to switch between GPU and CPU rendering.\r\n\r\nIt's a little hard to see on Retina displays, but if you view the enclosed images \"CPURendering.png\" and \"GPURendering.png\" and zoom in, you can see the differences.\L\r\nExpected Results:\r\nRendering with a software context would not cause the display artifacts.\L\r\nActual Results:\r\nIt looks like the software CIContext is scaling down the image, and then scaling it back up, and then drawing it— essentially throwing out 75% of the pixels in the image.\r\n\r\nRegression:\r\nThis problem does not occur on non-hidpi displays.\r\n\r\nNotes:\r\n\r\nCreating a CGImageRef from the software cicontext and then drawing that to the CGContextRef from [[NSGraphicsContext currentContext] graphicsPort] will draw things correctly.  But, that's a lot of extra work for the CPU to be doing and probably not as fast."
+    email: gusmueller@gmail.com
+    modified: "2013-06-05T03:37:34.082825Z"
+    number: "14066419"
+    number_intvalue: 14066419
+    originated: 04-Jun-2013
+    parent_number: '&{NULL_VALUE}'
+    product: OSX
+    product_version: 10.8.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CIContext with Software Rendering on Retina Display Causes Incorrect Rendering

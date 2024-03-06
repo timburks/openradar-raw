@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21472364"
+    labels:
+        datastore_id: "4820674715582464"
+data:
+    classification: ""
+    created: "2015-06-20T02:25:28.57496Z"
+    description: "JSON is supposed to disregard trailing whitespace, but fractional numbers with trailing spaces sometimes do not equate to fractional numbers without trailing space. Paste the reproduction steps into a playground to reproduce.\r\n\r\nSteps to Reproduce:\r\nimport Foundation\r\n\r\nfunc makeJSON(str: String) -> NSObject? {\r\n    if let data = str.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true) {\r\n        return NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments, error: nil) as? NSObject\r\n    }\r\n    return nil\r\n}\r\n\r\nmakeJSON(\"1\") == makeJSON(\"1\") // true\r\nmakeJSON(\"1\") == makeJSON(\"1 \") // true\r\nmakeJSON(\"123\") == makeJSON(\"123 \") // true\r\nmakeJSON(\"123.4\") == makeJSON(\"123.4 \") // true\r\n\r\nmakeJSON(\"123.45\") == makeJSON(\"123.45\") // true\r\nmakeJSON(\"123.45\") == makeJSON(\" 123.45\") // true\r\nmakeJSON(\"123.45\") == makeJSON(\"123.45 \") // true\r\n\r\nmakeJSON(\"123.456\") == makeJSON(\"123.456\") // true\r\nmakeJSON(\"123.456\") == makeJSON(\" 123.456\") // true\r\nmakeJSON(\"123.456\") == makeJSON(\"123.456 \") // false!?!?\r\n\r\nmakeJSON(\"123.4567\") == makeJSON(\"123.4567\") // true\r\nmakeJSON(\"123.4567\") == makeJSON(\" 123.4567\") // true\r\nmakeJSON(\"123.4567\") == makeJSON(\"123.4567 \") // true\r\n\r\nmakeJSON(\"123.45678\") == makeJSON(\"123.45678\") // true\r\nmakeJSON(\"123.45678\") == makeJSON(\" 123.45678\") // true\r\nmakeJSON(\"123.45678\") == makeJSON(\"123.45678 \") // false!?!?\r\n\r\nmakeJSON(\"123.456789\") == makeJSON(\"123.456789\") // true\r\nmakeJSON(\"123.456789\") == makeJSON(\" 123.456789\") // true\r\nmakeJSON(\"123.456789\") == makeJSON(\"123.456789 \") // false!?!?\r\n\r\nmakeJSON(\"123.4567890\") == makeJSON(\"123.4567890\") // true\r\nmakeJSON(\"123.4567890\") == makeJSON(\" 123.4567890\") // true\r\nmakeJSON(\"123.4567890\") == makeJSON(\"123.4567890 \") // false!?!?\r\n\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\nVersion 6.3.2 (6D2105)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:"
+    email: mprudhom@gmail.com
+    modified: "2015-06-20T02:25:28.57521Z"
+    number: "21472364"
+    number_intvalue: 21472364
+    originated: 19-Jun-2015
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: NSJSONSerialization doesn't always disregard trailing whitespace

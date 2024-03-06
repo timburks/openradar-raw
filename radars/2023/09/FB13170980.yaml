@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13170980
+    labels:
+        datastore_id: "5560795169554432"
+data:
+    classification: Bug
+    created: "2023-09-14T19:52:03.129829Z"
+    description: "There’s an infinite layout loop when using a UIHostingController in a UIScrollView’s content view (using Auto Layout). The setup is as follows:\r\n1. Pin a scroll view to a view controller’s leading / trailing / top / bottom\r\n2. Pin a content view to the scroll view’s leading / trailing / top / bottom\r\n3. Add a hosting controller as a child view controller, and subview of the content view\r\n3. Pin the hosting controller’s view to the content view’s leading / trailing / top / bottom\r\n4. Use a simple view (a color, for example) with a .frame(height: X), where X is the height needed to push the content view beyond the bottom edge of the scroll view’s visible bounds region\r\n5. Force layout via view.layoutIfNeeded\r\n\r\nAn infinite layout loop occurs, leading to a n eventual crash.\r\n\r\nHere’s some code to repro:\r\n\r\nhttps://gist.github.com/bryankeller/6dba75ee416a22678205214b0007d86a\r\n\r\n=====\r\n\r\nimport UIKit\r\nimport SwiftUI\r\n\r\nfinal class ViewController: UIViewController {\r\n\r\n  override func viewDidLoad() {\r\n    super.viewDidLoad()\r\n\r\n    let scrollView = UIScrollView()\r\n    view.addSubview(scrollView)\r\n    scrollView.layer.borderColor = UIColor.red.cgColor\r\n    scrollView.layer.borderWidth = 1\r\n    scrollView.translatesAutoresizingMaskIntoConstraints = false\r\n    NSLayoutConstraint.activate([\r\n      scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),\r\n      scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),\r\n      scrollView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),\r\n      scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),\r\n    ])\r\n\r\n    let contentView = UIView()\r\n    scrollView.addSubview(contentView)\r\n    contentView.layer.borderColor = UIColor.orange.cgColor\r\n    contentView.layer.borderWidth = 2\r\n    contentView.translatesAutoresizingMaskIntoConstraints = false\r\n    NSLayoutConstraint.activate([\r\n      contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),\r\n      contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),\r\n      contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),\r\n      contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),\r\n    ])\r\n\r\n    let hostingController = UIHostingController(rootView: {\r\n      Color.yellow\r\n        // exact height that causes the layout loop on iPhone 14 Pro simulator\r\n        // values less than this won't crash\r\n        .frame(height: 760)\r\n    }())\r\n//    hostingController._disableSafeArea = true // uncommenting this stops the layout loop\r\n    hostingController.willMove(toParent: self)\r\n    addChild(hostingController)\r\n    contentView.addSubview(hostingController.view)\r\n    hostingController.view.translatesAutoresizingMaskIntoConstraints = false\r\n    NSLayoutConstraint.activate([\r\n      hostingController.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),\r\n      hostingController.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),\r\n      hostingController.view.topAnchor.constraint(equalTo: contentView.topAnchor),\r\n      hostingController.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),\r\n      hostingController.view.widthAnchor.constraint(equalTo: scrollView.widthAnchor),\r\n    ])\r\n    hostingController.didMove(toParent: self)\r\n\r\n    view.layoutIfNeeded()\r\n  }\r\n\r\n}"
+    email: kellerbryan19@gmail.com
+    modified: "2023-09-14T19:52:32.924943Z"
+    number: FB13170980
+    number_intvalue: 13170980
+    originated: "2023-09-14"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS / SwiftUI
+    product_version: iOS 16
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Infinite loop using hosting controller in a UIScrollView

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34491993"
+    labels:
+        datastore_id: "4995453158424576"
+data:
+    classification: Usability
+    created: "2017-09-18T16:10:04.79438Z"
+    description: "Summary:\r\nWhen using UICollectionViewFlowLayout with sectionInsetReference = .fromSafeArea on iPhone X, the layout of cells is in portrait following a rotation to landscape is different for the portrait layout before any rotation has occurred. It appears that the post-rotation portrait layout is not noticing that the left and right safeAreaInsets have reset to 0, and is treating them like they're still set to 44 pts.\r\n\r\nPossibly related: I've also observed that in a UICollectionViewController, at the time that `viewSafeAreaInsetsDidChange` is called, the new safeAreaInsets values have been set on self.view, but they have not yet propagated to self.collectionView.\r\n\r\nWith the following code:\r\n\r\n    override func viewSafeAreaInsetsDidChange() {\r\n        super.viewSafeAreaInsetsDidChange()\r\n        debugPrint(\"UICollectionViewController viewSafeAreaInsetsDidChange() was called: self.view.safeAreaInsets: \\(self.view.safeAreaInsets); self.collectionView.safeAreaInsets: \\(self.collectionView!.safeAreaInsets)\")\r\n    }\r\n\r\nI get the following logs:\r\n1. When the view is initially displayed (in portrait):\r\n\r\nUICollectionViewController viewSafeAreaInsetsDidChange() was called: self.view.safeAreaInsets: UIEdgeInsets(top: 44.0, left: 0.0, bottom: 34.0, right: 0.0); self.collectionView.safeAreaInsets: UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)\r\n\r\n2. When the view rotates to landscape:\r\n\r\nUICollectionViewController viewSafeAreaInsetsDidChange() was called: self.view.safeAreaInsets: UIEdgeInsets(top: 0.0, left: 44.0, bottom: 21.0, right: 44.0); self.collectionView.safeAreaInsets: UIEdgeInsets(top: 44.0, left: 0.0, bottom: 34.0, right: 0.0)\r\n\r\n3. When the view rotates back to portrait:\r\n\r\nUICollectionViewController viewSafeAreaInsetsDidChange() was called: self.view.safeAreaInsets: UIEdgeInsets(top: 44.0, left: 0.0, bottom: 34.0, right: 0.0); self.collectionView.safeAreaInsets: UIEdgeInsets(top: 0.0, left: 44.0, bottom: 21.0, right: 44.0)\r\n\r\nNotice how at the time this method is called, self.collectionView!.safeAreaInsets always seems to lag.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nRun the attached project on iPhone X simulator, with iPhone X initially in portrait orientation (first screenshot). Rotate to landscape (second screenshot). Rotate back to portrait (third screenshot).\r\n\r\n\r\nExpected Results:\r\n\r\nBoth portrait layouts should be identical; i.e., the first and third screenshots should be the same.\r\n\r\nActual Results:\r\n\r\nThe post-rotation portrait layout has sections inset by an additional 44 pts on the left and right: the safe area inset applied for landscape layout was not removed when returning to a portrait layout\r\n\r\nVersion/Build:\r\nXcode 9 GM, iOS 11.0 simulator for iPhone X"
+    email: wes@tulip.io
+    modified: "2017-09-18T16:10:04.79465Z"
+    number: "34491993"
+    number_intvalue: 34491993
+    originated: "2017-09-18"
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: iOS 11.0
+    reproducible: Always
+    resolved: ""
+    status: New
+    title: UICollectionViewFlowLayout's sectionInsetReference = .fromSafeArea produces inconsistent results after rotating on iPhone X

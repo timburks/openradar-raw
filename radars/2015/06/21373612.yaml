@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21373612"
+    labels:
+        datastore_id: "5979484809330688"
+data:
+    classification: Serious Bug
+    created: "2015-06-13T23:14:31.46367Z"
+    description: "Summary:\nAccessing tuple indexes via labels results in a `does not have a member named` error.\n\nSteps to Reproduce:\n1. \n```swift\nlet (one, two) = [ Void() ].reduce(\n\t(one: 1, two: 2)\n) { previous, value in\n\t_ = previous.one\n\treturn (previous.one, previous.two)\n}\n```\n\nExpected Results:\nIt should compile.\n\nActual Results:\n```\nerror: libarclite_macosx.a(arclite.o) failed to load objfile for /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/arc/libarclite_macosx.a\nWelcome to Apple Swift version 2.0 (700.0.38.1 700.0.53). Type :help for assistance.\nrepl.swift:4:7: error: '(Int, Int)' does not have a member named 'one'\n         _ = previous.one\n             ^        ~~~\nrepl.swift:5:10: error: '(Int, Int)' does not have a member named 'one'\n        return (previous.one, previous.two)\n                ^        ~~~\n```\n\nRegression:\nWith Swift 1.2 — `swiftlang-602.0.53.1`, the first code block compiles.\n\nNotes:\nWith Swift 2.0 — `swiftlang-700.0.38.1`, this compiles:\n```swift\nlet (one, two) = [ Void() ].reduce(\n\t(one: 1, two: 2)\n) { previous, value in\n\t// _ = previous.one // commented this line out\n\treturn (previous.one, previous.two)\n}\n```\n\nWith Swift 2.0 — `swiftlang-700.0.38.1`, this **does not** compile:\n```swift\nlet (one, two) = [ Void() ].reduce(\n\t(one: 1, two: 2)\n) { previous, value in\n\t_ = previous.0\n\treturn (previous.one, previous.two)\n}\n```\n\nWith Swift 2.0 — `swiftlang-700.0.38.1`, this compiles:\n```swift\nlet (one, two) = [ Void() ].reduce(\n\t(one: 1, two: 2)\n) { previous, value in\n\t_ = previous.0\n\treturn (previous.0, previous.1)\n}\n```\nWith Swift 2.0 — `swiftlang-700.0.38.1`, this compiles:\n```swift\nlet (one, two) = [ Void() ].reduce(\n\t(one: 1, two: 2)\n) { (previous: (one: Int, two: Int), value) in\n\t_ = previous.one\n\treturn (previous.one, previous.two)\n}\n```\n\nSee in practice: <https://github.com/jdhealy/PrettyColors/commit/7a1682b7663cfa075d8e9a5ad0c1e096e54968b5>"
+    email: jdhealy@gmail.com
+    modified: "2015-06-13T23:14:31.46392Z"
+    number: "21373612"
+    number_intvalue: 21373612
+    originated: 13-Jun-2015 07:14 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: swiftlang-700.0.38.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '`initial` variable in `reduce` loses tuple labels.'

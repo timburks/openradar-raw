@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34956416"
+    labels:
+        datastore_id: "6158778739195904"
+data:
+    classification: Serious Bug
+    created: "2017-10-12T16:22:04.68063Z"
+    description: "Summary:\r\nAfter an undefined period, the Caching Service will stop servicing client requests (see attached screenshot). A typical log entry:\r\n\r\n2017-10-12 11:05:46.787 #QIkMQ8l6yl4/ Request from xxx.xxx.xxx.xx:xxxxx [cloudd/651.15 CFNetwork/811.5.4 Darwin/16.6.0] to store http://xxx.xx.xx.xxx:xxxxx/apple-mas-00001/A2mCX7gBXxEet-QCEwHn?x-client-request-id=F57395FD-3A55-44A5-B369-521A62DA3840&bin=403000019®ion=amereast&Expires=1507824106&source=uschi-edge.icloud-content.com%3A443&sourceScheme=https denied because the server is too busy; see MaxConcurrentClients setting\r\n2017-10-12 11:05:46.787 #QIkMQ8l6yl4/ Failed with status code 503, reason code 36\r\n\r\nIncreasing the MaxConcurrentClients setting appears to have no effect.\r\n\r\nThese entries seems to increase over time. For example, there were 9,927 instances of \"Failed with status code 503, reason code 36\" in Debug-2017.10.10-21/43.log when the service still appeared to be servicing clients and 17,602 instances in Debug-2017.10.12-10/11.log when it had stopped completely.\r\n\r\nSteps to Reproduce:\r\nRun the caching service with a large number of clients.\r\n\r\nExpected Results:\r\nIf the server is too busy, it should deny service to some clients, but should eventually recover when demand goes down.\r\n\r\nActual Results:\r\nIf the server is too busy, it'll soon stop servicing all clients and never recovers without restarting the service.\r\n\r\nVersion/Build:\r\nmacOS Sierra 10.12.6 (16G29)\r\nServer.app 5.3.1 (16S4128)\r\n\r\nConfiguration:\r\nMac Mini (Late 2014)\r\n3 GHz Intel Core i7\r\n16 GB RAM\r\n1 TB SSD\r\nserverperfmode=1\r\ncaching:MaxConcurrentClients = 50000\r\nSonnet xMac mini Server\r\nSonnet Presto 10GbE 2-Port 10 Gigabit Ethernet PCI Express Card\r\n\r\nNote that there are no alerts issued when the service stops and I am only aware of it because I see no traffic on the Stats page."
+    email: j.a.grigutis@gmail.com
+    modified: "2018-03-09T20:20:37.73542Z"
+    number: "34956416"
+    number_intvalue: 34956416
+    originated: October 12 2017, 12:16 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Server
+    product_version: 5.3.1 (16S4128)
+    reproducible: Sometimes
+    resolved: January 24 2018, 2:16 PM
+    status: Closed
+    title: assetcache fails to serve client requests with increasing incidents of "Failed with status code 503, reason code 36" in the Debug.log

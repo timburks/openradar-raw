@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19028882"
+    labels:
+        datastore_id: "5324974072004608"
+data:
+    classification: Enhancement
+    created: "2014-11-19T11:53:50.474238Z"
+    description: "Summary:\r\nWhen a WatchKit app extension changes local data and then needs to communicate its changes to a cloud service, it has no way to ensure it runs long enough to send these changes, and no way to invoke its containing app to do so on its behalf. This means that WatchKit apps cannot reliably update CloudKit data, making iCloud appear slow, unreliable, or broken to Apple Watch wearers.\r\n\r\nSteps to Reproduce:\r\n1. Write an app with a local read-write data store like Core Data.\r\n2. Add two-way sync between the local data store and a cloud database like CloudKit.\r\n3. Add a watch app capable of mutating the data in some fashion which needs to be synced.\r\n\r\nExpected Results:\r\nThere is some way for the watch app extension to ensure its mutations are uploaded in a timely manner.\r\n\r\nActual Results:\r\nThere is no such technique.\r\n\r\nRegression:\r\nIn most extensions, the extensionContext can be used to invoke openURL:completionHandler: to launch the containing app, which has the ability to delay its closing long enough to upload content. Watch apps, however, do not have an extensionContext and cannot do this.\r\n\r\nNotes:\r\nThis is less of a problem when downloading changes; a well-written sync process will work fine if it’s terminated in the middle of a download, and even if it isn’t, push notifications (using CloudKit or otherwise) can help keep the local data in sync. But when changes need to be uploaded, aborting an upload in the middle will cause a change in behavior (as other devices won’t see changes when they update themselves), and no server will intervene to launch the containing app.\r\n\r\nobjective-dave suggests in <https://devforums.apple.com/thread/254553> that extensions should let the containing app handle interacting with the cloud. He admits, however, that watch app extensions cannot invoke the containing app the way that other extensions (such as Today widgets) can. \r\n\r\nA simple solution might be to allow -openURL:completionHandler: or a similar API to be used from a watch app extension. However, I think this is a bit of kludge. It might be better to add an API that allows an extension to launch its containing app in the background, or to allow an app to request that it be launched in the background whenever a file in a shared container it can access changes."
+    email: brent@architechies.com
+    modified: "2014-12-01T22:05:35.757069Z"
+    number: "19028882"
+    number_intvalue: 19028882
+    originated: 19-Nov-2014 03:53 AM
+    parent_number: "18033548"
+    product: iPhone SDK
+    product_version: Xcode-Beta (6C86e)
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/18033548
+    title: WatchKit app extensions need some way to ensure changes are sent to the cloud in a timely manner

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9682567
+    labels:
+        datastore_id: "4975611219017728"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2021-10-06T15:52:36.526812Z"
+    description: "There are two features in macOS SetupAssistant which do not play well with each together: Remote Management (Automatic Device Enrollment) and Migration Assistant (restoring Mac from TimeMachine backup). This problem is applicable to all versions of macOS but this feedback was tested specifically against macOS 12.0 Monterey Beta 8 21A5534d.\r\n\r\nThere are multiple problems related to these features. In this feedback I am going to illustrate the TimeMachine restore only of the user account files together with Automatic Device Enrollment.\r\nThere is a second feedback FB9682501 dealing with the problem of restoring all files.\r\n\r\n# Prepare the scenario\r\n\r\nFirst we need to create a Time Machine backup we are going be using later.\r\n\r\n1. If the Mac is in the Apple Business Manager, use the MDM to remove cloud/DEP profile from the ABM so no Automatic Device Enrollment occurs during SetupAssistant\r\n2. Mac has the latest version of macOS Big Sur installed and it is NOT enrolled in the MDM\r\n3. Upgrade the Mac to the latest version of macOS Monterey. Currently Beta 8 21A5534d\r\n4. Initiate the Erase All Content and Settings from System Preferences to get a Mac with fresh macOS Monterey state\r\n5. Proceed through the macOS SetupAssistant\r\n6. Personalizace the user account (wallpaper, data, apps, etc.)\r\n7. Create a TimeMachine backup\r\n\r\nPrepare the Mac for Automatic Device Enrollment.\r\nWe can use the same Mac from which we created the backup or a different one. It does not matter.\r\n\r\n1. Assign MDM DEP/Cloud profile (+ other MDM features) to the Mac we are going to enroll via ADE.\r\n  - Authentication during enrollment: Yes\r\n  - Supervision: Yes\r\n  - SetupAssistant panes to be skipped: NONE\r\n  - Computer account: administrator\r\n  - Managed administrator created by the MDM: NO\r\n2. Initiate the Erase All Content and Settings to get a Mac with fresh macOS Monterey\r\n\r\n# Steps to reproduce\r\n\r\nNow we try to combine Automated Device Enrollment with Time Machine Restore during SetupAssistant.\r\n\r\n1. Start the Mac with fresh install of macOS Monterey\r\n2. Proceed through the macOS SetupAssistant\r\n3. There is a Remote Management. Let it enroll the Mac into the MDM\r\n4. There is a Migration Assistant pane. Use it to restore the Mac from the Time Machine Backup we created earlier\r\n  - Restore only the files of the User account(s)\r\n  - Enter the passwords of all users to be migrated\r\n  - Let it do the migration\r\n5. When macOS boots up log into the user account\r\n6. Use MDM to issue any command through the User channel.\r\n\r\n# Expected result\r\n\r\nOne of the users we migrated would be enabled for User Channel MDM management.\r\n\r\n# Actual result\r\n\r\nNone of the users is enabled for User Channel MDM management. Device channel MDM management works.\r\n\r\n# Workaround\r\n\r\n1. Manually unenroll the Mac from the MDM.\r\n2. Manually enroll the Mac into the MDM using the user account which you want to managed by the User Channel MDM management.\r\n\r\n# Possible solution\r\n\r\nTake this situation into account. During the migration of the user account allow the operator to select one account which is going to be managed by the MDM User Channel management."
+    email: michalm.mac@gmail.com
+    modified: "2021-10-06T15:52:36.526975Z"
+    number: FB9682567
+    number_intvalue: 9682567
+    originated: "2021-10-06"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 12.0 Monterey Beta 8 21A5534d
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Restoring user from TimeMachine during SetupAssistant after Automatic Device Enrollment does not enable it for User Channel MDM management

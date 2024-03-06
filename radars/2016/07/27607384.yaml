@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27607384"
+    labels:
+        datastore_id: "4971879928430592"
+data:
+    classification: Serious Bug
+    created: "2016-07-29T11:28:29.96239Z"
+    description: "We recently enabled the execution of JavaScript via JavaScriptCore on dispatch queues in our app. After releasing this version of the app, we started getting a number of crashes in the JSC GC thread and had to disable this feature.\r\n\r\nThe basic issue is the JSC GC needs to know the bounds of the stack for any thread that has ever called into JSC to begin its mark phase. To do this it calls thread_get_state and to get the stack pointer of the target thread:\r\n\r\nhttps://github.com/WebKit/webkit/blob/5b3d24f/Source/JavaScriptCore/heap/MachineStackMarker.cpp#L919\r\n\r\nUnder certain circumstances, the stack pointer returned by thread_get_state is 0x0, which causes the JSC GC to attempt to scan the stack starting from 0x0 causing a segfault.\r\n\r\nThe threads returning 0x0 for the SP appear to be GCD threads that are either just created, just about to exit, or just about to be reused by the kernel (not really sure which since the pthread source is no longer published). In particular, the target thread's call stack has only a single stack frame that looks like this:\r\n\r\n  Thread #32:\r\n  0 libsystem_pthread.dylib 0x00000001 start_wqthread + 0\r\n\r\nI wrote a little test app that stress tests the thread_get_state call and I'm able to reproduce this issue of thread_get_state returning a SP of 0 on both an iPhone 5S running iOS 8.4.1 and an iPhone 6S running iOS 9.3.2.\r\n\r\nSee the attached ThreadGetStateBadSP.png for an example of the state of the app when this occurs.\r\n\r\nSteps to Reproduce:\r\nYou may have to run the test app for several minutes for this issue to repro. Also note the #defines at the top; I am using different sets of parameters to stress GCD thread creation and destruction on a 5S vs. a 6S.\r\n\r\n1. Run ThreadGetStateTest project.\r\n2. Tweak the #defines at the top depending on device--I've included sets of parameters that seem to repro the issue on both a 5S and 6S.\r\n3. Set a breakpoint where it says \"SET BREAKPOINT HERE\", which is when thread_get_state returns KERN_SUCCESS and a SP of 0.\r\n4. Run the app for some number of minutes until you hit the breakpoint.\r\n\r\nExpected Results:\r\nIt seems like a valid thread should not have a SP of 0. Either that or this behavior should be documented so that JSC's GC and other GCs know to expect a NULL stack pointer and should handle it appropriately.\r\n\r\nActual Results:\r\nthread_get_state returns a SP of 0 for some work queue threads, which is unexpected\r\n\r\nVersion:\r\niOS 8.4.1, iOS 9.3.2\r\n\r\nNotes:\r\n\r\nConfiguration:\r\niPhone 5S 8.4.1, iPhone 6S 9.3.2\r\n\r\nAttachments:\r\n'ThreadGetStateBadSP.png' and 'ThreadGetStateTest.zip' were successfully uploaded.\r\n\r\nThreadGetStateBadSP.png => http://imgur.com/a/anfMa\r\nThreadGetStateTester.cpp => http://hastebin.com/xutetikura.cpp"
+    email: ben@nhaminated.com
+    modified: "2016-07-29T11:28:29.96259Z"
+    number: "27607384"
+    number_intvalue: 27607384
+    originated: 7/29/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: thread_get_state returns KERN_SUCCESS and SP of 0 causing crashes in JavaScriptCore

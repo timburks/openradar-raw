@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8588290"
+    labels:
+        datastore_id: "775402"
+data:
+    classification: Serious Bug
+    created: "2010-10-25T07:02:19.791561Z"
+    description: "The pthread library behaves unexpectedly when mixing recursive read locks with write locks. Unbalanced unlock calls will unlock a different threads' lock.\r\n\r\nSteps to Reproduce:\r\n\r\n-Compile the below c file with gcc -Wall -pthread t2.c\r\n-Run a.out\r\n\r\nExpected Results:\r\n\r\nThe third unbalanced unlock call from the read thread should return EINVAL or an equivalent error. The unlock of the write thread should succeed.\r\n\r\nActual Results:\r\n\r\nThe third unbalanced unlock call from the read thread unlocks the write lock that the write thread currently holds. The first unlock call to the write thread fails because the unbalanced unlock from the read thread has already unlocked the write thread.\r\n\r\nCode:\r\n\r\nt2.c\r\n//-----------------\r\n\r\n#include <pthread.h>\r\n#include <stdio.h>\r\n#include <unistd.h>\r\n\r\n//gcc -Wall -pthread t2.c\r\n\r\npthread_t t;\r\npthread_t t2;\r\npthread_rwlock_t m;\r\n\r\nvoid * fn(void * arg) {\r\n\tint res;\r\n\tres = pthread_rwlock_rdlock(&m);\r\n\tfprintf(stderr,\"read lock acquire 1 res: %i\\n\",res);\r\n\tres = pthread_rwlock_rdlock(&m);\r\n\tfprintf(stderr,\"read lock acquire 2 res: %i\\n\",res);\r\n\tres = pthread_rwlock_unlock(&m);\r\n\tfprintf(stderr,\"read lock release 1 res: %i\\n\",res);\r\n\tusleep( 10000);\r\n\tres = pthread_rwlock_unlock(&m);\r\n\tfprintf(stderr,\"read lock release 2 res: %i\\n\",res);\r\n\t\r\n\t/** UNLOCKS THE WRITE LOCK (from a read thread) **/\r\n\tres = pthread_rwlock_unlock(&m);\r\n\tfprintf( stderr, \"read lock release 3 res: %i\\n\", res);\r\n\t\r\n\treturn NULL;\r\n}\r\n\r\nvoid * fn2(void * arg) {\r\n\tint res;\r\n\tres = pthread_rwlock_wrlock(&m);\r\n\tfprintf(stderr,\"write lock acquire res: %i\\n\",res);\r\n\tusleep( 10000);\r\n\tres = pthread_rwlock_unlock(&m);\r\n\tfprintf(stderr,\"write lock release res: %i\\n\",res);\r\n\treturn NULL;\r\n}\r\n\r\nint main(int argc, char ** argv)\r\n{\r\n\tpthread_rwlock_init( &m, NULL);\r\n\tpthread_create( &t, NULL, fn, NULL);\r\n\tusleep( 2000);\r\n\tpthread_create( &t2, NULL, fn2, NULL);\r\n\tpthread_join( t, NULL);\r\n\tpthread_join( t2, NULL);\r\n\treturn 0;\r\n}\r\n\r\n//----------------------"
+    email: gngrwzrd.lists@gmail.com
+    modified: "2011-08-28T05:39:26.0279Z"
+    number: "8588290"
+    number_intvalue: 8588290
+    originated: 10/24/2010
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: PThread RWLock - pthread_rwlock_unlock unlocks from wrong thread

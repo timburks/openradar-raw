@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18975903"
+    labels:
+        datastore_id: "5066127667363840"
+data:
+    classification: Serious Bug
+    created: "2014-11-14T19:46:37.072352Z"
+    description: "Summary:\r\nI'm trying to use NSXMLDocument and NSXMLDTD to parse some XML, but for some reason, NSXMLDTD never returns the DTD notations.\r\n\r\nSteps to Reproduce:\r\nUsing the following code, you can see that it happily picks up the entities and elements, however, it doesn't return the notations.  Even if I inspect the internal _notations variable, I can see that it is always nil. \r\n\r\nint main(int argc, char *argv[]) {\r\n    @autoreleasepool {\r\n        NSString *xml = @\"\"\r\n            \"<?xml version=\\\"1.0\\\" standalone=\\\"yes\\\" ?>\\n\"\r\n            \"<!DOCTYPE xxx SYSTEM \\\"XXX\\\" [\\n\"\r\n            \"    <!ENTITY blah SYSTEM \\\"BLAH\\\" NDATA note>\\n\"\r\n            \"    <!NOTATION note PUBLIC \\\"my notation\\\">\\n\"\r\n            \"    <!ELEMENT xxx (#PCDATA)>\\n\"\r\n            \"]>\\n\"\r\n            \"<xxx>some text</xxx>\";\r\n\r\n        NSData *xmlData = [xml dataUsingEncoding:NSUTF8StringEncoding];\r\n        NSError *error;\r\n        NSXMLDocument *doc = [[NSXMLDocument alloc] initWithData:xmlData options:NSXMLNodePreserveAll error:&error];\r\n        NSLog(@\"Entity = %@\", [[doc DTD] entityDeclarationForName:@\"blah\"]);\r\n        NSLog(@\"Element = %@\", [[doc DTD] elementDeclarationForName:@\"xxx\"]);\r\n        NSLog(@\"Notation = %@\", [[doc DTD] notationDeclarationForName:@\"note\"]);\r\n    }\r\n}\r\n\r\nExpected Results:\r\nI expect to see the notations output to the console\r\n\r\nActual Results:\r\nThe notations are nil.\r\n\r\nVersion:\r\nOS X 10.9.5 (13F34)\r\nOS X 10.10 (14A389)"
+    email: craig@blackdogfoundry.com
+    modified: "2014-11-14T19:47:42.942678Z"
+    number: "18975903"
+    number_intvalue: 18975903
+    originated: 14/11/2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: "10.10"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSXMLDTD does not return notations

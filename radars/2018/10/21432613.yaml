@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21432613"
+    labels:
+        datastore_id: "5613624781438976"
+data:
+    classification: ""
+    created: "2018-10-31T23:51:34.712853Z"
+    description: "Summary:\r\nIn most languages if you give the min() or max() function a NaN and a non-NaN floating point value, you always get the non-NaN value back.  (See the fmin() and fmax() functions in the C standard library, for example.)\r\n\r\nSwift's min() and max() functions, however, take generic Comparable arguments. No special-casing is done for floating point types, so handling of NaN is rather haphazard, with the resulting value depending on the order of the arguments:\r\n\r\nmin(2.0,Double.NaN)   // 2.0\r\nmin(Double.NaN, 2.0)  // nan\r\nmax(2.0,Double.NaN)   // nan\r\nmax(Double.NaN, 2.0)  // 2.0\r\n\r\nIt would be trivial to fix this by providing an alternate implementation for min()/max() with FloatingPointType arguments:\r\n\r\nfunc max<T : FloatingPointType>(x: T, _ y: T) -> T {\r\n    if x.isNaN { return y }\r\n    if y.isNaN { return x }\r\n    return x > y ? x : y\r\n}\r\nfunc min<T : FloatingPointType>(x: T, _ y: T) -> T {\r\n    if x.isNaN { return y }\r\n    if y.isNaN {return x }\r\n    return x < y ? x : y\r\n}\r\n\r\nIt might be more correct to also check for the case where x and y are both NaN and to create a new NaN value to return in that case (rather than returning the second argument, as would happen here) but I'm not sure that's ever necessary. (I'm certainly no expert in IEEE floating point.)\r\n\r\n\r\nThere are a few languages which always propagate the NaN, rather than always returning the non-NaN argument. That would also be ok, I suppose. (But I'd say it's best to do what C does, to avoid surprises.) In any case Swift's current inconsistent behavior is ridiculous, as the order of arguments should never matter for these functions.\r\n\r\nSteps to Reproduce:\r\nRun the following swift code:\r\n\r\nprint(min(1.0,Double.NaN))\r\nprint(min(Double.NaN, 2.0))\r\nprint(max(3.0,Double.NaN))\r\nprint(max(Double.NaN, 4.0))\r\n\r\n\r\n\r\nExpected Results:\r\nYou should get this output:\r\n\r\n1.0\r\n2.0\r\n3.0\r\n4.0\r\n\r\n\r\nActual Results:\r\nInstead you get this:\r\n\r\n1.0\r\nnan\r\nnan\r\n4.0\r\n\r\n\r\nVersion:\r\nXcode 7.0 (7A120f)\r\nOS X 10.11 (15A178w)\r\n\r\n\r\nNotes:\r\nI fully expect this to be closed as a duplicate, as I know at least one other person reported this problems months ago for Swift 1.x. :)\r\n\r\n\r\nConfiguration:"
+    email: tim1724@gmail.com
+    modified: "2018-10-31T23:51:34.71315Z"
+    number: "21432613"
+    number_intvalue: 21432613
+    originated: 6/17/2015
+    parent_number: "18371906"
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: 6/19/2015
+    status: Duplicate/18371906
+    title: The min()/max() functions in the Swift standard library (2.0 beta 1) don't handle NaN in a consistent way

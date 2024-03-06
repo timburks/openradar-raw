@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21373630"
+    labels:
+        datastore_id: "6272231759937536"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-06-13T23:21:15.68165Z"
+    description: "Summary:\nLike rdar://21373621 and rdar://21373624 but this time there’s no error\n\nSteps to Reproduce:\n1. This:\nprotocol AlgebraicType {\n\ttypealias Term\n}\n\nenum Expr<T>: AlgebraicType {\n\ttypealias Term = T\n\n\tcase Var(String)\n\tcase Abstraction(String, T)\n\tcase Application(T, T)\n}\n\nstruct Term<E: AlgebraicType where E.Term == Term> {\n\tlet expression: E\n}\n\n\nExpected Results:\nshould not crash the compiler\n\nActual Results:\nbut totally does:\n0  swift                    0x000000010b172e0b llvm::sys::PrintStackTrace(__sFILE*) + 43\n1  swift                    0x000000010b17354b SignalHandler(int) + 379\n2  libsystem_platform.dylib 0x00007fff84de5f1a _sigtramp + 26\n3  libsystem_platform.dylib 0x000000010bfa4000 _sigtramp + 2266751232\n4  swift                    0x000000010985d12d swift::ArchetypeBuilder::resolveArchetype(swift::Type) + 29\n5  swift                    0x000000010985f125 swift::ArchetypeBuilder::addSameTypeRequirement(swift::Type, swift::Type, swift::RequirementSource) + 37\n6  swift                    0x000000010985f249 swift::ArchetypeBuilder::addRequirement(swift::RequirementRepr const&) + 89\n7  swift                    0x00000001098236f6 checkGenericParameters(swift::TypeChecker&, swift::ArchetypeBuilder*, swift::GenericParamList*, swift::DeclContext*, swift::GenericTypeResolver&) + 950\n8  swift                    0x0000000109822ffd swift::TypeChecker::validateGenericSignature(swift::GenericParamList*, swift::DeclContext*, swift::GenericSignature*, std::__1::function<bool (swift::ArchetypeBuilder&)>, bool&) + 141\n…\nStack dump:\n0.\tProgram arguments: /Applications/Xcode-7-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift -frontend -c -primary-file term.swift -target x86_64-apple-darwin14.3.0 -enable-objc-interop -module-name term -o /var/folders/9y/f7n4rvx901nctm_5d16c1wm40000gn/T/term-446944.o \n1.\tWhile type-checking 'Term' at term.swift:14:1\n<unknown>:0: error: unable to execute command: Segmentation fault: 11\n<unknown>:0: error: swift frontend command failed due to signal (use -v to see invocation)\n\n\nRegression:\nN/A\n\nNotes:\nN/A"
+    email: rix.rob@gmail.com
+    modified: "2015-06-13T23:21:15.68205Z"
+    number: "21373630"
+    number_intvalue: 21373630
+    originated: 13-Jun-2015 07:21 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-7-beta (7A120f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2: Correct recursive type constraint also crashes the compiler'

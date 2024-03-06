@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12788358"
+    labels:
+        datastore_id: "2359404"
+data:
+    classification: Serious Bug
+    created: "2012-11-30T20:48:55.004594Z"
+    description: "Summary:\r\nI'm trying to programmatically mount some WebDAV shares and I'd like to give the volumes specific names other than the default. For example, if I mount\r\n\r\n\thttps://my.sharepoint.school.edu/personal/grigutis\r\n\r\nI'd like it to appear in the Finder as\r\n\r\n\t/Volumes/My SharePoint Site\r\n\r\nInstead of\r\n\r\n\t/Volumes/grigutis\r\n\r\nI can do this with the mount_webdav command:\r\n\r\n\t$ mkdir /Volumes/My\\ SharePoint\\ Site\r\n\t$ mount_webdav -s -i https://my.sharepoint.school.edu/personal/grigutis /Volumes/My\\ SharePoint\\ Site\r\n\r\nBut I can't get this working with NetFSMountURLSync.\r\n\r\n\r\nSteps to Reproduce:\r\n\tNSURL *url = [NSURL URLWithString:@\"https://my.sharepoint.school.edu/personal/grigutis\"];\r\n\tNSURL *mountpath = [NSURL fileURLWithPath:@\"/Volumes/My SharePoint Site\" isDirectory:YES];\r\n\tCFArrayRef mountpoints = NULL;\r\n\tint result = 0;\r\n\tresult = NetFSMountURLSync((__bridge CFURLRef)url,\r\n\t\t(__bridge CFURLRef)mountpath,\r\n\t\tCFSTR(\"Kerberos\"),\r\n\t\tCFSTR(\"NoPassword\"),\r\n\t\tNULL,\r\n\t\tNULL,\r\n\t\t&mountpoints);\r\n\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\nIf the mount path directory exists, I get the Finder dialog:\r\n\r\n\t'There was a problem connecting to the server \"my.sharepoint.school.edu\". You do not have permission to access this server.'\r\n\r\nand the function returns result 13.\r\n\r\nIf the mount path directory does not exist, I get the Finder dialog:\r\n\r\n\t'There was a problem connecting to the server \"my.sharepoint.school.edu\". The share does not exist on the server. Please check the share name, and then try again.'\r\n\r\nand the function returns result 2.\r\n\r\n\r\nRegression:\r\nCalling the function with NULL for the mountpath argument works as expected (the default mount point is used)."
+    email: j.a.grigutis@gmail.com
+    modified: "2013-03-02T04:12:45.892373Z"
+    number: "12788358"
+    number_intvalue: 12788358
+    originated: 30-Nov-2012 03:47 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X SDK
+    product_version: 10.8.2/12C60
+    reproducible: Always
+    resolved: 01-Mar-2013 04:43 PM
+    status: Behaves correctly
+    title: 'NetFSMountURLSync: cannot specify mount point'

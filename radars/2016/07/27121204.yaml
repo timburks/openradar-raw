@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27121204"
+    labels:
+        datastore_id: "4952225302446080"
+data:
+    classification: Serious Bug
+    created: "2016-07-01T01:54:41.27036Z"
+    description: "Summary:\r\nCalling -[NSWindow invalidateShadow] no longer updates the shadow shape in a transparent borderless NSWindow with a shadow. The stale shadow from the first paint remains.\r\n\r\nSteps to Reproduce:\r\n1. Download the attached file and save it as main.m.\r\n2. Compile and run it with clang++ main.m -framework Cocoa -o test && ./test\r\n3. Wait for two seconds.\r\n\r\nExpected Results:\r\nThere should be a blue circle with a shadow around it.\r\n\r\nActual Results:\r\nThe blue circle doesn't have a shadow. Instead, there is a shadow in the place where there was a red circle. invalidateShadow failed to update the shadow.\r\n\r\nVersion:\r\n10.12 Beta (16A201w)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'main.m' was successfully uploaded.\r\n\r\nContents of main.m reproduced here for convenience:\r\n\r\n/**\r\n * Save as main.m.\r\n * Compile and run using: clang++ main.m -framework Cocoa -o test && ./test\r\n *\r\n * This program creates a borderless window with a transparent background, and a shadow.\r\n * It draws a red circle into it. After two seconds, it repaints, and draws a blue circle\r\n * in a different location. Then it calls -[NSWindow invalidateShadow] so that the shadow\r\n * is updated to be around the blue circle instead of around the red circle.\r\n *\r\n * However, on 10.12 Beta (16A201w), invalidateShadow has no effect and the stale shadow remains.\r\n **/\r\n\r\n#import <Cocoa/Cocoa.h>\r\n\r\n@interface TestView: NSView\r\n{\r\n  bool _firstDraw;\r\n}\r\n\r\n@end\r\n\r\n@implementation TestView\r\n\r\n- (id)initWithFrame:(NSRect)aFrame\r\n{\r\n  if (self = [super initWithFrame:aFrame]) {\r\n    _firstDraw = YES;\r\n  }\r\n  return self;\r\n}\r\n\r\n- (void)drawRect:(NSRect)rect\r\n{\r\n  if (_firstDraw) {\r\n\r\n    // Draw a red circle in the bottom left corner.\r\n    NSRect r = NSMakeRect(10, 10, 50, 50);\r\n    NSBezierPath* circlePath = [NSBezierPath bezierPath];\r\n    [circlePath appendBezierPathWithOvalInRect: r];\r\n    [[NSColor redColor] set];\r\n    [circlePath fill];\r\n    _firstDraw = NO;\r\n\r\n    // trigger second draw.\r\n    [self performSelector:@selector(invalidate) withObject:nil afterDelay:2.0];\r\n\r\n  } else {\r\n\r\n    // Draw a blue circle further up and to the right from the right circle.\r\n    NSRect r = NSMakeRect(100, 70, 50, 50);\r\n    NSBezierPath* circlePath = [NSBezierPath bezierPath];\r\n    [circlePath appendBezierPathWithOvalInRect: r];\r\n    [[NSColor blueColor] set];\r\n    [circlePath fill];\r\n\r\n    // Invalidate the window shadow.\r\n    [[self window] performSelector:@selector(invalidateShadow) withObject:nil afterDelay:0.0];\r\n\r\n  }\r\n}\r\n\r\n- (void)invalidate\r\n{\r\n  [self setNeedsDisplay:YES];\r\n}\r\n\r\n- (void)mouseUp:(NSEvent*)event\r\n{\r\n  // Shut down on double click.\r\n  if ([event clickCount] >= 2) {\r\n    [NSApp terminate:self];\r\n  }\r\n}\r\n\r\n@end\r\n\r\nint\r\nmain (int argc, char **argv)\r\n{\r\n  NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];\r\n\r\n  [NSApplication sharedApplication];\r\n  [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];\r\n\r\n  int style = NSBorderlessWindowMask;\r\n  NSRect contentRect = NSMakeRect(400, 300, 300, 400);\r\n  NSWindow* window = [[NSWindow alloc] initWithContentRect:contentRect\r\n                                       styleMask:style\r\n                                         backing:NSBackingStoreBuffered\r\n                                           defer:NO];\r\n  [window setHasShadow:YES];\r\n  [window setBackgroundColor:[NSColor clearColor]];\r\n\r\n  NSView* view = [[TestView alloc] initWithFrame:NSMakeRect(0, 0, contentRect.size.width, contentRect.size.height)];\r\n    \r\n  [window setContentView:view];\r\n  [NSApp activateIgnoringOtherApps:YES];\r\n  [window makeKeyAndOrderFront:window];\r\n\r\n  [NSApp run];\r\n\r\n  [pool release];\r\n  \r\n  return 0;\r\n}"
+    email: markus.stange@gmail.com
+    modified: "2016-07-01T01:54:41.27053Z"
+    number: "27121204"
+    number_intvalue: 27121204
+    originated: "2016-06-30"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.12 Beta (16A201w)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: -[NSWindow invalidateShadow] has stopped working in 10.12

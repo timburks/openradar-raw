@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25101089"
+    labels:
+        datastore_id: "6141298138415104"
+data:
+    classification: Performance
+    created: "2016-03-11T02:17:06.91322Z"
+    description: "Summary:\nWhen a Mac is bound to AD and the preferred server option is used with dsconfigad. The server listed as the preferred domain controller _should_ be used for all authentication and ldap lookups. However using TCP Dumps and netstat, it is clear that the preferred server is being ignored. Authentication and ldap lookups continue to go out to the domain controller that is assigned for the site in AD sites and services\n\nI have tested this back as far as 10.9.5 and the issue is present in all current versions of 10.11 and 10.10 as well \n\nSteps to Reproduce:\n1. Install 10.11.3\n2. Bind to AD\n3. Perform an ldap lookup using dscl or the id command. \neg.\n:~ $ id <username>\nor \n:~ $ dscl /Search -read /Users/<username>\n\n4. Use netstat to list established connections\neg.\n:~ $ netstat -W | grep ESTAB\ntcp4       0      0  10.10.10.10.49390   dc001.contoso.com.ldap  ESTABLISHED\ntcp4       0      0  10.10.10.10.49388   dc001.contoso.com.msft-gc  ESTABLISHED\n\nNotice the server listed, in the above example it is dc001.contoso.com\n\n4. Set the preferred domain controller to use with dsconfigad\neg:\n:~ $ dsconfigad -preferred “dc002.contoso.com”\n\n5. Reboot machine\n\n6. Config preferred server is set with dsconfigad -show\neg.\n:~ $dsconfigad -show\nAdvanced Options - Administrative\n  Preferred Domain controller    = dc002.contoso.com\n\n7. Repeat step 3 with different usernames to avoid any caching of user records\n\n8. Repeat step 4 and notice the server names of the established connections for ldap and msft-gc\neg.\n$ netstat -W | grep ESTAB\ntcp4       0      0  10.10.10.10.49704   dc001.contoso.com.ldap  ESTABLISHED\ntcp4       0      0  10.10.10.10.49702   dc001.contoso.com.msft-gc  ESTABLISHED\n\nNote that the server name is _NOT_ the name of the preferred server we set with dsconfigad\n\n\nExpected Results:\nWhen a preferred domain controller is set using dsconfigad -preferred. All authentication and ldap looks should first attempt to use this server. If this preferred server is non-responsive or otherwise offline, authentication and ldap lookups will fail over to servers provided via DNS service records.\n\nAs per the manual entry for -preferred:\n -preferred server\n              Use the specified server for all Directory lookups and authentications.  If the server is no longer available, it will fail-over to other servers.\n\nActual Results:\nThe server set with dsconfigad -preferred is not used for authentication of ldap lookups\n\nRegression:\nTest in OS X 10.9.5, 10.10.5 and 10.11.3. All three versions of the system exhibit this issue.\n\nNotes:"
+    email: calum.h@gmail.com
+    modified: "2016-03-11T02:17:06.91339Z"
+    number: "25101089"
+    number_intvalue: 25101089
+    originated: 11-Mar-2016 01:16 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: dsconfigad use preferred server has no effect

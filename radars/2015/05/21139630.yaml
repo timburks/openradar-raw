@@ -1,0 +1,63 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21139630"
+    labels:
+        datastore_id: "5012517751357440"
+data:
+    classification: Other Bug
+    created: "2015-05-28T13:08:19.61344Z"
+    description: |-
+        Summary:
+
+        Renaming the app target breaks linking following a clean build of the associated Tests target, due to a hard coded Test Host Value in the unit tests target.
+
+        Steps to Reproduce:
+
+        1. Create a new Swift project (we’ll call ours LetsBreakTestHostForFunAndProfit)
+        2. Verify unit test target compiles and runs successfully
+        3. In the project inspector, rename the main app target to RenamedTarget
+        4. Hold down Alt and do Product >> Clean Build Folder… and select Clean
+        5. Cmd+U to build and run the tests target
+        6. Observe linking fails with attached output (see linking-failure.txt inside attached zip)
+        7. Return to the Project inspector and view the test target
+        8. Locate the Test Host value
+        9. Observe it is still hardcoded to the old app target name:
+
+        $(BUILT_PRODUCTS_DIR)/LetsBreakTestHostForFunAndProfit.app/LetsBreakTestHostForFunAndProfit
+
+        10. Edit Test Host to:
+
+        $(BUILT_PRODUCTS_DIR)/RenamedTarget.app/RenamedTarget
+
+        11. Cmd+U to build and run tests target
+        12. Observe compilation/linking/running completes OK now
+
+
+        Expected Results:
+
+        I would expect renaming the app target to not break the tests target.
+
+        Actual Results:
+
+        Unit tests target fails to link after a clean build until the user goes in and manually hacks the unit test target’s Test Host field to remove references to the old app target name.
+
+        Regression:
+
+        Unsure - I’ve successfully changed app target names before without problems.
+
+        Notes:
+
+        N/A
+    email: andrew@tenero.co.uk
+    modified: "2015-05-28T13:08:19.61376Z"
+    number: "21139630"
+    number_intvalue: 21139630
+    originated: 28-May-2015 02:08 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.3 (6D570)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 6.3: Renaming app target breaks linking for test target due to hard coded Test Host value'

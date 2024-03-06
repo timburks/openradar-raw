@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28479978"
+    labels:
+        datastore_id: "5507212436832256"
+data:
+    classification: ""
+    created: "2016-09-27T14:55:11.7677Z"
+    description: "Area:\r\nBluetooth\r\n\r\nSummary:\r\nWe have an app which uses a CBCentralManager to connect to bluetooth peripherals, which we manufacture.  \r\nIn `-centralManager:didDiscoverPeripheral:`, we store a strong reference to the CBPeripheral, set the delegate, and call `-connectPeripheral:options:`.  A few seconds later, we receive the callback `-didConnectPeripheral:` on the delegate. We then call `-discoverServices`, which eventually results in `didDiscoverServices:`  This works fine on iOS8, iOS9, iPhone 4S through iPhone 6S+.\r\n\r\nIt does not work on iPhone 7.  Specifically `didDiscoverServices` will never get called, and about 30s after `-didConnectPeripheral`  we receive `-didDisconnectPeripheral:error:` with an error \"CBErrorDomain Code=0 \"Unknown Error\".\r\n\r\nWe have found a similar report in the developer forums, and have added our own report there as well: https://forums.developer.apple.com/message/182460\r\n\r\nSteps to Reproduce:\r\nIn code:\r\n\r\nOn iPhone 7 (FAILS)\r\n1) `CBCentralManager -scanForPeripheralsWithServices:nil options:nil`\r\n2) `-centralManager:didDiscoverPeripheral:`  Retain the `peripheral`, Set the delegate, call `-connectPeripheral:options:`\r\n3) Wait for `-didConnectPeripheral:` Observe that this gets called. Call `-discoverServices:`\r\n4) Observe that `didDiscoverServices` is never called\r\n5) Observe that `-didDisconnectPeripheral:error:` is called with an error \"CBErrorDomain Code=0 \"Unknown Error\". \r\n\r\nOn iPhone Other (SUCCESS)\r\n1) `CBCentralManager -scanForPeripheralsWithServices:nil options:nil`\r\n2) `-centralManager:didDiscoverPeripheral:`  Retain the `peripheral`, Set the delegate, call `-connectPeripheral:options:`\r\n3) Wait for `-didConnectPeripheral:` Observe that this gets called. Call `-discoverServices:`\r\n4) Observe that `didDiscoverServices` is called\r\n\r\nExpected Results:\r\n`didDiscoverServices`  will be called on the CBPeripheral delegate after connection, and the connection will remain in-tact.\r\n\r\nActual Results:\r\n`didDiscoverServices` is never called on the CBPeripheral delegate. About 30s after initial connection (`didConnectPeripheral`), `didDisconnectPeripheral` is called with \"CBErrorDomain Code=0 \"Unknown Error\"\r\n\r\nVersion:\r\niOS 10.0.1, iOS 10.0.2\r\n\r\nNotes:\r\nThis issue has been reproduced on two iPhone 7 devices, running both iOS 10 10.0.1 and 10.0.2. We do not see this issue on iPhone 4S, 5, 5C, 5S, 6, 6S, or SE running iOS 9 or any version of iOS 10.\r\n\r\nOur hardware device that runs in peripheral mode runs Android 5.1 Lollipop.\r\n\r\nConfiguration:\r\niPhone 7"
+    email: bcherry@gmail.com
+    modified: "2016-09-27T14:55:11.76794Z"
+    number: "28479978"
+    number_intvalue: 28479978
+    originated: 9/27/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "10"
+    reproducible: ""
+    resolved: ""
+    status: open
+    title: CBPeripheral automatically disconnects with "Unknown Error" on iPhone 7

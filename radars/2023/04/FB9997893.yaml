@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9997893
+    labels:
+        datastore_id: "5493047605329920"
+data:
+    classification: Bug
+    created: "2023-04-28T01:23:17.925807Z"
+    description: "It seems NavigationStack have state-inconsistent problem when dimissing a scrolling view.\r\n\r\nSteps to reproduce:\r\n1. Create an empty SwiftUI project and paste codes below.\r\n2. Run the app, then navigate 3 levels deep (By tapping any items in the list).\r\n3. Scroll the current page view\r\n4. Tap the \"< Back\" button while the view is still inertial scrolling.\r\n5. Tap the \"< Back\" button again.\r\n6. The app crashed with message \"Fatal error: Can't remove more items from a collection than it contains\".\r\n\r\n```swift\r\nstruct ContentView: View {\r\n    @StateObject var holder = PathHolder()\r\n\r\n    var body: some View {\r\n        NavigationStack(path: holder.pathBinding) {\r\n            PageView()\r\n                .navigationDestination(for: Int.self) { _ in PageView() }\r\n        }\r\n        .environmentObject(holder)\r\n    }\r\n}\r\n\r\nstruct PageView: View {\r\n    @EnvironmentObject var holder: PathHolder\r\n    @Environment(\\.dismiss) var dismiss\r\n\r\n    var body: some View {\r\n        VStack {\r\n            if !holder.path.isEmpty {\r\n                // Working version\r\n                Button(\"dismiss\") {\r\n                    holder.path.removeLast()\r\n                }\r\n                // Crash version\r\n//                Button(\"dismiss\") {\r\n//                    dismiss()\r\n//                }\r\n            }\r\n            ScrollView {\r\n                VStack {\r\n                    // Create 100 elements for scrolling\r\n                    ForEach(0 ..< 100) { _ in\r\n                        NavigationLink(value: 1, label: {\r\n                            Color.green\r\n                                .padding(.vertical)\r\n                                .overlay(Text(\"\\(holder.path.count)\").font(.title).foregroundColor(.red))\r\n                                .frame(maxWidth: .infinity)\r\n                                .frame(height: 200)\r\n                        })\r\n                    }\r\n                }\r\n            }\r\n        }\r\n    }\r\n}\r\n\r\nclass PathHolder: ObservableObject {\r\n    @Published var path: [Int] = [] {\r\n        willSet {\r\n            print(\"willSet\", newValue, path)\r\n        }\r\n        didSet {\r\n            print(\"didSet\", oldValue, path)\r\n        }\r\n    }\r\n\r\n    var pathBinding: Binding<[Int]> {\r\n        Binding(get: {\r\n            print(\"get \\(self.path)\")\r\n            return self.path\r\n        }, set: {\r\n            print(\"set\", $0)\r\n            self.path = $0\r\n        })\r\n    }\r\n}\r\n```\r\n\r\nIn the above example, if you tap on the \"dismiss\" button I provided instead of the default \"< Back\" button, the crash won't occur.\r\n\r\nFuther investigation shows that the \"dismiss\" method provided by NavigationStack is actually popping view first then modify the path binding value, so if you comment-out the \"Crash version\" and the app will crash again when tap on \"dismiss\" button."
+    email: xiaogdgenuine@gmail.com
+    modified: "2023-04-28T01:23:17.925967Z"
+    number: FB9997893
+    number_intvalue: 9997893
+    originated: Apr 28, 2023
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: SwiftUI 4
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Bug in NavigationStack's back button

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31779360"
+    labels:
+        datastore_id: "4953786640498688"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2017-04-23T22:01:26.03375Z"
+    description: "Summary:\r\nWhen performing a particular set of batch updates on a UICollectionView with a certain number of sections, it appears there is a heap corruption and crash in objc_release in -[UICollectionViewUpdate _computeItemUpdates].\r\n\r\nSteps to Reproduce:\r\n1. Setup a UICollectionView with 8 sections, each with 3 items\n2. Perform batch updates with:\n  a. Insert item at section 1, item 0\n  b. Insert section 0\n  c. Move section 3 to section 1\n3. Make sure data source is properly updated to reflect changes\n\r\n\r\nExpected Results:\r\nUICollectionView performs the queued updates on the view hierarchy.\r\n\r\nActual Results:\r\nUICollectionView crashes with the following trace:\n\n#0\t0x0000000101a3bd7b in objc_release ()\n#1\t0x000000010325241c in -[UICollectionViewUpdate _computeItemUpdates] ()\n#2\t0x0000000103251315 in -[UICollectionViewUpdate initWithCollectionView:updateItems:oldModel:newModel:oldVisibleBounds:newVisibleBounds:] ()\n#3\t0x00000001032c078b in -[UICollectionView _endItemAnimationsWithInvalidationContext:tentativelyForReordering:] ()\n#4\t0x00000001032c8497 in -[UICollectionView _performBatchUpdates:completion:invalidationContext:tentativelyForReordering:] ()\n#5\t0x00000001032c82d5 in -[UICollectionView _performBatchUpdates:completion:invalidationContext:] ()\n#6\t0x00000001032c8278 in -[UICollectionView performBatchUpdates:completion:] ()\n\r\n\r\nVersion:\r\n9.3.1\r\n\r\nNotes:\r\nCrash reports from production show issue occurring on iOS 7.1.2, 8.3, 8.4, 9.1, 9.2, 9.2.1, 9.3, and 9.3.1. Locally reproduce on iOS 9.3.1 and Xcode 7.3 simulators.\n\nChanging from 8 to 9 sections in the sample project seems to mitigate the issue. The same happens when using only 7 sections."
+    email: jesse.d.squires@gmail.com
+    modified: "2017-04-23T22:01:26.034Z"
+    number: "31779360"
+    number_intvalue: 31779360
+    originated: 23-Apr-2017 03:01 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 9.3.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UICollectionView batch update heap corruption

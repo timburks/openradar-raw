@@ -1,0 +1,72 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30064691"
+    labels:
+        datastore_id: "5526626896969728"
+data:
+    classification: Enhancement
+    created: "2017-01-18T00:55:30.65311Z"
+    description: |-
+        Summary:
+
+        Surprisingly often, I find myself creating "auxiliary overlay UIWindows", which I define as:
+         * Having a clear background color
+         * Either has userInteractionEnabled=NO, or a hitTest: that only hits on a small overlay element instead of the entire screen
+         * Has windowLevel set to UIWindowLevelStatusBar or around there
+
+        The purpose is to:
+         * Show auxiliary information/controls to the user (a recording indicator, or controls that affect the entire application and doesn't belong in a UIViewController, a notification HUD, or similar)
+         * be presentable without affecting what's currently on screen (presenting this UI should not interfere with the current UIViewController stack, even if it contains modal view controllers that can be presented and dismissed during the use of the aux window)
+        * When part of an SDK/Framework which is added to an existing application, this auxiliary window should not require the cooperation of the hosting app. The hosting app should be unaffected by the addition of the auxiliary window.
+
+        This window should never become key, since it is auxiliary to the main content of the app. However, as far as I've found, there is no way to prevent a UIWindow from becoming the first responder. For example, when a UIAlert is dismissed, UIKit will look for the topmost window, and make it key, regardless of which window was key before, or if the new window is supposed to be key.
+
+        Steps to Reproduce:
+
+        1. Create a UIWindow subclass as outlined in the description
+        2. Make it visible, but not key
+        3. Run the app, with a breakpoint in becomeKeyWindow for your subclass
+        4. Tap in a text field
+        5. Type some text in it
+        6. Select a word, and tap "Look Up"
+        7. Dismiss the UI that comes up
+
+        Expected Results:
+
+        In step 1 or 2, there was a flag you could set to indicate that the window should never become key.
+
+        8. UIKit looks through the application's windows to find a suitable key window
+        9. It rejects UIRemoteKeyboardWindow, UITextEffectsWindow and other system auxiliary windows
+        10. It also rejects any user auxiliary windows by looking at the aforementioned flag
+        11. It ends up making a window key that wants to be key (probably the bottom-most window created by the app during startup)
+
+        Actual Results:
+
+        8 and 9 like in expected
+        10. This doesn't happen
+        11. My auxiliary window becomes key
+
+        Regression:
+        Describe circumstances where the problem occurs or does not occur, such as software versions and/or hardware configurations.
+
+        I have tried many, many things to try to work around this:
+
+        * Emulating step 10 by overriding becomeKeyWindow and going through candidates, rejecting "bad" key windows. This is tricky since you keep adding system auxiliary windows that I need to hard-code
+        * Picking the bottom-most window. This is bad because there are plenty of multiwindow apps, and as an SDK, I have no control over the hosting app.
+        * Storing the top-most window after applicationDidFinishLaunching:. There are plenty of apps that do crazy UIWindow mangling at the start of the app, or even replaces it halfway through the app, so this is very unreliable as well.
+        * And much more
+
+        I've been trying to fix this for a long time, and has concluded that the auxiliary window fix is the sanest fix. Sorry for not filing this issue earlier.
+    email: joachimb@gmail.com
+    modified: "2017-01-18T00:55:30.65328Z"
+    number: "30064691"
+    number_intvalue: 30064691
+    originated: 17-Jan-2017 04:55 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: At least iOS 3-10
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Creating an auxiliary overlay UIWindow that never becomes key

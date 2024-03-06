@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25892115"
+    labels:
+        datastore_id: "5027980136939520"
+data:
+    classification: Other bug
+    created: "2016-04-23T09:40:19.69753Z"
+    description: "Summary:\r\nThis was originally a request to DTS (see additional notes for original DTS request).\r\n\r\nThere seems to be an issue with [NSPasteboard pasteboardWithName:NSDragPboard]. Whereas it correctly contains the information about a dragged file when the file is being dragged, it keeps the information when dragging has long ended. Therefore it is impossible to tell from the NSDragPboard if currently a file is being dragged, or not.\r\n\r\nSteps to Reproduce:\r\nPlease see sample code attached.\r\n\r\nInstall Xcode, create new Mac App, copy the following code to AppDelegate.m/applicationDidFinishLaunching:\r\n\r\n[NSEvent addGlobalMonitorForEventsMatchingMask:NSLeftMouseDraggedMask handler:^(NSEvent* event) {\r\n        NSPasteboard* pb = [NSPasteboard pasteboardWithName:NSDragPboard];\r\n        NSLog(@\"%@\", [pb propertyListForType:NSFilenamesPboardType]);\r\n    }];\r\n\r\nRun the application. Open Finder.app, and start dragging around a random file from your Mac. You will see that information about the file being dragged is being written to the Xcode console. Let off that file, and start dragging around the Finder window. You will notice that still the information about the file you have already let off is being printed to the Xcode console. Hence, NSDragPboard seems to contain this information still when the dragging operation has long ended.\r\n\r\nExpected Results:\r\nNSLog(@\"%@\", [pb propertyListForType:NSFilenamesPboardType]);\r\n\r\nshould return nil when no file is being dragged currently.\r\n\r\nActual Results:\r\nNSLog(@\"%@\", [pb propertyListForType:NSFilenamesPboardType]);\r\n\r\nwill print the information about the file that has been dragged before when currently no file is being dragged, but something else, e.g. the Finder window (in the context of NSEvent addGlobalMonitorForEventsMatchingMask:)\r\n\r\nVersion:\r\nXcode Version 7.3 (7D175), OS X 10.11 (and all patches)\r\n\r\nNotes:\r\nOriginal DTS request:\r\n\r\nHi Apple Engineer, thanks for taking time for my question.\r\n\r\nI'm trying to be notified when a user is dragging any file in OS X, not only in my app.\r\n\r\nMy current approach was using addGlobalMonitorForEventsMatchingMask:handler: on NSEvent, as follows:\r\n\r\n(see code above)\r\n\r\nThis works partially - the handler is being called when I start dragging a file from my desktop or Finder, however propertyListForType: also returns a valid file path when I perform every other operation that contains a left-mouse-drag, e.g. moving a window. The issue is that the NSDragPboard still seems to contain the latest dragged file path e.g. when I let off the file I was dragging and start moving a window, which makes it hard to distinguish between these operations.\r\n\r\nTL;DR - I am interested in file drag operations system-wide. I do not need any information about the dragged file itself, just the information that a file drag operation has been started or stopped. I would appreciate any hint.\r\n\r\nConfiguration:\r\nAll hardware I have tested with: rMBP 15\", MB 12\""
+    email: tj@mkswap.net
+    modified: "2016-04-23T09:40:19.69779Z"
+    number: "25892115"
+    number_intvalue: 25892115
+    originated: 23-Apr-2016 11:38 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.11.x
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSDragPboard still contains dragged file information when dragging has ended

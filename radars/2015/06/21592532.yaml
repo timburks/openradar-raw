@@ -1,0 +1,45 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21592532"
+    labels:
+        datastore_id: "6190784147619840"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-06-29T16:40:36.69009Z"
+    description: |-
+        The following code crashes the compiler. Injecting “as DecryptorType?” resolves the crash and successfully compiles.
+
+        protocol DataSinkType: class {}
+
+        // Removing DataSinkType conformance converts crash to error:
+        // Function signature '([UInt8]) -> PasswordDecryptorV3?' is not compatible with expected type '([UInt8]) -> DecryptorType?'
+        // Along with incorrect Fix-it (suggesting I wrap it in a closure)
+        protocol DecryptorType: DataSinkType {}
+
+        final class PasswordDecryptorV3: DecryptorType {
+            init?() {}
+        }
+
+        final class Decryptor {
+            let decryptors: [() -> DecryptorType?]
+            init(password: String) {
+                self.decryptors = [
+                    ( { PasswordDecryptorV3()
+        //                as DecryptorType? // Uncommenting this line removes crash and successfully compiles
+                    })
+                ]
+            }
+        }
+    email: robnapier@gmail.com
+    modified: "2015-06-29T16:40:36.69037Z"
+    number: "21592532"
+    number_intvalue: 21592532
+    originated: 29-Jun-2015 12:40 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Swift 2b2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift crash converting [() -> T] to [() -> Protocol]

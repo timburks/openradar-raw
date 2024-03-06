@@ -1,0 +1,58 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17493920"
+    labels:
+        datastore_id: "5909719440949248"
+data:
+    classification: Serious Bug
+    created: "2014-06-28T03:13:06.1651Z"
+    description: |-
+        Summary:
+        The type of a variadic function of T returning U is (T...) -> U; (T...) is a valid (variadic) tuple type; but variadic parameters are arrays. This is syntactically weird and semantically uncomfortable.
+
+
+        Steps to Reproduce:
+        1. Write the following function:
+
+        func apply<T>(a: T...) -> (T...) {
+        	return a
+        }
+
+        2. Note that it appears to take a variadic parameter list and return a 1-tuple with a variadic list.
+
+        3. Try to compile it; make it return (a) instead and try again.
+
+
+        Expected Results:
+        Success with at least one of the two attempts.
+
+
+        Actual Results:
+        Both fail: error: could not find an overload for '__conversion' that accepts the supplied arguments.
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        So, it *looks* like it should work, but it doesn’t. However, this version works just fine:
+
+        func apply<T>(a: (T...)) -> (T...) {
+        	return a
+        }
+
+        Since you can’t write the return type T... without the parens, and given the different behaviour of T... in the parameter list vs. alone, it’s clear that variadic parameters and variadic tuple types are distinct. There appears to be no way to return a variadic tuple given a variadic parameter, either.
+    email: rix.rob@gmail.com
+    modified: "2014-06-28T03:13:06.165273Z"
+    number: "17493920"
+    number_intvalue: 17493920
+    originated: 27-Jun-2014 11:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta2 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: variadic parameters do not convert to variadic tuples'

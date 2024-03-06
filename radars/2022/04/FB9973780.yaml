@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9973780
+    labels:
+        datastore_id: "5589148664594432"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2022-04-04T20:57:17.575119Z"
+    description: "This bug report concerns /usr/bin/hexdump, part of shell_cmds.\r\n\r\nFrom “man hexdump”:\r\n     -C      Canonical hex+ASCII display.  Display the input offset in\r\n             hexadecimal, followed by sixteen space-separated, two column,\r\n             hexadecimal bytes, followed by the same sixteen bytes in %_p format\r\n             enclosed in ``|'' characters.\r\n[…]\r\n     _p          Output characters in the default character set.  Nonprinting\r\n                 characters are displayed as a single “.”.\r\n\r\nWithin Terminal:\r\n\r\n% sw_vers\r\nProductName:\tmacOS\r\nProductVersion:\t12.3.1\r\nBuildVersion:\t21E258\r\n% hexdump -C -n 64 /usr/lib/dyld | less\r\n00000000  ca fe ba be 00 00 00 03  00 00 00 07 00 00 00 03  |<CA><FE><BA><BE>............|\r\n00000010  00 00 40 00 00 09 e4 00  00 00 00 0e 01 00 00 07  |..@...<E4>.........|\r\n00000020  00 00 00 03 00 0a 40 00  00 0b 4e 40 00 00 00 0e  |......@...N@....|\r\n00000030  01 00 00 0c 80 00 00 02  00 15 c0 00 00 0b 38 30  |..........<C0>...80|\r\n00000040\r\n(END)\r\n\r\nHere, <CA>, <FE>, <BA>, <BE>, <E4>, and <C0> on the rightmost side are displayed in inverse video, an indication that “less” received those bytes as 0xca, 0xfe, 0xba, 0xbe, 0xe4, and 0xc0 intact. hexdump -C is outputting nonprintable characters, in contravention of its documented and intended behavior. These characters should have appeared as dots.\r\n\r\nSteps to reproduce:\r\n\r\n1. Run hexdump -C on a file with nonprintable characters. Here, /usr/lib/dyld is used, in conjunction with -n 64 to limit the amount of output produced. Examine the output via something that will highlight nonprintable characters such as less, or even by piping to another instance of hexdump or od.\r\n\r\n% hexdump -C -n 64 /usr/lib/dyld | less\r\nor\r\n% hexdump -C -n 64 /usr/lib/dyld | od -A x -t x1\r\n\r\n2. Look for nonprintable characters.\r\n\r\nExpected results: There should be no nonprintable characters.\r\n\r\nObserved results: Nonprintable characters are apparent. These are displayed in inverse video when using “less”. Following the “od” example above, they are apparent beginning at offset 0x3d, which shows “ca” (indicating byte 0xca was output) instead of the expected “2e” (indicating that a “.” character was output).\r\n\r\nNote: testing was conducted with the Terminal-default value of LANG=en_US.UTF-8. The specific behaviors here may be locale-sensitive, so please conduct testing in Terminal at its defaults, allowing LANG to be set appropriately.\r\n\r\nThis regressed in macOS 12.3 (hexdump from shell_cmds-240.100.15). I checked a system running macOS 12.2 (hexdump from shell_cmds-234) and found that its hexdump -C behaved correctly, in accordance with “Expected results” above."
+    email: mark@chromium.org
+    modified: "2022-04-04T20:57:17.57527Z"
+    number: FB9973780
+    number_intvalue: 9973780
+    originated: "2022-04-04"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 12.3.1 21E258
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: hexdump -C prints nonprintable characters since macOS 12.3

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19181702"
+    labels:
+        datastore_id: "6347882810572800"
+data:
+    classification: Developer Tools
+    created: "2014-12-08T22:29:42.845313Z"
+    description: "Summary:\r\nConsider this code:\r\n\r\n    let postParams = NSString(\r\n        format: \"name=%@ version=%@ what=%@\",\r\n        \"fred\",\r\n        NSBundle.mainBundle().objectForInfoDictionaryKey(\"CFBundleShortVersionString\"),\r\n        \"whatever\"\r\n    )\r\n\r\nXcode marks with an error, \"Extra argument in call\". Or consider this:\r\n\r\n    let postParams = NSString(\r\n        format: \"name=hi %@&account=%@&body=%@\",\r\n        NSBundle.mainBundle().objectForInfoDictionaryKey(\"CFBundleShortVersionString\"),\r\n        account,\r\n        valueTextField.stringValue\r\n    )\r\n\r\nIt says, “Missing argument label \"locale:\" in call”. It also offers to correct the `objectForInfoDictionaryKey()` call, saying, “Type 'AnyObject?' cannot be implicitly downcast to 'NSLocale'; did you mean to use 'as' to force downcast?\"\r\n\r\nIt took me quite some time to figure out what the problem was: In both cases, I needed to cast the `objectForInfoDictionaryKey()` call to String. But none of the messages from Xcode knew that. It was only when I tried to assign the output of `objectForInfoDictionaryKey()` to a variable elsewhere that I figured it out.\r\n\r\nXcode (or the static analyzer?) seems to think that there is a parameter missing. Now, AFAICT, `objectForInfoDictionaryKey()` returns a scalar value, so I don't know why it would think it might return no value -- and I'm not sure that's what it thinks is happening.\r\n\r\nIn any event, it would be nice if, instead, Xcode gave me the same information as when I tried to assign to a variable:\r\n\r\n    let foo = NSBundle.mainBundle().objectForInfoDictionaryKey(\"CFBundleShortVersionString\")\r\n\r\nThis gives a warning: “Constant 'foo' inferred to have type 'Any Object?', which may be unexpected” and then offers to fix it with \"Add an explicit type annotation to silence this warning\". Sure enough, all I had to do was add `as String` after the call to `objectForInfoDictionaryKey()` and the errors went away.\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\nVersion 6.1.1 (6A2008a)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: justatheory@gmail.com
+    modified: "2014-12-08T22:29:42.845598Z"
+    number: "19181702"
+    number_intvalue: 19181702
+    originated: "2014-12-08"
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Static Analyzer Confused by Swift Format Issues

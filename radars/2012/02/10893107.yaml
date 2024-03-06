@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10893107"
+    labels:
+        datastore_id: "1524405"
+data:
+    classification: Serious Bug
+    created: "2012-02-19T22:24:41.256494Z"
+    description: "Summary:\r\n\r\nWhen using a umask value, xcode-select -switch sets wrong permissions on /usr/share/xcode-select/xcode_dir_path, where the current developer directory is saved.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nDelete existing xcode_dir_path to reproduce (this file did not exist on a fresh install):\r\n$ sudo rm /usr/share/xcode-select/xcode_dir_path\r\n\r\nSet umask value:\r\n$ umask 0077\r\n\r\nSelect default developer directory:\r\n$ sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer\r\n\r\nAfter this, xcrun, xcodebuild etc. fail to run:\r\n$ xcrun -find clang\r\nxcode-select: Error: Incorrect permissions for xcode-select data. Run xcode-select -switch <xcode_folder_path> to reset the path to the Xcode folder.\r\nError: /usr/bin/xcode-select returned unexpected error.\r\n\r\nObviously, these permissions are wrong:\r\n$ ls -l /usr/share/xcode-select/xcode_dir_path \r\n-rw-------  1 root  wheel  43 Feb 19 23:07 /usr/share/xcode-select/xcode_dir_path\r\n\r\n\r\nExpected Results:\r\n\r\nThe path /usr/share/xcode-select/xcode_dir_path needs to be readable for all users:\r\n$ ls -l /usr/share/xcode-select/xcode_dir_path \r\n-rw-r--r--  1 root  wheel  43 Feb 19 23:07 /usr/share/xcode-select/xcode_dir_path\r\n\r\n\r\nActual Results:\r\n\r\nxcrun, xcodebuild etc. fail to run and quit with an error message about incorrect permissions. It does not indicate which file actually cannot be read. Running xcode-select -switch again does not correct the permissions on this file, even when using a different umask value.\r\n\r\n\r\nWorkaround:\r\n\r\nManually adjust permissions of the xcode_dir_path file:\r\n$ sudo chmod a+r /usr/share/xcode-select/xcode_dir_path\r\n\r\nOr, delete existing xcode_dir_path as otherwise it will not be created with new permissions; set umask value to be more permissive and run xcode-select -switch again:\r\n$ sudo rm /usr/share/xcode-select/xcode_dir_path\r\n$ umask 0022\r\n$ sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer\r\n$ ls -l /usr/share/xcode-select/xcode_dir_path \r\n-rw-r--r--  1 root  wheel  43 Feb 19 23:07 /usr/share/xcode-select/xcode_dir_path\r\n\r\n\r\nNotes:\r\n\r\n(none)"
+    email: raimue@gmail.com
+    modified: "2013-11-02T14:45:59.759192Z"
+    number: "10893107"
+    number_intvalue: 10893107
+    originated: 19-Feb-2012 11:22 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 4.3 4E109
+    reproducible: Always
+    resolved: 02-Nov-2013 03:43 PM
+    status: Closed
+    title: xcode-select -switch sets wrong permissions on /usr/share/xcode-select/xcode_dir

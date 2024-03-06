@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8869784"
+    labels:
+        datastore_id: "1056401"
+data:
+    classification: enhancement request
+    created: "2011-01-15T10:03:53.969259Z"
+    description: "Dear Apple team,\r\n\r\nthis note is to request an addition to the AddressBook API of iOS 4.x.\r\nThe AddressBook framework has been recently extended with a new function:\r\n\r\nCFDataRef ABPersonCopyImageDataWithFormat (ABRecordRef person, ABPersonImageFormat format);\r\n\r\nwhereby one can retrieve separately: (1) the squared contact thumbnail picture with format=kABPersonImageFormatThumbnail AND (2) the original full size picture the thumbnail comes from, with format=kABPersonImageFormatOriginalSize.\r\n\r\nWhile it is quite useful to have separate access to these two images, there are two missing functionalities in the current version of the API that makes the mechanism incomplete and asymmeric:\r\n\r\nA) It is possible to READ the two different images, but it is not possible to WRITE them separately (programmatically) into the address book. The only available API is ABPersonSetImageData(…), which seems to set both images to the same value.\r\n\r\nB) It is not possible to know which is the crop rect that was applied to the original image to obtain the thumbnail.\r\n\r\nThese two features would be useful, for example, to support the following use-cases:\r\n\r\nA) the user assigns a pic to a contact from a third party application using some custom controller (not the system AddressBookUI), selecting some portion of a larger image; the information about such larger image is lost (or saved to the image library but without any reference to the contact), so it won't be possible for the user to adjust the image later\r\n\r\nB) the user needs to adjust (scale/move) a contact thumbnail that she knows has been cropped from a larger image. This functionality can't be provided outside AddressBookUI because the crop rect of the thumbnail is unknown. Image processing techniques (template matching) could be used in principle to locate the thumbnail within the large image, but this is a heavy workaround to obtain (an approximation of) a simple piece of information which is possibly already stored somewhere privately in the AB database.\r\n\r\nTo fix these problems, it would be sufficient to:\r\n\r\nA) include a new function:\r\n\r\nbool ABPersonSetImageDataWithThumbnail (ABRecordRef person, CFDataRef oriImageData, CGRect cropRect, CFErrorRef *error);\r\n\r\nwhere all the arguments are like in the existing \"ABPersonSetImageData\", but what is passed as input (oriImageData) is the original full size image; the thumbnail image will be implicitly assigned cropping the portion identified by \"cropRect\". So basically this function assigns both the thumbnail and the full size image, specifying only the latter, and giving the crop rect of the former\r\n\r\nB) include a new function:\r\n\r\nbool ABPersonGetImageCropRect(ABRecordRef person, CGRect *cropRect)\r\n\r\nwhich returns TRUE iff the record for \"person\" actually has two different images (thumbnail and full size), returning in cropRect the crop rect of the thumbnail in the large image.\r\n\r\nThank you for considering this extension.\r\n\r\nPierangelo"
+    email: mabene@gmail.com
+    modified: "2011-08-28T05:38:20.88671Z"
+    number: "8869784"
+    number_intvalue: 8869784
+    originated: Jan 15, 2011
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 4.x
+    reproducible: not applicable
+    resolved: ""
+    status: Open
+    title: Missing AddressBook API to deal with thumbnail VS full-size contact pics

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6751358"
+    labels:
+        datastore_id: "36417"
+data:
+    classification: Serious Bug
+    created: "2009-05-04T08:41:32.414073Z"
+    description: "02-Apr-2009 03:38 PM Gwynne Raskind:\r\nSummary:\r\nThe documentation for code signing states explicitly that individual framework versions should be signed. Ref: TN2206 Mac OS X Code Signing In Depth, the section titled \"Signing Frameworks\". When building a framework target in Xcode, however, the IDE invokes codesign(1) on the framework bundle as a whole.\r\n\r\nSteps to Reproduce:\r\n1. Create a Cocoa framework project in Xcode.\r\n2. Assign the project a Code Signing Identity in the Project or Target build settings.\r\n3. Create a source code file in the project, using C or Objective-C, containing a dummy function.\r\n4. Build the framework target.\r\n\r\nExpected Results:\r\nXcode should correctly invoke codesign(1) using <framework path>/Versions/A.\r\n\r\nActual Results:\r\nXcode instead invokes codesign(1) using <framework path>.\r\n\r\nNotes:\r\n\r\nThe relevant section from TN2206 states:\r\n\r\nSigning Frameworks\r\nSeeing as frameworks are bundles it would seem logical to conclude that you can sign a framework directly. However, this is not the case. To avoid problems when signing frameworks make sure that you sign a specific version as opposed to the whole framework:\r\n\r\n$admin> # This is the wrong way:\r\n$admin> codesign -s my-signing-identity ../FooBarBaz.framework\r\n$admin> # This is the right way:\r\n$admin> codesign -s my-signing-identity ../FooBarBaz.framework/Versions/A\r\n\r\nXcode produces the following CodeSign build phase commands:\r\n\r\nCodeSign \"/Volumes/Testbed/FooBarBaz/build/Debug/FooBarBaz.framework\"\r\n    cd \"/Volumes/Testbed/FooBarBaz\"\r\n    /usr/bin/codesign -f -s \"my-signing-identity\" \"/Volumes/Testbed/FooBarBaz/build/Debug/FooBarBaz.framework\"\r\n\r\nThere also does not appear to be any way to disable the Code Signing build phase in favor of a custom shell script designed to sign the framework correctly.\r\n\r\nAs a side remark, the documentation in both the Code Signing Guide and TN2206 state that you must implement code signing using a run shell script build phase in your project, while Xcode 3.1.2 implements code signing automatically.\r\n\r\n\r\n08-Apr-2009 12:29 PM KIT CHEUNG :\r\nThis bug has been closed as Duplicate. We are tracking this known issue under the Bug ID listed above in the bug State (Duplicate/XXXX)."
+    email: gwynne@darkrainfall.org
+    modified: "2011-08-28T05:47:16.604118Z"
+    number: "6751358"
+    number_intvalue: 6751358
+    originated: 02-Apr-2009 03:38 PM
+    parent_number: "6683283"
+    product: Xcode
+    product_version: 3.1.2
+    reproducible: Yes
+    resolved: ""
+    status: Duplicate/6683283
+    title: Xcode 3.1.2 invokes codesign(1) incorrectly on framework builds

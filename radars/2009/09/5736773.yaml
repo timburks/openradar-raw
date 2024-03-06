@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "5736773"
+    labels:
+        datastore_id: "71429"
+data:
+    classification: Serious Bug
+    created: "2009-09-01T06:31:44.231661Z"
+    description: "11-Feb-2008 08:02 PM W Lewis:\r\nWe've been getting end-user crash reports which indicate crashes with stack traces similar to this one:\r\n\r\n#0  0x95e0b6e4 in draw_line ()\r\n#1  0x95e0a54a in line_to ()\r\n#2  0x95e09e12 in aa_line_render ()\r\n#3  0x93cf1e62 in ripr_Coverage ()\r\n#4  0x93cdf94e in ripc_Render ()\r\n#5  0x93ce88a0 in ripc_DrawPath ()\r\n#6  0x95dbb687 in CGContextDrawPath ()\r\n#7  0x95e09296 in CGContextStrokePath ()\r\n\r\nI've attached a very small sample application which easily reproduces the problem: create an NSImage, draw a certain path into it with a certain CTM, and Quartz will crash. In the test app's case it seems to be reading from 0xc00145e6 (or similar nearby addresses), which isn't even near any allocated memory other than the stack.\r\n\r\nThe crash seems to depend on the bounds of the image being drawn into --- drawing it into a larger image does not cause the crash.\r\n\r\nAlthough it isn't necessary in order to observe the crash, I recommend running with MallocDebug enabled: MallocScribble=1 and MallocGuardEdges=1.\r\n\r\nThe crash reports we've gotten are all from 10.5.1/9B18, but that may not indicate anything other than that's what people are running right now.\r\n\r\n\r\n\r\n\r\n\r\n'slowpoke.spx' was successfully uploaded\r\n\r\n11-Feb-2008 08:13 PM W Lewis:\r\nAttaching a very straightforward Cocoa app which demonstrates the crash.\r\n\r\n\r\n\r\n\r\n\r\n'badstroke-5736773.tar.gz' was successfully uploaded\r\n\r\n12-Feb-2008 02:38 PM W Lewis:\r\nGreg (another engineer here) thinks that this bug may be the same as RADAR #4273679, reported in 2005 but we never found a good test case for it.\r\n\r\n\r\n\r\n\r\n03-Mar-2008 02:48 PM W Lewis:\r\nProblem persists unchanged in Leopard 10.5.2 / 9C31.\r\n\r\n03-Mar-2008 02:59 PM W Lewis:\r\nProblem persists unchanged on 10.5.2 / 9C31 after installing \"Leopard Graphics Update 1.0\".\r\n\r\n\r\n\r\n11-Jun-2009 05:52 PM W Lewis:\r\nconfirmed; I can no longer reproduce this crash in SnowLeopard 10A380 (although some of the related crashes still occur; see eg #6047383)"
+    email: wiml@omnigroup.com
+    modified: "2011-08-28T05:50:37.728428Z"
+    number: "5736773"
+    number_intvalue: 5736773
+    originated: 11-Feb-2008 08:02 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.1
+    reproducible: Always
+    resolved: Yes
+    status: Closed
+    title: CGContextStrokePath() will access unallocated memory (and segfault)

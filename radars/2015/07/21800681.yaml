@@ -1,0 +1,56 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21800681"
+    labels:
+        datastore_id: "4537141107359744"
+data:
+    classification: Other Bug
+    created: "2015-07-13T21:18:59.02862Z"
+    description: |-
+        It seems to be legitimate to overload functions based on return type. However, the disambiguation rules seem to be different for return values than for function arguments, which seems peculiar. Shouldn’t it be the same?
+
+        Below is a set of cases that show the disparity. The put functions, where the type is an argument, all disambiguate smoothly and, to my eye, correctly. However, two of the get functions declare ambiguous matches.
+
+        protocol P { }
+        struct W: P { }
+        enum Z: Int { case One, Two, Three }
+
+        func getValue <T> () -> T?                { print("Called case #1, any type"); return nil }        // #1
+        func putValue <T> (x: T?)                 { print("Called case #1, any type") }
+
+        func getValue <T: P> () -> [T]?           { print("Called case #2, array of <T: P>"); return nil } // #2
+        func putValue <T: P> (x: [T]?)            { print("Called case #2, array of <T: P>") }
+
+        func getValue <Key, T: P> () -> [Key: T]? { print("Called case #3, [Key, T: P]"); return nil }     // #3
+        func putValue <Key, T: P> (x: [Key: T]?)  { print("Called case #3, [Key, T: P]") }
+
+        func getValue <Key: RawRepresentable, T: P> () -> [Key: T]? { print("Called case #4, [Key: RR, T: P]"); return nil } // #4
+        func putValue <Key: RawRepresentable, T: P> (x: [Key: T]?)  { print("Called case #4, [Key: RR, T: P]") } // #4
+
+        var a: W?
+        var b: [W]?
+        var c: [Int: W]?
+        var d: [Z: W]?
+
+        putValue(a)    // Calls #1
+        putValue(b)    // Calls #2
+        putValue(c)    // Calls #3
+        putValue(d)    // Calls #4
+
+        a = getValue() // Calls #1
+        b = getValue() // Calls #2
+        c = getValue() // Error: "Ambiguous use of 'getValue'
+        d = getValue() // Error: "Ambiguous use of 'getValue'
+    email: garth@garthsnyder.com
+    modified: "2015-07-13T21:18:59.02898Z"
+    number: "21800681"
+    number_intvalue: 21800681
+    originated: 13-Jul-2015 02:18 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7 beta 3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: overload disambiguation is different for arguments vs. return value'

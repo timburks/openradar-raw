@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10155924"
+    labels:
+        datastore_id: "1386403"
+data:
+    classification: Serious Bug
+    created: "2011-10-12T23:35:42.1111Z"
+    description: "20-Sep-2011 02:47 PM W Lewis:\r\nSummary:\r\n\r\nSecItemCopyMatching() can return items that do not match the search criteria passed to it.\r\n\r\nSteps to Reproduce:\r\n\r\nstatic SecKeyRef copyKey(SecKeychainRef keychain, NSDictionary *attributes, NSError **outError)\r\n{\r\n    NSMutableDictionary *query = [NSMutableDictionary dictionaryWithDictionary:attributes];\r\n    [query setObject:(id)kSecClassKey forKey:(id)kSecClass];\r\n    [query setObject:(id)kSecMatchLimitOne forKey:(id)kSecMatchLimit];\r\n    [query setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnRef];\r\n    [query setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnAttributes];\r\n    CFTypeRef result = NULL;\r\n    OSStatus err = SecItemCopyMatching((CFDictionaryRef)query, &result);\r\n    if (err != noErr) {\r\n        ofErrorFromOSError(outError, err, @\"SecItemCopyMatching\", query);\r\n        return NULL;\r\n    }\r\n    NSLog(@\"SecItemCopyMatching(%@) -> %@\", [query description], result);\r\n    SecKeyRef refResult = CFDictionaryGetValue(result, kSecValueRef);\r\n    CFRetain(refResult);\r\n    CFRelease(result);\r\n    return refResult;\r\n}\r\n\r\n\r\nExpected Results:\r\n\r\nThe returned item should have attributes which match the attributes in the query.\r\n\r\nActual Results:\r\n\r\n2011-09-20 14:30:59.876 otest-x86_64[49027:707] SecItemCopyMatching({\r\n    \"Digest Type\" = \"SHA1 Digest\";\r\n    class = keys;\r\n    \"m_Limit\" = \"m_LimitOne\";\r\n    \"r_Attributes\" = 1;\r\n    \"r_Ref\" = 1;\r\n    sign = 1;\r\n    type = 43;\r\n}) -> {\r\n    bsiz = 768;\r\n    class = keys;\r\n    decr = 0;\r\n    drve = 0;\r\n    encr = 0;\r\n    esiz = 768;\r\n    kcls = 1;\r\n    klbl = \"<null>\";\r\n    labl = \"<key>\";\r\n    perm = 1;\r\n    sign = 1;\r\n    type = 42;\r\n    unwp = 0;\r\n    \"v_Ref\" = \"<SecKey 0x7fa607aa3510 [0x7fff7463eea0]>\";\r\n    vrfy = 0;\r\n    wrap = 0;\r\n}\r\n\r\nNotes:\r\n\r\nNote that the returned item is an RSA key, not a DSS-SHA1 key.\r\n\r\nAttempting to sign and verify data using the key suggests that it is in fact a 768-bit RSA key."
+    email: wiml@omnigroup.com
+    modified: "2011-10-12T23:35:42.111703Z"
+    number: "10155924"
+    number_intvalue: 10155924
+    originated: 20-Sep-2011 02:47 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.7.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SecItemCopyMatching() returns items that don't match

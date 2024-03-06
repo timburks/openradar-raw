@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22609757"
+    labels:
+        datastore_id: "4956086813589504"
+data:
+    classification: Serious Bug
+    created: "2015-09-08T13:50:33.63209Z"
+    description: "Summary:\r\nIf I have func a(x: Int?), I can guard let x = x else { return }, and this works fine. I love this, because it lets me avoid unnecessary nesting without having to fiddle with names.\r\n\r\nBut if, within a(_:), I do let b = maybeInt(); guard let b = b else { return }, I get a redefinition error for b. This is frustrating; now I need to do something like let maybeB = maybeInt(); guard let b = maybeB else { return }.\r\n\r\nIt seems weird that the let-bound function parameter can be shadowed, but not the let-bound local name.\r\n\r\nSteps to Reproduce:\r\n> swift\r\n(.lldbinit loaded)\r\nfcWelcome to Apple Swift version 2.0 (700.0.57 700.0.72). Type :help for assistance.\r\n  1> func b() -> Int? { return 3 }\r\n  2> func a(x: Int?) {\r\n  3.     guard let x = x else { return }\r\n  4.     let y = b()\r\n  5.     guard let y = y else { return }\r\n  6.     print(x, y)\r\n  7. }\r\nrepl.swift:5:15: error: definition conflicts with previous value\r\n    guard let y = y else { return }\r\n              ^\r\nrepl.swift:4:9: note: previous definition of 'y' is here\r\n    let y = b()\r\n        ^\r\n\r\n\r\nExpected Results:\r\nb is shadowed for the rest of the method body with the unwrapped value of b, so that b: Int? is replaced with b: Int.\r\n\r\nThis would be identical to the handling of the let-bound function argument name.\r\n\r\nActual Results:\r\nrepl.swift:5:15: error: definition conflicts with previous value\r\n    guard let y = y else { return }\r\n              ^\r\nrepl.swift:4:9: note: previous definition of 'y' is here\r\n    let y = b()\r\n        ^\r\n\r\nVersion:\r\nApple Swift version 2.0 (swiftlang-700.0.57.3 clang-700.0.72)\r\nTarget: x86_64-apple-darwin14.5.0\r\n\r\nXcode 7.0\r\nBuild version 7A192o\r\n\r\nProductName:\tMac OS X\r\nProductVersion:\t10.10.5\r\nBuildVersion:\t14F27\r\n\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: jeremyw.sherman@gmail.com
+    modified: "2015-09-08T13:50:33.63233Z"
+    number: "22609757"
+    number_intvalue: 22609757
+    originated: 08-Sep-2015 09:48 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2: Guard let can shadow let-bound func param but not let-bound local name'

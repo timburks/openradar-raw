@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19729224"
+    labels:
+        datastore_id: "5260644857151488"
+data:
+    classification: Serious Bug
+    created: "2015-02-05T14:03:16.823584Z"
+    description: "Summary:\r\nIt is fine to reference a computed var in global scope that defined in terms of itself, though a compiler warning is (appropriately generated).  For example, when compiling this code \r\n\r\nvar closure:()->() {\r\n    return {\r\n        closure()\r\n    }\r\n}\r\n\r\nswiftc gives the warning \r\n\r\n\"Attempting to access 'closure' within its own getter\".\r\n\r\nUnfortunately, the situation is not so good when the computed var is within a function.  When compiling this code\r\n\r\nfunc function() {\r\n    var local:()->() {\r\n        return { local() }\r\n    }\r\n}\r\n\r\nswiftc segfaults.\r\n\r\nSteps to Reproduce:\r\n1.  Feed swiftc the following text:\r\n\r\nfunc function() {\r\n    var local:()->() {\r\n        return { local() }\r\n    }\r\n}\r\n\r\n2.  Witness the compiler segfault.\r\n\r\nExpected Results:\r\nThe behavior should be the same as if the computed var were global.\r\n\r\nActual Results:\r\nSwift Compiler Error\r\nCommand failed due to signal:\r\nSegmentation fault: 11\r\n\r\nVersion:\r\n6.1.1 (6A2008a)\r\n6.2 Beta (6C86e)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: nathaniel.chandler@gmail.com
+    modified: "2015-03-17T15:07:09.890355Z"
+    number: "19729224"
+    number_intvalue: 19729224
+    originated: 02/05/2015
+    parent_number: '&{NULL_VALUE}'
+    product: swiftc/Xcode
+    product_version: Xcode versions 6A2008a, 6C86e
+    reproducible: Always
+    resolved: Duplicate of 11266246 (Open)
+    status: Closed
+    title: 'swiftc segfault: defining a computed var closure to call itself'

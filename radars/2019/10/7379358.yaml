@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7379358"
+    labels:
+        datastore_id: "4989008664854528"
+data:
+    classification: ""
+    created: "2019-10-14T21:10:41.638879Z"
+    description: "On devices with the IntelHD3000 GPU (\"Intel HD Graphics 3000\"), a certain sequence of OpenGL calls triggers unexpected rendering. This bug has been found to be the root cause of very visible rendering glitches in Firefox on these machines. It also causes incorrect rendering in WebGL in any browser on these machines.\r\n\r\nThis bug is present on all versions of macOS we've tested, including 10.9.3 and 10.13.6.\r\n\r\nMozilla is tracking this bug in https://bugzilla.mozilla.org/show_bug.cgi?id=1586627 .\r\n\r\nSteps to reproduce, option A:\r\n 1. Download https://bug1586627.bmoattachments.org/attachment.cgi?id=9100974 as main.mm\r\n 2. Compile and run the app: clang++ main.mm -framework Cocoa -framework OpenGL -o test && ./test\r\n\r\nSteps to reproduce, option B:\r\n 1. Open https://bug1586627.bmoattachments.org/attachment.cgi?id=9100978 in any browser.\r\n\r\nNow compare the rendering on machines with the Intel HD 3000 and on machines with a different GPU. It should be the same but it is not.\r\n\r\nThe last macOS version to support this GPU is 10.13.\r\n\r\nMore details below:\r\n\r\nThe bug seems to be triggered when the deletion of the most recently read-from framebuffer interleaves with two draw calls in a certain way. More specifically, if you have two framebuffers A and B, the following sequence of events breaks subsequent drawing to B:\r\n\r\n 1. A becomes \"most recently read-from framebuffer\".\r\n 2. B is drawn to.\r\n 3. A is deleted, and other GL state (such as GL_SCISSOR enabled state) is touched.\r\n 4. B is drawn to again.\r\n\r\nNow all draws to framebuffer B, including the draw from step 4, will render at the wrong position and upside down. The wrong transform is a flip transform that seems to be intended to counteract a flip transform on the \"screen\" framebuffer, but on offscreen framebuffers it just breaks things. The vertical offset of the flip is always based on the height of framebuffer zero. In headless GL contexts, the flip offset is zero, i.e. all drawing is just mirrored along the framebuffer's bottom edge."
+    email: markus.stange@gmail.com
+    modified: "2019-10-14T21:10:41.639053Z"
+    number: "7379358"
+    number_intvalue: 7379358
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: OpenGL driver bug in 10.13 which causes visual glitches in Firefox and incorrect WebGL rendering in Safari (affects AppleIntelHD3000GraphicsGLDriver)

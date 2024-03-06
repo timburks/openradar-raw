@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15959788"
+    labels:
+        datastore_id: "5864446593335296"
+data:
+    classification: Serious Bug
+    created: "2014-01-31T20:54:06.156783Z"
+    description: "Summary:\r\nThis is an iOS 6-only bug, and it is fixed in iOS 7, but I wanted to file it in case this specific case was not known, and people were looking for workarounds. We encountered this bug while working on an app that supports 5.1, 6, and 7.\r\n\r\nWhen creating a resizableImageWithCapInsets from an image that is less than 1pt wide, weird things happen on iOS 6, and different weird things happen on iOS 5, but not on iOS 7.\r\n\r\nSteps to Reproduce:\r\n(see attached sample code)\r\n1. Use Quartz drawing to generate a small image, suitable for stretching. I want a UINavigationBar with a 1px stroke on the bottom, so I am making a 1px wide by 2px tall image. I want a true 1px stroke on Retina devices, so I have a function, screenPixel(), which returns 1 on non-Retina displays and 0.5 on Retina displays. In the sample code, the image consists of a red pixel on top of a blue pixel.\r\n2. Make a new image from that image using resizableImageWithCapInsets: and use a cap inset with screenPixel() on the bottom and 0 on the other sides.\r\n3. Use the image as the background image for a UINavigationBar.\r\n\r\nExpected Results:\r\nThe bottom pixel is within the insets, so the top pixel stretches to fill the remaining space. In the sample code, we get a red bar with a 1px blue stroke on the bottom.\r\n\r\nActual Results:\r\nThe 1 ✕ 2 px resizable image works fine on iOS 7, but on iOS 5 and 6, it seems to introduce a third, middle pixel, which appears to be the average of the top and bottom pixels. The nav bar ends up purple, with a 1px red stroke at the top, and a 1px blue stroke at the bottom.\r\n\r\nIn the sample code, we have included our workaround, which is to make a 1 ✕ 3 px image with the top two pixels the same color that we want for the nav bar.\r\n\r\nVersion:\r\nXcode 5.0.2 (5A3005)\r\niOS 7 SDK\r\n\r\nNotes:\r\nIncluding two versions of the sample project: one for the iOS 7 SDK with a 6.1 deployment target, and one for building and running with the iOS 5.1 SDK/runtime.\r\n\r\nConfiguration:\r\nWe see this bug in the following conditions:\r\nRetina displays only (because our screenPixel() function returns whole numbers on non-Retina displays).\r\nBuilt with iOS 7 SDK, running under iOS 6.\r\nBuilt with iOS 5.1 SDK, running under iOS 5 SDK (except the effect is slightly different: instead of purple, we get a blurry gradient effect - see screenshot.)\r\n\r\nWe do not see this bug when building in the iOS 7 SDK and running on iOS 7.\r\n\r\nAttachments:\r\nSample code and screenshots: http://cl.ly/TfHz"
+    email: igeek1@gmail.com
+    modified: "2014-01-31T20:54:06.156922Z"
+    number: "15959788"
+    number_intvalue: 15959788
+    originated: 31-Jan-2014 03:53 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 7 SDK
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: resizableImageWithCapInsets bug with fractional pixels

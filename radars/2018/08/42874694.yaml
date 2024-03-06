@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "42874694"
+    labels:
+        datastore_id: "5063363058991104"
+data:
+    classification: ""
+    created: "2018-08-03T17:24:48.25991Z"
+    description: "Area:\r\nApp Sandbox\r\n\r\nFinder Sync App Extension `selectedItemURLs()` should receive \"User Selected File\" Sandbox file access.\r\n\r\nThe Finder Sync App Extension is Sandboxed and has \"user-selected files read only\" File Access:\r\n\r\n```\r\n\t<key>com.apple.security.files.user-selected.read-only</key>\r\n\t<true/>\r\n```\r\n\r\nThe Finder Sync app is set to monitor the entire file system via `directoryURLs`:\r\n\r\n```\r\n\tFIFinderSyncController.default().directoryURLs = [URL(fileURLWithPath: \"/\")]\r\n```\r\n\r\nWith the Finder Sync app running, I receive notifications for all Context Menus called on the entire system.\r\n\r\nFor example, the FinderSync app gets the following data when right-clicking a set of files on the Desktop:\r\n\r\n```\r\n{\tselectedItemURLs = (\r\n\t\t{\turl = { relative = \"file:///Users/user/Desktop/bug_report.txt\"; }; },\r\n\t\t{\turl = { relative = \"file:///Users/user/Desktop/IMG_1.jpg\"; }; },\r\n\t\t{\turl = { relative = \"file:///Users/user/Desktop/IMG_2.jpg\"; }; },\r\n\t\t{\turl = { relative = \"file:///Users/user/Desktop/IMG_3.jpg\"; }; },\r\n\t);\r\n\ttargetedURL = { url = { relative = \"file:///Users/user/Desktop/\"; }; };\r\n}\r\n```\r\n\r\nThese are \"user selected files\" that the user has physically selected and then right-clicked. The system is giving the URLs to my Finder Sync app extension. The App Extension should be able to use the files.\r\n\r\nHOWEVER, there is an issue. These files are seemingly not receiving the same \"User-Selected File\" sandbox permisions as they would from an Open Panel. So, when I try to actually DO anything with the files that have been selected by the user, the sandbox is denying my action:\r\n\r\n > The application “MyFinderSync” does not have permission to open “IMG_1.jpg.”\r\n\r\nI am instead forced to add a Sandbox TEMPORARY EXCEPTION for read-only access to All Files:\r\n\r\n```\r\n\t<key>com.apple.security.temporary-exception.files.absolute-path.read-only</key>\r\n\t<array>\r\n\t\t<string>/</string>\r\n\t</array>\r\n```\r\n\r\nI do not want to add a temporary exception, both for security reasons and to avoid having issues with App Store Review.\r\n\r\n\r\nEXPECTED RESULTS:\r\n\r\nThe file urls received from a Finder Sync App Extension should count as \"USER SELECTED FILES\" as far as Sandbox access is concerned.\r\n\r\nFinderSync app extensions should have a new level of access that allows them to interact with all of the files granted to them via `FIFinderSyncController.default().directoryURLs`\r\nComments"
+    email: peter.kamb@gmail.com
+    modified: "2018-08-03T17:24:48.26023Z"
+    number: "42874694"
+    number_intvalue: 42874694
+    originated: August 2 2018
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: ""
+    reproducible: 100%
+    resolved: ""
+    status: Open
+    title: Finder Sync App Extension `selectedItemURLs()` should receive "User Selected File" Sandbox file access.

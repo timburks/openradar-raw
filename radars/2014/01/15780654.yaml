@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15780654"
+    labels:
+        datastore_id: "4992802307964928"
+data:
+    classification: Bug
+    created: "2014-01-09T10:07:31.923784Z"
+    description: "Ralph Boehme09-Jan-2014 11:03 AM\r\n\r\nSummary:\r\nAccording to\r\n<https://developer.apple.com/library/mac/documentation/Networking/Reference/AFP_Reference/Reference/reference.html#//apple_ref/doc/constant_group/Extended_Attributes_Bitmap>\r\n\r\nan AFP server must return an error code for a FPSetExtAttr request with set kXAttrReplace flag in case the attribute doesn't exist.\r\nApparently AppleFileServer on 10.9.1 returns no error and simply discards the request.\r\n\r\nSteps to Reproduce:\r\ninti:~ ralph$ cat myxattr.c \r\n#include <stdio.h>\r\n#include <string.h>\r\n#include <errno.h>\r\n#include <sys/xattr.h>\r\n\r\nint main(int argc, char **argv)\r\n{\r\n    if (argc != 4) {\r\n        printf(\"usage: %s file ea value\\n\", argv[0]);\r\n        return 1;\r\n    }\r\n    if (setxattr(argv[1], argv[2], argv[3], strlen(argv[3]), 0, XATTR_REPLACE) != 0) {\r\n        perror(\"setxattr\");\r\n        return 2;\r\n    }\r\n    return 0;\r\n}\r\ninti:~ ralph$ gcc -Wall -o myxattr myxattr.c\r\ninti:~ ralph$ pwd\r\n/Users/ralph\r\ninti:~ ralph$ rm -f file && touch file\r\ninti:~ ralph$ ./myxattr file test bla\r\nsetxattr: Attribute not found\r\ninti:~ ralph$ xattr -l file \r\ninti:~ ralph$ \r\n\r\ninti:~ ralph$ mount | grep afp\r\n//sysadmin@10.10.10.30/sysadmin on /Volumes/sysadmin (afpfs, nodev, nosuid, mounted by ralph)\r\ninti:~ ralph$ ssh sysadmin@10.10.10.30\r\nLast login: Thu Jan  9 10:44:20 2014 from 10.10.10.157\r\nmac-mini:~ sysadmin$ sw_vers \r\nProductName:\tMac OS X\r\nProductVersion:\t10.9.1\r\nBuildVersion:\t13B42\r\nmac-mini:~ sysadmin$ logout\r\nConnection to 10.10.10.30 closed.\r\ninti:~ ralph$ rm -f /Volumes/sysadmin/file && touch /Volumes/sysadmin/file\r\ninti:~ ralph$ ./myxattr /Volumes/sysadmin/file test bla\r\ninti:~ ralph$ xattr -l /Volumes/sysadmin/file\r\ninti:~ ralph$ \r\n\r\n\r\nExpected Results:\r\nReturn an AFP error code like kFPObjectNotFound.\r\n\r\nActual Results:\r\nkFPNoErr\r\n\r\nVersion:\r\n10.9.1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n10.9.1 AFP client with 10.9.1 AFP server.\r\n\r\nAttachments:\r\n'FPSetExtAttr-replace.pcapng' and 'myxattr.c' were successfully uploaded."
+    email: sloowfranklin@gmail.com
+    modified: "2014-01-09T10:07:31.923979Z"
+    number: "15780654"
+    number_intvalue: 15780654
+    originated: 09-Jan-2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AppleFileServer ignores XATTR_REPLACE in FPSetExtAttr

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21299477"
+    labels:
+        datastore_id: "5583628243304448"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-06-09T13:37:40.88911Z"
+    description: "Summary:\nI was messing around with enums & protocols, attempting to recover functions for enum cases, when I hit a crasher.\n\n\nSteps to Reproduce:\n1. Compile this test case, _if you dare_:\n\npublic protocol P {\n\ttypealias T\n\tstatic func c(T) -> Self\n\tstatic func C(T) -> Self\n}\nextension P {\n\tpublic static func C(x: T) -> Self {\n\t\treturn .c(x)\n\t}\n}\n\npublic enum E<T>: P {\n\tcase C(T)\n\n\tpublic static func c(x: T) -> E {\n\t\treturn C(x)\n\t}\n}\n\n\nExpected Results:\nI expected this not to crash. I didn’t expect it to do much very useful tho.\n\n\nActual Results:\nIt crashed when compiling E.c().\n\nexpression kind should not survive to SILGen\nUNREACHABLE executed at /Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-700.0.38.1/src/swift/lib/SILGen/ASTVisitor.h:49!\n0  swift                    0x000000010cd4ee0b llvm::sys::PrintStackTrace(__sFILE*) + 43\n1  swift                    0x000000010cd4f54b SignalHandler(int) + 379\n2  libsystem_platform.dylib 0x00007fff88493f1a _sigtramp + 26\n3  swift                    0x000000010d348a1f FirstTarget + 60535\n4  swift                    0x000000010cd4f346 abort + 22\n5  swift                    0x000000010cd08e21 llvm::llvm_unreachable_internal(char const*, char const*, unsigned int) + 481\n6  swift                    0x000000010af6feb3 swift::ASTVisitor<(anonymous namespace)::SILGenApply, void, void, void, void, void, void>::visit(swift::Expr*) + 5987\n7  swift                    0x000000010af73d2f (anonymous namespace)::SILGenApply::visitApplyExpr(swift::ApplyExpr*) + 3279\n8  swift                    0x000000010af64aef prepareApplyExpr(swift::Lowering::SILGenFunction&, swift::Expr*) + 175\n9  swift                    0x000000010af649ff swift::Lowering::SILGenFunction::emitApplyExpr(swift::Expr*, swift::Lowering::SGFContext) + 47\n10 swift                    0x000000010afa3c57 swift::ASTVisitor<(anonymous namespace)::RValueEmitter, swift::Lowering::RValue, void, void, void, void, void, swift::Lowering::SGFContext>::visit(swift::Expr*, swift::Lowering::SGFContext) + 87\n…\nStack dump:\n0.\tProgram arguments: /Applications/Xcode-7-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift -frontend -c -primary-file either.swift -target x86_64-apple-darwin14.3.0 -enable-objc-interop -color-diagnostics -module-name either -o /var/folders/9y/f7n4rvx901nctm_5d16c1wm40000gn/T/either-3c4bb1.o \n1.\tWhile emitting SIL for 'c' at either.swift:15:9\n\n\nRegression:\nIt doesn’t crash if E.c() returns E.C(x) instead of just C(x).\n\n\nNotes:\nN/A"
+    email: rix.rob@gmail.com
+    modified: "2015-06-09T13:37:40.88932Z"
+    number: "21299477"
+    number_intvalue: 21299477
+    originated: 09-Jun-2015 09:37 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-7-beta (7A120f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2: Expression survives to SILGen & crashes compiler'

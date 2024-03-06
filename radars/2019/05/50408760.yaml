@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "50408760"
+    labels:
+        datastore_id: "4952576000786432"
+data:
+    classification: ""
+    created: "2019-05-02T16:44:46.983344Z"
+    description: "Summary:\r\nRecent ninja-build versions support sub-second timestamps. With CMake I noticed that static libraries are always out-of-date after the first build due to the archive file older than newest object file.\r\n\r\nSee also https://gitlab.kitware.com/cmake/cmake/issues/19222\r\n\r\nSteps to Reproduce:\r\ntouch bar.c\r\nclang -c bar.c\r\nar -qc bar.a bar.o\r\n./timestamp bar.a # outputs: 1556814480 10926633 bar.a\r\nranlib bar.a\r\n./timestamp bar.a # outputs: 1556814492 0 bar.a\r\n\r\nExpected Results:\r\nThe file touched by ranlib does not always have 0 for the fractional seconds field.\r\n\r\nActual Results:\r\ntv_nsec is 0\r\n\r\nVersion/Build:\r\nXcode 10.2\r\nmacOS 10.14\r\nAPFS file system\r\n\r\nThanks,\r\nGregor\r\n\r\n-- \r\n\r\n#include <stdio.h>\r\n#include <string.h>\r\n#include <sys/stat.h>\r\n\r\nint main(int argc, char* argv[]) {\r\n\r\n\tfor (int i = 1; i < argc; ++i) {\r\n\t    struct stat attr;\r\n\t    memset(&attr, '\\0', sizeof(attr));\r\n\t    int ret = stat(argv[i], &attr);\r\n\t    if (ret) {\r\n\t    \tperror(\"stat\");\r\n\t    \treturn 1;\r\n\t    }\r\n\t    printf(\"%ld %ld %s\\n\", attr.st_mtimespec.tv_sec, attr.st_mtimespec.tv_nsec, argv[i]);\r\n\t}\r\n    return 0;\r\n}"
+    email: gjasny@googlemail.com
+    modified: "2019-05-02T16:44:46.983525Z"
+    number: "50408760"
+    number_intvalue: 50408760
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: always
+    resolved: ""
+    status: ""
+    title: ranlib truncates archive modification time

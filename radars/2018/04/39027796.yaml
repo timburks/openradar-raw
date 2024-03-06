@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39027796"
+    labels:
+        datastore_id: "6185611748704256"
+data:
+    classification: Engineering has determined that your bug report is a duplicate of another issue and will be closed.
+    created: "2018-04-28T08:06:54.15781Z"
+    description: "Area:\r\nSceneKit\r\n\r\nSummary:\r\nI want to do terrain deform and I created a SCNPlane, change its segments on width & height to 149, the vertex count should be  150*150, but it returns 4. If I put a \"Thread.Sleep\" between the call, I get 22500.\r\n\r\nSteps to Reproduce:\r\nlet GOLF_SITE_SQUARE_MESH_SEGMENTS_COUNT : Int = 149\r\nlet GOLF_SITE_SQUARE_MESH_SIZE : Float = 16000.0\r\nvar planeMeshGeometry : SCNPlane = SCNPlane(width: CGFloat(GOLF_SITE_SQUARE_MESH_SIZE), height: CGFloat(GOLF_SITE_SQUARE_MESH_SIZE))\r\nplaneMeshGeometry.widthSegmentCount = GOLF_SITE_SQUARE_MESH_SEGMENTS_COUNT\r\n        planeMeshGeometry.heightSegmentCount = GOLF_SITE_SQUARE_MESH_SEGMENTS_COUNT\r\n        planeMeshGeometry.cornerRadius = 0.0\r\n//Thread.sleep(forTimeInterval: 0.1)\r\n\r\n var vertexSources : [SCNGeometrySource] = planeMeshGeometry.sources(for: .vertex)\r\n        let vertexSource : SCNGeometrySource = vertexSources[0]\r\n        \r\n        var texCoordSources : [SCNGeometrySource] = planeMeshGeometry.sources(for: .texcoord)\r\n        let texCorrdSource : SCNGeometrySource = texCoordSources[0]\r\n        \r\n        let stride : Int = vertexSource.dataStride\r\n        let offest : Int = vertexSource.dataOffset\r\n        let componentsPerVector : Int = vertexSource.componentsPerVector\r\n        let bytesPerVector : Int = componentsPerVector * vertexSource.bytesPerComponent\r\n        let vectorCount : Int = vertexSource.vectorCount\r\n        print(vectorCount)\r\n        var vertices : [SCNVector3] = [SCNVector3](repeatElement(SCNVector3(0,0,0), count: vectorCount))\r\n        for i in 0..<vectorCount\r\n        {\r\n            var vectorData : [Float] = [Float](repeatElement(0.0, count: 3))\r\n            let byteRange : NSRange = NSMakeRange(i * stride + offest, bytesPerVector)\r\n            let vertexData = vertexSource.data as NSData\r\n            vertexData.getBytes(&vectorData, range: byteRange)\r\n            \r\n            let x : Float = vectorData[0]\r\n            let y : Float = vectorData[1]\r\n            let xNormalized : Float = x / GOLF_SITE_SQUARE_MESH_SIZE + 0.5\r\n            let yNormalized : Float = 1 - (y / GOLF_SITE_SQUARE_MESH_SIZE + 0.5)\r\n            \r\n            let vectorToSample : vector_int2 = vector2(Int32(Int(xNormalized * Float(NOISE_SAMPLE_COUNT))), Int32(yNormalized * Float(NOISE_SAMPLE_COUNT)))\r\n            let noiseValue : Float = (JZNoiseMapManager.shared.noiseMap.value(at: vectorToSample)) / 2.0 + 0.5\r\n            \r\n            let newVector : SCNVector3 = SCNVector3 (vectorData[0],vectorData[1],noiseValue*GOLF_SITE_SQUARE_MESH_SIZE / 2.0*GOLF_SITE_HEIGHT_MULTIPIER)\r\n            vertices[i] = newVector\r\n        }\r\n\r\nExpected Results:\r\nprint(vectorCount) should output 22500 on matter if the Thread.Sleep exists.\r\n\r\nActual Results:\r\nprint(vectorCount) = 4 when no sleep.\r\nprint(vectorCount) = 22500 when sleep.\r\n\r\nVersion/Build:\r\nXcode 9.2 iOS 11.2.5\r\n\r\nConfiguration:"
+    email: JustZht@gmail.com
+    modified: "2018-04-28T08:06:54.15802Z"
+    number: "39027796"
+    number_intvalue: 39027796
+    originated: March 30 2018, 1:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: IOS SDK
+    product_version: 11.2.5
+    reproducible: YES
+    resolved: ""
+    status: DUPLICATE OF 22764475
+    title: Change widthSegmentCount/heightSegmentCount on SCNPlane doesn't change vertex immediately

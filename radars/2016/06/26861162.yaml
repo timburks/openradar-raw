@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26861162"
+    labels:
+        datastore_id: "5019591327612928"
+data:
+    classification: UI/Usability
+    created: "2016-06-17T13:24:46.55137Z"
+    description: "Summary:\r\nXcode cannot handle git repositories anymore which contain files in paths that contain an umlaut, for example \"Dämo/main.m\". This is a regression as it used to work flawlessly before (probably) Xcode version 7.3.x\r\nAs soon as Xcode accesses such a repository, it fails with an error in libgit's git_tree_entry_bypath() method. When the offending directory name is changed to a name not containing any umlauts, Xcode has no problems.\r\nThis bug is present in the latest official Xcode build (7.3.1) and still present in the Xcode 8 DP. I'm still investigating but it seems that it has been introduced with Xcode 7.3.x\r\nUnfortunately, it greatly limits the workflow as it prevents from using Xcode's nice graphical version comparison view.\r\n\r\nSteps to Reproduce:\r\n1. Open the attached demo project (It won't compile and is stripped down to a bare minimum in order to make it easy to show the problem).\r\n2. Examine that its main.m file is marked with \"M\" for \"modified\"\r\n3. Choose \"Source Control -> Commit …\" from the menu\r\n5. Note that you can select UserInterfaceState.xcuserstate without any problems because its file path doesn't contain any umlauts.\r\n5. Now select main.m in order to examine the modified content in comparison to the last commit.\r\n\r\n\r\nExpected Results:\r\nThe split view should show the local file's content on the left pane and the contents of the last commit within the git repository on the right pane.\r\n\r\nActual Results:\r\nXcode cannot access the git repository and shows an alert: \"The source control operation failed because no repository could be found. Make sure a valid repository exists at the specified location and try again.\"\r\n\r\nAnd Console.app loggs the following:\r\n\r\ncom.apple.dt.Xcode.sourcecontrol.Git[14914]: #DVTSourceControl Notice: Error with libgit operation (git_tree_entry_bypath(&treeEntry, tree, [relativePath.gitNormalizedString cStringUsingEncoding:NSUTF8StringEncoding]))\r\nMethod: -[DVTSourceControlGitPlugInPrimary _libgit_exportFile:inWorkingCopy:fromRevisionLocation:toDirectory:completionBlock:]\r\n\r\nXcode[14857]: #DVTSourceControl Error: -200 The source control operation failed because no repository could be found.\r\nUnderlying Error: the path 'Dämo' does not exist in the given tree (-3)\r\nMethod: __101-[DVTSourceControlManager exportFile:inWorkingCopy:fromRevisionLocation:toDirectory:completionBlock:]_block_invoke_2\r\n\r\nVersion:\r\nXcode Version 7.3.1 (7D1014)\r\nXcode Version 8.0 beta (8S128d)\r\nOS X 10.11.5 (15F34)\r\nmacOS 10.12. DP1\r\n\r\nNotes:\r\nGit itself has no problem with accessing said repositories containing an umlaut - it is clearly a bug in Xcode, probably related to or identical to rdar://25650762"
+    email: kastansn@gmail.com
+    modified: "2016-06-17T13:24:46.55165Z"
+    number: "26861162"
+    number_intvalue: 26861162
+    originated: "2016-06-17"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 7.3.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Xcode fails to show git history of projects containing umlauts (regression)

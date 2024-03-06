@@ -1,0 +1,43 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29741117"
+    labels:
+        datastore_id: "4962540253609984"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2016-12-19T21:56:25.12069Z"
+    description: |-
+        Summary:
+        Since iOS 10.2, doing writes to the KeyChain (either SecItemAdd or SecItemDelete) just when the device gets locked or just got unlocked, the SecItemAdd or SecItemDelete calls will not return for 3 to 30 seconds and often hang the LockScreen as well, making it completely unresponsive.
+
+        Steps to Reproduce:
+        1. Create an app that, in applicationDidEnterBackground:, calls SecItemAdd() with kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        2. Lock the device using the Sleep/wake button
+        3. Unlock the device using either Touch ID or passcode
+
+        Expected Results:
+        - App launches quickly
+
+        Actual Results:
+        - App hangs while waiting on SecItemAdd() to finish
+
+        Regression:
+        This did not happen on iOS 10.1 or any version before that.
+
+        Notes:
+        - Any writes to the KeyChain done in other background queues are also hanging, until something in the security daemon stops hanging.
+        - Attached is a Console log capture from around the time the device got unlocked and started hanging
+        - Attached is a screenshot of a captured stack trace of our app hanging for about 15 seconds on this specific call
+    email: avedesk@gmail.com
+    modified: "2016-12-19T21:56:25.12097Z"
+    number: "29741117"
+    number_intvalue: 29741117
+    originated: 19-Dec-2016 10:56 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "10.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: KeyChain writes done near time of device lock/unlock will hang for several seconds

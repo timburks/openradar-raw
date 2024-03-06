@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26486874"
+    labels:
+        datastore_id: "4933523404226560"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2016-05-26T04:57:48.98479Z"
+    description: "Summary:\nWhen loading a .mtl file with certain properties (e.g. specularityExponent) a property is dropped when the properties are enumerated using Swift subscripting.\n\nSteps to Reproduce:\n1) Run the attached project\n2) Notice in the debug log that when the properties are enumerate using Swift the property 'specularExponent' is nil, it is not nil when Objective C is used or when the property is queried by name.\n\nExpected Results:\nIt should be possible to enumerate the properties successfully and accurately via both Swift and Objective C.\n\nActual Results:\nObjective C finds the following properties:\n2016-05-25 21:48:35.821 ModelIOSpecularExponent-iOS[21057:1590476] [15]: ambientOcclusionScale\n2016-05-25 21:48:35.821 ModelIOSpecularExponent-iOS[21057:1590476] [16]: specularExponent\n2016-05-25 21:48:35.821 ModelIOSpecularExponent-iOS[21057:1590476] [17]: opacity\nSwift finds the following:\n2016-05-25 21:48:35.823 ModelIOSpecularExponent-iOS[21057:1590476] [15]: Optional(\"ambientOcclusionScale\")\n2016-05-25 21:48:35.823 ModelIOSpecularExponent-iOS[21057:1590476] [16]: nil\n2016-05-25 21:48:35.824 ModelIOSpecularExponent-iOS[21057:1590476] [17]: Optional(\"opacity\")\n\nRegression:\nOccurs in all versions of ModelIO of OS X and iOS. Did not find a working version. But this is a Swift vs. Objective C regression.\n\nNotes:\nDuring debugging it was determined that the culpable routine is `-[MDLMaterial objectAtIndexedSubscript:]`.\nMDLMaterial maintains two arrays _builtinProperties and _userProperties.\nIn the example case specularExponent is the first entry in the _userProperties array. \nThe method logic incorrectly looks it up in the _builtinProperties."
+    email: iosdeveloperzone@gmail.com
+    modified: "2016-05-26T04:57:48.98496Z"
+    number: "26486874"
+    number_intvalue: 26486874
+    originated: 25-May-2016 09:56 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9.x SDK OS X 10.11.x
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ModelIO Loses Material Property Data when Enumerated with Swift

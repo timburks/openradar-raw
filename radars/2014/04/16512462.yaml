@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16512462"
+    labels:
+        datastore_id: "5863664640851968"
+data:
+    classification: Security
+    created: "2014-04-03T16:28:35.580262Z"
+    description: "Summary:\r\nIn all versions of MacOS since (apparently) 10.4.4 the 'ipfw set disable' command is broken for rule sets 24-30. \"ipfw set disable 24\" does not disable set 24 but instead quietly deletes all rules except for the special set 31 default rule. For sets 25-30, the command is a no-op that sometimes emits an error message but always returns an exit code of 0 (success.)   The 'set disable' command is an essential first step in the construction of a multi-rule set that needs to be constructed one rule at a time and is later enabled as a whole atomically with a 'set enable' command.\r\n\r\nVersion:\r\nConfirmed on:\r\n10.4.11 (xnu-792.24.17~1/RELEASE_PPC)\r\n10.6.8 (xnu-1504.15.3~1/RELEASE_I386)\r\n10.9.2 (xnu-2422.90.20~2/RELEASE_X86_64)\r\n10.8.5 (xnu-2050.48.12~1/RELEASE_X86_64)\r\n\r\n\r\nNotes:\r\nFrom examining the published xnu sources I believe the cause of the trouble was introduced in MacOS 10.4.4. The change to bsd/netinet/ip_fw2.c between xnu-792.6.22 and xnu-792.6.56 treating the set_mask[0] bitfield as a cmd+arg package is clearly at fault, as it introduced a new code path which is only taken if one of the high 8 bits in the mask is set (i.e. if a set >23 is being disabled.) I am unable to offer any theory about what that change was meant to do."
+    email: wkcole@gmail.com
+    modified: "2014-04-03T16:28:35.597307Z"
+    number: "16512462"
+    number_intvalue: 16512462
+    originated: 03-Apr-2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.4.4-10.9.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ipfw disabling of rulesets >23 fails, can quietly wipe all rules

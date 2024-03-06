@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "44916684"
+    labels:
+        datastore_id: "4939082341810176"
+data:
+    classification: ""
+    created: "2018-10-01T19:18:14.324019Z"
+    description: "Area:\r\nFoundation\r\n\r\nSummary:\r\nWhen you print a NSDecimalNumber to the console using NSLog, the number is converted to a double first, potentially resulting in floating point rounding errors. This does not happen if you convert the NSDecimalNumber to a string by any other method first.\r\n\r\nSteps to Reproduce:\r\nNSDecimalNumber *d = [NSDecimalNumber decimalNumberWithString:@\"99.9\"];\r\nNSLog(@\"%@\", d);     //prints \"99.90000000000001\"\r\nNSLog(@\"%@\", d.description);     //prints \"99.9\"\r\nNSLog(@\"%@\", d.stringValue);     //prints \"99.9\"\r\nNSLog(@\"%@\", [d descriptionWithLocale:nil]);     //prints \"99.9\"\r\n\r\nExpected Results:\r\nAll of the NSLog calls should print \"99.9\" for this number.\r\n\r\nActual Results:\r\nIf the NSDecimalNumber is passed directly to NSLog, it is converted to a double somewhere.\r\n\r\nIt seems this is happening during the mapping to os_log. Inside _os_log_fmt_flatten_data, it tests if the object is an instance of NSNumber and then directly calls -objCType, which for this decimal number returns \"d\" (double). Then -doubleValue is called on the decimal number, which creates the rounding error.\r\n\r\nVersion/Build:\r\nXcode 9.2 (also the same on Xcode 10.0)"
+    email: nicked@gmail.com
+    modified: "2018-10-01T19:18:14.324195Z"
+    number: "44916684"
+    number_intvalue: 44916684
+    originated: 2018/10/1
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSDecimalNumber is not printed correctly by NSLog

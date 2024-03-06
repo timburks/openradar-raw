@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28839713"
+    labels:
+        datastore_id: "5031586416295936"
+data:
+    classification: Serious Bug
+    created: "2016-10-19T05:00:50.95331Z"
+    description: "Summary:\r\nMy app Deliveries includes a feature that I've seen in many other apps: it examines the pasteboard contents, and if the contents are something the user might want to use in the app, a dialog pops up to make the process faster.\r\n\r\nUnfortunately the magic of Universal Clipboard is a bit too magical, and causes some problems with features like this that are impossible to work around. In order to determine whether it's appropriate to pop up a dialog, my app needs to examine the contents of the clipboard—for example by getting the value of [UIPasteboard generalPasteboard].URL or [UIPasteboard generalPasteboard].string. Since my app is a package tracking app, it then examines those contents to see if they look like a tracking URL or tracking number.\r\n\r\nIf the contents of the clipboard came from a Universal Clipboard handoff, the clipboard will be empty shortly after my app examines it. If there was a tracking URL or tracking number on the clipboard, AND the user taps on the dialog that appears to add it automatically, this isn't a problem.\r\n\r\nHowever there are many other likely scenarios:\r\n\r\n- There was tracking information on the clipboard, but my app didn't recognize it, or wasn't confident enough about what it was. No dialog is displayed, and the clipboard contents are lost.\r\n\r\n- There was tracking information on the clipboard, and it was recognized, but the user didn't see the message that appeared, or accidentally dismissed it. The contents are lost.\r\n\r\n- There was no tracking information on the clipboard, but there was some content the user was trying to paste into my app (or even in another app after they were done with mine). Again, those contents are lost.\r\n\r\nI don't see any reasonable way to work around this. The new hasStrings and hasURLs properties are helpful, but I can't assume any string or URL is valid tracking data. I would settle for not examining the contents when it's Universal Clipboard data, but as far as I can tell that's not even possible. I could add the data back to the clipboard after examining it, but that seems like a terrible idea that's sure to cause unexpected and problematic side effects. If I remove this feature many of my users will be upset.\r\n\r\nSteps to Reproduce:\r\n1. Make sure you have two devices logged into the same iCloud account so Universal Clipboard can work between them.\r\n2. Download \"Deliveries: a package tracker\" (or another app that programmatically examines the pasteboard contents) onto device A.\r\n3. Copy some text on device B.\r\n4. Return to device A and open the app. In the case of Deliveries, the pasteboard contents are examined when the app becomes active.\r\n5. Wait a second or two and then attempt to paste the pasteboard contents.\r\n\r\nExpected Results:\r\nThe contents you copied on device A should be pasted.\r\n\r\nActual Results:\r\nThe pasteboard is empty.\r\n\r\nVersion:\r\niOS 10.1 beta 3 (14B72)\r\n\r\nNotes:\r\nIf you'd like to see what happens when Deliveries does recognize a tracking number on the clipboard, try 1Z1111111111111111.\r\n\r\nConfiguration:\r\niPhone 6s, AT&T, 128GB\r\n\r\nAttachments:"
+    email: robotspacer@gmail.com
+    modified: "2016-10-24T20:07:03.36887Z"
+    number: "28839713"
+    number_intvalue: 28839713
+    originated: 19-Oct-2016 01:00 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 10.1 beta 3 (14B72)
+    reproducible: Always
+    resolved: 24-Oct-2016 04:06 PM
+    status: Open
+    title: Programmatically examining pasteboard clears Universal Clipboard contents

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20057375"
+    labels:
+        datastore_id: "5818067724533760"
+data:
+    classification: Enhancement
+    created: "2015-03-05T19:11:51.795414Z"
+    description: "Summary:\r\nMy app includes a way for users to submit support tickets directly from the app. We try to include as much debugging information as possible so we can actually investigate and fix our users' technical issues.\r\n\r\nWe use the Apple System Log <asl> api to capture our own logging information. We use ASL_KEY_PID in our query so that we only capture log information for our process. This works great in our ad hoc release but fails in our App Store version because sandboxing makes all asl_search() calls return no results.\r\n\r\nThis means that we have no way to help our users short of directing them to try our ad hoc release, or roll our own logging system and stop using NSLog. Both of these options are undesirable.\r\n\r\nIt would be great if sandboxing allowed asl queries to go through when I'm querying my own PID, or if there was an entitlement I could adopt to make them work.\r\n\r\nSteps to Reproduce:\r\nHere is rough sample code:\r\n\r\n#import <asl.h>\r\n\r\nNSProcessInfo   *p = [NSProcessInfo processInfo];\r\nNSString        *pidStr = [NSString stringWithFormat:@\"%d\", [p processIdentifier]];\r\nconst char      *pid = [pidStr UTF8String];\r\naslmsg          query = asl_new(ASL_TYPE_QUERY);\r\n\r\nasl_set_query(query, ASL_KEY_PID, pid, ASL_QUERY_OP_EQUAL);\r\n\r\naslresponse     response = asl_search(NULL, query);\r\n\r\nfor (aslmsg entry = aslresponse_next(response); entry; entry = aslresponse_next(response))\r\n{\r\n    const char  *timestamp = asl_get(entry, ASL_KEY_TIME);\r\n    const char  *logline = asl_get(entry, ASL_KEY_MSG);\r\n}\r\n\r\nasl_free(response);\r\nasl_free(query);\r\n\r\n\r\nExpected Results:\r\nI expect that I should be able to read the console logs of my own process.\r\n\r\nActual Results:\r\nAll asl queries fail when sandboxed."
+    email: chris@slack-corp.com
+    modified: "2015-03-05T19:11:51.795551Z"
+    number: "20057375"
+    number_intvalue: 20057375
+    originated: 3/5/2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: "10.10"
+    reproducible: Always
+    resolved: ""
+    status: open
+    title: Allow ASL calls to work in sandboxed apps when querying own PID

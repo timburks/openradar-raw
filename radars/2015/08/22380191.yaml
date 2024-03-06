@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22380191"
+    labels:
+        datastore_id: "6068046330331136"
+data:
+    classification: Serious Bug
+    created: "2015-08-21T16:58:55.30232Z"
+    description: "Summary:\r\nRelated thread: https://forums.developer.apple.com/thread/4999\r\n\r\nI am the developer of a Core Data wrapper library called CoreStore:\r\nhttps://github.com/JohnEstropia/CoreStore\r\nThe bug I am reporting can be reproduced with the library's demo app.\r\n\r\nOne of the utilities the library provides, \"ObjectMonitor.swift\", is a wrapper on NSFetchedResultsController that observes just a single NSManagedObject by fetching with:\r\nNSPredicate(\"SELF == %@\", managedObjectID)\r\n\r\nThis worked well until XCode 6.4. Starting XCode 7 (I'm not sure which beta) though, the NSFetchedResultsControllerDelegate method \"controller(_:didChangeObject:atIndexPath:forChangeType:newIndexPath)\"  keeps getting erratic notifications on iOS 9 simulator where the change type is always \".Move from index 0 to index 0\", instead of an .Update type.\r\n\r\nOn all iOS versions, another problem can be reproduced with \"ListMonitor.swift\", an NSFetchedResultsController wrapper that observes a list. Because of the \".Move from index 0 to index 0\" delegate calls, this crashes and breaks UITableViews that call beginUpdates() and endUpdates() because no actual changes occurred.\r\n\r\nSteps to Reproduce:\r\nSample 1:\r\n1. Run the CoreStoreDemo app using any simulator/device\r\n2. Choose the \"Colors\" demo\r\n3. Add some colors using the + button\r\n4. From the top list, tap the first color\r\n5. Drag the hue slider back and forth. This should update the list at bottom half of the screen.\r\n6. After a while the UITableView will crash due to the NSFetchedResultsControllerDelegate receiving Move(0-0) calls instead of Update calls, which causes missing updates in between UITableView.beginUpdates() and UITableView.endUpdates().\r\n\r\nSample 2:\r\n1. Run the CoreStoreDemo app on an iOS 8.4 or below simulator/device\r\n2. Choose the \"Colors\" demo\r\n3. Add some colors using the + button\r\n4. From the top list, tap the first color\r\n5. From the bottom list, tap the exact same color as the top\r\n6. Drag any of the sliders. This correctly updates both top and bottom.\r\n7. Repeat steps 1-6, this time by running the CoreStoreDemo app on an iOS 9 simulator/device. Dragging the sliders do not cause any updates due to the NSFetchedResultsControllerDelegate receiving Move calls instead of Update calls.\r\n\r\nExpected Results:\r\n- Updates should report .Update type, not .Move type\r\n- There should be no .Move events with source NSIndexPath equal to the destination NSIndexPath\r\n\r\n\r\nActual Results:\r\nSample1:\r\n- UITableView crashes with an assertion failure\r\n\r\nSample2:\r\n- Updates do not reach the NSFetchedResultsController\r\n\r\nVersion:\r\nXCode 7 beta 5\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nAny simulator or device"
+    email: john.rommel.estropia@gmail.com
+    modified: "2015-08-21T16:58:55.30275Z"
+    number: "22380191"
+    number_intvalue: 22380191
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: XCode 7 beta 5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSFetchedResultsController delegate keeps getting .Move change type instead of .Update

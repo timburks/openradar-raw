@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "5949061"
+    labels:
+        datastore_id: "70433"
+data:
+    classification: ""
+    created: "2009-09-01T06:49:31.64292Z"
+    description: "20-May-2008 10:10 AM W Lewis:\r\nSummary: \r\n\r\nCertain input will cause CFXMLTreeCreateFromDataWithError() to go into an infinite loop.\r\n\r\nSteps to Reproduce:\r\n\r\nRun the attached program. Notice that it hangs at len=38, corresponding to the input text \"<?xml version='1.0' encoding='utf-8' ?\".\r\n\r\nExpected Results:\r\n\r\nCFXMLTreeCreateFromDataWithError() should either parse its input correctly or fail with an error. It should not hang, crash, try to read invalid memory, or kick my dog.\r\n\r\nActual Results:\r\n\r\nHangs.\r\n\r\nRegression & Notes:\r\n\r\nI reported an earlier CFXML parse failure in RADAR 4987953, marked as a dup of  4376018, which Apple informed me is fixed in 10.5.2; my very first attempt to verify that fix uncovered this bug. I really strongly recommend that Apple attempt some more thorough testing of the CFXML code, including code coverage testing  and 'fuzzing'.\r\n\r\nSource code:\r\n\r\n#include <CoreFoundation/CoreFoundation.h>\r\n#include <stdio.h>\r\n\r\nconst char *broken =\r\n\"<?xml version='1.0' encoding='utf-8' ?>\\r\\n\"\r\n\"<VisioDocument></VisioDocument>\";\r\n\r\n\r\nint z(int l)\r\n{\r\n    CFDataRef parseMe = CFDataCreate(kCFAllocatorDefault, (void *)broken, l);\r\n    CFXMLTreeRef xmlTree;\r\n    CFDictionaryRef xmlParseErrors = NULL;\r\n    \r\n    xmlTree = CFXMLTreeCreateFromDataWithError(kCFAllocatorDefault, parseMe, NULL /* URL */, kCFXMLParserSkipWhitespace | kCFXMLParserReplacePhysicalEntities, kCFXMLNodeCurrentVersion, &xmlParseErrors);\r\n    \r\n    if (xmlTree) {\r\n        printf(\" Parse successful.\\n\");\r\n        CFRelease(xmlTree);\r\n    } else {\r\n        CFNumberRef n = CFDictionaryGetValue(xmlParseErrors, kCFXMLTreeErrorLocation);\r\n        int loc = -42;\r\n        CFNumberGetValue(n,kCFNumberIntType,&loc);\r\n        printf(\" Parse failed: errorLocation=%u\\n\", loc);\r\n        CFRelease(xmlParseErrors);\r\n    }\r\n\r\n    CFRelease(parseMe);\r\n}\r\n\r\nint main()\r\n{\r\n   int i;\r\n   for(i = 0; i <= strlen(broken); i++) {\r\n       int len = strlen(broken) - i;\r\n       printf(\"len =%3d: \", len);\r\n       fflush(stdout);\r\n       z(len);\r\n   }\r\n}\r\n\r\n\r\nBacktrace:\r\n\r\nProgram received signal SIGINT, Interrupt.\r\n0x90d9fac2 in _inputStreamScanToCharacters ()\r\n(gdb) bt\r\n#0  0x90d9fac2 in _inputStreamScanToCharacters ()   <--- INFINITE LOOP HERE?\r\n#1  0x90da1778 in parseProcessingInstruction ()\r\n#2  0x90da5763 in CFXMLParserParse ()\r\n#3  0x90da5848 in CFXMLTreeCreateFromDataWithError ()\r\n#4  0x00001e38 in z (l=38) at x.m:15\r\n#5  0x00001f41 in main () at x.m:38\r\n\r\n\r\n\r\n\r\n\r\n'slowpoke.spx' was successfully uploaded\r\n\r\n01-Jul-2008 01:47 PM W Lewis:\r\nProblem persists unchanged in 10.5.4 / 9E17.\r\n\r\n10-Mar-2009 05:56 PM W Lewis:\r\nProblem persists unchanged in 10.6/10A286.\r\n\r\n\r\n31-Aug-2009 11:20 PM W Lewis:\r\nProblem persists unchanged in 10.6 / 10A432."
+    email: wiml@omnigroup.com
+    modified: "2011-08-28T05:50:15.141198Z"
+    number: "5949061"
+    number_intvalue: 5949061
+    originated: 20-May-2008 10:10 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.2 - 10.6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CFXMLTreeCreateFromDataWithError() hangs if given truncated data

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10644044"
+    labels:
+        datastore_id: "1484401"
+data:
+    classification: Serious Bug
+    created: "2012-01-05T14:18:20.655804Z"
+    description: "Summary:\r\nIn Mac OS X 10.5 and 10.6, the Guest account could be enabled using MCX / Managed Preferences. In Lion, the option is still available in Workgroup Manager, but it does not seem to have the effect of enabling the Guest account. The option is no longer selectable in the Users & Groups prefpane (as was the case before), but the checkbox is no longer checked. Guest account logins do not seem to function.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n1. As root, create a guest computer using dscl if one doesn't already exist:\r\n\r\n/usr/bin/dscl /Local/Default -create /Computers/guest\r\n\r\n2. Enable the guest account for the guest computer record:\r\n\r\n/usr/bin/dscl /Local/Default -mcxset /Computers/guest com.apple.MCX DisableGuestAccount always -bool false\r\n\r\n3. Logout, restart or manually refresh MCX using \"mcxrefresh -n [a local username]\"\r\n\r\n4. Verify that the Managed Preference has been set using either System Profiler or mcxquery.\r\n\r\n5. Logout, attempt to login using \"Guest Account\" or \"guest.\"\r\n\r\nI've attempted to apply the preferences using different methods, outlined below in Notes.\r\n\r\n\r\nExpected Results:\r\n\r\nLogin should succeed.\r\n\r\n\r\nActual Results:\r\n\r\nLogin is not possible. I can only see these events in the console:\r\n\r\nJan  4 11:58:54 test-imac SecurityAgent[738]: User info context values set for Guest Account\r\nJan  4 11:58:54 test-imac SecurityAgent[738]: Unknown user \"Guest Account\" login attempt PASSED for auditing\r\nJan  4 11:58:56 test-imac SecurityAgent[738]: User info context values set for guest\r\n\r\n\r\n\r\nRegression:\r\n\r\nWorked in Leopard / SL.\r\n\r\nNotes:\r\n\r\nI've tried setting this Managed Preference three ways. In all cases I also set the login window to show a list of users (my com.apple.loginwindow has SHOWFULLNAME to true) to verify that the preferences are being loaded.\r\n\r\n- connecting to an OD master running 10.6.8v1.1\r\n- using a guest computer record at /private/var/db/dslocal/nodes/Default/computers/guest.plist\r\n- using a local_desktop computer record containing the en0 ethernet MAC at /private/var/db/dslocal/nodes/MCX/computers/local_desktop, and adding this node to the CSPSearchPath\r\n\r\nI've also seen it suggested that the new features of FileVault offered in Lion could be related. I tested this with FileVault both enabled and disabled."
+    email: tim@synthist.net
+    modified: "2012-01-05T14:18:20.656264Z"
+    number: "10644044"
+    number_intvalue: 10644044
+    originated: 04-Jan-2012 04:06 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.3 11D36
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Guest account cannot be enabled via Managed Preferences

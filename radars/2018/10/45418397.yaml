@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "45418397"
+    labels:
+        datastore_id: "5020248633769984"
+data:
+    classification: bug
+    created: "2018-10-23T07:07:42.858359Z"
+    description: "Area:\r\nVideoToolbox\r\n\r\nSummary:\r\nOn some platforms (observed on macOS Sierra with 12\" macbook), the VT decoder will start returning errors when encountering an SPS change in the h264 bitstream. To work around this bug we have to catch the kVTVideoDecoderBadDataErr response from the decoder and the decompression session is recreated. The \"bad data\" is then fed into the new decompression session so that it can be decoded correctly. \r\nMore details can be found here:\r\n\r\nhttps://patchwork.ffmpeg.org/patch/2581/\r\n\r\nSteps to Reproduce:\r\nTry to play http://tmm1.s3.amazonaws.com/videotoolbox/spschange.ts (attached)\r\nwith VLC or ffmpeg\r\n\r\nExpected Results:\r\nno kVTVideoDecoderBadDataErr\r\n\r\nActual Results:\r\n\r\nVersion/Build:\r\nXcode 10O23u, iOS 12 macOS 10.14\r\n\r\nreply by Apple:\r\nThis issue behaves as intended based on the following:  When the SPS changes, and the ‘avcC’ is updated, are you calling VTDecompressionSessionCanAcceptFormatDescription to see if the decoder is ok with the updated CMVideoFormatDescription?   If VTDecompressionSessionCanAcceptFormatDescription returns “false”, you should preempt this failure and go ahead and rebuild the VTDecompressionSession before trying to decode with the new CMVideoFormatDescription.  If VTDecompressionSessionCanAcceptFormatDescription returns “true”, but the VTDecompressionSession with the new CMVideoFormatDescription returns an error complaining about the SPS change, we would need to investigate.  Please update your bug report to let us know if this is still an issue for you."
+    email: Nitz.Carola@googlemail.com
+    modified: "2018-10-25T14:42:38.763422Z"
+    number: "45418397"
+    number_intvalue: 45418397
+    originated: 10/20/2018
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: ""
+    reproducible: always
+    resolved: ""
+    status: closed
+    title: VideoToolbox throws kVTVideoDecoderBadDataErr when encountering an SPS change

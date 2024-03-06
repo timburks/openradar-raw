@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8806385"
+    labels:
+        datastore_id: "989401"
+data:
+    classification: Security
+    created: "2010-12-26T17:58:52.241599Z"
+    description: "Summary:\r\nOn the command-line, it is impossible to set or remove ACL-entries on a symbolic link (symlink).\r\nThis can become a problem, if you have a directory with additional ACL-entries and apply the permissions of this directory to it's contents through the \"Get Info\"-panel: If there are symlinks within this directory, they are applied this ACL, which _cannot be removed_ through normal means later.\r\n\r\nSteps to Reproduce:\r\n0. Assume you are logged into the account \"someuser\" and there exists an account \"someotheruser\" as well\r\n(In the shell:)\r\n1. mkdir /tmp/acl_symlink_test && cd /tmp/acl_symlink_test\r\n2. touch testfile && ln -s testfile link_to_file\r\n3. chmod +a \"someotheruser allow write\" .\r\n4. open /tmp\r\n(In the Finder:)\r\n5. select the \"acl_symlink_test\" folder and \"Get Info\"\r\n6. authenticate as an admin-user and select the apply-to-all-subfolders-option from the gear-menu\r\n(back in the shell:)\r\n7. chmod -h -a# 0 /tmp/acl_symlink_test/link_to_file\r\n8. ls -le /tmp/acl_symlink_test\r\n\r\nExpected Results:\r\nStep 8. outputs something like:\r\n    total 8\r\n    lrwxr-xr-x+ 1 someuser  wheel  8 26 Dez 18:12 link_to_file -> testfile\r\n    -rw-r--r--  1 someuser  wheel  0 26 Dez 18:12 testfile\r\n     0: user:someotheruser allow write\r\n(I.e. the ACL is removed from the *symlink itself*.)\r\n\r\nActual Results:\r\nStep 8. outputs something like:\r\n    total 8\r\n    lrwxr-xr-x+ 1 someuser  wheel  8 26 Dez 18:12 link_to_file -> testfile\r\n     0: user:someotheruser allow write\r\n    -rw-r--r--  1 someuser  wheel  0 26 Dez 18:12 testfile\r\n(I.e. the \"-h\" option is ignored and instead of the symlink, the *link-target* is modified.)\r\n\r\nRegression:\r\nUnknown, but the age of [1] suggests, that it dates back to whichever version of 10.5 was current in early 2009.\r\nActually, it seems like the underlying issue is even older as the discussion [2] suggests (which dates back to 2008).\r\n\r\nNotes:\r\nAccording to [1] this is a known bug already filed under rdar://problem/6264303 some 20 months ago and marked as a duplicate of rdar://problem/5684438.\r\nThe author of [1] — back then — was kind enough to post a patch for chmod, which can be found under [3].\r\n\r\n[1] http://0xced.blogspot.com/2009/03/chmod-acl-and-symbolic-links_23.html\r\n[2] http://discussions.apple.com/thread.jspa?threadID=1440377&start=0&tstart=0\r\n[3] http://pitaya.ch/radar/6264303/chmod.patch"
+    email: daniel@puppiesonacid.de
+    modified: "2011-08-28T05:38:36.941982Z"
+    number: "8806385"
+    number_intvalue: 8806385
+    originated: 26-Dec-2010 06:51 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.5
+    reproducible: always
+    resolved: ""
+    status: open
+    title: '/bin/chmod: Setting/Removing of ACL-Directives on Symbolic Links Unsuppoerted'

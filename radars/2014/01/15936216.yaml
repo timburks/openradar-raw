@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15936216"
+    labels:
+        datastore_id: "5333236448231424"
+data:
+    classification: Serious Bug
+    created: "2014-01-29T16:49:02.917901Z"
+    description: "Summary:\r\nWhen creating an instance of the ITLibrary object, the framework leaks memory. The exact amount seems to depend on the library size. Since you need to create a new instance of the library object every time you need fresh data, this makes the framework useless for any long-running app that needs regular access to the iTunes library.\r\n\r\nSteps to Reproduce:\r\n1. Create an XCode project with ARC and sandboxing enabled.\r\n2. Add the ITunes Library framework to the project.\r\n3. Add the following to you app delegate's header:\r\n\r\n#import <iTunesLibrary/ITLibrary.h>\r\n#import <iTunesLibrary/ITLibMediaItem.h>\r\n#import <iTunesLibrary/ITLibArtist.h>\r\n#import <iTunesLibrary/ITLibAlbum.h>\r\n\r\n4. Add this code to your delegates source file:\r\n\r\n- (void) awakeFromNib {\r\n    NSError *err;\r\n    ITLibrary *itlib;\r\n   itlib = [ITLibrary libraryWithAPIVersion:@\"1.0\" error:&err];\r\n   itlib = nil;\r\n }\r\n\r\n5. Build and run the app in Instruments' leaks tool.\r\n\r\nExpected Results:\r\nThe app should run without any memory leaks.\r\n\r\nActual Results:\r\nInstruments will show multiple objects being leaked by just creating the  object. If you repeat the call via NSTimer you will see a new leak every time itlib = [ITLibrary libraryWithAPIVersion:@\"1.0\" error:&err] is being called.\r\n\r\nVersion:\r\nVersion 5.0.2 (5A3005), OS X 10.9.1 (13B42)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n iTunes 11.1.4"
+    email: mail@jensbaumeister.de
+    modified: "2014-01-29T16:49:02.918034Z"
+    number: "15936216"
+    number_intvalue: 15936216
+    originated: 29.01.2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.9.1
+    reproducible: Always
+    resolved: ""
+    status: open
+    title: Memory leak in iTunes Library Framework

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14123633"
+    labels:
+        datastore_id: "5511730692096000"
+data:
+    classification: ""
+    created: "2016-07-12T18:43:29.84912Z"
+    description: "Summary:\r\n\r\nI use CGEventTapCreate to create an active event tap. In the CGEventCallback function, I want to either allow (return the event, unmodified), or kill (return NULL) the mouse events.\r\n\r\nThe Apple docs say:\r\nhttps://developer.apple.com/library/mac/#documentation/Carbon/Reference/QuartzEventServicesRef/Reference/reference.html\r\n\r\n > return NULL if the event passed in is to be deleted.\r\n\r\nIn my event I do return NULL. However, the mouse event is not deleted.\r\n\r\nSteps to Reproduce:\r\n\r\nCreate an event tap with the code below:\r\n\r\neventTap = CGEventTapCreate(kCGHIDEventTap, kCGHeadInsertEventTap, kCGEventTapOptionDefault, kCGEventMaskForAllEvents, myCGEventCallback, NULL);\r\n\t\r\n...\r\n\r\nCGEventRef myCGEventCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *refcon)\r\n{\r\n\tif (type == kCGEventKeyDown || type == kCGEventKeyUp) {\r\n        //Kill key events (works perfectly)\r\n\t\treturn NULL;\r\n    }\r\n    else if (type == kCGEventMouseMoved)\r\n\t{\r\n        //Kill mouse movement events (does not work)\r\n\t\treturn NULL;\r\n    }\r\n    else\r\n    {\r\n        // Allow other events to go through\r\n        return event;\r\n    }\r\n}\r\n\r\nExpected Results:\r\n\r\nThe Quartz Event Services docs say:\r\n\r\n > return NULL if the event passed in is to be deleted.\r\n\r\nI would thus expect all intercepted mouse events (where in the callback I returned NULL) to be deleted.\r\n\r\nThe keypress events above *are* killed when we return NULL. Mouse events are not.\r\n\r\nActual Results:\r\n\r\nMouse continues to work, and all mouse movement events continue to be shown on screen.\r\n\r\nSome things, such as Mission Control hotcorners, *are* prevented when we return NULL. However, the main mouse movements are not prevented.\r\n\r\nNotes:\r\n\r\nI am killing mouse movements in the aim of accessibility. I realize that mouse hooks can be made to be malicious or annoying. However they are very important for accessibility purposes, which Apple takes great pride in promoting.\r\n\r\nKeyboard events can be killed just fine by returning NULL. But mouse events cannot."
+    email: peter.kamb@gmail.com
+    modified: "2016-07-12T18:43:29.84933Z"
+    number: "14123633"
+    number_intvalue: 14123633
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Behaves Correctly
+    title: Returning NULL in CGEventCallback function does not kill mouse events

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18417625"
+    labels:
+        datastore_id: "5017927921172480"
+data:
+    classification: Bug
+    created: "2021-02-10T00:37:53.453644Z"
+    description: "Time:\r\n5:33pm - Tuesday February 9, 2021\r\n\r\nApplication name: FortiExplorer\r\n\r\nSummary:\r\nI'm experiencing an issue where I receive a \"restored\" transaction instead of a \"purchasing\" transaction when I attempt to make a purchase.\r\nThis occurs when a transaction is issued while SKPaymentQueue transactions array is not empty, and the queue has some transactions that are still being finished.\r\n\r\n\r\nDetails:\r\nThis situation requires an account with pre-existing purchases that can be restored.\r\nIn my case I have 275 transactions (274 are subscriptions that are no longer auto-renewing), and 1 non-consumable purchase.\r\nSince subscriptions are always returned no matter how old they are; this will only continue to be an issue (More so in sandbox since the timeframe is much shorter)\r\n\r\n\r\n1. The first step is to restore transactions.\r\nWhich calls updatedTransaction with the correct number of transactions to restore - 275 transactions.\r\n\r\n2. Once updatedTransaction call is completed (which happens very quickly since its a single forloop).\r\n   Note: queue.transactions has 275 transactions (important!).\r\n3. Control is returned to the user.\r\n4. The user triggers a purchase, and a call to purchase SKPaymentQueue.add(payment:) is issued.\r\n\r\n\r\nExpected behaviour (Default behaviour when SKPaymentQueue has no transactions):\r\nupdatedTransaction is called immediately with a transaction in \"purchasing\" state.\r\n\r\n\r\nCurrent behaviour:\r\nupdatedTransaction is called immediately with a transaction in \"restored\" state. This transaction is actually one of the 275 transactions already in the queue when the restore operation took place; with the status of the transaction is \"restored\".\r\n// queue.transactions now has less than 275 transactions; based on how many were successfully finished.\r\n\r\nfunc paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {\r\n  print(transactions)\r\n  ▿ 1 element\r\n    - 0 : [\"id\": \"1000000775902920\", \"error\": \"nil\", \"state\": \"restored\", \"payment product id\": \"product.id\"]\r\n\r\n  print(transactions)\r\n  ▿ 275 elements\r\n}\r\n\r\nAdditional Debugging:\r\nI added the removedTransaction function call; i noticed that the queue is slowly being popped; around 1 transaction per second.\r\n\r\n\r\nThe issue here is that updatedTransaction is actually called with an incorrect transaction. updatedTransaction is never called with the purchasing transaction (no matter how long you wait); but is called with the next transaction on the queue instead.\r\n\r\nThe current workaround is to wait until SKPaymentQueue has removed all of its transactions then continue to make the purchase. This can result in an undesirably slow user experience.\r\n270 transaction with ~1 transaction being removed per second ~= 4.5 minutes of waiting.\r\n\r\nThank you for your time, I hope this can be fixed soon.\r\n\r\n\r\nThis issue suffers from the following ticket:\r\nhttps://openradar.appspot.com/50132756 (which requires the application to call restore on launch since updatedTransactions is not called)"
+    email: snoseir@fortinet.com
+    modified: "2021-02-10T02:01:56.156327Z"
+    number: "18417625"
+    number_intvalue: 18417625
+    originated: 09/02/2021
+    parent_number: '&{NULL_VALUE}'
+    product: StoreKit
+    product_version: iOS 14
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: updatedTransaction is never called with purchasing transaction (Issue purchasing SKU when SKPaymentQueue transactions is not empty)

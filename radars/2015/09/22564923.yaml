@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22564923"
+    labels:
+        datastore_id: "5536294750912512"
+data:
+    classification: ""
+    created: "2015-09-03T21:19:55.22869Z"
+    description: "Summary:\r\nUsing the default `UIViewControllerBasedStatusBarAppearance`, the status bar style, visibility and update animation are specified by a view controller. When a view controller is presented, whether is becomes the status bar view controller depends on its presentation style. For example, view controllers presented full screen become the status bar view controller, while those in popovers do not.\r\n\r\nUIKit seems to determine the status bar view controller at presentation time, and does not update this when a presentation adapts to a different style.\r\n\r\nSteps to Reproduce:\r\n• Open and run the attached sample project on iPhone 6 Plus or iPad Air 2 with Split View enabled (because on these devices the trait collections change, resulting in adaptivity).\r\n• Tap to present a view controller.\r\n• Change size class (rotate).\r\n\r\nSome specific steps mentioned below:\r\n\r\n1. While in landscape, tap the screen to present\r\n2. Rotate to portrait\r\n3. Tap to dismiss\r\n4. Tap to present\r\n5. Rotate to landscape\r\n6. Tap to dismiss\r\n\r\nExpected Results:\r\n• When only the dark green master view is visible, the status bar should have light text.\r\n• When the pink detail view is presented in a popover, the status bar should have light text.\r\n• When the pink detail view is presented full screen, the status bar should have dark text.\r\n• These should remain true after rotation.\r\n\r\nActual Results:\r\n• After step 2, the status bar is light over the full screen pink detail view.\r\n• After step 5, the status bar is dark over the dark green master view (while the pink detail view is in a popover).\r\n• After step 6, the status bar remains dark over the dark green master view. Note that the presented view controller is being kept alive by the presenting view controller somewhat unexpectedly.\r\n\r\nVersion:\r\niOS 9, Xcode 7.0 beta 6 (7A192o)\r\n\r\nNotes:\r\nIt seems that UIKit does not call `_setPresentedStatusBarViewController:` when adapting. As an uninformed outsider, I wonder why UIKit uses an instance variable to store the presented status bar view controller and doesn’t recompute it each time.\r\n\r\nWorkaround: in the delegate method `presentationController:willPresentWithAdaptiveStyle:transitionCoordinator:`, call `_setPresentedStatusBarViewController:` with what we think the status bar view controller should be.\r\n\r\nConfiguration:\r\niPad Air 2 simulator and iPhone 6 Plus simulator\r\n\r\nAttachments:\r\n'status-bar-adapt.zip' was successfully uploaded."
+    email: douglashill@douglashill.co
+    modified: "2016-07-22T09:50:30.86149Z"
+    number: "22564923"
+    number_intvalue: 22564923
+    originated: 03-Sep-2015 10:18 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Fixed in iOS 10 beta 3
+    title: Status bar view controller is wrong when a presentation adapts

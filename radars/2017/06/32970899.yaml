@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32970899"
+    labels:
+        datastore_id: "4956433950965760"
+data:
+    classification: Bug
+    created: "2017-06-25T13:10:18.86126Z"
+    description: "Summary:\r\nThe absence of the properties make it impossible to get the current line number in Xcode 9. It makes some Xcode plugins unusable.\r\n\r\nSteps to Reproduce:\r\n1. open a workspace with Xcode 9 beta\r\n2. open a document to edit\r\n3. run the following applescript\r\n\r\nset Xcode to \"Xcode-beta\"\r\n\r\nset current_document_path to \"\"\r\n\r\ntell application Xcode\r\n\tset last_word_in_main_window to (word -1 of (get name of window 1))\r\n\tif (last_word_in_main_window is \"Edited\") then\r\n\t\tactivate\r\n\t\ttell application \"System Events\" to keystroke \"s\" using {command down} -- command-s to save the file\r\n\tend if\r\n\t#get the file name again\r\n\tset last_word_in_main_window to (word -1 of (get name of window 1))\r\n\tset current_document to document 1 whose name ends with last_word_in_main_window\r\n\tset current_document_path to path of current_document\r\n\t\r\n\t#get the current line number\r\n\tusing terms from application \"Xcode-beta\"\r\n\t\ttell current_document\r\n\t\t\tset {startLine, endLine} to selected paragraph range\r\n\t\tend tell\r\n\tend using terms from\r\nend tell\r\nreturn (startLine as string) & \"&\" & current_document_path\r\n\r\nExpected Results:\r\nshould get the current line number and the document path\r\n\r\nObserved Results:\r\nthe script fails because it cannot find selected paragraph range"
+    email: KHaiFeng@gmail.com
+    modified: "2017-06-25T13:10:18.86147Z"
+    number: "32970899"
+    number_intvalue: 32970899
+    originated: June 25 2017
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: "9"
+    reproducible: Always
+    resolved: ""
+    status: open
+    title: The text document in Xcode 9 beta doesn't have "selected paragraph range" and "selected character range" properties

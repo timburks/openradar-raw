@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11919777"
+    labels:
+        datastore_id: "1835401"
+data:
+    classification: Enhancement
+    created: "2012-07-20T05:45:21.977258Z"
+    description: "19-Jul-2012 10:40 PM Doug Russell:\r\nGCD does not handle io bound tasks well and often spawns enough threads to cripple an app if you try to do a lot of (for example) file io in a dispatch_async()\r\n\r\nI've made a sample implementation of a queue that uses a semaphore, group and another queue as associated objects to handle throttling width just to show how the API could be useful:\r\n\r\nhttps://github.com/rustle/QueueWithWidth\r\n\r\nRelated: rdar://problem/11919747 http://openradar.appspot.com/11919747\r\n\r\nThis is what I propose the new API could look like:\r\n\r\n// dispatch_queue_attr_t\r\n// Used by dispatch_queue_create() to create a\r\n// queue with a concept of width\r\n#define DISPATCH_QUEUE_CONCURRENT_WITH_WIDTH\r\n\r\n#define DISPATCH_QUEUE_CONCURRENT_WITH_WIDTH_DEFAULT_WIDTH /*Processor Count*/\r\n\r\n// Set queues width (internally this creates a semaphore\r\n// with given width and attaches it to the queue)\r\n__OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_6_0)\r\nDISPATCH_EXPORT DISPATCH_NOTHROW\r\nvoid\r\ndispatch_set_queue_width(dispatch_queue_t queue, long width);\r\n\r\n// Only accepts DISPATCH_QUEUE_CONCURRENT_WITH_WIDTH queues\r\n// and waits with the same behavior as dispatch_semaphore_wait()\r\n__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_4_0)\r\nDISPATCH_EXPORT DISPATCH_NONNULL_ALL DISPATCH_NOTHROW\r\nlong\r\ndispatch_queue_wait(dispatch_queue_t queue, dispatch_time_t timeout);\r\n\r\n// Only accepts DISPATCH_QUEUE_CONCURRENT_WITH_WIDTH queues\r\n// and notifies with the same behavior as dispatch_group_notify(),\r\n// but instead of waiting for it's group to reach\r\n// value==originalvalue for it's value to become non-negative\r\n#ifdef __BLOCKS__\r\n__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_4_0)\r\nDISPATCH_EXPORT DISPATCH_NONNULL_ALL DISPATCH_NOTHROW\r\nvoid\r\ndispatch_queue_notify(dispatch_queue_t queue,\r\n\t\t\t\t\t  dispatch_block_t block);\r\n#endif /* __BLOCKS__ */\r\n\r\n// Notifies with the same behavior as dispatch_group_notify(),\r\n// but instead of waiting for it's group to reach\r\n// value==originalvalue for it's value to become non-negative\r\n// Should queue with the same ordering as dispatch_semaphore_wait()\r\n// i.e. if you called wait then notify then wait, they'd signal in\r\n// that order\r\n#ifdef __BLOCKS__\r\n__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_4_0)\r\nDISPATCH_EXPORT DISPATCH_NONNULL_ALL DISPATCH_NOTHROW\r\nvoid\r\ndispatch_semaphore_notify(dispatch_semaphore_t semaphore,\r\n\t\t\t\t\t\t  dispatch_block_t block);\r\n#endif /* __BLOCKS__ */\r\n\r\n\r\n19-Jul-2012 10:44 PM Doug Russell:\r\nFwiw, I imagine the Foundation team had to solve nearly identical issues making NSOperationQueue sit on top of GCD, so between the work I've demonstrated and the work Foundation has demonstrated, it's certainly possible."
+    email: doug@getitdownonpaper.com
+    modified: "2012-07-20T05:45:21.97753Z"
+    number: "11919777"
+    number_intvalue: 11919777
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X SDK
+    product_version: "10.8"
+    reproducible: N/A
+    resolved: ""
+    status: Open
+    title: dispatch_queue_t should support width

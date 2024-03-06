@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7413894"
+    labels:
+        datastore_id: "161412"
+data:
+    classification: ""
+    created: "2010-02-23T22:13:35.792845Z"
+    description: "20-Nov-2009 04:46 PM Alexander Strange:\r\nSummary:\r\n\r\nFSF gcc, on Linux and Darwin using -m64, passes __m64 parameters in xmm registers.\r\nThis matches the last sentence of page 17 of http://www.x86-64.org/documentation/abi-0.99.pdf:\r\n\"Arguments of types float, double, _Decimal32, _Decimal64 and __m64 are in class SSE.\"\r\n\r\nApple gcc, llvm-gcc, and clang all pass __m64 parameters starting in rdi, although the documentation claims it uses the standard ABI.\r\n\r\nI've never seen an __m64 function parameter myself, and didn't find this in any real code.\r\n\r\nSource:\r\n#include <mmintrin.h>\r\n\r\n__m64 a;\r\n\r\nvoid b(__m64 c)\r\n{\r\n\ta = c;\r\n}\r\n\r\n> gcc -m64 -O -S m64-param.c\r\n.globl _b\r\n_b:\r\nLFB131:\r\n\tpushq\t%rbp\r\nLCFI0:\r\n\tmovq\t%rsp, %rbp\r\nLCFI1:\r\n\tmovq\t_a@GOTPCREL(%rip), %rax\r\n\tmovq\t%rdi, (%rax)\r\n\tleave\r\n\tret\r\n...\r\n\r\n> xcrun llvm-gcc -m64 -O -S m64-param.c\r\n_b:\r\nLeh_func_begin1:\r\n\tpushq\t%rbp\r\nLlabel1:\r\n\tmovq\t%rsp, %rbp\r\nLlabel2:\r\n\tmovq\t_a@GOTPCREL(%rip), %rax\r\n\tmovq\t%rdi, (%rax)\r\n\tpopq\t%rbp\r\n\tret\r\n...\r\n\r\n> ~/checker-227/bin/clang -m64 -O -S m64-param.c\r\n_b:\r\nLeh_func_begin1:\r\n\tpushq\t%rbp\r\nLlabel1:\r\n\tmovq\t%rsp, %rbp\r\nLlabel2:\r\n\tmovq\t_a@GOTPCREL(%rip), %rax\r\n\tmovd\t%rdi, %mm0\r\n\tmovq\t%mm0, (%rax)\r\n\tpopq\t%rbp\r\n\tret\r\n...\r\n\r\nOn Linux:\r\n$ gcc -m64 -v\r\n...\r\ngcc version 4.3.4 (Debian 4.3.4-5) \r\n$ gcc -m64 -O -S m64-param.c\r\nb:\r\n.LFB131:\r\n        movq    %xmm0, a(%rip)\r\n        ret\r\n\r\nAlso note that clang has a pointless 'movd', and that all the Darwin compilers seem to be emitting pointless stack adjustments.\r\n\r\n01-Dec-2009 06:33 PM\r\nEngineering has determined that this issue behaves as intended based on the following information:\r\n\r\nThe compilers all agree, this is supposed to work this way.  Re \"and that all the Darwin compilers seem to be emitting pointless stack adjustments.\", this is because darwin defaults to enabling frame pointers."
+    email: astrange@gmail.com
+    modified: "2011-08-28T05:43:29.139461Z"
+    number: "7413894"
+    number_intvalue: 7413894
+    originated: 20-Nov-2009 04:46 PM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: Behaves correctly
+    status: Closed
+    title: Apple compilers don't match ABI docs with __m64 parameters on x86_64

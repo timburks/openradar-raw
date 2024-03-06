@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17498071"
+    labels:
+        datastore_id: "5266384879616000"
+data:
+    classification: NSOperationQueue Swift
+    created: "2014-06-29T05:50:30.497636Z"
+    description: "Summary:\r\nadd two operations to the NSOperationQueue where the second operation is dependent on the first in Swift. Each of those operations dispatch their main method to the background queue. Even after the first operation completes, the next one does not execute. \r\n\r\nwhereas this happens in objective-c\r\n\r\nSteps to Reproduce:\r\n1. create a concurrent subclass of NSOperation where the main method is dispatched to the background queue\r\n2. create two instances of the same and add a dependency of second to the first\r\n3. add both to the operation queue\r\n\r\n\r\nExpected Results:\r\nafter the first finishes, the next one should start\r\n\r\nActual Results:\r\nthe first executes and finishes, but the next one does not start. comment out the dispatch to background and it works.. pls note even without commenting it works in Objective c\r\n\r\nVersion:\r\nxCode Version 6.0 (6A216f)\r\n\r\ncode sample\r\nimport Foundation\r\n\r\nclass MyConcurrentOperation:NSOperation{\r\n    var myExecuting = false\r\n    var myFinished = false\r\n    var message : String? = nil\r\n    init(){\r\n        myExecuting = false\r\n        myFinished = false\r\n    }\r\n    \r\n    override var executing: Bool {\r\n    get{\r\n        return myExecuting\r\n    }\r\n    }\r\n    \r\n    override var finished: Bool {\r\n    get{\r\n        return myFinished\r\n    }\r\n    }\r\n    \r\n    override var asynchronous: Bool {\r\n    get {\r\n        return true\r\n    }\r\n    }\r\n    \r\n    func finishOperation(){\r\n        self.willChangeValueForKey(\"executing\")\r\n        self.willChangeValueForKey(\"finished\")\r\n        myFinished = true\r\n        myExecuting = false\r\n        self.didChangeValueForKey(\"finished\")\r\n        self.didChangeValueForKey(\"executing\")\r\n    }\r\n    \r\n    override func start() {\r\n        if self.cancelled{\r\n            self.finishOperation()\r\n            return;\r\n        }\r\n        \r\n        self.willChangeValueForKey(\"executing\")\r\n        myExecuting = true\r\n        self.didChangeValueForKey(\"executing\")\r\n        \r\n        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), {\r\n            self.main()\r\n            })\r\n\r\n    }\r\n    \r\n    override func main() {\r\n        autoreleasepool({\r\n            if let message = self.message {\r\n                println(\"this is the main function with message:\\(self.message!)\")\r\n\r\n             }\r\n            })\r\n        self.finishOperation()\r\n    }\r\n\r\n}\r\n\r\nimport UIKit\r\n\r\nclass ViewController: UIViewController {\r\n                            \r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n        var myoperation = MyConcurrentOperation()\r\n        myoperation.message = \"this is first operation\"\r\n        var mynextoperation = MyConcurrentOperation()\r\n        mynextoperation.message = \"this is second operation\"\r\n        mynextoperation.addDependency(myoperation)\r\n        let operationQ = NSOperationQueue();\r\n        operationQ.addOperation(myoperation)\r\n        operationQ.addOperation(mynextoperation)\r\n        \r\n        \r\n    }\r\n\r\n    override func didReceiveMemoryWarning() {\r\n        super.didReceiveMemoryWarning()\r\n        // Dispose of any resources that can be recreated.\r\n    }\r\n\r\n\r\n}"
+    email: Inforeqd51@gmail.com
+    modified: "2014-06-29T05:50:30.49777Z"
+    number: "17498071"
+    number_intvalue: 17498071
+    originated: 29-june-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: xCode Version 6.0 (6A216f), iOS 8.0
+    reproducible: Always
+    resolved: no
+    status: Open
+    title: 'Swift : NSOperationQueue does not execute dependent operations'

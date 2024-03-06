@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8935555
+    labels:
+        datastore_id: "4965806110670848"
+data:
+    classification: Crash
+    created: "2020-12-10T15:25:03.483994Z"
+    description: "Description of the problem:\r\n\r\nMy Apple TV application is written in SwiftUI 2nd gen (tvOS 14). When presenting a view and dismissing it fast, my app crashes with the following stack trace (full stack trace provided as attachment):\r\n\r\n0   libsystem_kernel.dylib        \t0x000000018449284c __pthread_kill + 8\r\n1   libsystem_pthread.dylib       \t0x0000000184516c30 pthread_kill + 212 (pthread.c:1388)\r\n2   libsystem_c.dylib             \t0x00000001843fe8ac abort + 100 (abort.c:110)\r\n3   libswiftCore.dylib            \t0x000000019aa2e108 swift::fatalError(unsigned int, char const*, ...) + 56 (Errors.cpp:393)\r\n4   libswiftCore.dylib            \t0x000000019aa2e258 swift::swift_abortRetainUnowned(void const*) + 52 (Errors.cpp:456)\r\n5   libswiftCore.dylib            \t0x000000019aa2fd34 swift_unownedRetainStrong + 168 (HeapObject.cpp:590)\r\n6   SwiftUI                       \t0x00000001a859e7a8 ViewRendererHost.enclosingHosts.getter + 84 (ViewRendererHost.swift:308)\r\n7   SwiftUI                       \t0x00000001a859c78c ViewRendererHost.performExternalUpdate(_:) + 52 (ViewRendererHost.swift:320)\r\n8   SwiftUI                       \t0x00000001a833ea80 closure #4 in closure #1 in PlatformViewChild.updateValue() + 68 (PlatformViewRepresentable.swift:401)\r\n9   SwiftUI                       \t0x00000001a833dc54 closure #1 in PlatformViewChild.updateValue() + 2368 (<compiler-generated>:0)\r\n10  SwiftUI                       \t0x00000001a833d018 PlatformViewChild.updateValue() + 584 (PlatformViewRepresentable.swift:306)\r\n11  SwiftUI                       \t0x00000001a8179e04 partial apply for implicit closure #2 in implicit closure #1 in closure #1 in closure #1 in Attribute.init<A>(_:) + 28 (<compiler-generated>:0)\r\n... \r\n\r\nThe call stack only contains internal SwiftUI rendering API calls, and the following message is logged to the console:  \"Attempted to read an unowned reference but object <address> was already deallocated\".\r\n\r\nIf I have a look at the Xcode memory debugger at the time of the crash (attached screenshot) I can see that the type of the already deallocated object is ViewGraph. I don't know SwiftUI internals, but it appears some object might still be referencing the view graph (or a subtree thereof), probably discarded at the same time view is dismissed.\r\n\r\nThough my app runs on tvOS, it is likely this issue affects other platforms as well (I don't see any tvOS specifics here).\r\n\r\nHere are some additional implementation details, but I cannot say if they might explain why the crash occurs:\r\n\r\n- I am using UIViewController modal presentation and dismissal of a UIHostingController, not SwiftUI modal presentation.\r\n- One of the presented views wraps a UIKit view (UICollectionView) using UIViewRepresentable.\r\n\r\nEnvironment:\r\n\r\n- Crash reproduced with tvOS 14.0, 14.2 and 14.3 beta.\r\n- Reproduced with Apple TV HD (4th gen) and Apple TV 4K (5th gen).\r\n\r\n\r\nHow to reproduce the issue:\r\n\r\nThere is no easy way to create a simple demo with which this can be reproduced, I am afraid. You can still contact me if this can help you (my project is open source so it is always possible to reproduce and discuss the crash together).\r\n\r\n\r\nExpected behavior:\r\n\r\nSwiftUI does not crash internally.\r\n\r\n\r\nActual behavior:\r\n\r\nSwiftUI sometimes crashes internally."
+    email: defagos@gmail.com
+    modified: "2022-02-03T11:53:42.30054Z"
+    number: FB8935555
+    number_intvalue: 8935555
+    originated: Dec 10, 2020
+    parent_number: '&{NULL_VALUE}'
+    product: tvOS
+    product_version: "14"
+    reproducible: ""
+    resolved: ""
+    status: Closed
+    title: SwiftUI internal rendering engine crash (attempt to read deallocated ViewGraph reference)

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21131078"
+    labels:
+        datastore_id: "4968751061532672"
+data:
+    classification: UI/Usability
+    created: "2015-05-27T22:41:34.00639Z"
+    description: "Summary:\r\nThe WWDC ’15 schedule currently redacts two sessions with the fake title “Be there or be ASCII code 254”. Did someone choose that number at random?\r\n\r\nhttps://developer.apple.com/wwdc/schedule/sessions/\r\n\r\nASCII only goes up to 126 and lacks “²”, the mathematical character for squaring. But ASCII is not a common encoding on the Mac anyways. Maybe another encoding was intended, but the number is still inaccurate:\r\n\r\n• MacRoman also lacks “²” and assigns “˛” to 254.\r\n• Unicode does have “²”, but at codepoint U+00B2 (178). Codepoint U+00FE (254) is “þ”.\r\n\r\nPerhaps the intent was that 254 would render as “tofu” (▯). But tofu only occurs when a font lacks a glyph for the given character, not when there are encoding issues. Native Cocoa controls, being Unicode-aware, would render 254 as “þ”. You couldn’t get either “²” or tofu by converting “²” to ASCII:\r\n\r\nvar d = NSString(string: \"²\").dataUsingEncoding(NSASCIIStringEncoding, allowLossyConversion: false)\r\n// => nil\r\nd = NSString(string: \"²\").dataUsingEncoding(NSASCIIStringEncoding, allowLossyConversion: true)\r\n// => <32>\r\nNSString(data: d!, encoding: NSASCIIStringEncoding)\r\n// => 2\r\n\r\nBesides, ASCII is *so* 1980.\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nExpected Results:\r\nThe two sessions in question should be retitled any of the following:\r\n\r\n• “Be there or be Unicode codepoint U+00B2”\r\n• “Be there or be Unicode codepoint 178”\r\n• “Be there or be Unicode codepoint U+25A0”\r\n• “Be there or be Unicode codepoint U+2B1C U+FE0F” (because emoji are so important nowadays)\r\n\r\nAlternatively, the real session titles could be revealed and this bug could be resolved as Feature Removed.\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\n\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: mxn@1ec5.org
+    modified: "2017-04-04T14:55:48.67631Z"
+    number: "21131078"
+    number_intvalue: 21131078
+    originated: 27-May-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Other
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: Fake session titles are inaccurate

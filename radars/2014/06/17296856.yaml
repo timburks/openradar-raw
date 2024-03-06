@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17296856"
+    labels:
+        datastore_id: "5816929893744640"
+data:
+    classification: Feature (New)
+    created: "2014-06-13T03:02:54.215609Z"
+    description: "Summary:\r\nSwift could use an operator that takes a T? on the left side and a T on the right, and turns the right side if the left side is nil.\r\n\r\nIn other words, it needs something like:\r\n\r\nfunc ?: <T> (lhs: T?, rhs: @auto_closure Void -> T) -> T {\r\n    return lhs ? lhs : rhs()\r\n}\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create an optional chain, e.g.:\r\n\r\n    john?.residence?.address\r\n\r\n2. Try to elegantly specify a default for that chain (in this case, a default mailing address).\r\n\r\nExpected Results:\r\nThere is some way to do this in a single expression without re-evaluating the optional chain.\r\n\r\nActual Results:\r\nYou can either evaluate the optional chain twice:\r\n\r\n    john?.residence?.address ? john?.residence?.address : defaultAddress\r\n\r\nOr you can use a heavier construct:\r\n\r\n    var optionalAddress = john?.residence?.address\r\n    if !optionalAddress { optionalAddress = defaultAddress }\r\n    let address = optionalAddress!\r\n\r\nNotes:\r\n“?:” is the equivalent operator in Objective-C, but I don’t think it feels right for Swift; I don’t imagine this as a boolean operation, but rather as a nil-or-not-nil operation. Perl 6 used “//” for this operation—and in fact, I backported this feature to Perl 5 about a decade ago—but that would clash with comments in Swift. My best suggestion is “??”, which clearly communicates that it’s optional-related, but that syntax is ugly enough that I’m not terribly attached to it."
+    email: brent@architechies.com
+    modified: "2014-07-26T00:07:23.082432Z"
+    number: "17296856"
+    number_intvalue: 17296856
+    originated: 12-Jun-2014 08:02 PM
+    parent_number: "15247356"
+    product: Developer Tools
+    product_version: Xcode6-Beta (6A215l)
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/15247356
+    title: Swift needs a defaulting operator

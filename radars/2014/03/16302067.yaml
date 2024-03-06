@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16302067"
+    labels:
+        datastore_id: "5035151490809856"
+data:
+    classification: Performance
+    created: "2014-03-12T17:16:25.27326Z"
+    description: "Summary:\r\nWhen OS X 10.9 Mavericks was released we noticed that scrolling of long file lists in our Fetch application was much slower than on 10.8. Instruments revealed that the time was being spent in PlotIconRefInContext, and specifically in md5_compress (which was being indirectly called by PlotIconRefInContext). This problem only appeared when the IconRef, which had been returned by GetIconRefFromFileInfo, was then duplicated using IconRefToIconFamily and RegisterIconRefFromIconFamily. \r\n\r\nI wrote a small program, PlotIconPerfTest, to illustrate the problem. It prompts for a file or folder, and then draws the item's icon as many times as it can in 200 milliseconds, and reports the number of icons plotted per second. When the \"Use icon duplicate\" checkbox is unchecked the application draws the IconRef returned by GetIconRefFromFileInfo; when checked it draws the duplicate icon returned by RegisterIconRefFromIconFamily. The icon loading code is in the function IconRefFromFSRef(), in AppDelegate.m.\r\n\r\nSteps to Reproduce:\r\n1. Open the attached PlotIconPerfTest application on 10.9 or 10.8\r\n2. Choose a file or folder\r\n3. Toggle the \"Use icon duplicate\" checkbox, and/or resize the window to force redrawing\r\n\r\nExpected Results:\r\nOn a modern machine the reported performance should be over 100,000 icons/s, on both 10.8 and 10.9, with either a file or folder icon, regardless of the setting of the \"Use icon duplicate\" setting.\r\n\r\nActual Results:\r\nOn 10.8 the results are as expected. On 10.9 the drawing rate with \"Use icon duplicate\" is 1/500 to 1/200 that with \"Use icon duplicate\" off, e.g. 200-500 icons/s. Instruments reveals that when \"Use icon duplicate\" is checked, most CPU time is spent computing MD5 hashes.\r\n\r\nVersion:\r\n10.9.2/13C64\r\n\r\nNotes:"
+    email: james.walter.matthews@gmail.com
+    modified: "2014-03-12T17:16:25.273453Z"
+    number: "16302067"
+    number_intvalue: 16302067
+    originated: 12-Mar-2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.2/13C64
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: PlotIconRefInContext of duplicated icons 200-500x slower on Mavericks

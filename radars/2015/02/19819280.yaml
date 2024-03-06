@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19819280"
+    labels:
+        datastore_id: "5770266349142016"
+data:
+    classification: Serious Bug
+    created: "2015-02-12T23:15:12.489058Z"
+    description: "Summary:\r\nDuring development, LaunchServices grabs the bundle identifier of application helpers and registers their DerivedData folder path as the correct path. This causes issues where you have to clear the LaunchServices cache in order to actually install the application and successfully register the helper application as a login item with SMLoginItemSetEnabled().\r\n\r\nSteps to Reproduce:\r\n1. Create an application with an application helper login item\r\n2. Run the application\r\n3. Run `/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -dump | grep appName` from the terminal\r\n4. Note the helper path is under `~/Library/Developer/Xcode/DerivedData/...`\r\n5. Archive the application and move it to `/Applications`\r\n6. Run the app\r\n7. See that the main bundle path has changed, but the helper has stayed the same.\r\n\r\nExpected Results:\r\nLaunchServices should pick up the new helper application's path and prefer it to the derived data path or LaunchServices should exclude certain paths from the database.\r\n\r\nActual Results:\r\nThe helper application in the DerivedData directory is registered as the application to launch at login, which opens the corresponding parent application instead of the parent application in `/Applications`.\r\n\r\nNotes:\r\nLaunchServices can also pick up applications and their bundle identifiers when they are bundled as Xcode archives and when they are in the trash. Both of these locations create the same problem that is described above."
+    email: keithbsmiley@gmail.com
+    modified: "2015-02-25T02:00:39.560333Z"
+    number: "19819280"
+    number_intvalue: 19819280
+    originated: 12-Feb-2015 03:15 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.2
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 17491721
+    title: LaunchServices helper application registration path exclusions

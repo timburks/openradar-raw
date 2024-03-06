@@ -1,0 +1,60 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27473065"
+    labels:
+        datastore_id: "5010482507284480"
+data:
+    classification: Serious Bug
+    created: "2016-07-21T16:38:07.87276Z"
+    description: |-
+        Summary:
+        Although Foundation/NSMutableDictionary.h declares -setObject:forKey: and -setObject:forKeyedSubscript: with a type signature that requires the KeyType to conform to NSCopying, this rich type information is lost at the call site:
+        Regardless of the dictionary’s actual KeyType, anything that conforms to NSCopying is accepted without warning by the compiler.
+
+        Steps to Reproduce:
+        Compile the code between the triple backticks using Xcode or command line clang:
+        ```
+        #import <Foundation/Foundation.h>
+
+        @interface YUNOWarn : NSObject <NSCopying> @end
+
+        @implementation YUNOWarn
+
+        + (void)pointlessMethod {
+            NSMutableDictionary<NSString *, NSNumber *> *canary = [NSMutableDictionary dictionary];
+            YUNOWarn *obviouslyInvalidKey = [[YUNOWarn alloc] init];
+
+            canary[obviouslyInvalidKey] = @1234;
+            [canary setObject:@1234 forKey:obviouslyInvalidKey];
+        }
+
+        - (id)copyWithZone:(NSZone *)zone {
+            return self;
+        }
+
+        @end
+        ```
+
+        Expected Results:
+        There are two warnings because of a type–mismatch for the key in line 11 and 12.
+
+        Actual Results:
+        This code compiles without a warning.
+
+        Regression:
+        ??
+
+        Notes:
+    email: daniel@puppiesonacid.de
+    modified: "2016-07-21T16:38:07.87293Z"
+    number: "27473065"
+    number_intvalue: 27473065
+    originated: 21-Jul-2016 06:37 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta 3 (8S174q)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Clang/Foundation: Key type of NSMutableDictionary is not checked properly'

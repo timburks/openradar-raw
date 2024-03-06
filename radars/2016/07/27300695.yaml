@@ -1,0 +1,79 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27300695"
+    labels:
+        datastore_id: "5058554465615872"
+data:
+    classification: Other Bug
+    created: "2016-07-12T15:28:57.88312Z"
+    description: |-
+        Summary:
+        C++’s `using` keyword makes it much more straight forward to introduce aliases for blocks than a `typedef` does. More importantly than being easier to write, they are much easier to read as well. Unfortunately, parameter names are not picked up by Clang’s documentation parser when declaring an alias name for a block in this way
+
+        Steps to Reproduce:
+        1. Create a file called WarningSign.mm, containing the code between the triple back–ticks:
+        ```
+        #import <Foundation/Foundation.h>
+
+        NS_ASSUME_NONNULL_BEGIN
+        namespace {
+            /**
+              Signature of the block to be called if we’ve actually succeeded downloading data.
+
+               @param downloadedFileURL The URL of the temporary file containing the downloaded data. The file must be copied to a different destination if the contents need to be preserved.
+             */
+            using SuccessHandler = void (^)(NSURL *downloadedFileURL);
+            using FailureHandler = void (^)(NSError *error);
+        }
+
+        @protocol SomeDownloader <NSObject>
+
+        - (NSProgress *)fetchURL:(NSURL *)remoteURL expectingSHA256:(NSString *)expectedSHASum withSuccessHandler:(SuccessHandler)successHandler failureHandler:(FailureHandler)failureHandler;
+
+        @end
+
+        NS_ASSUME_NONNULL_END
+        ```
+        2. Open a new terminal window and type `export DEVELOPER_DIR=${path_to_code_8beta2}`
+        3. change into the directory containing WarningSign.mm and execute the following command:
+        clang \
+            -x objective-c++ \
+            -arch i386 \
+            -std=gnu++1y \
+            -stdlib=libc++ \
+            -isysroot "${DEVELOPER_DIR}/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator10.0.sdk" \
+            -fobjc-arc -fmodules \
+            -Wdocumentation \
+            -c WarningSign.mm
+
+        Expected Results:
+        The file compiles without warnings or errors.
+
+        Actual Results:
+        The following warning is printed to the console:
+        WarningSign.mm:8:9: warning: '@param' command used in a comment that is not
+              attached to a function declaration [-Wdocumentation]
+               @param downloadedFileURL The URL of the temporary file containin...
+                ^~~~~
+        1 warning generated.
+
+
+        Regression:
+        The same warning occurs on older versions of Xcode as well, but I guess it makes more sense to file this against the most recent version.
+
+        Notes:
+        The only workaround thus far is to replace line 10 in that file with the following:
+        typedef void (^SuccessHandler)(NSURL * downloadedFileURL);
+    email: daniel@puppiesonacid.de
+    modified: "2016-07-12T15:28:57.88341Z"
+    number: "27300695"
+    number_intvalue: 27300695
+    originated: 12-Jul-2016 05:28 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta 2 (8S162m)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Clang documentation parsing: C++ `using` directive should support documentation of blocks like a `typedef`'

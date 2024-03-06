@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16223901"
+    labels:
+        datastore_id: "5770565856002048"
+data:
+    classification: ""
+    created: "2014-03-04T18:13:10.204683Z"
+    description: "Summary:\r\nWhen declaring a variable on the stack with a field with a custom alignment, the custom alignment is ignored if it is greater than 32 (I'm not sure if the alignment is respected when smaller, it may be random chance).\r\n\r\nSteps to Reproduce:\r\nCompile the following code for armv7 or arm64:\r\n\r\ntemplate < size_t bytes, size_t alignment >\r\nclass Aligned {\r\nprivate:\r\n  uint8_t __attribute__((aligned(alignment))) data_[bytes];\r\npublic:\r\n  uint8_t* data() {\r\n    return data_;\r\n  }\r\n};\r\n\r\n#define CHECK_ALIGNMENT(ALIGNMENT) \\\r\n  { Aligned<8, ALIGNMENT> raw ## ALIGNMENT; \\\r\n    BOOL aligned = ((uintptr_t)(raw ## ALIGNMENT.data()) & (ALIGNMENT - 1)) == 0; \\\r\n    NSLog(@\"raw%d is aligned? %@\", ALIGNMENT, aligned ? @\"YES\" : @\"NO\"); \\\r\n  } while (0)\r\n\r\nvoid TestAlignment() {\r\n  CHECK_ALIGNMENT(4);\r\n  CHECK_ALIGNMENT(8);\r\n  CHECK_ALIGNMENT(16);\r\n  CHECK_ALIGNMENT(32);\r\n  CHECK_ALIGNMENT(64);\r\n  CHECK_ALIGNMENT(128);\r\n  CHECK_ALIGNMENT(256);\r\n  CHECK_ALIGNMENT(512);\r\n}\r\n\r\n\r\nExpected Results:\r\nOutput on armv7:\r\n\r\n2014-03-04 19:07:34.518 EmptyApplication[5452:60b] raw4 is aligned? YES\r\n2014-03-04 19:07:34.519 EmptyApplication[5452:60b] raw8 is aligned? YES\r\n2014-03-04 19:07:34.520 EmptyApplication[5452:60b] raw16 is aligned? YES\r\n2014-03-04 19:07:34.520 EmptyApplication[5452:60b] raw32 is aligned? YES\r\n2014-03-04 19:07:34.521 EmptyApplication[5452:60b] raw64 is aligned? YES\r\n2014-03-04 19:07:34.521 EmptyApplication[5452:60b] raw128 is aligned? YES\r\n2014-03-04 19:07:34.522 EmptyApplication[5452:60b] raw256 is aligned? YES\r\n2014-03-04 19:07:34.522 EmptyApplication[5452:60b] raw512 is aligned? YES\r\n\r\n\r\nActual Results:\r\nOutput on arm64:\r\n\r\n2014-03-04 18:59:12.068 EmptyApplication[5356:60b] raw4 is aligned? YES\r\n2014-03-04 18:59:12.070 EmptyApplication[5356:60b] raw8 is aligned? YES\r\n2014-03-04 18:59:12.071 EmptyApplication[5356:60b] raw16 is aligned? YES\r\n2014-03-04 18:59:12.072 EmptyApplication[5356:60b] raw32 is aligned? NO\r\n2014-03-04 18:59:12.073 EmptyApplication[5356:60b] raw64 is aligned? NO\r\n2014-03-04 18:59:12.073 EmptyApplication[5356:60b] raw128 is aligned? NO\r\n2014-03-04 18:59:12.074 EmptyApplication[5356:60b] raw256 is aligned? NO\r\n2014-03-04 18:59:12.074 EmptyApplication[5356:60b] raw512 is aligned? NO\r\n\r\n\r\nVersion:\r\nXcode: Version 5.0.2 (5A3005)\r\nOS X: Version 10.9.2, Build 13C64\r\nclang: Apple LLVM version 5.0 (clang-500.2.79) (based on LLVM 3.3svn)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nAlways occurs\r\n\r\nAttachments:"
+    email: sdefresne@chromium.org
+    modified: "2014-03-04T18:13:10.204811Z"
+    number: "16223901"
+    number_intvalue: 16223901
+    originated: 04-Mar-2014 07:09 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: clang does not respect __attribute__((aligned(X))) for X >= 32 on arm64

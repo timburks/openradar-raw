@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33202311"
+    labels:
+        datastore_id: "5009405795893248"
+data:
+    classification: ""
+    created: "2017-07-09T12:16:26.48226Z"
+    description: "Summary:\r\nI created sample AudioUnit v3 with UI for macOS.\r\nThis AudioUnit has DSP processing part and visualisation part (i.e. Level meter).\r\nCVDisplayLink and MTKView used to represent signal level on AudioUnit UI.\r\n\r\nI need to know when AUv3 host closes or hides the AudioUnit UI.\r\nThis will help me to suspend calculation of signal level when it is not needed (i.e. when AudioUnit UI is closed, miniaturized or overlapped by other window).\r\n\r\nSo, I subscribed for notifications: NSWindow.willCloseNotification, NSWindow.willMoveNotification, NSWindow.willMiniaturizeNotification, NSWindow.didUpdateNotification.\r\n\r\nAs result sample AudioUnit UI receives NSWindow.didUpdateNotification while other notifications not received.\r\n\r\nMy question: How to know in AudioUnit v3 (which \"lives\" out of the process) that Host Application did close/open, hide/unhide, miniaturize/deminiaturize window which contains \"embedded\" AudioUnit User interface.\r\n\r\nThanks!\r\n\r\nSteps to Reproduce:\r\n1. Download example project from git repository (https://github.com/vgorloff/Radar33202311).\r\n2. Launch \"AttenuatorAU\" schema and select \"GarageBand.app\" as a AUv3 Host application.\r\n3. Load \"AttenuatorAU\" plugin: \"AudioUnits -> WaveLabsUA -> Attenuator\"\r\n4. Open plugin UI.\r\n5. Move plugin UI. Close plugin UI.\r\n\r\nExpected Results:\r\nXcode Debug Area console shows print statements:\r\n\r\n[EDITED] ===> NSWindow.didUpdateNotification\r\n[EDITED] ~~~> NSWindowDelegate.windowDidUpdate\r\n[EDITED] ===> NSWindow.willMoveNotification\r\n[EDITED] ~~~> NSWindowDelegate.windowWillMove\r\n[EDITED] ===> NSWindow.willCloseNotification\r\n[EDITED] ~~~> NSWindowDelegate.windowWillClose\r\n\r\nObserved Results:\r\nXcode Debug Area console shows print statements:\r\n\r\n[EDITED] ===> NSWindow.didUpdateNotification\r\n[EDITED] ~~~> NSWindowDelegate.windowDidUpdate\r\n\r\nXcode Debug Area console NOT shows print statements:\r\n\r\n[EDITED] ===> NSWindow.willMoveNotification\r\n[EDITED] ~~~> NSWindowDelegate.windowWillMove\r\n[EDITED] ===> NSWindow.willCloseNotification\r\n[EDITED] ~~~> NSWindowDelegate.windowWillClose\r\n\r\nVersion:\r\nmacOS: 10.12.5 (16F73)\r\nXcode 9 beta 1: Version 9.0 beta (9M136h)\r\nGarageBand: 10.2.0 (4769.13)"
+    email: volodymyr.gorlov@gmail.com
+    modified: "2017-07-09T12:16:26.48249Z"
+    number: "33202311"
+    number_intvalue: 33202311
+    originated: July 9 2017
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'AUv3: Subclass of AUViewController receives NSWindow.didUpdateNotification while NSWindow.willCloseNotification is not received.'

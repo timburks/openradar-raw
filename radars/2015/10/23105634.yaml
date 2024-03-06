@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23105634"
+    labels:
+        datastore_id: "4939323287797760"
+data:
+    classification: Bug
+    created: "2015-10-14T09:16:57.46448Z"
+    description: "Summary:\r\nWhen using IB to create your interface if you use size classes and have one of more views in the view hierarchy that are uninstalled for a specific size class you are no longer able to add/remove views to the view hierarchy at runtime especially in viewDidLoad.\r\n\r\nIf you don't uninstall any views in IB the views will be added/removed as expected. The issue only occurs when any other view is uninstalled for a specific size class, then all other views can't be removed programatically in viewDidLoad.\r\n\r\nIt's worth making clear that I'm not talking about uninstalling view A in IB and then trying to remove it in code, I'm talking about trying to remove view B programmatically, while uninstalling view A in IB (for a specific size class), there are completely separate views that are in the same view hierarchy. \r\n\r\nI've reached out to Apple Developer Relations and have been told the following by Justin Miller:\r\n\r\n\"As things are currently implemented, if size classes are enabled the system will reset the view hierarchy back to the state defined in the storyboard whenever the current trait collection changes.  This process only affects a view's subviews and the installed constraints.  Thus 'label' will be (re)added as a subview of ViewController.view but if you were to hide 'label' instead of removing it, then it would remain hidden.\".\r\n\r\nWhile this explains the issue it appears to me this is a bug or design flaw. As far as I can tell this is documented nowhere on apple.com. It's always been possible to modify the view hierarchy programatically and there is no mention in the documentation for addSubview or removeFromSuperview that this might pointless if you're using size classes and the install/uninstall IB option.\r\n\r\nSteps to Reproduce:\r\n1) Install Xcode.\r\n2) Create a project from the Single View Application template.\r\n3) Edit the associated storyboard and add two views (i.e. labels) to the Any/Any size class.\r\n4) Setup some constraints for the two views.\r\n5) Switch to the Regular/Regular size class.\r\n6) Select one of the views and uninstall it for this specific size class.\r\n7) Now switch back to the Any/Any size class.\r\n8) Create an outlet connection from the other view (not the one just uninstalled) to the view controller.\r\n9) From the Project Navigator select the associated view controller .m file.\r\n10) In the viewDidLoad method add code to remove the outlet view from the superview i.e. [self.myView removeFromSuperview].\r\n11) Run the project and observe that the view to be removed programatically is still visible.\r\n\r\nExpected Results:\r\nThe view that received the removeFromSuperview call should be removed at runtime.\r\n\r\nActual Results:\r\nThe view stays visible in the view hierarchy.\r\n\r\nVersion:\r\nXcode 7.0\r\niOS 9\r\nOS X 10.11.1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nHappens in Xcode 7.0 running iOS 9. I've not tried in earlier views but expect the result to be the same for iOS 8 and Xcode 6."
+    email: cameron@brightec.co.uk
+    modified: "2015-10-14T09:16:57.46479Z"
+    number: "23105634"
+    number_intvalue: 23105634
+    originated: 14/10/2015
+    parent_number: '&{NULL_VALUE}'
+    product: IB
+    product_version: "7.0"
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: Unable to programatically remove views

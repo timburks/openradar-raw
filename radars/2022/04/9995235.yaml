@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9995235"
+    labels:
+        datastore_id: "5552720698146816"
+data:
+    classification: ""
+    created: "2022-04-25T17:09:25.746138Z"
+    description: "On Intel Metal devices, when rendering to a mip level >= 2 of a MTLPixelFormatR8Unorm or MTLPixelFormatRG8Unorm texture doesn't seem to render correctly. The exact test case I was able to repro with does:\r\n\r\n - Create an R8Unorm texture of size 4x4 and 3 mip levels.\r\n - Uses a render pass to clear mip level 2 to 1.0 (so the level contains a 0xFF byte).\r\n - Copy level 2 to a buffer.\r\n - Wait for all commands to complete.\r\n - Read back the content of the buffer and notice that the byte isn't 0xFF.\r\n\r\nIt works with other, larger unorm formats, and with mip levels 0 and 1 (texture size adjusted accordingly). A minimal repro case is available at https://github.com/Kangz/MetalBugs/blob/main/r8unorm_rg8unorm_mip/main.mm (Apache 2.0 licensed in case you need to know).\r\n\r\nThese formats also have problems on Intel devices on other APIs so there must be something non-trivial that drivers need to handle. We found that a viable workaround is to detect cases where the bug would happen and replace the attachment with a temporary texture, then copy into the mip level."
+    email: cwallez@google.com
+    modified: "2022-04-25T17:09:25.746402Z"
+    number: "9995235"
+    number_intvalue: 9995235
+    originated: "2022-04-25"
+    parent_number: '&{NULL_VALUE}'
+    product: Metal
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: '[WebGPU][Metal] R/RG8Unorm doesn''t render to mip levels on Intel device'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31389725"
+    labels:
+        datastore_id: "5006489647316992"
+data:
+    classification: Enhancement
+    created: "2017-04-01T17:35:42.4019Z"
+    description: "Summary:\r\nWhen using xcodebuild or xcrun to export an archive with the new export APIs, it will return a very misleading error message if any other kind of error happens during the export process.\r\n\r\nSteps to Reproduce:\r\n1. Create an archive successfully\r\n2. Try to create an export to an IPA, but cause an error during the process (such as via codesigning or bitcode mismatches)\r\n\r\nSample command using new export APIs\r\n\r\nxcodebuild \\\r\n    -exportArchive \\\r\n    -archivePath \"MyApp/build/MyApp.xcarchive\" \\\r\n    -exportOptionsPlist \"MyApp/build/export.plist\" \\\r\n    -exportPath \"MyApp/build/MyApp.ipa\"\r\n\r\nWe had two different errors that manifested themselves as \"No available devices found:\r\n\r\nFirst error: I chose `enterprise` for the export method, but I didn't have any certificates to match\r\nSecond error: I had a static lib within a framework that was built with bitcode, but I was archiving/exporting without bitcode\r\n\r\nOthers have had many other kinds of errors manifest themselves this way: https://github.com/fastlane/fastlane/issues/8737\r\n\r\nExpected Results:\r\nA correct error message should be surfaced from the lower level bundler interface so that the user is aware of exactly *why* the archive failed and how to fix it.\r\n\r\nThis was the error message shown from the command line where we ran the xcodebuild export command:\r\n\r\n2017-03-30 21:47:09.855 xcodebuild[78957:9114437] [MT] IDEDistribution: -[IDEDistributionLogging _createLoggingBundleAtPath:]: Created bundle at path '/var/folders/s1/0h7d0scx6xqdthft328yfk0m0000gn/T/MyApp-Internal_2017-03-30_21-47-09.854.xcdistributionlogs'.\r\n1.2.840.113635.100.1.61\r\n1.2.840.113635.100.1.61\r\n2017-03-30 21:47:14.702 xcodebuild[78957:9114437] [MT] IDEDistribution: Step failed: <IDEDistributionThinningStep: 0x7fc3218d0b60>: Error Domain=IDEDistributionErrorDomain Code=14 \"No applicable devices found.\" UserInfo={NSLocalizedDescription=No applicable devices found.}\r\nerror: exportArchive: No applicable devices found.\r\n\r\nActual Results:\r\nCurrently, people have to dig into the *.xcdistributionlogs files in order to understand there was actually a *different* error that caused the higher level \"No applicable devices found\" error message to be shown.\r\n\r\nIt's misleading and confusing to have this red herring error be thrown.\r\n\r\nThis was the *actual* error that was happening under the hood, only visible by knowing to dig into the *.xcdistributionlogs files:\r\n\r\n2017-03-31 16:49:06 +0000 Validating IPA structure...\r\n2017-03-31 16:49:06 +0000 error: Failed to verify bitcode in opus.framework/opus:\r\nerror: Bundle only contains bitcode-marker /var/folders/s1/0h7d0scx6xqdthft328yfk0m0000gn/T/IDEDistributionThinningStep.KRt/Payload/Viv.app/Frameworks/opus.framework/opus (armv7)\r\n\r\nAs soon as we correct that error, the export worked successfully.\r\n\r\nVersion:\r\nXcode 8.3 (8E162)\r\n\r\nNotes:\r\nList of other errors that also caused this high level error to be thrown: https://github.com/fastlane/fastlane/issues/8737\r\n\r\nConfiguration:\r\nXcode 8.3 CLI tools using latest xcodebuild export APIs"
+    email: rob@chefbrain.com
+    modified: "2017-04-01T17:35:42.40215Z"
+    number: "31389725"
+    number_intvalue: 31389725
+    originated: 4/1/2017
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'xcodebuild: Misleading "No applicable devices found" error'

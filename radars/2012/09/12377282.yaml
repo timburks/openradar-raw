@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12377282"
+    labels:
+        datastore_id: "2049403"
+data:
+    classification: High
+    created: "2012-09-26T17:37:46.334404Z"
+    description: "26-Sep-2012 07:31 PM Lukas Zeller:\r\nSummary:\r\n\r\nthe new iOS API to obtain a vendor specific unique ID, the \"identifierForVendor\" method of UIDevice, returns a non-unique ID of 00000000-0000-0000-0000-000000000000 on some devices.\r\n\r\nSteps to Reproduce:\r\n\r\n  UIDevice *theDevice = [UIDevice currentDevice];\r\n  NSUUID *ifv = [theDevice identifierForVendor];\r\n  NSString *deviceID = [ifv UUIDString];\r\n  NSLog(deviceID);\r\n\r\nExpected Results:\r\n\r\nAn unique identifier for the device/vendor combination\r\n\r\nActual Results:\r\n\r\nOn some devices this returns a completely bogus ID of\r\n\r\n  00000000-0000-0000-0000-000000000000\r\n\r\nTwo of my own devices (an iPhone4 and a iPhone4S) are affected, another (a iPad 3rd Gen) is not.\r\n\r\nIn the few hours since I detected this problem (which has catastrophic consequences for my customers, see below) I have collected logs from 5 customers from all over the world, with iPhones and iPads which exhibit the same behaviour.\r\n\r\nThe behaviour is 100% reproducible on affected devices, among different apps (my real apps and the test app as attached to this bug report)\r\n\r\nRegression:\r\n\r\nno reliable device identifier in iOS - UUID is deprecated and identifierForVendor seems severely unreliable.\r\n\r\nNotes:\r\n\r\nI created a minimal app to test the behaviour.\r\n\r\nThis is catastropic for apps like mine, which implement a open protocol which MANDATES a unique device identifier (SyncML in my case). Non-unique IDs may mess up data on the server side.\r\n\r\nI am hugely disappointed as the switch from UDID to identifierForVendor has cost me and especially my customers a lot of headake already, because a device which changed ID is not something the designers of the SyncML standard thought would happen. But widespread collision of IDs is really disastrous!!! \r\n\r\n26-Sep-2012 07:31 PM Lukas Zeller:\r\n'identifierForVendor000000000000000.zip' was successfully uploaded\r\n(For openRadar: get the sample app here: http://www.plan44.ch/downloads/identifierForVendor000000000000000.zip"
+    email: syncluz@gmail.com
+    modified: "2017-11-01T16:57:42.1523Z"
+    number: "12377282"
+    number_intvalue: 12377282
+    originated: "2012-09-26"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS6
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: identifierForVendor returns 00000000-0000-0000-0000-000000000000 on some devices

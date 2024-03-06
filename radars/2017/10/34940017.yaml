@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34940017"
+    labels:
+        datastore_id: "4991447027679232"
+data:
+    classification: Serious Bug
+    created: "2017-10-11T20:16:58.5859Z"
+    description: "Summary:\r\nIf you have multiple accounts enabled for FileVault2 on 10.13 using APFS, only the account credentials currently logged in as the console/active desktop user can safely change the personal recovery key.\n\nAny attempt to use an account other than the one visually logged into the Finder/desktop in an automated fashion will generate an error when attempting to change the recovery key and then - in a completely unexpected/erroneous move - immediately delete the current recovery key.\r\n\r\nSteps to Reproduce:\r\n- Install 10.12.6\n- Create two administrative users (test1 and test2)\n- Enable FileVault encryption\n- Reboot twice - verifying that both users (test1 and test2) can unlock and log into the device\n- Upgrade to 10.13 and verify the filesystem was updated from HFS+ to APFS\n- Reboot twice - verifying that both users (test1 and test2) can unlock and log into the device\n- Log in with one account (test1) and use: sudo fdesetup changerecovery -personal\n- Verify that a new recovery key is generated and displayed\n- Open Terminal and type: login    - then log in as the other account (test2)\n- As the non-console account, use: sudo fdesetup changerecovery -personal\r\n\r\nExpected Results:\r\nA new personal recovery key is generated\r\n\r\nActual Results:\r\nsudo fdesetup changerecovery -personal\nPassword: <enter second user password>\nEnter your password: <enter second user password>\nError: Unable to change key.\n\nThe above error message is displayed and no recovery key is generated.\n\nRunning sudo fdesetup haspersonalrecoverykey   now returns false where before it returned true, and the prior recovery key no longer works with fdesetup validaterecovery\r\n\r\nVersion:\r\n10.13.0 17A365\r\n\r\nNotes:\r\nNumber of devices affected: 37000+\n\nThis procedure is confirmed to work just fine with 10.12.6.\n\nSince 10.13 removed the ability to change the recovery key using the current recovery key (it appears to now require a user's password), if an organization attempted to perform automated recovery key rotation in the background using a FileVault2 enabled account, it will not only fail to do so under 10.13 with APFS, it will also erroneously delete the existing recovery key during the process."
+    email: frogor.fb.openradar@gmail.com
+    modified: "2017-10-11T20:16:58.58622Z"
+    number: "34940017"
+    number_intvalue: 34940017
+    originated: 11-Oct-2017 01:16 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13.0 17A365
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: macOS 10.13 with APFS and FileVault2 encryption enabled deletes personal recovery keys in error

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12021052"
+    labels:
+        datastore_id: "2842402"
+data:
+    classification: Enhancement
+    created: "2013-03-11T19:54:52.86869Z"
+    description: "02-Aug-2012 04:09 PM Zach Drayer:\r\nWhen dealing with audio/video, AirPlay is basically a must-have feature at this point. However, the only way to have an AirPlay route picker is by using MPVolumeView from MediaPlayer.framework. In cases where one writes a custom player (for whatever reason one has -- why one would do this isn't the purpose of this radar), MediaPlayer.framework *still* needs to be linked in, in order to show the a/v route picker.\r\n\r\nIt would be nice if there was a property, perhaps on AVPlayer, that exposed available routes. This would be very preferable to having to link in MoviePlayer.framework for one bit of functionality that does not have a very complex UI.\r\n\r\n In my mind, the ideal interface will look something like this:\r\n\r\nextern NSString *const AVRouteAvailabilityDidChangeNotification;\r\n\r\n@interface AVPlayer (Routing)\r\n@property (atomic, retain) AVRoute *activeRoute;\r\n@property (readonly) NSArray *routes;\r\n@end\r\n\r\ntypedef enum {\r\n    AVRouteTypeLocalDevice,\r\n    AVRouteTypeAppleTV,\r\n    AVRouteTypeBluetooth,\r\n    AVRouteTypeWifi\r\n} AVRouteType;\r\n\r\n@interface AVRoute : NSObject\r\n@property (readonly) NSString *displayName; // localized as needed\r\n@property (readonly) UIImage *displayIcon; // suggested icon, to avoid confusing con\r\n@property (readonly) AVRouteType routeType;\r\n@property (readonly) BOOL active; // is the route currently in use?\r\n@property (readonly) BOOL available; // is the route available, or has it disappeared on us?\r\n@end\r\n\r\nHowever! I would also be okay (even if not exactly happy with) with an interface along the lines of:\r\n@interface AVPlayer (Routing)\r\n@property (readonly) BOOL hasAvailableRoutes;\r\n@end\r\n\r\n// instantiate this view and stick it in your view hierarchy, like you would with a MPVolumeView.\r\n@interface AVRoutePickerView : UIView\r\n@end\r\n\r\n02-Aug-2012 04:46 PM Zach Drayer:\r\n\"to avoid confusing con\" -> \"to avoid confusing consumers\""
+    email: zach@drayer.name
+    modified: "2013-03-11T19:54:52.869133Z"
+    number: "12021052"
+    number_intvalue: 12021052
+    originated: 02-Aug-2012 04:09 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPad SDK
+    product_version: ""
+    reproducible: N/A
+    resolved: ""
+    status: Open
+    title: Expose AirPlay routes in AVFoundation

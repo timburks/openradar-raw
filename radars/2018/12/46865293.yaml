@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "46865293"
+    labels:
+        datastore_id: "5025850143539200"
+data:
+    classification: Bug
+    created: "2018-12-20T08:11:52.208232Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nFor collection view cells / layouts who define cell width based on total available collection view width, a bug exists where a cell will size incorrectly on rotation. \r\n\r\nThis is due to a cell creating incorrect constraints for `contentView` from its autoresizing mask. Despite `contentView`'s subviews being constrained correctly, and the correct parameters being passed into `systemLayoutSizeFitting` from `preferredLayoutAttributesFitting`, the contentView's autoresizing mask constraints will cause `systemLayoutSizeFitting` to return incorrect, stale values.\r\n\r\nA workaround for the problem exists - simply setting `contentView.bounds = width` before invoking `systemLayoutSizeFitting` inside of `preferredLayoutAttributesFitting` will cause the autoresizing mask constraints to update their constant values, resulting in correct behavior when invoking `systemLayoutSizeFitting`.\r\n\r\nIn MagazineLayout, I need to work around this exact issue for rotation to work in all of our flows https://github.com/airbnb/MagazineLayout/blob/master/MagazineLayout/Public/Views/MagazineLayoutCollectionViewCell.swift\r\n\r\nThe included sample project demos the problem with flow layout.\r\n\r\nSteps to Reproduce:\r\n1. Open sample project\r\n2. Run on iPhone XS simulator\r\n3. Rotate from portrait to landscape - observe that there's extra padding vertical padding for some of the cells (the cell should hug the text closely on all sides)\r\n4. Rotate back to portrait - observe more incorrectly sized cells\r\n\r\n5. Uncomment Cell.swift:47 - this will fix the issue\r\n6. Repeat 1-4, everything will behave correctly as long as that line (the fix) is present\r\n\r\nI've included some print statements in `preferredLayoutAttributesFitting` to facilitate debugging.\r\n\r\nExpected Results:\r\nCells should size correctly if their width changes and their heights are self-sizing.\r\n\r\nActual Results:\r\nCells size incorrectly if their width changes and their heights are self-sizing.\r\n\r\nVersion/Build:\r\niOS 12\r\n\r\nConfiguration:\r\nN/A\r\n\r\n\r\n\r\nSample project: https://drive.google.com/file/d/1dwdANQYmzu8ZyBQAaCFbux5Z3dF7e8Hl/view?usp=sharing"
+    email: kellerbryan19@gmail.com
+    modified: "2018-12-20T08:11:52.208426Z"
+    number: "46865293"
+    number_intvalue: 46865293
+    originated: 12/10/18
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: iOS 12
+    reproducible: Yes
+    resolved: No
+    status: Open
+    title: Cell's autoresizing mask breaks self-sizing

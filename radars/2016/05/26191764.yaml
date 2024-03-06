@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26191764"
+    labels:
+        datastore_id: "6132649148022784"
+data:
+    classification: Serious
+    created: "2016-05-10T09:24:42.49548Z"
+    description: "Summary:\r\nWhen using document scoped bookmarks, the ScopedBoo process never closes files. After 255 open files has been reached, no more files can be opened causing document saving to fail.\r\n\r\nSteps to Reproduce:\r\n1. Open up a terminal window and run the following command.\r\n\r\nwhile true; do lsof -c ScopedBoo; sleep 1;  done\r\n\r\n2. Run the attached test app and hit the \"Button\".\r\n3. Choose a file, then save the document.\r\n4. Hit the \"Button\" again, choose another file and save the document.\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\nObserve in the terminal window that ScopedBoo now has a number of open files. If you keep saving the document the number of open files in After each save, ScopedBoo's open file count continues to rise eventually reaching a count of 255. Once reached, your document to fail to save.\r\n\r\nThe only way I've found to clear the list is to reboot the machine.\r\n\r\nWith auto save enabled, users are quickly running into this problem.\r\n\r\nThe ScopedBoo process is shared between all apps so after exhausting all open files, ANY application that uses document scoped bookmarks will fail to save.\r\n\r\nVersion:\r\n10.11.4 (15E65)\r\n\r\n\r\nSample app:\r\nA document based sandboxed app with these entitlements \r\n\r\nApp Sandbox = YES\r\ncom.apple.security.files.bookmarks.document-scope = YES\r\ncom.apple.security.files.user-selected.read-write = YES\r\n\r\nDocument.m code\r\n\r\n@interface Document ()\r\n@property (nonatomic, strong) NSData *bookmarkData;\r\n@end\r\n\r\n@implementation Document\r\n\r\n+ (BOOL)autosavesInPlace {\r\n\treturn YES;\r\n}\r\n\r\n- (NSString *)windowNibName {\r\n\treturn @\"Document\";\r\n}\r\n\r\n- (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError {\r\n\treturn self.bookmarkData;\r\n}\r\n\r\n- (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError {\r\n\tself.bookmarkData = data;\r\n\treturn YES;\r\n}\r\n\r\n- (IBAction)openFile:(id)sender {\r\n\t\r\n\tNSOpenPanel *panel = [NSOpenPanel openPanel];\r\n\t\r\n\t[panel beginSheetModalForWindow:[self windowForSheet] completionHandler:^ (NSInteger result) {\r\n\t\tif (result != NSFileHandlingPanelOKButton) {\r\n\t\t\treturn;\r\n\t\t}\r\n\t\t\r\n\t\tNSURL *fileURL = [[panel URLs] lastObject];\r\n\t\tNSData *newBookmarkData = [fileURL bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope includingResourceValuesForKeys:nil relativeToURL:self.fileURL error:nil];\r\n\t\t\r\n\t\tself.bookmarkData = newBookmarkData;\r\n\t}];\r\n}\r\n\r\n@end"
+    email: tom@71squared.com
+    modified: "2016-06-07T13:28:30.83335Z"
+    number: "26191764"
+    number_intvalue: 26191764
+    originated: 10-May-2016 10:16 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11.4 (15E65)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ScopedBoo reaches maximum (255) open files

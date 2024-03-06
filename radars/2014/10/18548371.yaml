@@ -1,0 +1,68 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18548371"
+    labels:
+        datastore_id: "5294607915024384"
+data:
+    classification: Serious Bug
+    created: "2014-10-04T22:24:02.851094Z"
+    description: |-
+        Summary:
+        Trying to narrow down the reduceLeft runtime crashes (and e.g. find a workaround) I instead found a bunch of compiler crashes. This is 3 of 3 so far.
+
+        TL;DR: Basically never call functions returned by functions taking functions passing them functions.
+
+
+        Steps to Reproduce:
+        1. Compile this.
+
+        public struct ReducibleOf<T> {
+        	public init<S : SequenceType where S.Generator.Element == T>(_ sequence: S) {
+        		producer = {
+        			var generator = sequence.generate()
+        			return { generator.next() }
+        		}
+        	}
+        	public func reduceLeft<Result>(recur: (ReducibleOf, Result, (Result, T) -> Result) -> Result) -> (ReducibleOf, Result, (Result, T) -> Result) -> Result {
+        		return { _, x, _ in x }
+        	}
+        	private let producer: () -> () -> T?
+        }
+        func testReduction() {
+        	let sequence = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        	let reducible = ReducibleOf(sequence)
+        	var result = 0
+        	var take: (ReducibleOf<Int>, Int, (Int, Int) -> Int) -> Int = { reducible, initial, combine in
+        		result = initial
+        		return initial
+        	}
+        	var x = reducible.reduceLeft(take)(reducible, 0 as Int, { into, each in each })
+        }
+
+        Expected Results:
+        No crash.
+
+
+        Actual Results:
+        Crash.
+
+
+        Regression:
+        Instead of finding ways for this not to crash, all I’ve found is subtly different ways in which it might crash instead.
+
+
+        Notes:
+        This is apparently what I do with my Saturday nights.
+    email: rix.rob@gmail.com
+    modified: "2014-10-04T22:24:02.851232Z"
+    number: "18548371"
+    number_intvalue: 18548371
+    originated: 04-Oct-2014 06:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-6.1 (6A1042b)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Crash 3 of 3 when calling functions returned by functions taking functions and passing functions'

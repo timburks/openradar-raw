@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15338001"
+    labels:
+        datastore_id: "5887148179849216"
+data:
+    classification: Other Bug
+    created: "2013-10-29T00:44:51.464117Z"
+    description: "Summary:\r\nWhen implementing the method -pickerView:rowHeightForComponent in a UIPickerViewDelegate, the method is called more times than there are components in the PickerView.\r\n\r\nSteps to Reproduce:\r\n1. Use Xcode Version 5.0.1 (5A2053) on Mac OS X 10.9, build 13A603\r\n2. Create empty application.\r\n3. Add new UIViewController subclass with .xib, add PickerView to .xib.\r\n\r\n4. In the AppDelegate:\r\n4a. Create UIViewController subclass\r\n4b. Create UINavigationController, initWithRootViewController using above subclass.\r\n4c. Set window.rootViewController to the UINavigationController.\r\n\r\n5. In the UIViewController subclass:\r\n5a. Implement the UIPickerViewDataSource Protocol methods -numberOfComponentsInPickerView: & -pickerView:numberOfRowsInComponent:.  Return 1 for numberOfComponents.\r\n5b. Implement the UIPickerViewDelegate Protocol methods -pickerView:titleForRow:forComponent:, -pickerView:rowHeightForComponent: & -pickerView:widthForComponent:.\r\n5c. In the methods in 5a & 5b that require component number as input, add NSParameterAssert(component == 0).\r\n\r\n6. Run the app in Xcode.\r\n\r\nExpected Results:\r\nI expected that the app would launch normally and I would be able to manipulate the picker view.\r\n\r\nActual Results:\r\nThe app launches, but then generates an assertion failure in pickerView:rowHeightForComponent: when this method is called with a component of 1.  This should not happen as the picker view is defined to only have one component by the data source implementation.\r\n\r\nVersion:\r\niOS 7.0\r\n\r\nNotes:\r\nThis problem always occurs, however:\r\n1.  Remove the NSParameterAssert from pickerView:rowHeightForComponent, and the app seems to launch normally.  Supplying a row height for a non-existant component seems to be a no-op.\r\n2.  Remove pickerView:rowHeightForComponent from the delegate implementation, and the app seems to launch normally.  Did not track component number in this case.\r\n\r\nAlso, attached is a sample project/app to illustrate the problem.\r\n\r\nConfiguration:\r\nAlways occurs when the UIPickerViewDataDelegate method -pickerView:rowHeightForComponent is implemented.\r\n\r\nAttachments:\r\n'Sample App.zip' was successfully uploaded."
+    email: whitegregory33@gmail.com
+    modified: "2013-10-29T01:05:29.544172Z"
+    number: "15338001"
+    number_intvalue: 15338001
+    originated: 11/28/2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 7.0.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIPickerViewDelegate Protocol Bug

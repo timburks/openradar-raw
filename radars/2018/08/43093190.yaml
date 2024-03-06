@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "43093190"
+    labels:
+        datastore_id: "5045674169073664"
+data:
+    classification: Serious bug
+    created: "2018-08-09T14:29:25.94449Z"
+    description: "Area:\r\nSomething not on this list\r\n\r\nSummary: Sending messages from kext to user space using an IOSharedDataQueue is unreliable/stalls on recent macOS versions.\r\n\r\nIt appears there have been 2 distinct regressions between OS X 10.11.6 and 10.13.6 in IOSharedDataQueue. The changes from OSAtomic functions to C11 atomics between 10.11.6 and 10.12 seems to have introduced a rare stall. Something else has changed between 10.12.6 and 10.13.6 which makes these stalls extremely frequent.\r\n\r\nThe core problem is that the IOSharedDataQueue::enqueue() function does not always call sendDataAvailableNotification() to wake the sleeping user client with a Mach message. This failure occurs because of weak memory ordering of IODataQueueMemory head & tail field reads and writes between the sender and receiver thread. One aspect of this seems to have been the change from OSAtomic to C11 atomics with __ATOMIC_RELAXED semantics on the kernel side with macOS 10.12. However, this alone only results in very rare failures. (You need to re-run the test many times to repro the problem on 10.12.6.) 10.13.6 makes the problem vastly worse. Source code for that version is not available, but when using a self-compiled IODataQueueDequeue() function from older sources, the problem goes away. (See readme.txt)\r\n\r\n\r\nSteps to Reproduce:\r\nenqueue() a large number of messages onto an IOSharedDataQueue which is being drained (IODataQueueDequeue) by a connected user space client. The attached code sample attempts to send as many messages as possible for a duration of 10 seconds:\r\n\r\n- Extract the attached SharedDataQueueBugRepro.zip.\r\n- Open the Xcode project.\r\n- Build the two targets: a kext and a command line utility.\r\n- Prepare and load the built kext, e.g.\r\nsudo cp -r /path/to/built/SharedDataQueueBugRepro.kext /tmp/\r\nsudo kextutil /tmp/SharedDataQueueBugRepro.kext\r\n- Run the SharedDataQueueBugTest test utility.\r\n- Wait 11 seconds for the result.\r\n\r\nExpected Results:\r\nMost of the messages should arrive in user space except when attempting to enqueue() on a full queue, and progress should not stall.\r\n\r\nOn OS X 10.11.6 and earlier, the output of the test utility will be similar to the following:\r\n-----\r\nTest completed after attempting to send 82618903 messages, result: 0x0 (kIOReturnSuccess)\r\nReceived 82617705 messages, last message ID = 82618902, time between first and last received message: 10.000000 (should be about 10)\r\n-----\r\n\r\nActual Results:\r\nOn macOS 10.13.6, the IOSharedDataQueue stalls almost immediately (after a fraction of a section, often just 1-2ms).\r\n\r\nSample output from SharedDataQueueBugTest:\r\n-----\r\nTest completed after attempting to send 12299 messages, result: 0x0 (kIOReturnSuccess)\r\nReceived 2120 messages, last message ID = 2120, time between first and last received message: 0.001353 (should be about 10)\r\n-----\r\n\r\nVersion/Build:\r\nOS X 10.11.6: unaffected\r\nmacOS 10.12.6: stalls are rare (often hundreds of millions of messages sent successfully before a stall)\r\nmacOS 10.13.6: stalls all the time\r\n\r\n\r\nConfiguration:\r\nN/A"
+    email: phil@philjordan.eu
+    modified: "2018-08-09T14:29:25.94469Z"
+    number: "43093190"
+    number_intvalue: 43093190
+    originated: August 9 2018, 4:27 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.12.6, 10.13.6
+    reproducible: always
+    resolved: ""
+    status: ""
+    title: IOSharedDataQueue stalls

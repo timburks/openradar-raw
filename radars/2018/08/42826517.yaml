@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "42826517"
+    labels:
+        datastore_id: "5001767121059840"
+data:
+    classification: ""
+    created: "2018-08-02T20:14:37.65731Z"
+    description: "There have been a number of times in this recent project I'm working on where I've wanted to get a value out of a block passed to performAndWait, as well as a way to propagate errors up the call stack. It would be really great if NSManagedObjectContext had a variant of performAndWait that could throw and return a value, similar to one of DispatchQueue's sync methods. For example, the method would look something like this:\r\n\r\n```swift\r\nfunc performAndWait<T>(_ block: () throws -> T) rethrows -> T\r\n```\r\n\r\nI've been able to achieve this functionality by adding this extension to NSManagedObjectContext, but having a system-provided implementation would be great.\r\n\r\n```swift\r\nprivate enum Something<T> {\r\n    case nothing\r\n    case value(T)\r\n    case error(Error)\r\n}\r\n\r\nextension NSManagedObjectContext {\r\n    \r\n    func performAndWait<T>(_ block: () throws -> T) throws -> T {\r\n        var value: Something<T> = .nothing\r\n        \r\n        performAndWait {\r\n            do {\r\n                value = .value(try block())\r\n            } catch let caughtError {\r\n                value = .error(caughtError)\r\n            }\r\n        }\r\n        \r\n        switch value {\r\n        case .nothing:\r\n            fatalError(\"Somehow got nothing. System error where our block was not called?\")\r\n        case let .error(error):\r\n            throw error\r\n        case let .value(value):\r\n            return value\r\n        }\r\n    }\r\n    \r\n}\r\n```\r\n\r\nThe common use case for me has been executing a fetch request, performing some transformation on the returned objects, and then passing those transformed objects back. Here's a little bit of a contrived example, but it shows off how this might work:\r\n\r\n```swift\r\nfunc getActiveUsers() throws -> [User] {\r\n    return try viewContext.performAndWait {\r\n         let userObjects = try viewContext.execute(usersFetchRequest)\r\n         let users = userObjects.filter({ $0.isActive == true })\r\n         return users\r\n    }\r\n}\r\n```"
+    email: butler.grant.j@gmail.com
+    modified: "2018-08-02T20:14:37.6575Z"
+    number: "42826517"
+    number_intvalue: 42826517
+    originated: "2018-08-01 16:40:00"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK (Core Data)
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Add performAndWait Swift Variant that Throws and Returns a Value

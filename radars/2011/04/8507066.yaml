@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8507066"
+    labels:
+        datastore_id: "1176403"
+data:
+    classification: Serious Bug
+    created: "2011-04-16T21:49:25.013081Z"
+    description: "03-Oct-2010 02:30 PM Marc Hoyois:\r\nSummary:\r\nWhen Safari reloads a web pages entirely from cache, this page cannot receive any message sent by an extension's global page.\r\n\r\nSteps to Reproduce:\r\n1. Install the first attached extension. It has this global script:\r\n\r\nfunction execute(event) {\r\n    event.target.browserWindow.activeTab.page.dispatchMessage(\"name\", \"message\");\r\n}\r\n\r\nsafari.application.addEventListener(\"command\", execute, false);\r\n\r\nand this injected script:\r\n\r\nsafari.self.addEventListener(\"message\", function(){alert(\"message received!\");}, false);\r\n\r\n2. Navigate to a lightweight page that Safari will save in its cache. For example, www.google.com.\r\n\r\n3. Press the extension's toolbar button, and observe the 'message received' alert confirming that the page received the message sent by the global page.\r\n\r\n4. Navigate away from the page (for example, click a link on the page).\r\n\r\n5. Press the back button.\r\n\r\n6. Press the toolbar button again.\r\n\r\nExpected Results:\r\nThe page receives the message and alerts 'message received' as in step 3.\r\n\r\nActual Results:\r\nNothing happens!\r\n\r\nNotes:\r\n1. I was unable to find a workaround. The second attached extension is such an attempt. It has a different injected script:\r\n\r\nfunction handlePageShowEvent(event) {\r\n    alert(\"pageshow event fired. Registering listener to messages.\")\r\n    safari.self.addEventListener(\"message\", function() {alert(\"message received!\");}, false);\r\n}\r\n\r\nwindow.addEventListener(\"pageshow\", handlePageShowEvent, true);\r\n\r\nthat registers the listener function to messages within a listener to the 'pageshow' event which is fired even when a page is restored from cache. However, this does not solve the problem.\r\n\r\n2. I've also tried dispatching the message to all pages instead of using the browserWindow property of the toolbar button, but that doesn't solve the problem.\r\n\r\n3. This affects every extension that uses messaging!"
+    email: marc.hoyois@gmail.com
+    modified: "2011-08-28T05:39:42.472464Z"
+    number: "8507066"
+    number_intvalue: 8507066
+    originated: "2010-10-03"
+    parent_number: "8108540"
+    product: Safari
+    product_version: 5.0.5
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/8108540
+    title: 'Safari extensions: Pages restored from cache cannot receive messages!'

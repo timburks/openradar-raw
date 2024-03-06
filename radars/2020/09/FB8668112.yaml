@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8668112
+    labels:
+        datastore_id: "4979920715382784"
+data:
+    classification: Incorrect Behavior
+    created: "2020-09-10T20:52:23.075888Z"
+    description: "In watchOS 6, destination views that were navigated to in a SwiftUI app would properly inherit their parent environment.\r\n\r\nIn watchOS 7, they no longer do.\r\n\r\nBelow is the sample code that can be used to cause the issue. It is also included in the sample project attached to this Feedback.\r\n\r\n--\r\n\r\nstruct ContentView: View {\r\n    @ObservedObject var model = Model()\r\n    \r\n    var body: some View {\r\n        ScrollView {\r\n            Text(\"Model Value \\(model.value)\")\r\n            \r\n            NavigationLink(destination: DetailView()) {\r\n                Text(\"Manage Model\")\r\n            }\r\n        }\r\n        .environmentObject(model)\r\n    }\r\n}\r\n\r\n\r\nstruct DetailView: View {\r\n    @EnvironmentObject var model: Model\r\n    \r\n    var body: some View {\r\n        Button(\"Increment\") {\r\n            self.model.value += 1\r\n        }\r\n    }\r\n}\r\n\r\n\r\nstruct ContentView_Previews: PreviewProvider {\r\n    static var previews: some View {\r\n        ContentView()\r\n    }\r\n}\r\n\r\n\r\nclass Model: ObservableObject {\r\n    @Published var value = 0\r\n}\r\n\r\n\r\n--\r\n\r\nThe above will show a NavigationLink that, when pressed, will show a detail view with a button.\r\n\r\nIn watchOS 6, the button works as expected and updates the environment object.\r\n\r\nIn watchOS 7, the app crashes when trying to access the environment object with the error: \"Fatal error: No ObservableObject of type Model found. A View.environmentObject(_:) for Model may be missing as an ancestor of this view.\"\r\n\r\nThis is clearly a regression from how things worked in watchOS 6."
+    email: josh.hrach@gmail.com
+    modified: "2020-09-10T20:52:23.076061Z"
+    number: FB8668112
+    number_intvalue: 8668112
+    originated: 10 Sept 2020
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI Framework
+    product_version: watchOS 7
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: SwiftUI EnvironmentObject in watchOS 7 doesn't function properly compared to watchOS 6

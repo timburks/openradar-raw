@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29859960"
+    labels:
+        datastore_id: "4951736129159168"
+data:
+    classification: ""
+    created: "2017-01-04T04:50:07.42618Z"
+    description: "Area:\r\nUserNotifications Framework\r\n\r\nSummary:\r\nWhen scheduling a local notification with content with a badge value of 0 and no other attributes, the notification will never post. Creating the exact same notification with a non-zero value does successfully update the badge. Scheduling the notification with a 0 value fails to clear the badge.\r\n\r\nSteps to Reproduce:\r\n1. Set the application badge to a non-zero value: UIApplication.shared.applicationIconBadgeNumber = 2\r\n2. Create a local notification with an instance of: let content = UNMutableNotificationContent()\r\n3. Set: content.badge = NSNumber(value: 0)\r\n4. Create a notification trigger sometime in the future: let notificationBadgeZeroTrigger = UNTimeIntervalNotificationTrigger.init(timeInterval: 5, repeats: false)\r\n5. Create the notification request: let notificationBadgeZeroRequest = UNNotificationRequest.init(identifier: \"0\", content: content, trigger: notificationBadgeZeroTrigger)\r\n6. Add the notification request to the notification center: UNUserNotificationCenter.current().add(notificationBadgeZeroRequest)\r\n\r\nExpected Results:\r\nWhen the notification trigger fires (5 seconds in the above example), the application badge should be set to 0 (cleared).\r\n\r\nActual Results:\r\nNothing. The notification is never listed in either the pending or delivered notification arrays (UNUserNotificationCenter.current().getDeliveredNotifications() or UNUserNotificationCenter.current().getPendingNotifications()).\r\n\r\nVersion:\r\n10.2 (14C92)\r\n\r\nNotes:\r\nI’ve attached an example project that demonstrates this behavior. When the ‘Start’ button is pressed, the application badge is set to 0. Then press the Home button to send the app to the background. Every five seconds, the badge value should increment: 1, 2, 3, 4. The next notification after 4 should set the badge to 0. The badge value is never cleared.\r\n\r\nAs a workaround to this, adding a title string to notification content does result in the posting of this notification. But having an NSNumber value of 0 behave differently (and in an undocumented fashion) from non-zero values seems to be a bug.\r\n\r\nConfiguration:\r\nOccurs on all configurations of 10.2 that I've tested (iPad, iPhone, Simulator).\r\n\r\nAttachments:\r\nhttps://jeffvautin.com/wp-content/uploads/openradar/radar29859960UserNotificationZeroBadgeTest.zip\r\nhttps://jeffvautin.com/wp-content/uploads/openradar/radar29859960UserNotificationZeroBadgeTestSwift5.zip"
+    email: jeff@jeffvautin.com
+    modified: "2019-07-21T15:11:13.94702Z"
+    number: "29859960"
+    number_intvalue: 29859960
+    originated: "2017-01-03"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 10.2 (14C92)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UserNotifications.Framework does not schedule local notifications that set badge value to 0

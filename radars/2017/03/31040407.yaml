@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31040407"
+    labels:
+        datastore_id: "5004721261641728"
+data:
+    classification: ""
+    created: "2017-03-14T17:37:12.02724Z"
+    description: "Summary:\r\nWhen having a UITextView in a UITableViewCell and long pressing the UITextView, the copy/paste menu has items that should not be shown. For example, it is possible for the menu to have a \"Cut\" or \"Copy\" item even if the UITextView is empty or no text is selected (which makes no sense).\r\n\r\nThis only happens when implementing the following UITableViewDelegate methods:\r\n  -tableView:shouldShowMenuForRowAtIndexPath:\r\n  -tableView:canPerformAction:forRowAtIndexPath:withSender:\r\n  -tableView:performAction:forRowAtIndexPath:withSender:\r\n\r\nNote that even if -tableView:shouldShowMenuForRowAtIndexPath: returns NO, -tableView:canPerformAction:forRowAtIndexPath:withSender: will still be called when long-touching the UITextView (?!) and if the latter returns YES, the items will appear in the menu.\r\n\r\nWhen an item which should no be here (\"Cut\" or \"Copy\" for example in a empty UITextView) is touched, the app enters an infinite recursion, and crashes.\r\n\r\nStack trace of the crash is attached.\r\n\r\n\r\nSteps to Reproduce:\r\nUsing the attached sample project:\r\n1. Build & run the project\r\n2. Long touch on the light-violet text view in the first cell\r\n3. Tap the \"Cut\" button in the appearing menu\r\n\r\nFrom scratch:\r\n1. Add a UITextView to a UITableViewCell\r\n2. Implement the following methods in the tableview's delegate:\r\n  -tableView:shouldShowMenuForRowAtIndexPath:\r\n  -tableView:canPerformAction:forRowAtIndexPath:withSender:\r\n  -tableView:performAction:forRowAtIndexPath:withSender:\r\n3. Make -tableView:canPerformAction:forRowAtIndexPath:withSender: return `YES`\r\n4. Build & run\r\n5. Build & run the project\r\n6. Long touch on the light-violet text view in the first cell\r\n7. Tap the \"Cut\" button in the appearing menu\r\n\r\n\r\nExpected Results:\r\nThe tableview's delegate methods are not called, and the textview menu only show relevant items.\r\n\r\nActual Results:\r\nThe tableview's delegate methods are called, wrong menu items are displayed, some of them resulting in the app crashing when tapped.\r\n\r\nRegression:\r\nBehavior observed on iOS 10.2.x, on an iPad Mini 4 and an iPhone 7\r\n\r\nNotes:\r\nAttached are a minimal sample project demonstrating the problem, and a crashlog after tapping one of the bogus menu items."
+    email: guillaume.algis@gmail.com
+    modified: "2017-03-14T17:37:12.02749Z"
+    number: "31040407"
+    number_intvalue: 31040407
+    originated: "2017-03-14"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 10.2.x
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'UIMenuController for a UITextView in UITableViewCell calls -tableView:canPerformAction:forRowAtIndexPath: resulting in a crash for some UIMenuItems'

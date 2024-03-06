@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7674133"
+    labels:
+        datastore_id: "161406"
+data:
+    classification: Serious Bug
+    created: "2010-02-22T10:27:06.447206Z"
+    description: "Summary: \r\nCode blocks do not handle C++ objects constructor/destructor calls correctly.\r\nAccording to http://developer.apple.com/mac/library/documentation/Cocoa/Conceptual/Blocks/Articles/bxVariables.html#//apple_ref/doc/uid/TP40007502-CH6-SW5 \"In general you can use C++ objects within a block.\" and \"If you use any other C++ stack-based object from within a block, it must have a const copy constructor. The C++ object is then copied using that constructor.\"\r\nThis is not the case because the code in the block would reference the object after calling the destructor.\r\n\r\nSteps to Reproduce:\r\n1) create a new \"Command Line Tool\" C++ project in XCode.\r\n2) paste the code (see below under \"Notes\").\r\n3) build & run & check the output.\r\n\r\nExpected Results:\r\nAnything, but still according to C++ rules: a method should not be called for an object after the destructor has been executed.\r\n\r\nActual Results:\r\nThe output clearly shows that the \"talk\" method is called for an object that has already been destroyed.\r\n\r\nRegression:\r\nI'm using XCode 3.2.1 from the retail Snow Leopard (upgrade) installation DVD. AFAIK 3.2.1 is still current.\r\n\r\nNotes:\r\nThis is the code that you should paste into the main.cpp to reproduce the problem.\r\n\r\n#include <iostream>\r\nusing namespace std;\r\nclass Test {\r\npublic:\r\n    Test()\r\n    {\r\n        cout << \"@\" << ((void*)this) << \"->Test()\\n\";\r\n    }\r\n    \r\n    ~Test()\r\n    {\r\n        cout << \"@\" << ((void*)this) << \"->~Test()\\n\";\r\n    }\r\n    \r\n    Test(const Test&r)\r\n    {\r\n        cout << \"@\" << ((void*)this) << \"->Test(const Test& @\" << ((void*)&r) << \")\\n\";\r\n    }\r\n    \r\n    void speak() const\r\n    {\r\n        cout << \"@\" << ((void*)this) << \"->speak()\\n\";\r\n    }\r\n};\r\n\r\nint main (int , char * const []) \r\n{\r\n    Test t;\r\n    ^{  t.speak();  }();\r\n}"
+    email: analogfile@gmail.com
+    modified: "2011-08-28T05:42:32.28923Z"
+    number: "7674133"
+    number_intvalue: 7674133
+    originated: 22-Feb-2010 11:16 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: XCode 3.2.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Code Blocks misbehave when using C++ objects

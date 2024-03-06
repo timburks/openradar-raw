@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "42117392"
+    labels:
+        datastore_id: "5012266814537728"
+data:
+    classification: Serious Bug
+    created: "2018-07-12T13:00:48.05694Z"
+    description: "Summary:\r\nIn the latest iOS 12 beta some Korean filenames (거짓말 for example) are not properly handled by NSFileManager even though URL based calls are used.\r\n\r\nI need to use POSIX calls to create a file with encoding such that the bug is provoked, but the bug/inconsistency happens entirely in calls to NSFileManager and the example uses NSURL based filenames as is best practice.\r\n\r\nThe same code runs without problems on iOS 11 devices.\r\n\r\nSteps to Reproduce:\r\n1. create file with Korean filename using Posix API's to fully control filename encoding.\r\n\r\n2. list directory where we just created file using NSFileManager's contentsOfDirectoryAtURL: includingPropertiesForKeys:options:error:\r\n\r\n3. confirm that the written file exists\r\n\r\n4. delete the file using NSFileManager's removeItemAtURL:error:\r\n\r\nExpected Results:\r\nfile should be deleted\r\n\r\nActual Results:\r\nfile isn't deleted with message:\r\n\r\nUnable to delete file: file:///private/var/mobile/Containers/Data/Application/7FBABD52-BB92-4A3B-AB6C-EE79C7A023D2/Documents/%EA%B1%B0%EC%A7%93%EB%A7%90\r\nError Domain=NSCocoaErrorDomain Code=4 UserInfo={NSFilePath=<redacted>, NSUserStringVariant=<redacted>, NSUnderlyingError=0x280af1ad0 {Error Domain=NSPOSIXErrorDomain Code=2}}\r\n\r\nIt is then possible to delete the file using the POSIX call 'unlock'\r\n\r\nVersion:\r\niOS 12.0 (16A5318d)\r\n\r\nNotes:\r\nThe following code provokes the bug by first writing a Korean filename using POSIX style API's. This is preparation of the bug. \r\n\r\nMy bug report is about the behaviour of NSFileManager given a filesystem where such a file exists.\r\n\r\nXcode project has been included where this code runs in application:didFinishLaunchingWithOptions.\r\n\r\nhttps://workingcopyapp.com/downloads/DeleteTest.zip"
+    email: palmin@gmail.com
+    modified: "2018-07-12T13:03:37.88592Z"
+    number: "42117392"
+    number_intvalue: 42117392
+    originated: 12-Jul-2018 03:00 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 12.0 (16A5318d)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSFileManager does not consistently handle Korean filenames, even when using NSURL based API's

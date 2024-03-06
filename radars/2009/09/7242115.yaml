@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7242115"
+    labels:
+        datastore_id: "76418"
+data:
+    classification: Serious Bug
+    created: "2009-09-22T06:22:15.078764Z"
+    description: "Summary:\r\nIf a function or a method contains several ObjC 2.0-style for loops (serial, not nested loops) which use indexing variable with the same name, then GDB uses an incorrect address of those variables. This makes printing values of those variables impossible. This issue seems to happen only when code is compiled with LLVM-GCC 4.2 compiler. GCC 4.2 and Clang LLVM 1.0 seem to generate correct code.\r\n\r\nSteps to Reproduce:\r\nTest app:\r\n\r\nint main (int argc, const char * argv[]) {\r\n    NSArray *a = [[NSArray alloc] initWithObjects:@\"a\", nil];\r\n\r\n    for(id i in a)\r\n    {\r\n        NSLog(@\"%@.\",i);   // <<- Stop here in GDB, try to print 'i'\r\n    }\r\n    for(id i in a)\r\n    {\r\n        NSLog(@\"%@.\",i);\r\n    }\r\n    return 0;\r\n}\r\n\r\n- Compile with the default \"Debug\" configuration of XCode's \"Command Line Tool\" project template.\r\n\r\nExpected Results:\r\n- GDB uses correct addresses of indexing variables\r\n\r\nActual Results:\r\n- GDB uses incorrect addresses of indexing variables (0x32aaaba7 in my case).\r\n\r\nRegression:\r\n$ `xcode-select -print-path`/usr/llvm-gcc-4.2/bin/llvm-gcc-4.2 --version\r\ni686-apple-darwin10-llvm-gcc-4.2 (GCC) 4.2.1 (Based on Apple Inc. build 5646) (LLVM build 2118)\r\n\r\n$ `xcode-select -print-path`/usr/bin/gcc-4.2 --version\r\ni686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1 (Apple Inc. build 5646)\r\n\r\n$ `xcode-select -print-path`/usr/bin/gdb --version\r\nGNU gdb 6.3.50-20050815 (Apple version gdb-1344) (Fri Jul  3 01:19:56 UTC 2009)"
+    email: nikita.zhuk@gmail.com
+    modified: "2011-08-28T05:44:26.053545Z"
+    number: "7242115"
+    number_intvalue: 7242115
+    originated: 22-Sep-2009 09:18 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "3.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: LLVM-GCC 4.2 and GDB generate incorrect address of indexing variables

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "41654253"
+    labels:
+        datastore_id: "5000901416714240"
+data:
+    classification: UI/Usability Bug
+    created: "2018-06-29T22:02:53.298416Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\n\r\nSetting a view's background color to a named color prevents the color from being changed until at least one run loop after viewWillAppear. This occurs whether the view is the storyboard's initial view controller or is presented from that initial view controller.\r\n\r\n```\r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n        print(\"testBlue color: \\(UIColor(named: \"testBlue\")!)\")\r\n        print(\"Loaded background color: \\(view.backgroundColor!)\")\r\n        view.backgroundColor = .orange\r\n        print(\"New background color: \\(view.backgroundColor!)\")\r\n    }\r\n\r\n    override func viewWillAppear(_ animated: Bool) {\r\n        super.viewWillAppear()\r\n        print(\"viewWillAppear background color: \\(self.view.backgroundColor!)\")\r\n    }\r\n```\r\nprints:\r\n```\r\ntestBlue color: kCGColorSpaceModelRGB 0 0.789 1 1 \r\nLoaded background color: UIExtendedSRGBColorSpace 0 0.789 1 1\r\nNew background color: UIExtendedSRGBColorSpace 1 0.5 0 1\r\nviewWillAppear background color: UIExtendedSRGBColorSpace 1 0.5 0 1\r\n```\r\n\r\nThe view is blue.\r\n\r\nIf the background color of the view in the storyboard is not set in the storyboard, but it's set in code after the view loads to a named color, changing the color in code works immediately after.\r\n\r\n```\r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n        view.backgroundColor = UIColor(named: \"testBlue\")\r\n        print(\"testBlue color: \\(UIColor(named: \"testBlue\")!)\")\r\n        print(\"Initial background color: \\(view.backgroundColor!)\")\r\n        view.backgroundColor = .orange\r\n        print(\"New background color: \\(view.backgroundColor!)\")\r\n    }\r\n  \r\n    override func viewWillAppear(_ animated: Bool) {\r\n        super.viewWillAppear(animated)\r\n        print(\"viewWillAppear background color: \\(self.view.backgroundColor!)\")\r\n    }\r\n```\r\nprints:\r\n```\r\ntestBlue color: kCGColorSpaceModelRGB 0 0.789 1 1 \r\nLoaded background color: kCGColorSpaceModelRGB 0 0.789 1 1 \r\nNew background color: UIExtendedSRGBColorSpace 1 0.5 0 1\r\nviewWillAppear background color: UIExtendedSRGBColorSpace 1 0.5 0 1\r\n```\r\n\r\nThe view is orange.\r\n\r\nSteps to Reproduce:\r\n\r\n1. In a storyboard, set the initial view controller's background color to a named color\r\n2. Make sure the view controller is written to change its background color in its viewDidLoad method\r\n3. Run the app\r\n4. Observe that the background color does _not_ visibly change from the one set in the storyboard\r\n\r\nExpected Results:\r\n\r\nIt should be possible to change the view's background color as soon as the view is loaded and have it take effect\r\n\r\nActual Results:\r\n\r\nThe background color change doesn't take effect unless you change the color one run loop after viewWillAppear\r\n\r\nWorkarounds:\r\n\r\n- In the storyboard, don't set the background color to a named color\r\n- Set the initial background color to the named color in viewDidLoad\r\n\r\nVersion/Build:\r\n\r\nXcode Version 9.4.1 (9F2000)\r\nXcode Version 10.0 beta 2 (10L177m)"
+    email: brandon@brandonevans.ca
+    modified: "2018-07-08T17:58:16.45168Z"
+    number: "41654253"
+    number_intvalue: 41654253
+    originated: 18/6/29
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: Xcode Version 9.4.1 (9F2000), 10.0 beta 2 (10L177m)
+    reproducible: Always
+    resolved: ""
+    status: Closed, duplicate of 35713525
+    title: Setting a view's background color to a named color prevents the color from being changed until after viewWillAppear

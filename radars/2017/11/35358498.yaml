@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35358498"
+    labels:
+        datastore_id: "6097910194241536"
+data:
+    classification: Serious Bug
+    created: "2017-11-06T05:17:40.84479Z"
+    description: "Area:\r\nMessages Framework\r\n\r\nSummary:\r\n\r\nIn any messages app extension, adding an MSStickerView containing an animated GIF to any view hierarchy copies and caches a copy of the GIF asset in /data/Containers/Data/PluginKitPlugin/(UUID)/Library/Caches/com.apple.MobileSMS/BrowserData. This cached file is never evacuated, even if the MSStickerView is never peeled and even after the MSStickerView is removed from the view hierarchy and deallocated.\r\n\r\nFor an application that repeatedly presents different MSStickerViews to the user, the cache leakage over time can seriously increase total application disk usage with no way for the developer to manually purge the cache. The user must remove the app hosting the extension in order to free up the disk space.\r\n\r\nSteps to Reproduce:\r\n\r\nCreate an MSSticker from a local asset\r\nCreate an MSStickerView with that MSSticker and add it to the view hierarchy\r\nRemove the MSStickerView from the view hierarchy and confirm that it has been deallocated\r\n\r\nNote that the .ckanimatedimage cached in /data/Containers/Data/PluginKitPlugin/(UUID)/Library/Caches/com.apple.MobileSMS/BrowserData is still there, and will never be removed.\r\n\r\nExpected Results:\r\n\r\nIf the MSSticker is never used (peeled) by the user, and once the MSStickerView has been removed from the view hierarchy, the cached .ckanimatedimage should be deleted.\r\n\r\nActual Results:\r\n\r\nThe .ckanimatedimage persists forever, consuming valuable disk space.\r\n\r\nVersion/Build:\r\n\r\nXcode 9.1, iOS 11.1\r\n\r\nSample project:\r\n\r\nThe attached sample project is a simple Messages App Extension that downloads 25 specific animated images from GIPHY. It saves them to random file names in the temporary folder. It then creates an MSSticker and MSStickerView for each of the stickers and adds them to the view hierarchy. Then, in 5 seconds, it removes all the MSStickerViews from the hierarchy and allows them to be deallocated. Note that the cached .ckanimatedimage persist in /data/Containers/Data/PluginKitPlugin/(UUID)/Library/Caches/com.apple.MobileSMS/BrowserData.\r\n\r\nStopping and re-running this project several times will continue to add files to the BrowserData folder, and this space cannot be reclaimed until the host app is deleted by the user."
+    email: gene@indigo1.com
+    modified: "2017-11-06T05:17:40.845Z"
+    number: "35358498"
+    number_intvalue: 35358498
+    originated: "2017-11-06"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: Xcode 9.1, iOS 11.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: BrowserData cache grows without bound with unused .ckanimatedimage assets

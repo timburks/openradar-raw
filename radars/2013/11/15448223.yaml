@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15448223"
+    labels:
+        datastore_id: "6155582562107392"
+data:
+    classification: Serious Bug
+    created: "2013-11-12T16:57:44.371948Z"
+    description: "Summary:\r\nThis bug is a recurrence of rdar://10644859 . That bug existed between OS X 10.6 and 10.7.4, but was fixed in 10.7.5 and 10.8. However, it appears to be back now in 10.9.\r\n\r\nThe problem is the same as before. QTMovie's writeToFile: method does not work at all, whether writing inside or outside the sandbox. The same sample code exhibits the problem (which I've attached here again for convenience).\r\n\r\nThe one difference is that there are denials in the logs this time, while there were no denials last time. These look like this when using an NSSavePanel to write outside the sandbox:\r\nNov 12 11:41:44 fruitbookwired.home sandboxd[363] ([3235]): QTMovieWriteSand(3235) deny file-issue-extension /Users/chad/Desktop\r\nNov 12 11:41:44 fruitbookwired.home sandboxd[363] ([3235]): QTMovieWriteSand(3235) deny file-write-data /Users/chad/Desktop\r\n\r\nAnd they look like this when trying to write within the application's container:\r\nNov 12 11:42:49 fruitbookwired.home sandboxd[363] ([3235]): QTMovieWriteSand(3235) deny file-issue-extension /Users/chad/Library/Containers/com.usefulfruit.QTMovieWriteSandboxBug/Data\r\nNov 12 11:42:49 fruitbookwired.home sandboxd[363] ([3259]): com.apple.qtkits(3259) deny file-write-create /Users/chad/Library/Containers/com.usefulfruit.QTMovieWriteSandboxBug/Data/tmpmovie.mov\r\n\r\nSteps to Reproduce:\r\nCopy/pasted from previous bug:\r\n\r\nA)\r\n1) Create a sandboxed app that has a QTMovie movie object.\r\n2) Open a NSSavePanel to get the file to save to (so that Powerbox will grant access to the path)\r\n3) Call writeToFile:withAttributes:error: to write the file to the chosen path\r\n\r\nB)\r\n1) Create a sandboxed app that has a QTMovie movie object.\r\n2) Create a path within the sandbox to write the file to\r\n3) Call writeToFile:withAttributes:error: to write the file to the path within the sandbox\r\n\r\n\r\nExpected Results:\r\nThe file is written successfully.\r\n\r\nActual Results:\r\nThe file is not written.\r\n\r\nVersion:\r\n10.9/13A3017"
+    email: chad515@gmail.com
+    modified: "2013-11-12T16:57:44.372143Z"
+    number: "15448223"
+    number_intvalue: 15448223
+    originated: 11/12/2013
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.9/13A3017
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: 'QTMovie writeToFile: does not work in sandbox'

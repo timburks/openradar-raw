@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11841756"
+    labels:
+        datastore_id: "1851401"
+data:
+    classification: Serious Bug
+    created: "2012-07-25T23:59:10.940594Z"
+    description: "Summary:\r\nNSUserDefaults reads/writes to an incorrect location in ~/Library/Preferences if the last component of the persistent domain being read/written begins with the string \"Plist\". For example, if you have an app with a bundle identifier of \"com.mac.bwebster.PlistEditPro\", in Lion and earlier, values set on NSUserDefaults will get written to ~/Library/Preferences/com.mac.bwebster.PlistEditPro.plist, but in Mountain Lion build 12A269, the values instead get written to ~/Library/Preferences/com.mac.bwebster.plist. The symptom of this is that when launching the app on Mountain Lion, all the user's settings will be forgotten, since they are not being read from the correct file.\r\n\r\nSteps to reproduce:\r\nI have attached a sample project that demonstrates the problem. The project contains two targets: PlistDefaultsTest, and UnfrozenCavemanDefaultsTest. The two targets have identical code and build settings, the only difference being the target name and bundle identifier used by the two applications.\r\n\r\nEach scheme has a pre-action script for the Run action which copies a test plist containing a value for the key \"testKey1\" into ~/Library/Preferences, to emulate the setup where a user had been running the application on a previous OS X release. So, PlistDefaultsTest puts a plist at ~/Library/Preferences/com.mycompany.PlistDefaultsTest.plist and UnfrozenCavemanDefaultsTest puts the same data at ~/Library/Preferences/com.mycompany.UnfrozenCavemanDefaultsTest.plist\r\n\r\nThe app itself simply reads the value for \"testKey1\" both using NSUserDefaults and then by reading its preferences plist file manually, compares the two fetched values, and prints out whether they are equal into the app's window. It also calls setObject:forKey: on NSUserDefaults for the key \"testKey2\", to test where that value gets written out to disk.\r\n\r\nExpected results:\r\nBoth apps should behave identically, with the value read from NSUserDefaults matching the one read manually from the preferences plist file.\r\n\r\nActual results:\r\n1. The UnfrozenCavemanDefaultsTest app reports success, but the PlistDefaultsTest app reports failure.\r\n2. After running the PlistDefaultsTest app, a new file named \"com.mycompany.plist\" will be created in ~/Library/Preferences containing the \"testKey1\" value that was set using -[NSUserDefaults setObject:forKey:]. The file \"com.mycompany.PlistDefaultsTest.plist\" is unchanged.\r\n\r\nRegression:\r\nThis bug appears to also be present on build 12A256 (a.k.a. 10.8 DP4). I have not tested against any previous 10.8 seeds.\r\n\r\nNotes:\r\nI haven't tried exhaustive variations on the bundle identifier, but it does seem to be just that last component, and only when it starts with \"Plist\".\r\n\r\n10-Jul-2012 11:33 AM Brian Webster:\r\n'PlistUserDefaultsTests.zip' was successfully uploaded"
+    email: bewebste@gmail.com
+    modified: "2015-07-14T18:37:26.38948Z"
+    number: "11841756"
+    number_intvalue: 11841756
+    originated: 10-Jul-2012 11:33 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.8/12A269
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: NSUserDefaults writes to wrong prefs file if app name begins with "Plist"

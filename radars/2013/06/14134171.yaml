@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14134171"
+    labels:
+        datastore_id: "3105401"
+data:
+    classification: Serious Bug
+    created: "2013-06-12T22:46:58.949506Z"
+    description: "Summary:\r\n\r\nUIViewController's navigationController property should not be nil when accessed from -viewDidLoad.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a UINavigationController and initialize using -init or -initWithNavigationBarClass:toolbarClass: (NOT -initWithRootViewController:).\r\n2. Call -setViewControllers: with a single view controller.\r\n3. Access the view controller's navigationController property from -viewDidLoad.\r\n\r\nExpected Results:\r\n\r\nThe view controller's navigationController property should not be nil.\r\n\r\nActual Results:\r\n\r\nThe view controller's navigationController property is nil.\r\n\r\nRegression:\r\n\r\nThis bug was not present in the iOS 6 SDK.\r\n\r\nNotes:\r\n\r\nSee sample project here (requires Xcode 5-DP): http://cl.ly/2X343l1B2J0r\r\n\r\nThe reason the property is not set appears to be because the view controller's view is loaded prematurely (before the navigation controller's view is loaded). Here's some debug output from a breakpoint within -viewDidLoad:\r\n\r\n(lldb) p (BOOL) [[[[UIApplication sharedApplication] keyWindow] rootViewController] isViewLoaded]\r\n(BOOL) $0 = NO\r\n\r\nStack trace (edited for readability):\r\n\r\n#0 in -[CSViewController viewDidLoad] at CSViewController.m:19\r\n#1 in -[UIViewController loadViewIfRequired] ()\r\n#2 in -[UIViewController view] ()\r\n#3 in -[UINavigationController _transitionForOldViewControllers:newViewControllers:] ()\r\n#4 in -[UINavigationController setViewControllers:animated:] ()\r\n#5 in -[UINavigationController setViewControllers:] ()\r\n#6 in -[CSAppDelegate application:didFinishLaunchingWithOptions:] at CSAppDelegate.m:20"
+    email: cspickert@gmail.com
+    modified: "2013-10-23T18:41:10.22053Z"
+    number: "14134171"
+    number_intvalue: 14134171
+    originated: 12-Jun-2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 7 beta 1
+    reproducible: Always
+    resolved: Yes
+    status: Closed
+    title: UIViewController's navigationController is nil when accessed from -viewDidLoad

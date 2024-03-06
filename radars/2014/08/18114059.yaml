@@ -1,0 +1,67 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18114059"
+    labels:
+        datastore_id: "5261441640693760"
+data:
+    classification: Serious Bug
+    created: "2014-08-24T16:57:22.396033Z"
+    description: |-
+        Summary:
+        There’s apparently no way to test the equality of instances of function types. This means that it’s not generally possible to implement e.g. an override of reduce for arrays of Double that, if passed + as its combine argument, calls the appropriate function in Accelerate.framework.
+
+
+        Steps to Reproduce:
+        1. Write this code:
+
+        let add: (Double, Double) -> Double = (+)
+
+        func isPlus(f: (Double, Double) -> Double) -> Bool {
+        	return f == add
+        }
+
+        var plusIsPlus = isPlus(+)
+
+        2. Attempt to compile it.
+
+
+        Expected Results:
+        I expected it to compile and, when run, correctly test whether the function passed to isPlus() is the same as the Swift stdlib’s +.
+
+
+        Actual Results:
+        It errors:
+
+        ./Test.swift:6:11: error: cannot invoke '==' with an argument list of type '((Double, Double) -> Double, (Double, Double) -> Double)'
+                return f == add
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        This seems to indicate that equality is undefined for functions of type (Double, Double) -> Double. Presumably we’d need to have equality defined for each arity of function:
+
+        func == <T, U> (lhs: T -> U, rhs: T -> U) -> Bool
+        func == <T, U, V> (lhs: (T, U) -> V, rhs: (T, U) -> V) -> Bool
+        …
+
+        I can’t think of a way for me to implement this in my code without e.g. calling out to (Objective-)C code.
+
+        Note that this is talking about the identity of function instances and not the equivalence of their behaviour, which is undecidable.
+
+        Note also that the desire for reference equality over functions is the subject of some controversy: https://twitter.com/jonsterling/status/503586235676237824
+    email: rix.rob@gmail.com
+    modified: "2014-08-24T16:57:22.396292Z"
+    number: "18114059"
+    number_intvalue: 18114059
+    originated: 24-Aug-2014 12:57 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta6 (6A280e)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Can’t test equality of function types'

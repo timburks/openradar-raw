@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB11721123
+    labels:
+        datastore_id: "5559877967544320"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2022-10-26T16:53:55.599476Z"
+    description: "When you have a LazyVStack within a ScrollView that has its items updated with an animation and transition, the animations are broken when you have a list of items that extend offscreen and those items are replaced with new items with distinct IDs. Specifically, the new items animate up from the bottom of the screen with an \"unfurling\" effect. \r\n\r\nThe expected behavior is that the old items fade out, and the new items fade in, which is the way that an eager VStack works. \r\n\r\nThe following code reproduces the issue: \r\n``` \r\nScrollView { \r\n  LazyVStack(alignment: .leading) { \r\n    ForEach(items) { item in \r\n      ItemRow(item: item) \r\n        .transition(.opacity.animation(.default)) \r\n    } \r\n    .animation(.default, value: items) \r\n  }\r\n  .safeAreaInset(edge: .bottom) { \r\n    Button(\"Replace\") { \r\n      items = newItems \r\n    } \r\n  } \r\n} \r\n\r\n@State private var items = … \r\n``` \r\n\r\nThis issue was reproduced on iOS 16.0 / Xcode Version 14.0 (14A309)\r\n\r\nWorkarounds: \r\n- Use a VStack instead of a LazyVStack (this makes the stack eager, which can result in large memory consumption) \r\n- Use a ScrollViewReader with the ScrollView (this also appears to trigger the LazyVStack to become eager, which can also result in large memory consumption)"
+    email: eric.horacek@airbnb.com
+    modified: "2022-10-26T16:53:55.599641Z"
+    number: FB11721123
+    number_intvalue: 11721123
+    originated: 10/26/2022
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI Framework
+    product_version: iOS 16
+    reproducible: Yes
+    resolved: Open
+    status: Open
+    title: LazyVStack animated updates are incorrect when all items are replaced in a list that extends offscreen

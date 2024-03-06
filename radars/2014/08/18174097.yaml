@@ -1,0 +1,71 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18174097"
+    labels:
+        datastore_id: "5866555288059904"
+data:
+    classification: Other Bug
+    created: "2014-08-29T11:35:16.029555Z"
+    description: |-
+        Summary:
+
+        This value seems to be cached in the scheme now.
+
+        The problem is, that when some other change alters the name of the executable, it results in a change to the scheme file:
+
+                           <BuildableReference
+                              BuildableIdentifier = "primary"
+                              BlueprintIdentifier = "8D15AC270486D014006FF6A4"
+        -                     BuildableName = "Sketch Debug.app"
+        +                     BuildableName = "Sketch Xcode Debug.app"
+                              BlueprintName = "Application"
+                              ReferencedContainer = "container:Sketch.xcodeproj">
+                           </BuildableReference>
+
+
+        The value is clearly derivable automatically, since Xcode is changing it of its own accord.
+
+        The problem is that:
+
+        1) it’s a derived value, but it’s being stored in a file which is typically checked in to source control
+        2) it seems to update at some slightly un-predictable later date
+
+        Issue (2) in particular is a problem since you tend to end up with a commit that changes the build name (for example, by changing the PRODUCT_NAME setting in an xcconfig file), and then later Xcode catches up and you have to do another commit of the scheme change. Often these commits end up being discontiguous, which isn’t very nice for the commit history.
+
+        Could this value not be cached in the user data, or somewhere else which is typically excluded from source control?
+
+        If not, could it at least be refreshed more aggressively, so that it gets picked up in the same commit that actually changed the buildable name?
+
+
+        Steps to Reproduce:
+
+        Change the product name.
+        Commit that change.
+        Build the product.
+        (possibly)open and close Xcode.
+
+        Expected Results:
+
+        Ideally, the change to the product name should be the only thing that the source control system ever sees.
+        If another file does change, it should do so soon enough that the scheme and xcconfig (or project edit) can be committed together.
+
+        Actual Results:
+
+        The scheme seems to update at some later time - possibly when the relevant target is next built, or maybe even when the project is next opened.
+
+        Regression:
+
+        I’m not sure if this is an XC6 change, or a slight difference in behaviour between XC5 and XC6, but I seem to get this a lot in a mixed 5/6 environment.
+    email: samdeane@gmail.com
+    modified: "2014-08-29T11:35:16.029745Z"
+    number: "18174097"
+    number_intvalue: 18174097
+    originated: 29-Aug-2014 12:34 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 5.1.1 (5B1008)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode: Is it really necessary to store BuildableName in the scheme?'

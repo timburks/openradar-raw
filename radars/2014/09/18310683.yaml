@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18310683"
+    labels:
+        datastore_id: "5278414814576640"
+data:
+    classification: Serious Bug
+    created: "2014-09-11T20:53:09.188025Z"
+    description: "Summary:\r\nIf I set a value with UIAApplication.setPreferencesValueForKey, I expect to be able to see that value appear in my NSUserDefaults.\r\n\r\n> setPreferencesValueForKey\r\n>> Sets the value of a specified app user preference.\r\n\r\nThis works in iOS 6 and iOS 7.\r\n\r\nIt works on the iOS 6 - 8 Simulators.\r\n\r\nIt does not work on iOS GM.\r\n\r\nPossibly related to:\r\n\r\n* rdar://18296714\r\n* rdar://17821465\r\n* rdar://15530604\r\n* rdar://18310483\r\n\r\nSteps to Reproduce:\r\n### To Reproduce\r\n\r\n**Requires**\r\n\r\n* iOS 8 GM device\r\n* The source code of an iOS app.\r\n* Instruments 6 GM\r\n\r\n1.  In the UIApplicationDelegete application:didFinishLaunchingWithOptions: method add the following code to log the NSUserDefaults\r\n\r\n```\r\n  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];\r\n  [defaults synchronize];\r\n  NSDictionary *dictionary = [defaults dictionaryRepresentation];\r\n  NSData *data = [NSJSONSerialization dataWithJSONObject:dictionary\r\n                                                 options:NSJSONWritingPrettyPrinted\r\n                                                   error:nil];\r\n  NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];\r\n\r\n  NSLog(@\"defaults = %@\", string);\r\n```\r\n2. Launch Instruments 6 GM and select the Automation template.\r\n3. Target the iOS 8 GM device and select an app to target.\r\n4. Execute this script\r\n\r\n```\r\nvar target = UIATarget.localTarget();\r\n\r\n// This value never appears in NSUserDefaults standardUserDefaults\r\ntarget.frontMostApp().setPreferencesValueForKey(\"value\", \"com.example.set-in-uia-automation\")\r\nvar valueSetByScript  = target.frontMostApp().preferencesValueForKey(\"com.example.set-in-uia-automation\")\r\nif (valueSetByScript == \"value\") {\r\n    UIALogger.logPass(\"The value I set in UIAutomation was '\" + valueSetByScript + \"'\");\r\n} else {\r\n    UIALogger.logFail(\"Expected to see 'value' but found '\" + valueSetByScript + \"'\");\r\n}\r\n```\r\n\r\n5. Launch the app again, either from Xcode or Instruments and inspect the Console log.\r\n\r\nExpected Results:\r\n### Expected\r\n\r\nI expected to see the key/value pair from the setPreferencesValueForKey in the console log.\r\n\r\n\r\nActual Results:\r\n### Found\r\n\r\n* Works on iOS 6 - 8 on simulators.\r\n* Works on iOS 6 - 7 on devices.\r\n\r\nOn iOS 8 GM, the key/value pair does not appear in NSUserDefaults.\r\n\r\n\r\nVersion:\r\nOS X 10.9.4 (13E28)\r\nXcode6 GM\r\ninstruments, version 6.0 (56156)\r\niOS 8 GM"
+    email: joshuajmoody@gmail.com
+    modified: "2014-09-11T20:53:09.18826Z"
+    number: "18310683"
+    number_intvalue: 18310683
+    originated: 11-Sep-2014 10:51 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6 GM
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: REGRESSION UIAApplication.setPreferencesValueForKey() does not work iOS 8 GM on devices

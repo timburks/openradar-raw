@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12382220"
+    labels:
+        datastore_id: "2058402"
+data:
+    classification: Other Bug
+    created: "2012-09-27T00:01:42.755912Z"
+    description: "Summary:\r\n\r\nThe Mac OS X kernel has a bug in which exceptions from the x86 \"int3\"\r\ninstruction are often not reported via Mach exception handling when\r\nthe %cs segment base is non-zero.\r\n\r\nThe problem does not occur when the %cs segment base is zero, nor does\r\nit occur with other types of fault (the HLT instruction, memory access\r\nerrors, etc.).\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nSee the attached test program, mach_exception_int3_with_segs.c.\r\n\r\n\r\nExpected Results:\r\n\r\nThe program should output something like:\r\n\r\nWaiting for fault to be reported (with the Mac bug present, we expect this to hang)...\r\nGot exception, type 0x6\r\neip=0x74465 (476261)\r\nesp=0xc0071d5c (-1073275556)\r\nss=0x23 (35)\r\ncs=0x1f (31)\r\nds=0x23 (35)\r\nes=0x23 (35)\r\nfs=0x0 (0)\r\ngs=0xf (15)\r\n\r\n\r\nActual Results:\r\n\r\nThe program hangs.\r\n\r\n\r\nRegression:\r\n\r\nThis was probably introduced when DTrace support was added to the kernel.\r\n\r\n\r\nNotes:\r\n\r\nWhen the int3 fault occurs, the Mac kernel examines the instruction\r\npreceding %eip to check whether it is (still) an int3 instruction, but\r\nit fails to take the %cs segment base into account.\r\n\r\nI think I've found the code responsible in the Mac kernel sources.\r\nxnu-1699.22.73/osfmk/i386/trap.c handles T_INT3.  It calls\r\ndtrace_user_probe() in xnu-1699.22.73/bsd/dev/i386/dtrace_subr_x86.c,\r\nwhich contains code which reads memory to check for int3.  This fails\r\nto take the %cs segment base into account.\r\n\r\n\r\nFor the test program, see the attachment on https://code.google.com/p/nativeclient/issues/detail?id=2879"
+    email: mseaborn@chromium.org
+    modified: "2012-09-27T00:01:42.756178Z"
+    number: "12382220"
+    number_intvalue: 12382220
+    originated: 2012/09/26
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.4 (11E53)
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: Mach exception handling does not report int3 faults when %cs base is non-zero

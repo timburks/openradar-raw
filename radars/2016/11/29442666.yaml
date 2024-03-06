@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29442666"
+    labels:
+        datastore_id: "4933259716722688"
+data:
+    classification: ""
+    created: "2016-11-30T19:26:40.17732Z"
+    description: "Area:\r\nSafari Services\r\n\r\nSummary:\r\nWe are implementing OpenID Connect as an authentication mechanism in our Vigilo Optimal app.\r\n\r\nSteps to Reproduce:\r\n1. Download the app from the App Store. Currently in the version 1.0.2\r\n2. Press the login button\r\n3. The app shows Safari by using URL Schemes (An instance of SFSafariViewController) so that the user can enter his username and password.\r\n4. Use this credentials:  Username = XXXX;  password = XXXX\r\n5. The app validate the user credentials and then gets a token (according to the OpenID Connect standard) \r\n6. The app use this new token to request the list of schools (tenants) available for that specific user.  The list is presented to the user so he can select one.\r\n7. Select Sandkassen\r\n8. The app use the id of the selected school (tenant) to request a new token. The app creates a new instance of SFSafariViewController to request this new token.\r\n9. If everything is Ok, the app calls the Vigilo API to get additional information necessary to use the app features.\r\n\r\nIn step 3, the app sends prompt = login as part of the parameters requested by OpenID Connect.\r\nIn step 8, the app stops sending the prompt parameter.  However, when OpenID Connect detects there is no prompt parameter then it use the value login as a default value for the missing prompt parameter.\r\n\r\nSo, what is the purpose of the prompt parameter and what values ​​can it have ?\r\nAccording to the official documentation can be 4 values: none, login, consent, select_account.\r\n\r\nExpected Results:\r\nWhy the behavior in iOS9 is different than the behavior with iOS 10?\r\n\r\nDESIRED BEHAVIOR\r\nThe behavior with iOS 9 looks like the right one. We want the behavior with iOS 10 to be exactly like the behavior with iOS 9.\r\n\r\nOUR THOUGHS\r\nWe think that perhaps the Safari instance (SFSafariViewController) does something in iOS 9 that does not do in iOS 10.  Perhaps, for some reason, in iOS 10 the authentication of the user is forgotten.\r\n\r\nWe dont know what is the cause of this behavior in iOS 10 so we need some help.  May be we are doing something wrong.\r\n\r\nAny help from you will be very appreciated.\r\n\r\nActual Results:\r\nOUR PROBLEM.\r\nBy now we have a problem with the described process flow.\r\n\r\nWe can send two possible values in step 8:\r\n- no prompt parameter\r\n- prompt = none\r\n\r\niOS 9.  OK !\r\nEverything is ok with iOS 9.  We can send no prompt or we can send prompt = none and all is ok.  Safari is launched only to get the new token.  This is done automatically and very quickly, so no problem here.\r\n\r\niOS 10.  PROBLEM!\r\nWe get two different results depending on the value sent through the prompt parameter:\r\n- no prompt parameter: it seems OpenID use a default prompt = login in this case because it shows the user authentication interface again.\r\n- prompt = none: Error.  A documented error ir retorned and it is:\r\nhttp://openid.net/specs/openid-connect-core-1_0.html\r\n\r\nVersion:\r\niOS 9.3.2 [13F69] and iOS 10.1.1 [14B100]\r\n\r\nConfiguration:\r\n iPhone 6S. Wifi and LTE Signal."
+    email: frantisaul@gmail.com
+    modified: "2016-11-30T19:33:48.99785Z"
+    number: "29442666"
+    number_intvalue: 29442666
+    originated: 30-Nov-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 10.1.1 [14B100]
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Safari forget OpenID Connect previous authentication

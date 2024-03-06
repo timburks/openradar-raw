@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24548417"
+    labels:
+        datastore_id: "5056110025244672"
+data:
+    classification: ""
+    created: "2016-02-08T16:33:50.77702Z"
+    description: "Summary:\r\nIt's unclear from the APNs documentation what units to expect when dealing with timestamps. The APNs protocol deals with timestamps in two places:\r\n\r\n1. The `apns-expiration` header sent from the APNs provider to the APNs server to indicate when a notification should no longer be sent to the destination device.\r\n2. The `timestamp` field in the payload sent from the server to the provider when a notification is rejected because the destination device has un-registered for push notifications.\r\n\r\nThe \"Notification API\" docs (https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH101-SW15) say that the `apns-expiration` header is:\r\n\r\n> A UNIX epoch date expressed in seconds (UTC).\r\n\r\n…but it describes the `timestamp` payload field as:\r\n\r\n> …the last time at which APNs confirmed that the device token was no longer valid for the topic.\r\n\r\nNote that the latter does not specify units. Reasonable minds might conclude that the `timestamp` field will be provided in seconds (particularly since this was the case in the pre-HTTP/2 versions of the APNs protocol), but in practice, the timestamps are actually sent as MILLISECONDS since the epoch. An example response from the server:\r\n\r\n```\r\n{\"reason\":\"Unregistered\",\"timestamp\":1454948015990}\r\n```\r\n\r\nI think the problem here is two-fold:\r\n\r\n1. If `apns-expiration` and `timestamp` have different units, both should have their units called out explicitly.\r\n2. Is it possible that the units for `apns-expiration` have changed and that the docs are out of date? Providers have no way of knowing how that values they send for the `apns-expiration` header are being interpreted by the server.\r\n\r\nSteps to Reproduce:\r\nn/a\r\n\r\nExpected Results:\r\nThe APNs documentation should clearly state the units for all timestamps, especially if they do not all use the same units.\r\n\r\nActual Results:\r\nThe APNs documentation only calls out units for one of two timestamp fields, and the second timestamp field appears to use different units in practice.\r\n\r\nVersion:\r\nLocal and Remote Notification Programming Guide - Notification API (https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH10)\r\n\r\nNotes:\r\nPlease see https://github.com/relayrides/pushy/issues/237 for a real-world example of a misinterpretation of units.\r\n\r\nConfiguration:\r\nn/a\r\n\r\nAttachments:"
+    email: jon@turo.com
+    modified: "2016-02-08T16:33:50.77726Z"
+    number: "24548417"
+    number_intvalue: 24548417
+    originated: "2016-02-08"
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Unclear units for timestamps in APNs documentation

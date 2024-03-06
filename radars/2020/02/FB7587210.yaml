@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7587210
+    labels:
+        datastore_id: "5041147722334208"
+data:
+    classification: Unexpected behavior
+    created: "2020-02-18T17:09:16.651103Z"
+    description: "Calling /usr/sbin/softwareupdate --install --all --restart does not restart the computer when following conditions are met:\r\n\r\n- Command is launched from root user shell or by launchdaemon.\r\n- Console GUI is sitting at loginwindow. There is no GUI session is logged in.\r\n\r\nProblem has been replicated with both 2018 MacBook Air with T2 running Catalina and VMware Fusion VM.\r\n\r\n# Steps to reproduce\r\n\r\n1. There is a Mac with macOS Catalina 10.15.2 ready to update to 10.15.3\r\n2. Enable Remote Login\r\n3. Logout All GUI Sessions -> Mac screen is showing the loginwindow\r\n4. SSH into the Mac with an admin account\r\n\r\n## Case 1: SSH and root shell\r\n\r\n5. Get root shell with sudo su -\r\n6. Launch `/usr/sbin/softwareupdate --install --all --restart`\r\n(softwareupdate output in attachment case1_out.txt)\r\n\r\n## Case 2: lauchdaemon\r\n\r\n5. Create LaunchDaemon:\r\n\r\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\r\n<plist version=\"1.0\">\r\n<dict>\r\n\t<key>Label</key>\r\n\t<string>test.softwareupdate</string>\r\n\t<key>OnDemand</key>\r\n\t<true/>\r\n        <key>RunAtLoad</key>\r\n\t<true/>\t\r\n\t<key>ProgramArguments</key>\r\n\t<array>\r\n\t\t<string>/usr/sbin/softwareupdate</string>\r\n\t\t<string>--install</string>\r\n\t\t<string>--all</string>\r\n\t\t<string>--restart</string>\r\n\t</array>\r\n    <key>StandardOutPath</key>\r\n    <string>/private/tmp/test.softwareupdate.log</string>\r\n    <key>StandardErrorPath</key>\r\n    <string>/private/tmp/test.softwareupdate.log</string>    \r\n</dict>\r\n</plist>\r\n\r\n6. Use launchctl to load the daemon: sudo launchctl load /Library/LaunchDaemons/test.softwareupdate.plist\r\n7. Monitor log file: tail -f /private/tmp/test.softwareupdate.log\r\n(softwareupdate output in attachment case2_out.txt)\r\n\r\n# Expected behavior \r\n\r\nMac is restarted and system is updated.\r\n\r\n# Actual behavior\r\n\r\nMac is not restarted and it keeps sitting at loginwindow.\r\n\r\n# Workaround\r\n\r\nLaunch softwareupdate over SSH from local admin shell using sudo: `sudo /usr/sbin/softwareupdate --install --all --restart`. Mac is restarted and updated afterwards.\r\n\r\nThis is however not the solution here.  We can't rely on SSH updating managed Macs. There are widely used tools such Munki running as root which needs to be able to call softwareupdate at the loginwindow and do the proper restart afterward. Working --restart switch is very important because of the T2 machines which require special type of shutdown instead of normal reboot when BridgeOS should be also updated."
+    email: michalm.mac@gmail.com
+    modified: "2020-02-18T17:09:16.651242Z"
+    number: FB7587210
+    number_intvalue: 7587210
+    originated: 18.2.2020
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.15.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: softwareupdate --restart broken when launched by root at loginwindow

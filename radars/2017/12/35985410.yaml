@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35985410"
+    labels:
+        datastore_id: "5065922431680512"
+data:
+    classification: Other Bug
+    created: "2017-12-12T03:16:20.99793Z"
+    description: "Summary:\r\nWhen a view controller is presented, it may or may not become the view controller specifying the appearance of the status bar. There is no public API to control this on UIPresentationController, so custom presentation controllers are stuck not being able to change the status bar view controller.\n\nInstead, we have to violate separation of concerns and instead ensure `modalPresentationCapturesStatusBarAppearance` is set on any view controller presented with that presentation controller.\r\n\r\nSteps to Reproduce:\r\n1. Create a subclass of UIPresentationController\n2. Look for API to make view controllers presented with that presentation controller always become the status bar view controller\r\n\r\nExpected Results:\r\nIt should be possible to create a custom presentation controller that always makes the presented view controller control the status bar. The view controllers being presented should not be involved in this decision.\n\nThis would be useful for any presentation controller that makes the presented view fill the screen, or at least the top part of it.\n\nIt would make sense to me if the private shouldPresentedViewControllerControlStatusBarAppearance was replaced by a public property on UIPresentationController returning an enum with three possible values:\n\n• Always change status bar view controller, ignoring modalPresentationCapturesStatusBarAppearance (presented view is opaque, covering the top of the screen — e.g. full screen)\n• Never change status bar view controller, ignoring modalPresentationCapturesStatusBarAppearance (presented view does not cover the top of the screen — e.g. popover)\n• Defer to the presented view controller’s modalPresentationCapturesStatusBarAppearance (presented view covers the top of the screen and may be transparent — e.g. over full screen)\r\n\r\nActual Results:\r\nNo public API for this.\n\nThere is private API on UIPresentationController to do this (shouldPresentedViewControllerControlStatusBarAppearance), and it is used by the built-in presentation controllers.\n\nIf the presentation style puts the presented view controller at the top of the screen, we have to violate separation of concerns and instead ensure modalPresentationCapturesStatusBarAppearance is set on any view controller presented with that presentation controller.\r\n\r\nVersion:\r\nXcode 9.2 (9C40b)\r\n\r\nNotes:\r\nThis also means if using a plain UIPresentationController the presented view fills the container view, but it does not make the presented view controller fill the status bar. This appears to be the cause of radar 35966854, so it looks like this problem even trips up UIKit engineers.\n\nI’ve attached a trivial sample showing the case of a plain UIPresentationController. It shows a dark view controller after 2 seconds and you can see the dark view controller is not able to change the status bar.\n\nIt used to be the case (I believe believe prior to iOS 10) that custom presentation controllers were forced to change the  status bar view controller (radar 22565293). The current situation is somewhat better, but the root of the problem (this needs to be publicly customisable) has not been addressed."
+    email: douglashill@douglashill.co
+    modified: "2017-12-12T03:16:20.99817Z"
+    number: "35985410"
+    number_intvalue: 35985410
+    originated: 12-Dec-2017 11:16 am
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: Xcode 9.2 (9C40b)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Custom presentation controllers can’t change the status bar view controller

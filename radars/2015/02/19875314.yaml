@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19875314"
+    labels:
+        datastore_id: "5843845044502528"
+data:
+    classification: Other bug
+    created: "2015-02-18T17:35:48.588623Z"
+    description: "Summary:\r\nWhen the APNs gateway rejects a notification because it does not include a token, the rejection message from the gateway does not include the sequence number of the rejected notification (i.e. the sequence number is always 0), even though the sequence number frame item was sent prior to the token frame item. This appears to be a new and very recent regression, and it only appears to affect the sandbox environment at this time.\r\n\r\nSteps to Reproduce:\r\nSend a push notification using the \"Binary Notification Format.\" In the frame data, include a valid sequence number frame item ({itemId: 3, itemDataLength: 4, itemData: 0x12345678}) before a frame item that includes a zero-length token ({itemId: 1, itemDataLength: 0, itemData: null}).\r\n\r\nExpected Results:\r\nThe APNs gateway should send an error-response packet that includes the sequence number of the previously-described notification ({command: 8, status: 2, identifier: 0x12345678}) and then close the connection.\r\n\r\nActual Results:\r\nThe APNs gateway actually sends an error-response packet that has a sequence number of zero regardless of the sequence number of the previous notification ({command: 8, status: 2, identifier: 0x00000000}) and then closes the connection.\r\n\r\nVersion:\r\n\r\n\r\nNotes:\r\nPlease see https://github.com/relayrides/pushy/issues/149 for additional discussion. Some APNs provider libraries close connections by sending known-bad notifications to avoid a race condition where closing the connection from the provider side could result in the loss of an error-response packet for a notification rejected shortly before the connection was closed.\r\n\r\nConfiguration:\r\nThis only appears to occur in the sandbox environment at the time of this report; the production environment continues to function as expected.\r\n\r\nAttachments:"
+    email: jon@relayrides.com
+    modified: "2015-04-21T19:17:46.29239Z"
+    number: "19875314"
+    number_intvalue: 19875314
+    originated: "2015-02-18"
+    parent_number: '&{NULL_VALUE}'
+    product: Other
+    product_version: ""
+    reproducible: Always
+    resolved: "2015-04-21"
+    status: Duplicate of 19807791
+    title: Sandbox APNs servers return incorrect sequence number when rejecting some notifications

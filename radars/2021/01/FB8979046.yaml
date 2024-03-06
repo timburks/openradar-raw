@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8979046
+    labels:
+        datastore_id: "4966130615582720"
+data:
+    classification: Bug
+    created: "2021-01-23T09:05:29.394875Z"
+    description: "Mac Catalyst’s UIScrollView behaves differently than iOS’ when its contentSize property is adjusted during a scroll deceleration, causing it to temporarily fly past the edge of the content and into the void. After about 1-2 seconds, the scroll view will suddenly snap back to be within the content boundary.\r\n\r\nContext: some scroll views cannot reliably determine their content size upfront. The most common scenario is a UICollectionView with estimated cell heights. On initial load, the estimated heights might result in a contentSize.height = 2000. As the collection view is scrolled down, the content size will be adjusted. If the estimated heights end up being much larger than the true height, then the scroll view’s content size after scrolling all the way to the bottom might only be, say, 750.\r\n\r\nOn iOS, this on-the-fly content size height adjustment is handled perfectly: even if the user is scrolling very fast, resulting in target content offsets far beyond 750, when the content size is adjusted from 2000 -> 750 at scroll time, the in-flight scroll is adjusted so that the scroll animation bounces normally at the bottom of the content.\r\n\r\nOn macOS, the scroll view will fly past the bottom of the content for a few seconds. It seems like on macOS, UIScrollView doesn’t have the same mechanism for adjusting its current target content offset to respect an updated content size.\r\n\r\n====\r\n\r\nThis issue is not unique to UICollectionView. It’s reproducible with any UI component that’s using a UIScrollView with a lazily-determined content height. Here’s a sample project to reproduce:\r\nhttps://drive.google.com/file/d/1K_rZigWSjWHqG2EUu9GPfjdrVwgBZwYm/view?usp=sharing\r\n\r\nRun this app on iOS, scroll down quickly, and observe that the scroll-time adjustment from contentSize.height=10_000 to contentSize.height=5_000 works correctly.\r\n\r\nRun the same app on macOS, scroll down quickly using a trackpad, and observe that the scroll view flies past the bottom boundary the first time.\r\n\r\n====\r\n\r\nOne last note: this bug also occurs if the scroll view’s content insets are adjusted at scroll-time (which is another approach that can be used to create a scroll boundary). This works fine on iOS, but fails in the exact same way on macOS. Whether the boundary is being created by adjusting content size, or by setting a new content inset, iOS handles It all well, but macOS flies past the content."
+    email: kellerbryan19@gmail.com
+    modified: "2021-01-23T09:05:29.395049Z"
+    number: FB8979046
+    number_intvalue: 8979046
+    originated: "2021-01-23"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: macOS 11
+    reproducible: ""
+    resolved: No
+    status: Open
+    title: Catalyst UIScrollView Scrolls Past Content Boundary

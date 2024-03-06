@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30442335"
+    labels:
+        datastore_id: "4976443465400320"
+data:
+    classification: ""
+    created: "2017-02-09T15:10:59.68675Z"
+    description: "Area:\r\nSomething not on this list\r\n\r\nSummary:\r\nApple ships a modified version of OpenLDAP (available at opensource.apple.com) - in this modified version, SecureTransport is used for making TLS connections to perform an LDAP query.\r\n\r\nWhen making an LDAP query over TLS, the modified OpenLDAP fails to validate correct (valid) server certificates if the subject name is empty. Since ActiveDirectory Domain Controllers issue server certificates with empty subject name, this prevents LDAP queries from being run against ActiveDirectory.\r\n\r\nSince ActiveDirectory is the most widely-used LDAP server, this is affecting our customers (our application performs LDAP queries).\r\n\r\nThe problem can be reproduced on the commandline using \"ldapsearch\" to query an ActiveDirectory LDAP server.\r\n\r\nAnother user (Graham Wells) has previously encountered this issue, since I found a mailing list query in the OpenLDAP mailing list, however they correctly pointed out that the problem is in Apple's changes to OpenLDAP (http://www.openldap.org/its/index.cgi/Incoming?id=8532;page=131;statetype=-1).\r\nI do not know if the issue was ever reported to Apple, since the bugtracker is not searchable.\r\n\r\nSteps to Reproduce:\r\nRun the following command, replacing YOUR_DC with a Domain Controller:\r\n\r\nldapsearch -d 5 -v -H ldaps://dc1.YOUR_DC.com -v -b CN=Users,DC=YOUR_DC_HERE '(userPrincipalName=test)'\r\n\r\nNote that the following line has been added to /etc/openldap/ldap.conf, and the given certificate has been added to the Keychain:\r\n\r\nTLS_TRUSTED_CERTS realvnc-DC1-CA\r\n\r\n(Although the syntax for TLS_TRUSTED_CERTS is barely-documented, I know that this certificate has been found because if I set TLS_TRUSTED_CERTS to the string \"bogus\" a different error is returned.)\r\n\r\nExpected Results:\r\nI expect ldapsearch to connect to the server, since the TLS certificate is valid.\r\n\r\nActual Results:\r\nAn error is printed (full log attached, along with the problematic server certificate).\r\n\r\nVersion:\r\nTested on Sierra. OpenLDAP build (ldapsearch -V):\r\n@(#) $OpenLDAP: ldapsearch 2.4.28 (Aug 29 2016 19:00:23) $\r\nroot@osx300.apple.com:/Library/Caches/com.apple.xbs/Binaries/OpenLDAP/OpenLDAP-523.30.2~8/TempContent/Objects/clients/tools\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nAll macOS configurations\r\n\r\nAttachments:\r\n'server-cert.pem' and 'ldapsearch-log.txt' were successfully uploaded."
+    email: realvnc@nickcwilson.co.uk
+    modified: "2017-05-09T10:23:48.10058Z"
+    number: "30442335"
+    number_intvalue: 30442335
+    originated: 09-Feb-2017 03:09 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: Sierra
+    reproducible: ""
+    resolved: ""
+    status: Closed
+    title: LDAP-over-TLS cannot connect to ActiveDirectory

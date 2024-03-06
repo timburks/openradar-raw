@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "40100673"
+    labels:
+        datastore_id: "5009827407331328"
+data:
+    classification: Bug
+    created: "2018-05-09T19:39:56.60663Z"
+    description: "We have the following flow in our app: If navigating to a particular URL in a WKWebView that requires a cookie, cancel the navigation, set a cookie, and in the cookie setter's completion block, load the original URL in the web view.\r\n\r\nHowever, new behavior added by https://github.com/WebKit/webkit/commit/d9d6e5c82c4a74cd573f3f119f166ffcee477b04 delays the creation of the WKWebsiteDataStore such that the completion block is queued until \"necessary\", and WebKit never actually considers its creation \"necessary\" since we only load the URL in the completion block. It's essentially a deadlock.\r\n\r\nHere's sample code:\r\n```\r\nif (@available(iOS 11.0, *)) {\r\n        [webView.configuration.websiteDataStore.httpCookieStore setCookie:cookie\r\n                                                        completionHandler:^{\r\n            [webView loadRequest:request];\r\n        }];\r\n}\r\n```\r\n\r\nThis was caused by rdar://problem/33164453 (see also https://bugs.webkit.org/show_bug.cgi?id=176551)\r\n\r\nSteps to Reproduce:\r\nCancel web view navigation, set a cookie with a completion handler that loads the original (canceled) URL. Take no other action on the web view.\r\n\r\nExpected Results:\r\nThe cookie is set and the completion handler is called.\r\n\r\nActual Results:\r\nThe cookie is not set (and the completion handler is not called) until another action is taken on the WKWebView that requires the WKWebsiteDataStore to be initialized.\r\n\r\nVersion/Build:\r\nIssue affects iOS 11.3+ only. Rarely reproduces on simulator; frequently but not always reproduces on device.\r\n\r\nConfiguration:\r\niPhone X 11.3"
+    email: hshamansky@pinterest.com
+    modified: "2018-05-09T19:39:56.60688Z"
+    number: "40100673"
+    number_intvalue: 40100673
+    originated: 5/9/2018
+    parent_number: '&{NULL_VALUE}'
+    product: WebKit
+    product_version: iOS 11.3
+    reproducible: Usually
+    resolved: ""
+    status: Open
+    title: iOS 11.3 delays creation of WKWebsiteDataStore and queues setCookie completion handler

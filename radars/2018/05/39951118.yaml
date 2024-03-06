@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39951118"
+    labels:
+        datastore_id: "4945599661080576"
+data:
+    classification: Bug
+    created: "2018-05-03T19:58:05.27685Z"
+    description: "Summary: in the SDK, the declaration -[NSString isEqualToString:(NSString *)s] falls within an NS_ASSUME_NONNULL_BEGIN/NS_ASSUME_NONNULL_END block, and thus causes the parameter to be nil.\r\n\r\n\r\n\r\n\r\nSteps to Reproduce:\r\n(a)\r\nNSString *x = @\"test\"; // line 1\r\nif ([x isEqualToString:nil]) { // line 2\r\n    NSLog(@\"error: x is not equal to nil\"); // line 3\r\n} // line 4\r\n\r\n(b)\r\nNSString *x = @\"test\"; // line 1\r\nif ([x isEqualToString:(NSString * _Nonnull)nil]) { // line 2\r\n    NSLog(@\"error: x is not equal to nil\"); // line 3\r\n} // line 4\r\n\r\n(c)\r\nNSString *RandomNullableString()\r\n{\r\n    return (arc4random_uniform(2) < 1) ? @\"test\" : nil;\r\n}\r\n\r\nNSString *x = @\"test\"; // line 1\r\nNSString *y = RandomNullableString(); // line 2\r\nif ([x isEqualToString:y]) { // line 3\r\n    NSLog(@\"error: x is not equal to nil\"); // line 4\r\n} // line 5\r\n\r\nExpected Results (based on preference for nullable parameter):\r\n(a) no compiler/analyzer issues; conditional line 2 is NO, line 3 is not executed\r\n(b) no compiler/analyzer issues; conditional line 2 is NO, line 3 is not executed\r\n(c) no compiler/analyzer issues; conditional line 3 is YES half the time and NO half the time, line 4 is not executed\r\n\r\nActual Results:\r\n(a) compiler error (parameter requires non-nil value)\r\n(b) works as expected\r\n(c) some instances (haven't figured out why) result in an analyzer issue about a potential nil being passed\r\n\r\nVersion/Build: Xcode 9.3\r\n\r\n\r\nConfiguration: macOS High Sierra (10.13.4), MacBook Pro (Retina, 15-inch, Mid 2015)"
+    email: kbeitz@twitter.com
+    modified: "2018-05-03T19:58:05.2771Z"
+    number: "39951118"
+    number_intvalue: 39951118
+    originated: 2018.05.03
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 9.3
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: 'make isEqualToString: parameter nullability attribute ''nullable'' while preserving current behavior'

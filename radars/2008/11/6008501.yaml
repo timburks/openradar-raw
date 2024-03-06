@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6008501"
+    labels:
+        datastore_id: "847"
+data:
+    classification: ""
+    created: "2008-11-19T20:35:04.032593Z"
+    description: "14-Jun-2008 04:43 PM Alexander Strange:\r\nSummary:\r\nMany file formats that people would like to write import components for either don't have sample tables or need packets to be reassembled before playback. The current methods using idle importers or custom media types are either wastes of resources or undocumented and deprecated-looking. As long as there's going to be a new API, it should be much more flexible and allow some kind of streaming import.\r\n\r\nHuge essay:\r\nQuickTime's API is based on representing movies exactly as they are on disk, so movie import components work by creating a sample table from beginning to end in memory. This works fine for formats with contiguous indexes, packets, and track headers, but some formats that people would like to play don't meet these standards, either out of design simplicity or mistakes.\r\n\r\nThe current solutions for writing import components are:\r\n* For files without contiguous indexes[1], use an idle importer. This is an enormous waste of resources, since the unnecessary disk seeks/reads that happen when the indexing goes ahead of the playback definitely affect performance -  especially on network shares. It also annoys people trying to play back a large file, since they can't seek ahead of what's been indexed so far.\r\n\r\n* For files without contiguous packets[2], it seems like you can't do an in-place import without kDataRefExtensionInitializationData. The memory use for that seems unworkable. I haven't really looked into this, though.\r\n\r\nThe only format QT supports that has these problems is MPEG-1/2 (and it doesn't even try to support transport streams). It does this with the MPEG media handlers, but that looks impossible. Even if I could write one - the component calls are obviously about to go away since they all use QuickDraw, and the documentation is too sparse to use for such a general kind of component - I'd just end up with a mov file that has another file stuck in the middle, without any track separation in the file or in the player UI.\r\n\r\nInstead, there should be an import component API that's controlled by the player. If the user seeks, it should be able to binary-search to the requested time, but otherwise it should stream and reassemble packets only as needed. That way it can hopefully minimize weird disk behavior and enable a lot more formats to be playable/convertable to mov.\r\n\r\n[1] MP3, maybe WMV (in Flip4Mac), Matroska and other formats (in Perian), Ogg (and all other formats in XiphQT). Formats with fast-start and contiguous indexes like MOV need two-pass muxing, which most developers are too lazy to do.\r\n\r\n[2] MPEG-TS (not sure of the details), -ES (needs startcode emulation prevention/NALs). Also, hacks to store MPEG4+B-frames in AVI, and most audio codecs, but these are usually handled in the decoder.\r\n\r\n14-Jun-2008 07:14 PM Alexander Strange:\r\n> Also, hacks to store MPEG4+B-frames in AVI, and most audio codecs, but these are usually handled in the decoder.\r\n\r\nFor the audio codecs, \"most\" should be nearly all. Every MP3 or AC-3 stored in an avi is weirdly framed or cut at random points in the bytestream instead of ending at packets - this is handled by software decoders, but it prevents using AC-3 passthrough if there's no opportunity to fix it."
+    email: astrange@gmail.com
+    modified: "2011-08-28T05:50:03.878735Z"
+    number: "6008501"
+    number_intvalue: 6008501
+    originated: 14-Jun-2008 04:43 PM
+    parent_number: '&{NULL_VALUE}'
+    product: QuickTime
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: More flexible import API needed for files with scattered indexes

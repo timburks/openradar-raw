@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21327897"
+    labels:
+        datastore_id: "5495685466030080"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-06-10T21:15:52.95052Z"
+    description: "Summary:\nCompiling my catamorphism function crashes swiftc. This seems to be a result of using curried forms.\n\n\nSteps to Reproduce:\n1. This:\nenum E<T> {\n\tfunc map<U>(_ : T -> U) -> E<U> { return .C }\n\tcase C\n}\nprotocol FixpointType {\n\ttypealias Recur\n\n\tinit(_ : Recur)\n\tvar out: Recur { get }\n}\nfunc out<Fix: FixpointType>(v: Fix) -> Fix.Recur {\n\treturn v.out\n}\nfunc flip<T, U, V>(f: T -> U -> V)(_ x: U)(_ y: T) -> V {\n\treturn f(y)(x)\n}\nfunc cata<T, Fix: FixpointType where Fix.Recur == E<Fix>>(f: E<T> -> T)(_ term: Fix) -> T {\n\treturn f(flip(E.map)(cata(f))(out(term)))\n}\n\n\nExpected Results:\nshould not crash swiftc\n\n\nActual Results:\nbut totally does:\nAssertion failed: (!(fd->getType()->is<AnyFunctionType>() && fd->getType()->castTo<AnyFunctionType>()->getResult() ->is<PolymorphicFunctionType>())), function emitGlobalFunctionRef, file /Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-700.0.38.1/src/swift/lib/SILGen/SILGenFunction.cpp, line 153.\n0  swift                    0x000000010b4e8e0b llvm::sys::PrintStackTrace(__sFILE*) + 43\n1  swift                    0x000000010b4e954b SignalHandler(int) + 379\n2  libsystem_platform.dylib 0x00007fff88493f1a _sigtramp + 26\n3  libsystem_platform.dylib 0x00007faf19823730 _sigtramp + 2436429872\n4  libsystem_c.dylib        0x00007fff86f90b53 abort + 129\n5  libsystem_c.dylib        0x00007fff86f58c39 basename + 0\n6  swift                    0x00000001097505af swift::Lowering::SILGenFunction::emitGlobalFunctionRef(swift::SILLocation, swift::SILDeclRef, swift::Lowering::SILConstantInfo) + 1359\n7  swift                    0x0000000109750bc6 swift::Lowering::SILGenFunction::emitFunctionRef(swift::SILLocation, swift::SILDeclRef, swift::Lowering::SILConstantInfo) + 470\n8  swift                    0x0000000109737d85 swift::Lowering::SILGenFunction::emitRValueForDecl(swift::SILLocation, swift::ConcreteDeclRef, swift::Type, swift::AccessSemantics, swift::Lowering::SGFContext) + 853\n9  swift                    0x000000010973df2b swift::ASTVisitor<(anonymous namespace)::RValueEmitter, swift::Lowering::RValue, void, void, void, void, void, swift::Lowering::SGFContext>::visit(swift::Expr*, swift::Lowering::SGFContext) + 811\n10 swift                    0x00000001097477bb (anonymous namespace)::RValueEmitter::visit(swift::Expr*) + 75\n…\nStack dump:\n0.\tProgram arguments: /Applications/Xcode-7-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift -frontend -interpret ./recur.swift -target x86_64-apple-darwin14.3.0 -enable-objc-interop -sdk /Applications/Xcode-7-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk -module-name recur \n1.\tWhile emitting SIL for 'cata' at ./recur.swift:19:1\n\n\nRegression:\nDidn’t happen in Swift 1.2.\n\nCan work around by replacing flip(E.map)(cata(f)) with { E.map($0)(cata(f)) }\n\n\nNotes:\nN/A"
+    email: rix.rob@gmail.com
+    modified: "2015-06-10T21:15:52.95086Z"
+    number: "21327897"
+    number_intvalue: 21327897
+    originated: 10-Jun-2015 05:15 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-7-beta (7A120f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift 2 and the Case of the Catastrophic Curried Catamorphism Compiler Crasher

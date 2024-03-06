@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27976865"
+    labels:
+        datastore_id: "4992414167072768"
+data:
+    classification: Serious Bug
+    created: "2016-08-23T22:23:48.85768Z"
+    description: "Our app uses a custom NSLayoutManager and a NSTextStorage. In a recent Sierra beta, this stopped working. As a result, our app has become unusable: it's text editor is blank and doesn't accept input.\r\n\r\nI've isolated the problem to using our custom layout manager, and have attached a zip file that contains 1) the source code for a very simple application that exhibits the error and 2) this application compiled on El Capitan.\r\n\r\nThe included application, LayoutManagerBug_ElCap, works fine on El Capitan but won't show text or accept input on Sierra. So, this isn't just an issue with compiling on Sierra - it affects applications compiled on El Cap as well.\r\n\r\nThis is quite urgent for us, and we hope you have a fix, or a suggested workaround, for us soon.\r\n\r\nSteps to Reproduce:\r\n1. Run the included application, LayoutManagerBug_ElCap, on the most recent Sierra beta.\r\n2. Notice how it does not display the appropriate text (\"This is a test.\") and doesn't allow any input.\r\n\r\nIn the included source:\r\n1. Compile and run the attached project on Sierra.\r\n2. Notice how the app does not display the appropriate text (\"This is a test.\") and doesn't allow any input.\r\n3. In the following code, change the \"#if 1\" (which creates a \"custom\" layout manager) to an \"#if 0\":\r\n\r\n- (void)applicationDidFinishLaunching:(NSNotification *)aNotification\r\n{\r\n#if 1\r\n    // Create our own layout manager\r\n    NSLayoutManager *lm = [[NSLayoutManager alloc] init];\r\n    [lm addTextContainer:self.textView.textContainer];\r\n#else\r\n    // If we don't create our own layout manager, everything\r\n    // works fine. To test, change the \"#if 1\" above to an \"#if 0\".\r\n    NSLayoutManager *lm = self.textView.layoutManager;\r\n#endif\r\n    \r\n    // Create our own text storage\r\n    _textStorage = [[NSTextStorage alloc] init];\r\n    [lm replaceTextStorage:self.textStorage];\r\n    \r\n    // Add \"This is a test.\" to our own text storage.\r\n    // We expect to see this in our text view.\r\n    NSAttributedString *aString =[[NSAttributedString alloc] initWithString:@\"This is a test.\"];\r\n    [self.textStorage appendAttributedString:aString];\r\n}\r\n\r\n4. Run again.\r\n5. Revel in a working application.\r\n\r\nExpected Results:\r\nThe application that is compiled on El Cap and works on El Cap should also work in Sierra.\r\n\r\nActual Results:\r\nThe application does not display the appropriate text (\"This is a test.\") and doesn't allow any input.\r\n\r\nVersion:\r\nOS: 10.12 Beta (16A304a)\r\nXcode: Version 8.0 beta 6 (8S201h)\r\n\r\nNotes:\r\nPerhaps this is why Xcode 7 crashes in Sierra?\r\nhttp://stackoverflow.com/questions/38903699/xcode-7-3-1-crashes-on-macos-sierra-beta-5\r\n\r\nConfiguration:\r\nThis occurs on computers running recent Sierra betas"
+    email: bya@180g.co
+    modified: "2016-08-23T22:23:48.85786Z"
+    number: "27976865"
+    number_intvalue: 27976865
+    originated: 8/23/2016
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.12 Beta (16A304a)
+    reproducible: Yes
+    resolved: No
+    status: Open
+    title: Using a custom NSLayoutManager no longer works in Sierra

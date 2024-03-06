@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25140509"
+    labels:
+        datastore_id: "5024232241102848"
+data:
+    classification: Other
+    created: "2016-03-14T11:03:03.16456Z"
+    description: "Summary:\r\nAfter some months of repeatedly looking into a strange page fault issue in a client's kext, I have finally solved the problem using IOMemoryMap::wireRange() after reading a bunch of related xnu source code. For reasons that are unclear, wireRange() has no headerdocs, and is in the com.apple.kpi.unsupported KPI. I don't see a way of solving the issue using a supported KPI, so it seems the function should be promoted to the IOKit KPI.\r\n\r\nThe issue we were having was the following:\r\n- IOKit IOUserClient subclass has an external method with a variable length struct input.\r\n- Above a certain size of input buffer, this is passed as an IOMemoryDescriptor; to directly access it from kernel code, we called createMappingInTask() with kernel_task as the task and kIOMapAnywhere for options.\r\n- Because we need to access the buffer from a critical section of kernel code where page faults are problematic, we prepare()d the memory descriptor. (It did not seem to matter if this was before or after the createMappingInTask() call)\r\n- We were still hitting page faults when accessing the buffer.\r\n\r\nAs it turns out, createMappingInTask seems to be lazy since OS X 10.10, and does not actually update the live page table. Presumably this is an optimisation to defer TLB flushes? (NB This seems questionable as access to each individual page will trigger a page fault AND a TLB flush, so this approach will cost more if there is more than 1 page involved, unless I've missed something.)\r\n\r\ncreateMappingInTask() accepts a kIOMapPrefault argument to work around this issue. Unfortunately, this doesn't work if mapping into the kernel task. (Why not?)\r\n\r\nRooting around in the xnu source, I found that vm_map_wire() can be used to pre-fault pages, and although we can't call it directly from a 3rd party kext, IOMemoryMap::wireRange() will call it for us. Doing that solves our problem.\r\n\r\nHowever, now we need to depend on the unsupported KPI.\r\n\r\nSteps to Reproduce:\r\n1. In a kext's IOUserClient subclass's external method implementation, check that the structureInputDescriptor of the external method arguments struct is non-NULL.\r\n2. Map the described user buffer into the kernel task's virtual address space using createMappingInTask().\r\n3. The mapping will not update CR3, so accesses to addresses in the range will trigger page faults. To avoid this, call wireRange() with appropriate arguments to pre-fault the kernel mapping.\r\n\r\nExpected Results:\r\nAs IOMemoryMap is part of I/O Kit, the kext should link & load as before.\r\n\r\nI would also expect an explanation of wireRange's behaviour in the header declaration.\r\n\r\nActual Results:\r\nLoading the kext fails until we add a dependency on the 'unsupported' KPI to the kext.\r\n\r\nThere is no documentation on wireRange(), or any other way of pre-faulting a kernel-mapped memory range.\r\n\r\nVersion:\r\nThe call to IOMemoryMap::wireRange() appears to be necessary in this specific case from OS X 10.10 onwards. We never hit those page faults on 10.9.\r\n\r\nNotes:\r\nIf there is an alternative way to pre-fault thusly kernel-mapped memory descriptors, using only public KPIs, I would of course love to know about it.\r\n\r\nConfiguration:\r\nN/A\r\n\r\nAttachments:"
+    email: phil@philjordan.eu
+    modified: "2016-03-14T11:03:03.16476Z"
+    number: "25140509"
+    number_intvalue: 25140509
+    originated: 14-Mar-2016 12:01 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.10+
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: IOMemoryMap::wireRange() should be supported KPI and documented

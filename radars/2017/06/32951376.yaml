@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32951376"
+    labels:
+        datastore_id: "5611716708663296"
+data:
+    classification: Other Bug
+    created: "2017-06-23T17:58:53.21168Z"
+    description: "UIApplication.h defines the UIApplicationDelegate protocol. Some of the protocol's methods accept block parameters declared as:\r\n\r\nvoid (^)()\r\n\r\nHowever, one of the new warnings Xcode 9 suggests that I apply to my project is Clang's -Wstrict-prototypes. That warning complains about void(^)(), correctly saying it should be void(^)(void) instead. This means that in a class implementing the UIApplicationDelegate protocol, the following method implementation will have a compiler warning:\r\n\r\n\r\n- (void)application:(UIApplication *)application\r\n    handleActionWithIdentifier:(NSString *)identifier\r\n          forLocalNotification:(UILocalNotification *)notification\r\n             completionHandler:(void (^)())completionHandler  // warning: this function declaration is not a prototype\r\n{}\r\n\r\nBut if I try to fix this, by changing the declaration to include the extra void, I get a different warning:\r\n\r\n- (void)application:(UIApplication *)application\r\n    handleActionWithIdentifier:(NSString *)identifier\r\n          forLocalNotification:(UILocalNotification *)notification\r\n             completionHandler:(void (^)(void))completionHandler\r\n{}\r\n// Conflicting parameter types in implementation of 'application:handleActionWithIdentifier:forLocalNotification:completionHandler:': 'void (^ _Nonnull __strong)()' vs 'void (^__strong _Nonnull)(void)'\r\n\r\nSo the only thing I can do is:\r\n\r\n- (void)application:(UIApplication *)application\r\n    handleActionWithIdentifier:(NSString *)identifier\r\n          forLocalNotification:(UILocalNotification *)notification\r\n#pragma clang diagnostic push\r\n#pragma clang diagnostic ignored \"-Wstrict-prototypes\"\r\n             completionHandler:(void (^)())completionHandler\r\n#pragma clang diagnostic pop\r\n{}\r\n\r\nThis should be easy to fix. Just apply -Wstrict-prototypes to UIApplication.h and fix the resulting warnings. For completeness, here is the full list of broken method declarations in that file:\r\n\r\n- application:handleActionWithIdentifier:forLocalNotification:completionHandler:\r\n- application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:\r\n- application:handleActionWithIdentifier:forRemoteNotification:completionHandler:\r\n- application:handleActionWithIdentifier:forLocalNotification:withResponseInfo:completionHandler:\r\n- application:handleEventsForBackgroundURLSession:completionHandler:"
+    email: ravron@dropbox.com
+    modified: "2017-06-23T17:58:53.2121Z"
+    number: "32951376"
+    number_intvalue: 32951376
+    originated: "2017-06-23"
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Methods required by UIApplicationDelegate do not conform to -Wstrict-prototypes

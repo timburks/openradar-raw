@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6761077"
+    labels:
+        datastore_id: "22430"
+data:
+    classification: Bug
+    created: "2009-04-06T17:31:20.807946Z"
+    description: "Summary:\r\nCopying an event with a CalRecurrenceEnd leaks an NSDate. \r\n\r\nSteps to Reproduce:\r\n\t\tCalEvent* event = [CalEvent event];\t\t\r\n\t\tCalRecurrenceEnd* end = [CalRecurrenceEnd recurrenceEndWithEndDate:\r\n\t\t\t\t\t\t\t\t [NSDate date]];\r\n\t\tevent.recurrenceRule = [[[CalRecurrenceRule alloc] \r\n\t\t\t\t\t\t\t\t initDailyRecurrenceWithInterval:1 \r\n\t\t\t\t\t\t\t\t end:end] // no leak if end is nil\r\n\t\t\t\t\t\t\t\tautorelease];\r\n\r\n\t\t// [event copy] leaks date \r\n\t\tCalEvent* eventCopy = [event copy];\r\n\t\t[eventCopy release];\r\n\r\nRun in Instruments and check for leaks. (Project attached)\r\n\r\nExpected Results:\r\nNo leak.\r\n\r\nActual Results:\r\nLeaks an NSDate\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\n\r\n\r\n'CalendarStoreLeak.zip' was successfully uploaded"
+    email: aeriksson@gmail.com
+    modified: "2011-08-28T05:47:12.271974Z"
+    number: "6761077"
+    number_intvalue: 6761077
+    originated: 09-04-06
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Copying CalendarStore CalEvent leaks date in CalRecurrenceEnd

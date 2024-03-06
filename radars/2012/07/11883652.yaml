@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11883652"
+    labels:
+        datastore_id: "1807403"
+data:
+    classification: Serious Bug
+    created: "2012-07-16T20:40:12.98305Z"
+    description: "Summary:\r\nMany iOS applications rely upon push notifications from the app developer to receive status updates, alerts, messages, etc.  These notifications are created manually or in an automated fashion from the app developer's environment, signed using a certificate signed by Apple, and sent to Apple's push notification service for delivery.  It's a fast and powerful system, but it is only viable when the notification is being sent from a host that the app developer controls.\r\n\r\nIf a notification needs to be sent from a host that the app developer doesn't control, then there is no  way to send the notifications from the host without exposing the app developers APNS private key.\r\n\r\nTo compound the problem, an APNS certificate is tied to an app bundle id, which must be owned by the developer.  This means that a third party cannot request their own APNS certificate for an application from another developer.\r\n\r\nSteps to Reproduce:\r\n\r\nExample:\r\nCompany A sells datacenter software that runs in Company B's datacenter and monitors the health of some other hardware in the datacenter.  A companion iOS application is provided by Company A which will receive push notifications from the datacenter software when the health of some monitored hardware changes.  For the push notification to be sent, the Company A's APNS certificate must be delivered with the datacenter software.  This introduces a vulnerability which could expose Company A's APNS certificate and cause them to break their agreement with Apple.\r\n\r\nExpected Results:\r\n\r\nOne of the following:\r\n- Apple should provide a way for an app developer (Company A) to request multiple APNS certificates for an app bundle id.  These additional certificates could then be distributed to individual third parties (Company B) to be installed in their environment, and allow sending push notifications to apps in use by a third party's employees.  Then if an individual third party breaks the rules for sending push notifications, that individual certificate could be revoked, rather than the developer's.\r\n- Apple should provide a way for anyone to join the Apple developer program and create APNS certificates for apps developed by others. This would allow third parties to supply their own certificate to use in sending push notifications to an app from another party.\r\n\r\nActual Results:\r\n\r\nUnable to send push notifications without security implications and breaking the Apple developer agreement.\r\n\r\nRegression:\r\n\r\nHas always been like this.\r\n\r\nNotes:\r\n\r\nThis is a serious problem for large companies who sell service software (VMware, Microsoft, etc) rather than providing a hosted solution (Google, Facebook, Twitter, etc).  There is a possibility for a company to set up a sort of 'relay server' within their network, which could receive pushes from customer installations, then sign the push notifications before sending them to APNS.  However, this introduces another middleman into the transmission of data which: slows delivery, and introduces data security, privacy, and retention concerns."
+    email: brianpartridge@gmail.com
+    modified: "2012-07-16T20:40:12.983343Z"
+    number: "11883652"
+    number_intvalue: 11883652
+    originated: 7/16/2012
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 5.1.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: APNS doesn't facilitate sending notifications from third parties

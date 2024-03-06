@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24410474"
+    labels:
+        datastore_id: "4952303551381504"
+data:
+    classification: ""
+    created: "2016-01-29T17:24:54.5885Z"
+    description: "Summary:\r\nWhile SimDeviceFramebufferService is incredibly useful, there is still some magical incantations to get it working that IMO, should be incorporated into SimDevice. Notably:\r\n\r\n@\"register-head-services\" must be passed as options to [SimDevice bootWithOptions:error:] in order for a SimDeviceFramebufferService created prior to actually be used. This seems pretty counter-intuitive, as you would expect creating SimDeviceFramebufferService while passing in the device would handle hooking into it at boot time.\r\n\r\nFurthermore, in order for backboardd to work with the Indigo HID system, you must register a service with @\"IndigoHIDRegistrationPort\" on the SimDevice before starting. This also requires creating a mach port which, while not technically difficult, is a bit tedious. It also seems like everyone using the SimDevice API to boot a simulator would expect events to be handled as normally. (Though I'm sure there are a couple cases where you would want access to this mach port, so maybe it could be exposed as well.)\r\n\r\nSteps to Reproduce:\r\nOur code looks something like:\r\n\r\n[SimDeviceFramebufferService mainScreenFramebufferServiceForDevice:simulator.device error:&error];\r\n\r\nmach_port_t hidPort = 0;\r\nmach_port_t machTask = mach_task_self();\r\nkern_return_t result = mach_port_allocate(machTask, MACH_PORT_RIGHT_RECEIVE, &hidPort);\r\nif (result != KERN_SUCCESS) {\r\n ..\r\n}\r\nresult = mach_port_insert_right(machTask, hidPort, hidPort, MACH_MSG_TYPE_MAKE_SEND);\r\nif (result != KERN_SUCCESS) {\r\n..\r\n}\r\n\r\nif (![simulator.device registerPort:hidPort service:@\"IndigoHIDRegistrationPort\" error:&innerError]) {\r\n..\r\n}\r\n\r\nNSDictionary *options = @{\r\n  @\"register-head-services\" : @YES\r\n};\r\nBOOL success = [simulator.device bootWithOptions:options error:&error];\r\n\r\nExpected Results:\r\n.\r\n\r\nActual Results:\r\n.\r\n\r\nVersion:\r\n.\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nXcode 7.2 (7C68)\r\n\r\nAttachments:"
+    email: mars.martian@gmail.com
+    modified: "2016-01-29T17:24:54.58885Z"
+    number: "24410474"
+    number_intvalue: 24410474
+    originated: 1/29/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Can't start workable Simulator instance without mach_port/register-head-services

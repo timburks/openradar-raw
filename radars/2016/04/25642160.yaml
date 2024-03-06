@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25642160"
+    labels:
+        datastore_id: "5001535956189184"
+data:
+    classification: Serious Bug
+    created: "2016-04-09T17:38:08.64359Z"
+    description: "Summary:\n\nWe caught a very strange KVO bug or race condition in NSOperation. When operation becomes Ready it does not run -start and keeps dangling in operation queue, or it doesn’t call completion block after transition to Finished state.\n\nIt’s a race condition because even adding NSLog statement somewhere around KVO notifications helps to delay or temporary or even entirely fix the issue, so behavior is not very consistent and looks like has something to do with timing.\n\nOur code is based on a sample project called Earthquakes that was presented over WWDC 2015 - 226 Advanced NSOperations. \n\nSo we use a subclass of NSOperation that maintains its state and properly handles KVO notifications, which should be enough for NSOperation subclasses to work properly. \n\nYou can follow our investigation on Github:\nhttps://github.com/danthorpe/Operations/issues/175\n\nAlso, I’ve attached a sample project that contains an original copy of Earthquakes app presented as a sample code during WWDC session mentioned above. \n\nThe only change was made is contained within AppDelegate (GIST: https://gist.github.com/pronebird/6ccf4e67030f5fdffe65c941c736181c)\n\nThe attached project runs operations in loops, you will see that at some point operations stop executing and logging themselves in Xcode console. Then if you enter debugger and print sharedQueue’s contents you will see that some of operations are ready but do not start.\n\nSteps to Reproduce:\n\nExpected Results:\nNSOperation should consistently call -start once it becomes Ready and received a KVO notification.\n\nActual Results:\nOperations remain in Ready state, or don’t call completion block after finished, or crash the app.\n\nRegression:\n\nNotes:"
+    email: and.mikhaylov@gmail.com
+    modified: "2016-04-09T17:38:08.64375Z"
+    number: "25642160"
+    number_intvalue: 25642160
+    originated: 09-Apr-2016 06:37 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 9.3.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Race condition in NSOperation's KVO

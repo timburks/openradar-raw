@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14485185"
+    labels:
+        datastore_id: "5680001840054272"
+data:
+    classification: UI/Usability
+    created: "2015-07-14T12:48:15.5431Z"
+    description: "Summary:\r\nThe new UISwitch in iOS 7 beta emits invalid or repeating UIControlEventValueChanged events if it is controlled by tracking user touch instead of just tapping. In first case, it emits two successive events with an invalid change if it's switched from \"off\" to \"on\" and then back to \"off\" by dragging the thumb back and forth in a single touch, and in the other case it emits a series of events if a touch that thumb is tracking is cancelled by dragging it far away from the switch.\r\n\r\nSteps to Reproduce:\r\n1. Create a new empty application (with just a window, or view controllers - doesn't matter).\r\n2. Add a switch on the window or any of its subviews programmatically or from nib file.\r\n3. Add a target/selector for UIControlEventValueChanged events to this switch.\r\n4. In this target/selector, add a log call to watch the events and, most importantly, the state of the switch at the moment of target/selector call.\r\n5. Run the app and perform one of these actions:\r\n    I. Touch and hold the thumb of the switch (it's in \"off\" state), drag it to the \"on\" state, then, without releasing the touch, drag it back to the \"off state\" and release the touch.\r\n    II. Touch and hold the thumb of the switch (its state doesn't matter), then drag the touch on ~100 points away from the thumb in the opposite direction from changing the switch state.\r\n\r\nExpected Results:\r\nIn both cases, switch should not emit any events at all since actual state does not change.\r\n\r\nActual Results:\r\nCase I: at the moment when touch is released, switch emits two successive events and target/selector is called. During the first call, -[UISwitch isOn] for the sender returns YES, and during the second one, the same call returns NO - like if state of the switch has changed back and forth immediately.\r\nCase II: at the moment when touch is cancelled, switch starts emitting repeated events, for each frame of animating back to inactive state, it seems. -[UISwitch isOn] call to sender during each event raising gives the same state - the one which the switch currently has.\r\n\r\nRegression:\r\nThis behavior does not occur in iOS 6.x. I have no information about this on earlier seeds of iOS 7, though.\r\n\r\nNotes:\r\nThe switch and event target/selector behave correctly if switch is just tapped to change its state."
+    email: argentumko@gmail.com
+    modified: "2015-07-14T12:48:15.54348Z"
+    number: "14485185"
+    number_intvalue: 14485185
+    originated: 19-Jul-2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 7+
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UISwitch emits superflous or invalid control events while tracking

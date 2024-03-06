@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8957317
+    labels:
+        datastore_id: "4973750827089920"
+data:
+    classification: bug
+    created: "2020-12-30T17:50:37.772367Z"
+    description: "The following program tries to stat() /usr/bin/env using a relative path from the user's home directory. (This means it crosses an APFS container boundary, which might be relevant). Every now and then (in this example, once after a little over 8 million tries), the stat fails with ENOENT. This is a problem for build systems that stat files to see if they exist and/or out of date. This is a regression in catalina. We've seen this on our build bots.\r\n\r\n% pwd\r\n/Users/thakis\r\n\r\n% cat a.c\r\n#include <errno.h>\r\n#include <stdio.h>\r\n#include <sys/stat.h>\r\n#include <unistd.h>\r\n\r\nint main() {\r\n  for (int count = 0; ; ++count) {\r\n    struct stat st;\r\n    if (stat(\"../../usr/bin/env\", &st) < 0) {\r\n      if (errno == ENOENT)\r\n        fprintf(stderr, \"got ENOENT, count=%d\\n\", count);\r\n      return 1;\r\n    }\r\n  }\r\n}\r\n% clang a.c -O2\r\n% time ./a.out\r\ngot ENOENT, count=8335512\r\n./a.out  0.50s user 10.92s system 78% cpu 14.536 total"
+    email: thakis@chromium.org
+    modified: "2020-12-30T17:50:37.772537Z"
+    number: FB8957317
+    number_intvalue: 8957317
+    originated: 2020 Dec 30
+    parent_number: '&{NULL_VALUE}'
+    product: macos
+    product_version: 11.0.1
+    reproducible: yes
+    resolved: ""
+    status: ""
+    title: can't reliably stat() some files using relative paths

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16534399"
+    labels:
+        datastore_id: "5338218341859328"
+data:
+    classification: UI
+    created: "2014-04-06T01:54:46.943036Z"
+    description: "Summary:\r\nIf you run an action on an SKNode, and in the completion block for that `runAction:` you remove and readd that SKNode, it results in a slightly corrupted scene graph.\r\n\r\nThis is especially important in cases where that SKNode is being moved to a different parent (e.g. to move the node out of the scope of an SKCropNode or SKEffectNode).\r\n\r\nThis problem occurs regardless of whether you use either:\r\n\r\n1. `[SKAction removeFromParent]` as the final item in an action sequence before the completion block, or\r\n2. `[node removeFromParent]` in the completion block\r\n\r\nSteps to Reproduce:\r\n1. Create an SKNode and add it to the scene.\r\n2. Use `[node runAction:... completion:^{ ... }]` and in that completion block, `[node removeFromParent]` and `[otherNode addChild:node]`. OR, include an `[SKAction removeFromParent]` instead of `[node removeFromParent]`; that makes no difference.\r\n\r\nCreate a new iOS Xcode project (or use the attached tarball) using the Sprite Kit template. Replace the scene class's implementation with the following code. Note the if-statement inviting you to test the workaround.\r\n\r\n\r\n-(id)initWithSize:(CGSize)size {    \r\n    if (self = [super initWithSize:size]) {\r\n        SKSpriteNode *sprite = [SKSpriteNode spriteNodeWithImageNamed:@\"Spaceship\"];\r\n        [self addChild:sprite];\r\n\r\n        SKAction *moveRemove = [SKAction sequence:@[\r\n                                                    [SKAction moveTo:CGPointMake(size.width/2, size.height/2) duration:2],\r\n                                                    [SKAction removeFromParent],\r\n                                                    ]];\r\n\r\n        [sprite runAction:moveRemove completion:^{\r\n            if (0) {\r\n                dispatch_async(dispatch_get_main_queue(), ^{\r\n                    [self readdNode:sprite];\r\n                });\r\n            }\r\n            else {\r\n                [self readdNode:sprite];\r\n            }\r\n        }];\r\n    }\r\n    return self;\r\n}\r\n\r\n-(void)readdNode:(SKNode *)node {\r\n    [self addChild:node];\r\n\r\n    node.position = CGPointZero;\r\n\r\n    NSLog(@\"scene (%d children) contains node? %@\", self.children.count, [self.children containsObject:node] ? @\"YES\" : @\"NO\");\r\n    NSLog(@\"node.scene = %@\", node.scene);\r\n}\r\n\r\nExpected Results:\r\nThe node will be correctly removed and re-added into the scene graph.\r\n\r\nActual Results:\r\nThe node is not completely added to the scene graph.\r\n\r\nThe SKNode's scene property is correctly reported as the SKScene subclass instance. The SKNode's new parent correctly reports the node as being a child.\r\n\r\nHowever, the SKNode is not rendered to the screen. Also, SKView's `showsFPS` indicator incorrectly reports 0 children.\r\n\r\nVersion:\r\niOS 7.1 (11D167)\r\n\r\nNotes:\r\nThe workaround I've been using is to wrap the contents of the completion block in a `dispatch_async(dispatch_get_main_queue(), ^{ ... })` invocation. This presumably gives the action subsystem enough time to finish tearing down the action which results in the correct behavior.\r\n\r\nConfiguration:\r\niPhone 5S\r\niOS Simulator"
+    email: sartak@gmail.com
+    modified: "2014-06-04T20:27:25.581137Z"
+    number: "16534399"
+    number_intvalue: 16534399
+    originated: "2014-04-05"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.1"
+    reproducible: Always
+    resolved: "2014-06-03"
+    status: Closed
+    title: 'Reparenting an SKNode in its own runAction:completion: block corrupts the scene graph'

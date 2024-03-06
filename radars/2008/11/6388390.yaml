@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6388390"
+    labels:
+        datastore_id: "855"
+data:
+    classification: serious bug
+    created: "2008-11-20T17:39:09.76296Z"
+    description: "Summary: When modulating a signal on and off with alSourcePlay / alSourceStop (or alSourcePause) clicking is clearly audible.   I have checked out the OpenAL source code from the OpenAL svn repository and tracked down the problem to the OALSource::RampUp() method (see details below on a proposal to fix the problem).\r\nThis is a general issue for both OS X desktop and iphone sdk, but since I can't compile the OpenAL framework for the iphone, I can't fix it myself.\r\n\r\nSteps to Reproduce:  I've created a simple OS X desktop program (tested in Leopard 10.4.5) that reproduces the problem.  See attached zip file clicks.zip or grab from:\r\nhttp://stuff.vaillant.fastmail.fm/clicks.zip\r\nIn Terminal.app:\r\n1.  unzip clicks.zip\r\n2.  make\r\n3. ./clicks\r\n\r\nThis program switches a single tone on and off every second.  Listen for the click/pops.\r\n\r\nExpected Results: Clean on off switching with no clicking/popping sounds.\r\n\r\nActual Results:  Clearly audible clicking/popping. \r\n\r\nNotes: Tracking down the problem in the OpenAL svn source revealed the following:  OALSource::RampUp() and OALSource::RampDown() modulate the on/off switching with a linear function so that no clicking is heard when transitioning from on to off and off to on.  However, only OALSource::RampDown() is actually executed. There is a return statement in the first line of OALSource::RampUp() (line 2832 of oalSource.cpp) so this method does nothing.  As a result clicking is clearly audible when modulating from on to off.  If I comment that return statement and build the OpenAL framework, the method appears to work properly (tested in Leopard) and clicking is eliminated. \r\n\r\nI'm developing an iphone app which has repeating on/off switching, so audible clicking is a real problem. If there is not a good reason why that return statement is there, it should be removed/commented.   Also, the proper (as in optimal for minimizing duration of ramp as well as bandwidth) way to ramp up/down is with a 3-5ms gaussian instead of a linear function.  I'll probably submit a patch proposal at some point."
+    email: vaillant@fastmail.fm
+    modified: "2011-08-28T05:49:20.703237Z"
+    number: "6388390"
+    number_intvalue: 6388390
+    originated: 11/20/08
+    parent_number: '&{NULL_VALUE}'
+    product: iphone sdk
+    product_version: "2.1"
+    reproducible: always
+    resolved: ""
+    status: open
+    title: OpenAL clicking during on/off switching. Tracked down problem in OpenAL source.

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20121119"
+    labels:
+        datastore_id: "5287355795636224"
+data:
+    classification: Other Bug
+    created: "2015-03-11T16:07:57.367237Z"
+    description: "Summary:\r\nRegion monitoring using CLLocationManager doesn’t work as expected. Specifically, -monitoredRegions always returns an empty set and monitored regions are not preserved between app launches.\r\nRegion monitoring works fine while the app is running, even when the Mac is put to sleep, but it doesn’t work when the app is quit, the Mac moves and the app is then relaunched.\r\n\r\nUse-case:\r\n1. User opens the app, sets up a geofence\r\n2. User quits the app\r\n3. User moves to another location that would trigger a region change\r\n4. User launches the app\r\n—> The app doesn’t get notified about the region change although it monitored the region\r\n\r\nSteps to Reproduce:\r\n1. Monitor a region using -[CLLocationManager startMonitoringForRegion:]\r\n2. Wait and observe -[CLLocationManager monitoredRegions]\r\n—> The returned set is always empty, although it should contain the region monitored in step 1.\r\n3. Quit the app\r\n4. Launch the app\r\n—> -monitoredRegions should include the previously monitored region (as it says in the docs), but it’s empty as before\r\n\r\nExpected Results:\r\n1. -monitoredRegions should contain the regions added with -startMonitoringForRegion:\r\n2. Monitored regions should be preserved between app launches and -monitoredRegions needs to include regions added in a previous app run\r\n\r\nActual Results:\r\n- [CLLocationManager monitoredRegions] always returns an empty set containing not a single region.\r\n\r\nVersion:\r\nMac OS X 10.10.2 (14C1510)\r\n\r\nNotes:\r\nWorkaround:\r\nThe only workaround is to save the latest known location and compare it with the current location on app launch.\r\nThis is bad for several reasons: Privacy and security, additional complexity, always need to query the current location, etc.\r\n\r\nRegression:\r\nI guess it works fine on iOS, but I haven’t tested it thoroughly there.\r\n\r\nConfiguration:\r\nMac OS X 10.10.2, Xcode 6.1.1\r\n\r\nAttachments:\r\n'MonitoredRegions.zip' was successfully uploaded."
+    email: fabian@fabian-kreiser.com
+    modified: "2015-08-10T17:53:00.43415Z"
+    number: "20121119"
+    number_intvalue: 20121119
+    originated: 03/11/2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.2
+    reproducible: Always
+    resolved: Yes
+    status: Closed
+    title: -[CLLocationManager monitoredRegions] is always empty, broken and monitored regions are not preserved between app launches

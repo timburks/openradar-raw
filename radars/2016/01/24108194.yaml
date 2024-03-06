@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24108194"
+    labels:
+        datastore_id: "5525851403714560"
+data:
+    classification: Other Bug
+    created: "2016-01-08T17:37:44.24683Z"
+    description: "Summary:\nXcode 7.2 includes convenient support for measuring code coverage of Swift projects via the \n“Gather coverage data” checkbox on the Info panel of a Scheme’s Test action. The coverage is nicely\nreported inside the Xcode GUI and available from Xcode server bots.\n\nHowever, it is surprisingly difficult to get at the underlying Coverage.profdata file, which makes it unreasonably \nhard to build support for coverage reports into command-line builds, in-house build systems and third-party build servers \n(using the llvm-cov utility).\n\nSteps to Reproduce:\n(Tested with an OS X target.)\n1. Create an OS X Swift framework with a unit test target\n2. Edit the (shared) scheme for the framework.\n3. Enable the checkbox Test > Info > Code Coverage\n3. In Test > Post-actions, add a “Run Script” action with the following setup:\n    Shell: /bin/sh\n    Provide build settings from: <Framework target>\n    Contents:\n        echo \"Coverage profile: $CLANG_COVERAGE_PROFILE_FILE\"\n        if [ ! -e $CLANG_COVERAGE_PROFILE_FILE ]; then \n            echo \"Coverage profile does not exist\" >2\n            exit 1\n        fi\n4. On the command line, run \n    xcodebuild clean test -project <Project> -scheme <Scheme>\n\nExpected Results:\n- xcodebuild builds and runs the tests and puts the coverage profile in the correct place *before* running the post actions.\n\nActual Results:\n- At the time the post action is run, the file pointed to by CLANG_COVERAGE_PROFILE_FILE does not exist yet.\n(For OS X targets, the profile is still in a temporary directory whose name isn't available from build settings.)\n- The above script prints \"Coverage profile does not exist\"\n- After running the post action script, xcodebuild copies/merges the profile data to the indicated file, then exits.\n\nRegression:\nUnknown\n\nNotes:\nThe problem is made even more frustrating by the fact that \n\n    xcodebuild test -showBuildSettings -project <project> -scheme <scheme>\n\ndoes not list the CLANG_COVERAGE_PROFILE_FILE setting. Thus, the location of the file is only available while \nrunning the tests, but the file contents aren't available until xcodebuild exists. To access the file, I either have to\nhardwire the profdata location into a standalone reporting script, or convolutedly create a post-action script \nthat just saves the filename somewhere for deferred processing (and still create a standalone reporting phase).\nBoth workarounds are deeply unsatisfying."
+    email: Karoly.Lorentey@gmail.com
+    modified: "2016-01-08T17:37:44.24714Z"
+    number: "24108194"
+    number_intvalue: 24108194
+    originated: 08-Jan-2016 06:37 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.2 (7C68)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 7.2: LLVM code coverage data is inaccessible from post-action scripts on a scheme''s test action'

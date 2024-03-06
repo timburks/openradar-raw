@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8111753"
+    labels:
+        datastore_id: "458401"
+data:
+    classification: ""
+    created: "2010-06-20T21:09:57.860544Z"
+    description: "20-Jun-2010 01:56 PM Karl Kuehn:\r\nSummary:\r\n\r\n\tWhen using hdiutil with the \"imageinfo\" command \r\n\r\nSteps to Reproduce:\r\n\r\n\tRun the attached script. It creates a trivial compressed dmg, then tries \"hdiutil imageinfo\" on it both with an absolute path, and a symlinked path, each 1000 times, then reports how many failures it encountered with each.\r\n\r\nExpected Results:\r\n\r\n\tI would expect this to succeed 100% of the time with either form of path.\r\n\r\nActual Results:\r\n\r\n\tThe absolute path always succeeds on all machines, but the symlinked one fails. I am seeing different failure rates:\r\n\r\niMac5,1\r\n\t10.6.4/10F569 (clean, just installed): about .5% failure rate\r\n\t10.5.8/ (clean, just installed): never seems to display the problem\r\n\r\niMac8,1\r\n\t10.6.4/10F569 (dirty, development machine): between 15 and 25% failure rate.\r\n\r\nRegression:\r\n\tUnknown\r\n\r\nNotes:\r\n\tWhile there is a strait-forward work-around for this issue, it is a nasty trap for people to fall into since their machine might exhibit the problem less the 1% of the time. My guess is that this is a race condition, but that is a thin guess.\r\n\r\n\r\n============== Test script ==============\r\n#!/bin/bash\r\n\r\n# create a temproary folder with three items in it\r\nTEMP_FOLDER=`/usr/bin/mktemp -d /tmp/hdiutilBugTest.XXXX`\r\n/usr/bin/touch \"$TEMP_FOLDER/a\"\r\n/usr/bin/touch \"$TEMP_FOLDER/b\"\r\n/usr/bin/touch \"$TEMP_FOLDER/c\"\r\n\r\n# create a compressed image from the temp folder\r\n/usr/bin/hdiutil create -srcfolder \"$TEMP_FOLDER\" \"$TEMP_FOLDER/testImage.dmg\" 1>/dev/null\r\n\r\n# create the symlink to the image\r\n/bin/ln -s \"testImage.dmg\" \"$TEMP_FOLDER/symlink\"\r\n\r\nSYMLINK_PATH=\"$TEMP_FOLDER/symlink\"\r\nABSOLUTE_PATH=\"$TEMP_FOLDER/testImage.dmg\"\r\n\r\nPATHS[0]=\"$SYMLINK_PATH\"\r\nPATHS[1]=\"$ABSOLUTE_PATH\"\r\n\r\nREPEAT_COUNT=1000\r\nIFS=$'\\n'\r\nfor THIS_PATH in ${PATHS[@]}; do\r\n\techo \"Working on: $THIS_PATH\"\r\n\tFAILED_COUNT=0\r\n\ti=0\r\n\twhile [ $i -lt $REPEAT_COUNT ]; do\r\n\t\t/usr/bin/hdiutil imageinfo \"$THIS_PATH\" 1>/dev/null 2>/dev/null\r\n\t\tif [ $? -ne 0 ]; then\r\n\t\t\tlet FAILED_COUNT=FAILED_COUNT+1\r\n\t\telse\r\n\t\t\tlet SUCEEDED_COUNT=SUCEEDED_COUNT+1\r\n\t\tfi\r\n\t\tlet i=i+1\r\n\tdone\r\n\techo \"\tFailed $FAILED_COUNT out of $REPEAT_COUNT times\"\r\ndone\r\n\r\n# delete the temp folder\r\nif [ ! -z \"$TEMP_FOLDER\" ] && [ -d \"$TEMP_FOLDER\" ]; then\r\n\t/bin/rm -rf \"$TEMP_FOLDER\"\r\nfi"
+    email: kuehn.karl@gmail.com
+    modified: "2011-08-28T05:41:06.444161Z"
+    number: "8111753"
+    number_intvalue: 8111753
+    originated: 6/20/2010
+    parent_number: '&{NULL_VALUE}'
+    product: MacOS X
+    product_version: 10.6.4/10F569
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: hdiutil imageinfo problem with softlinks

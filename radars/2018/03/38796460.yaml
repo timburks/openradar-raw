@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "38796460"
+    labels:
+        datastore_id: "5008821177024512"
+data:
+    classification: Serious Bug
+    created: "2018-03-23T16:49:05.89889Z"
+    description: "Summary:\r\nWhen reordering rows in a UITableView, when long pressing a row to re-order it, UITableView  internally disables scrolling using setScrollEnabled:, which makes contentInset adjustments being set to (0,0,0,0) when using UIScrollViewContentInsetAdjustmentScrollableAxes / UIScrollViewContentInsetAdjustmentAutomatic. This makes the tableview contents jump around and makes it impossible to autoscroll the dragged row near the edges of the tableview. \n\r\n\r\nSteps to Reproduce:\r\n1. Have a UITableView inside a UITabbarController and UINavigationController\n2. Make sure contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentScrollableAxis\n3. Put the tableview into editing mode (-setEditing:YES)\n4. Start dragging a row to reorder it\r\n\r\nExpected Results:\r\n- adjustedContentInsets stay as is\n- scrolling near the edges of not obscured content stays possible\r\n\r\nActual Results:\r\n- adjustedContentInsets is reset to (0, 0, 0, 0)\n- tableview contents jumps upwards\n- scrolling a dragged row is only possible behind the obscured content (e.g. behind the tab bar)\n- scrolling works \r\n\r\nVersion:\r\n11.2.6\r\n\r\nNotes:\r\nThis is caused by UITableView calling `-scrollEnabled:NO` internally when starting to drag a row, which in turns disabled any adjustedContentInsets set automatically by contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentScrollableAxis.\n\nThis seems unexpected, because non UIKit code is never calling setScrollEnabled, so one would assume the contentInsets would stay as is."
+    email: avedesk@gmail.com
+    modified: "2018-03-23T16:49:05.8992Z"
+    number: "38796460"
+    number_intvalue: 38796460
+    originated: 23-Mar-2018 05:49 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 11.2.6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Re-ordering rows in a UITableView breaks adjustedContentInsets and makes the content jump around

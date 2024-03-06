@@ -1,0 +1,72 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19714793"
+    labels:
+        datastore_id: "5855961684115456"
+data:
+    classification: Other Bug
+    created: "2015-02-04T15:36:20.233956Z"
+    description: |-
+        Summary:
+
+        The character set for an NSEntityDescription’s name is limited, but this is seemingly only enforced when typing in the Core Data model editor inside Xcode.
+
+        Consider this code:
+
+        #!/usr/bin/xcrun swift
+
+        import CoreData
+
+        class Foo_Bar : NSManagedObject {
+        }
+
+        let entity = NSEntityDescription()
+        entity.name = "Foo Bar"
+        entity.managedObjectClassName = "spacesInEntity.Foo_Bar"
+
+        let model = NSManagedObjectModel()
+        model.entities = [entity]
+
+        let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+        let url = NSURL(fileURLWithPath: "/tmp/store.lol")
+        coordinator.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil, error: nil)
+
+        let context = NSManagedObjectContext()
+        context.persistentStoreCoordinator = coordinator
+
+        let object = NSEntityDescription.insertNewObjectForEntityForName(entity.name!, inManagedObjectContext:context) as Foo_Bar
+        println(object.description)
+
+
+        Steps to Reproduce:
+
+        Run the Swift example code from above.
+
+        Expected Results:
+
+        Fails at some point with an error message regarding the use of an unsupported entity name.
+
+        Actual Results:
+
+        A syntax error in the generated SQL:
+
+        CoreData: error: (1) I/O error for database at /tmp/store.lol.  SQLite error code:1, 'near "BAR": syntax error'
+
+        Regression: -
+
+        Notes:
+
+        Adding insult to injury, this works just fine when using NSInMemoryStoreType
+    email: neocool2@googlemail.com
+    modified: "2015-02-04T15:36:20.234184Z"
+    number: "19714793"
+    number_intvalue: 19714793
+    originated: 04-Feb-2015 04:36 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "8.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Names of NSEntityDescriptions are only checked by the Xcode UI

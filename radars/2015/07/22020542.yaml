@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22020542"
+    labels:
+        datastore_id: "5683242493542400"
+data:
+    classification: Other Bug
+    created: "2015-07-27T23:14:55.75425Z"
+    description: "Summary:\r\nI have an iOS 7+ app that uses UISearchController on iOS 8 and UISearchDisplayController on iOS 7 by choosing the right one at runtime. I store them both in stored properties on my class, which works just fine in swift 1.2. However, in swift 2.0 I cannot declare this stored property on my class on its own since it's only available in iOS 8+, and I get an error. In addition, I cannot use @available() with this property as I get an error message stating \"Stored properties cannot be marked potentially unavailable with 'introduced='\". I need to hack around it by storing the search controller in a different stored property typed differently, and by accessing the different stored property in an @available(iOS 8.0, *)'d computed property that has the type I want.\r\n\r\nSteps to Reproduce:\r\nOpen code from this gist in an xcode project that targets iOS 7: https://gist.github.com/klundberg/cb6d5205feb180c37345\r\n\r\nExpected Results:\r\nThe first property in ViewController.swift triggering an error makes sense with the new availability checks. However I would expect the second property to work (the one named conditionallyAvailableSearchController) even though it's a stored property. \r\n\r\nAny usage of that property could be checked for by using #available(). In this case, the property is optional, so during initialization iOS 7 could just make the value be nil, and it could not be accessed by iOS 7 code with availability checks. \r\n@available stored properties could be forced to be optional by the compiler in cases where OS versions could not set them where that class is not available, or if non-optional @available stored properties are desired, they could hold a junk reference, or the compiler could allow those properties to not be initialized on the OS versions where the type is unavailable since any usage of such a value is not allowed by the compiler anyways on older versions.\r\n\r\nActual Results:\r\nNeither the first or second defined properties build because the class is unavailable everywhere and I cannot mark the stored property with @available() annotations.\r\n\r\nVersion:\r\nOS X 10.10.4\r\nXcode 7 beta 4"
+    email: KevinRLundberg@gmail.com
+    modified: "2015-07-27T23:14:55.75451Z"
+    number: "22020542"
+    number_intvalue: 22020542
+    originated: 7/27/2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7 beta 4
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Stored properties in Swift 2.0 cannot be marked as conditionally available to satisfy the swift 2.0 compiler

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10941104"
+    labels:
+        datastore_id: "1533409"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2012-02-27T23:21:10.338156Z"
+    description: "Summary:\r\n\r\nThe UIPageViewController has some serious bugs. While integrating it with PSPDFKit, I had to add some crazy workarounds to NOT crash or hang the app, and it also breaks rotation of the whole app.\r\n\r\nSteps to Reproduce:\r\n\r\nDownload the source code of PSPDFKit (note: this is a commercial framework and I grant you a temporary license for debugging, please do not share this link)\r\n\r\n<<CENSORED>>\r\n(I also attached the latest version of it here)\r\n\r\nSee how PSPDFPageViewController.m is implemented.\r\n\r\nSee the cruelty I had to add in\r\n\r\n- (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed\r\n\r\nto cleanup after UIPageViewController's mess (e.g. pages got stuck, rotation got blocked).\r\nI used some obfuscated private API to fix the problems, but I really want this to be fixed.\r\n\r\nRemove the code and try the PSPDFKit Example with pageCurl enabled. Try on an iPad2. Try scrolling FAST, using the bottom bar. Eventually, a page hangs. Also see how rotation is now disabled, because Apple uses the secret beginDisablingInferfaceAutorotation. (why can't we have this API? It would be so much more convenient than overriding shouldRotate... and you have no idea how long it took me to find about about this...)\r\n\r\nNext step, see the inhumanity in PSPDFPatch.m. Remove the calls, try on the device and watch how the app crashes because of a late animation trying to callback it's creator, then crashing badly because someone forgot nilling his delegates.\r\n\r\nHa, and please don't report my hacks to the AppStore review team ;)\r\n\r\n\r\nExpected Results:\r\n\r\nNo crashes. No rotation stops. No frozen pages.\r\n\r\nActual Results:\r\n\r\nAll the mess above.\r\n\r\nRegression:\r\n\r\nNo change, tried with iOS 5.0 - 5.1b3\r\n\r\nNotes:\r\n\r\nFor further questions, just contact me at steipete@gmail.com or on Twitter, @steipete here."
+    email: steipete@gmail.com
+    modified: "2012-06-23T11:35:54.120515Z"
+    number: "10941104"
+    number_intvalue: 10941104
+    originated: 02/27/12
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "5.0"
+    reproducible: Always
+    resolved: ""
+    status: Partly fixed in iOS6 ;)
+    title: Multiple problems with UIPageViewController

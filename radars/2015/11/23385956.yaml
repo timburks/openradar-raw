@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23385956"
+    labels:
+        datastore_id: "6684046914486272"
+data:
+    classification: ""
+    created: "2015-11-04T01:10:26.60908Z"
+    description: "Summary:\r\nThe compiler is not yet capable of inferring the type of an expression when multiple overloads are involved.\r\n\r\nSteps to Reproduce:\r\nCompile the following code:\r\n\r\nenum A {\r\n\tcase A1\r\n\tcase A2\r\n}\r\nenum B {\r\n\tcase B1\r\n}\r\nenum C {\r\n\tcase C1\r\n}\r\n\r\nstruct S {\r\n\tfunc f(a: A, f: A -> B) -> B {\r\n\t\treturn f(a)\r\n\t}\r\n\r\n\tfunc f(a: A, f: A -> C) -> C {\r\n\t\treturn f(a)\r\n\t}\r\n}\r\n\r\nlet s = S()\r\n\r\n// This compiles because there’s only one branch.\r\nlet _ = s.f(.A1) { _ in\r\n\treturn .B1\r\n}\r\n\r\n// This is ambiguous: it requires either an explicit type on the return value, or in the closure\r\nlet _ = s.f(.A1) { a in\r\n\tswitch a {\r\n\tcase .A1: return .B1\r\n\tcase .A2: return .B1\r\n\t}\r\n}\r\n\r\nExpected Results:\r\nCode compiles, and the second expression evaluates to type `B`.\r\n\r\nActual Results:\r\nError: ambiguous use of 'f(_:f:)'\r\nlet _ = s.f(.A1) { a in\r\n        ^\r\n/var/folders/yt/njd3fm3x4jd54hgtnck226l00000gn/T/./lldb/83520/playground61.swift:13:7: note: found this candidate\r\n        func f(a: A, f: A -> B) -> B {\r\n             ^\r\n/var/folders/yt/njd3fm3x4jd54hgtnck226l00000gn/T/./lldb/83520/playground61.swift:17:7: note: found this candidate\r\n        func f(a: A, f: A -> C) -> C {\r\n\r\nNotes:\r\nA workaround is to explicitly specify the types:\r\n\r\n// This compiles thanks to the explicit type in the return value.\r\nlet _: B = s.f(.A1) { a in\r\n\tswitch a {\r\n\tcase .A1: return .B1\r\n\tcase .A2: return .B1\r\n\t}\r\n}\r\n\r\n// This compiles thanks to the explicit type in the closure.\r\nlet _ = s.f(.A1) { a -> B in\r\n\tswitch a {\r\n\tcase .A1: return .B1\r\n\tcase .A2: return .B1\r\n\t}\r\n}\r\n\r\nHowever, with more complex scenarios this becomes harder to manage, as well as harder to decipher why the compiler can’t infer the type."
+    email: hello@nachosoto.com
+    modified: "2015-11-04T01:10:26.6093Z"
+    number: "23385956"
+    number_intvalue: 23385956
+    originated: 11/3/2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Swift 2.1
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: Swift can't infer type of expression with multiple overloads and multiple return branches

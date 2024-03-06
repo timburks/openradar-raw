@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "50854433"
+    labels:
+        datastore_id: "5012044621283328"
+data:
+    classification: Bug
+    created: "2019-05-16T16:09:47.264808Z"
+    description: "Summary:\r\nThe sort algorithm used by Xcode to \"Sort by Name\" is not a strict sorting algorithm: in some situations, two files may be ordered differently (sometimes one before the other, and sometimes the reverse order). This happens notably when comparing Unicode characters that have the same ASCII transliteration. It also means that Xcode has a broken implementation of the Unicode Collation Algorithm (on which Finder sorting is based on, according to https://support.apple.com/kb/TA22935?locale=en_US).\r\n\r\nSteps to Reproduce:\r\nMy repro case involves having three files named respectively:\r\n- \"ffi \" (with a space at the end)\r\n- \"ffi1\"\r\n- \"ﬃ1\" (this is a unicode character followed by a digit, and it needs to be in a different folder from the previous file on some filesystems)\r\nThen we add those files one by one to the same group in an Xcode project.\r\nAnd finally we use Xcode feature \"Sort by Name\" on the group.\r\n\r\nTo understand the setup, I've built such scenario in an xcodeproj and I've attached it to the report. I've made a repository of it at https://github.com/Coeur/XcodeWeakSortByName in case the attachment is deleted.\r\nThere are two groups with different initial order (but same files):\r\n- tosort-case-1 has initially this order: \"ffi \", \"ﬃ1\", \"ffi1\"\r\n- tosort-case-2 has initially this order: \"ffi1\", \"ffi \", \"ﬃ1\"\r\n\r\nExpected Results:\r\n\"Sort by Name\" should return a unique strict order for the files, no matter how they are previously arranged.\r\nWhich means that tosort-case-1 and tosort-case-2 should end up with the same files order after sorting.\r\n\r\nActual Results:\r\nWe get multiple different sort results depending on the initial position of the group entries.\r\nFrom the above and attached setup, applying \"Sort by Name\" results in:\r\n- tosort-case-1 has a final order of: \"ﬃ1\", \"ffi \", \"ffi1\"\r\n- tosort-case-2 has a final order of: \"ffi \", \"ffi1\", \"ﬃ1\"\r\n\r\nVersion/Build:\r\nXcode 10.2 on macOS Mojave 10.14.5.\r\nSystem ruby: ruby 2.3.7p456 (2018-03-28 revision 63024) [universal.x86_64-darwin18]\r\n\r\nConfiguration:\r\nMacBook Pro (13-inch, 2017, Four Thunderbolt 3 Ports)"
+    email: adigitalknight@gmail.com
+    modified: "2019-05-16T16:10:00.611338Z"
+    number: "50854433"
+    number_intvalue: 50854433
+    originated: May 17 2019, 12:03 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Xcode Sort by Name is doing weak ordering with Unicode

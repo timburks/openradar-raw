@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19924983"
+    labels:
+        datastore_id: "6063549801562112"
+data:
+    classification: Serious Bug
+    created: "2015-02-23T19:52:40.597732Z"
+    description: "Summary:\r\nThis peculiar bug affects Xcode's determination of the implied target that needs to be built to satisfy a unit testing target that has specified a \"Test Host\".\r\n\r\nThe situation that leads to the confusion is when two application targets exist in the same project, and each target produces an application with the same product name. This may sound far-fetched, but it's ordinary for projects where for example a different target is used for building an app for the Mac App Store and for direct sale/distribution.\r\n\r\nThe gist of the problem is Xcode fails to reliably list as the dependency for the test build the correct version of the app, leading to at best duplicated dependency builds at test time, and at worst weird conflicts that seem to crop up from having both of the targets build at the same time.\r\n\r\nThe attached project demonstrates the problem. Please bear with me and step through the large number of steps ... it's not as complicated as it appears, I'm just trying to be very explicit about how to observe the bug.\r\n\r\n1. Open attached Test App.xcodeproj\r\n2. Open the Scheme Editor and confirm that the App 2 Tests scheme’s \"Build\" section contains two hard-coded targets: App 2 and App 2 Tests.\r\n3. Select the App 2 Tests *target* and click the General tab.\r\n4. Change the \"Host Application\" setting from App 2 to App 1.\r\n5. Click the \"Build Phases\" tab.\r\n6. Change theTarget Dependencies to remove App 2 from the list of dependencies.\r\n7. Open the Scheme Editor and observe that the App 2 Tests scheme’s \"Build\" section still erroneously shows \"App 2\" as a dependency build.\r\n8. Quit and relaunch Xcode, opening the same project.\r\n9. Open the Scheme Editor and observe the dependencies now shows \"App 1\" as the sole app dependency.\r\n10. Now repeat the process with steps 3-6, this time switching the host app for App 2 Tests to BACK to \"App 2\", and removing App 1 from the list of explicit dependencies.\r\n11. Open the Scheme Editor and observe that, again, the wrong dependent target is listed, now showing App 1 when it should have changed to App 2.\r\n12. Quit and relaunch again.\r\n\r\nExpected result: quitting and relaunching should have cleared out the dust, or whatever, and gotten the scheme into line, but it doesn’t.\r\n\r\nWorkaround: It sometimes seems that quitting Xcode and then deleting any xcuserdata in the project before reopening Xcode causes it to refigure the dependent target correctly, and it sticks:\r\n\r\nfind . -name xcuserdata -exec rm -rf {} \\;\r\n\r\nHOWEVER: if you delete the xcuserdata again, it perplexingly toggles BACK to favoring the other target, and seems to toggle in this way each time you delete the xcuserdata. Furthermore, I don’t always see this work as expected so maybe there’s a component of randomness.\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\nVersion 6.3 (6D520o)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'TestAppSchemes.zip' was successfully uploaded.\r\n\r\n[Direct download link for the sample I submitted to Apple:]\r\n\r\nhttp://indiestack.com/wp-content/uploads/2015/02/TestAppSchemes.zip"
+    email: jalkut@gmail.com
+    modified: "2015-02-23T21:30:10.362851Z"
+    number: "19924983"
+    number_intvalue: 19924983
+    originated: 23-Feb-2015 02:50 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "6.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Testing scheme builds wrong app target when two targets have same product name

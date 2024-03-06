@@ -1,0 +1,44 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19357784"
+    labels:
+        datastore_id: "5788189516103680"
+data:
+    classification: Enhancement
+    created: "2014-12-30T00:01:04.419112Z"
+    description: |-
+        Summary:
+        The difference between “YYYY” and “yyyy” is subtle and only noticeable near the end of the year. To help prevent mistakes, NSDateFormatter should notice probably mistaken uses and log a warning to the console.
+
+        Steps to Reproduce:
+        1. Open the attached playground. It creates an NSDate on December 29, 2014 and formats it with the string “MM-dd-YYYY”.
+        2. Note that the formatted output is “12-29-2015”—not a “correct” date.
+        3. Open the Assistant Editor and check the console output.
+
+        Expected Results:
+        NSDateFormatter prints a message warning you that YYYY may not give you the result you expect.
+
+        Actual Results:
+        No such message is printed.
+
+        Notes:
+        The algorithm I would suggest is that it log a warning if you use a “Y” code in a date string that contains an “M” or “d” code, but does not contain a “w” or “y” code. This would avoid warning on strings that print both the day-based date and the week-based date, but would not warn about mistaken uses of “YYYY” by itself, so you guys may feel differently about this algorithm than I. This warning could be printed either when you format a date or when you set the dateFormat.
+
+        If such a warning is introduced, there should of course be a way to silence it, probably by registering a default.
+
+        It might make sense to build a similar feature into the POSIX date APIs’ %G format, although it may be more difficult there because POSIX APIs traditionally don’t print random output to stderr.
+
+        Alternatively, clang and swiftc could be modified to emit compiler warnings about suspicious date formats. This would not catch as many cases, but would emit warnings only to the developer, allowing the warnings to be emitted more aggressively.
+    email: brent@architechies.com
+    modified: "2014-12-30T00:01:04.419274Z"
+    number: "19357784"
+    number_intvalue: 19357784
+    originated: 29-Dec-2014 04:00 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: Xcode 6.1.1 (6A2006)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSDateFormatter should warn about YYYY use

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12253540"
+    labels:
+        datastore_id: "2328401"
+data:
+    classification: ""
+    created: "2012-11-25T15:30:50.787042Z"
+    description: "Summary:\r\n\r\nI am using NSPersistentStoreCoordinator migratePersistentStore:toURL:options:withType:error to migrate an iCloud store to a local store when the user disables iCloud.\r\nCalling this method logs an error:\r\n\r\n2012-09-07 12:13:50.864 App[28271:907] -[NSPersistentStoreCoordinator addPersistentStoreWithType:configuration:URL:options:error:](1055): CoreData: Ubiquity:  Error: A persistent store which has been previously added to a coordinator using the iCloud integration options must always be added to the coordinator with the options present in the options dictionary. If you wish to use the store without iCloud, migrate the data from the iCloud store file to a new store file in local storage. file://localhost/var/mobile/Applications/67CD10C5-A883-40A4-AD66-DBEE02C06CCC/Documents/CoreDataStores/fallbackStore.sqlite\r\nThis will be a fatal error in a future release.\r\n \r\nI assume this is because migratePersistentStore is using addPersistentStore internally.\r\nAfter this, the migrated local store can not be saved anymore. save: always fails with:\r\n\r\nError Domain=NSCocoaErrorDomain Code=134030 \"The operation couldn’t be completed. (Cocoa error 134030.)\"\r\n\r\nMigrating from local to iCloud works just fine.\r\nDropping and loading the local store doesn't change any of this, and the same error is logged when directly calling addPersistentStore on the local store after it has been migrated.\r\n\r\nSteps to Reproduce:\r\n\r\ncall\r\n        self.fallbackStore = [self.persistentStoreCoordinator migratePersistentStore:self.iCloudStore\r\n                                                                               toURL:self.fallbackStoreURL\r\n                                                                             options:options\r\n                                                                            withType:NSSQLiteStoreType\r\n                                                                               error:&localError];\r\n\r\n\r\nExpected Results:\r\n\r\nStore is migrated properly to a local store.\r\n\r\nActual Results:\r\n\r\nLocal store can be read but not saved.\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\n\r\n15-Sep-2012 02:01 PM Julien Poissonnier:\r\nAdded sample project based on the Master-Detail Application Xcode project template. The Core Data store is added with ubiquity options. The master view has a toolbar button \"Migrate\" which will start the migration.\r\nThe migration functionality is implemented in -[JPAppDelegate migrateToLocal].\r\n\r\nPerforming the migration will output the warning in the log. Saving the context after the migration results in the error in -[NSManagedObjectContext save:].\r\n\r\n15-Sep-2012 02:01 PM Julien Poissonnier:\r\n'Migration.zip' was successfully uploaded"
+    email: poissonnier@gmail.com
+    modified: "2012-11-25T15:30:50.787608Z"
+    number: "12253540"
+    number_intvalue: 12253540
+    originated: 07-Sep-2012 12:22 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iCloud
+    product_version: "6.0"
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: migratePersistentStore does not work for ubiquitous stores

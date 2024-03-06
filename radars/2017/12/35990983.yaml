@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35990983"
+    labels:
+        datastore_id: "5000693152743424"
+data:
+    classification: Core Location
+    created: "2017-12-13T12:55:27.57299Z"
+    description: "Summary:\r\n\r\nBackground location services gets hampered after system update.\r\n\r\nWhen the OS is upgraded to iOS 11.x, location updates that were previously received flawlessly in the background, are suddenly hampered. It appears that the app's suspended state causes the location updates to fail being received only by our app, because other apps running at the same time (e.g. Strava) keep receiving location updates. Only when the device fully is restarted (shut down and booted again), receiving location updates in the background are again restored.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n1. Build an app that receives location updates in the background (See Configuration)\r\n2. Install the app on a device with an older OS\r\n3. Grant the app \"Always\" location permissions\r\n4. Trigger the location manager to start in the background (e.g. by exiting a geofence)\r\n5. Collect location updates and logs pre-update.\r\n6. Run the iOS update\r\n7. For comparison, start another location receiving app in the foreground, e.g. Strava\r\n8. Again trigger the location manager to start in the background\r\n9. Collect location updates and logs after-update.\r\n10. Reboot the device\r\n11. Trigger the location manager to again start in the background.\r\n12. Collect location updates and logs after-reboot.\r\n\r\n\r\nExpected Results:\r\n\r\nIt is expected that location updates are received fine as always, also after an iOS update.\r\n\r\nActual Results:\r\n\r\nBefore the iOS update, the location updates are received flawlessly.\r\nAfter the iOS update, the location updates are received 'hampered'.\r\nAfter a device reboot, the location updates are again received flawlessly.\r\n\r\nIn this 'hampered' bad state, the location updates are received at an interval and at a location, which looks a lot like significant location changes, except with a higher accuracy. The app then receives those location updates for about 10 seconds, after which no further location updates are received. Until the next 'significant location change' seems to wake up the app, delivers 10 seconds of location updates and then suspends the app again.\r\n\r\nIn the sysdiagnose logs, the app to look for (which is loosing the location data) is called \"TimesUppTracer\".\r\n\r\n\r\nVersion/Build:\r\n\r\nThis bug is witnessed when updating from iOS 10.3 to iOS 11.0, from iOS 11.0 to 11.1, or as attached\r\nfrom iOS 11.1.2 to iOS 11.2\r\n\r\nOn an iPhone 5s, 6, 6plus and an iPhone 8.\r\n\r\n\r\nConfiguration:\r\n\r\nIn order to reproduce the attached results, a test app was created with the following characteristics:\r\n\r\n- Make sure the app asks for \"Always\" location permissions\r\n- Make a background-allowed location manager with a \"high\" desired accuracy:\r\n```\r\n    let locationManager = CLLocationManager()\r\n    locationManager.pausesLocationUpdatesAutomatically = false\r\n    locationManager.allowsBackgroundLocationUpdates = true\r\n    locationManager.distanceFilter = kCLDistanceFilterNone\r\n    locationManager.activityType = CLActivityType.otherNavigation\r\n    locationManager.disallowDeferredLocationUpdates()\r\n    locationManager.desiredAccuracy = kCLLocationAccuracyBest\r\n```\r\n- Have the app receive location triggers in the background, like significant location changes or geofence exit events.\r\n- Upon such trigger in the background, start high-accuracy location tracking with `locationManager.startUpdatingLocation()`\r\n- Store the received location updates for further investigation."
+    email: dirk@innovactory.com
+    modified: "2017-12-13T12:55:27.57326Z"
+    number: "35990983"
+    number_intvalue: 35990983
+    originated: 12/12/2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "11"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Background location services gets hampered after system update

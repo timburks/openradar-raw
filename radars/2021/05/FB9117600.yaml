@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9117600
+    labels:
+        datastore_id: "4963947732008960"
+data:
+    classification: Bug
+    created: "2021-05-25T08:36:16.528312Z"
+    description: "I believe I have discovered a bug in CFNetwork.framework version 1237 NSURLCache. I noticed that if the URL I supply to init(memoryCapacity:diskCapacity:directory:) contains a space then the cache fails because it is attempting to create the SQLite database to hold the cache at a path with %20 in it which is invalid, see debug output at the bottom.\r\n\r\nI used Hopper to investigate this deeper (screenshot attached) and I believe there is a bug that this method is using:\r\nCFURLCopyPath(dir)\r\nWhich results in the %20 instead of:\r\nCFURLCopyFileSystemPath(dir, kCFURLPOSIXPathStyle);\r\nWhich returns the path correctly with spaces.\r\n\r\nHere is a Stackoverflow post where a developer was facing the same problem of seeing %20 in paths:\r\nhttps://stackoverflow.com/questions/19933380/is-there-a-corefoundation-equivalent-that-generates-the-same-string-when-calling\r\n\r\nI can work around this problem by using the old init that takes the path as a string however that is deprecated now so would prefer for this URL based init to be fixed, thanks.\r\n\r\n2021-05-25 09:20:24.069335+0100 URLCacheTestApp[78502:8570943] [logging-persist] cannot open file at line 44514 of [02c344acea]\r\n2021-05-25 09:20:24.069440+0100 URLCacheTestApp[78502:8570943] [logging-persist] os_unix.c:44515: (0) open(/Users/mh/Library/Group%20Containers/HUK6B7UUU2.com.malcolmhall.URLCacheTest/Library/Caches/Cache.db) - Undefined error: 0\r\n2021-05-25 09:20:24.069526+0100 URLCacheTestApp[78502:8570943] NetworkStorageDB:_openDBReadConnections: failed to open read connection to DB @ /Users/mh/Library/Group%20Containers/HUK6B7UUU2.com.malcolmhall.URLCacheTest/Library/Caches/Cache.db.  Error=14. Cause=unable to open database file\r\n2021-05-25 09:20:24.069585+0100 URLCacheTestApp[78502:8570943] The read-connection to the DB=/Users/mh/Library/Group%20Containers/HUK6B7UUU2.com.malcolmhall.URLCacheTest/Library/Caches/Cache.db is NOT valid.  Unable to determine schema version."
+    email: indiekiduk@gmail.com
+    modified: "2021-05-25T08:36:16.529046Z"
+    number: FB9117600
+    number_intvalue: 9117600
+    originated: 25/5/2021
+    parent_number: '&{NULL_VALUE}'
+    product: CFNetwork.framework
+    product_version: "1237"
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: 'NSURLCache bug: Can''t create a disk cache in a directory that has a space in it.'

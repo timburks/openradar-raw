@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7333645"
+    labels:
+        datastore_id: "100406"
+data:
+    classification: Enhancement
+    created: "2009-10-24T16:43:55.292475Z"
+    description: "24-Oct-2009 11:43 AM Dave Dribin:\r\nWhen running a unit test bundle against a GUI application, the test bundle gets injected into the application, and the the tests are run after a delayed performSelector or something.  This means that a lot of the NSApplication startup machinery is still run:\r\n\r\n  * The main window NIB is loaded\r\n  * All -awakeFromNib methods are called\r\n  * -applicationWillFinishLaunching: is called\r\n\r\nWhile this can be useful if you are doing higher-level integration testing, this is not good for true low-level unit testing where you are testing individual classes in isolation:\r\n\r\n  <http://xunitpatterns.com/unit%20test.html>\r\n  <http://misko.hevery.com/2009/07/14/software-testing-categorization/>\r\n  <http://www.artima.com/weblogs/viewpost.jsp?thread=126923>\r\n\r\nFirst off, it slows down the tests by loading the NIB and running code that does not affect the tests.  Worse is -awakeFromNib or -applicationWillFinishLaunching: may adversely interfere with tests by kicking off timers and background threads or registering for notifications.  They could even block app startup by showing a modal window.\r\n\r\nI once had to add code that skipped part of app initialization if it was being run under OCUnit (by checking for the existence of the SenTestCase class).  This is a code smell due to putting test logic in production code:\r\n\r\n  <http://xunitpatterns.com/Test%20Logic%20in%20Production.html>\r\n\r\nI've gotten around the problem altogether by replacing main() with the following code.  However, it would be nice if this was built into the default NSApplicationMain machinery somehow.\r\n\r\n#import <Cocoa/Cocoa.h>\r\n\r\nint DDTestApplicationMain(int argc, const char ** argv)\r\n{\r\n    BOOL testMode = (getenv(\"TEST_HOST\") != NULL);\r\n    if (!testMode) {\r\n        return NSApplicationMain(argc, argv);\r\n    } else {\r\n        [[NSRunLoop currentRunLoop] run];\r\n        return 0;\r\n    }\r\n}\r\n\r\nint main(int argc, char *argv[])\r\n{\r\n    return DDTestApplicationMain(argc, (const char **)argv);\r\n}"
+    email: ddribin@gmail.com
+    modified: "2011-08-28T05:43:54.019586Z"
+    number: "7333645"
+    number_intvalue: 7333645
+    originated: 24-Oct-2009 11:43 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 3.2
+    reproducible: N/A
+    resolved: ""
+    status: Open
+    title: 'ER: Don''t start NSApplication when injecting tests into a dependent target'

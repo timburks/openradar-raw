@@ -1,0 +1,47 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14228383"
+    labels:
+        datastore_id: "3129405"
+data:
+    classification: Other Bug
+    created: "2013-06-21T13:04:49.894613Z"
+    description: |-
+        Summary:
+
+        -[NSBundle preferredLocalizationsFromArray:forPreferences:] doesn't handle country codes properly.
+
+        A Country code in the `preferencesArray` argument work as expected; but when a country code is present in the `localizationsArray`, the method doesn't fallback on the generic language or on another country code of the same language.
+
+        Steps to reproduce:
+
+        // Some correct results
+        [NSBundle preferredLocalizationsFromArray:@[@"de", @"en"]    forPreferences:@[@"en"]];    // en    (expected)
+        [NSBundle preferredLocalizationsFromArray:@[@"de", @"en-GB"] forPreferences:@[@"en-GB"]]; // en-GB (expected)
+        [NSBundle preferredLocalizationsFromArray:@[@"de", @"en"]    forPreferences:@[@"en-GB"]]; // en    (expected)
+
+        // Some unexpected results
+        [NSBundle preferredLocalizationsFromArray:@[@"de", @"en-GB"] forPreferences:@[@"en"]];    // de    (unexpected)
+        [NSBundle preferredLocalizationsFromArray:@[@"de", @"fr-FR"] forPreferences:@[@"fr"]];    // de    (unexpected)
+        [NSBundle preferredLocalizationsFromArray:@[@"de", @"en-US"] forPreferences:@[@"en"]];    // en    (wtf)
+
+        Expected Results:
+
+        The method should fallback on another country code of the same language if available. Also the "en-US" locale should not be special-cased.
+
+        Notes:
+
+        This is also broken in iOS 6. I suspect it never worked as expected.
+    email: kemenaran@gmail.com
+    modified: "2013-06-21T13:04:49.894785Z"
+    number: "14228383"
+    number_intvalue: 14228383
+    originated: 21-Jun-2013 03:04 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 7.0b1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: -[NSBundle preferredLocalizationsFromArray:forPreferences:] doesn't fallback on country codes (or has inconsistent behavior)

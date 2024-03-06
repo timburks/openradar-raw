@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33124158"
+    labels:
+        datastore_id: "4998361958580224"
+data:
+    classification: Serious Bug
+    created: "2017-07-04T15:21:57.74178Z"
+    description: "I got this when downgrading a subscription.\r\nLooks like the error is coming directly from the transactions in func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {\r\n\r\nPrinting the error of the first updated transaction (po transactions[0].error!) gives me \"Error Domain=SSServerErrorDomain Code=0 \"You are all set\" UserInfo={NSLocalizedDescription=You are all set}\", and transaction state is `.failed`. Note the error domain is SSServerErrorDomain\r\nNOT SKErrorDomain.\r\n\r\nSome more insights:\r\n- the higher level subscription state is not approved yet (state is missing metadata with yellow icon) (I can test purchasing in sandbox.)\r\n- the lower level plan is approved\r\n- If user tries to purchase the same downgraded plan again, he will get “You are already subscribed.”.\r\nI don't think we can do anything here because it comes from StoreKit. May be it's an Apple sandbox bug.\r\n\r\nSteps to Reproduce:\r\n- Set up 2 subscriptions with different levels (will call plan A and B) in a subscription group in iTunes Connect\r\n- Go to the app, purchase the plan with higher level (A), observe successful purchase\r\n- Then immediately purchase lower level plan (B)\r\n\r\nExpected Results:\r\npaymentQueue:updatedTransactions: provides a transaction that is purchased successfully.\r\n\r\nObserved Results:\r\npaymentQueue:updatedTransactions: provides a transaction with error \"Error Domain=SSServerErrorDomain Code=0 \"You are all set\" UserInfo={NSLocalizedDescription=You are all set}\" and state `.failed`. If I try to buy the same plan (B) again, app store says \"You are already subscribed to this\".  But then later (after about 1 hour after refreshing the receipt), we observe the downgraded subscription got added to the receipt. Which is confusing because it seems to be successful but it transaction state is failed.\r\n\r\nVersion:\r\niOS 10.3.2 (14F89), iPhone 7 plus\r\n\r\nNotes:\r\n- Could this be a sandbox only issue?\r\n- Apple should provide more documentation regarding the behaviour of downgrade scenario (e.g. telling that subscription will be added to the receipt at the NEXT renewal date, what transaction error/state we should handle)"
+    email: thongchaikol@gmail.com
+    modified: "2017-07-04T15:25:27.01712Z"
+    number: "33124158"
+    number_intvalue: 33124158
+    originated: 4 July 2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK, StoreKit
+    product_version: iOS 10.3.2
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: Testing subscription downgrade in sandbox produces SSServerErrorDomain error

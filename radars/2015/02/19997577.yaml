@@ -1,0 +1,62 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19997577"
+    labels:
+        datastore_id: "5308642727297024"
+data:
+    classification: Other Bug
+    created: "2015-02-28T23:34:25.906422Z"
+    description: |-
+        Summary:
+        Since @noescape can’t be applied to locals, you can’t write a convenience closure which wraps a @noescape parameter and which trivially never escapes, so you have to duplicate the closure, which increases the surface area for defects.
+
+
+        Steps to Reproduce:
+        1. Write this code:
+
+        enum Type {
+        	case Unit
+        	case Function(() -> Type, () -> Type)
+        	case Sum(() -> Type, () -> Type)
+
+        	func reduce<Result>(initial: Result, @noescape _ combine: (Result, Type) -> Result) -> Result {
+        		let binary: (Type, Type) -> Result = { combine(combine(combine(initial, self), $0), $1) }
+        		switch self {
+        		case Unit:
+        			return combine(initial, self)
+        		case let Function(t1, t2):
+        			return binary(t1, t2)
+        		case let Sum(t1, t2):
+        			return binary(t1, t2)
+        		}
+        	}
+        }
+
+
+        Expected Results:
+        I expected it to compile. It’s pretty obvious that `combine` never escapes.
+
+
+        Actual Results:
+        It failed: `combine` is captured in a closure which may—perhaps by magic—allow it to escape.
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        I also tried @noescape let binary: (Type, Type) -> Result = … but “'noescape' may only be used on 'parameter' declarations,” which is sad-making.
+    email: rix.rob@gmail.com
+    modified: "2015-02-28T23:34:25.906644Z"
+    number: "19997577"
+    number_intvalue: 19997577
+    originated: 28-Feb-2015 06:34 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (6D532l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2b2: @noescape cannot be applied to locals, leading to duplication of code'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "5993448"
+    labels:
+        datastore_id: "18431"
+data:
+    classification: Enhancement
+    created: "2009-03-28T01:11:46.492173Z"
+    description: "Summary:\r\n\r\nThe NSURLConnection system lets clients control the caching of responses from a webserver.  In Mac OS X, an NSCachedURLResponse can be saved to a disk cache and a memory cache, but in iPhone OS, only a memory cache works.  \r\n\r\nThis is a problem because applications on the iPhone don't stay in memory very long.  If the user takes a phone call or the app uses a helper application like Maps, the memory cache is lost.  When the user re-launches the app, it has to fully retrieve all data over the network.  This makes the app feel sluggish.\r\n\r\nSteps to Reproduce:\r\n\r\nUse an NSURLConnection to make a request.\r\nThe server sets an Expires header that enables client-side caching.\r\nIn [delegate connection:willCacheResponse:], return an NSCachedURLResponse with a storage policy of NSURLCacheStorageAllowed.\r\n\r\nExpected Results:\r\n\r\nThe NSURLCache will save the response in persistent storage.\r\nIn a different launch of the application, an NSURLConnection for the same request will retrieve the data from the persistent cache.\r\n\r\nActual Results:\r\n\r\nAs documented in the reference for NSCachedURLResponse, the response is only saved in a memory cache.\r\nIn a different launch of the application, an NSURLConnection for the same request will perform a full network load.\r\n \r\nNotes:\r\n\r\nOur application is a webservice client.  We want to cache the webservice responses to ensure a fluid user experience:\r\n    * Pressing the back button on a screen should quickly bring back the previous screen.\r\n    * Re-launching the app after a short interval (e.g. taking a call or viewing a map) should quickly bring back the last screen the user saw. \r\n\r\nOur business requirements also require server calls to log user actions and to make sure users see fresh data. For example, when the user goes back to a search result after a \"session\" expires, a full webservice call needs to occur.\r\n\r\nTo balance the two needs, our webservice will emit Expires headers of a \"session\" duration. The client should cache responses for the duration of that session (until the Expires timestamp), then it needs to re-request the data from the server. This ensures that the searches of each user are performed correctly."
+    email: jlieske@attinteractive.com
+    modified: "2011-08-28T05:50:06.968153Z"
+    number: "5993448"
+    number_intvalue: 5993448
+    originated: 06-Jun-2008 08:19 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone
+    product_version: "2.0"
+    reproducible: yes
+    resolved: ""
+    status: Open
+    title: NSURLCacheStorageAllowed doesn't use persistent storage

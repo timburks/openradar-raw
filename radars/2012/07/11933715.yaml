@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11933715"
+    labels:
+        datastore_id: "1830406"
+data:
+    classification: Enhancement
+    created: "2012-07-23T08:25:59.163652Z"
+    description: "Summary:\r\nWhen the status bar of an iPhone is 2x height (either because your mic is in used, you're in a phone call, or are tethering), and you launch a new app, the Default.png is pushed down by 20px and the bottom if it is cut off. \r\n\r\nThe Issue:\r\nThis can make for a rather jarring launch experience (when, say, tabbar icons are cut off, and then the app finishes launching and the tabbar moves up 20px).\r\n\r\nThe Request:\r\nIt would be nice if there was a way for developers to gracefully handle this scenario.\r\n\r\nPotential workarounds:\r\nThere are a few ways to handle this (that I can think of):\r\nI. Allow developers to have another set of Default.png's for apps that target iPhone, that are 20px shorter.\r\nII. Allow developers to specify a point in which the next 20px would be cut off, in Info.plist (per supported orientation) that is chopped off from Default.png as needed. Ex:\r\n\r\n<key>UIStatusBarClippingRange</key>\r\n<dict>\r\n\t<key>UIInterfaceOrientationPortrait</key>\r\n\t<string>150</string>\r\n\t<key>UIInterfaceOrientationLandscape</key>\r\n\t<string>45</string>\r\n</dict>\r\n\r\nIII. Allow developers to specify a list of ranges (that add up to 20px, per orientation) that are chopped off from Default.png as needed. This is slightly better than a flat 20px range to chop off, because, it will let people with patterned background images keep more of the overall design, instead of having to choose a big chunk to remove. Ex:\r\n\r\n<key>UIStatusBarClippingRange</key>\r\n<dict>\r\n\t<key>UIInterfaceOrientationPortrait</key>\r\n\t<array>\r\n\t\t<string>150-160</string>\r\n\t\t<string>205-210</string>\r\n\t\t<string>250-253</string>\r\n\t\t<string>273-274</string>\r\n\t</array>\r\n\r\n<!-- or maybe something like this -->\r\n<key>UIInterfaceOrientationLandscape</key>\r\n\t<array>\r\n\t\t<dict>\r\n\t\t\t<key>start</key>\r\n\t\t\t<number>44</number>\r\n\t\t\t<key>length</key>\r\n\t\t\t<number>10</number>\r\n\t\t</dict>\r\n\t\t<dict>\r\n\t\t\t<key>start</key>\r\n\t\t\t<number>260</number>\r\n\t\t\t<key>length</key>\r\n\t\t\t<number>6</number>\r\n\t\t</dict>\r\n\t\t<dict>\r\n\t\t\t<key>start</key>\r\n\t\t\t<number>272</number>\r\n\t\t\t<key>length</key>\r\n\t\t\t<number>4</number>\r\n\t\t</dict>\r\n\t</array>\r\n</dict>\r\n\r\nPotential workaround problems:\r\nI. App size increases. Default.png's are usually one of the larger assets in the app, and, nearly doubling the amount of Default.png's isn't too good.\r\nII. App launch time might slow down slightly, as UIKit has to chop up an image and render it back into a context for display. (Or maybe not. Theres a lot about the rendering pipeline that I don't know about.)\r\nIII. See #2, with an even longer delay, since you can't make it a quick chop and will have to iterate over more pixels and and stuff.\r\n\r\nOther random thoughts:\r\nI really like solution II. It feels like a good compromise -- avoids doubling the # of Default.png's, and, isn't the most complicated solution to implement (or understand). Also, I don't think the app launch time will be slowed down by a noticeable amount of time on newer devices."
+    email: zach@drayer.name
+    modified: "2012-07-23T08:25:59.164866Z"
+    number: "11933715"
+    number_intvalue: 11933715
+    originated: 7/23/12
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "6.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Default.png gets cut off when status bar is double-height

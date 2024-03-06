@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17298843"
+    labels:
+        datastore_id: "5776629141864448"
+data:
+    classification: Enhancement
+    created: "2014-06-13T07:52:08.489658Z"
+    description: "Summary:\r\nIn Java 8, optional default methods were added to Java interfaces.\r\n\r\nBy adding similar support, it is possible to trivially support mixins and safe binary backward compatibility of protocols. \r\n\r\nExample 1:\r\n\r\nprotocol Equals {\r\n\tfunc isEqualTo(object : AnyObject) -> Bool\r\n}\r\n\r\nclass MyClass : Equals {\r\n\tlet value : Int\r\n\tfunc isEqualTo(object: AnyObject) -> Bool {\r\n\t\tif let myObject = object as? MyClass {\r\n\t\t\treturn myObject.value == value\r\n\t\t}\r\n\t\treturn false\r\n\t}\r\n\tinit(_ value : Int) { self.value = value }\r\n}\r\n\r\nLet's say we want to add isNotEqual to the Equals interface. That is not possible, since that would require MyClass to add the method conforming to the extended interface. \r\n\r\nHowever, if we have something like default protocol method:\r\n\r\nextension protocol Equals {\r\n\tfunc isNotEqualTo(object : AnyObject) -> Bool {\r\n\t\treturn !self.isEqualTo(object)\r\n\t}\r\n}\r\n\r\nWe could then immediately use MyClass(1).isNotEqualTo(MyClass(1))\r\n\r\nWe could define our protocol with isNotEquals immediately, by providing a default method:\r\n\r\nprotocol Equals {\r\n\tfunc isEqualTo(object : AnyObject) -> Bool\r\n\tdefault func isNotEqualTo(object : AnyObject) -> Bool {\r\n\t\treturn !self.isEqualTo(object)\r\n\t}\r\n}\r\n\r\nThis would work as a mixin:\r\n\r\nclass MyClass : Equals {\r\n\tlet value : Int\r\n\tfunc isEqualTo(object: AnyObject) -> Bool {\r\n\t\tif let myObject = object as? MyClass {\r\n\t\t\treturn myObject.value == value\r\n\t\t}\r\n\t\treturn false\r\n\t}\r\n\tinit(_ value : Int) { self.value = value }\r\n}\r\n\r\nclass MyClass2 : Equals {\r\n\tlet value : Double\r\n\tfunc isEqualTo(object: AnyObject) -> Bool {\r\n\t\tif let myObject = object as? MyClass {\r\n\t\t\treturn myObject.value == value\r\n\t\t}\r\n\t\treturn false\r\n\t}\r\n\tinit(_ value : Double) { self.value = value }\r\n}\r\n\r\nNow both MyClass2 and MyClass share the implementation for isNotEqualTo defined in protocol Equals.\r\n \r\nWe could even make pure mixins:\r\n\r\nprotocol UselessMixin {\r\n\tdefault func bracketDescription {\r\n\t\treturn \"[\\(self)]\"\r\n\t}\r\n}\r\n\r\nAnd either add it when creating the class\r\n\r\nclass MyClass : UselessMixin {}\r\n\r\nor add it as an extension:\r\n\r\nextension MyClass : UselessMixin {}\r\n\r\nIf we look at Equatable, then this is essentially what we have:\r\n\r\n== is defined, but we get != for free. So this extensible protocol with default method is actually dual to free functions.\r\n\r\nThis is readily seen because\r\n\r\nclass MyClass {}\r\nfunc myFunction(O : MyClass, arg : Int) {\r\n\t// do something\r\n}\r\n\r\nIs dual to \r\n\r\nextension MyClass {\r\n\tfunc myFunction(arg : Int) {\r\n\t\t// do something\r\n\t}\r\n}\r\n\r\nConsequently\r\n\r\nprotocol MyProtocol {}\r\nfunc myFunction(O : MyProtocol, arg : Int) {\r\n\t// do something\r\n}\r\n\r\nIs dual to \r\n\r\nextension MyProtocol {\r\n\tfunc myFunction(arg : Int) {\r\n\t\t// do something\r\n\t}\r\n}"
+    email: christoffer@aegik.com
+    modified: "2014-06-24T23:24:34.678134Z"
+    number: "17298843"
+    number_intvalue: 17298843
+    originated: 13-Jun-2014 09:36 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 6.0 (6A215l)
+    reproducible: Always
+    resolved: Duplicate of 14011860
+    status: Closed
+    title: 'Swift: Support protocol default methods and protocol extensions (=mixins)'

@@ -1,0 +1,54 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18963168"
+    labels:
+        datastore_id: "5811003845509120"
+data:
+    classification: Other Bug
+    created: "2014-11-13T00:16:18.257289Z"
+    description: |-
+        Summary:
+        Variables and explicitly unwrapped optional variables seem to work fine as lvalues in tuples on the lhs of an assignment. But chained expressions (e.g., foo?.x) produce an error.
+
+        Steps to Reproduce:
+        Try this in a playground:
+
+        class Test {
+            var a: Int = 8
+            var b: Int = 9
+        }
+
+        var t: Test     = Test()
+        var optT: Test? = Test()
+
+        (t.a, t.b)         = (2, 3) // Works fine
+        (optT!.a, optT!.b) = (2, 3) // Works fine
+
+        // Err: "Cannot assign to the result of this expression"
+        (optT?.a, optT?.b) = (2, 3)
+
+        Expected Results:
+        Since the following are valid:
+
+        optT?.a = 2
+        optT?.b = 3
+
+        Then this should be valid as well, but is not:
+
+        (optT?.a, optT?.b) = (2, 3)
+
+        Actual Results:
+        Rejected by compiler
+    email: garth@garthsnyder.com
+    modified: "2014-11-13T00:16:18.25742Z"
+    number: "18963168"
+    number_intvalue: 18963168
+    originated: 12-Nov-2014 04:16 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1 (6A1052d)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: chaining does not work in tuples of lvalues'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23741928"
+    labels:
+        datastore_id: "5604657208492032"
+data:
+    classification: Other Bug
+    created: "2015-12-03T14:32:17.64955Z"
+    description: "Summary:\r\nIn Swift 2.1 casting an array of objects of some class that actually contain objects of a subclass to an Any and then to an Array<Subclass> fails, when casting from an Any to an Array<SomeClass> then another cast to Array<Subclass> succeeds. There doesn’t seem to be any reason for this behavior. Any cast that can work by doing intermediate casts should work when you skip the intermediate cast.\r\n\r\nSteps to Reproduce:\r\nEasiest way is to download the attached playground, but…\r\n1) create 2 classes (structs will work also): class BaseModel { required init() {} }, and class SubclassModel: BaseModel { required init() {} }\r\n2) create an array: var baseArray = [BaseModel]()\r\n3) put subclass models in the array: baseArray.append(SubclassModel())\r\n4) cast baseArray to an Any?: let anyArray = baseArray as Any?\r\n5) later try to cast the anyArray to an array of SubclassModels: let expectedCastArray = anyArray as? [SubclassModel]\r\n\r\nExpected Results:\r\nThe result of step 5 would be expectedCastArray that is not nil, and who’s dynamicType == Array<SubclassModel>.type.\r\n\r\nActual Results:\r\nThe result of step 5: expectedCastArray == nil :(. \r\n\r\nRegression:\r\nThis was working on Swift previously, but since you are tying Swift versions to Xcode versions, there isn’t an easy way of setting which Swift version to compile with. Perhaps you should fix that too, and make Swift versions selectable in Xcode.\r\n\r\nNotes:\r\nAs a workaround you can do let intermediateCast = anyArray as? [BaseModel], then let finalCastArray = intermediateCast as? [SubclassModel]. However I can’t see why a cast should ever fail if that same cast can be achieved by doing 1 intermediate cast. Also this type of casting setup works fine if you aren’t casting an Array:\r\n\r\nlet subclass: BaseModel = SubclassModel()\r\nlet any = subclass as Any?\r\nlet expectedCastArray = any as? SubclassModel // This works as expected in a single cast, not needing an intermediate cast to BaseModel"
+    email: amayers13@gmail.com
+    modified: "2015-12-03T14:32:17.64977Z"
+    number: "23741928"
+    number_intvalue: 23741928
+    originated: 12/03/15
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.1.1 / Swift 2.1
+    reproducible: Always
+    resolved: "false"
+    status: Open
+    title: 'Swift 2.1: Casting an array from an Any to that array requires 2 casts instead of the expected one to successfully work'

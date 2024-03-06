@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22243089"
+    labels:
+        datastore_id: "4965931952373760"
+data:
+    classification: Serious Bug
+    created: "2015-08-12T01:15:33.19953Z"
+    description: "Summary:\r\nWebHTMLView delegates many editing actions to the delegate by way of a COMMAND_PROLOGUE macro that translates to a call to the delegate's -webView:doCommandBySelector: method.\r\n\r\nThe problem is for some editing actions, at least including but possibly not limited to \"changeAttributes:\", any meaningful action in response to the action depends upon the actor having access to the sender of the message. In the case of changeAttributes:, for example, it is not necessarily the shared NSFontPanel sending the message, but a private subview (NSFontEffectsBox). The consequence is that the editing delegate has no way of consulting the sender to e.g. invoke \"convertAttributes:\" and determine what specific kind of editing operation has been conducted.\r\n\r\nThe problem would be addressed by supporting, for some or all of the delegated actions, a parameter to pass along the sender. For example, instead of:\r\n\r\n-webView:doCommandBySelector:\r\n\r\nIt would instead dispatch to:\r\n\r\n-webView:doCommandBySelector:sender:\r\n\r\nAlternatively, if a change in the delegation API is too disruptive, it would be a quick fix to stash the sender for the duration of the dispatch, such that a delegate could ask the web view for the \"current command sender\" and act upon it as appropriate.\r\n\r\nThe private nature of both WebHTMLView and NSFontEffectBox leave a WebView editing delegate (such as my app, MarsEdit) unable to work around this shortcoming in any way except to (shudder) swizzle WebHTMLView to replace its implementation of changeAttributes: with one that performs the desired action. Because WebHTMLView is an internal class to WebKit, it's not possible to subclass it or to augment in any more supported or safe manner.\r\n\r\nThe practical effect of this bug on my app is that I can't react meaningfully to certain Font Panel actions such as changing the strikethrough formatting of text. I handle other font editing commands such as changeFont:, which suffers the same problem but for which consulting -[NSFontPanel sharedFontPanel] is a suitable workaround to getting access to the sender (at least given current implementations).\r\n \r\nSee http://stackoverflow.com/questions/4411315/how-can-i-react-meaningfully-to-a-changeattributes-delegation-pass-through-from for previous context for this bug report.\r\n\r\nSteps to Reproduce:\r\n1. Implement any app with a web editing delegate that specializes behavior of the changeAttributes: action.\r\n2. From an editable web view, open the font panel.\r\n3. Invoke the e.g. \"strikethrough\" popup panel and selection a strikethrough option.\r\n4. From the web editing delegate's doCommandBySelector: method, observe that there is no way to reliably consult the sender that originated the command. Thus, no e.g. meaningful convertAttributes: calculations can be made.\r\n\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\nThis has been a longstanding bug but still exists in 10.11 betas.\r\n10.11 Beta (15A244d)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: jalkut@gmail.com
+    modified: "2015-08-12T01:15:33.19976Z"
+    number: "22243089"
+    number_intvalue: 22243089
+    originated: 11-Aug-2015 09:14 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11 Beta (15A244d)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'WebView''s editing delegate cannot meaningfully act upon changeAttributes: delegation'

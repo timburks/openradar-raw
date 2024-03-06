@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21826157"
+    labels:
+        datastore_id: "6301306440384512"
+data:
+    classification: Crash / Hang / Data Loss
+    created: "2015-07-15T00:23:15.75204Z"
+    description: "I am mistaken. It's strange that the results of otool -l vary for a binary which includes just arm64 and armv7 targets versus when a binary includes arm64, armv7, i386, and x86_64. In the first case, otool -l prints a header indicating the architecture and then its details. In the second case, otool -l prints a header with no indication of the architecture, followed by what would be printed if one calls otool -arch arm64 -l, but without the __bundle / __LLVM section.\r\n\r\nI'm able to verify the presence of bitcode in the universal binary by running:\r\n\r\notool -arch arm64 -l ~/Desktop/MissingBitcode | grep __LLVM\r\notool -arch armv7 -l ~/Desktop/MissingBitcode | grep __LLVM\r\nThis issue has been verified as resolved and can be closed.\r\n\r\nSummary:\r\nlipo deletes Bitcode segments when merging iOS and OS X code, as one might do in order to ship a single .framework which can be used for both the devices and the Simulator. We ship armv7, arm64, i386, and x86_64 in our TextExpander.framework's binary. We do this by building the iOS and OS X versions separately and using lipo to merge the binaries.\r\n\r\nSteps to Reproduce:\r\nUsing OS X 10.11 Beta 3 (15A216g):\r\n\r\n1. In Terminal, run:\r\n\r\nsudo xcode-select -s /Applications/Xcode-beta.app/\r\n\r\n2. Download the attached files: TextExpander_iOS_with_bitcode and TextExpander_OSX and place them on your Desktop\r\n\r\n3. Validate that TextExpander_iOS_with_bitcode contains Bitcode by running this in Terminal:\r\n\r\notool -l ~/Desktop/TextExpander_iOS_with_bitcode | grep __LLVM\r\n\r\nThe result should be:\r\n\r\n    segname __LLVM\r\n    segname __LLVM\r\n\r\nThese are the bitcode segments for armv7 and arm64.\r\n\r\n4. Merge the OS X code by running this in Terminal:\r\n\r\ncd ~/Desktop\r\nlipo -create TextExpander_iOS_with_bitcode TextExpander_OSX -output MissingBitcode\r\n\r\n5. Validate that the merged MissingBitcode contains Bitcode by running this in Terminal:\r\n\r\notool -l MissingBitcode | grep __LLVM\r\n\r\n\r\nExpected Results:\r\nExpected result from step #5:\r\n    segname __LLVM\r\n    segname __LLVM\r\n\r\n\r\nActual Results:\r\nActual result from step #5:\r\n(Nothing. No matches.)\r\n\r\nUsing lipo to merge iOS and OS X code strips the Bitcode segments from the iOS code.\r\n\r\nVersion:\r\nXcode 7.0 beta 3 (7A152u)\r\nOS X 10.11 Beta 3 (15A216g)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nMacBook Pro (Retina, 15-inch, Late 2013)\r\n2.6 GHz Intel Core i7\r\n16 GB 1600 MHz DDR3\r\nNVIDIA GeForce GT 750M 2048 MB\r\n\r\nAttachments:"
+    email: greg@smilesoftware.com
+    modified: "2015-07-15T22:27:30.19528Z"
+    number: "21826157"
+    number_intvalue: 21826157
+    originated: "2015-07-14"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 7S152u / 15A216g
+    reproducible: Always
+    resolved: "2015-07-15"
+    status: Resolved
+    title: lipo deletes Bitcode segments when merging iOS and OS X code

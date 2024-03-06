@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19282514"
+    labels:
+        datastore_id: "5822186329735168"
+data:
+    classification: ""
+    created: "2014-12-17T20:31:28.234117Z"
+    description: "Summary:\r\nIt would be beneficial to be able to scan codabar barcodes.\r\n\r\nIt would be nice to have the following:\r\n- codabar available in the AVCaptureMetadataOutput availableMetadataObjectTypes\r\n- codabar as a metadataObjectType that can be added to the AVCaptureMetadataOutput metatdataObjectTypes\r\n- Have AVCaptureMetadataOutputObjectsDelegate’s captureOutput delegate function’s metadataObjects include codabar metadata\r\n- Have codabar as a NSString const* AVMetadataObjectType for comparison against an AVMetadataObject type\r\n- Have an AVMetadataMachineReadableCodeObject for codabar barcode types\r\n- Be able to transform codabar metadata objects with AVMetadataMachineReadableCodeObject so we can acquire the barcode string\r\n\r\nSteps to Reproduce:\r\n1. self.session = [[AVCaptureSession alloc] init];\r\n2. self.device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];\r\n3. NSError* our_error;\r\nself.input = [AVCaptureDeviceInput deviceInputWithDevice:self.device error:&our_error];\r\n[self.session addInput:self.input];\r\n4. self.output = [[AVCaptureMetadataOutput alloc] init];\r\n[self.output setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];\r\n[self.session addOutput:self.output];\r\nself.output.metadataObjectTypes = [self.output availableMetadataObjectTypes]; ****Would like codabar available here****\r\n5. Blah blah preview\r\n6. - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)metadataObjects fromConnection:(AVCaptureConnection *)connection { ****Would like codabar returned in metadataObjects\r\n7. NSArray* barcodeTypes = @[AVMetadataObjectTypeUPCECode, AVMetadataObjectTypeCode39Code, etc, etc]; ****Would like codabar as an option, like AVMetadataObjectTypeCodabarCode or similar****\r\n8. for (AVMetadataObject* metadata in metadataObjects) {\r\n  for (NSString* type in barcodeTypes) {\r\n    if ([metadata.type isEqualToString:type]) {\r\n      barcodeObject = (AVMetadataMachineReadableCodeObject *) [self.preview_layer transformedMetadataObjectForMetadataObject:(AVMetadataMachineReadableCodeObject*)metadata];\r\n      detectionString = [(AVMetadataMachineReadableCodeObject*) metadata stringValue]; ****Would like to get the codabar barcode result here****\r\n      break;\r\n    }\r\n  }\r\n}\r\n\r\nExpected Results:\r\nCodabar as a barcode type and scanning to acquire the barcode value from the image.\r\n\r\nActual Results:\r\nCodabar is not available as a barcode type. Attempts to scan a codabar barcode are unsuccessful."
+    email: rquick@booksys.com
+    modified: "2014-12-17T20:31:28.234298Z"
+    number: "19282514"
+    number_intvalue: 19282514
+    originated: 17-Dec-2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 6.1.1
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Codabar Barcode Scanning

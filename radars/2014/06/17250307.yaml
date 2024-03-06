@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17250307"
+    labels:
+        datastore_id: "5864367807528960"
+data:
+    classification: ""
+    created: "2014-06-10T21:11:57.707247Z"
+    description: "Summary:\r\nThe attached file demonstrates the problem.\r\n\r\nCalling cblas_sgemv for matrix data that is not aligned at 8 byte boundaries causes a segfault.   This may be due to unprotected use of AVX instructions because running the code on a machine that does not have AVX does not produce the segfault.\r\n\r\nSee: https://github.com/numpy/numpy/issues/4007 for discussion\r\n\r\nSteps to Reproduce:\r\nCompile and run attached c code:\r\n\r\n    cc accelerate_aligned.c -lblas\r\n    ./a.outOutput on my 6,2 MBA:\r\n\r\n    0 16 0\r\n    Segmentation fault: 11\r\n\r\nExpected Results:\r\nNo segmentation fault. \r\n\r\nActual Results:\r\nOutput on my 6,2 MBA:\r\n\r\n    0 16 0\r\n    Segmentation fault: 11\r\n\r\nVersion:\r\nXCode version : 5.1.0.0.1.1396320587\r\nOSX version : 10.9.3 (13D65)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nDoes not segfault on two OSX machines without AVX.  However, these are running 10.6 and 10.7.\r\n\r\n\r\naccelerate_aligned.c\r\n\r\n// cc file.c -lblas\r\n#include <stdlib.h>\r\n#include <stdio.h>\r\n#include \"Accelerate/Accelerate.h\"\r\n\r\nint main(int argc, const char *argv[])\r\n{\r\n    long m = 10000;\r\n    long n = 200;\r\n    float * A = calloc(m*n + 4, sizeof(float));\r\n    float * X = calloc(m*n + 4, sizeof(float));\r\n    float * R = calloc(m*n + 4, sizeof(float));\r\n    X +=4;\r\n    printf(\"%ld %ld %ld\", (long)A % 32, (long)X % 32, (long)R % 32);\r\n    puts(\"\");\r\n    cblas_sgemv(CblasRowMajor, CblasNoTrans, m, n, 1.f, A, n, X, 1,\r\n                 0.f, R, 1);\r\n    return 0;\r\n}"
+    email: matthew.brett@gmail.com
+    modified: "2014-06-10T21:11:57.707431Z"
+    number: "17250307"
+    number_intvalue: 17250307
+    originated: 06/10/2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 5.1.0.0.1.1396320587
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Segfault for Accelerate cblas_sgemv with 4-byte floats not aligned to 32 byte boundary

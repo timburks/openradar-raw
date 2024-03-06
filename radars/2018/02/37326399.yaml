@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "37326399"
+    labels:
+        datastore_id: "6106299540439040"
+data:
+    classification: ""
+    created: "2018-02-07T22:06:33.37401Z"
+    description: "37326399\r\n\r\nSummary: overly aggressive warning (or error in our case, since we enable warnings as errors) w.r.t. format specifier %z when using integer numeric literal\r\n\r\nTFNTableViewCell.m:447:81: Format specifies type 'ssize_t' (aka 'long') but the argument has type 'int'\r\n            TFNFlushLogsAndReportNonFatalError(NSStringFromClass([self class]), 0, NSStringFromSelector(_cmd), [e description]);\r\nCrashlytics+TFNAdditions.h:43:254: Expanded from macro 'TFNFlushLogsAndReportNonFatalErrorConditionalSimulatorAbort'\r\n        TFNLogWithoutCap(TLSLogLevelError, TFNLoggingChannel_Generic, @\"Forcing app abort. (Not calling [[Crashlytics sharedInstance] reportError:] in the simulator.)\\nerrorDomain = %@, errorCode = %zd, errorKey = %@, errorValue = %@\\n%@\", errorDomain, errorCode, errorKey, errorValue, [NSThread callStackSymbols]); \\\r\n\r\nin this case, %zd is used because we often pass an the code @property for an NSError, which will expand in that macro to be an NSInteger, which would then break a non-%z specifier since we still support both 32-bit NSInteger on 32-bit devices and 64-bit NSInteger on 64-bit devices.  this will be the case for our product while supporting versions of iOS that support 32 bit devices (which would include iOS 10 that is supported on iPhone 5), it should not be the case that a warning is emitted for use of %z for a integer numeric literal.\r\n\r\n\r\n\r\nSteps to Reproduce: add code such as the following\r\n\r\n{code}\r\n#define MyLog(errorDomain, errorCode) NSLog(@\"%@ - %zd\", errorDomain, errorCode);\r\n\r\n    NSError *error = [NSError errorWithDomain:@\"domain\" code:0 userInfo:nil];\r\n    MyLog(error.domain, error.code); // <-- compiles without error\r\n    MyLog(error.domain, 0); // <-- compiler warning (or error with warnings as errors)\r\n{code}\r\n\r\nExpected Results: no warning\r\n\r\nActual Results: Format specifies type 'ssize_t' (aka 'long') but the argument has type 'int'\r\n\r\nVersion/Build: Xcode 9.3 beta 2\r\n\r\n\r\nConfiguration: macOS 10.13.3 (17D47) MacBook Pro (Retina, 15-inch, Mid 2015)"
+    email: kbeitz@twitter.com
+    modified: "2018-02-07T22:06:33.37427Z"
+    number: "37326399"
+    number_intvalue: 37326399
+    originated: 2018.02.07
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 9.3 beta 2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Summary: overly aggressive warning w.r.t. format specifier %z when using integer numeric literal'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6511474"
+    labels:
+        datastore_id: "2803"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2009-01-22T04:15:55.228701Z"
+    description: "Dirhelper deletes data out from under NSTemporaryDirectory() on Leopard.\r\n\r\nIf an app creates files in NSTemporaryDirectory() and the user leaves the app running for more than 3 days (or unzips an archive containing files with a modification date more than three days in the past), the files will be deleted out from under the application.\r\n\r\nThe semantics appear to have changed recently.\r\n\r\nAs recently as the doc set in Xcode 3.1.2, the documentation for NSTemporaryDirectory() read: \r\n\r\n\"Files put in the temporary directory may be moved to the Trash in a “Recovered Files” directory when the user’s system is restarted. You should therefore ensure that you delete temporary files before your application terminates.\"\r\n\r\n... which implies that the data will be available for the lifetime of the app.\r\n\r\nHowever, the documentation now on-line at http://developer.apple.com/documentation/Cocoa/Reference/Foundation/Miscellaneous/Foundation_Functions/Reference/reference.html reads:\r\n\r\n\"The temporary directory is determined by confstr(3) passing the _CS_DARWIN_USER_TEMP_DIR flag. The erase rules are whatever match that directory.\"\r\n\r\nThough the erase rules aren't documented (!), they are specified in /System/Library/LaunchDaemons/com.apple.bsd.dirhelper.plist: erase normal files last accessed more than three days ago.\r\n\r\n       <key>RunAtLoad</key>\r\n       <true/>\r\n       <key>StartCalendarInterval</key>\r\n       <dict>\r\n               <key>Hour</key>\r\n               <integer>3</integer>\r\n               <key>Minute</key>\r\n               <integer>35</integer>\r\n       </dict>\r\n       <key>EnvironmentVariables</key>\r\n       <dict>\r\n               <key>CLEAN_FILES_OLDER_THAN_DAYS</key>\r\n               <string>3</string>\r\n       </dict>\r\n\r\nNote: You can verify that dirhelper is loaded using a trick described in Tech Note TN2083 (http://developer.apple.com/technotes/tn2005/tn2083.html).\r\n\r\n$ pid=`sudo killall -s kextd | cut -f 3 -d ' '`\r\n$ sudo launchctl bslist $pid | grep dirhelper"
+    email: steveshep@gmail.com
+    modified: "2011-08-28T05:48:24.063523Z"
+    number: "6511474"
+    number_intvalue: 6511474
+    originated: 1/20/09
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: "10.5"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Data loss in NSTemporaryDirectory()

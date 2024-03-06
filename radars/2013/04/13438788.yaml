@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13438788"
+    labels:
+        datastore_id: "2923401"
+data:
+    classification: Other Bug
+    created: "2013-04-07T22:38:55.544374Z"
+    description: "Summary:\r\n\r\nUsing iOS 6 state preservation and restoration the first visible row of a UITableView is not restored when the table view is embedded in a UINavigationController.\r\n\r\nSteps to Reproduce:\r\n\r\n(using Xcode 4.6.1)\r\n\r\n1. Create a new Xcode project using the iOS Single View Application template, specifying iPhone, Use Storyboards, Use Automatic Reference Counting.\r\n\r\n2. Enable state preservation and restoration in the App delegate by implementing application:shouldSaveApplicationState: and application:shouldRestoreApplicationState:. Both methods should return YES.\r\n\r\n3. Add a new class to the project that is a subclass of UITableViewController (without a XIB). Implement the two mandatory UITableViewDataSource delegate methods to provide a basic data source:\r\n\r\n- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section\r\n{\r\n    return 1000;\r\n}\r\n\r\n- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath\r\n{\r\n    static NSString *CellIdentifier = @\"BasicCell\";\r\n    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];\r\n    cell.textLabel.text = [NSString stringWithFormat:@\"Cell #%d\",indexPath.row];\r\n    return cell;\r\n}\r\n\r\n4. Replace the storyboard contents with a single Table View Controller. Change the class of the controller to the name of the class created in step 3.\r\n\r\n5. In the storyboard set the Table View Cell style to Basic and set the cell reuse identifier to \"BasicCell\" as specified in step 3.\r\n\r\n6. Embed the table view controller in a navigation controller (Editor > Embed In > Navigation Controller).\r\n\r\n7. Set the Storyboard ID for the navigation controller and the table view controller and select the \"Use Storyboard ID\" option to use the same identifier for the restortation ID. Also set the restoration ID for the table view.\r\n\r\n8. Build and run\r\n\r\n9. Scroll down the table view until row 50 is the first visible row. Use the home button to move the App to the background and then use Xcode to stop the App.\r\n\r\n10. Run the app again to see the restored state.\r\n\r\nExpected Results:\r\n\r\nThe first visible row should be row 50 which was the first visible row when the App was terminated.\r\n\r\nActual Results:\r\nThe first visible row is row 0.\r\n\r\nRegression:\r\n\r\nDelete the navigation controller from the storyboard and repeat the test. On restoring the app the first visible row is row 50.\r\n\r\nNotes:\r\n\r\nA sample Xcode project to reproduce the problem can be found in my GitHub Code Examples repository:\r\n\r\nhttps://github.com/kharrison/CodeExamples/tree/master/BUG%20TableView%20State%20Restore\r\n\r\nThe project contains two storyboards to demonstrate state restoration of a table view both when it is the root view and when it is embedded in a navigation controller:\r\n\r\n    If the Target settings are used to set the Main Storyboad to NavStoryboard the user interface consists of UITableView embedded in a Navigation Controller. In this use case the table view state is not restored.\r\n\r\n    If the Target settings are used to set the Main Storyboard to MainStoryboard the user interface consists of a single UITableView which does have state restored as expected."
+    email: keith@useyourloaf.com
+    modified: "2013-04-07T22:38:55.544597Z"
+    number: "13438788"
+    number_intvalue: 13438788
+    originated: 18-Mar-2013
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 6.1.3
+    reproducible: yes
+    resolved: ""
+    status: Duplicate
+    title: table view state not restored when embedded in navigation controller

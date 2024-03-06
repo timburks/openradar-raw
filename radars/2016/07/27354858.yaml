@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27354858"
+    labels:
+        datastore_id: "6164557986791424"
+data:
+    classification: Crash
+    created: "2016-07-15T10:54:22.57048Z"
+    description: "Summary:\r\nPerforming a sequence of insertItems, reloadData, insertItems, with an interval of 0.1s between each operation, will trigger an assert within UIKit\r\n\r\nSteps to Reproduce:\r\nOpen and run the attached project under iOS 9.3 (last tested in the 9.3 simulator).\r\n\r\nBriefly:\r\n - Create a UICollectionView with a counter for the number of items, initially zero.\r\n - Insert a single item with insertItemsAtIndexPaths at item index 0\r\n - Wait 0.1s\r\n - Reload the collection-view using reloadData\r\n - Wait 0.1s\r\n - Insert a second item with insertItemsAtIndexPaths at item index 1\r\n\r\nExpected Results:\r\nI would expect the collection view to end up with two items.\r\n\r\nActual Results:\r\nAn assert is triggered in the second insertItemsAtIndexPaths call, with a message like \"request for index path for global index 1152930280101002667 when there are only 2 items in the collection view\"\r\n\r\nVersion:\r\niOS 9.3.2, Xcode 7.3.1\r\n\r\nNotes:\r\nReplacing 'reloadData' with 'reloadSections' behaves correctly.\r\nIncreasing the delay between calls to 0.2s or higher behaves correctly.\r\n\r\nConfiguration:\r\niPhone Simulator, iPhone 6 \r\n\r\nAttachments:\r\n'CVCrasher.zip' and 'stack.txt' were successfully uploaded.\r\n\r\n\r\n\r\nRelevant snippet from attached project:\r\n\r\n@interface ViewController : UICollectionViewController\r\n{\r\n    int numItems;\r\n}\r\n\r\n@end\r\n\r\n@implementation ViewController\r\n\r\n- (void)viewDidAppear:(BOOL)animated\r\n{\r\n    [super viewDidAppear:animated];\r\n    [self insert];\r\n}\r\n\r\n- (UICollectionViewCell*)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {\r\n    return [collectionView dequeueReusableCellWithReuseIdentifier:@\"cell\" forIndexPath:indexPath];\r\n}\r\n\r\n- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section\r\n{\r\n    return numItems;\r\n}\r\n\r\n- (void)insert\r\n{\r\n    numItems++;\r\n    [self.collectionView insertItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:numItems-1 inSection:0]]];\r\n\r\n    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100*NSEC_PER_MSEC), dispatch_get_main_queue(), ^{\r\n        [self reload];\r\n    });\r\n}\r\n\r\n- (void)reload\r\n{\r\n    numItems = 1;\r\n    [self.collectionView reloadData];\r\n    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100*NSEC_PER_MSEC), dispatch_get_main_queue(), ^{\r\n        [self insert];\r\n    });\r\n}\r\n\r\n@end"
+    email: mike.ferenduros@gmail.com
+    modified: "2016-08-05T08:33:20.98145Z"
+    number: "27354858"
+    number_intvalue: 27354858
+    originated: 14-Jul-2016
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: "9.3"
+    reproducible: Always
+    resolved: Fixed in iOS 10 beta 4
+    status: Closed
+    title: UICollectionView crashes when insert, reload, insert are called in rapid succession

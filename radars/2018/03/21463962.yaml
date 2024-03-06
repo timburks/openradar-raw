@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21463962"
+    labels:
+        datastore_id: "4994269425172480"
+data:
+    classification: ""
+    created: "2018-03-24T20:20:55.40317Z"
+    description: "Summary:\r\nThere are various ways to receive NSEvents from OS X.\r\n\r\nNamely:\r\n - addLocalMonitorForEventsMatchingMask\r\n - CGEventTapCreate > CGEventTapCallBack\r\n - Input Method Kit > -handleEvent:client:\r\n\r\nNSEvents have the property `charactersIgnoringModifiers`, which should return the \"basic\" character on the keyboard that was pressed.\r\n\r\nThe docs state:\r\n\r\n > This property is set to the non-modifier key character pressed for dead keys, such as Option-e. For example, Option-e (no shift key) returns an “e\" for this method.\r\n\r\nUnfortunately, when using Input Method Kit, `charactersIgnoringModifiers` does NOT return \"e\". It if Option is pressed, it returns the \"key as it was transformed by Option\", aka the Grave Accent \"´\" key.\r\n\r\nThis makes it impossible for Input Method Kit to ever know the \"basic keyboard character pressed\" without relying on passing the `event.keyCode` through something like `UCKeyTranslate()`\r\n\r\nSteps to Reproduce:\r\n 1. Hook NSEvents using various methods: Local Monitor, CGEventTap, and Input Method Kit. \r\n 2. Log NSEvent data for NSKeyDown events (see below).\r\n 3. When your NSEvent listener is running, press \"Option-e\"\r\n 4. Observe log output.\r\n\r\nNSEvent `addLocalMonitorForEventsMatchingMask:`\r\nNSKeyDownEvent: event.keyCode: [kVK_ANSI_E], event.characters: [], event.charactersIgnoringModifiers: [e]\r\n\r\nCGEventTap:\r\nNSKeyDownEvent: event.keyCode: [kVK_ANSI_E], event.characters: [´], event.charactersIgnoringModifiers: [e]\r\n\r\nInput Method Kit `handleEvent:client:`:\r\nNSKeyDownEvent: event.keyCode: [kVK_ANSI_E], event.characters: [´], event.charactersIgnoringModifiers: [´]\r\n\r\n\r\nExpected Results:\r\nWhen observed via IMKit `handleEvent:client:`, the keypress of \"Option-e\" SHOULD report the value \"e\" for `charactersIgnoringModifiers`.\r\n\r\n > This property is set to the non-modifier key character pressed for dead keys, such as Option-e. For example, Option-e (no shift key) returns an “e\" for this method.\r\n\r\n\"Option-e\" does not report \"e\", however. It logs:\r\n\r\nInput Method Kit `handleEvent:client:`:\r\nNSKeyDownEvent: event.keyCode: [kVK_ANSI_E], event.characters: [´], event.charactersIgnoringModifiers: [´]\r\n\r\nActual Results:\r\nNote that via Local Monitor `event.charactersIgnoringModifiers` reports \"e\", as expected.\r\n\r\nNote that via CGEventTap `event.charactersIgnoringModifiers` reports \"e\", as expected.\r\n\r\nNote that via IMKit `event.charactersIgnoringModifiers` reports \"´\". This is explicitly wrong according to the NSEvent docs and example. This is exactly the same value as the `event.characters` value and thus rather useless.\r\n\r\nIn IMKit, the `charactersIgnoringModifiers` is actually returning \"characters WITH modifiers\".\r\n\r\nThe NSEvent docs state:\r\n\r\n > This property is set to the non-modifier key character pressed for dead keys, such as Option-e. For example, Option-e (no shift key) returns an “e\" for this method, whereas the characters property returns an empty string.\r\n\r\n > This property is useful for determining “basic” key values in a hardware-independent manner, enabling such features as keyboard equivalents defined in terms of modifier keys plus character keys. For example, to determine if the user typed Alt-S, you don’t have to know whether Alt-S generates a German double ess, an integral sign, or a section symbol. You simply examine the string contained by this property along with the event’s modifier flags, checking for “s” and NSAlternateKeyMask.\r\n\r\n\r\nVersion:\r\nOS X 10.10\r\n\r\nNotes:\r\nThis makes it impossible for Input Method Kit to ever know the \"basic keyboard character pressed\" without relying on passing the `event.keyCode` through something like `UCKeyTranslate()`"
+    email: peter.kamb@gmail.com
+    modified: "2018-03-24T20:20:55.40347Z"
+    number: "21463962"
+    number_intvalue: 21463962
+    originated: June 19 2015,
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Input Method Kit reports wrong values for NSEvent `charactersIgnoringModifiers` in `handleEvent:client:`

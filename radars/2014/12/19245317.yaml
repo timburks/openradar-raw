@@ -1,0 +1,55 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19245317"
+    labels:
+        datastore_id: "6664167423475712"
+data:
+    classification: Serious Bug
+    created: "2014-12-14T20:03:21.33814Z"
+    description: |-
+        Summary:
+        When an associated type is constrained to a protocol and the type parameters of a method or constructor attempt to constrain the associated type to be equal to a type parameter constraining to the same protocol, the compiler gives spurious errors.
+
+
+        Steps to Reproduce:
+        1. Compile this:
+        protocol P {
+        	typealias T: P
+        }
+
+        struct S<A: P> {
+        	init<Q: P where Q.T == A>(_ q: Q) {}
+        }
+
+
+
+        Expected Results:
+        I expected it to compile. Q.T is constrained to conform to P by the protocol’s definition; A is constrained to conform to P by the struct’s definition; what’s the problem?
+
+
+        Actual Results:
+        Spurious errors:
+        ./same-type.swift:9:22: error: same-type constraint type 'A' does not conform to required protocol 'P'
+
+
+        Regression:
+        These errors do not occur if P.T does not itself have any constraints.
+        You can work around this by constructing S with a free function, which is unidiomatic, but actually compiles.
+        A static method on S works in this case, but not in others, e.g. a CollectionOf type. (Still investigating that.)
+
+
+        Notes:
+        This bites me surprisingly frequently—any time I’m trying to do something interesting with CollectionType, for example.
+    email: rix.rob@gmail.com
+    modified: "2014-12-14T20:03:21.338289Z"
+    number: "19245317"
+    number_intvalue: 19245317
+    originated: 14-Dec-2014 03:03 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Constrained associated types can’t be same-type constrained to parameters with the same constraints'

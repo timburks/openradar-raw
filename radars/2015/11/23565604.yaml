@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23565604"
+    labels:
+        datastore_id: "5520782268563456"
+data:
+    classification: bug
+    created: "2015-11-16T23:36:25.07896Z"
+    description: "Summary:\r\nA HomeKit HMAccessory delegate callback, -[id<HMAccessoryDelegate> accessory:service:didUpdateValueForCharacteristic:], is not received when an out-of-band change is made to the power state characteristic of a Lutron Caseta Switch after the app has written the same characteristic.\r\n\r\nFor instance, if the Lutron switch is physically toggled off after being toggled on in HMCatalog (Apple sample HomeKit project), HMCatalog will continue to show the switch as on because HomeKit delivers no change event, the switch HMAccessory's delegate never receives the characteristic change callback.\r\n\r\nBy \"out-of-band\", I mean anything outside the app which last wrote the characteristic. This includes physically toggling the switch or running a second instance of HMCatalog or other HomeKit app on a second device concurrently with the first.\r\n\r\nAmazon link to the specific Lutron switch:\r\nhttp://www.amazon.com/Lutron-PD-5WS-DV-WH-Switch-Wireless-Lighting/dp/B00NO7Z80S\r\n\r\nSteps to Reproduce:\r\nUnfortunately, the behavior is a bit capricious, so exact steps cannot be provided. Nevertheless, the issue can always be reproduced and reproduction is simple.\r\n1) Install a Lutron switch as linked in the Summary.\r\n2) Install HMCatalog on iOS device #1.\r\n3) In HMCatalog, add the switch accessory to your HomeKit home.\r\n4) Toggle the switch's power state several times using HMCatalog. It appears to be important that the HMCatalog instance was the last writer of the current power state.\r\n5) Now toggle the switch's power state physically. How soon after toggling from the app? Try different values from as fast as possible to one minute after. I'll call this window of time the \"missed event window\".\r\n\r\nThen:\r\n6) Install HMCatalog on iOS device #2\r\n7) If device #2 does not use the same iCloud account, share the home with the iCloud account logged into device #2.\r\n8) Repeat steps 1-5, but in step #5, instead of physically toggling the switch, use the HMCatalog instance running on device #2.\r\n\r\nAnd finally:\r\n9) Play back and forth with writing from HMCatalog on one device then toggling with HMCatalog on the other. Also observe that the device which was not the last writer, when it received and reflects that last change event, *does* receive the next change event while the writer does not. But again, the behavior is capricious and also may have a timing dependence on the missed event window.\r\n\r\nExpected Results:\r\nA HomeKit app should be able to accurately represent the current state of the accessory within a few seconds (eventual consistency). The delegate of an HMAccessory representing this switch should receive a -[id<HMAccessoryDelegate> accessory:service:didUpdateValueForCharacteristic:] callback for every out-of-band value change and should never have to poll in order to maintain consistency.\r\n\r\nActual Results:\r\nThe delegate of an HMAccessory representing this switch does not receive a -[id<HMAccessoryDelegate> accessory:service:didUpdateValueForCharacteristic:] callback for every out-of-band value change. As such, the only way for a HomeKit app to guarantee consistency with the actual state of the switch is to poll the value with -[HMCharacteristic readValueWithCompletionHandler:]. Within the missed event window, concurrent events may not be reflected accurately in a HomeKit app, misleading the user as the actual state of the device.\r\n\r\nRegression:\r\nFor various versions of iOS 9, this behavior is always reproducible. I don't have enough data points to know if the issue has a root cause in the Lutron switch or the HomeKit framework."
+    email: michael.pederson@gmail.com
+    modified: "2015-11-16T23:36:25.07938Z"
+    number: "23565604"
+    number_intvalue: 23565604
+    originated: 11/16/2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS (HomeKit)
+    product_version: "9"
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: Last writer does not receive HMAccessory callbacks for out-of-band characteristic changes

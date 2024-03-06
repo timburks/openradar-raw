@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17340722"
+    labels:
+        datastore_id: "5534191122907136"
+data:
+    classification: ""
+    created: "2014-06-17T10:48:14.912636Z"
+    description: "Summary:\r\ngiven this code\r\n\r\nlet a: Array<Int>? = [1]\r\nlet b: Array<Int>? = [1]\r\n\r\n(a!) == (b!)\r\n\r\nlet a2 = a!\r\nlet b2 = b!\r\n\r\na2 == b! // evaluate to true\r\nb! == a2 // evaluate to false\r\n\r\n-------\r\n\r\nand this code\r\n\r\nlet s1 : Slice<Int> = Slice(count: 1, repeatedValue:1)\r\nlet s2 : Slice<Int> = Slice(count: 1, repeatedValue:1)\r\n\r\nvar b1 = s1[0..1] == s2  // false\r\nvar b2 = s1 == s2        // true\r\n\r\n-----\r\n\r\nthe compiler sometimes decide to use\r\n\r\n@transparent func ==(lhs: CConstVoidPointer, rhs: CConstVoidPointer) -> Bool\r\n\r\nto compare value, which give unexpected and incorrect result\r\n\r\nSteps to Reproduce:\r\nxcrun swift\r\nWelcome to Swift!  Type :help for assistance.\r\n  1> let a: Array<Int>? = [1]\r\na: Int[]? = size=1 {\r\n  [0] = 1\r\n}\r\n  2> let b: Array<Int>? = [1]\r\nb: Int[]? = size=1 {\r\n  [0] = 1\r\n}\r\n  3> let a2 = a!\r\na2: Int[] = size=1 {\r\n  [0] = 1\r\n}\r\n  4> let b2 = b!\r\nb2: Int[] = size=1 {\r\n  [0] = 1\r\n}\r\n  5> \r\n  6> a2 == b!\r\n$R1: Bool = true\r\n  7> b! == a2\r\n$R2: Bool = false\r\n  8> (a2 == b!) == (b! == a2)\r\n$R3: (Bool) = false\r\n 9> import Foundation\r\n 10> a2 == b!\r\n$R9: Bool = true\r\n 11> b! == a2\r\n<REPL>:11:4: error: ambiguous use of operator '=='\r\nb! == a2\r\n   ^\r\nSwift.==:1:19: note: found this candidate\r\n@transparent func ==(lhs: CConstVoidPointer, rhs: CConstVoidPointer) -> Bool\r\n                  ^\r\nFoundation.==:1:6: note: found this candidate\r\nfunc ==(lhs: NSObject, rhs: NSObject) -> Bool\r\n\r\nExpected Results:\r\nb! == a2 is true and (a2 == b!) == (b! == a2) is true\r\n\r\nActual Results:\r\nb! == a2 is false and (a2 == b!) == (b! == a2) is false\r\n\r\nVersion:\r\nxcrun swift --version\r\nSwift version 1.0 (swift-600.0.34.4.5)\r\nTarget: x86_64-apple-darwin14.0.0\r\n\r\nNotes:\r\nhttp://stackoverflow.com/questions/24260900/equality-of-unwrapped-optional-arrays-in-swift/24261366#24261366\r\n\r\nhttp://stackoverflow.com/questions/24238478/what-is-the-slice-compare-logic-in-swift/24239556#24239556\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: xlchen1291@gmail.com
+    modified: "2014-06-17T10:48:14.912848Z"
+    number: "17340722"
+    number_intvalue: 17340722
+    originated: 17-Jun-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Swift sometimes pick incorrect `==` function to call

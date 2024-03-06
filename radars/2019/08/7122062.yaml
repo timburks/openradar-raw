@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7122062"
+    labels:
+        datastore_id: "4976019274465280"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2019-08-25T05:40:56.612722Z"
+    description: "Radar: FB7122062\r\n\r\nThe XCTest invocation contains the `CONFIGURATION_BUILD_DIR` path for *all targets in the selected scheme* in a bunch of different environment variables:\r\n\r\n* DYLD_FRAMEWORK_PATH\r\n* DYLD_LIBRARY_PATH\r\n* __XCODE_BUILT_PRODUCTS_DIR_PATHS\r\n* __XPC_DYLD_FRAMEWORK_PATH\r\n* __XPC_DYLD_LIBRARY_PATH\r\n\r\nWe use the `CONFIGURATION_BUILD_DIR` build setting for per-target isolation. We have a single scheme that contains all of our unit tests for all of our modules. This simplifies our CI configuration and makes it easy for developers to run unit tests without needing to switch schemes to the module containing the test.\r\n\r\nAs we've modularized our codebase, we now have 200+ unit test bundles. We've gotten to a point where the xctest invocation is failing, because we're hitting the max size of the environment data that can be supplied. This manifests in the IDE as an obscure error message \"The request to open <target> failed.\" and detail \"The request was denied by service delegate (SBMainWorkspace) for reason: unspecified\". Our current workaround for developers is to have them show or create a scheme for just the module containing the test. This isn't a great experience for the developer though.\r\n\r\nOn investigating this, it appears that this is at least partially caused by information that is unrelated to the test target being invoked being supplied to xctest. The list of paths supplied continues to grow the more we modularize our codebase.\r\n\r\nPlease list the steps you took to reproduce the issue:\r\n1. Open attached sample project\r\n2. Select scheme \"frameworkA\" and run tests (CMD+U)\r\n3. Open the xctest session logs (report navigator -> \"Log - Test frameworkA\" -> expand and double click \"writing diagnostic log for test session\")\r\n4. Find log line \"Spawned executable at path: .../xctest with options:\"\r\n5. Inspect the `DYLD_FRAMEWORK_PATH` value\r\n6. Repeat steps 2-5 with scheme \"run-all-tests\" and open the diagnostic logs specifically for frameworkATests\r\n\r\nWhat did you expect to happen?\r\nThe `DYLD_FRAMEWORK_PATH` for frameworkATests to be the same, regardless of it being launched from the \"frameworkA\" scheme or the \"run-all-tests\" scheme. Each XCTest invocation should only be supplied the `CONFIGURATION_BUILD_DIR` values needed for the specific XCTest bundle being launched.\r\n\r\nWhat actually happened?\r\nThe `run-all-tests` scheme frameworkATests xctest invocation contains the build directories for frameworkB, frameworkD, frameworkBTests, frameworkDTests, none of which are dependencies of frameworkATests. Each XCTest invocation is being supplied the `CONFIGURATION_BUILD_DIR` values for *all targets included in the scheme*."
+    email: JSM_2001@hotmail.com
+    modified: "2019-08-25T05:40:56.612994Z"
+    number: "7122062"
+    number_intvalue: 7122062
+    originated: "2019-08-24"
+    parent_number: '&{NULL_VALUE}'
+    product: XCTest
+    product_version: Xcode 10.2.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: XCTest invocation environment contains values for all targets in the scheme rather than only dependencies of the bundle being launched

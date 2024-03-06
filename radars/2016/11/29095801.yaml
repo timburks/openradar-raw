@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29095801"
+    labels:
+        datastore_id: "5032832091029504"
+data:
+    classification: ""
+    created: "2016-11-03T20:11:00.20932Z"
+    description: "Summary:\r\nEncoding a custom object with a UIColor in RGB color space causes a memory leak.\r\n\r\nSteps to Reproduce:\r\n1. Create custom class with NSCoding, that encodes a UIColor.\r\n2. Instantiate instance variable of custom class with a UIColor using RGBA.\r\n3. Run app and select Debug Memory Graph.\r\n4. Open Issue Navigator, select Runtime, see memory leak.\r\n(See code below)\r\n\r\n\r\nExpected Results:\r\nExpect to not see this memory leak.\r\n\r\nActual Results:\r\nMemory leak message:\r\n\"runtime: Memory Issues – (1 leaked type): 1 instance of UIDeviceRGBColor leaked\"\r\n\r\nVersion:\r\niOS 10.1\r\n\r\nNotes:\r\nInstantiating the UIColor with a type property (i.e. UIColor.red) does not create the leak.\r\n\r\n\r\nCode to reproduce: (project included in Apple bug reporter)\r\n```\r\nclass ColorObject: NSObject, NSCoding {\r\n    var detailsColor:UIColor\r\n    init(detailsColor:UIColor) {\r\n        self.detailsColor = detailsColor\r\n    }\r\n    // MARK: NSCoding\r\n    convenience required init?(coder aDecoder: NSCoder) {\r\n        guard let detailsColor = aDecoder.decodeObject(forKey:\"detailsColor\") as? UIColor else { return nil }\r\n        self.init(\r\n            detailsColor: detailsColor\r\n        )\r\n    }\r\n    func encode(with aCoder: NSCoder) {\r\n        aCoder.encode(detailsColor, forKey: \"detailsColor\")\r\n    }\r\n    \r\n}\r\n\r\n\r\nclass ViewController: UIViewController {\r\n    var colorObject:ColorObject = ColorObject(detailsColor: UIColor(red: 1, green: 1, blue: 1, alpha: 1))   //UIDeviceRGBColor Memory leak\r\n    //var colorObject:ColorObject = ColorObject(detailsColor: UIColor.red) //No problem\r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n    }\r\n}\r\n```"
+    email: craiggrummitt@gmail.com
+    modified: "2017-03-13T16:03:02.79841Z"
+    number: "29095801"
+    number_intvalue: 29095801
+    originated: 03-Nov-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 10.1
+    reproducible: Yes
+    resolved: 17-Nov-2016
+    status: Open
+    title: Encode UIColor causes UIDeviceRGBColor leak

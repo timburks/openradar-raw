@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7061166"
+    labels:
+        datastore_id: "60440"
+data:
+    classification: Crash
+    created: "2009-07-15T15:10:47.051338Z"
+    description: "15-Jul-2009 04:08 PM Jonathan del Strother:\r\nSummary: \r\nIf your app uses enough memory that the OS tells the ipod app to quit, releasing an MPVolumeView shortly afterwards often crashes with '-[NSCFDictionary removeObjectForKey:]: attempt to remove nil key'\r\n\r\nSteps to Reproduce:\r\n1 - Open iPod.app, start playing a song (pause it immediately if you like)\r\n2 - Press the home button, and launch your app containing an MPVolumeView\r\n3 - Set the audio session to kAudioSessionCategory_MediaPlayback (I'm not 100% convinced this is necessary, but it does seem to make the crash more frequent)\r\n3 - Allocate memory while watching the iPhone's console log\r\n4 - Immediately after the iPod app quits due to low memory conditions, release the MPVolumeView\r\n\r\nExpected Results:\r\nThe volume slider goes away, app continues as normal\r\n\r\nActual Results:\r\nThe volume slider invokes the following stack :\r\n12  Foundation                    \t0x3054e31a -[NSCFDictionary removeObjectForKey:] + 154\r\n13  MediaPlayer                   \t0x337463ac +[MPVolumeSlider _enableSystemVolumeHUDForAudioCategory:] + 112\r\n14  MediaPlayer                   \t0x33746658 -[MPVolumeSlider didMoveToSuperview] + 104\r\n15  UIKit                         \t0x308f3e90 -[UIView(Hierarchy) _postMovedFromSuperview:] + 256\r\n16  UIKit                         \t0x30927538 -[UIView(Hierarchy) removeFromSuperview] + 544\r\n17  UIKit                         \t0x30934504 -[UIView dealloc] + 232\r\n18  MediaPlayer                   \t0x337472d4 -[MPVolumeView dealloc] + 224\r\n\r\n- calling removeObjectForKey with a nil key, causing a crash.\r\n\r\nRegression:\r\nI don't _think_ this occurs in 2.x - only 3.0 and up.\r\n\r\nNotes:\r\nThe attached project can reproduce this problem, maybe 50% of the time.  Launch iPod, play a song, launch VolumeTest.\r\nKeep hitting the 'Use memory' button until you see something along the lines of :\r\n\r\n SpringBoard[23] <Warning>: Memory level is urgent (10%). Asking 'iPod' to exit.\r\n com.apple.launchd[1] <Notice>: (com.apple.mediaserverd) Exited: Killed\r\n com.apple.launchd[1] <Warning>: (UIKitApplication:com.apple.mobileipod[0xb4aa]) Exited with exit code: 101\r\n\r\nAnd immediately hit 'Remove slider'\r\nIf it doesn't crash, repeat from square 1.  Apologies for the temperamental crash - I've had times where it never crashes, then I reboot my phone & start from scratch, and it crashes every time.\r\ncr\r\n\r\n\r\n'VolumeTest.zip' and 'Crashes.zip' were successfully uploaded"
+    email: jdelStrother@gmail.com
+    modified: "2011-08-28T05:45:50.615511Z"
+    number: "7061166"
+    number_intvalue: 7061166
+    originated: 15-Jul-2009 04:08 PM
+    parent_number: "7036907"
+    product: iPhone
+    product_version: "3.0"
+    reproducible: Sometimes
+    resolved: ""
+    status: Duplicate/7036907
+    title: Releasing MPVolumeView after iPod.app quits causes crash

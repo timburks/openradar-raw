@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15330950"
+    labels:
+        datastore_id: "6116956847472640"
+data:
+    classification: serious bug
+    created: "2013-10-28T12:25:26.820582Z"
+    description: "Summary:\r\nIt appears that the HFS file system's \"catalog search\" FSCatalogSearch (or searchfs) has become case sensitive when searching file names on case sensitive volumes in 10.9.\r\n\r\nBefore, when searching for a file named \"a\", it would also find items named \"A\", even on case sensitive HFS+ volumes. In 10.9, this is not the case any more.\r\n\r\nThis is counter-productive because this is a _search_ function, which is prepared to deal with multiple matches! OTOH, an \"open\", for instance is not, hence there the case separation makes sense.\r\n\r\nUsually, the user enters a search condition and then the user or the searching program can sort it out later from the results. Now in 10.9, however, if the user only remembers the file's name but not its case, he won't be able to find the file any more as it was possible before.\r\n\r\nI believe this is a regression that should be reverted as it doesn't gain anything but only makes it harder for the user.\r\n\r\nSteps to Reproduce:\r\nXcode project and test diskimg attached.\r\n\r\n1. Mount the disk image. It should appear as \"CaseSensitiveVol\". Open it and notice that it contains both \"a\" and \"A\" items. This is only possible because the volume is case-sensitive.\r\n\r\n2. Using Terminal, run the \"CaseSensitiveVolTest\" tool inside Build/Products/Debug. This program uses FSCatalogSearch for search for items named \"a\" on the volume and prints out what it finds.\r\n\r\n\r\nExpected Results:\r\nIt should print out:\r\n\r\nFound 2 items:\r\n  A\r\n  a\r\nDone.\r\n\r\n\r\nActual Results:\r\nIt only prints (on 10.9):\r\n\r\nFound 1 items:\r\n  a\r\nDone.\r\n\r\nOTOH, if you run the program on pre-10.9 systems, e.g. 10.8.5, then it'll print out what is expected (2 items).\r\n\r\nVersion:\r\n13A603\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nWorks correctly on any pre-10.9 system.\r\n\r\n\r\nDownload demo project here: http://files.tempel.org/Various/radar_15330950.zip"
+    email: tempelmann@gmail.com
+    modified: "2013-10-28T12:25:26.820828Z"
+    number: "15330950"
+    number_intvalue: 15330950
+    originated: 28-Oct-2013
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: "10.9"
+    reproducible: always
+    resolved: ""
+    status: open
+    title: FSCatalogSearch (searchfs) does not search case insensitive any more

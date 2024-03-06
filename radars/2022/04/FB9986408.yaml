@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9986408
+    labels:
+        datastore_id: "5489570854469632"
+data:
+    classification: Incorrect behavior
+    created: "2022-04-18T11:52:54.301815Z"
+    description: "I've attached a .zip file (gzipped version: http://files.tempel.org/Various/zip64sample.zip.gz) that fails to uncompress correctly when opened by Archive Utility (e.g. double click in Finder).\r\n\r\nIt should create a file of about 4 GB in size (4'294'967'301 bytes, which is 2^32+5), but it creates one of only 5 bytes.\r\n\r\nWhen uncompressing the same file on older macOS versions (I've tried High Sierra) or with command line tools such as \"unzip\", the result is correct.\r\n\r\nThis is a fairly serious regression because it leads to zip files not uncompressing that uncompressed well before.\r\n\r\nAnd it shouldn't matter that the zip file contains a file whose size is >32 bit, because all other common zip tools before and current can correctly uncompress it regardless. The bug is that the new Archive Utility ignores that possibility and shortens the extracted file (which initially indeed extracts to the full 4GB in length, it appears) to the 32bit value it finds in the directory (which is 5).\r\n\r\nSure, the zip64 format is _supposed_ to be used for such cases, but there are many zip files out there that aren't using that format, and they should still extract just fine, which is possible. In fact, it was, until this regression.\r\n\r\nFact is that this zip file was created on macOS High Sierra, using Finder's \"Compress\" command, so it's Apple's own tool that created this file, and since it also used to uncompress correctly, you can't blame anyone but Apple on this :)\r\n\r\nSo please fix this issue in Archive Utility (or in ditto or whatever it uses beneath) instead of demanding that everyone \"does it right\", and thereby failing to uncompress backups people may have made with Apple's own tools in the past. Please don't punish all us by ignoring that old mistake by deciding to not working around it any more.\r\n\r\n--P.S.--\r\n\r\nActually, it appears that the decompression utility does not even first create the full 4GB file before shortening it afterwards. Instead, it appears to stop uncompressing once it believes it has reached the \"uncompressed size\", even though the compressed zip stream keeps feeding data and hasn't reached its end, yet. The proper decompression behavior would be to continue to uncompress the stream until it returns that it's at its end, like unzip and other tools (and older Archive Utility) do it."
+    email: tempelmann@gmail.com
+    modified: "2022-04-18T11:52:54.301977Z"
+    number: FB9986408
+    number_intvalue: 9986408
+    originated: 18 Apr 2022
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 12.3.1
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: Archive Utility on macOS Monterey fails to uncompress some zip files that previous macOS versions handled well

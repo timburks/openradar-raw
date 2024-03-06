@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32293782"
+    labels:
+        datastore_id: "5065603832348672"
+data:
+    classification: Serious Bug
+    created: "2017-05-19T14:30:11.31888Z"
+    description: "Area:\r\nGraphics & Imaging\r\n\r\nSummary:\r\nRunning an app that uses an OpenGL context with vertical sync disabled (NSOpenGLCPSwapInterval set to 0) causes flickering and graphics corruption across the whole screen when the window is overlayed by other windows on MacBooks with an Intel Iris Graphics 6100.\r\n\r\nSteps to Reproduce:\r\n1. Get a MacBook Pro with an Intel Iris Graphics 6100, e.g. a Retina 13\" Early 2015 (MacBookPro12,1).\r\n2. Compile and run the attached file with\r\n$ clang -framework AppKit -framework OpenGL -o windowFlicker windowFlicker.m && ./windowFlicker \r\n3. Open Xcode and choose \"File > New > Project...\". (Make sure that the Xcode and windowFlicker windows overlap.)\r\n4. Continuously scroll up and down in the \"Choose a template for your new project:\"-sheet.\r\n\r\nAlternatively instead of 3.+4., try\r\n3. Enable System Preferences > Dock > Magnification.\r\n4. Ensure that the Dock and the windowFlicker window overlap.\r\n5. Continuously move the from one end of the Dock to the other and back.\r\n\r\nExpected Results:\r\nSmooth scrolling without artefacts\r\n\r\nObserved Results:\r\nThe screen flickers. Black regions flash for a split second across large parts of Xcode's main window. The Dock is flickering non-stop. Large scale graphics corruption across the whole screen occasionally.\r\n\r\nVersion:\r\nThe problem is reproducible on the latest versions of Mac OS X 10.11 and macOS 10.12. This machine:\r\nMac OS X 10.11.6\r\n\r\nNotes:\r\nThe bug seems to be triggered by frequent draw calls that are not synchronised to the screen's vertical refresh rate. Setting NSOpenGLCPSwapInterval to 1 in the attached example is a workaround (in which case the calls to glFinish will just block). It seems that the bug is somewhere in the window compositor or the OpenGL driver for this chip since it's only reproducible if there are a combination of vsync enabled and disabled windows visible on the screen. \r\n\r\nThe problem seems to get worse if there are semi-transparent windows overlaying the windowFlicker window, or when moving windows around the screen. The problem is not related to Xcode or the Dock and can be triggered with lots of different applications. Scrolling a text file in the Atom text editor while windowFlicker is running produces similarly severe graphics glitches.\r\n\r\nConfiguration:\r\nThe problem only occurs on MacBook Pros with an Intel Iris Graphics 6100 chip on 10.11 and 10.12. It is not reproducible on machines with other Graphics chips or OSs. The machine I am using to reproduce is an Early 2015 Retina MacBook Pro 13\" (MacBookPro12,1)."
+    email: tobias.hahn@ableton.com
+    modified: "2017-05-19T14:30:11.31917Z"
+    number: "32293782"
+    number_intvalue: 32293782
+    originated: "2017-05-19"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.11-10.12
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Screen flicker on Intel Iris Graphics 6100 when vsync is off

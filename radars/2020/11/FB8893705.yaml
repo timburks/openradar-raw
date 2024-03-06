@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8893705
+    labels:
+        datastore_id: "4943410507022336"
+data:
+    classification: Bug
+    created: "2020-11-12T17:13:07.60362Z"
+    description: "Please describe the issue:\r\nI'm reporting unexpected behaviour where a View's body is being recomputed seemingly unnecessarily.  I've included a sample project demonstrating the problem. The parent View has a button that causes a state change, its body is recomputed and child Views are reinitialised. I expected that the body of these child Views will only be recomputed if a property has changed. But in the case of a View that is using@ @AppStorage or @SceneStorage properties is recomputed regardless. This does not happen for a child View that has @State property. \r\n\r\nI did some debugging to the reason why and it seems that with @State the binding location does not change, but with @AppStorage and @SceneStorage the binding location is different. Which is why I think SwiftUI is detecting these Views as different from the previous time they were created and why their bodies are being recomputed.\r\n\r\nThis issue affects me because I'm trying to design my Views to be as efficient as possible and only be recomputed when really required.\r\n\r\nPlease list the steps you took to reproduce the issue:\r\nPlease run the sample project on the iOS 14.2 Simulator and tap the button. In the console you will see debug output showing when each View's body is recomputed.\r\n\r\nWhat did you expect to happen?\r\nI expected the body not to be recomputed for all Views 1 & 2 like it isn't for View 3.\r\n\r\nWhat actually happened?\r\nAs you can see View1 and View2 are recomputed. \r\n\r\nSample code:\r\n\r\nimport SwiftUI\r\n\r\nstruct ContentView: View {\r\n    \r\n    @State private var counter = 0\r\n    \r\n    var body: some View {\r\n        print(\"ContentView body computed\")\r\n        return VStack {\r\n            Text(\"Hello, world! \\(counter)\")\r\n            Button(\"Increment\") {\r\n                counter += 1\r\n                \r\n            }\r\n            View1()\r\n            View2()\r\n            View3()\r\n        }\r\n        .padding()\r\n    }\r\n}\r\n\r\nstruct View1: View {\r\n    @AppStorage(\"test\") private var test = false\r\n    \r\n    var body: some View {\r\n        print(\"View1 body computed\")\r\n        return Text(\"View1\")\r\n    }\r\n}\r\n\r\nstruct View2: View {\r\n    @SceneStorage(\"test\") private var test = false\r\n    \r\n    var body: some View {\r\n        print(\"View2 body computed\")\r\n        return Text(\"View2\")\r\n    }\r\n}\r\n\r\n\r\nstruct View3: View {\r\n    @State private var test = false\r\n    \r\n    var body: some View {\r\n        print(\"View3 body computed\")\r\n        return Text(\"View3\")\r\n    }\r\n}"
+    email: indiekiduk@gmail.com
+    modified: "2020-11-12T17:13:07.603808Z"
+    number: FB8893705
+    number_intvalue: 8893705
+    originated: 12/11/2020
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: "14.2"
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: Body needlessly recomputed for Views that have @AppStorage and @SceneStorage properties

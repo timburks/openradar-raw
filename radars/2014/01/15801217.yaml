@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15801217"
+    labels:
+        datastore_id: "6713950322294784"
+data:
+    classification: ""
+    created: "2014-01-12T21:24:20.757805Z"
+    description: "Summary:\r\nI can't find any supported way to get the localized name of a NSScreen.  Many apps need to display a list (e.g. popup menu) of available screens, to display different content on different screens.  We need a supported way to do this.\r\n\r\nPrior to 10.9, there was an approach using IODisplayCreateInfoDictionary(), but that has been deprecated.  See below for a NSScreen category I've written to use it.  We need an approach that is supported on 10.9.\r\n\r\nI would suggest adding a name or localizedName property to NSScreen as the ideal solution.\r\n\r\n\r\n@implementation NSScreen (Dejal)\r\n\r\n/**\r\n Read-only property to return the unique ID of the screen, aka the screen number.  Not the same as the screen list index.\r\n \r\n @returns The reciever's unique display ID.\r\n \r\n @author DJS 2014-01.\r\n */\r\n\r\n- (NSUInteger)displayID;\r\n{\r\n    NSDictionary *screenDictionary = [self deviceDescription];\r\n    NSNumber *screenID = [screenDictionary objectForKey:@\"NSScreenNumber\"];\r\n    \r\n    return [screenID unsignedIntegerValue];\r\n}\r\n\r\n/**\r\n Read-only property to return the localized name of the receiver.\r\n \r\n @returns The localized name of the screen, or nil if none is available.\r\n \r\n @author DJS 2014-01.\r\n */\r\n\r\n- (NSString *)screenName;\r\n{\r\n    return [self screenNameForDisplayID:self.displayID];\r\n}\r\n\r\n/**\r\n Given a display ID, returns the localized screen name, or nil if none is available.\r\n \r\n @param displayID The unique ID of the screen, as returned by the displayID property.\r\n @returns The localized name of the screen, or nil if none is available.\r\n \r\n @author DJS 2014-01.\r\n */\r\n\r\n// IODisplayCreateInfoDictionary() is deprecated as of 10.9; suppress the warning for this method, since there's no alternative:\r\n#pragma clang diagnostic ignored \"-Wdeprecated-declarations\"\r\n\r\n- (NSString *)screenNameForDisplayID:(NSUInteger)displayID;\r\n{\r\n    NSDictionary *deviceInfo = (NSDictionary *)CFBridgingRelease(IODisplayCreateInfoDictionary(CGDisplayIOServicePort((CGDirectDisplayID)displayID), kIODisplayOnlyPreferredName));\r\n    NSDictionary *localizedNames = [deviceInfo objectForKey:[NSString stringWithUTF8String:kDisplayProductName]];\r\n    \r\n    return [[localizedNames allValues] firstObject];\r\n}\r\n\r\n// Restore deprecation warnings:\r\n#pragma clang diagnostic warning \"-Wdeprecated-declarations\"\r\n\r\n@end\r\n\r\nSteps to Reproduce:\r\n1. Try calling IODisplayCreateInfoDictionary().\r\n2. Get deprecation warning.\r\n3. Search for alternative.\r\n4. Fail.\r\n5. File bug report.\r\n\r\n\r\nExpected Results:\r\nIt works without a warning, or there's some alternative.\r\n\r\nActual Results:\r\nI can't find any alternative to using a deprecated function.  I am sad.\r\n\r\nVersion:\r\nOS X 10.9."
+    email: google@dejal.com
+    modified: "2014-07-22T18:15:58.248413Z"
+    number: "15801217"
+    number_intvalue: 15801217
+    originated: "2014-01-12"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: "10.9"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: IODisplayCreateInfoDictionary() is deprecated, and needs some replacement

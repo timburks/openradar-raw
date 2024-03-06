@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13193606
+    labels:
+        datastore_id: "5530970916651008"
+data:
+    classification: ""
+    created: "2023-09-21T06:10:31.57107Z"
+    description: "After migrating to Xcode 15.0 and MacOS SDK 14.0, I'm getting unexpected errors in WebRTC code. (The code is compiled with `-mmacos-version-min=10.13` flag)\r\n\r\n```\r\n ../../rtc_base/async_resolver.cc:61:3: error: 'dispatch_queue_global_t' is only available on macOS 10.14 or newer [-Werror,-Wunguarded-availability-new]\r\n  dispatch_queue_global_t global_queue =\r\n  ^~~~~~~~~~~~~~~~~~~~~~~\r\n../../../../../../../../../../../Applications/Xcode15.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/dispatch/queue.h:103:1: note: 'dispatch_queue_global_t' has been marked as being introduced in macOS 10.14 here, but the deployment target is macOS 10.13.0\r\nDISPATCH_DECL_SUBCLASS(dispatch_queue_global, dispatch_queue);\r\n^\r\n../../../../../../../../../../../Applications/Xcode15.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/dispatch/object.h:117:49: note: expanded from macro 'DISPATCH_DECL_SUBCLASS'\r\n                typedef struct name##_s : public base##_s {} *name##_t\r\n                                                              ^\r\n<scratch space>:135:1: note: expanded from here\r\ndispatch_queue_global_t\r\n^\r\n../../rtc_base/async_resolver.cc:61:3: note: enclose 'dispatch_queue_global_t' in a __builtin_available check to silence this warning\r\n  dispatch_queue_global_t global_queue =\r\n  ^~~~~~~~~~~~~~~~~~~~~~~\r\n```\r\n\r\n(line numbers may vary with open source one since I'm building an internal fork of WebRTC)\r\n\r\nUpstream has fixed issue like this: https://crbug.com/1454356 , however I believe this is a bug in Xcode 15.0.\r\n\r\nXcode 15.0's MacOS SDK 14.0 defines `dispatch_queue_global_t` and `dispatch_get_global_queue` as follows:\r\n\r\n/Applications/Xcode15.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/dispatch/queue.h\r\n```\r\nAPI_AVAILABLE(macos(10.14), ios(12.0), tvos(12.0), watchos(5.0))\r\nDISPATCH_DECL_SUBCLASS(dispatch_queue_global, dispatch_queue);\r\n\r\nAPI_AVAILABLE(macos(10.6), ios(4.0))\r\nDISPATCH_EXPORT DISPATCH_CONST DISPATCH_WARN_RESULT DISPATCH_NOTHROW\r\nDISPATCH_REFINED_FOR_SWIFT\r\ndispatch_queue_global_t\r\ndispatch_get_global_queue(intptr_t identifier, uintptr_t flags);\r\n```\r\n\r\nHowever, MacOS SDK 13.3, which is contained in Xcode 14.3, defines them as follows:\r\n\r\n\r\n/Applications/Xcode14.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/usr/include/dispatch/queue.h\r\n```\r\nDISPATCH_DECL_SUBCLASS(dispatch_queue_global, dispatch_queue);\r\n\r\nAPI_AVAILABLE(macos(10.6), ios(4.0))\r\nDISPATCH_EXPORT DISPATCH_CONST DISPATCH_WARN_RESULT DISPATCH_NOTHROW\r\ndispatch_queue_global_t\r\ndispatch_get_global_queue(intptr_t identifier, uintptr_t flags);\r\n```\r\n\r\nSince `dispatch_get_global_queue` is available on MacOS 10.6, it doesn't make sense to define `dispatch_queue_global_t` as available on MacOS 10.14."
+    email: daniel.l@hpcnt.com
+    modified: "2023-09-21T06:10:31.571213Z"
+    number: FB13193606
+    number_intvalue: 13193606
+    originated: "2023-09-21"
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 15.0 (15A240d)
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: dispatch_queue_global_t is incorrectly defined in Xcode 15.0 and MacOS SDK 14.0

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19142368"
+    labels:
+        datastore_id: "4997390473887744"
+data:
+    classification: Crash
+    created: "2014-12-04T14:13:23.337841Z"
+    description: "Summary:\r\nApp crashes when trying to create class via convenience initializer.\r\nRequirements :\r\n• Use Swift\r\n• initializer should be described in protocol\r\n• convenience initializer described in protocol should be implemented in class extension\r\n• initializer should be called with a help of generic method\r\n• class should be marked with @objc\r\n\r\nCrash happens with Xcode 6.1.1 (6A2008a) and Xcode 6.2 (6C86e). But perfectly works with Xcode 6.1 (6A1052d)\r\n\r\nExample:\r\n\r\nprotocol P {\r\n    init(name: String)\r\n}\r\n\r\n@objc\r\nfinal class C {\r\n    var name = \"John Doe\";\r\n    \r\n    required init() {\r\n    }\r\n}\r\n\r\nextension C: P {\r\n    convenience init(name: String) {\r\n        self.init()\r\n        self.name = name;\r\n    }\r\n}\r\n\r\nfunc create<T: P>(name: String) -> T {\r\n    return T(name: name)\r\n}\r\n\r\ncreate(\"Bob\") as C // Crash !!!\r\n\r\nSteps to Reproduce:\r\n1. Implement protocol:\r\nprotocol P {\r\n    init(name: String)\r\n}\r\n\r\n2. Implement class:\r\n@objc\r\nfinal class C {\r\n    var name = \"John Doe\";\r\n    \r\n    required init() {\r\n    }\r\n}\r\n\r\nextension C: P {\r\n    convenience init(name: String) {\r\n        self.init()\r\n        self.name = name;\r\n    }\r\n}\r\n\r\n3.Implement generic method:\r\nfunc create<T: P>(name: String) -> T {\r\n    return T(name: name)\r\n}\r\n4. call method described on step [3]:\r\nlet person = create(\"Bob\") as C\r\n\r\nExpected Results:\r\nperson variable should contain class C with name Bob\r\n\r\nActual Results:\r\nCrash:\r\nNSForwarding: warning: object 0x10c699c20 of class 'MyApp.C' does not implement methodSignatureForSelector: -- trouble ahead\r\nUnrecognized selector +[MyApp.C initWithName:]\r\n\r\nVersion:\r\nOS X 10.10.2 (14C68m)\r\nXcode 6.1.1 (6A2008a)\r\nXcode 6.2 (6C86e)\r\n\r\nNotes:\r\nTested in iOS app with 8.x simulator.\r\n\r\nWorkarounds:\r\n1. Use Xcode 6.1 (6A1052d)\r\n\r\n2. Don't implement convenience initializer in class extension:\r\n\r\n@objc\r\nfinal class C: P {\r\n    var name = \"John Doe\";\r\n    \r\n    required init() {\r\n    }\r\n\r\n    convenience init(name: String) {\r\n        self.init()\r\n        self.name = name;\r\n    }\r\n}\r\n\r\n3. Use class factory method instead:\r\n\r\nprotocol P {\r\n    class func create(name: String) -> Self\r\n}\r\n\r\n@objc\r\nfinal class C {\r\n    var name = \"John Doe\";\r\n    \r\n    required init() {\r\n    }\r\n}\r\n\r\nextension C: P {\r\n    \r\n    class func create(name: String) -> C {\r\n        let c = C()\r\n        c.name = name\r\n        return c\r\n    }\r\n}\r\n\r\nfunc create<T: P>(name: String) -> T {\r\n    return T.create(name)\r\n}\r\n\r\n4. Don't use @objc mark, if you don't want objective-c support for your class"
+    email: BokkusuNoTegami@gmail.com
+    modified: "2014-12-04T14:13:23.338052Z"
+    number: "19142368"
+    number_intvalue: 19142368
+    originated: 04-Dec-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Crash while calling class initializer via generic method in Swift

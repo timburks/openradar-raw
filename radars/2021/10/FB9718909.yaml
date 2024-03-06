@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9718909
+    labels:
+        datastore_id: "5011727431237632"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2021-10-22T13:27:10.356167Z"
+    description: "Summary:\r\nNavigation bar title ignores `navigationBarTitleDisplayMode` when NavigationView shown via `.sheet` and contained in conditional content view.\r\n\r\nSteps to reproduce:\r\n1. Create SwiftUI iOS app with following implementation\r\n```\r\nimport SwiftUI\r\n\r\n@main\r\nstruct SheetNavApp: App {\r\n  var body: some Scene {\r\n    WindowGroup {\r\n      ContentView()\r\n    }\r\n  }\r\n}\r\n\r\nstruct ContentView: View {\r\n  @State var showSheet = false\r\n\r\n  var body: some View {\r\n    Button(\"Show sheet\") { showSheet = true }\r\n    .sheet(isPresented: $showSheet) { SheetView() }\r\n  }\r\n}\r\n\r\nstruct SheetView: View {\r\n  enum ViewState {\r\n    case initial, navigationView\r\n  }\r\n  @State private var state: ViewState = .initial\r\n\r\n  @ViewBuilder\r\n  var body: some View {\r\n    switch state {\r\n    case .initial:\r\n      VStack {\r\n        Button(\"Show navigation\") { state = .navigationView }\r\n      }\r\n    case .navigationView:\r\n      NavigationView {\r\n        VStack {\r\n          Text(\"In navigation\")\r\n        }\r\n        .navigationTitle(\"A title\")\r\n        .navigationBarTitleDisplayMode(.inline)\r\n      }\r\n    }\r\n  }\r\n}\r\n```\r\n2. Run app on iOS 15 device\r\n3. Tap on 'Show sheet' button\r\n4. Tap on 'Show navigation' button\r\n\r\nObserved behavior:\r\nNavigation bar title displayed in `large` mode.\r\n\r\nExpected behavior:\r\nNavigation bar title displayed in `inline` mode\r\n\r\nNote:\r\nIn iOS 14.5 title displayed correctly.\r\nAlso `.navigationBarHidden(true)` modifier does not work in this case as well."
+    email: azeffin@gmail.com
+    modified: "2021-10-22T13:27:10.356317Z"
+    number: FB9718909
+    number_intvalue: 9718909
+    originated: 22 October 2021
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Incorrect display mode of navigation bar title

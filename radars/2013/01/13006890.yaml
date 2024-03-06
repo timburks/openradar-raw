@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13006890"
+    labels:
+        datastore_id: "2560401"
+data:
+    classification: ""
+    created: "2013-01-15T06:30:34.745126Z"
+    description: "14-Jan-2013 10:05 AM Alex Zavatone:\r\nSummary:\r\nCreating an Enterprise installation of an iOS app using OTA and a manifest link within a web page.\r\n\r\nWithin the url parameter, even if the space character is properly escaped with a %20, if there is a space anywhere in a folder name or file name to in the path to the manifest pList used as the , itms-services://?action=download-manifest will fail without reporting an error.\r\n\r\nSteps to Reproduce:\r\nPrepare a valid iOS ipa and manifest file for enterprise distribution and place them on an http server that is configured to install IPA files through OTA distribution.\r\nVerify that the manifest plist file loads in a browser on a Mac.\r\nDuplicate this file and add a space in the filename of the pList or the folder holding it.\r\nCreate an HTML file that includes links to both manifests.  Make sure to escape out the space character with %20\r\nExamples:\r\nThe link below will work \r\nitms-services://?action=download-manifest&url=http://mydomain.com/test/myApp.plist\"\r\n\r\nThe link below will fail\r\nitms-services://?action=download-manifest&url=http://mydomain.com/sample%20app%20test/myApp.plist\"\r\n\r\n\r\nExpected Results:\r\nBoth links should trigger the app install, but the itms-services link where the url has a space in it will not.\r\n\r\nActual Results:\r\nThe link with the properly escaped %20 character fails to issue a download of the manifest pList without issuing a warning.\r\n\r\nRegression:\r\n\r\nNotes:\r\nEscaping out other characters works fine (A and C tested).  \r\nThe url value within the manifest file CAN have a space in it with no problem.  Only when this validly escaped is in the url parameter of the itms-services://?action=download-manifest&url= does this fail.\r\n\r\nFrom the discussion on the Xcode Users list\r\nFYI, if anyone else is interested in this itms-services related question:\r\n\r\nFrom: http://blog.appliedis.com/2012/10/29/wireless-distribution-of-enterprise-ios-apps/\r\n\r\n5) There is apparently a bug in Apple’s implementation of the “itms-services” protocol. No spaces, even if they are escaped or URL Encoded, are allowed in the file name or web folder structure.\r\n\r\nEven if the space character is properly escaped with a %20, if there is a space anywhere in a folder name or file name to in the path to the manifest pList used as the , itms-services://?action=download-manifest will fail.\r\n\r\nExamples:\r\nThe link below will work \r\nitms-services://?action=download-manifest&url=http://mydomain.com/test/myApp.plist\"\r\n\r\nThe links below will fail\r\nitms-services://?action=download-manifest&url=http://mydomain.com/sample%20app%20test/myApp.plist\"\r\nitms-services://?action=download-manifest&url=http://mydomain.com/sample+app+test/myApp.plist\"\r\n\r\nHowever, If there is a space within the url key value of the ipa within the manifest pList the app install works just fine.  It doesn't have to be escaped to work.  But if the itms-services doesn't even support a validly escaped space character and no error is reported in this case.\r\n\r\nWhat this all means is that you can't freely put a bunch of folders for your ipa files with nicely descriptive names on an http server and expect them all to work for install.  Certainly sucks more than it needs to.  \r\n\r\n\r\nOn Jan 8, 2013, at 2:58 PM, Alex Zavatone wrote:\r\n\r\nFurther testing indicates that any space character anywhere in the path of the URL of an ipa will prevent OTA installation using itms-services:// from triggering an iOS app install.\r\n\r\nYou can not escape out the space char with %20. Other characters like the standard alphanumerics can be escaped out without a problem.\r\n\r\nEven if the path to the ipa will resolve in a browser, itms-services will not load the plist file.\r\n\r\nIs there any reference anywhere that explains why this would fail in itms-services?\r\n\r\nTIA\r\n\r\nSent from my iPad"
+    email: alexzavatone@gmail.com
+    modified: "2013-01-15T06:30:34.745272Z"
+    number: "13006890"
+    number_intvalue: 13006890
+    originated: 14-Jan-2013 10:05 AM
+    parent_number: '&{NULL_VALUE}'
+    product: itms-services
+    product_version: unknown
+    reproducible: Yes
+    resolved: ""
+    status: open
+    title: Properly escaped character disables valid itms-services download

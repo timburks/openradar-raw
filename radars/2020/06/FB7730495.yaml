@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7730495
+    labels:
+        datastore_id: "5042814438080512"
+data:
+    classification: Suggestion
+    created: "2020-06-09T12:15:48.031871Z"
+    description: "Please provide a descriptive title for your feedback:\r\nMasterDetail Swift CoreData Template Suggestion\r\nWhich area are you seeing an issue with?\r\nXcode\r\nWhat type of feedback are you reporting?\r\nSuggestion\r\nDetails\r\nWhat version of Xcode are you using?\r\nXcode 11.5\r\nDescription\r\nPlease describe the issue:\r\nMasterDetail Swift CoreData Template Suggestiong\r\n\r\nThis project demonstrates an issue with the Swift Master Detail template as of Xcode 11.5 and I'd like to suggest an improvement to solve it.\r\n\r\nThe Master's Fetch Controller didChange assumes that an updated object's cell will always be on screen and will crash if it isn't. This is a regression compared to the ObjC version of the template that doesn't crash if an updated cell is on screen because of how it handles the cell being nil.\r\n\r\nThis code began with the MasterDetail Core Data Swift teplate and has a few things added to demonstrate the crash.\r\n\r\n1. A tool bar button is added to the Master view controller.\r\n2. An IBAction is added to update the first object with a new timestamp which causes the cell to be updated.\r\n\r\nHow to use.\r\n\r\n1. Launch in the simulator, e.g. iPhone 8 Plus.\r\n2. Tap the plus button to add a cell.\r\n3. Tap the Update tool bar button and notice the first row updates.\r\n4. Now add more than a full screen height of rows.\r\n5. Scroll down so the first row is now off-screen.\r\n6. Tap the Update toolbar button.\r\n\r\nWhat you'd expect to happen.\r\nThe app shouldn't crash.\r\n\r\nWhat happens:\r\nThe app crashes.\r\n\r\nI've included a proposal for a change to the Master detail template to fix this problem, by checking if the cell is not null (and thus is on screen) using an if let. I've also improved it to use the fallthrough feature so the configure method doesn't need to be called twice with the same params.\r\n\r\n\r\n/// Default Method From Master Detail Template (see below for proposed fixed method):\r\n    \r\n    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {\r\n        switch type {\r\n            case .insert:\r\n                tableView.insertRows(at: [newIndexPath!], with: .fade)\r\n            case .delete:\r\n                tableView.deleteRows(at: [indexPath!], with: .fade)\r\n            case .update:\r\n                configureCell(tableView.cellForRow(at: indexPath!)!, withEvent: anObject as! Event)\r\n            case .move:\r\n                configureCell(tableView.cellForRow(at: indexPath!)!, withEvent: anObject as! Event)\r\n                tableView.moveRow(at: indexPath!, to: newIndexPath!)\r\n            default:\r\n                return\r\n        }\r\n    }\r\n    \r\n/// Proposed fixed method:\r\n\r\n    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {\r\n        switch type {\r\n            case .insert:\r\n                tableView.insertRows(at: [newIndexPath!], with: .fade)\r\n            case .delete:\r\n                tableView.deleteRows(at: [indexPath!], with: .fade)\r\n            case .move:\r\n                tableView.moveRow(at: indexPath!, to: newIndexPath!)\r\n                fallthrough\r\n            case .update:\r\n                if let cell = tableView.cellForRow(at: indexPath!) {\r\n                    configureCell(cell, withEvent: anObject as! Event)\r\n                }\r\n            default:\r\n                return\r\n        }\r\n    }"
+    email: indiekiduk@gmail.com
+    modified: "2020-06-09T12:15:48.032064Z"
+    number: FB7730495
+    number_intvalue: 7730495
+    originated: Jun 9, 2020 at 1:11 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: "11.5"
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: MasterDetail Swift CoreData Template Suggestion

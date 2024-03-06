@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13707406"
+    labels:
+        datastore_id: "2956402"
+data:
+    classification: Serious Bug
+    created: "2013-04-22T18:48:11.554651Z"
+    description: "22-Apr-2013 02:45 PM Landon Fuller:\r\nSummary:\r\n\r\nWhen update_dyld_shared_cache combines LINKEDIT segments and writes a new segment_command(_64).vmsize field for cached libraries, it /appears/ to write a too-long vmsize length.\r\n\r\nSteps to Reproduce:\r\n\r\nCompare the dyld_shared_cache_*.map LINKEDIT range values against the actual vmaddr/vmsize values written in the dyld_shared_cache_*.\r\n\r\nExpected Results:\r\n\r\nThe values should be equal.\r\n\r\nActual Results:\r\n\r\nThe vmsize value is larger than the actual mapping. I've attached two reproduction cases.\r\n\r\nThe first is a hacked up version of dyld_decache. It will print the on-disk vmaddr/vmsize-defined range as it parses out the dyld cache. Comparison against the dyld_shared_cache_*.map will show that the ranges do not match.\r\n\r\nExample usage:\r\n   make BOOST_PREFIX=/opt/local && ./dyld_decache /var/db/dyld/dyld_shared_cache_i386\r\n\r\nObserve that the LINKEDIT ranges found within dyld_shared_cache_i386 actually extend beyond the end of the mapping listed in dyld_shared_cache_i386.map.\r\n\r\nThe second reproduction case walks the currently loaded images, reads each LC_SEGMENT_* command,  and attempts to create a memory object for the full LINKEDIT segment range. If the resulting memory object is smaller than vmsize declared, it will print an error message.\r\n\r\nExample usage:\r\n  clang macho_case.c -o macho_case && ./macho_case\r\n  [snip]\r\n  Parsing: /usr/lib/libc++.1.dylib\r\n  Architecture: x86_64\r\n  Checking for LC_SEGMENT_* LINKEDIT mapping at 0x7fff9816f000-0x7fff9bde2000 (unslid 0x7fff8d180000-0x7fff90df3000)\r\n  Mapped fewer bytes than expected. Actual range is 0x7fff9816f000-0x7fff9b572000 (unslid 0x7fff8d180000-0x7fff90583000), difference of 0x870000 bytes.\r\n\r\nIf you compare against the dyld_shared_cache_x86_64.map, the mapped range is supposed to be __LINKEDIT 0x7FFF8D180000 -> 0x7FFF904FE000."
+    email: landon.j.fuller@gmail.com
+    modified: "2013-04-22T18:48:11.554903Z"
+    number: "13707406"
+    number_intvalue: 13707406
+    originated: 22-Apr-2013 02:45 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 12D78
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: update_dyld_shared_cache appears to write invalid LINKEDIT vmsize

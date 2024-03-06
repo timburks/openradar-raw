@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17506068"
+    labels:
+        datastore_id: "6100675297542144"
+data:
+    classification: ""
+    created: "2014-06-30T15:49:16.87349Z"
+    description: "Summary:\r\nOn 32 bit architectures, NSInteger and NSUInteger are typedef'd to c int types. Swift Int and UInt use long instead, which while still 32 bit integers, cause type errors when examining method signatures at runtime.\r\n\r\nSteps to Reproduce:\r\n1. Fetch an NSMethodSignature for a method on a class implemented in Swift that takes an Int or UInt while running in a 32 bit runtime\r\n2. Examine the result of getArgumentTypeAtIndex() for the integer argument\r\n3. Compare to a method implemented in Objective-C\r\n\r\nExpected Results:\r\nThe Swift type should be 'i' for Int and 'I' for UInt\r\n\r\nActual Results:\r\nThe Swift type is 'l' for Int and 'L' for UInt\r\n\r\nVersion:\r\nXcode 6.0/6A216f OS X 10.9.3/13D65\r\n\r\nSample Code:\r\n\r\n        class SwiftClass : NSObject {\r\n            func objectAtIndex(index: UInt) -> AnyObject! {\r\n                return \"\"\r\n            }\r\n        }\r\n\r\n        let objCUIntArgType = NSArray.instanceMethodSignatureForSelector(\"objectAtIndex:\").getArgumentTypeAtIndex(2)\r\n        let swiftUIntArgType = SwiftClass.instanceMethodSignatureForSelector(\"objectAtIndex:\").getArgumentTypeAtIndex(2)\r\n        println(objCUIntArgType)\r\n        println(swiftUIntArgType)\r\n        assert(objCUIntArgType == swiftUIntArgType)\r\n\r\nThis code will work correctly on a 64 bit runtime, but the assertion will fail on 32 bit."
+    email: wetzeal@gmail.com
+    modified: "2016-08-29T18:45:47.93422Z"
+    number: "17506068"
+    number_intvalue: 17506068
+    originated: 30-Jun-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.0/6A216f
+    reproducible: Always
+    resolved: 14-Jun-2016
+    status: Closed
+    title: 'Swift: Int and UInt types encode to long rather than int on 32 bit'

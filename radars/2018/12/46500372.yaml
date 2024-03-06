@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "46500372"
+    labels:
+        datastore_id: "6103923374948352"
+data:
+    classification: Serious Bug
+    created: "2018-12-05T22:40:14.568984Z"
+    description: "Increasing `-XCTIDEConnectionTimeout` command line argument is required to avoid timeout \"IDE session ready for test plan\". Without this, we're hitting a timeout on our CI test runs about 25% of the time. This happened on updating our CI runs to use Xcode 10.1 from Xcode 9.4. \r\n\r\nIt happens more on some jobs than others, which leads me to believe there is something that is exacerbating this, but we were unable to isolate what exactly it was. For our cluster, we always create a new clean simulator to start, so it might be taking longer to set up the connection on first simulator launch? \r\n\r\nFrom looking at the simulator logs, a normal run has:\r\n\"Test process runnable PID\" -> \"Test runner is ready, running protocol 29\" -> \"Test runner session successfully initiated.\" (immediately after) (edited)\r\n\r\nFor the failure case, it has:\r\n\"Test runner is ready, running protocol 29\" -> (one minute later) -> \"Failed to run tests: Timeout waiting for fulfillment of promise for 'IDE session ready for test plan'.\" ->  \"Test process runnable PID\"\r\n\r\nI'm attaching the logs from a normal case (where the tests ran but a test failed) and the bad case where it timed out trying to establish a session.\r\n\r\nI've also found that LinkedIn has independently ran into and worked around this problem in the same way:\r\nhttps://github.com/linkedin/bluepill/pull/289\r\n\r\nSteps to Reproduce:\r\n1. Create a project with a scheme with many targets\r\n2. Add some dynamic frameworks as dependencies of the test bundle\r\n3. Invoke tests from `xcodebuild` CLI with `test-without-building` action\r\n\r\nExpected Results:\r\nTests should start running consistently.\r\n\r\nActual Results:\r\nSometimes a test target fails to be started before the \"IDE session ready\" timeout.\r\n\r\nVersion/Build:\r\nVersion 10.1 (10B61)"
+    email: JSM_2001@hotmail.com
+    modified: "2018-12-05T22:40:14.569177Z"
+    number: "46500372"
+    number_intvalue: 46500372
+    originated: 12/5/2018
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools Xcode
+    product_version: "10.1"
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: Increasing `-XCTIDEConnectionTimeout` command line argument is required to avoid timeout "IDE session ready for test plan"

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15060374"
+    labels:
+        datastore_id: "5405413910511616"
+data:
+    classification: Serious Bug
+    created: "2013-09-23T23:28:50.878292Z"
+    description: "Summary:\r\nThe output from mediafilessegmenter is behaving differently in iOS 7 than it does in iOS 6, with a decidedly worse experience for our customers. The problem is intermittent and possibly related to track length.\r\n\r\nJust a hypothesis, but perhaps if there's only a sliver of audio left over when the segmenting's done, that final sliver doesn't work right? This hypothesis comes from a response I got in the forums: https://devforums.apple.com/message/895656#895656\r\n\r\nSteps to Reproduce:\r\n1. Encode .mp3 in preparation for streaming. We've been doing this for 2 years without issue for Band of the Day, so I'll skip the details for now.\r\n\r\n2. Segment & upload the .mp3:\r\n\r\n    > mediafilesegmenter -t 10 --generate-variant-plist -f <segments_dir> <encoded_mp3>\r\n    # followed by our usual uploading script, which seems to be working fine\r\n\r\n3. Validate the uploaded playlist:\r\n    > mediastreamvalidator --verbose <url_of_playlist.m3u8>\r\n\r\n4. Play stream for problem track.\r\n\r\nExpected Results:\r\nExpected (Step 3): no warnings from validator. This is the case for most of our tracks. But, given that there _are warnings from the validator, we expect in iOS 6...\r\n\r\nExpected (Step 4): We're using AVQueuePlayer. In iOS 6, when spitting out the AVPlayerItem's errorLog, we see 2 errors, then the track finishes normally and the AVQueuePlayer advances to the next track. Segment urls removed for brevity:\r\n\r\n    -12645 \"CoreMediaErrorDomain\" \"No response for media file in 0.49632s\"\r\n    -12318 \"CoreMediaErrorDomain\" \"Segment exceeds specified bandwidth for variant\"\r\n\r\n\r\nActual Results:\r\nActual (Step 3, only on badly-segmented tracks): \r\n\r\n    WARNING: Media segment bandwidth exceeded target playlist bandwidth by 2080 % ( 5.43 Mbits/sec vs.249.18 kbits/sec, limit is 10 %).\r\n    WARNING: Media segment exceeds target duration of 0.50 seconds by 10.00 seconds (segment duration is 10.50 seconds)\r\n\r\nThese warnings aren't inherently problematic. As mentioned, in iOS 6, the offending tracks merely skipped ahead to the next track. We didn't even know the problem existed, until...\r\n\r\nActual (Step 4): In iOS 7, same track, the \"no response\" error keeps firing without end and AVQueuePlayer never advances to the next track:\r\n\r\n    -12645 \"CoreMediaErrorDomain\" \"No response for media file in 0.528s\"\r\n    -12645 \"CoreMediaErrorDomain\" \"No response for media file in 0.528s\"\r\n    -12645 \"CoreMediaErrorDomain\" \"No response for media file in 0.528s\"\r\n    -12645 \"CoreMediaErrorDomain\" \"No response for media file in 0.528s\"\r\n    -12645 \"CoreMediaErrorDomain\" \"No response for media file in 0.528s\"\r\n    -12645 \"CoreMediaErrorDomain\" \"No response for media file in 0.528s\"\r\n    -12318 \"CoreMediaErrorDomain\" \"Segment exceeds specified bandwidth for variant\"\r\n    -12645 \"CoreMediaErrorDomain\" \"No response for media file in 0.528s\"\r\n    -12645 \"CoreMediaErrorDomain\" \"No response for media file in 0.528s\"\r\n    -12645 \"CoreMediaErrorDomain\" \"No response for media file in 0.528s\"\r\n    ... etc.\r\n\r\nVersion:\r\nXcode 5A1412\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niOS 7, both in simulator and on iPhone 5. Probably other hardware as well. Though, as mentioned above, we're concerned that there may be a bug in mediafilesegmenter that precludes the iOS 7 misbehavior.\r\n\r\nAttachments:"
+    email: clozach@gmail.com
+    modified: "2013-09-23T23:28:50.878496Z"
+    number: "15060374"
+    number_intvalue: 15060374
+    originated: 9/23/2013
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: YES
+    resolved: ""
+    status: Open
+    title: Output of mediafilesegmenter generates warnings in mediastreamvalidator (and break streaming in iOS 7)

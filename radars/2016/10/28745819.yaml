@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28745819"
+    labels:
+        datastore_id: "6119638534455296"
+data:
+    classification: Serious Bug
+    created: "2016-10-12T23:56:46.32103Z"
+    description: "Felix Krause12-Oct-2016 04:53 PM\r\n\r\nSummary:\r\nWhen running xcodebuild to generate an ipa file using\r\n\r\n```\r\nxcodebuild -exportArchive -exportOptionsPlist '/tmp/my.plist' -archivePath /.../Archives/.../Fabric/.../xcarchive -exportPath '/tmp/output' \r\n```\r\n\r\nthe command throws an \"Rsync failed\" error message\r\n\r\n```\r\n2016-10-12 15:51:06.404 xcodebuild[59708:2722458] [MT] IDEDistribution: -[IDEDistributionLogging _createLoggingBundleAtPath:]: Created bundle at path '/var/folders/my/t28zn1cd4pl_f7dfzs3vszj00000gn/T/Fabric_2016-10-12_15-51-06.403.xcdistributionlogs'.\r\n2016-10-12 15:51:12.352 xcodebuild[59708:2722458] [MT] IDEDistribution: Step failed: <IDEDistributionPackagingStep: 0x7fc4c6d433b0>: Error Domain=IDEFoundationErrorDomain Code=1 \"Rsync failed\" UserInfo={NSLocalizedDescription=Rsync failed}\r\nerror: exportArchive: Rsync failed\r\n\r\nError Domain=IDEFoundationErrorDomain Code=1 \"Rsync failed\" UserInfo={NSLocalizedDescription=Rsync failed}\r\n\r\n** EXPORT FAILED **\r\n```\r\n\r\nLooking at Xcode's log files, we found a more detailed error message in \"IDEDistribution.standard.log\":\r\n\r\n```\r\nations/Xcode-8.app/Contents/Developer/usr/bin/symbols exited with 0\r\n2016-10-12 23:00:35 +0000 [MT] Processing symbols for CRToast.framework\r\n2016-10-12 23:00:35 +0000 [MT] Running /usr/bin/rsync '-8aPhhE' '/var/folders/my/t28zn1cd4pl_f7dfzs3vszj00000gn/T/XcodeDistPipeline.MQT/Root/Payload/Fabric.app/Frameworks/CRToast.framework' '--link-dest' '/var/folders/my/t28zn1cd4pl_f7dfzs3vszj00000gn/T/XcodeDistPipeline.MQT/Root/Payload/Fabric.app/Frameworks' '/var/folders/my/t28zn1cd4pl_f7dfzs3vszj00000gn/T/XcodeDistPipeline.MQT'\r\n2016-10-12 23:00:35 +0000  building file list ... \r\n2016-10-12 23:00:35 +0000   0 files...\r\n2016-10-12 23:00:35 +0000  5 files to consider\r\n2016-10-12 23:00:35 +0000  CRToast.framework/\r\n2016-10-12 23:00:35 +0000  CRToast.framework/_CodeSignature/\r\n2016-10-12 23:00:35 +0000  rsync: recv_generator: mkdir \"/var/folders/my/t28zn1cd4pl_f7dfzs3vszj00000gn/T/XcodeDistPipeline.MQT/CRToast.framework/_CodeSignature\" failed: Result too large (34)\r\n*** Skipping everything below this failed directory ***\r\n2016-10-12 23:00:35 +0000  rsync error: some files could not be transferred (code 23) at /BuildRoot/Library/Caches/com.apple.xbs/Sources/rsync/rsync-47/rsync/main.c(992) [sender=2.6.9]\r\n2016-10-12 23:00:35 +0000  \r\nsent 222 bytes  received 32 bytes  508.00 bytes/sec\r\ntotal size is 416.57K  speedup is 1679.40\r\n2016-10-12 23:00:35 +0000 [MT] /usr/bin/rsync exited with 23\r\n```\r\n\r\nLooking at the _CodeSignature directory inside the CRToast, the size and its content seem valid, and matches the one from the other frameworks that are included.\r\n\r\nThe build is working however, as soon as we set \"include_symbols\" to false in our export plist file.\r\n\r\nSteps to Reproduce:\r\n1. Setup iOS app with frameworks from CocoaPods\r\n2. Try exporting an ipa file from the command line using `-exportOptionsPlist`\r\n3. Enable \"dSYM symbolications included\" in the export plist file\r\n\r\nExpected Results:\r\nExport should work with and without symbolications included\r\n\r\nActual Results:\r\n\"Rsync failed\" error is thrown\r\n\r\nVersion:\r\nXcode 8.0\r\n\r\nNotes:\r\nMore information about how we debugged the issue can be found on GitHub: https://github.com/fastlane/fastlane/issues/6520\r\n\r\nConfiguration:\r\nXcode 8.0\r\nrbenv Ruby 2.3.1\r\nrsync version 2.6.9 protocol version 29\r\nApp Store distribution code signing set for the project\r\n\r\nAttachments:"
+    email: KrauseFx@gmail.com
+    modified: "2016-10-12T23:58:02.51107Z"
+    number: "28745819"
+    number_intvalue: 28745819
+    originated: 12-Oct-2016 04:53 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.0
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: '"Rsync failed" error in IDEDistributionPackagingStep when using -exportOptionsPlist to generate an ipa file'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20162683"
+    labels:
+        datastore_id: "5222987120771072"
+data:
+    classification: Other Bug
+    created: "2015-03-14T03:05:29.129478Z"
+    description: "Summary:\r\n`mdfind 'kMDItemContentType=public.unix-executable'` should report Unix executables, but fails to detect them in certain scenarios and, conversely, fails to detect when they're _no longer_ executable.\r\n\r\nCuriously, the problem seems related to whether or not a new executable file is created AND made executable on the SAME LINE of a shell command line.\r\n\r\nSteps to Reproduce:\r\nScenario 1: Create a new Unix executable\r\n\r\n* Open Terminal, create a new temp, directory and change to it.\r\n* Run the following commands:\r\n\r\n    rm -f foo; echo 'echo foo' > foo # create and fill file 'foo', but DO NOT make executable YET\r\n    chmod +x foo                           # make executable on SEPARATE LINE\r\n    sleep 5      # give Spotlight some time to update its database\r\n    mdfind -onlyin .  'kMDItemContentType=public.unix-executable'  # at this point, ./foo SHOULD be reported, but isn't\r\n\r\nScenario 2: Remove the executable permissions from a Unix executable previously recognized by Spotlight:\r\n\r\n* In the same temp. directory created in scenario 1, run the following commands:\r\n\r\n    rm -f foo; echo 'echo foo' > foo; chmod +x foo # create, fill, AND make the file executable on the SAME LINE\r\n    sleep 5      # give Spotlight some time to update its database \r\n    mdfind -onlyin .  'kMDItemContentType=public.unix-executable'  # at this point, ./foo WILL be reported.\r\n\r\nNow, REMOVE the executable permission from 'foo' and see if Spotlight - against expectation - STILL reports it as executable:\r\n\r\n    chmod a-x foo  # remove executable permission for all security principals\r\n    sleep 5      # give Spotlight some time to update its database \r\n    mdfind -onlyin .  'kMDItemContentType=public.unix-executable'  # at this point, ./foo SHOULD NO LONGER be reported, but is\r\n\r\n\r\n\r\n\r\nExpected Results:\r\nScenario 1:\r\n\r\nThe `mdfind` command SHOULD report the equivalent of  ./foo (using an absolute path).\r\n\r\nScenario 2:\r\n\r\nThe `mdfind` command SHOULD NOT (no longer) report the equivalent of ./foo\r\n\r\nActual Results:\r\nScenario 1:\r\n\r\n`mdfind` NEVER reports ./foo, no matter how long you wait.\r\n\r\nScenario 2:\r\n\r\nThe `mdfind` command STILL reports the equivalent of ./foo, even though ./foo is no longer executable."
+    email: mklement0@gmail.com
+    modified: "2015-04-13T19:11:13.50367Z"
+    number: "20162683"
+    number_intvalue: 20162683
+    originated: 13 Mar 2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.2
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Spotlight - as reflected via CLI mdfind - fails to detect executable Unix files in certain scenarios and, conversely, fails to detect when Unix files are no longer executable

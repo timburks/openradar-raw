@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6535050"
+    labels:
+        datastore_id: "3003"
+data:
+    classification: Hang
+    created: "2009-01-28T10:13:28.957319Z"
+    description: "28-Jan-2009 02:10 AM Joachim Bengtsson:\r\nSummary:\r\nTrying to read more than 4096 bytes in one go with NSFileHandle's readDataOfLength will lock up forever, never returning.\r\n\r\nSteps to Reproduce:\r\n1. Create a new Foundation tool.\r\n2. Write the following in your impl file:\r\n#import <Foundation/Foundation.h>\r\n\r\nint main (int argc, const char * argv[]) {\r\n    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];\r\n\r\n    NSFileHandle *fh = [[NSFileHandle alloc] initWithFileDescriptor:fileno(fopen(\"/dev/random\", \"r\"))];\r\n    \r\n    NSLog(@\"Reading 4096 bytes... This will succeed.\");\r\n    [fh readDataOfLength:4096];\r\n    NSLog(@\"Reading 4097 bytes... This will lock for infinity\");\r\n    [fh readDataOfLength:4097];\r\n    NSLog(@\"This will never be printed.\");\r\n    \r\n    [fh closeFile];\r\n    [fh release];\r\n\r\n    [pool drain];\r\n    return 0;\r\n}\r\n\r\n3. Compile and run\r\n\r\nExpected Results:\r\n4. See the output:\r\n2009-01-28 10:55:06.164 NSFileHandleIsEvil[42953:10b] Reading 4096 bytes... This will succeed.\r\n2009-01-28 10:55:06.229 NSFileHandleIsEvil[42953:10b] Reading 4097 bytes... This will lock for infinity\r\n2009-01-28 10:55:06.230 NSFileHandleIsEvil[42953:10b] This will never be printed.\r\n\r\nThe Debugger has exited with status 0.\r\n\r\nActual Results:\r\n2009-01-28 10:55:06.164 NSFileHandleIsEvil[42953:10b] Reading 4096 bytes... This will succeed.\r\n2009-01-28 10:55:06.229 NSFileHandleIsEvil[42953:10b] Reading 4097 bytes... This will lock for infinity\r\n< No more output, ever >\r\n\r\nRegression:\r\nUnknown\r\n\r\nNotes:\r\nThis is a very serious bug. For example, the above program seems to try to read an infinite amount of data from /dev/random. This is so very wrong.\r\n\r\nBlog entry on the subject: http://overooped.com/post/73721688/nsfilehandle-considered-harmful\r\n\r\n\r\n'NSFileHandleIsEvil.m' and 'Vermillion.spx' were successfully uploaded\r\n\r\n13-Jun-2009 01:46 AM Vanaja Pasumarthi :\r\nWe believe this issue has been addressed in Mac OS X SnowLeopard (Client), build 10A380.  Please verify with the build that you obtained at WWDC, and update this report with your results.\r\n\r\n27-Jun-2009 07:46 AM Joachim Bengtsson:\r\nThis issue has been verified as resolved and can be closed.\r\n\r\nThanks!"
+    email: joachimb@gmail.com
+    modified: "2011-08-28T05:48:19.400116Z"
+    number: "6535050"
+    number_intvalue: 6535050
+    originated: 28-Jan-2009 02:10 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.6/9G55
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: '[NSFileHandle readDataOfLength:N] with N >4096 locks up forever'

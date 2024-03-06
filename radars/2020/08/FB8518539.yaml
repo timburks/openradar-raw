@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8518539
+    labels:
+        datastore_id: "5012500290469888"
+data:
+    classification: ""
+    created: "2020-08-24T17:47:55.841248Z"
+    description: "With following sample code to access OSLogStore:\r\n\r\nfunc getLogEntries() -> Result<[OSLogEntryLog], Error> {\r\n    var logMessages: [OSLogEntryLog] = []\r\n    do {\r\n        // FB8269189: OSLogStore does not work iOS\r\n        let logStore = try OSLogStore(scope: .currentProcessIdentifier)\r\n        let oneHourAgo = logStore.position(date: Date().addingTimeInterval(-3600))\r\n\r\n\r\n        // TODO: How to format the predicate? See \"PREDICATE-BASED FILTERING\" in `man log`.\r\n        // Things I tried unsuccessfully:\r\n        // - NSPredicate(format: \"subsystem == %@\", \"com.steipete.LoggingTest\")\r\n        // - NSPredicate(format: \"subsystem == \\\"com.steipete.LoggingTest\\\"\")\r\n\r\n        // FB8518476: The Swift shims for for the entries enumerator are missing.\r\n        let allEntries = try Array(logStore.__entriesEnumerator(position: oneHourAgo, predicate: nil))\r\n        let osLogEntryLogObjects = allEntries.compactMap { $0 as? OSLogEntryLog }\r\n        for entry in osLogEntryLogObjects where entry.subsystem == subsystem {\r\n            logMessages.append(entry)\r\n        }\r\n        return .success(logMessages)\r\n    } catch {\r\n        print(\"Error: \\(error)\")\r\n        return .failure(error)\r\n    }\r\n}\r\n\r\nI was unable to write a predicate to filter the log messages. Manual filtering works. Please provide sample code or fix the predicate logic - above syntax is what I would expect to work.\r\n\r\nThanks!"
+    email: steipete@gmail.com
+    modified: "2020-08-24T17:47:55.841417Z"
+    number: FB8518539
+    number_intvalue: 8518539
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: iOS/macOS
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'OSLogStore: How does Predicate work?'

@@ -1,0 +1,70 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22774760"
+    labels:
+        datastore_id: "6751785964273664"
+data:
+    classification: Other Bug
+    created: "2015-09-20T20:23:10.5372Z"
+    description: |-
+        Summary:
+        In the following code, Xcode complains that there are four candidate, while it’s not ambiguous at all:
+
+        import Foundation
+
+        enum DrillingError: ErrorType {
+            case BadKey
+            case NotAContainer
+            case KeyMissing
+        }
+
+        extension Dictionary {
+
+            func drill(keys: [Key]) throws -> AnyObject {
+                guard !keys.isEmpty else {
+                    throw DrillingError.KeyMissing
+                }
+                if let childDictionary = self[keys.first!] as? Dictionary {
+                    do {
+                        try childDictionary.drill(Array(keys.dropFirst()))
+                    } catch let error {
+                        throw error
+                    }
+                } else {
+                    if let childArray = self[keys.first!] as? Array { // <— Xcode complains that this subscript is ambiguous
+
+                    }
+                }
+            }
+
+            func drill(keys: Key ...) throws -> AnyObject {
+                do {
+                    return try drill(keys)
+                } catch let error {
+                    throw error
+                }
+            }
+        }
+
+
+        Steps to Reproduce:
+        Try compile the code above in Xcode project or Playground
+
+        Expected Results:
+        The compiler should proceed to find more legit errors.
+
+        Actual Results:
+        The complier reports an error that’s bogus.
+    email: DaNmarner@gmail.com
+    modified: "2015-09-20T20:23:10.53752Z"
+    number: "22774760"
+    number_intvalue: 22774760
+    originated: 20-Sep-2015 01:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0 (7A218)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2: Dictionary extension thinks subscript ambiguous'

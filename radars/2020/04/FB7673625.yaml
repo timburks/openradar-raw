@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7673625
+    labels:
+        datastore_id: "5046273161822208"
+data:
+    classification: ""
+    created: "2020-04-23T12:23:45.01298Z"
+    description: "The Foundation’s type `JSONDecoder` has a property that allow defining a decoding strategy. The documentation description of what `.convertFromSnakeCase` does is incorrect. It says:\r\n\r\n/// Converting from snake case to camel case:\r\n/// 1. Capitalizes the word starting after each `_`\r\n/// 2. Removes all `_`\r\n/// 3. Preserves starting and ending `_` (as these are often used to indicate private variables or other metadata).\r\n\r\nWhat is wrong is that it actually makes every character lowercased before performing the operations described in the documentations.\r\n\r\nFor example, when using convertFromSnakeCase decoding strategy, a JSON key named `some_name_ICreated` will be translated to `someNameIcreated` (according to the documentation it should be `someNameICreated`)\r\n\r\n\r\nPlease list the steps you took to reproduce the issue:\r\nmport Foundation\r\n\r\nlet jsonData = \"{\\\"some_name_ICreated\\\": \\\"hello\\\"}\".data(using: .utf8)!\r\nstruct MyEntity: Codable {\r\n    \r\n    let someProp: String\r\n    \r\n    enum CodingKeys: String, CodingKey {\r\n        case someProp = \"someNameIcreated\"\r\n    }\r\n    \r\n    init(from decoder: Decoder) throws {\r\n        let container = try decoder.container(keyedBy: CodingKeys.self)\r\n        print(container.allKeys)\r\n        someProp = try container.decode(String.self, forKey: .someProp)\r\n    }\r\n    \r\n}\r\n\r\nlet decoder = JSONDecoder()\r\ndecoder.keyDecodingStrategy = .convertFromSnakeCase\r\ndo {\r\n    let decoded = try decoder.decode(MyEntity.self, from: jsonData)\r\n    print(\"Did decode: \\(decoded.someProp)\")\r\n} catch let e {\r\n    print(\"Failed: \\(e.localizedDescription)\")\r\n}\r\n\r\nWhat did you expect to happen?\r\nI think there are two ways of fixing it:\r\n- Update the documentation to reflect what the code does,\r\nOR\r\n- Update the code to make what the documentation says it does"
+    email: wm.hass@gmail.com
+    modified: "2020-04-23T12:23:45.013231Z"
+    number: FB7673625
+    number_intvalue: 7673625
+    originated: April 23rd, 2020
+    parent_number: '&{NULL_VALUE}'
+    product: Foundation documentation
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: JSONDecoder convertFromSnakeCase keyDecodingStrategy documentation is incorrect

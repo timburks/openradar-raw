@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8957219"
+    labels:
+        datastore_id: "4946596567449600"
+data:
+    classification: ""
+    created: "2020-12-30T16:19:10.834088Z"
+    description: "1. Create a file with a high-res timestamp. On 11.0, `touch file1` works, on 10.15.7 and earlier `python -c 'open(\"file1\", \"w\")'` works. Use `stat -f %Fm file` to verify that the file has non-zero nanoseconds in its mtimestamp:\r\n\r\n  % touch file1\r\n  % stat -f %Fm file1\r\n  1609344354.172814338\r\n\r\n2. Copy the file with `cp -p file1 file2` and check the timestamp of file2:\r\n\r\n  % cp -p file1 file2\r\n  % stat -f %Fm file2\r\n  1609344354.172814000\r\n\r\nExpected: The full timestamp is copied.\r\nActual: Most of the timestamp is copied, but nanoseconds get zeroed out.\r\n\r\nThis is a problem for mtime-based build systems. They'll think that the output of the copy has an older timestamp than the input and will re-run the copy on every build. Ninja 1.9+ (https://ninja-build.org/) is an example of a build system that reads high-resolution timestamps and that gets confused by this.\r\n\r\nSee https://github.com/nico/hack/blob/master/notes/copydir.md for some background around this bug report.\r\n\r\nThis reproduces on macOS 10.15.7 and macOS 11.0.1."
+    email: thakis@chromium.org
+    modified: "2020-12-30T16:19:10.834229Z"
+    number: "8957219"
+    number_intvalue: 8957219
+    originated: 2020 Dec 30
+    parent_number: '&{NULL_VALUE}'
+    product: macos
+    product_version: 11.0.1
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: '`cp -p` doesn''t correctly copy mtime'

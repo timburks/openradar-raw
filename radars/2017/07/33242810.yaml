@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33242810"
+    labels:
+        datastore_id: "5025173694578688"
+data:
+    classification: Serious Bug
+    created: "2017-07-13T19:42:29.05347Z"
+    description: "Summary:\r\n\r\nXcode used to be able to check for NULL pointer dereferences when analysing a project, with the Clang Static Analyser.\r\n\r\nIt looks like it is no longer the case with Xcode 9.\r\n\r\n--------------------------------------------------\r\n\r\nSteps to Reproduce:\r\n\r\nUse some very basic/simple code that dereferences NULL pointers, like:\r\n\r\n    int * _Nullable foo( void );\r\n    int * _Nullable foo( void )\r\n    {\r\n        return NULL;\r\n    }\r\n\r\n    int main( void )\r\n    {\r\n        int * p1 = foo();\r\n        int * p2 = NULL;\r\n        \r\n        printf( \"%i\\n\", *( foo() ) );\r\n        printf( \"%i\\n\", *( p1 ) );\r\n        printf( \"%i\\n\", *( ( volatile int * )NULL ) );\r\n        \r\n        int i1 = *( p1 );\r\n        int i2 = *( p2 );\r\n        \r\n        printf( \"%i\\n\", i1 );\r\n        printf( \"%i\\n\", i2 );\r\n        \r\n        return 0;\r\n    }\r\n\r\n--------------------------------------------------\r\n\r\nExpected Results:\r\n\r\nWhen running the analyser, it should warn about possible NULL pointer dereferences.\r\n\r\n--------------------------------------------------\r\n\r\nObserved Results:\r\n\r\nNo warning is issued.\r\n\r\n--------------------------------------------------\r\n\r\nVersion:\r\n\r\nmacOS 10.13 Beta (17A306f)\r\nXcode 9.0 beta 3 (9M174d)\r\n\r\n--------------------------------------------------\r\n\r\nNotes:\r\n\r\nAttached is a project demonstrating the issue."
+    email: macmade@xs-labs.com
+    modified: "2017-07-13T19:42:29.05372Z"
+    number: "33242810"
+    number_intvalue: 33242810
+    originated: July 11 2017, 9:05 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: Yes
+    status: Closed
+    title: Clang Static Analyser no longer checks for NULL dereferences

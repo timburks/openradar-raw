@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6199955"
+    labels:
+        datastore_id: "4988884681228288"
+data:
+    classification: iCloud
+    created: "2019-06-23T00:10:30.581541Z"
+    description: "Please describe the issue and what steps we can take to reproduce it:\r\nThe issue is that iCloud appears to be breaking HTML in mail forwarded through iCloud.com.\r\n\r\nSee also issue \"iCloud mail forwarding destructive to DMARC authentication\", FB6081973, radar ID 49888068. This may be a result of the same underlying issue, but since this is a completely different symptom, I'm reporting it separately.\r\n\r\nI have iCloud set to forward messages to another mail provider (@REDACTED.com). What I'm seeing is occasional emails where with broken images links in the forwarded message.\r\n\r\nAttached is a sample of an email that I receive daily, and in every single one of these emails the first image is a broken link.  In the HTML the image link is in these two lines:\r\n\r\n4; display: block; min-width: 100%;\"><img src=3D\"https://dallasnews.imgus11=\r\ncom/public//9dade2314bfbc2983597d605da77c8cf.png?r=3D1402623526\" alt=3D\"Da=\r\n\r\nNotice that the URL is missing a period before \".com\". It should be linking to https://dallasnews.imgus11.com/public//9dade2314bfbc2983597d605da77c8cf.png.\r\n\r\nSo, what appears to be happening is that in any email with text/html content, if the HTML contains a period (\".\") as the first character of a line, the period is being removed when the iCloud forwards the email. In the case of URLs, if that period is a domain separator, it breaks the URL.  Image URLs are just much more visible to the user.\r\n\r\nNow the question is, how do we know that iCloud is changing the email while forwarding, vs. perhaps the sender is generating the email incorrectly?  I discussed this case with this email sender (Dallas Morning News), and they generated two emails: one was sent directly to my @REDACTED email account, and the other was sent to @mac.com and forwarded.\r\n\r\nThe emails are not exactly the same, nor are they an exact match for the daily email, because they generated the email for this test twice, once to each address. But if we compare the resulting emails, it shows that periods in the 1st column are being removed. For example, at the start of the text/html block, the HTML code is identical for many lines, except for this line:\r\n\r\n.ExternalClass ul, .ExternalClass ol { Margin: 0; }=0A.undoreset div p, .un=\r\n\r\nThe email sent directly to @REDACTED.com has the period in the class selector, but the period was removed in the email forwarded through iCloud.\r\n\r\nPlease describe the business impact, if any, of the issue you are reporting\r\nRemoving periods from the HTML code is breaking the HTML, such as breaking URLs (including links to embedded images) and as seen above, breaking CSS selectors."
+    email: msschmitt@gmail.com
+    modified: "2019-06-23T00:10:30.58169Z"
+    number: "6199955"
+    number_intvalue: 6199955
+    originated: 06/22/2019
+    parent_number: '&{NULL_VALUE}'
+    product: Web Services & SDKs
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: iCloud mail forwarding breaks images in email

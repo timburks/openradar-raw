@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27844971"
+    labels:
+        datastore_id: "5002993158062080"
+data:
+    classification: ""
+    created: "2016-08-15T11:26:12.44437Z"
+    description: "Summary:\r\nAccessing the Keychain from the iOS 10 simulator using Xcode 8 beta 2–5 fails with error code -34018 unless Keychain Sharing is enabled.\r\n\r\nSteps to Reproduce:\r\n1. Create a new Single page iOS app project in Xcode 8 beta 3.\r\n2. Run the following code in viewDidLoad (or open the attached Xcode project).\r\n\r\n    let itemKey = \"My key\"\r\n    let itemValue = \"My secretive bee \U0001F41D\"\r\n    \r\n    // Remove from Keychain\r\n    // ----------------\r\n    \r\n    let queryDelete: [String: AnyObject] = [\r\n      kSecClass as String: kSecClassGenericPassword,\r\n      kSecAttrAccount as String: itemKey\r\n    ]\r\n    \r\n    let resultCodeDelete = SecItemDelete(queryDelete as CFDictionary)\r\n    \r\n    if resultCodeDelete != noErr {\r\n      print(\"Error deleting from Keychain: \\(resultCodeDelete)\")\r\n    }\r\n    \r\n    \r\n    // Add to keychain\r\n    // ----------------\r\n    \r\n    guard let valueData = itemValue.data(using: String.Encoding.utf8) else {\r\n      print(\"\U0001F423\U0001F423\U0001F423\U0001F423\U0001F423\U0001F423\U0001F423\U0001F423\U0001F423\U0001F423 Error saving text to Keychain\")\r\n      return\r\n    }\r\n    \r\n    let queryAdd: [String: AnyObject] = [\r\n      kSecClass as String: kSecClassGenericPassword,\r\n      kSecAttrAccount as String: itemKey,\r\n      kSecValueData as String: valueData,\r\n      kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlocked\r\n    ]\r\n    \r\n    let resultCode = SecItemAdd(queryAdd as CFDictionary, nil)\r\n    \r\n    if resultCode != noErr {\r\n      print(\"\U0001F41D\U0001F41D\U0001F41D\U0001F41D\U0001F41D\U0001F41D\U0001F41D\U0001F41D\U0001F41D Error saving to Keychain: \\(resultCode).\")\r\n    } else {\r\n      print(\"\U0001F340\U0001F340\U0001F340\U0001F340\U0001F340\U0001F340\U0001F340\U0001F340\U0001F340 Saved to keychain successfully.\")\r\n    }\r\n\r\nExpected Results:\r\nItem is added to Keychain\r\n\r\nActual Results:\r\nFunction SecItemAdd returns the following error code: -34018\r\n\r\nVersion:\r\nXcode version 8.0 beta 5 (8S193k)\r\nOS X version 10.11.5 (15F34)\r\n\r\nNotes:\r\nWorkaround: enable Keychain Sharing in the target settings’ Capabilities tab. Then Keychain works as expected.\r\n\r\nThis is a duplicate of rdar://27422249 although I added more detail here.\r\n\r\nDiscussion: http://stackoverflow.com/questions/38456471/secitemadd-always-returns-error-34018-in-xcode-8-beta-4-in-ios-10-simulator\r\n\r\nConfiguration:\r\nAlways occurs in Xcode 8 beta 2–5 when testing in iOS 10 simulator (14A5309d).\r\n\r\nDoes NOT occur in Xcode 8 beta 2 and beta 3 when testing in iOS 9.3 simulator.\r\n\r\nDoes NOT occur in Xcode 8 beta 1 when testing in iOS 10 simulator (14A5261u).\r\n\r\nAttachments:\r\n'KeychainBugDemo.zip' was successfully uploaded."
+    email: douglashill@douglashill.co
+    modified: "2016-08-15T11:26:12.44457Z"
+    number: "27844971"
+    number_intvalue: 27844971
+    originated: 15-Aug-2016 01:22 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Keychain fails on iOS 10 simulator

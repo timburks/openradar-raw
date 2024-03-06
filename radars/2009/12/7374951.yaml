@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7374951"
+    labels:
+        datastore_id: "123406"
+data:
+    classification: Serious Bug
+    created: "2009-12-03T21:54:27.640927Z"
+    description: "Summary: \r\nSampling from a texture in GLSL with texture2D(sampler2D sampler, vec2 coord, float bias) making a branch based on the contents of the texture and sampling the same texture again inside a if-condition or loop corrupts the subsequent samples. Specifically these subsequent texture samples, return the texture contents from mipLevel 0 *for some pixels*, although they shouldn't. Which pixels are corrupted depends on the branch condition. This problem is (especially) relevant if the texture contents aren't mip mapped in the normal way, i.e. lower resolution mip-levels are not scaled  down versions of higher-levels.\r\n\r\nSteps to Reproduce:\r\n1.) make a opengl app which has a texture with completely different contents at the different mip levels.\r\n2.) use a shader which samples from the texture and based on the contents of the sample samples again at the same coordinates in the if-part:\r\n\r\nvec4 sample1 = floor(texture2D(debugTexture, gl_TexCoord[0].xy, bias) * 255.0 + 0.5);\r\nif (sample1.r > 200.0)\r\n{\r\n\tvec4 sample2 = floor(texture2D(debugTexture, gl_TexCoord[0].xy, bias) * 255.0 + 0.5); // this should be identical to sample1, because it is the same texture, same coord, same bias, BUT IT IS NOT, IT IS SAMPLED AT MIP LEVEL 0 FOR SOME PIXELS\r\n}\r\n\r\nSteps to Reproduce (Sample APP):\r\n1.) Download the attached sample app\r\n2.) run the VTDemo.app or build-and-run glslBug/VTDemo.xcodeproj\r\n3.) you should see a black window because the shader shows the difference between two samples taken from the same texture at the same coordinates and the difference should be zero=>black\r\n4.) In fact you see a black window on ATI or software rendering, because the bug doesn't exist there, but on nvidia you see a checkerboard image\r\n\r\n\r\nExpected Results:\r\nblack window, no difference between multiple texture2D() sampels from the same texture at the same position\r\n\r\nActual Results:\r\non NVIDIA you see colored lines indicating that repeated samples from the same texture give different results\r\n\r\nRegression:\r\nOccurs on current Mac AND EVEN WINDOWS nvidia drivers. Does not occur on Mac ATI or Software rendering.\r\nThe problem does not occur if the second sample is not taken inside a branch/loop or if the condition does not depend on the contents on the first sample. Which pixels are affected by the problem is also determined by the branch condition, if you replace \"if (sample1.r > 200.0)\" from the \"Steps to reproduce\" with \"if (sample1.r > 20.0)\" a lot less corruption occurs.\r\n\r\nNotes:\r\nNormal operation of the demo shows the difference between the 2 samples which should be zero but isn't. Press 0 on the keyboard to return to normal operation.\r\nPress 1 or 2 on the keyboard to the directly see sample1 or sample2, which should be identical but aren't on NVIDIA. \r\nPress 3 to see mip-level 0 of the texture, this is what some sample2 fetches return although they shouldn't.\r\n\r\nAdditional Notes:\r\ni really need this bug fixed ASAP.\r\n\r\n08-Nov-2009 11:28 PM:\r\nreplace \"*for some pixels\"\" with \"*for pixels that lie on borders of rendered triangles*\"\r\n\r\n\r\n\r\n15-Nov-2009 07:11 PM:\r\nok testing reveals that NVIDIA has fixed this already for their newest windows driver, versions above 190.x don't exhibit the bug anymore. seems the first mac driver based on these newer windows drivers will get the fix for \"free\". ;-)"
+    email: mayer.julian@gmail.com
+    modified: "2011-08-28T05:43:41.474816Z"
+    number: "7374951"
+    number_intvalue: 7374951
+    originated: 07-Nov-2009 10:45 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '[OpenGL/GLSL] sampling from texture inside if-condition or loop broken on NVIDIA'

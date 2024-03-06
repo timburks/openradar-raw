@@ -1,0 +1,62 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26104139"
+    labels:
+        datastore_id: "6100845720502272"
+data:
+    classification: Performance
+    created: "2016-05-05T01:05:14.2165Z"
+    description: |-
+        Summary:
+        NSURLSession has the ability to set a 1) a request timeout timeout and 2) a resource timeout.  First, coupling the configuration to the session makes having lots of variations in timeouts difficult to manage by being forced to scale the number of NSURLSessions that are running - but that's a separate concern.  The timeouts specific (or lack thereof) are an impediment to robust networking.
+
+        For resource timeout: this timeout is actually just fine.  Simple to understand and easy to use.  A 7 day default is pretty crazy long though.
+
+        For request timeout: I think it is well known that this timeout has serious issues and we elect to not even use it.  By having it be the timeout between data is received it incurs tremendous bias against upload data.   Trying to fit the entire upload and server processing time within the request timeout and then on download the rapid delivery of packets needing a much smaller timeout make this timeout ill suited for any sensible use cases.  Willing to discuss more of course.
+
+        What we'd really like are the following timeouts or, even better really, would be granular enough callbacks from the delegate so that we can at least build our own timeouts and get our own measurements:
+
+        1) blocked timeout: a timeout for the max amount of time to wait blocked on other network requests before timing out.  A simple callback of "will initiate connection to host" would suffice.  A reasonable value might be something like 180 seconds.
+
+        2) Connection timeout: a timeout for the max duration it should take to establish a connection.  Reused connections would never hit this timeout.   A simple callback of "did establish connection to host" would suffice.  60 seconds would probably be an appropriate value given latencies in parts of the world.
+
+        3) timeout per ack in upload phase: once we are connected, we would like to send up our payload and everytime we get an ack that the uploaded packet/data was received, we should reset this timer.  This timeout is 100% for upload phase.   10-30 seconds would probably be an appropriate value.  Alternatively, a max upload duration could be used - a pair of "will begin uploading payload" and "did complete uploading payload" callbacks would suffice.
+
+        4) timeout for server side to start responding with data: from the time that the upload phase completes (last byte ack'd) to the time that the first response byte is received would be overseen by a timeout that caps how long the server can take to process the response.  This value would really be dependent on the transaction, but a 60 second timeout would probably be an appropriate default.  A "did begin receiving response" callback (paired with the "did complete uploading payload" callback) would suffice.
+
+        5) timeout per packet received in download phase: given that upload and download phases are completely separate, a timeout governing the max time between packets received would be useful in the download phase.  Something like 10-30 seconds would make sense.  Alternatively, a max download duration could be used or callbacks (like the "did begin receiving response" callback mentioned earlier and the existing "did complete" callback).
+
+        6) attempt timeout (dynamically adjusts): for any given request attempt (per redirect, honestly) it would be useful to gate the entire attempt with a timeout.  However, if the timeout fires and the request is actual very close to completing and it has been seeing progress.  Say we can estimate based on bytes received, estimated download bitrate and expected content length; the timeout could be smart enough to identify it will only take a few more seconds to complete and opt to not terminate the request for up to short period of time.  This is entirely doable outside of the NSURL layer (by us) if we can get accurate bitrate info for that specific inflight request.  Something like 60 seconds for small requests and upwards of 180 seconds for very large requests would make sense.
+
+        7) operation timeout (dynamically adjusts): for any given request we would want to gate all attempts with a timeout: including initial attempt, redirect attempts and retry attempts (which we support in a custom retry policy system).   Just like the attempt timeout, if we can tell that the request will be completing we should not trigger a failure from this timeout but let it finish.  This is entirely doable outside of NSURL layer (by us) and not really a request.   Something like 90 seconds for small requests to upwards of 480 seconds for very large requests would make sense.
+
+        Timeouts #1 through #5 are not possible with the current NSURL apis.   Simply adding specific callbacks would be all that would be necessary to unblock our own creation and curation of those timeouts.
+
+        The benefits of these callbacks would also offer additional benefits that are urgently desired such as being able accurately calculate bitrate estimates and getting accurate request durations broken down by phase (and we wouldn't be opposed to even more granular callbacks so we can establish things like DNS resolution time).   These are really core to us being able to serve users across the globe and as we continue to optimize our networking for users around the world based on their conditions, the NSURL layer (and CFNetwork layer too) are not providing enough granularity for us to diagnose, configure and iterate.
+
+        Steps to Reproduce:
+        Try to set effective timeouts for every request being sent by the device
+
+        Expected Results:
+        Can be done either with explicit settings or by creating our own timers that are fed by granular callbacks
+
+        Actual Results:
+        cannot be done
+
+        Notes:
+        Please don't hesitate to reach out in collaborating on this.  All of my time is spent optimizing performance with the network, and this is one area outside of Twitter's control that a collaborative effort could yield dramatic results.  If we could make NSURL layer have just a little more granularity, we could avoid having to consider creating our own socket based connections.
+
+        This affects Mac OS X and tvOS equally.
+    email: nobrien@twitter.com
+    modified: "2016-05-05T01:05:14.21671Z"
+    number: "26104139"
+    number_intvalue: 26104139
+    originated: 04-May-2016 06:05 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "9"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Timeouts in NSURL layer are insufficient for robust control over network requests

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22183105"
+    labels:
+        datastore_id: "6631169592393728"
+data:
+    classification: Serious Bug
+    created: "2015-08-07T03:07:44.13564Z"
+    description: "Summary:\r\nWhen an El Capitan Mac is bound to Active Directory and the Mac is configured to use Auto Proxy Discovery or Automatic Proxy Configuration the Mac is unable to authenticate users to AD. \r\n\r\nAuthentication failure is shown by failed logins via the LoginWindow as well as attempts to login on the command line by using: su <username>\r\n\r\nAttempts to use dscl to read a user record also fail. (Error: DS Error: -14136 (eDSRecordNotFound)\r\n \r\nEven when a machine is on a subnet where the DHCP server does not provide a proxy url via DHCP options, having the Auto Proxy Discovery checkbox ticked results in failed AD authentication.\r\n\r\nThis appears to be an issue introduced in Beta 3 and is also present in Beta 4, Beta 5 and Beta 6. It does not occur in Beta 2 however.\r\n\r\nIf a bogus URL is specified when using Automatic Proxy Configuration i.e. http://foo.local:3000/proxy.pac then authentication is successful.\r\n\r\nThe issue is not occurring when specifying Web Proxy (HTTP) and Secure Web Proxy (HTTPS) server addresses\r\n\r\n\r\nSteps to Reproduce:\r\n1. Install El Capitan and update to Beta 6\r\n2. Bind to Active Directory using Directory Utility\r\n3. Reboot machine\r\n4. Login with Active Directory user and confirm authentication is successful.\r\n5. Log out and log in as Local Administrator\r\n6. Enable Auto Proxy Discovery in System Preferences \r\n\tNote:- (It is NOT a requirement to have a DHCP server providing option 252 for this issue to occur, it occurs with and without this option being provided via DHCP)\r\n7. Reboot\r\n8. Attempt to login with Active Directory User via various methods; LoginWindow and CLI utility ‘su’\r\n9. System will fail to authenticate users.\r\n10. Disable Auto Proxy Discovery\r\n11. Reboot\r\n12. Attempt to authenticate AD users\r\n13. System will authenticate AD users without error.\r\n\r\n\r\nExpected Results:\r\nAD User authentication should not be failing when attempting to use Auto Proxy Discovery or Automatic Proxy Configuration \r\n\r\n\r\nActual Results:\r\nUser authentication fails with little to no errors - I have attached opendirectoryd debug logs from successful and failed login attempts.\r\n\r\n\r\nRegression:\r\nThis problem does not occur in El Capitan Beta 2, however it is present in Beta3, Beta4, Beta5 and Beta6\r\nThis problem does not occur in 10.10.4\r\n\r\nNotes:\r\nWe are using Bluecoat proxy servers, however tcpdumps and proxy logs indicate that no traffic is ever contacting the proxy server during an AD login attempt."
+    email: calum.h@gmail.com
+    modified: "2015-08-11T02:19:13.26967Z"
+    number: "22183105"
+    number_intvalue: 22183105
+    originated: 07-Aug-2015 01:05 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11/15A244d
+    reproducible: Always
+    resolved: ""
+    status: Closed as Duplicate of 21986520
+    title: Active Directory Authentication Failure when AutoProxyDiscovery or Automatic Proxy Configuration enabled

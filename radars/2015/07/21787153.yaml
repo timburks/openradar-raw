@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21787153"
+    labels:
+        datastore_id: "6653150161272832"
+data:
+    classification: Enhancement
+    created: "2015-07-13T00:15:58.67324Z"
+    description: "Summary:\r\nThe caller of libcompression compression_decode_buffer() is required to take a best guess at the data's expected uncompressed size.\r\n\r\nDue to this limitation the user of the buffer API either must know with a high degree of certainty what the uncompressed size will be, or they must alloc a (possibly extremely) large dst buffer to ensure it is capable of holding the uncompressed data without truncation.\r\n\r\nIt would be highly beneficial if an API was provided to determine the expected uncompressed buffer size. Perhaps a function like the following:\r\n\r\nextern size_t \r\ncompression_decode_uncompressed_size(const uint8_t * __restrict src_buffer, size_t src_size, compression_algorithm algorithm);\r\n\r\nShort of that, a consideration of changing compression_decode_buffer() to add an out parameter (size_t** uncompressed_size) that would hold the total uncompressed size so if the result is truncated the caller can choose to recall with the new size if needed.\r\n\r\nSteps to Reproduce:\r\nUtilize compression_decode_buffer()\r\n\r\nExpected Results:\r\nAbility to decode buffer with full, un-truncated, results.\r\n\r\nActual Results:\r\nMust alloc a large buffer to ensure contents will fit.\r\n\r\nVersion:\r\n10.11 Beta 15A216g\r\n\r\nNotes:\r\nIn lieu of the ability to get at the uncompressed data size directly, I think a standard way of accessing any available headers would be beneficial. This would keep the burden of dealing with the sizes at the higher level caller, while at the same time providing the higher level caller a standard way to get at any headers they might know about and be able to use (such as the uncompressed size).\r\n\r\nhttp://blog.shiftybit.net/tinkering-with-compressionlib/\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n\r\n\r\nResolution:\r\nlibcompression is a low level API and this kind of meta-data is expected to be provided at a higher level. \r\nFurthermore, some archive formats, like zlib and lzma, don't provide this kind of meta-data in their headers.\r\n\r\nFor more details see my series here:\r\nhttp://blog.shiftybit.net/series/tinkering-with-compressionlib/"
+    email: leemorgan@me.com
+    modified: "2015-07-25T01:41:36.26807Z"
+    number: "21787153"
+    number_intvalue: 21787153
+    originated: 12-Jul-2015 07:59 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.11 Beta 15A216g
+    reproducible: N/A
+    resolved: 24-Jul-2015
+    status: Closed
+    title: libcompression doesn't provide uncompressed size hint

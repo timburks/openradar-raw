@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7839823"
+    labels:
+        datastore_id: "254401"
+data:
+    classification: Bug
+    created: "2010-04-09T02:43:27.509655Z"
+    description: "07-Apr-2010 10:55 PM Arno Hautala:\r\nSummary\r\n-------\r\n\r\nWith TimeMachine set to backup to a sparse disk image that has been set to a specific size, each new backup first resizes the sparse bundle to the full size of the disk.  The desired behavior is that the image size would remain unchanged in order to limit TimeMachine backups.\r\n\r\nThis behavior is specifically beneficial when the external drive is to contain files other than the TimeMachine backup, or TimeMachine backups from multiple local machines such as several seldom used laptops and a heavily used desktop.  The laptops can be set to retain a small backup history by limiting the backup size.  The desktop machine can be granted a greater history with a greater backup image size.\r\n\r\nA specific maximum backup capacity setting would be more direct, but that's a different feature request.\r\n\r\n\r\nSteps to Reproduce\r\n---------------\r\n\r\n1. Create a new sparse disk image, where NAME and MAC are replaced with the computer name and MAC address:  \r\n    `$ hdiutil create -size 10g -fs HFS+J  -volname \"Backup of NAME\" NAME_MAC.sparsebundle`\r\n\r\n2. Place the disk image at the root of an external drive, that is bigger than the sparse image, to be used for TimeMachine.\r\n\r\n3. Point TimeMachine at the external drive containing the sparse image.\r\n\r\n4. Initiate a backup using \"Backup Now\" from the TimeMachine menu bar menu.\r\n\r\n5. Observe the backupd log messages, specifically something along the line of:  \r\n    `com.apple.backupd\tResizing backup disk image from 10 GB to 4095.6 GB`\r\n\r\n\r\nExpected Results\r\n-------------\r\n\r\nTimeMachine should not resize the backup disk image when it is smaller than the containing drive.  As referenced above, it may be desirable to limit backups by using a restricted sparse bundle.\r\n\r\n\r\nActual Results\r\n-----------\r\n\r\nTimeMachine resizes the backup sparse image to the full reported size of the drive, despite the actual amount of free space and any constraints that had previously been placed on the disk image.\r\n\r\n\r\nRegressions\r\n---------\r\n\r\nThis is a new behavior as of 10.6.3.  Prior to this version, as far as I am aware, TimeMachine respected the set size of a sparse image and did not resize the image at any time.  It would be restricted to that size even if additional space were available on the containing drive.\r\n\r\n\r\nNotes\r\n----\r\n\r\nSeveral times now I have tried to reset the size cap using `hdiutil resize`, but each time TimeMachine initiates a new backup, the sparse image is resized to equal the total reported size of the containing volume.\r\n\r\nPartitioning the backup drive is one solution to limit TimeMachine backups, but this is not very scalable as adding new machines to a network would require re-partitioning the backup device.  This may potentially require fully wiping the drive.  This also would not allow manually resizing the backup image to increase or decrease the backup history as more space becomes available, as occurs in the case of a Drobo, or other thin provisioned device.\r\n\r\nSee also discussions here:  \r\nhttp://discussions.apple.com/message.jspa?messageID=11292518  \r\nhttp://discussions.apple.com/thread.jspa?threadID=2383738&start=0&tstart=45  \r\n\r\nIdeally, TimeMachine would respect any size limit on a backup sparse image.  When initially creating such an image, it would make sense to match the available drive space (a knowledgeable user could create their own image in its place).  When moving the backup image to a new drive, TimeMachine might be able to detect this change and offer to increase the available back up space.\r\n\r\nBetter yet, include an explicit option for restricting the amount of space that TimeMachine will use when backing up."
+    email: fracai@gmail.com
+    modified: "2011-08-28T05:41:58.922336Z"
+    number: "7839823"
+    number_intvalue: 7839823
+    originated: 07-Apr-2010 10:55 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.3
+    reproducible: Always
+    resolved: ""
+    status: Behaves correctly
+    title: TimeMachine resizes sparsebundle images beyond set size to available space.

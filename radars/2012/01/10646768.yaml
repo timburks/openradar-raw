@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10646768"
+    labels:
+        datastore_id: "1483401"
+data:
+    classification: Other
+    created: "2012-01-05T04:18:54.607396Z"
+    description: "Summary:\r\n\r\nDoc bug.\r\nNSDebug.h (/System/Library/Frameworks/Foundation.framework/Headers/NSDebug.h) documents environment variables and functions suitable for debugging autorelease pool leaks. The documentation appears to not have been updated since 10.6, and the functions and variables that worked in 10.6 do not appear to do anything in 10.7.\r\n\r\nPlease update the NSDebug.h comments and text to reflect reality.\r\n\r\nFor instance, line 105 and following:\r\n/****************       Autorelease pool debugging      ****************/\r\n\r\n// Functions used as interesting breakpoints in a debugger\r\n// void __NSAutoreleaseNoPool(void *object);\r\n        // Called to log the \"Object X of class Y autoreleased with no\r\n        // pool in place - just leaking\" message.  If an environment\r\n        // variable named \"NSAutoreleaseHaltOnNoPool\" is set with string\r\n        // value \"YES\", the function will automatically break in the\r\n        // debugger (or terminate the process).\r\n\r\n// void __NSAutoreleaseFreedObject(void *freedObject);\r\n        // Called when a previously freed object would be released\r\n        // by an autorelease pool.  If an environment variable named\r\n        // \"NSAutoreleaseHaltOnFreedObject\" is set with string value\r\n        // \"YES\", the function will automatically break in the debugger\r\n        // (or terminate the process).\r\n\r\nHowever __NSAutoreleaseNoPool() does not appear to be called, and no change happens when NSAutoreleaseHaltOnNoPool is set to YES in the environment.\r\n\r\n\r\nSteps to Reproduce:\r\n1. Find an app that prints autorelease pool errors, such as:\r\nobjc[71689]: Object 0x4922bb0 of class __NSCFString autoreleased with no pool in place - just leaking - break on objc_autoreleaseNoPool() to debug \r\n2. Try to debug using standard techniques learned from 10.6, i.e. setting NSAutoreleaseHaltOnNoPool to YES or breaking on __NSAutoreleaseNoPool() in gdb.\r\n\r\nExpected Results:\r\nThe breakpoint should trip or the app should exit.\r\n\r\nActual Results:\r\nNothing happens.\r\n\r\nRegression:\r\n\r\nNotes:\r\nIf one reads the printf carefully, it suggests breaking on objc_autoreleaseNoPool(). This indeed works, and is a straightforward workaround. But please update NSDebug.h so this is more clear.\r\n\r\nAdditionally, there have historically been more fine-grained tools than simply a function to set a breakpoint on. If those still exist, any documentation about them would be very much appreciated."
+    email: jhawk@mit.edu
+    modified: "2012-01-05T04:18:54.607761Z"
+    number: "10646768"
+    number_intvalue: 10646768
+    originated: 04-Jan-2012 11:16 PM (Eastern)
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OSX
+    product_version: 10.7.2/11C74
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Obsolete autorelease debugging documentation in NSDebug.h

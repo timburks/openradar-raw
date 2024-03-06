@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9864248"
+    labels:
+        datastore_id: "1285401"
+data:
+    classification: Crash
+    created: "2011-07-29T17:37:54.259722Z"
+    description: "Summary:\r\n\r\nCalling becomeFirstResponder on a view controller presented modally from application:didFinishLaunchingWithOptions: causes NSAutoreleasePool to release the view controller without a corresponding autorelease call.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a subclass of UIViewController that returns YES for canBecomeFirstResponder.\r\n\r\n2. In the view controller's implementation of viewDidAppear, call [self becomeFirstResponder].\r\n\r\n3. Create an instance of the view controller in application:didFinishLaunchingWithOptions: and present it modally.\r\n\r\n4. Dismiss the view controller, show an action sheet, and tap a button on the action sheet.\r\n\r\n5. The view controller is accessed from UIKit code, even though it has been deallocated, throwing EXC_BAD_ACCESS.\r\n\r\nExpected Results:\r\n\r\nNo references to the modal view controller are retained in user code, so it should either be deallocated cleanly with no dead references or it should not be deallocated if there are still references to it.\r\n\r\nActual Results:\r\n\r\nWhen run in the Allocations Instrument, the culprit seems to be a spurious release sent from NSAutoreleasePool which causes the view controller instance to deallocate prematurely.  None of the user code has autoreleased the instance, and no autorelease call is recorded by the Allocations Instrument, meaning that the instance must have been added to the pool by UIKit.\r\n\r\nRegression:\r\n\r\nUnknown.\r\n\r\nNotes:\r\n\r\nAttached is an example app that replicates the bug.  Run it, tap the blue screen to dismiss the modal view controller, tap Action on the main screen, and tap Delete.  The app should crash.  Also included in the provided zip archive are a screenshot of the Allocations Instrument and a crash log from an iPod touch."
+    email: jesse.crossen@gmail.com
+    modified: "2011-08-28T05:35:16.993147Z"
+    number: "9864248"
+    number_intvalue: 9864248
+    originated: 29-Jul-2011 01:35 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "4.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Calling becomeFirstResponder on a modal view causes extra release

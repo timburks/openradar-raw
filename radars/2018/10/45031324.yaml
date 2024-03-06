@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "45031324"
+    labels:
+        datastore_id: "4997600331694080"
+data:
+    classification: UI/Usability
+    created: "2018-10-05T03:19:41.027486Z"
+    description: "Summary:\r\nWhen using UIView's drawViewHierarchyInRect:afterScreenUpdates: method to render a view's snapshot, calling it on Simulator always produces a standard-gamut image, even when simulating a device with Display P3 screen and rendering into a context with wide-gamut (Extended sRGB or Display P3) color space. This may be confusing during development of apps that manipulate wide-gamut content and use snapshotting.\r\nOn physical devices this method produces expected results.\r\n\r\nSteps to Reproduce:\r\n1. Make a simple app that renders wide-gamut content in a certain view.\r\n2. Setup a UIGraphicsImageRenderer with preferred extended range, and call drawViewHierarchyInRect:afterScreenUpdates: method on the view with wide-gamut content in the actions block.\r\n3. Run this app in an iPhone X Simulator (or other simulated device with Device P3 screen). Compare the resulting snapshot image with the original content (either inside the app, or by exporting the snapshot into a PNG file).\r\n\r\nExpected Results:\r\nSnapshot is identical to the original content. Minor color conversion errors are normal.\r\n\r\nActual Results:\r\nEven though the snapshot is made into a wide-gamut context, its contents are clipped to standard sRGB, which is noticeable by comparing to the original.\r\n\r\nVersion/Build:\r\niOS 10+\r\n\r\nConfiguration:\r\niPhone X Simulator, or any other simulated device with P3 screen\r\n\r\nAdditional Info:\r\nIt seems like this limitation extends to the Simulator itself: even when running on a modern MacBook Pro with wide-gamut display, Simulator app presents the wide-gamut content clipped to standard sRGB. And looks like UIKit's private _UIRenderingBufferCreateCGImage function specifically uses Device RGB color space and 8 bits per component when interpreting the render server buffer contents on Simulator, but on device it preserves the color space specified via IOSurface. So looks like this problem extends beyond just UIKit.\r\n\r\nThe attached sample project demonstrates the issue: it renders a difference between the original wide-gamut image and the snapshot, which is noticeable when running in e.g. iPhone X Simulator."
+    email: argentumko@gmail.com
+    modified: "2018-10-05T03:19:41.027767Z"
+    number: "45031324"
+    number_intvalue: 45031324
+    originated: October 5, 2018
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: iOS 10+
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIView snapshot rendering should support wide gamut on Simulator

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22108400"
+    labels:
+        datastore_id: "6191397958844416"
+data:
+    classification: Enhancement
+    created: "2015-08-02T20:26:59.43505Z"
+    description: "Summary:\nIn rdar://problem/22108390, I described allowing `self` to be assigned a value of Optional type in failable value type initializers, automatically returning `nil` if `self` was assigned `nil`.\n\nI personally think that would have better semantics than the semantics of `return` in a failable initializer—it’s inconsistent and confusing that you can return only `nil` but can assign only non-`nil`—but `return` is already established, and assignment to self isn’t a thing for classes anyway, so one might argue that this conflates things unnecessarily.\n\nTherefore I also propose allowing `if let` and `guard let` to assign to `self` in failable value type initializers, which would allow me to replace this:\n\ninit?(_ weave: (A -> Location?) -> A -> Location?, _ up: A -> Location?, _ a: A) {\n\tfunc into(t1: A) -> Location? {\n\t\treturn Location(it: t1, down: weave(into), up: up, left: const(nil), right: const(nil))\n\t}\n\tguard let location = into(a) else { return nil }\n\tself = location\n}\n\nwith the briefer, more idiomatic:\n\ninit?(_ weave: (A -> Location?) -> A -> Location?, _ up: A -> Location?, _ a: A) {\n\tfunc into(t1: A) -> Location? {\n\t\treturn Location(it: t1, down: weave(into), up: up, left: const(nil), right: const(nil))\n\t}\n\tguard let self = into(a) else { return nil }\n}\n\n\nSteps to Reproduce:\nN/A\n\nExpected Results:\nN/A\n\nActual Results:\nN/A\n\nRegression:\nN/A\n\nNotes:\nIf you try this today, you get unhelpful error messages:\n\n/Users/rob/Developer/Projects/Manifold/Manifold/Location.swift:64:9: error: pattern matching in a condition requires the 'case' keyword\n                guard let self = into(a) else { return nil }\n                      ^\n                      case \n/Users/rob/Developer/Projects/Manifold/Manifold/Location.swift:64:13: error: binary operator '~=' cannot be applied to operands of type 'Location<A>' and 'Location<A>?'\n                guard let self = into(a) else { return nil }\n                          ^~~~\n\nTaking its advice and using guard case let self = into(a), you get:\n\n/Users/rob/Developer/Projects/Manifold/Manifold/Location.swift:64:14: warning: 'let' pattern has no effect; sub-pattern didn't bind any variables\n                guard case let self = into(a) else { return nil }\n                           ^~~~~~~~\n                           \n/Users/rob/Developer/Projects/Manifold/Manifold/Location.swift:64:18: error: binary operator '~=' cannot be applied to operands of type 'Location<A>' and 'Location<A>?'\n                guard case let self = into(a) else { return nil }\n                               ^~~~\n\nSo you have to bind a pointless temporary either way."
+    email: rix.rob@gmail.com
+    modified: "2015-08-02T20:26:59.43529Z"
+    number: "22108400"
+    number_intvalue: 22108400
+    originated: 02-Aug-2015 04:26 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A165t)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2.0b4: Allow `if let` and `guard let` to assign to `self` in failable value type initializers'

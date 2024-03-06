@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15208516"
+    labels:
+        datastore_id: "5630315577999360"
+data:
+    classification: Severe bug
+    created: "2013-10-11T17:14:15.672561Z"
+    description: "Summary:\r\nIf you read from the -[UIViewController topLayoutGuide] property before everything is fully laid out, something causes the contentSize of the controller's view to be set to {0,0}.  This then prevents you from being able to scroll properly - in the attached example, you can drag the tableview up, but it springs back into place without letting you see what's below the screen\r\n\r\nSteps to Reproduce:\r\n1 - create a UITableViewController in a UINavigationController (the one in the Master-Detail sample code will do)\r\n2 - read from self.topLayoutGuide in awakeFromNib (or viewWillAppear, or viewWillLayoutSubviews, or...)\r\n\r\n\r\nExpected Results:\r\nCrazy content sizes like {0,0} should not be applied to the scroll view.\r\n\r\nActual Results:\r\nCrazy content sizes like {0,0} are applied to the scroll view.\r\n\r\nVersion:\r\niOS 7.0.2\r\n\r\n----------------\r\n\r\n\r\nThis is a variant of the Master-Detail sample app that demonstrates the problem : \r\n\r\n\r\n\r\n@implementation ABMasterViewController\r\n\r\n- (void)awakeFromNib\r\n{\r\n    for(int i=0; i<20; i++) {\r\n        [self insertNewObject:nil];\r\n    }\r\n    \r\n    (void)self.topLayoutGuide;\r\n    \r\n    [super awakeFromNib];\r\n}\r\n\r\n\r\n- (void)insertNewObject:(id)sender\r\n{\r\n    if (!_objects) {\r\n        _objects = [[NSMutableArray alloc] init];\r\n    }\r\n    [_objects insertObject:[NSDate date] atIndex:0];\r\n    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];\r\n    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];\r\n}\r\n\r\n#pragma mark - Table View\r\n\r\n- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView\r\n{\r\n    return 1;\r\n}\r\n\r\n- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section\r\n{\r\n    return _objects.count;\r\n}\r\n\r\n- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath\r\n{\r\n    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@\"Cell\" forIndexPath:indexPath];\r\n\r\n    NSDate *object = _objects[indexPath.row];\r\n    cell.textLabel.text = [object description];\r\n    return cell;\r\n}\r\n\r\n@end"
+    email: jdelStrother@gmail.com
+    modified: "2013-10-11T17:14:15.672786Z"
+    number: "15208516"
+    number_intvalue: 15208516
+    originated: "2013-10-11"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS7
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Reading from topLayoutGuide causes contentSize to be set to {0,0}

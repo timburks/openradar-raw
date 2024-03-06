@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6470946"
+    labels:
+        datastore_id: "2214"
+data:
+    classification: Serious Bug
+    created: "2009-01-01T23:22:51.536106Z"
+    description: "Summary:\r\n\r\nI use IKImageBrowserView in a garbage collected application. In this situation, IKImageBrowserView does not seem to free / deallocate objects that are no longer in use. Memory footprint only grows and never goes down again.\r\n\r\nEven worse, when using the IKImageBrowserNSURLRepresentationType, The HTTP socket connections stay open, quickly exhausting the available file descriptors, which then leads to all kinds of problems (e.g. http://openradar.appspot.com/radar?id=2018).\r\n\r\nThe same does not happen when the exact same application is built without GC.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nCheckout and build demo project from\r\n\r\n    http://code.google.com/p/imagekit-test/source/checkout\r\n\r\nThere are two Release build configurations, one with and one without GC. Build and run each one. (This requires that the local machine runs a webserver that serves the following image: http://localhost/PoweredByMacOSX.gif)\r\n\r\nClick \"Add Items\" and \"Clear Items\" repeatedly. After a few times of this, run this command in the Terminal:\r\n\r\n    lsof -i -P | grep Image\r\n\r\nExpected Results:\r\n\r\nThe number of socket connections listed by lsof should be zero when all images are loaded or cleared.\r\n\r\nActual Results:\r\n\r\nIn the binary without GC, it works as expected.\r\n\r\nIn the binary with GC, the open sockets list keeps growing."
+    email: liyanage@gmail.com
+    modified: "2011-08-28T05:48:39.600946Z"
+    number: "6470946"
+    number_intvalue: 6470946
+    originated: "2009-01-02"
+    parent_number: "6157367"
+    product: Mac OS X
+    product_version: 10.5.6
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/6157367
+    title: IKImageBrowserView keeps image objects around under Garbage Collection

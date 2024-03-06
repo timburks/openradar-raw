@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11825208"
+    labels:
+        datastore_id: "1791409"
+data:
+    classification: Enhancement
+    created: "2012-07-07T17:01:24.242766Z"
+    description: "I would like a memoization operator in clang for C, Objective-C, and possibly C++ if it wouldn’t conflict (I’m no expert, I leave that to you).\r\n\r\nWe have a ternary operator which lets us do conditional expressions:\r\n\r\nfoo? bar : quux\r\n\r\nThe result of this expression is bar if foo evaluates to true, and quux otherwise. Further, it short-circuits, meaning that only one of bar or quux are evaluated; if they have side-effects or are expensive to calculate, this can avoid pitfalls.\r\n\r\nIn addition, there’s a shorthand available (I believe as a GNU99 extension which clang supports, but I could be wrong about its provenance) for cases when the condition and positive result are the same expression:\r\n\r\nfoo ?: bar\r\n\r\nThis has two interesting facets:\r\n\r\n1. It’s more or less equivalent to foo ? foo : bar, except that it doesn’t evaluate foo twice, meaning it can in some cases be faster and avoid errors involving duplicate side-effects triggered by evaluating foo.\r\n\r\n2. It works particularly well for object pointers as a way of saying “foo, if possible, defaulting to bar.” In this usage it is directly comparable to Ruby and JavaScript’s || (boolean or) operator, vs. C’s version of the same which returns a true/false value rather than one of its operands.\r\n\r\nYou can build on this basis to do convenient memoization, which is again particularly useful for object pointers:\r\n\r\n-(id)foo {\r\n\treturn _foo ?: (_foo = bar());\r\n}\r\n\r\nIf _foo is not nil, it returns its value; otherwise it assigns to it the return value of bar() and then returns that.\r\n\r\nIn Ruby, there is a shorthand for this, too, which is ||=:\r\n\r\n@foo ||= bar()\r\n\r\nRoughly identical meaning: the lvalue is assigned the rvalue. In Objective-C, this could build on the above operators with ?:=\r\n\r\n-(id)foo {\r\n\treturn _foo ?:= bar();\r\n}\r\n\r\nThis has some nice properties:\r\n\r\n1. It works anywhere the lvalue is assignable;\r\n2. It only has to evaluate the lvalue once (for example if you’re calculating an address expensively or in a way that has side-effects);\r\n3. There’s no need to have parentheses surrounding the rvalue, which I always add a) out of paranoia, since I can never remember the relative precedence of ?: and =, and b) for clarity’s sake, in case someone else can’t remember the precedence either;\r\n4. It looks like an emoticon for a walrus with an Elvis quiff. Anything we can do to promote this in our language is justified.\r\n\r\nThank you for your time."
+    email: rix.rob@gmail.com
+    modified: "2012-07-07T17:01:24.243088Z"
+    number: "11825208"
+    number_intvalue: 11825208
+    originated: 07-Jul-2012 12:59 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Objective-C
+    reproducible: Always
+    resolved: N/A
+    status: Open
+    title: Ternary assignment (memoization) operator in Objective-C

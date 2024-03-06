@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13363786
+    labels:
+        datastore_id: "5519903054364672"
+data:
+    classification: Crash
+    created: "2023-11-12T07:47:52.252085Z"
+    description: "I have a model class that has a persistent property for a `Codable` enum. If the enum type is written a certain way, the app will crash because SwiftData raises the following Objective-C exception: `-[__NSDictionaryM UTF8String]: unrecognized selector sent to instance 0x6000010f69a0`. The full stack trace is attached.\r\n\r\nI have attached a minimal sample project reproducing the issue. `Item.swift` and `ContentView.swift` are annotated with comments explaining the significance of certain pieces of code. Below is a summary of the conditions that are needed to trigger the SwiftData bug:\r\n- There needs to be a nested enum.\r\n- Within the nested enum, there needs to be a case without an associated value.\r\n- The nested enum must have more than one case.\r\n- A second insert of the same type of item is needed to trigger the SwiftData bug.\r\n\r\n---\r\n\r\nI also spent a few hours reverse-engineering SwiftData/Core Data. I believe I have found the bug and I believe the bug can be resolved by less than a day of work on your part. The bug is in the `NSSQLBindVariable` class.\r\n\r\n`NSSQLBindVariable` is part of the code that deals with SQLite prepared statements. It represents the value that is bound to a given parameter in the SQL statement template. It has an initializer `initWithValue:sqlType:propertyDescription:allowCoercion:` that takes in the parameter value of the first SQL row that is being inserted. It also has a setter method `setValue:` that updates the parameter value for subsequent rows. The bug is in the setter method.\r\n\r\nThe initializer looks similar to the following:\r\n```\r\n- (instancetype)initWithValue:(id)value sqlType:(int)sqlType … {\r\n  self = [super init];\r\n  if (self) {\r\n    if (value == [NSNull null]) {\r\n      value = nil;\r\n    }\r\n    if (sqlType == 6 && ![value isNSString__]) {\r\n      value = [value description];\r\n    }\r\n    _value = value;\r\n  }\r\n  return self;\r\n}\r\n```\r\n\r\nAs shown above, the initializer potentially performs a couple transformations to the `value` parameter before storing it:\r\n1. It replaces `NSNull` with `nil`.\r\n2. If the value is supposed to be a SQLite text value and the value is not already an `NSString`, then it calls `[value description]` to get an `NSString`.\r\n\r\nThe setter method, on the other hand, does none of those transformations before storing its `value` parameter. This is the bug.\r\n\r\nLet’s see how the bug manifests and results in the crash. SwiftData adds a SQLite table column for each case (or nested case) of a `Codable` enum. For nested enum cases without associated values, the encoded value is an empty dictionary that, for some reason, SwiftData wants to store as a SQLite text value. The `NSSQLBindVariable` initializer is able to handle this situation because it calls the dictionary’s `description` method to get an `NSString`. The `NSSQLBindVariable` setter method’s lack of similar logic causes it to propagate the dictionary, which eventually results in some code trying to call `UTF8String` on the dictionary, resulting in the crash.\r\n\r\nAn obvious fix would be to refactor the value transformation logic from the `NSSQLBindVariable` initializer into a separate method to be called by both the initializer and the setter method.\r\n\r\nThere may also be another bug that is worth following up on: why is SwiftData trying to store the empty dictionary as a SQLite text value?"
+    email: darren.mo@me.com
+    modified: "2023-11-12T07:47:52.252252Z"
+    number: FB13363786
+    number_intvalue: 13363786
+    originated: "2023-11-11"
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftData
+    product_version: iOS 17.2 Beta 2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SwiftData crashes when saving certain types of enum cases

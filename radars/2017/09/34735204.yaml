@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34735204"
+    labels:
+        datastore_id: "6136655496871936"
+data:
+    classification: Serious Bug
+    created: "2017-09-29T09:20:34.98758Z"
+    description: "Summary:\r\nNote - this is being investigate by Apple Professional Service ticket 100291765343.\niCloud ActivationLock Bypass Code behavior has changed between iOS 10 and iOS 11 and the change makes clearing ActivationLock hard if not impossible by MDM.  \r\n\r\nSteps to Reproduce:\r\n1. Have a DEP supervised device ; wipe it, activate it and enroll it via an MDM. Make sure the user is prompted for Apple ID.\n2. MDM server must:\na. Request ActivationLockBypass Code\nb. Clear ActivationLock Bypass code on the device\nc. send setting to allow ActivationLock while supervised\n3. on the device, activate find my phone\n4. remove Activation Lock by calling https://deviceservices-external.apple.com/deviceservicesworkers/escrowKeyUnlock with the code retrieved in a.\r\n\r\nExpected Results:\r\nService must return 200 OK - and activation lock must be removed. wiping the device must not ask for Apple ID after activation.\r\n\r\nActual Results:\r\nService returns 404 - escrow key mismatch.\n\r\n\r\nVersion:\r\n11.0.0\r\n\r\nNotes:\r\n- this works with iOS 10.\n- if, after step 3, I ask for the code again, I get a new code different from the one from step 2. this new code works and allows to unlock the device. It sounds like the code has been regenerated when Find My Phone is enabled.\n\nthis change is not documented, and has bad side effects:\n1. with iOS 10, the workflow is easy - activate, get code, clear code, done. With iOS 11, we need to get the code regularly. What if the user enables find my phone and wipe the device before MDM could get the code ? \n2. the code is supposed to be removed from the device after 15 days. What if the user takes the device outside the MDM network, enable find my phone, wait 15 days, comes back. MDM will ask for the code but it will be removed.\n\nThis is a major change which can lead to lock issues :(."
+    email: pierrenicolasr@filewave.com
+    modified: "2017-09-29T09:20:34.98777Z"
+    number: "34735204"
+    number_intvalue: 34735204
+    originated: 29-Sep-2017 11:20 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 11.0.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Change with iCloud ActivationLock ByPass Code

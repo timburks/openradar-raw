@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17576114"
+    labels:
+        datastore_id: "6379225401524224"
+data:
+    classification: Other Bug
+    created: "2014-07-07T17:33:19.700305Z"
+    description: "Summary:\r\nThe header sys/resource.h defines both RLIMIT_AS and RLIMIT_RSS (as equivalents) to limit the amount of virtual memory that may be used by a process. Launchd also exposes this functionality using the ResidentSetSize launchd.plist key, in both SoftResourceLimits and HardResourceLimits.\r\n\r\nUnfortunately, none of these options have any effect in the kernel. In xnu-2422.90.20/bsd/kern/kern_resource.c:dosetrlimit(), the kernel does not handle RLIMIT_AS or RLIMIT_RSS in the switch(which) section. It merely records the updated limit by setting |*alimp = *limp| on line 922. Effectively, this means the operation is a no-op.\r\n\r\nWithout proper support for setrlimit(RLIMIT_AS, ...) or RLIMIT_RSS, it is not possible to restrict the size of a process's virtual address space. It also means that the aforementioned launchd.plist keys have zero effect, too.\r\n\r\nSteps to Reproduce:\r\nI've attached a sample program (rlimit-as.c) that should fail to allocate in a loop. Instead on OS X, the process terminates without issue. Running this on another POSIX system (e.g. Linux) results in the allocation loop failing.\r\n\r\nOutput on Linux:\r\nRLIMIT_AS : cur=18446744073709551615, max=18446744073709551615\r\nRLIMIT_AS set to 51200\r\nRLIMIT_AS : cur=51200, max=51200\r\nFailed to allocate at chunk 0\r\nFailed to allocate at chunk 1\r\nFailed to allocate at chunk 2\r\nFailed to allocate at chunk 3\r\nFailed to allocate at chunk 4\r\nFailed to allocate at chunk 5\r\nFailed to allocate at chunk 6\r\nFailed to allocate at chunk 7\r\nFailed to allocate at chunk 8\r\nFailed to allocate at chunk 9\r\nFailed to allocate at chunk 10\r\nFailed to allocate at chunk 11\r\nFailed to allocate at chunk 12\r\nFailed to allocate at chunk 13\r\nFailed to allocate at chunk 14\r\nFailed to allocate at chunk 15\r\nFailed to allocate at chunk 16\r\nFailed to allocate at chunk 17\r\nFailed to allocate at chunk 18\r\nFailed to allocate at chunk 19\r\nFailed to allocate at chunk 20\r\nFailed to allocate at chunk 21\r\nFailed to allocate at chunk 22\r\nFailed to allocate at chunk 23\r\nFailed to allocate at chunk 24\r\nFailed to allocate at chunk 25\r\nFailed to allocate at chunk 26\r\nFailed to allocate at chunk 27\r\nFailed to allocate at chunk 28\r\nFailed to allocate at chunk 29\r\nFinished allocating!\r\n\r\nOutput on OS X:\r\nRLIMIT_AS : cur=9223372036854775807, max=9223372036854775807\r\nRLIMIT_AS set to 51200\r\nRLIMIT_AS : cur=51200, max=51200\r\nFinished allocating!\r\n\r\nThe Linux output is desired.\r\n\r\nExpected Results:\r\nSince setrlimit(RLIMIT_AS, ...) is defined in sys/resource.h, I'd expect it to work as advertised in the man page.\r\n\r\nActual Results:\r\nsetrlimit has no effect on the process's address space size."
+    email: rsesek@gmail.com
+    modified: "2014-07-07T17:33:19.700484Z"
+    number: "17576114"
+    number_intvalue: 17576114
+    originated: "2014-07-07"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.3 13D65
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: setrlimit(RLIMIT_AS, ...) has no effect in the kernel

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB11892838
+    labels:
+        datastore_id: "5520752182820864"
+data:
+    classification: ""
+    created: "2022-12-23T00:23:45.508158Z"
+    description: 'Create a sample project as described in https://developer.apple.com/documentation/technotes/tn3102-http3-in-your-app. Add a header with a non-ascii character to the URLRequest and run it. In the example attached, I have created 2 buttons with a valid User-Agent containing only ascii characters (device model iPhone XR), and another one containing a non-ascii character (device model iPhone Xʀ, notice the non-ascii subscript "R"). To reproduce the issue, simply run this project and tap on the buttons to see the logs. Making a regular HTTP2 request will truncate the User-Agent header at the non-ascii char (see images attached where I used Charles Proxy to intercept the data and compared the valid with the non-valid User-Agent headers). The logs from both requests are below: 2022-12-22 18:56:36.995545-0500 HTTP3App[62323:2625749] task will start, url: https://www.faire.com 2022-12-22 18:56:37.162693-0500 HTTP3App[62323:2625749] protocols: ["h2"] 2022-12-22 18:56:37.163082-0500 HTTP3App[62323:2625749] task finished with status 200, bytes 66842 2022-12-22 18:56:38.578292-0500 HTTP3App[62323:2625749] task will start, url: https://www.faire.com 2022-12-22 18:56:38.757157-0500 HTTP3App[62323:2625749] protocols: ["h2"] 2022-12-22 18:56:38.757607-0500 HTTP3App[62323:2625749] task finished with status 200, bytes 66842 However, on HTTP3 it will simply drop the header altogether. I couldn''t capture it with Charles since it doesn''t support HTTP/3, but I could confirm on our server logs that indeed the User-Agent is simply not sent (resulting in a null value in our server). I reproduced the issue with the sample code hitting https://google.com, and the logs show an error: 2022-12-22 18:59:49.096690-0500 HTTP3App[62776:2634948] task will start, url: https://google.com 2022-12-22 18:59:49.345508-0500 HTTP3App[62776:2634948] protocols: ["h3", "h3"] 2022-12-22 18:59:49.345813-0500 HTTP3App[62776:2634948] task finished with status 200, bytes 16120 2022-12-22 18:59:51.113574-0500 HTTP3App[62776:2634948] task will start, url: https://google.com 2022-12-22 18:59:51.115604-0500 HTTP3App[62776:2635160] [h3stream] Dropping HTTP field due to invalid value Retailer/22.51.0 CFNetwork/1399 Darwin/22.2.0 (iOS; 16.1; Simulator (iPhone Xʀ); Build: 0) 2022-12-22 18:59:51.194805-0500 HTTP3App[62776:2635160] [h3stream] Dropping HTTP field due to invalid value Retailer/22.51.0 CFNetwork/1399 Darwin/22.2.0 (iOS; 16.1; Simulator (iPhone Xʀ); Build: 0) 2022-12-22 18:59:51.385840-0500 HTTP3App[62776:2634948] protocols: ["h3", "h3"] 2022-12-22 18:59:51.386096-0500 HTTP3App[62776:2634948] task finished with status 200, bytes 50342 We can see an [h3stream] log where the filed was dropped, but the URLSessionDataTask does not return any error. The expectation would be that the behavior should be consistent between HTTP/2 and HTTP/3, and also that URLSessionDataTask should complete with an error instead of simply truncating/dropping the invalid header and continuing with the network request. This is reproducible on iOS simulator 16.1 and also on devices with iOS 15.0 and higher.'
+    email: cassiano.monteiro@faire.com
+    modified: "2022-12-23T00:23:45.508299Z"
+    number: FB11892838
+    number_intvalue: 11892838
+    originated: 22/12/2022
+    parent_number: '&{NULL_VALUE}'
+    product: Foundation
+    product_version: "16.1"
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: URLSession silently truncates or drops HTTP header with invalid non-ascii character

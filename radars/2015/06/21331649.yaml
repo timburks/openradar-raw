@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21331649"
+    labels:
+        datastore_id: "6093688526602240"
+data:
+    classification: Serious Bug
+    created: "2015-06-10T23:55:05.50633Z"
+    description: "Summary:\r\nAdding a new designated initializer in subclass causes self-contradicting warnings:\r\n1. “Method override for the designated initializer of the superclass ‘-init…:’ not found”.\r\n2. After overriding ‘-init…:’ by delegating to super, “Convenience initializer should not invoke an initializer on 'super’”, “Convenience initializer missing a 'self' call to another initializer”.\r\n\r\nThe issues are:\r\n1. Why are designated initializers no longer designated after being overridden in subclass?\r\n2. Why must subclass override superclass’s designated initializers?\r\n\r\nIf we want a strictly sound initializer system like Swift, new designated initializers in subclass should render superclass’s designated initializers unavailable to call on subclass. It shouldn’t force subclass to override those designated initializers if no one use them on subclass. If subclass wants to override them, or have to override them because users need to call them on subclass, overriding them shouldn’t change them to convenience initializers automatically.\r\n\r\nOne cause of the issues I can think of is that Objc and Swift are opposite with respect to the default role of initializers: In Swift initializers are designated by default, unless annotated with convenience keyword; In Objc, initializers are convenience by default, unless annotated with NS_DESIGNATED_INITIALIZER.\r\n\r\nIf this means that overriding designated initializers without annotation makes them convenience initializers by default, then we need a way to conveniently annotate them designated. Currently, NS_DESIGNATED_INITIALIZER can only be used on declaration but not on definition, so we have to redeclare them with NS_DESIGNATED_INITIALIZER in subclass to keep them designated, which is very inconvenient.\r\n\r\n\r\nSteps to Reproduce:\r\nJust try solving all the warnings and you’ll see the issues.\r\n\r\n\r\nSample code:\r\nhttp://cl.ly/0q1L2z291H0g\r\n\r\n\r\nApple response:\r\nThis issue behaves as intended based on the following:\r\n\r\nPlease see this document:\r\nhttps://developer.apple.com/library/ios/documentation/General/Conceptual/CocoaEncyclopedia/Initialization/Initialization.html#//apple_ref/doc/uid/TP40010810-CH6-SW3\r\n\r\nThis explains the designated initializer patterns.\r\n\r\nWe are now closing this bug report.\r\n\r\nIf you have questions about the resolution, or if this is still a critical issue for you, then please update your bug report with that information.\r\n\r\nPlease be sure to regularly check new Apple releases for any updates that might affect this issue."
+    email: an00na@gmail.com
+    modified: "2016-03-03T15:14:49.5236Z"
+    number: "21331649"
+    number_intvalue: 21331649
+    originated: 10-Jun-2015 06:54 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0 beta 1
+    reproducible: Always
+    resolved: ""
+    status: Behaves as Intended
+    title: Designated initializer overriding issues in Objective-C

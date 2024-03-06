@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB12078831
+    labels:
+        datastore_id: "5597349300666368"
+data:
+    classification: Bug
+    created: "2023-03-24T15:56:41.827162Z"
+    description: "I've been following the issue with sheets for a while and I noticed in the iOS 16.4 RC release notes, the following:\r\n\"Fixed: Presentations in SwiftUI using the ‘sheet’ or ‘fullScreenCover’ modifier can now be dynamically presented again while a dismiss animation is in progress. Previously, attempting to present again in this case would do nothing.\"\r\n\r\nI decided to make a test app to try this out and have uncovered a wider issue with presentation in SwiftUI. If one type of thing is being presented, e.g. a popover, then when attempting another kind of presentation, e.g. a confirmationDialog, then the second thing does not present and the is broken and never presents again. It seems the fix that is mentioned in the release notes needs generalised to all different kinds of presentations.\r\n\r\nI've attached a sample application \"BrokenPresentation\" to demonstrate the problem. Please launch this on the iPad Pro 11-inch 4th gen simulator. \r\n\r\nLaunch 1\r\nClick popover.\r\nWhile popover is still presented, now click sheet.\r\nAlthough the popover is dismissed, the sheet does not present. Furthermore clicking sheet again still does not present it.\r\n\r\nClick popover again\r\nWhile popover is still presented, now click Confirmation Dialog\r\nAlthough the popover is dismissed, the dialog does not present. Furthermore clicking Confirmation Dialog again still does not present it.\r\n\r\nRepeat this again for full screen cover.\r\n\r\nAs you can see there is a serious problem with different kinds of presentation in SwiftUI, I hope this can be fixed.\r\n\r\nXcode Version 14.3 RC\r\niOS 16.4 RC\r\n\r\nCode from attached sample project pasted below for openradar:\r\n\r\nimport SwiftUI\r\n\r\nstruct ContentView: View {\r\n    @State var popoverPresented = false\r\n    @State var confirmationPresented = false\r\n    @State var sheetPresented = false\r\n    @State var fullScreenCoverPresented = false\r\n    \r\n    var body: some View {\r\n        VStack {\r\n            Spacer()\r\n            Button(\"Popover\") {\r\n                popoverPresented = true\r\n            }\r\n            .popover(isPresented: $popoverPresented) {\r\n                Text(\"Popover\")\r\n            }\r\n            Spacer()\r\n            Button(\"Sheet\") {\r\n                sheetPresented = true\r\n            }\r\n            .sheet(isPresented: $sheetPresented) {\r\n                Text(\"Sheet\")\r\n            }\r\n            Spacer()\r\n            Button(\"Confirmation Dialog\") {\r\n                confirmationPresented = true\r\n            }\r\n            .confirmationDialog(\r\n                \"Confirmation dialog\",\r\n                isPresented: $confirmationPresented,\r\n                titleVisibility: .visible\r\n            ) {\r\n                Button(\"button\") {}\r\n            } message: {\r\n                VStack {\r\n                    Text(\"Message\")\r\n                }\r\n            }\r\n            \r\n            Spacer()\r\n            Button(\"Full Screen Cover\") {\r\n                fullScreenCoverPresented = true\r\n            }\r\n            .fullScreenCover(isPresented: $fullScreenCoverPresented) {\r\n                Text(\"Full Screen Cover\")\r\n                Button(\"Dismiss\") {\r\n                    fullScreenCoverPresented = false\r\n                }\r\n            }\r\n            Spacer()\r\n        }\r\n    }\r\n}"
+    email: indiekiduk@gmail.com
+    modified: "2023-03-24T15:56:41.827306Z"
+    number: FB12078831
+    number_intvalue: 12078831
+    originated: "2023-03-24"
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: iOS 16.4 RC
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: Presentation of popover, confirmationDialog, sheet and fullScreenCover are all broken

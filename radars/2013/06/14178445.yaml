@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14178445"
+    labels:
+        datastore_id: "3131402"
+data:
+    classification: Other Bug
+    created: "2013-06-18T18:28:32.673734Z"
+    description: "Summary:\r\n\r\nWhen a UIRefreshControl is enabled for a table view controller in a storyboard the controller never receives the UIControlEventValueChanged event.\r\n\r\nSteps to Reproduce:\r\n\r\n1) Using Xcode 4.6.2 create a new project using the single view application template.\r\n2) In the storyboard replace the UIViewController with a UITableViewController and ensure it is set as the initial view controller for the storyboard.\r\n3) Configure the table view to have a single prototype table view using a basic style.\r\n4) Add a custom table view controller to the project and set the class of the table view controller in the storyboard to this custom class.\r\n5) Modify the table view controller to have a simple data model based on an MSMutableArray that is initialised with a set of NSNumber objects - the values of the numbers do not matter. Configure the table view controller data source to display the value of each NSNumber in the corresponding row of the table.\r\n6) In the storyboard modify the table view controller to enable the UIRefreshControl (Refreshing: enabled). The Refresh Control should show up in the document outline.\r\n7) Using the assistant editor to show the corresponding implementation file control-drag from the refresh control to create and connect the target-action method in the controller.\r\n8) Modify the implementation of the refresh method to randomly shuffle the array of numbers, trigger a reload of the table view and to stop the refresh control:\r\n\r\n  - (IBAction)refresh:(id)sender\r\n  {\r\n    [self shuffle];\r\n    [self.tableView reloadData];\r\n    [self.refreshControl endRefreshing];\r\n  }\r\n \r\n9) Build and run the project.\r\n\r\nExpected Results:\r\n\r\nPulling down on the table view should show the refresh control and then trigger the refresh of the table view and then stop and hide the refresh control.\r\n\r\nActual Results:\r\n\r\nThe refresh control spinner starts but the table view is never refreshed. The debugger can be used to verify that the target-action method is never called.\r\n\r\nRegression:\r\n\r\nTested with Xcode 4.6.2. The problem occurs on both the simulator and on a device running iOS 6.1. \r\n\r\nNotes:\r\n\r\nAs a workaround, the target-action can be set in the table view controller by adding the following to the viewDidLoad method:\r\n\r\n[self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];"
+    email: keith@useyourloaf.com
+    modified: "2013-06-26T16:19:32.292693Z"
+    number: "14178445"
+    number_intvalue: 14178445
+    originated: 17-Jun-2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "6.1"
+    reproducible: Yes
+    resolved: ""
+    status: Duplicate
+    title: Target action never triggered from refresh control in storyboard

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "37011288"
+    labels:
+        datastore_id: "4961312798932992"
+data:
+    classification: ""
+    created: "2018-01-30T02:34:32.05973Z"
+    description: "Summary: we have a macro (TFS_UNRECOGNIZED_SELECTOR) which we use to \"implement\" methods that have been declared with NS_UNAVAILABLE on them for those circumstances when a method that had been so marked still manages to get invoked unintentionally at runtime.  the macro would produce code as follows:\r\n\r\ne.g.\r\n\r\n  - (instancetype)initWithIdentifier:(NSString *)identifier\r\n  {\r\n      [self doesNotRecognizeSelector:cmd];\r\n      abort(); // will never be reached, but prevents compiler warning\r\n  }\r\n\r\nhowever, in Xcode 9.3 beta, the compiler now complains about this in a few ways, most notably with an error:\r\n\r\n  Code.m:115:1: Implementing unavailable method\r\n\r\nthe application of this is not entirely consistent.  there are places in our code where it's possible to place the declaration in\r\n\r\n @interface Code (Unavailable)\r\n\r\nand the definition in\r\n\r\n @implementation Code (Unavailable)\r\n\r\nhowever, this is not always guaranteed to workaround the problem.\r\n\r\nfurther, there are places where either the SDK or our own code uses NS_DESIGNATED_INITIALIZER in a case where, for a subclass, NS_UNAVAILABLE is used; in such cases, it can be the case that a diagnostic is produced for either the missing designated initializer override (which we no longer wish to provide because we've designated a different NS_DESIGNATED_INITIALIZER) or the implementation of the unavailable method.  thus, in these circumstances, we cannot build.\r\n\r\nthe same ends up being true in some cases for @protocol implementors for which an NS_UNAVAILABLE has been provided.\r\n\r\nSteps to Reproduce:\r\n1. declare an init method with NS_UNAVAILABLE\r\n2. define the method as follows\r\n\r\n- (instancetype)init\r\n{\r\n    [self doesNotRecognizeSelector:cmd];\r\n    abort(); // will never be reached, but prevents compiler warning\r\n}\r\n    \r\n3. build\r\n\r\nExpected Results: as with Xcode 9.2 and many previous version, compile without diagnostic issues.\r\nActual Results: Code.m:115:1: Implementing unavailable method"
+    email: kbeitz@twitter.com
+    modified: "2018-02-07T22:04:39.31318Z"
+    number: "37011288"
+    number_intvalue: 37011288
+    originated: 2018.01.29
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 9.3 beta 1
+    reproducible: always
+    resolved: fixed 9.3 beta 2
+    status: Closed
+    title: 'Xcode 9.3 beta 1: overly aggressive disallowing implementation of method declared with NS_UNAVAILABLE'

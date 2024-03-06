@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15557270"
+    labels:
+        datastore_id: "5836629163900928"
+data:
+    classification: Performance
+    created: "2013-11-28T13:44:28.42145Z"
+    description: "Summary:\r\nWhen I open a video file with flip with an flip transform applied to it, it takes minutes to open even short videos as QuickTime shows the \"Converting\" window and converts the file each time you open it. (These are files are written with AVAssertWriterInput setTransform:] to have horizontal and vertical flips). \r\n\r\nI would expect that this be more performant since opening a video WITHOUT a transform, and Edit...Flip Horizontal (and Flip Vertical) is instantaneous! \r\n\r\nCan the setTransform: flipped videos be special cased to use the same instantaneous mechanism Flip Horizontal and Flip Vertical (or both)? Thanks!\r\n\r\nSteps to Reproduce:\r\n1. Write out a video or open the attached video VideoWithFlipApplied-Slow.mp4.\r\n2. Wait minutes while quicktime \"Converts\".\r\n\r\ncompared to.\r\n1. Open VideoNeedsMenuFlip.mp4\r\n2. Choose Edit...Flip Horizontal and Edit...Flip Vertical\r\n3. Observe same result with no performance delays. \r\n4. Be sad that customers are unhappy :(\r\n\r\nExpected Results:\r\nThese three special cases should be as fast as their Edit...Flip Horizontal,  Edit...Flip Vertical (or both), given that the result is the same. \r\n\r\nThese are the special cases that can be achieved equivalent with an untransformed video with the Edit menu:\r\n\r\n+CGAffineTransform TransformForPlateOrientation(PlateOrientation plateOrientation)\r\n+{\r\n+    CGAffineTransform transform;\r\n+    switch (plateOrientation) {\r\n+        case PlateOrientationTopRead:\r\n+        case PlateOrientationNoWells:\r\n+            transform = CGAffineTransformIdentity;\r\n+            break;\r\n+        case PlateOrientationTopRead180DegreeRotated:\r\n+            transform = CGAffineTransformMakeScale(-1.0, -1.0); // horizontal and vertical flip\r\n+            break;\r\n+        case PlateOrientationBottomRead:\r\n+            transform = CGAffineTransformMakeScale(-1.0, 1.0);  // horizontal flip\r\n+            break;\r\n+        case PlateOrientationBottomRead180DegreeRotated:\r\n+            transform = CGAffineTransformMakeScale(1.0, -1.0);  // vertical flip\r\n+            break;\r\n+    }\r\n+    return transform;\r\n+}\r\n\r\nActual Results:\r\nMultiple minute delays, that lead to the same results as already implemented super fast menu items. \r\n\r\nVersion:\r\nMac OS X 10.9.0 (12A603), MacBook Retina, 2.6 ghz 8GB\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'VideoNeedsMenuFlip.mp4' and 'VideoWithFlipApplied-Slow.mp4' were successfully uploaded."
+    email: chris@levelview.com
+    modified: "2013-11-28T13:44:28.421679Z"
+    number: "15557270"
+    number_intvalue: 15557270
+    originated: 11/28/2013
+    parent_number: '&{NULL_VALUE}'
+    product: QuickTime
+    product_version: 10.9.0 GM
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: Opening video with flip transform takes minutes, compared to menu flip

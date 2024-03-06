@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB11721387
+    labels:
+        datastore_id: "6720145665818624"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2022-11-04T17:43:57.25345Z"
+    description: "# Appearance Issues\r\nWhen a TabView or NavigationView/NavigationStack is removed from the view tree, there can be unexpected additional calls to appearance\r\nmodifiers like `onAppear`, `task`, and `onDisappear` for some of the views.\r\n\r\nI reproduced this issue on the current iOS and Xcode versions - iOS 16.1 and Xcode 14.1.\r\n\r\n## TabView Appearance Issues\r\nFor TabViews, you must select at least one other tab before changing state to another case that doesn't include the TabView.\r\nWhen removed from the view tree, all already-viewed, non-currently-viewed tab views will run through all appearance calls again, even\r\nwhen the state binding that controls the selected tab does not change.\r\n\r\n### Reproducible Steps\r\n1. Have an application where the root of the app has some conditional for logged-in and logged-out states, and the logged-in view has a TabView as the root with at least two tabs\r\n2. Run the app and \"Log In\"\r\n3. Select another non-root tab view\r\n4. Log out to see the Login view again\r\n5. Observe the already-viewed, non-currently-selected tab views run through their appearance calls again\r\n\r\n## NavigationView/NavigationStack Appearance Issues\r\nFor NavigationView and NavigationStack (potentially NavigationSplitView as well, but I didn't test this), you must push\r\nat least one other view onto the stack before changing state to another case that doesn't include the Navigation type.\r\nWhen removed from the view tree, the root view will run through all appearance calls again.\r\n\r\n### Reproducible Steps\r\n1. Have an application where the root of the app has some conditional for logged-in and logged-out states, and the logged-in view has a NavigationView/NavigationStack as the root and can push a view onto the stack to log out\r\n2. Run the app and \"Log In\"\r\n3. Push a view onto the stack\r\n4. Log out to see the Login view again\r\n5. Observe the Navigation Root view (Not the Navigation View itself) runs through the appearance calls again\r\n\r\n## Typical Example\r\nAssume you have an app that has a Login view, and once logged in, you have a tabbed or some other typical navigational structure\r\nas the root of your authenticated app flow. Following any of the above situations will result in additional appearance\r\ncallbacks for the affected views when logging out of the application.\r\n\r\n### Sample Project Pseudocode\r\n```swift\r\n    struct ContentView: View {\r\n        @StateObject\r\n        private var viewModel = ViewModel()\r\n        \r\n        var body: some View {\r\n            switch viewModel.state {\r\n                case .loading:\r\n                    SplashView()\r\n                case .loggedOut:\r\n                    LoginView()\r\n                case .loggedIn:\r\n                    Authenticated() // Some TabView or other NavigationView/NavigationStack Root\r\n            }\r\n        }\r\n    }\r\n```"
+    email: joshua.shroyer@toasttab.com
+    modified: "2022-11-04T17:43:57.253673Z"
+    number: FB11721387
+    number_intvalue: 11721387
+    originated: October 26th, 2022
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: iOS 16.1 and under
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Unexpected Additional Appearance (onAppear, task, onDisappear) Calls Made When TabView or NavigationView/NavigationStack Removed From View Tree

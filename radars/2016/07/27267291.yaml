@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27267291"
+    labels:
+        datastore_id: "6084602556841984"
+data:
+    classification: Serious Bug
+    created: "2016-07-10T16:35:37.75271Z"
+    description: "Summary:\r\nI was happily stepping-over code (\"n\" in the lldb console, the \"step over\" button too). This works fine, except for stepping over a `for (blah in [self someCollection])`  Xcode steps _in_ to the `someCollection` method.  This could be a three liner, or it could be something very complex - but definitely a distraction from what I was wanting to do (which was not to step through known-working code)\r\n\r\nVideo attached.\r\n\r\nHappens in Xcode 7.3 family and Xcode 8b2\r\n\r\nSteps to Reproduce:\r\n1. Here's some code.  You won't run it, but it's the same that's in the video.\r\n\r\n- (BOOL) isValidNoteForTie: (MJNote *) note {\r\n    BOOL isValid = NO;\r\n\r\n    MJSlot *nextSlot = note.slot.nextSlot;\r\n    if (nextSlot == nil || nextSlot.type == kRestSlot) {\r\n        isValid = NO;\r\n    }\r\n\r\n    // ties can only connect to same pitch\r\n    for ( MJNote *nextNote in nextSlot.notes ) {\r\n        if ( note.midiNote == nextNote.midiNote ) {\r\n            isValid = YES;\r\n            break;\r\n        }\r\n    }\r\n\r\n\r\nI happily step over lines of code starting 'isValid\" and over the if statement.\r\n\r\n2. I step over the for loop\r\n \r\n\r\nExpected Results:\r\n3. I step over the for loop\r\n\r\nActual Results:\r\n3. I step in to the implementation of -[MJSlot notes], which is more than just a simple property, because reasons.\r\n\r\nVersion:\r\nVersion 7.3 (7D175)\r\nVersion 8.0 beta 2 (8S162m)\r\n10.11.5 (15F34)\r\n\r\n\r\nNotes:\r\nIt's really not that big a deal - just suck it up and slog through an uninteresting method, but\r\nwhen it happens day-in, day-out, it's just another heavy-sigh\r\ndeath-of-a-thousand-cuts that makes using Xcode unpleasant.\r\n\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'loopinzee.mp4' was successfully uploaded."
+    email: markd@badgertronics.com
+    modified: "2016-07-10T16:35:37.75296Z"
+    number: "27267291"
+    number_intvalue: 27267291
+    originated: 7/10/2016
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Version 8.0 beta 2 (8S162m)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 7/8: Step-Over actually steps-into fast enumeration collections'

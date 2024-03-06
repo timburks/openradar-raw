@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33208209"
+    labels:
+        datastore_id: "6147597093830656"
+data:
+    classification: ""
+    created: "2017-07-10T08:09:58.00745Z"
+    description: "Area:\r\nDisk Utility\r\n\r\nSummary:\r\nI would like to create dmg from APFS Recovery volume. Command:\r\nhdiutil create /Users/admin/Recovery.dmg -srcdevice /dev/disk1s3\r\nIs not working in this case. /dev/disk1s3 is recovery volume.\r\n\r\nSteps to Reproduce:\r\n1. Use 10.13 APFS\r\n2. Run terminal\r\n3. sudo hdiutil create /Users/admin/Recovery.dmg -srcdevice /dev/disk1s3 -gid 20 -mode 755 -puppetstrings -format UDZO\r\n\r\nExpected Results:\r\nOperation should create Recover.dmg\r\n\r\nObserved Results:\r\nhdiutil: create failed - No such file or directory\r\n\r\n-verbose:\r\nCDevBackingStore::openDataFork open() failed: Operation not permitted\r\nMESSAGE:Attaching…\r\nError -1 (Undefined error: 0).\r\nMESSAGE:Finishing…\r\nDIHLDiskImageCreate() returned -1\r\nhdiutil: create: returning -1\r\nhdiutil: create failed - No such file or directory\r\n\r\n\r\n-debug \r\nCBSDBackingStore::setPermission: opening /dev/rdisk1s3\r\nCBSDBackingStore::OpenLockFriendly: mapping flags 0x00000000 -> 0x00000014 (locks are MANDATORY)\r\nCBSDBackingStore:OpenLockFriendly: could not open with lock 1\r\nCDevBackingStore::setPermission: CBSDBackingStore could not grant permission.  checking stat results instead.\r\n/dev/rdisk1s3 : crw-r----- \r\nCDevBackingStore::newWithCFURL: granting read-only access\r\nCDevBackingStore::setURL_Permissions_and_OpenFile: permission granted kDI_PERM_READONLY.\r\nCDevBackingStore::openDataFork open() failed: Operation not permitted\r\nDIBackingStoreNewWithCFURL: instantiator returned 4294967295\r\nDIBackingStoreNewWithCFURL: returning -1\r\nDIResolveURLToBackingStore: unable to resolve to any backing store class. -1. \r\nDIResolveURLToDiskImage: resolving backing store/file encoding failed. -1.\r\n\r\nVersion:\r\n10.13 second beta, APFS file system\r\n\r\nNotes:\r\ndisk1s3 is recovery volume. \r\nThis command is working without any problem on HFS 10.12\r\n\r\nApple Answer:\r\n\r\nYou cannot create a diskimage from any APFS volume. It has to be created from an APFS container. This is because APFS stores all its metadata for all volumes inside the container and using -srcdevice with a particular volume does not make sense.\r\n\r\nThe error that we see in this case is the expected behavior.\r\n\r\nAs an alternative, “-srcfolder <path to mounted recovery volume>” can be used. This just does a file by file copy of the recovery volume contents while creating the new diskimage.\r\n\r\nWe are now closing this bug report.\r\n\r\nIf you have questions or comments about the resolution, please update your bug report with that information so we can respond."
+    email: adrian.kubisztal@gmail.com
+    modified: "2017-08-22T13:58:08.60954Z"
+    number: "33208209"
+    number_intvalue: 33208209
+    originated: 10 July 2017
+    parent_number: '&{NULL_VALUE}'
+    product: macOS 10.13 APFS
+    product_version: "10.13"
+    reproducible: Yes
+    resolved: ""
+    status: Closed
+    title: Build DMG from APFS Recovery volume

@@ -1,0 +1,51 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13875232"
+    labels:
+        datastore_id: "3006406"
+data:
+    classification: Security
+    created: "2013-05-13T16:05:54.2531Z"
+    description: |-
+        Summary:
+        When setting a certificate as explicitly trusted in Keychain.app you cannot change their settings anymore if that certificate has been removed from the keychain.
+
+        Steps to Reproduce:
+        Download an SSL certificate. For example github.com.
+        Add that certificate to the login.keychain.
+        Set that certificate as explicitly trusted.
+        Remove that certificate from the keychain again.
+
+
+        Expected Results:
+        SSL verifications against github.com should behave normally and validate the X.509 chain as usual.
+        When using curl to fetch an https page (for example clone a repo over https from github) it should work by checking the X.509 chain matching the certificate presented by the server.
+
+        Actual Results:
+        The explicit trust takes precedence even with that certificate missing from the keychain. So there is no indication that this overrides the trust expected from the certificate chain.
+        Safari does not complain about the certificate, it just shows as trusted.
+        curl does not validate that chain anymore and presents a trust issue with the certificate but also does not validate against the chain like it should.
+
+        Regression:
+        Happens in 10.8. (also did happen in 10.7.)
+        OS X 10.8. (12D78)
+        Keychain Access Version 7.0 (55121.4)
+
+        Notes:
+        Security relevant as one could add a certificate to the user's keychain for a site overriding the normal certificate chain and then cover their tracks by removing the certificate again after setting said certificate to explicitly trusted. The issue can only be found by explicitly inspecting the certificate, adding it to the keychain again and setting trust to “System defaults” again.
+        This would make a MITM attack against SSL servers possible without having obvious tracks of a manipulated chain on a victim's system.
+
+        This should be remedied by resetting trust settings to the defaults of any certificate that is removed from the keychain.
+    email: pepi.zawodsky@gmail.com
+    modified: "2013-05-13T16:05:54.253285Z"
+    number: "13875232"
+    number_intvalue: 13875232
+    originated: 13-May-2013 06:05 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.8.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Cannot edit trust settings for removed certificates but they are still evaluated

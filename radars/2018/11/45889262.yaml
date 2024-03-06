@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "45889262"
+    labels:
+        datastore_id: "4971940250910720"
+data:
+    classification: ""
+    created: "2018-11-21T20:11:02.241235Z"
+    description: "Steps to Reproduce:\r\n1) Create VTCompressionSession.\r\n2) Start encoding process.\r\n3) Call VTSessionCopyProperty() or VTSessionSetProperty() after every new frame sent to encoder. (ex: get kVTCompressionPropertyKey_AverageBitRate)\r\n\r\nEventually, compression session will fail with 'kVTVideoEncoderMalfunctionErr' status, and 'mediaserverd' will crash.\r\nIssue observed with different frequency, depending on working queue.\r\nAny queue (system or manually created), except `QOS_CLASS_UTILITY` will cause encoder to fail. System utility queue (`QOS_CLASS_UTILITY`) will cause failure eventually, but with much lower rate.\r\n\r\nIssue is not observed if working thread suspended for some time (artificial delay of 0.1sec introduced between calls as example).\r\n\r\nSource code to reproduce issue: https://www.dropbox.com/s/c4zx3mhxuyvgzkb/videotoolbox_issue.zip?dl=0\r\n\r\nExpected Results:\r\nCalls to VTSessionCopyProperty should not lead to encoder failure.\r\n\r\nActual Results:\r\nVTCompressionSession switched to invalid state with 'kVTVideoEncoderMalfunctionErr' status.\r\nAny subsequent calls involving compressionSession will fail.\r\n\r\nVersion/Build:\r\n* iPhone 5 / 8.2 \r\n* iPhone 5 / 10.3.3 (14G60)\r\n* iPhone 7 / 12.0.1 (16A404)\r\n* iPhone Xs / 12.0.1 (16A405)\r\n* iPhone 6 / 11.4.1 (15G77)\r\n* essentially any device/iOS version 8.0 to 12.1"
+    email: i.am.skeeet@gmail.com
+    modified: "2018-12-04T00:15:29.779521Z"
+    number: "45889262"
+    number_intvalue: 45889262
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: iOS / VideoToolbox
+    product_version: ""
+    reproducible: yes
+    resolved: ""
+    status: open
+    title: VTCompressionSession fails if VTSessionCopyProperty() called often.

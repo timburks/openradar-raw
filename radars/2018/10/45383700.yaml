@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "45383700"
+    labels:
+        datastore_id: "5004030568824832"
+data:
+    classification: bug
+    created: "2018-10-18T21:14:26.028167Z"
+    description: "When using EKEventEditViewController to add or edit an event, the application crashes if the EKEvent used as input to EKEventEditViewController has the startDate field set.\r\n\r\nThis is true both for creating new events and for editing existing events.\r\n\r\nThis will only crash on device. On simulator the EventUI is shown as expected but this is output in the console:\r\n2018-10-18 23:01:25.363585+0200 EventKitUICrash[289:5623904] *** -[__NSCFCalendar components:fromDate:]: date cannot be nil\r\n(and a stacktrace similar to when run on device from Xcode\r\n\r\nAttached Xcode project that reproduces.\r\n\r\nSteps to Reproduce:\r\n1. Create an empty single view iOS project\r\n2. To Info.plist add <key>NSCalendarsUsageDescription</key><string>crash</string>\r\n3. Change ViewController.swift to have this contents:\r\nclass ViewController: UIViewController {\r\n    let store = EKEventStore()\r\n\r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n\r\n        store.requestAccess(to: .event) { _, _ in\r\n            DispatchQueue.main.async {\r\n                self.showEventEdit()\r\n            }\r\n        }\r\n    }\r\n\r\n    func showEventEdit() {\r\n        let event = EKEvent(eventStore: store)\r\n        event.startDate = Date()\r\n        let viewController = EKEventEditViewController()\r\n        viewController.event = event\r\n        viewController.eventStore = store\r\n\r\n        present(viewController, animated: true)\r\n    }\r\n}\r\n\r\nExpected Results:\r\nEKEventEditViewController to show\r\n\r\nActual Results:\r\nApp crashes\r\n\r\nVersion/Build:\r\nXcode Version 10.0 (10A255)\r\niOS 12.0.1"
+    email: nicolai@procrasty.com
+    modified: "2018-10-18T21:14:26.028318Z"
+    number: "45383700"
+    number_intvalue: 45383700
+    originated: October 18 2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "12"
+    reproducible: always
+    resolved: ""
+    status: open
+    title: EKEventEditViewController crashes if event has startDate filled

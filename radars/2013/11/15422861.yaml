@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15422861"
+    labels:
+        datastore_id: "5052196873830400"
+data:
+    classification: UI/Usability
+    created: "2013-11-08T11:17:11.744754Z"
+    description: "Summary:\r\nWhen popover control is shown using presentPopoverFromRect:inView:permittedArrowDirections:animated: method with UIPopoverArrowDirectionAny flag it seems that in some cases arrow direction is not updated correctly in respect to popover reposition.\r\n\r\nSteps to Reproduce:\r\n1. Import 'TestPopover' project which can be found in attachments (source snippet below description)\r\n2. Launch application in landscape mode on iPad\r\n3. Click on 'Button', popover control is shown on the left in respect to button - ok.\r\n4. Click on text field embedded into popover content - keyboard appears\r\n5. Popover is repositioned to the top of the button (ok), but popover's arrow is not pointing to the button anymore :(  Moreover recently added (iOS7) popoverController:willRepositionPopoverToRect:inView: delegate's method is not invoked when keyboard appearance enforces popover's repositioning, but it should be raised another issue for this.\r\n\r\nExpected Results:\r\nPopover's arrow position should be updated, and it should still be pointing to the anchor button.\r\n\r\n\r\nVersion:\r\niOS 7.0.3\r\n\r\nNotes:\r\n\r\n********** source example ***********\r\n\r\n@interface ViewController ()\r\n\r\n@end\r\n\r\n@implementation ViewController {\r\n    UIViewController *textFieldController;\r\n    UIPopoverController *popover;\r\n}\r\n\r\n- (IBAction)onTouchDown:(id)sender {\r\n    \r\n    textFieldController = [[UIViewController alloc] init];\r\n    textFieldController.view = [[UITextField alloc] init];\r\n    //textFieldController.view.frame = CGRectMake(0, 0, 200, 400);\r\n    \r\n    popover = [[UIPopoverController alloc] initWithContentViewController:textFieldController];\r\n    popover.popoverContentSize = CGSizeMake(100, 400);\r\n    [popover presentPopoverFromRect:self.button.frame inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];\r\n    \r\n    popover.delegate = self;\r\n}\r\n\r\n#pragma mark - UIPopoverControllerDelegate methods\r\n\r\n- (void)popoverController:(UIPopoverController *)popoverController willRepositionPopoverToRect:(inout CGRect *)rect inView:(inout UIView **)view {\r\n    NSLog(@\"%@\", @\"willRepositionPopoverToRect\");\r\n}\r\n\r\n@end"
+    email: tomasz.mlocek@gmail.com
+    modified: "2013-11-08T11:17:11.744947Z"
+    number: "15422861"
+    number_intvalue: 15422861
+    originated: 08-Nov-2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 7.0.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIPopover arrow direction not updated after keyboard appearing [iPad, iOS7]

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29314216"
+    labels:
+        datastore_id: "5552459917295616"
+data:
+    classification: Enhancement
+    created: "2016-11-17T18:45:07.41824Z"
+    description: "Summary:\nAttempting to use the `prepareToPlay(completionHandler:)` method on `MPMusicPlayerController.systemMusicPlayer()` fails because the callback is never invoked.\n\nSteps to Reproduce:\nInvoke the `prepareToPlay(completionHandler:)` method on `MPMusicPlayerController.systemMusicPlayer()`\nSample code in the context of a view controller:\n\noverride func viewDidLoad() {\n    super.viewDidLoad()\n    MPMediaLibrary.requestAuthorization { (status) in\n        switch status {\n        case .authorized:\n            let musicPlayerController: MPMusicPlayerController = MPMusicPlayerController.systemMusicPlayer()\n            musicPlayerController.setQueue(with: MPMediaQuery.songs())\n            NSLog(\"About to call prepareToPlay\")\n            musicPlayerController.prepareToPlay(completionHandler: { (error) in\n                guard error == nil else {\n                    let alert = UIAlertController(title: \"Error\", message: \"Error preparing to play. \\(error!.localizedDescription)\", preferredStyle: .alert)\n                    alert.addAction(UIAlertAction(title: \"OK\", style: .default, handler: nil))\n                    self.present(alert, animated: true, completion: nil)\n                    return\n                }\n                NSLog(\"Ready to play\")\n                musicPlayerController.play()\n            })\n            \n        case .denied, .notDetermined, .restricted:\n            let alert = UIAlertController(title: \"Access Denied\", message: \"You need to allow access to the media library.\", preferredStyle: .alert)\n            alert.addAction(UIAlertAction(title: \"Settings\", style: .default, handler: { (action) in\n                UIApplication.shared.open(URL(string:UIApplicationOpenSettingsURLString)!)\n            }))\n            self.present(alert, animated: true, completion: nil)\n        }\n    }\n}\n\nExpected Results:\n\nConsole logs:\n`About to call prepareToPlay`\n`Ready to play`\n\nMusic plays.\n\nActual Results:\n\nConsole logs:\n`About to call prepareToPlay`\n\nNo music plays and no error is displayed.\n\nRegression:\n\nTested with iOS 10.1.1 on iPhone 6 and iPhone SE\n\nNotes:"
+    email: rob@robmaceachern.com
+    modified: "2016-11-17T18:45:07.41853Z"
+    number: "29314216"
+    number_intvalue: 29314216
+    originated: 17-Nov-2016 10:45 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 10.1.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: MPMusicPlayerController.systemMusicPlayer.prepareToPlay never invokes callback

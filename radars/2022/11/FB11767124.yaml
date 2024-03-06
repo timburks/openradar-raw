@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB11767124
+    labels:
+        datastore_id: "5536824084660224"
+data:
+    classification: ""
+    created: "2022-11-08T14:47:24.081312Z"
+    description: "I am reaching out because of concern about changes in the macOS/Darwin dynamic linker and its potential impact on the Python binary extension system. This entails Python extensions installable via `pip` that contain a shared library component -- things like NumPy, Pandas, PyTorch, Tensorflow, and any project based on Cython, pybind11, etc..\r\n\r\nIn brief: on macOS, such Python extensions are linked using a flag named `-undefined dynamic_lookup`. The purpose of this flag is to avoid linking against any specific Python shared library and simply leave all Python API symbols undefined. Those symbols are then resolved at load time when the shared library is imported into an actual process.\r\n\r\nRecently, XCode started generating the following warning\r\n\r\n```\r\nld: warning: -undefined dynamic_lookup may not work with chained fixups\r\n```\r\n\r\nThis happens for deployment targets >= macOS 12.0. Targeting an older version of macOS appears to disable the chained fixups optimization, but that does not seem like a good long-term workaround.\r\n\r\nIf that message is taken at heart, it would indicate an issue that will soon break every Python extension. In particular, \"may not work\" sounds a lot like undefined behavior, and so that is kind of scary given the potential fallout. On the other hand, perhaps this warning is just a fluke that can be ignored. In this case, it will be good to know that it is safe to target recent macOS versions.\r\n\r\nIn my opinion, there is no real alternative to the `-undefined dynamic_lookup` flag (if there is, I would be really curious to know!). \r\n\r\nSpecifically, \r\n\r\n1. We cannot link to a specific Python binary (e.g. via `-bundle_loader`) because of how those shared library components are redistributed to others. In particular, we don't know what the loader will be called, or where it is installed. The shared library may be imported into a normal Python REPL, a Jupyter notebook backend, or some other application containing a full Python runtime (e.g. /Applications/Blender.app/Contents/MacOS/Blender that does not even ship a libpython.dylib). \r\n\r\n2. A set of alternative flags (`-undefined suppress -flat_namespace`) breaks Anaconda, who ship a custom version of libc++ and need two-level namespaces. \r\n\r\n3. Specifying all Python API symbols individually using the -U command line parameter (~900 times) causes the warning to disappear. But investigation via `xcrun dyldinfo -rebase -bind` seems to indicate that the linker output is actually identical to that of `-undefined dynamic_lookup`, and so would be affected by the same problem. It's possible that the warning message was simply not implemented for this way of specifying undefined symbols. \r\n\r\nSome more context on the issue can be found here: https://github.com/python/cpython/issues/97524 and here: https://github.com/pybind/pybind11/pull/4301#issuecomment-1300377998\r\n\r\nIf you have any ideas, your input would be greatly appreciated. My hope is that somebody familiar with the implementation of \"chained fixups\" can tell us to ignore this warning or propose an alternative way of linking Python extensions."
+    email: wenzel.jakob@epfl.ch
+    modified: "2022-11-08T14:47:24.081458Z"
+    number: FB11767124
+    number_intvalue: 11767124
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: Changes in the dynamic linker ("chained fixups") and potential impact on the Python binary extension ecosystem

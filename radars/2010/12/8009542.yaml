@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8009542"
+    labels:
+        datastore_id: "935402"
+data:
+    classification: Serious Bug
+    created: "2010-12-06T19:37:42.306777Z"
+    description: "20-May-2010 10:47 AM Kyle Sluder:\r\nSummary:\r\n\r\nIf a layer-hosting view is made the document view of an NSScrollView, and that document view returns YES from -isFlipped, scrolling is broken in the scroll view. In particular, the clip view fails to properly reposition the document view's layer, scrolling it by the right amount in the wrong direction.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Subclass NSView.\r\n2. Implement -isFlipped to return YES.\r\n3. Implement -awakeFromNib to assign itself a layer and turn on wantsLayer for itself and its enclosing scroll view.\r\n4. Put an instance of this view inside a scroll view in a window in a nib.\r\n\r\nExpected Results:\r\n\r\nThe view appears as normal in the scroll view, but with a flipped coordinate system.\r\n\r\nActual Results:\r\n\r\nThe view's layer appears to have its center pinned to the lower-left of the visible area of the scroll view, and this misalignment persists until the scroll view is scrolled, by the user or by -scrollRectToVisible:.\r\n\r\nRegression:\r\n\r\nThis doesn't happen with non-layer-hosting document views.\r\n\r\nNotes:\r\n\r\nThis is a blocking issue for all of our apps. I have attached a simple demo project that demonstrates the issue.\r\n\r\n21-May-2010 02:10 PM Kyle Sluder:\r\nI have followed Troy Stephens' advice, and used -makeBackingLayer to hand off responsibility for resizing the layer to AppKit. Unfortunately, contrary to expectations, this does not fix the bug. Loading a scrolled document still results in incorrect positioning of the view's backing layer.\r\n\r\nI have attached an updated demo project. Steps to reproduce the problem:\r\n\r\n[[ed. note: demo project is here: http://dl.dropbox.com/u/9699077/ScrolledLayerHostingView-1.zip ]]\r\n\r\n1. Launch the demo app.\r\n2. Scroll the document so that its scrollers are at non-zero positions.\r\n3. Save the document.\r\n4. Close the document.\r\n5. Reopen the document.\r\n\r\n26-May-2010 08:29 AM Kyle Sluder:\r\nWe have decided to work around this bug in [[redacted]] by calling the private -_updateLayerGeometryFromView method from our override of -[NSView viewWillDraw]. Of course we would rather not have to call this method.\r\n\r\n15-Jun-2010 03:34 PM Kyle Sluder:\r\nIt turns out this doesn't only affect the flipped document view. We add another subview to the clip view whose bounds and frame are matched to that of the document view. This view moves in the wrong direction when scrolling around; if you scroll up, it moves down, and vice versa.\r\n\r\nWe have worked around that problem by replacing NSClipView's implementation of -scrollToPoint: with one that calls super's implementation and then called -_updateLayerGeometryFromView on all of its subviews. Obviously, we'd rather get rid of this workaround altogether."
+    email: kyle.sluder@gmail.com
+    modified: "2011-08-28T05:41:30.449928Z"
+    number: "8009542"
+    number_intvalue: 8009542
+    originated: 20-May-2010
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS x
+    product_version: 10.6.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'CoreAnimation: Scroll view misbehaves with flipped layer-hosting document view'

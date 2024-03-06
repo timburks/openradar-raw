@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28918184"
+    labels:
+        datastore_id: "4968744333869056"
+data:
+    classification: UI/Usability
+    created: "2016-10-24T18:11:12.5027Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nCalling animateAlongsideTransition within presentationTransitionWillBegin creates an animation that seems to be the reverse of what is expected. I used a UIVisualEffectView with a UIBlurEffect that I wanted to fade is as I present a view controller. However, the view comes in with full opacity and then fades out, and at the end of the presentation, appears on the screen abruptly again.\r\n\r\n-(UIVisualEffectView *)blurEffectView{\r\n    if(!_blurEffectView){\r\n        UIVisualEffect * blurEffect     = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];\r\n        UIVisualEffectView * effectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];\r\n        _blurEffectView                 = effectView;\r\n    }\r\n    return _blurEffectView;\r\n}\r\n\r\n-(void)presentationTransitionWillBegin{\r\n    UIView * containerView        = self.containerView;\r\n    UIVisualEffectView * blurView = self.blurEffectView;\r\n    blurView.frame                = containerView.bounds;\r\n    [containerView addSubview:blurView];\r\n    blurView.alpha = 0;\r\n    \r\n    id<UIViewControllerTransitionCoordinator> transitionCoordinate = [[self presentingViewController] transitionCoordinator];\r\n    [transitionCoordinate animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {\r\n        blurView.alpha = 1;\r\n    } completion:nil];\r\n}\r\n\r\n-(void)presentationTransitionDidEnd:(BOOL)completed{\r\n    if(!completed){\r\n        [self.blurEffectView removeFromSuperview];\r\n    }    \r\n}\r\n\r\nSteps to Reproduce:\r\n1. Present a view controller (animated) and present another view that fades in alongside with transition\r\n\r\nExpected Results:\r\nThe view transitions along side the view controller being presented\r\n\r\nActual Results:\r\nThe view comes on the screen as soon as animation begins, fades out, and then abruptly appears on the screen again\r\n\r\nVersion:\r\niOS 10.0\r\n\r\nNotes:\r\nOnly appears to be on iOS 10 and iOS 10.1 beta\r\n\r\nConfiguration:\r\niPhone 5s, 6, 6Plus"
+    email: bhatnagar.anurag@gmail.com
+    modified: "2016-10-24T18:11:12.50293Z"
+    number: "28918184"
+    number_intvalue: 28918184
+    originated: 10/24/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "10"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIViewControllerTransitionCoordinator's animateAlongsideTransition doesn't work as expected

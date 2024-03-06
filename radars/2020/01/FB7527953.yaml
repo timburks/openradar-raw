@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7527953
+    labels:
+        datastore_id: "4984778122067968"
+data:
+    classification: Performance Issue
+    created: "2020-01-09T13:36:07.096405Z"
+    description: "DYLD3 Closure Rebuilding Issue\r\n\r\nAs a file name of the closure, dyld3 uses SHA256 hash which is based on 3 variables:\r\n\r\n- Main executable file's inode number.\r\n- Main executable file's modification time.\r\n- iOS boot-time in microseconds. \r\n\r\nWhile using two first perfectly makes sense, the last one can cause some issues.\r\nI can reproduce such a situation when boot-time slightly drifts in microseconds without any visible reason.\r\n\r\nSo as a result, when boot-time is changed, dyld will rebuild the same closure that was before but with a different name. It causes some degradation in pre-main time and bloats the content of the tmp folder where dyld stores the closures.\r\n\r\nIn vast majority cases, the bug was preceded by JetsamEvent and in all cases, iPhone wasn't connected to the external source of power, so it can be related to sleep mode as well.\r\nThe issue is reproducible on iPhone7 (iPhone9,3) and iPhone8 (iPhone10,4), where both of them on the latest iOS version 13.3 (17C54).\r\n\r\nSo it seems the issue affects the huge number of devices on iOS 13, and while the closure itself already contains `boot-uuid` to detect the system reboots, it's not clear why such an unreliable value as boot-time is used as a parameter.\r\n\r\nThe piece of code used to obtain iOS boot-time:\r\n\r\nhttps://github.com/maxovtsin/BootTimeChecker/\r\n\r\n```\r\ntimeval_t kern_boottime() {\r\n  struct timeval boottime;\r\n  int mib[2] = {CTL_KERN, KERN_BOOTTIME};\r\n  size_t size = sizeof(boottime);\r\n  if (sysctl(mib, 2, &boottime, &size, NULL, 0) != -1 && boottime.tv_sec != 0) {\r\n    return boottime;\r\n  }\r\n  return (timeval_t){ .tv_sec = 0, .tv_usec = 0 };\r\n}\r\n```"
+    email: max.ovtsin@gmail.com
+    modified: "2020-01-09T15:01:59.216798Z"
+    number: FB7527953
+    number_intvalue: 7527953
+    originated: 09.01.2020
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 13.x
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: DYLD3 Closure Rebuilding Issue

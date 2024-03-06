@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13425549"
+    labels:
+        datastore_id: "2854403"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2013-03-14T23:24:20.211104Z"
+    description: "Application can trigger a crash using NSSpeechSynthesizer with a high speech rate and a Nuance voice.\r\n\r\nSteps to Reproduce:\r\n\r\nYou can trigger this in the current stable version of Google Chrome by installing TTS Demo from this link: https://chrome.google.com/webstore/detail/tts-demo/chhkejkkcghanjclmhhpncachhgejoel?utm_source=chrome-ntp-launcher - set the system default voice to Samantha, set the speech rate to about 50%, and press Speak a couple of times until it crashes.\r\n\r\nThese factors trigger it:\r\n\r\n* A NSSpeechSynthesizerDelegate is used that listens to willSpeakWord\r\n* The speech rate is high (try 900)\r\n* The voice used is from Nuance (try Samantha)\r\n* The NSString passed to startSpeakingString is not retained.\r\n\r\nThe problem seems to be that the speech synthesizer should be retaining the string in order to pass it to willSpeakWord, but it's not - so when the string is deleted, it triggers a crash.\r\n\r\nRetaining the NSString passed to startSpeakingString for the duration of the utterance fixes the problem.\r\n\r\nThe high speech rate may be a red herring. It probably affects the timing of when the word callbacks are generated relative to when the NSString is released from Chrome's release pool."
+    email: dmazzoni@google.com
+    modified: "2013-03-14T23:24:20.211314Z"
+    number: "13425549"
+    number_intvalue: 13425549
+    originated: 3/14/2013
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.8.2
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Crash in SpeechWordCFProc with Nuance voices

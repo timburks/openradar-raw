@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17165855"
+    labels:
+        datastore_id: "6397357142835200"
+data:
+    classification: Serious Bug
+    created: "2014-06-19T18:44:42.939643Z"
+    description: "Summary:\r\nBridging swift to objective-c is very painful so far. The compiler is unforgiving about all types including integer types. For example if your obj-c function argument is declared as an (int) instead of an (NSInteger), you'll get a compile error that the function is just not found.\r\n\r\nExample: I have this existing objective-c protocol declared in an objc PixelMapUI.h\r\n\r\n@protocol DeleteKeyDelegate <NSTableViewDelegate>\r\n- ( void ) deleteKeyPressed: ( NSTableView * ) view onRow: ( int ) rowIndex;\r\n@end\r\nAnd in my new swift class, I'm trying to do this:\r\n\r\nextension NSTableView {\r\n\r\noverride func keyDown( event : NSEvent ) {\r\n  var obj : NSTableViewDelegate = delegate()\r\n  var obj2 = obj as? DeleteKeyDelegate;\r\n\r\n  let characters : NSString = event.characters;\r\n  var firstChar = Int(characters.characterAtIndex( 0 ));\r\n  // if the user pressed delete and the delegate supports deleteKeyPressed\r\n  if ( ( firstChar == NSDeleteFunctionKey ||\r\n        firstChar == NSDeleteCharFunctionKey ||\r\n        firstChar == NSDeleteCharacter) )\r\n  {\r\n     if let keyObj = obj as? DeleteKeyDelegate {\r\n         keyObj.deleteKeyPressed( self, onRow: selectedRow() );\r\n     }\r\n  }\r\n}\r\n\r\nThis produces a compiler error \"Could not find member 'deleteKeyPressed'. After stumbling around, I finally changed my obj-c protocol from (int) to (NSInteger) and it started working. ** sigh ** if swift is going to be as unforgiving as f***ing Java, it's not going to be pretty code when every other line of code has a typecast integer.\r\n\r\nSteps to Reproduce:\r\ncompile code listed above\r\n\r\nExpected Results:\r\n- a compile error that suggests a corrective action\r\n- an llvm compiler flag to freely convert between all numeric types\r\n\r\nActual Results:\r\ncompiler error \"Could not find member 'deleteKeyPressed'\"\r\n\r\nVersion:\r\nVersion 6.0 (6A215l)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nMac Pro late 2013 \r\n\r\nAttachments:"
+    email: kknauber@prg.com
+    modified: "2014-06-19T18:44:42.93982Z"
+    number: "17165855"
+    number_intvalue: 17165855
+    originated: 04-Jun-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Version 6.0 (6A215l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: swift objective-c bridge compiler warnings

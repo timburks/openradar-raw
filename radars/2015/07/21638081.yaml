@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21638081"
+    labels:
+        datastore_id: "6266251722620928"
+data:
+    classification: Serious Bug
+    created: "2015-07-01T20:03:17.40304Z"
+    description: "Summary:\n\nA .cikernel file that uses more than one “kernel” annotation does not produce any result or any type of error.\n\nSteps to Reproduce:\n\nCreate a .cikernel with the following text:\n\nkernel vec4 Test (sampler src)\n{\n    return vec4(0.0, 1.0, 0.0, 0.0);\n}\n\nkernel vec4 Gradient (sampler src)\n{\n    vec4 test = Test(src);\n    \n    float red = 0.0;\n    float green = 0.0;\n    float blue = 0.0;\n    float alpha = 1.0;\n    \n    red = test.r;\n    green = test.g;\n    blue = test.b;\n    \n    return vec4(red, green, blue, alpha);\n}\n\nThen process an image with CIKernel created with:\n\n    NSArray *kernels = [CIKernel kernelsWithString:kernelCode];\n    CIKernel *myKernel = [kernels lastObject];\n\nExpected Results:\n\nA Core Image filter that returns a green image.\n\nActual Results:\n\nA Core Image filter that does nothing: no errors and no image processing.\n\nRegression:\n\nThis code works fine in Yosemite 10.10 and prior.\n\nNotes:\n\nThe documentation in CIKernel.h states:\n\n/* The string 's' should contain a program in the CoreImage dialect\n * of the OpenGL Shading Language. Each function marked as a kernel is\n * converted to a CIKernel object, all objects are then returned in\n * an array. */\n+ (NSArray *)kernelsWithString:(NSString *)s;\n\nThe workaround is to remove the “kernel” annotation from the Test function (so that only one remains.) This is far from obvious since there is no error returned while compiling the kernel (with the new LLVM backend) or while processing the image (with Metal.)"
+    email: craig.hockenberry@gmail.com
+    modified: "2015-07-01T20:03:17.40342Z"
+    number: "21638081"
+    number_intvalue: 21638081
+    originated: 01-Jul-2015 01:03 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11 (15A204h)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CIKernel compiler produces invalid filter when multiple kernels are specified in a single file

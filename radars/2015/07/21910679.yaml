@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21910679"
+    labels:
+        datastore_id: "6573169011851264"
+data:
+    classification: Crash
+    created: "2015-07-20T23:51:43.56249Z"
+    description: "Summary:\r\nWith the hidesBarsOnSwipe property set to true on a UINavigationController, we see about 1500-2000 of these crashes per day: http://crashes.to/s/7726b6a2fab\r\n\r\nUnfortunately I have not found a way to reproduce the crash, but as you can see in the stack trace, it's all SDK code:\r\n\r\nThread : Fatal Exception: NSInternalInconsistencyException\r\n0  CoreFoundation                 0x00000001824242d8 __exceptionPreprocess\r\n1  libobjc.A.dylib                0x00000001940980e4 objc_exception_throw\r\n2  CoreFoundation                 0x0000000182424198 +[NSException raise:format:]\r\n3  Foundation                     0x00000001832d8ed4 -[NSAssertionHandler handleFailureInMethod:object:file:lineNumber:description:]\r\n4  UIKit                          0x0000000187589a00 -[_UIAnimationCoordinator cancelInteractiveAnimation]\r\n5  UIKit                          0x00000001871d7a18 -[UINavigationController _gestureRecognizedInteractiveHide:]\r\n6  UIKit                          0x0000000187033070 _UIGestureRecognizerSendActions\r\n7  UIKit                          0x0000000186ecc5c4 -[UIGestureRecognizer _updateGestureWithEvent:buttonEvent:]\r\n8  UIKit                          0x000000018733d38c ___UIGestureRecognizerUpdate_block_invoke662\r\n9  UIKit                          0x0000000186e90418 _UIGestureRecognizerRemoveObjectsFromArrayAndApplyBlocks\r\n10 UIKit                          0x0000000186e8e7c4 _UIGestureRecognizerUpdate\r\n11 UIKit                          0x0000000186eca82c -[UIWindow _sendGesturesForEvent:]\r\n12 UIKit                          0x0000000186ec9ee4 -[UIWindow sendEvent:]\r\n13 UIKit                          0x0000000186e9d120 -[UIApplication sendEvent:]\r\n14 UIKit                          0x00000001870d8530 __42-[UIApplication _cancelTouches:withEvent:]_block_invoke\r\n15 UIKit                          0x0000000186f242a0 -[UIApplication _cancelTouches:withEvent:includingGestures:notificationBlock:]\r\n16 UIKit                          0x0000000186f23f90 -[UIApplication _cancelTouches:withEvent:]\r\n17 UIKit                          0x000000018713de94 _UIApplicationHandleEventFromQueueEvent\r\n18 UIKit                          0x0000000186e9b634 _UIApplicationHandleEventQueue\r\n19 CoreFoundation                 0x00000001823dc240 __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE0_PERFORM_FUNCTION__\r\n20 CoreFoundation                 0x00000001823db59c __CFRunLoopDoSources0\r\n21 CoreFoundation                 0x00000001823d9594 __CFRunLoopRun\r\n22 CoreFoundation                 0x00000001823052d4 CFRunLoopRunSpecific\r\n23 GraphicsServices               0x000000018bd636fc GSEventRunModal\r\n24 UIKit                          0x0000000186f02f40 UIApplicationMain\r\n25 Team Stream                    0x0000000100047480 main (main.m:13)\r\n26 libdyld.dylib                  0x0000000194742a08 start\r\n\r\nSteps to Reproduce:\r\nCreate a UINavigationController with a UIScrollView and enable hidesBarsOnSwipe (sample project attached).\r\n\r\nNot sure if this is related, but in viewWillAppear: for the controller at the bottom of the navigation stack, we set hidesBarsOnScroll to true. In viewWillAppear: for other controllers pushed on top of it, we set it to false. So we only hide bars when scrolling the root view controler.\r\n\r\nExpected Results:\r\nGiven that it's all UIKit code, I would expect the invalid state to be a no-op, perhaps logged to the console.\r\n\r\nActual Results:\r\nUIKit raises an exception and crashes the process\r\n\r\nVersion:\r\niOS 8+\r\n\r\nNotes:\r\nThis crash also occurs in iOS 9. \r\n\r\n\r\n\r\nConfiguration:\r\nOccurs on iPhone, iPod Touch and iPad\r\n\r\nAttachments:\r\n'HideBarsOnSwipeCrash.zip' was successfully uploaded."
+    email: cpickslay@twobitlabs.com
+    modified: "2015-07-20T23:51:43.5627Z"
+    number: "21910679"
+    number_intvalue: 21910679
+    originated: 7/20/15
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 8+
+    reproducible: No
+    resolved: ""
+    status: Open
+    title: Crash in -[_UIAnimationCoordinator cancelInteractiveAnimation] with hidesBarsOnSwipe

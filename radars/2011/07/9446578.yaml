@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9446578"
+    labels:
+        datastore_id: "1274413"
+data:
+    classification: Performance
+    created: "2011-07-29T17:50:05.808655Z"
+    description: "Summary:\r\n\r\nWhen playing an MP3 file from a remote URL using AVFoundation, periodic NSTimer calls are substantially delayed when the media is loading.  The delay is always present, but its length increases when precise timing is requested, and also when the server provides the file slowly.\r\n\r\nSteps to Reproduce:\r\n\r\nA sample project is attached which reproduces the problem.  It was created as follows:\r\n\r\n1. Schedule an NSTimer instance on the main run loop at an interval of 0.1 seconds.\r\n\r\n2. Use AVFoundation classes to load and play remote media as described here:\r\n\r\nhttp://developer.apple.com/library/ios/#documentation/AudioVideo/Conceptual/AVFoundationPG/Articles/02_Playback.html\r\n\r\n3. Within the selector called by the timer, access the duration property of the asset.\r\n\r\n4. Monitor the interval between timer firings, reporting it if it is more than 50% longer than the requested interval.\r\n\r\nExpected Results:\r\n\r\nThe timer will continue to fire within a reasonable margin of the requested interval, possibly reporting an unknown duration.\r\n\r\nActual Results:\r\n\r\nIn the best case, where the server provides the media quickly or precise timing is not requested, the timer will be delayed once for about 1 second, which might be noticeable to the user but not egregious.\r\n\r\nIf precise timing is requested, the timer will be delayed once for around 20 seconds for a 12 minute MP3, and generally this delay seems proportional to the file's size.\r\n\r\nIf the precise timing is requested and the server provides the media slowly (this is not included in the attached example), the timer will be delayed for a period that varies with the length of the server's speed.  To demonstrate this, I set up my server to sleep for a varying amount of time after transmitting each 8k block or part thereof.  With precise timing requested, and loading a 90 second clip, the results are as follows:\r\n\r\nper-block server delay (in seconds) => client delay (in seconds)\r\n0.1 =>  7\r\n0.2 => 12\r\n0.3 => 18\r\n0.4 => 24\r\n0.5 => The asset fails to load.\r\n\r\nWithout precise timing requested, the delay is more constant:\r\n0.1 => 0.9\r\n0.2 => 0.7\r\n0.3 => 0.7\r\n0.4 => 0.6\r\n0.5 => 0.8\r\n\r\nRegression:\r\n\r\nNot known.\r\n\r\nNotes:\r\n\r\nThis can cause trouble for audio players that update their interfaces using an NSTimer.  For instance, an app might want to show loading progress for a clip.  It would be better if an unknown duration did not block the app from updating."
+    email: jesse.crossen@gmail.com
+    modified: "2011-08-28T05:36:40.290348Z"
+    number: "9446578"
+    number_intvalue: 9446578
+    originated: 16-May-2011 03:50 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "4.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AVFoundation classes block NSTimer when precise timing is requested

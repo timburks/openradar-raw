@@ -1,0 +1,61 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19153042"
+    labels:
+        datastore_id: "5304918722215936"
+data:
+    classification: Serious Bug
+    created: "2014-12-05T04:51:30.237732Z"
+    description: |-
+        Summary:
+        Nested local functions mustn’t reference themselves, which is terrible, but at least the error is clear. Certain references within closures give a misleading/flat out wrong error, too.
+
+
+        Steps to Reproduce:
+        1. This code. Compile it.
+
+        func f(x: Int?) {
+        	func g() {
+        		x.map { _ in
+        			g
+        		}
+        	}
+        }
+
+
+        Expected Results:
+        I expected it to bother me about the expression evaluating to an unused closure, or at least to error about the recursive reference.
+
+
+        Actual Results:
+        ./spurious-local-nested-function-error-of-doom.swift:6:4: error: cannot reference a local function with captures from another local function
+
+        WAT
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        I found two (count ’em!) sweet crashes trying to reduce this:
+
+        1. rdar://19152922
+        2. rdar://19153007
+
+        (Look how small the delta between those numbers is!)
+
+        I assume it’s referring to the closure passed to map, but _who knows_! The diagnostic points at the inner reference to g. At least the “local functions cannot reference themselves” error message would point me at the actual problem :\
+    email: rix.rob@gmail.com
+    modified: "2014-12-05T04:51:30.23786Z"
+    number: "19153042"
+    number_intvalue: 19153042
+    originated: 04-Dec-2014 11:51 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2006)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Bad error message with nested function & closures yada yada'

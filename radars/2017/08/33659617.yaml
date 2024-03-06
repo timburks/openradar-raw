@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33659617"
+    labels:
+        datastore_id: "4958882216542208"
+data:
+    classification: Bug
+    created: "2017-08-01T19:31:50.90454Z"
+    description: "Summary:\r\nWhen opening the SKCloudServiceSetupViewController to give the user the option to start a trial, some users are presented with \"We've run into a problem\". \r\n\r\nThis may be related to transferring a device to a new Apple ID as both devices we were able to troubleshoot in person were presented with the transfer to a new Apple ID alert when toggling the Automatic Download settings in the iTunes & App Store settings screen.\r\n\r\nThis has never been an issue for accounts with an active Apple Music subscription. Once a user sees this on a device, they seem to always see it on that device. The same Apple ID on another device doesn't necessarily see this issue, too.\r\n\r\nSteps to Reproduce:\r\n1. Sign into iTunes with an Apple ID that does not have an Apple Music subscription\r\n2. Run this code:\r\n\r\nSKCloudServiceController *controller = [SKCloudServiceController new];\r\n[controller requestCapabilitiesWithCompletionHandler:^(SKCloudServiceCapability capabilities, NSError * _Nullable error) {\r\n    if (capabilities & SKCloudServiceCapabilityMusicCatalogSubscriptionEligible) {\r\n        SKCloudServiceSetupViewController *setupController = [SKCloudServiceSetupViewController new];\r\n        setupController.delegate = self;\r\n        NSDictionary<SKCloudServiceSetupOptionsKey, id> *options = @{ SKCloudServiceSetupOptionsActionKey : SKCloudServiceSetupActionSubscribe,\r\n                                                                      SKCloudServiceSetupOptionsAffiliateTokenKey : @\"1010lqqg\" };\r\n        [setupController loadWithOptions:options completionHandler:^(BOOL result, NSError * _Nullable error) {\r\n            if (result) {\r\n                [weakSelf.viewController presentViewController:setupController animated:YES completion:nil];\r\n            }\r\n        }];\r\n    }\r\n}\r\n\r\nYou may also be able to use our app which uses the above code to reproduce this:\r\n\r\n2. Open the Vertigo app (1118149022)\r\n3. Sign in\r\n4. Open the menu on the top left\r\n5. Tap Accounts\r\n6. Tap Apple Music\r\n\r\nIf the account you're signed into in iTunes doesn't have an active Apple Music subscription, it will present an SKCloudServiceSetupViewController.\r\n\r\nExpected Results:\r\nA working trial signup screen\r\n\r\nObserved Results:\r\nThe trial signup screen without the \"Start trial\" button and without any information about Apple Music. Instead, it just says \"We've run into a problem.\" (screenshot attached)\r\n\r\nVersion:\r\niOS 10.3.1 and 10.3.2\r\n\r\nNotes:\r\nI was once able to resolve the issue by performing the following steps, however, it only worked on 1 of 2 devices. The second device is still seeing the issue after performing these steps.\r\n1. Go to Settings app\r\n2. Open iTunes & App Store\r\n3. Toggle one of the first three Automatic Download options\r\n4. Tap Transfer on the alert that displays explaining that the device will now be associated with the new Apple ID\r\n5. Toggle all three settings on (Music, Apps, and Books)\r\n\r\nThe iPhone 7 Plus running iOS 10.3.2 using Apple ID [email2] was able to properly display the Apple Music trial after performing these steps. The device with [email1] still says \"We've run into a problem.\"\r\n\r\nAttached is the sysdiagnose from the iPhone 6 Plus running iOS 10.3.1 using Apple ID [email1]. The issue was last reproduced at 12:13 pm CDT before creating the sysdiagnose.\r\n\r\nConfiguration:\r\niPhone 6 Plus running iOS 10.3.1 using Apple ID [email1]\r\niPhone 7 Plus running iOS 10.3.2 using Apple ID [email2]"
+    email: jay.whitsitt@vertigomusic.com
+    modified: "2017-08-01T19:31:50.90485Z"
+    number: "33659617"
+    number_intvalue: 33659617
+    originated: August 1 2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: StoreKit
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: SKCloudServiceSetupViewController has "run into a problem"

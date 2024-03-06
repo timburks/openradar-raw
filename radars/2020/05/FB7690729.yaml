@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7690729
+    labels:
+        datastore_id: "4985402133839872"
+data:
+    classification: ""
+    created: "2020-05-06T19:51:50.182867Z"
+    description: "Please provide a descriptive title for your feedback:\r\nSystem Extension database can get into a state where extension can't be installed successfully\r\nWhich area are you seeing an issue with?\r\nDriverKit\r\nWhat type of issue are you reporting?\r\nIncorrect/Unexpected Behavior\r\nDescription\r\nPlease describe the issue and what steps we can take to reproduce it:\r\nWhile testing under-development driver extensions (dexts), my test macOS systems have many times got themselves into such a bad state that installing the dext can no longer be done successfully until the /Library/SystemExtensions/db.plist is manually cleaned up and the leftover extensions are manually deleted from /Library/SystemExtensions/*/\r\n\r\nThis essentially does not seem to happen if the following testing flow is used:\r\n1. Copy app hosting dext to /Applications\r\n2. Run app, trigger dext activation request\r\n3. Authorise dext via System Preferences Security & Privacy pane\r\n4. Test the dext (plug/unplug device[s], connect user clients, restart app, etc.)\r\n5. Trigger dext deactivation request\r\n6. Immediately reboot the system\r\n\r\nHowever, if I miss off step 5 and/or step 6 and attempt to install a new version of the dext for testing before the old one has been eradicated from the system, especially if a dext process has crashed, the system will often end up in a state where it apparently confuses itself. In this state:\r\n\r\n1. One or more copies of the dext are in /Library/SystemExtension/<UUID> directories, and appear in the db.plist in the state “terminated_waiting_to_uninstall_on_reboot”\r\n2. Rebooting may clear some of these but not all.\r\n3. Starting the dext wrapper app and initiating the activation request APPEARS to work (and the delegate completion method gets called with a success code)\r\n4. The dext does not actually start up, although a corresponding IOUserService may appear in the I/O Registry (no dext process runs, however)\r\n5. kextd logs ‘kextd: (IOKit) [com.apple.kext:kextlog] Error encountered during approval check: Error Domain=OSSystemExtensionErrorDomain Code=2 \"(null)”’, ‘Driver Extension is not approved to run:’, ‘<bundle ID> failed security checks; failing.’, and ‘(IOKit) [com.apple.kext:kextlog] String/URL conversion failure.’\r\n6. Requesting deactivation will appear to succeed once, and one of the detritus dexts will usually be cleared on reboot, but the system remains stuck and has gained a new detritus dext.\r\n\r\nI have included:\r\nbad-library-systemextensions.zip - the contents of /Library/SystemExtensions when such a stuck state has been reached\r\ndext-approval-system-log.rtf - a system log excerpt from immediately after clicking “Allow” in the Security & Privacy pane after requesting install of the dext embedded in the DemoDriver app from this stuck state. The delegate method reports success, and an object appears in the I/O Registry, but the dext’s code never runs.\r\nbad-library-systemextensions-after.zip - the contents of /Library/SystemExtensions afterward\r\nDemoDriver.zip - binary of the app with embedded dext\r\nDemoDriver-source-bad-library.zip - source & Xcode project for DemoDriver.\r\n\r\nI am hitting this on a regular basis (whenever I happen to forget either the uninstall or reboot steps) while testing on macOS 10.15.4 and 10.15.5 beta (19F72f). Note that SIP is disabled and amfi_get_out_of_my_way=0x1 on these Macs to allow development signing of dexts and user clients.\r\nFile Uploads\r\nSystem_Profile_full.spx\r\nsysdiagnose_2020.05.06_21-21-28+0200_Mac-OS-X_Macmini6-2_19F72f.tar.gz\r\ndext-approval-system-log.rtf\r\nDemoDriver.zip\r\nDemoDriver-source-bad-library.zip\r\nbad-library-systemextensions.zip\r\nbad-library-systemextensions-after.zip"
+    email: phil@philjordan.eu
+    modified: "2020-05-06T19:51:50.183437Z"
+    number: FB7690729
+    number_intvalue: 7690729
+    originated: May 6, 2020 at 9:49 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: System Extension database can get into a state where extension can't be installed successfully

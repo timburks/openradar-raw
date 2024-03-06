@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25645113"
+    labels:
+        datastore_id: "4989179939258368"
+data:
+    classification: Crash
+    created: "2016-04-10T13:43:06.78469Z"
+    description: "Summary:\r\n-[UIStackView initWithArrangedSubviews:] has an undocumented dependency on its subclass's init(frame: CGRect), which Swift does not require implementing.\r\n\r\nSteps to Reproduce:\r\nWrite the following code:\r\n\r\nclass SubclassedStackView: UIStackView {\r\n\r\n    init(text: String, subtext: String) {\r\n        let textlabel = UILabel()\r\n        let subtextLabel = UILabel()\r\n        textlabel.text = text\r\n        subtextLabel.text = subtext\r\n        super.init(arrangedSubviews: [textlabel, subtextLabel])\r\n    }\r\n\r\n    required init?(coder aDecoder: NSCoder) {\r\n        fatalError(\"init(coder:) has not been implemented\")\r\n    }\r\n}\r\n\r\nIf you then use it such as this:\r\n\r\nlet stackView = SubclassedStackView(text: \"Test\", subtext: \"Uh-oh!\")\r\n\r\nYou get a runtime exception with the following message:\r\n\r\nfatal error: use of unimplemented initializer 'init(frame:)' for class 'test.SubclassedStackView'\r\n\r\nA look at the call stack shows that the base initializer -[UIStackView initWithArrangedSubviews:] is attempting to call init(frame: CGRect) on the subclass, which is intentionally left unimplemented.\r\n\r\nExpected Results:\r\nUIStackView should not call int:frame on its subclass when called by this very subclass's other initialiser.\r\n\r\nActual Results:\r\nfatal error: use of unimplemented initializer 'init(frame:)' for class 'test.SubclassedStackView'\r\n\r\nVersion:\r\niOS 9.3.1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nAny iOS device\r\n\r\nAttachments:\r\n'print  10-04-2016, 14-26.crash' was successfully uploaded."
+    email: clafou@gmail.com
+    modified: "2016-04-10T13:43:06.7849Z"
+    number: "25645113"
+    number_intvalue: 25645113
+    originated: "2016-4-10"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 9.3.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIStackView subclasses written in Swift may crash due to unimplemented init(frame:)

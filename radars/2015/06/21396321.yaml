@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21396321"
+    labels:
+        datastore_id: "4930763317313536"
+data:
+    classification: Serious Bug
+    created: "2015-06-16T03:14:35.85016Z"
+    description: "Summary:\r\nWhen writing a `do`/`catch` block with an exhaustive `catch` `Swift` is adding a hidden `let` called `error` that limits the definition of a variable with that name outside of the calling block.\r\n\r\nSteps to Reproduce:\r\nCopy the following code to a `Playground`:\r\n\r\n```\r\nenum TestError: ErrorType {\r\n  case HiddenErrorVariable\r\n}\r\n\r\nfunc throwingFunction() throws -> () {\r\n  throw TestError.HiddenErrorVariable\r\n}\r\n\r\nlet error: TestError\r\ndo {\r\n  try throwingFunction()\r\n} catch {\r\n  error = TestError.HiddenErrorVariable\r\n  \r\n  print(error)\r\n}\r\n\r\nprint(error)\r\n```\r\n\r\nExpected Results:\r\nInside the `catch` block I should be able to assign to my own `error` variable because is an exhaustive `catch`.\r\n\r\nActual Results:\r\n`Swift` «hijacks» the `error` variable inside the exhaustive `catch` instead of using a `_` as a `hidden` variable name.\r\n\r\nRegression:\r\nNone.\r\n\r\nNotes:\r\n`Swift` shouldn’t be naming `hidden` variables and instead should use of the `_` character when «needing» to have some «unused» parameter."
+    email: me@estebantorr.es
+    modified: "2015-07-17T21:13:44.44457Z"
+    number: "21396321"
+    number_intvalue: 21396321
+    originated: 15-Jun-2015 09:14 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-7 (7A120f)
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: 'Xcode-7 (7A120f): «Hidden» variable name on exhaustive `catch` block'

@@ -1,0 +1,42 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23106163"
+    labels:
+        datastore_id: "5027498161078272"
+data:
+    classification: Other Bug
+    created: "2015-10-14T10:24:04.61083Z"
+    description: |-
+        Summary:
+        The --resource-rules flag has been deprecated for a while now and it's no longer possible to upload app bundles to iTunesConnect that have apps packaged using that flag.  However, the PackageApplication script bundled with Xcode still invokes that flag when building an app package, causing any apps built from the command-line using that script to fail.  The Xcode script which pushes the flag back into the app bundles is located at /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/PackageApplication
+
+        Steps to Reproduce:
+        1) Make an iOS app, making sure that the deprecated --resource-rules parameter is not used.  In other words, make sure the build settings do not include the obsolete CODE_SIGN_RESOURCE_RULES_PATH=$(SDKROOT)/ResourceRules.plist setting.
+        2) Use jenkins or fastlane to build it (which invokes the PackageApplication script)
+        3) try to submit the app to the store
+
+        Expected Results:
+        Because the app is packaged by an official Apple tool, I'd expect it to be correct and ready for upload to iTC
+
+        Actual Results:
+        The app is bundled and codesigned with the --resource-rules parameter, which adds a CFBundleResourceSpecification to the Info.plist (along with other less-visible effects).  This results in any iTC uploads returning the following error:  ERROR ITMS-90339: "This bundle is invalid. The Info.plist contains an invalid key 'CFBundleResourceSpecification' in bundle SyncSpace [SyncSpace.app]
+
+        Regression:
+        The only problem seems to be when using command-line builds that invoke the PackageApplication script (possibly indirectly).  I assume that's quite a lot of people.
+
+        Notes:
+        The workaround is to edit the PackageApplication script as described in this stackoverflow answer: http://stackoverflow.com/a/32762413/68748
+        Seems like this would be a really quick and easy fix to make before the next beta?
+    email: seandreilly@gmail.com
+    modified: "2015-10-14T10:24:04.61128Z"
+    number: "23106163"
+    number_intvalue: 23106163
+    originated: 14-Oct-2015 11:23 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.1 beta 3 (7B85)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: PackageApplication script uses now-banned --resource-rules flag, producing unsubmittable app bundles

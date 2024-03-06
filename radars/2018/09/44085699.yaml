@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "44085699"
+    labels:
+        datastore_id: "5035894662758400"
+data:
+    classification: ""
+    created: "2018-09-04T04:47:42.46034Z"
+    description: "Area:\r\nAVFoundation\r\n\r\nSummary:\r\nAVAudioPlayer doesn't resume when calling play() after an audio has been paused() close to the end. It always happens when the audio has been paused at 95% play time of its total duration.\r\n\r\nSteps to Reproduce:\r\nThis can be reproduced by playing back audio, and then tapping pause just before the end. If done at the right moment, the playback will enter into an infinite loop without anything being heard.\r\n\r\nThis code will reproduce it:\r\n\r\nimport AVFoundation\r\n\r\nclass ViewController: UIViewController, AVAudioPlayerDelegate {\r\n    var player: AVAudioPlayer?\r\n    var intercept: Bool = true\r\n    \r\n    @IBOutlet weak var progressView: UIProgressView!\r\n    \r\n    @IBOutlet weak var playButton: UIButton!\r\n    \r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n        let displayLink = CADisplayLink.init(target: self, selector: #selector(pollCurrentTime))\r\n        displayLink.add(to: RunLoop.main, forMode: RunLoopMode.defaultRunLoopMode)\r\n    }\r\n\r\n    override func didReceiveMemoryWarning() {\r\n        super.didReceiveMemoryWarning()\r\n        // Dispose of any resources that can be recreated.\r\n    }\r\n\r\n    @IBAction func onPlayButtonTapped(_ sender: UIButton) {\r\n        let asset = NSDataAsset(name:\"TestRecording\")!\r\n        player = try! AVAudioPlayer(data: asset.data, fileTypeHint: \"m4a\")\r\n        player!.delegate = self\r\n        player!.play()\r\n        playButton.isEnabled = false\r\n    }\r\n    \r\n    func pollCurrentTime() {\r\n        if let player = player {\r\n            progressView.progress = Float(player.currentTime / player.duration)\r\n            if intercept && progressView.progress > 0.97 {\r\n                intercept = false\r\n                player.pause()\r\n                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {\r\n                    player.play()\r\n                }\r\n            }\r\n        } else {\r\n            progressView.progress = 0\r\n        }\r\n    }\r\n    \r\n    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {\r\n        cleanup()\r\n    }\r\n    \r\n    func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {\r\n        cleanup()\r\n    }\r\n    \r\n    private func cleanup() {\r\n        self.player = nil\r\n        playButton.isEnabled = true\r\n        intercept = true\r\n    }\r\n}\r\n\r\nExpected Results:\r\nWhen calling play() it should resume from its last point and the audio being played until it finishes.\r\n\r\nVersion:\r\n11.4 (15F79)\r\n\r\nConfiguration:\r\nIPad Simulator A1674"
+    email: manuelescrig@gmail.com
+    modified: "2018-09-04T04:47:42.46078Z"
+    number: "44085699"
+    number_intvalue: 44085699
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 11.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AVAudioPlayer doesn't resume when calling play() after an audio has been pause() close to the end.

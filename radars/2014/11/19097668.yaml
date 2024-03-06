@@ -1,0 +1,62 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19097668"
+    labels:
+        datastore_id: "5908164058808320"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2014-11-30T23:55:43.16156Z"
+    description: |-
+        Summary:
+        Swift requires that `Self` occur only in protocols or as the return type of a class function. Further, only final classes may implement protocols using Self outside of parameters/returns. However, it fails to check whether occurrences of types matched to `Self` in the protocol’s declaration are nested within the return type, e.g. in a tuple, leading to spurious errors.
+
+
+        Steps to Reproduce:
+        1. Compile this:
+        protocol P {
+        	func f() -> (Self, Int)
+        }
+
+        class C: P {
+        	func f() -> (C, Int) {
+        		return (self, 0)
+        	}
+        }
+
+
+
+        Expected Results:
+        I expected it to compile; we’re using C in the return type which (as far as I can see) should be valid.
+
+
+        Actual Results:
+        Error:
+        ./non-final.swift:8:7: error: protocol 'P' requirement 'f()' cannot be satisfied by a non-final class ('C') because it uses 'Self' in a non-parameter, non-result type position
+
+
+        Regression:
+        This error does not occur if the function returns Self in both the protocol and the class (a la ObjC’s instancetype I take it).
+        This error does not occur if the class is final (obviously).
+        A similar error occurs if you change the method’s return type to (Self, Int):
+
+        ./non-final.swift:8:15: error: 'Self' is only available in a protocol or as the result of a class method; did you mean 'C'?
+                func f() -> (Self, Int) {
+
+        This seems like it should be fine too.
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2014-11-30T23:55:43.161719Z"
+    number: "19097668"
+    number_intvalue: 19097668
+    originated: 30-Nov-2014 06:55 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2006)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: spurious errors with `Self` nested in return types'

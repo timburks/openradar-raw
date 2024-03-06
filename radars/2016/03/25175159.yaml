@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25175159"
+    labels:
+        datastore_id: "4928059333410816"
+data:
+    classification: Hang
+    created: "2016-03-15T20:37:11.436Z"
+    description: "Summary:\r\nSecurity.framework will deadlock on a mutex in SecTrustSettingsEvaluateCert() when an application calls SecTrustEvaluate().\r\n\r\nI've attached sampler excerpt showing the situation. However, it is also possible to see the bug by inspecting the released Apple source code (e.g. Security-57337.20.44).\r\n\r\nScenario: [excerpted from our investgation]\r\n\r\nThe application calls SecTrustEvaluate(), which somewhere along the way calls SecTrustSettingsEvaluateCert(), which (for some reason?) wants to evaluate the app's code signing. It does that by dispatching to another thread. (So the main thread is blocked in dispatch_wait() via the Security::Dispatch::Group helper class.) That other thread does some stuff and eventually needs to evaluate a SecTrust, so it calls SecTrustEvaluate(), which eventually calls down to SecTrustSettingsEvaluateCert().\r\n\r\nProblem: The first thing SecTrustSettingsEvaluateCert() does is take out a lock on a mutex. So the app deadlocks when the second thread tries to take out that same mutex.\r\n\r\nYou can see this in Apple's published source code: see http://www.opensource.apple.com/source/libsecurity_keychain/libsecurity_keychain-55050.9/lib/SecTrustSettings.cpp, and the first line of SecTrustSettingsEvaluateCert() is \"StLock<Mutex> _(sutCacheLock())\" (a RAII-style mutex acquisition).\r\n\r\nThat mutex is a recursive mutex, and the comment above it on line 130 suggests that Apple made it recursive to deal with this *exact* situation, but that broke when they inserted a dispatch_group.\r\n\r\nSteps to Reproduce:\r\n1. Install OmniPlan.\r\n2. Set up OS X Server as a DAV server.\r\n3. Attempt to create an OmniPlan document sync on that DAV server.\r\n\r\nExpected Results:\r\nNo deadlock\r\n\r\nActual Results:\r\nDeadlock\r\n\r\nVersion:\r\n10.11.1/15B42\r\nSecurity-57337.20.44\r\n\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nThis does not occur in all configurations, but on configurations where it happens, it happens reliably.\r\n\r\nThe parallelization in SecStaticCode::validateResources() checks the disk type (SSD versus non-SSD), so reproduction may depend on the media type on which the host app is stored."
+    email: wiml@omnigroup.com
+    modified: "2016-03-15T20:37:11.43618Z"
+    number: "25175159"
+    number_intvalue: 25175159
+    originated: 15-Mar-2016 01:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11.1
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Deadlock in SecTrustSettingsEvaluateCert()

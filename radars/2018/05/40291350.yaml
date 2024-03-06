@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "40291350"
+    labels:
+        datastore_id: "4988988226011136"
+data:
+    classification: Duplicate of 35688315
+    created: "2018-05-16T12:24:51.56472Z"
+    description: "Area:\r\nSystemConfiguration Framework\r\n\r\nSummary:\r\nWhen Reachability (SCNetworkReachability) is configured with a hostname and callback monitoring is enabled, and the app goes to background, sometimes the reachability callback will report Not Reachable when the device is woken up, and doesn't recover.\r\n\r\nSteps to Reproduce:\r\n1 - ensure you have WiFi enabled on the device\r\n2 - configure SCNetworkReachability using a hostname, e.g. www.google.com\r\n3 - enable monitoring of SCNetworkReachability via callback\r\n4 - lock the device (manually, or waiting for auto lock)\r\n5 - wait some seconds with the device locked (maybe a minute or two even)\r\n6 - lift the device (to force it to wake up temporarily)\r\n7 - repeat steps 5-6 until some `dnssd_clientstub` or `nw_resolver_create_dns_service_locked` logs appear and/or the reachability fires with empty flags (not reachable). If not able to reproduce, start from step 4, or wait some more time between waking the device by lifting it.\r\n8 - the reachability will report Not reachable, when the WiFi connection is still active, and won't recover automatically\r\n\r\nNotes:\r\n- Steps 2 and 3 are already done on the provided sample app `ReachabilityHostnameBGBug`.\r\n- relevant app on the sysdiagnose is `ReachabilityHostnameBGBug` (test project, also attached).\r\n\r\nAnalysis:\r\nMy suspicion is that this is some problem with the DNS background service interfering with the Reachability (revealed by the `dnssd_clientstub`and `nw_resolver_create_dns_service_locked` logs), because this issue only seems to manifest itself when using a hostname to configure the Reachability. If one uses an address (e.g. 0.0.0.0), the issue doesn't seem to happen (at least I wasn't able to).\r\n\r\nExpected Results:\r\nReachability should always report the correct reachability state, according to the device/network's actual state.\r\n\r\nActual Results:\r\nReachability incorrectly reports Not Reachable, even though the WiFi connection has always been active and working\r\n\r\nVersion/Build:\r\niPhone 6s (MKQJ2B/A), iOS 11.3 (15E216)\r\niPhone X (MQAC2QL/A), iOS 11.3.1 (15E302)\r\n(probably others)\r\n\r\nConfiguration:\r\nXcode 9.3.1 (9E501), Swift 4.1\r\nmacOS 10.13.4"
+    email: p4checo@gmail.com
+    modified: "2018-05-18T00:00:35.78726Z"
+    number: "40291350"
+    number_intvalue: 40291350
+    originated: May 16 2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 11.3.1
+    reproducible: Sometimes
+    resolved: May 18 2018
+    status: Closed
+    title: Reachability using hostname incorrectly reporting Not Reachable after device is locked/sleeps, and doesn't recover automatically

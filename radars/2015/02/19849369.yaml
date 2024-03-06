@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19849369"
+    labels:
+        datastore_id: "6397121120960512"
+data:
+    classification: Serious Bug
+    created: "2015-02-16T19:56:09.074956Z"
+    description: "Summary:\n\nSwift's struct initialisers look like functions but don't behave as such.\n\nExample:\n\nGiven struct S and a function sConstructorFun\n\nstruct S {\n    let a : String \n    let b : Int \n    let c : Bool \n}\n\nfunc sConstructorFun(a a:String, b b:Int, c c:Bool) -> S { \n    return S(a:a, b:b, c:c) \n}\n\nI can use both sConstructorFun(a:\"\", b:1, c:false) and S(a:\"\", b:1, c:false) to get the following S value (as the REPL outputs it)\n\nS = {\n  a = \"\"\n  b = 1\n  c = false\n}\n\nSo, S and sConstructorFun have the very same interface and unsurprisingly return the same result.\n\nHowever, a sFactory function defined as follows\n\nfunc sFactory(f:(String, Int, Bool) -> S) -> S {\n    return f(\"foo\", 42, false) \n}\n\ncan only be used with the sConstructorFun but not with S directly:\n\nREPL> sFactory(sConstructorFun) \n$R2: S = {\n  a = \"foo\"\n  b = 42\n  c = false\n}\n\nbut\n\nREPL> sFactory(S) \nrepl.swift:18:1: error: cannot invoke 'sFactory' with no arguments\nsFactory(S)\n^\nrepl.swift:18:9: note: expected an argument list of type '((String, Int, Bool) -> S)'\n sFactory(S)\n         ^\n\n\nSteps to Reproduce:\n- Save the attached file main.swift\n- Run `xcrun swift main.swift`\n\nExpected Results:\ncompiles all fine\n\nActual Results:\nmain.swift:18:9: error: cannot invoke 'sFactory' with no arguments\nlet d = sFactory(S) /* compile error */\n        ^\nmain.swift:18:17: note: expected an argument list of type '((String, Int, Bool) -> S)'\nlet d = sFactory(S) /* compile error */\n                ^\n\nRegression:\nno"
+    email: weissismail@gmail.com
+    modified: "2015-02-16T19:56:09.075132Z"
+    number: "19849369"
+    number_intvalue: 19849369
+    originated: 16-Feb-2015 07:55 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift's struct initialisers look like functions but don't behave as such

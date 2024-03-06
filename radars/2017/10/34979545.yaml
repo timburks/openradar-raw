@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34979545"
+    labels:
+        datastore_id: "6163316506361856"
+data:
+    classification: Security
+    created: "2017-10-13T16:42:15.54559Z"
+    description: "Summary:\r\nThis is a duplicate of radar #34979397\n\n10.13's startosinstall tool has a new --installpackage option. This option fails to properly stage packages for install when multiple packages are given.\n\r\n\r\nSteps to Reproduce:\r\n1) /Applications/Install\\ macOS\\ High\\ Sierra.app/Contents/Resources/startosinstall --installpkg /path/to/pkg1.pkg --installpkg /path/to/pkg2.pkg --installpkg /path/to/pkg3.pkg --installpkg /path/to/pkg4.pkg\r\n\r\n2) When the machine restarts after the macOS install is set up, the installer complains that \"The path /System/Installation/Packages/OSInstall.mpkg appears to be missing or damaged.\" and tells you to restart and try again.\r\n\r\n You can reboot into an alternate startup disk and examine the (previous) target disk:\r\n\r\nThe paths for all given packages are added to macOS Install Data/InstallInfo.plist under the \"Additional Installs\" key, but not all are actually copied to the paths indicated. For example:\r\n\r\n\t<key>Additional Installers</key>\r\n\t<array>\r\n\t\t<string>UnwrappedInstallers/78d4e18c246101ac030409a3b28cf1ba6006055e/DA_adminaccount.pkg</string>\r\n\t\t<string>UnwrappedInstallers/56609c54df6cc13597ea94d2ffd30540d7027dc7/SuppressSetupAssistant.pkg</string>\r\n\t\t<string>UnwrappedInstallers/a04a3ba6f46deddca73b98679d09d2e41a95b2fa/munkitools.pkg</string>\r\n\t\t<string>UnwrappedInstallers/6a0b81670c8f340ee2c51c98aa0572f5a8aa055b/munki_kickstart.pkg</string>\r\n\t</array>\r\n\r\nbut the actual UnwrappedInstallers directory only has two of the packages:\r\n\r\n$ ls -al macOS\\ Install\\ Data/UnwrappedInstallers/\r\ntotal 0\r\ndrwxr-xr-x   4 root  wheel  136 Oct 11 10:11 .\r\ndrwxr-xr-x@ 16 root  wheel  544 Oct 11 10:13 ..\r\ndrwxr-xr-x   3 root  wheel  102 Oct 11 10:12 56609c54df6cc13597ea94d2ffd30540d7027dc7\r\ndrwxr-xr-x   3 root  wheel  102 Oct 11 10:12 6a0b81670c8f340ee2c51c98aa0572f5a8aa055b\r\n\r\nI can manually copy the missing packages to the paths listed in InstallInfo.plist and then if I restart into the macOS Installer environment, install proceeds successfully and the extra packages are installed.\r\n\r\nExpected Results:\r\nmacOS High Sierra is installed, followed by the installation of the additional packages.\r\n\r\nActual Results:\r\nInstallation fails with \"The path /System/Installation/Packages/OSInstall.mpkg appears to be missing or damaged.\"\r\n\r\nVersion/Build:\r\n\r\nstartosinstall from \"Install macOS High Sierra.app\", version 13.0.66, which contains macOS 10.13 Build 17A405\r\n\r\nVersion:\r\n10.13\r\n\r\nNotes:\r\nNumber of devices affected: 30000+"
+    email: frogor.fb.openradar@gmail.com
+    modified: "2017-10-13T16:42:15.54586Z"
+    number: "34979545"
+    number_intvalue: 34979545
+    originated: 13-Oct-2017 09:42 AM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: "10.13"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: (10.13) startosinstall --installpackage option does not properly handle multiple packages

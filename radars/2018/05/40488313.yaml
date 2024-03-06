@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "40488313"
+    labels:
+        datastore_id: "4938150711394304"
+data:
+    classification: Bug, UI/Usability
+    created: "2018-05-23T16:49:57.5081Z"
+    description: "Area:\r\nNetwork Extensions Framework\r\n\r\nSummary:\r\n\r\nThe behaviour of NEHotspotConfigurationManager.apply(_:completionHandler:) makes it easy for app developers to let users join a network without their app becoming involved in the management of network associations. The documentation for this method states:\r\n\r\n> This method attempts to join the network only if it's found nearby. Also, because of the noticeable delay that the Hotspot 2.0 discovery mechanism may incur, the method doesn't attempt to join Hotspot 2.0 networks.\r\n\r\nIt seems there's some nuance to this behaviour, but more importantly a network configured with an SSID will always attempt to associate with the network when the user grants permission, even if the network isn't found nearby. This leads to a failure alert being shown to the user.\r\n\r\nThe nuance I mentioned is that the current behaviour I see is:\r\n\r\n- Network configured with SSID will _actively_ attempt to join the new network, even if the device is currently associated with a different one\r\n- Network configured with HS2 will auto-join the new network only if the device isn't already associated with a network\r\n\r\nThis sounds like the second sentence I quoted, but the way it's worded in the documentation wasn't immediately clear that it meant this.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Apply a configuration with an SSID that isn't nearby\r\n2. As a user, allow joining the new network\r\n3. Observe that joining fails\r\n\r\nExpected Results:\r\n\r\nA network configured with an SSID should not attempt to join the network if it isn't found nearby.\r\n\r\nActual Results:\r\n\r\nNetworks configured with an SSID always attempt to join the network, even if they're not nearby, which always fails.\r\n\r\nVersion/Build:\r\n\r\n11.3 (15E216)\r\niPhone 6S"
+    email: brandon@brandonevans.ca
+    modified: "2018-08-03T21:57:06.95061Z"
+    number: "40488313"
+    number_intvalue: 40488313
+    originated: 2018/5/23
+    parent_number: '&{NULL_VALUE}'
+    product: Network Extensions Framework
+    product_version: 11.3 (15E216)
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: NEHotspotConfigurationManager.apply(_:completionHandler:) always attempts to join network configured with SSID contrary to documentation

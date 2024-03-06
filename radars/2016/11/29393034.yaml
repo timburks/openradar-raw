@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29393034"
+    labels:
+        datastore_id: "4962963039453184"
+data:
+    classification: ""
+    created: "2016-11-26T18:05:09.90994Z"
+    description: "While executing UIAutomation tests from command line using xcodebuild. The tool allocations enormous amount of pseudo terminals, around one terminal per test case. If the test target has more then 100 tests (in my case 186) the application can reach the maximum number of allowed pseudo terminals (by default 127) and it cannot execute next tests with following error message:\r\n\r\n> Assertion Failure: <unknown>:0: UI Testing Failure - Failure attempting to launch <XCUIApplicationImpl: 0x610000030cc0 com.user.test at /Users/user/Library/Developer/Xcode/DerivedData/test-bdhmpkpvtcuzrscnsfkcsgohstze/Build/Products/Debug-iphonesimulator/test.app>: Error Domain=IDEPseudoTerminalDomain Code=1 \"(null)\"\r\n\r\nThis issue doesn't occurs if the test were started from Xcode. In case of Xcode the number of allocated pseudo terminals is no higher than 9. It can be checked by executing command:\r\n\r\n> sudo lsof /dev/ptmx\r\n\r\nAs a workaround the maximum number of allowed pseudo terminals can be changed to 999 (this is the maximum number allowed by the system) by using command:\r\n\r\n> sudo sysctl -w kern.tty.ptmx_max=999\r\n\r\nBut if the test target will have more than 1000 tests the issue will come back.\r\n\r\nSteps to Reproduce:\r\n1. Using terminal go to folder where the attached project was extracted\r\n2. Execute UI tests using:\r\nxcodebuild -project test.xcodeproj -scheme test -destination \"platform=iOS Simulator,name=iPhone 7\" build test\r\n3. Tests should fail before `testExample128`\r\n\r\nExpected Results:\r\nAll test should be executed and finished\r\n\r\nActual Results:\r\nWhen the maximum number of pseudo terminals is reached the tests are no longer executed and starting failing with \"Assertion Failure\" error\r\n\r\nVersion:\r\nmasOS Sierra 10.12.1 (16B2555)\r\nXcode Version 8.1 (8B62)\r\n\r\nNotes:\r\nI've attached logs from xcodebuild command and compressed project with tests."
+    email: bartosz.janda@gmail.com
+    modified: "2017-11-04T09:48:18.59111Z"
+    number: "29393034"
+    number_intvalue: 29393034
+    originated: 26.11.2016
+    parent_number: "33190443"
+    product: Developer Tools
+    product_version: Version 8.1 (8B62)
+    reproducible: Always
+    resolved: No
+    status: Duplicate/33190443
+    title: xcodebuild doesn't deallocate pseudo terminals

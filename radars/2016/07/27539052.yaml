@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27539052"
+    labels:
+        datastore_id: "4970558638784512"
+data:
+    classification: Enhancement
+    created: "2016-07-26T03:36:45.914Z"
+    description: "Summary:\r\niOS 8 introduced trait collections and layout margins, externalizing many platform parameters for displaying a view. iOS 10 brings more power to these mechanisms by integrating theming information, like Dynamic Type and Dark Mode, into the fold.\r\n\r\nUICollectionViewLayout supports incremental invalidation during a scroll event or in to allow self-sizing, but no other entry points. \r\n\r\nView controllers have all these entry points for environment detection, which is usable only when there's a 1:1 relationship between a collection view controller and the layout of the collection view. This is less tenable when the layout is being reused throughout a codebase.\r\n\r\nSteps to Reproduce:\r\n1. Build a collection view layout whose layout data depends on the trait collection or layout margins.\r\n2. Be sad.\r\n\r\nExpected Results:\r\nI can perform partial invalidations, like redisplaying all cells, on a trait collection change. I can integrate the code into my layout to prevent code duplication throughout view controllers.\r\n\r\nActual Results:\r\nI can only invalidate during bounds change, which is at best not what I need, and, at worse, a duplicate invalidation to the ones my layout I actually needs.\r\n\r\nVersion:\r\niOS 10.0 (14A5309d)\r\n\r\nNotes:\r\nPart of this can be done subclassing UICollectionView and giving it a special relationship with its layout, but this isn't feasible for a whole app, or in use with UICollectionViewController.\r\n\r\nI was able to accomplish the desired effect with little API consequence by having my custom layout maintain a bounds-sized \"canary\" decoration view that would call back to the layout.\r\n\r\nIf it's too late, or not worth considering, to get this approach into the kit, it would be very helpful to describe this technique in docs and/or sample code.\r\n\r\nParticularly importance to building this support into the SDK would be disambiguating the callback distinguishing between simple bounds changes, trait-changing bounds changes, and non-bounds trait changes. In my custom layout, a bounds change that causes a trait collection change causes two layout invalidations, and may cause partial data to be rebuilt when not needed. I'll leave that up to you bright folks. :)\r\n\r\nConfiguration:\r\niPhone 6s Plus 64GB Verizon, using Wi-Fi\r\n\r\nAttachments:"
+    email: zach@waldowski.me
+    modified: "2016-07-26T03:36:45.91418Z"
+    number: "27539052"
+    number_intvalue: 27539052
+    originated: 25-Jul-2016 11:35 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 10.0 (14A5309d)
+    reproducible: Sometimes
+    resolved: "false"
+    status: Open
+    title: 'UICollectionView: Allow for partial invalidation from environment changes'

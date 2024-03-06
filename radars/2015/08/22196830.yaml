@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22196830"
+    labels:
+        datastore_id: "6623978743398400"
+data:
+    classification: Serious Bug
+    created: "2015-08-07T22:19:35.6422Z"
+    description: "We are using AVFoundation for rendering video compositions offline on our Mac backend. Now and then, AVAssetExportSession will just stop working without reporting an error to the completion handler nor setting its error or status properties. In effect, our rendering tool hangs without diagnostics, until we manually time it out (by looking at _exporter.progress, and if it hasn’t changed *at all* in ten minutes, we kill the process). This means that our entire rendering cluster can hang being busy with work, but not actually doing anything.\n\nIt’s frustrating when AVFoundation fails to export and there’s no error to investigate to figure out why, but’s even worse when it’s not even rendering an error. It seems that a few usages of VideoToolbox (among others) need to propagate their errors all the way up to AVAssetExportSession.\n\nHere’s one session that is consistently failing for me. Error callback is never called, but console prints this:\n\n<<<< GVAVideoEncoder >>>> GVAVideoEncoder_SetProperty: AVF encoder error: VT GVAVideoEncoder_SetProperty  usage = 8\n[15:07:59.376] GVAVideoEncoder_SetProperty signalled err=-12902 (kVTParameterErr) (bad usage) at /SourceCache/CoreMedia_frameworks/CoreMedia-1562.235/Sources/VideoCodecs/GVAMultiCodecs/GVAVideoEncoder.c line 761\n<<<< GVAVideoEncoder >>>> GVAVideoEncoder_StartSession: AVF encoder error: VT GVAVideoEncoder_StartSession, unsupported usage 8\n[15:07:59.376] GVAVideoEncoder_StartSession signalled err=-12903 (kVTInvalidSessionErr) (, bad usage, Encoder session was invalidated) at /SourceCache/CoreMedia_frameworks/CoreMedia-1562.235/Sources/VideoCodecs/GVAMultiCodecs/GVAVideoEncoder.c line 2122\n[15:07:59.376] VTCompressionSessionCreate signalled err=-12903 (err) (VTVideoEncoderStartSession failed) at /SourceCache/CoreMedia_frameworks/CoreMedia-1562.235/Sources/VideoToolbox/VTCompressionSession.c line 967\n[15:07:59.407] openglVideoCompositor_SetProperty signalled err=-12784 (kFigBaseObjectError_PropertyNotFound) (unrecognised property) at /SourceCache/CoreMedia/CoreMedia-1562.235/Prototypes/MediaConverter/VideoCompositing/FigVideoCompositor_OpenGL.c line 1424\nGVA info: Successfully connected to the Intel plugin, offline Gen75 \n[15:07:59.539] VTCompressionSessionSetProperty signalled err=-12900 (kVTPropertyNotSupportedErr) (Unsupported property key (it's not in the SupportedPropertyDictionary)) at /SourceCache/CoreMedia_frameworks/CoreMedia-1562.235/Sources/VideoToolbox/VTCompressionSession.c line 1818\n\nThe best thing I can give you in terms of a reproducible case is the source code to our tool, and the 2GB of source data."
+    email: joachimb@gmail.com
+    modified: "2015-08-07T22:19:35.64241Z"
+    number: "22196830"
+    number_intvalue: 22196830
+    originated: 07-Aug-2015 03:19 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AVAssetExportSession frequently stops processing without notifying error

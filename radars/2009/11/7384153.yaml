@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7384153"
+    labels:
+        datastore_id: "115412"
+data:
+    classification: Serious
+    created: "2009-11-19T02:06:19.42608Z"
+    description: "==Summary==\r\nibtool has issues with parsing certain characters. For some, it correctly stops execution and outputs an error message. But for certain ones, it appears to complete successfully, when it actually failed silently. Below is a list of characters it correctly errors out on and a list it silently fails on.\r\n\r\nVerbal errors: \" ' : . / - _ $\r\nSilent errors: { } [ ] ; , < > ? \\ | = + ! ` ~ @ # % ^ & * ( )\r\n\r\n==Steps to Reproduce==\r\n1) Create an Xcode project: ibtool_silent_failure.\r\n2) Open \"Get Info\" on MainMenu.xib and add \"fr\" as a localization.\r\n2) Generate a .strings file for English.lproj/MainMenu.xib. In Terminal, \"cd\" into the project directory and run \"ibtool --generate-strings-file ./English.lproj/MainMenu.strings ./English.lproj/MainMenu.xib\".\r\n3) In MainMenu.strings, add a semi-colon to the end of the first entry:\r\n/* Class = \"NSMenuItem\"; title = \"Bring All to Front\"; ObjectID = \"5\"; */\r\n\"5.title\" = \"Bring All to Front\";;\r\n4) In MainMenu.strings, change the window title to \"new title\":\r\n/* Class = \"NSWindow\"; title = \"ibtool_silent_failure\"; ObjectID = \"371\"; */\r\n\"371.title\" = \"new title\";\r\n5) Generate a localized XIB with the above changes. In Terminal, cd into the project directory and run \"ibtool --strings-file ./English.lproj/MainMenu.strings --write ./fr.lproj/MainMenu_generated.xib ./English.lproj/MainMenu.xib\".\r\n\r\n==Expected Results==\r\nibtool should produce a standard error saying \"The stringsfile MainMenu.strings could not be parsed.\" Below is an error when I replaced the semi-colon (silent error) with a dollar sign (verbal error).\r\n\r\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\r\n<plist version=\"1.0\">\r\n<dict>\r\n\t<key>com.apple.ibtool.errors</key>\r\n\t<array>\r\n\t\t<dict>\r\n\t\t\t<key>description</key>\r\n\t\t\t<string>The stringsfile MainMenu.strings could not be parsed.</string>\r\n\t\t</dict>\r\n\t</array>\r\n</dict>\r\n</plist>\r\n\r\n==Actual Results==\r\nibtool did not return an error when executing step 5, but the resulting fr.lproj/MainMenu_generated.xib will not include the new window title. It appeared to succeed, but in fact silently failed.\r\n\r\n==Regression==\r\nI've tried this with versions 3.1.2 (677), 3.1.4 (680), and 3.2 (732). All exhibit the same problem.\r\n\r\n==Notes==\r\nI hadn't read about anyone else having this problem, until Wil Shipley touched on the issue in his blog:\r\n\"Cocoa’s localization machinery will just silently ignore all strings after any punctuation mistake, resulting in mystery partial localizations.\"\r\n- http://wilshipley.com/blog/2009/10/pimp-my-code-part-17-lost-in.html\r\n\r\nAlso, plutil suffers from the same issue, so it cannot be used as a validation tool."
+    email: bdunagan@gmail.com
+    modified: "2011-08-28T05:43:37.13493Z"
+    number: "7384153"
+    number_intvalue: 7384153
+    originated: 10-Nov-2009
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 3.2 (732)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ibtool fails silently when parsing certain characters in .strings files

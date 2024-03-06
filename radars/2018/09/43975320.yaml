@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "43975320"
+    labels:
+        datastore_id: "4965718923673600"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2018-09-01T03:41:35.43966Z"
+    description: "Summary:\r\nIf you create a symbolic breakpoint, and add a command to call a custom python function, lldb-rpc-server hangs when the breakpoint is hit.\r\n\r\nSteps to Reproduce:\r\n1. Create a python script. Here’s a simplified example (also in attached file):\r\n\r\n```\r\nimport lldb\r\n\r\ndef example_function(debugger, command, result, dict):\r\n  print(\"Printed by custom python script. You will see this unless lldb is hanging.\")\r\n\r\ndef __lldb_init_module(debugger, dict):\r\n  debugger.HandleCommand('command script add -f lldb_hang_repro.example_function try_to_print_a_thing')\r\n```\r\n\r\n2. Save this into a file. For example, ~/Desktop/lldb_hang_repro.py.\r\n3. Import the script into lldb with the following line in ~/.lldbinit:\r\n\r\ncommand script import ~/Desktop/lldb_hang_repro.py\r\n\r\n4. Open the attached project.\r\n5. Look at the embedded breakpoints in the project. If they don’t appear on your machine, you can find them inside the project at SimpleApp/SimpleApp.xcodeproj/xcuserdata/zeisenberg.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist. You’ll find several that work perfectly, and one that causes the problem. I’ll discuss the working cases later. Here’s how to reproduce the hang issue:\r\n\r\n6. Create a Symbolic Breakpoint.\r\n7. Set the symbol to UIApplicationMain.\r\n8. Add the following debugger command:\r\n\r\nbr set -n viewDidLoad --command 'try_to_print_a_thing'\r\n\r\n9. Run the app on an iOS simulator. I’m using an iPhone 5s running iOS 11.4, but have also confirmed that this is reproducible in Xcode 10 beta 6.\r\n\r\nExpected Results:\r\nWhen viewDidLoad is hit, it triggers the symbolic breakpoint, which runs the try_to_print_a_thing function. You can tell it works if the app hits a breakpoint and the message from the Python script is printed to the console: \"Printed by custom python script. You will see this unless lldb is hanging.\"\r\n\r\nActual Results:\r\nThe app hangs. The Xcode Stop and Run buttons fail to respond. You can only continue by force-quitting Xcode or by killing the lldb-rpc-server process.\r\n\r\nVersion/Build:\r\nXcode 9.4.1 (9F2000) on macOS 10.13.6 (17G2307)\r\n\r\nConfiguration:\r\nThe attached crash log was generated with killall -5 lldb-rpc-server. It seems to point to a deadlock related to locking a temp file and then never unlocking it, but I’m not sure of the specifics.\r\n\r\nHere are some cases that are similar to the failing case, but they work, and they help to narrow down the scope of the problem. They are reflected in order in the breakpoints included in the project, but they are all disabled by default. These breakpoints are numbered in their Log Message section, corresponding to this list. I recommend enabling one at a time and confirming that all but #3 work correctly.\r\n\r\n<descriptions moved to Appendix-A.txt, attached, to reduce character count>\r\n\r\nThanks to Aijaz Ansari, Jay Freeman, and Derek Selander for help debugging and isolating this.\r\n\r\nAttached file also posted at https://cl.ly/ab3b7a533523\r\n\r\nAlso attached a sysdiagnose, which I am not posting to Open Radar."
+    email: igeek1@gmail.com
+    modified: "2018-09-01T03:41:35.44Z"
+    number: "43975320"
+    number_intvalue: 43975320
+    originated: August 31 2018, 11:38 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools | Xcode
+    product_version: Xcode 9.4.1 (9F2000) on macOS 10.13.6 (17G2307)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: lldb hangs when breaking on programmatically added symbolic breakpoint with attached action

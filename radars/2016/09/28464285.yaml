@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28464285"
+    labels:
+        datastore_id: "4994106652622848"
+data:
+    classification: Other
+    created: "2016-09-25T04:53:33.5401Z"
+    description: "Summary:\r\nThe watchOS 3.0 documentation states the following parameter should be passed nil:\r\n\r\nestimatedSnapshotExpiration\r\nThe preferred fire date for the next background snapshot refresh task. Use nil if the next snapshot needs to be scheduled as soon as possible. Use distantFuture if you do not want to schedule the next refresh.\r\n\r\n(Source: https://developer.apple.com/reference/watchkit/wksnapshotrefreshbackgroundtask/1650844-settaskcompletedwithdefaultstate?language=objc)\r\n\r\nHowever if you attempt to pass nil to this method, you get a compiler warning:\r\n\r\n> Null passed to a callee that requires a non-null argument\r\n\r\nThe header in WatchKit.framework/WKBackgroundTask.h declares the method as:\r\n\r\n- (void)setTaskCompletedWithDefaultStateRestored:(BOOL)restoredDefaultState\r\n                     estimatedSnapshotExpiration:(NSDate *)estimatedSnapshotExpiration\r\n                                        userInfo:(nullable id<NSSecureCoding>)userInfo\r\n\r\nSteps to Reproduce:\r\n1. Implement a WKExtensionDelegate class.\r\n2. Implement handleBackgroundTasks: in the class\r\n3. Try to call [snapshotTask setTaskCompletedWithDefaultStateRestored:YES estimatedSnapshotExpiration:nil userInfo:nil];\r\n4. Compile the project, check for warnings\r\n\r\nExpected Results:\r\nEither the documentation should be updated to propose a way to set a request a background refresh snapshot task in an ASAP but indeterminate period of time, or the header should be changed to set the parameter as nullable.\r\n\r\nActual Results:\r\nCompiler gives warning 'Null passed to a callee that requires a non-null argument'\r\n\r\nVersion:\r\n3.0 (14S326)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nXcode 8.0 (8A218a)"
+    email: rupey@rupey.org
+    modified: "2016-09-25T04:53:33.54037Z"
+    number: "28464285"
+    number_intvalue: 28464285
+    originated: 25-Sep-2016
+    parent_number: '&{NULL_VALUE}'
+    product: watchOS SDK
+    product_version: 3.0 (14S326)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'WKSnapshotRefreshBackgroundTask setTaskCompletedWithDefaultStateRestored: documentation/headers do not match'

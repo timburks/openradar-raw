@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26158591"
+    labels:
+        datastore_id: "4986648794234880"
+data:
+    classification: Serious bug
+    created: "2016-05-07T23:13:43.59283Z"
+    description: "Summary:\r\nScreenshot PNG file created on 10.11.4 El Capitan via Shift + Command + 3 or Shift + Command + 4 was copied to Mac with 10.7.5 Lion. Metadata were preserved because screenshot was inside zip archive created via Finder. After Extracting screenshot on 10.7.5 Spotlight (namely mds process) started crashing:\r\n\r\nDebugSymbols was unable to start a spotlight query: spotlight is not responding or disabled.\r\n(com.apple.metadata.mds[39]) Job appears to have crashed: Segmentation fault: 11\r\n\r\n+ see mds_crashlogs.zip attachment containing mds crash logs from 10.7.5\r\n\r\nI identified the culprit. It's xattr attribute com.apple.metadata:kMDItemScreenCaptureGlobalRect \r\nAfter deleting kMDItemScreenCaptureGlobalRect with \"xattr -d com.apple.metadata:kMDItemScreenCaptureGlobalRect ScreenShot.png\" mds stopped crashing.\r\n\r\nkMDItemScreenCaptureGlobalRect is new in OS X 10.11 El Capinan.\r\nScreenshots created in previous versions of OS X (I tested 10.7, 10.8, 10.9 and 10.10) does NOT contain kMDItemScreenCaptureGlobalRect attribute.\r\n\r\n10.11.4 Screenshot -- COPY --> 10.7.5 | CRASH\r\n10.11.4 Screenshot -- COPY --> 10.8.5 | OK\r\n10.8.5 Screenshot -- COPY --> 10.7.5 | OK\r\n10.9.5 Screenshot -- COPY --> 10.7.5 | OK\r\n10.10.5 Screenshot -- COPY --> 10.7.5 | OK\r\n\r\nSteps to Reproduce:\r\n1. Create .png screenshot on 10.11.4 using Shift + Command + 3 or Shift + Command + 4\r\n2. Archive screenshot in Finder into .zip archive preserving its metadata\r\n3. Copy archive to 10.7.5 Mac\r\n4. Extract screenshot from .zip archive\r\n\r\n\r\nExpected Results:\r\nNothing extraordinary happens\r\n\r\nActual Results:\r\nmds process starts crashing with Segmentation fault: 11\r\n\r\nVersion:\r\n10.11.4\r\n10.7.5\r\n\r\nNotes:\r\nAfter deleting kMDItemScreenCaptureGlobalRect with \"xattr -d com.apple.metadata:kMDItemScreenCaptureGlobalRect ScreenShot.png\" mds stopped crashing.\r\n\r\nI know Apple does not update old OS X versions but in this case there should be something done. A lot of Macs are stuck on 10.7.5 including first gen Mac Pros.\r\n\r\nConfiguration:\r\nI was able to reproduce this issue both in real world scenario (which led me to this problem) and in VMware Fusion OS X virtual machines (freshly installed OS X)."
+    email: michalm.mac@gmail.com
+    modified: "2016-05-07T23:13:43.59304Z"
+    number: "26158591"
+    number_intvalue: 26158591
+    originated: 8.5.2016
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11.4, 10.7.5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Screenshot xattr from El Capitan crashes Lion Spotlight

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9546856
+    labels:
+        datastore_id: "5055988478509056"
+data:
+    classification: Incorrrect/Unexpected Behavior
+    created: "2021-08-22T01:40:09.041716Z"
+    description: "Apologies for the chosen category. I tried searching for a category specific to XNU, Mach, Darwin, Rosetta, etc., but couldn’t find any.\r\n\r\n`libproc.h` has a struct called `proc_taskinfo`, whose `pti_total_user` and `pti_total_system` fields report the amount of user and system CPU time a given process has consumed over its lifetime. Under Rosetta 2 on an M1 Mac Mini, these values are wrong, off by a factor of ~41.666x.\r\n\r\nWhen running natively on x86_64 (tested on an Intel i5-5257U), `mach_timebase_info` returns `1/1`, thus the mach timebase units are equivalent to nanoseconds. The values of `pti_total_user` are correct (They match the CPU time reported by Activity Monitor.app).\r\n\r\nWhen running natively on arm64e (tested on an M1 Mac mini), `mach_timebase_info` returns `125/3`. Multiplying the values of `pti_total_user` by this constant (~41.666) yields a value that’s correct in nanoseconds (They also match the CPU time reported by Activity Monitor.app).\r\n\r\nHowever, under Rosetta 2 on the same M1 Mac Mini, there’s a mismatch:\r\n  - `mach_timebase_info` returns a factor of `1/1`, just like on Intel\r\n  - The values of `pti_total_user` are the same as native M1 execution, which are native mach tick units (each of which is 3/125th’s of a nanosecond)\r\n\r\nThus, if you take the value of `pti_total_user`, multiply it by the factor returned by `mach_timebase_info` (as the documentation prescribes https://developer.apple.com/documentation/driverkit/3433733-mach_timebase_info), you get a time in nanoseconds which is ~41.666x *too small*.\r\n\r\nWorking around this requires that you:\r\n1. add a special case to detect when running an M1 under Rosetta 2\r\n2. ignore the result of `mach_timebase_info ` completely\r\n3. multiply by the same 125/3 factor as if `mach_timebase_info` was run natively"
+    email: AlexanderMomchilov@gmail.com
+    modified: "2021-08-22T01:40:09.041983Z"
+    number: FB9546856
+    number_intvalue: 9546856
+    originated: "2021-08-21"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 11.5.2 (20G95)
+    reproducible: yes
+    resolved: ""
+    status: Open
+    title: 'Rosetta 2 error: incorrect value for values reported by libproc'

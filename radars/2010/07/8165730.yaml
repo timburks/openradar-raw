@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8165730"
+    labels:
+        datastore_id: "444404"
+data:
+    classification: Bug
+    created: "2010-07-07T10:44:41.633997Z"
+    description: "Summary:\r\n\r\nA UIView Subclass without backgroundColor, that is an instance with backgroundColor set to nil, doesn't clear its drawing context correctly, before calling drawRect:\r\nThere is pixelData from earlier call to drawRect: left in the context.\r\n\r\nSteps to Reproduce:\r\n\r\nUse the attached Xcode project or create a window based app.\r\n\r\nIn the appDelegate instanciate the view and add the view to the window.\r\n\r\nImplement the view like this:\r\n\r\n@implementation view\r\n\r\n- (void)drawRect:(CGRect)rect {\r\n    static int nDrawrectCalls = 0;\r\n    CGContextRef context = UIGraphicsGetCurrentContext();\r\n\t//CGContextClearRect(context, rect);\r\n    CGContextSetLineWidth(context, 1.0);\r\n    CGContextSetStrokeColorWithColor(context, (nDrawrectCalls%5==0?[UIColor redColor]:[UIColor greenColor]).CGColor);\r\n    CGContextMoveToPoint(context, 10, 30+10*nDrawrectCalls);\r\n    CGContextAddLineToPoint(context, 300, 30+10*nDrawrectCalls);\r\n    CGContextStrokePath(context);\r\n    nDrawrectCalls++;\r\n} \r\n\r\n- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {  \r\n    [self setNeedsDisplay];\r\n}\r\n\r\nExpected Results:\r\n\r\nYou should see a line green line. On tap the line steps 10.0 point down. Every 5th tap the line turns red.\r\n\r\nActual Results:\r\n\r\nAfter the nth tap, you can see the expected line plus the lines from tap n-2, n-4, n-6, etc.\r\n\r\nRegression:\r\n\r\nAfter setting any backgroundColor on the view, the bug doesn't occur.\r\nAfter adding a call to CGContextClearRect() inside drawRect:, the bug doesn't occur.\r\n\r\nNotes:\r\n\r\nMight be that context clearing is taking the backgroundColor into account, but is not prepared or does not correctly handle a value of nil.\r\n\r\n------------------------\r\n28-Jul-2010 11:42 PM Patrick Collins :\r\nEngineering has determined that this issue behaves as intended based on the following information:\r\n\r\nPlease see UIView.clearsContextBeforeDrawing property. It depends on how you setup your view. A view with a -drawRect: but marked opaque does not clear the context.\r\n\r\n------------------------\r\nThat's right. Here the parts of the documentation in question.\r\n\r\nProperty clearsContextBeforeDrawing:\r\n\r\nThe default value of this property is YES. When set to YES, the current graphics context buffer in the drawRect: method is automatically cleared to transparent black before drawRect: is invoked. If the view’s opaque property is also set to YES, the backgroundColor property of the view must not be nil or drawing errors may occur.\r\n\r\nIf the value of this property is NO, it is the view’s responsibility to completely fill its content. Drawing performance can be improved if this property is NO—for example, when scrolling.\r\n\r\nProperty opaque:\r\n\r\nYES if it is opaque; otherwise, NO. If opaque, the drawing operation assumes that the view fills its bounds and can draw more efficiently. The results are unpredictable if opaque and the view doesn’t fill its bounds. Set this property to NO if the view is fully or partially transparent. The default value is YES."
+    email: tobias.klonk@tklonk.net
+    modified: "2011-08-28T05:40:44.688297Z"
+    number: "8165730"
+    number_intvalue: 8165730
+    originated: 2010/07/07
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 3.1.3/3.2
+    reproducible: always
+    resolved: 2010/07/30
+    status: Resolved
+    title: UIView without backgroundColor not clearing drawing context

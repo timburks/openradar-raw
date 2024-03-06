@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15750089"
+    labels:
+        datastore_id: "6752700590981120"
+data:
+    classification: Performance
+    created: "2014-01-05T20:28:51.778831Z"
+    description: "Summary:\r\nmy app is only using 15-40mb and is sometimes getting killed.The reason always being vm-pageshortage\r\n\r\nSteps to Reproduce:\r\ngo from any map view to the camera and take a picture (repeat N times. on devices with a lot of free RAM it takes longer of course)\r\nyou will start (quite soon(!) to receive memory warnings\r\n==>BOOM (killed, I can't even make it through 2 iterations right now)\r\n\r\nSee the MINIMAL demo app I made:\r\nSample project: only 1 view controller, only 1 map (via Apple MapKit, GMS is equally bad), push camera and take a pic--- BOOM\r\n\r\nrunnable code: attached\r\n\r\nbut the gist is:\r\n- (void)loadView {\r\n    UIView *v = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];\r\n\r\n    CGRect f = v.bounds;\r\n    mapView = [[MKMapView alloc] initWithFrame:CGRectInset(f, 5, 5)];\r\n    [v addSubview:mapView];\r\n\r\n    self.view = v;\r\n}\r\n\r\n- (void)viewDidAppear:(BOOL)animated {\r\n    [self performSelector:@selector(delayed) withObject:nil afterDelay:3];\r\n}\r\n\r\n- (void)delayed {\r\n    UIImagePickerController* imagePickerController = [[UIImagePickerController alloc] init];\r\n    imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;\r\n    imagePickerController.delegate = (id)self;\r\n    imagePickerController.showsCameraControls = NO;\r\n    [self presentViewController:imagePickerController animated:YES completion:nil];\r\n\r\n    [imagePickerController performSelector:@selector(takePicture) withObject:nil afterDelay:2];\r\n}\r\n\r\n- (void)imagePickerController:(UIImagePickerController *)imagePicker didFinishPickingMediaWithInfo:(NSDictionary *)info {\r\n    UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];\r\n    NSData *jpg = UIImageJPEGRepresentation(image, 0.8);\r\n    NSLog(@\"jpg %d\", ((const char*)jpg.bytes)[0]);\r\n    [self dismissViewControllerAnimated:YES completion:nil];\r\n}\r\n\r\nExpected Results:\r\ndon't 'crash' ;)\r\n\r\nActual Results:\r\nThe App is Always killed. Sometimes sooner, sometimes later\r\n\r\nVersion:\r\nIOS 7.0.4\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 4S \r\nlanguage: en\r\ncountry: DE\r\n\r\nrunnable sample:\r\nhttps://dl.dropboxusercontent.com/u/3753090/MapKitTest.zip"
+    email: Pich.Dominik@googlemail.com
+    modified: "2014-01-05T20:28:51.779039Z"
+    number: "15750089"
+    number_intvalue: 15750089
+    originated: 05-Jan-2014
+    parent_number: '&{NULL_VALUE}'
+    product: IOS SDK
+    product_version: "7"
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: MINIMAL App using a map (apple or google) often killed due to memory pressure (Mainly happens when going to Camera)

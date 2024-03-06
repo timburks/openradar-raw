@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "44884416"
+    labels:
+        datastore_id: "4990685501456384"
+data:
+    classification: ""
+    created: "2018-09-29T08:05:31.851939Z"
+    description: "On iOS 12, binary data stored in Core Data with the External Storage option gets corrupted/goes missing on every second save of the context.\r\n\r\nSteps to Reproduce:\r\n\r\nSee attached minimal sample project, or you can follow steps 1-4 below to create a project in Xcode.  Then follow steps 5-8 to see the issue.\r\n\r\n1. Create new project in Xcode 10 (iOS, Single View App, Core Data)\r\n2. Add Entity to model, with a single attribute of type Binary, with Allow External Storage enabled\r\n3. Add a PNG file called “sample_image.png\" to the project.  Ours is 400x400 pixels and 200KB in size.\r\n4. Replace the contents of ViewController.swift with the following:\r\n\r\n```\r\nimport UIKit\r\nimport CoreData\r\n\r\nclass ViewController: UIViewController {\r\n    var button: UIButton!\r\n    var context:NSManagedObjectContext?\r\n    \r\n    private var fetchedRows: [Entity] {\r\n        get {\r\n            let request = NSFetchRequest<NSFetchRequestResult>(entityName: \"Entity\")\r\n            return try! context!.fetch(request) as! [Entity]\r\n        }\r\n    }\r\n    \r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n        \r\n        let appDelegate = UIApplication.shared.delegate as! AppDelegate\r\n        context = appDelegate.persistentContainer.viewContext\r\n        \r\n        // Ensure there is one row in the database\r\n        if (fetchedRows.isEmpty) {\r\n            _ = Entity(context: context!)\r\n            try! context?.save()\r\n        }\r\n        \r\n        button = UIButton(frame: view.bounds)\r\n        button.backgroundColor = UIColor.blue\r\n        button.addTarget(self, action: #selector(buttonPressed), for: .touchUpInside)\r\n        view.addSubview(button)\r\n        \r\n        updateButtonBackgroundImage()\r\n    }\r\n    \r\n    func updateButtonBackgroundImage() {\r\n        var image: UIImage?\r\n        \r\n        if let data = fetchedRows.first!.attribute {\r\n            image = UIImage(data: data)\r\n        } else {\r\n            print(\"Image missing from database!\")\r\n        }\r\n\r\n        button.setBackgroundImage(image, for: .normal)\r\n    }\r\n    \r\n    @objc func buttonPressed() {\r\n        fetchedRows.first!.attribute = UIImage(named: \"sample_image.png\")?.pngData()\r\n\r\n        try! context?.save()\r\n        \r\n        // Wait a little while before reading back value from db\r\n        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {\r\n            self.updateButtonBackgroundImage()\r\n        }\r\n    }\r\n}\r\n```\r\n\r\n5. Run the app on the Simulator or device\r\n6. The UI consists of a full screen button that has an image from the database as its background, it will initially be blank.\r\n7. Press anywhere on the screen to click the button which will attempt to save the sample image to the database, and then refresh the background of the button to show the image from the database\r\n\r\nExpected Results:\r\n\r\nThe sample image should be displayed on the button after each save.\r\n\r\nActual Results:\r\n\r\nEvery second time, the image is not being present in the database, and therefore the button background images goes back to being blank.\r\n\r\nVersion/Build: iOS 12"
+    email: rodhan@gmail.com
+    modified: "2018-10-23T13:14:38.106836Z"
+    number: "44884416"
+    number_intvalue: 44884416
+    originated: 9/29/2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK Core Data
+    product_version: iOS 12
+    reproducible: Yes
+    resolved: 10/18/2018
+    status: Resolved
+    title: Data corruption when External Storage enabled for Binary attributes

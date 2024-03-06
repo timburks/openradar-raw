@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13611092"
+    labels:
+        datastore_id: "2934401"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2013-04-09T21:53:08.045501Z"
+    description: "09-Apr-2013 12:01 PM Kenny Bongort:\r\nSummary:\r\n\r\nWe see many reports of a relatively common but hard-to-reproduce crash that comes from CLConnectionClient::sendCachedMessages(). Our automatic crash reporting system has collected 176,088 reports like the one attached since we started collecting them in October 2012.\r\n\r\nSteps to Reproduce:\r\n\r\nUse a CLLocationManager either to poll location or for significant location change notifications. In the latter case, this crash occurs much more frequently, but still not reliably enough to reproduce easily.\r\n\r\nRegression:\r\n\r\nYes, this is a new bug since iOS 6.0. It affects every version of iOS 6.\r\n\r\nNotes:\r\n\r\nThe crash ultimately comes from CFDictionaryCreateMutableCopy having an over-released CFDictionary argument. In cases where the pointer is a new object, we get a doesNotRecognizerSelector: exception, and the selector is \"count\".\r\n\r\n\r\n09-Apr-2013 12:01 PM Kenny Bongort:\r\n'Google-Search_2-5-1_2013-04-09_iOS-6-1_Top-Crash_07.mztlrpmu.zip_1.crash' and 'Google-Search_2-5-1_2013-04-09_iOS-6-1_Top-Crash_04.dblbycau.zip_1.crash' were successfully uploaded\r\n\r\n\r\n17-Apr-2013 12:38 PM Apple Developer Bug Reporting Team :\r\nEngineering has provided the following feedback regarding this issue:  \r\n\r\nThis race should only happen if you're in the habit of creating and destroying CLLocationManagers. Instead, please consider allocating only one (e.g. hang it off the app delegate instead of a view) and merely stopping it when you're done rather than destroying it.\r\n\r\n\r\n17-Apr-2013 01:29 PM Kenny Bongort:\r\nI am very nearly certain that we do not destroy CLLocationManagers; I even went as far as swizzling -[CLLocationManager dealloc] to stick in an assert. We do use a couple of CLLocationManager instances, and the UIWebView uses a third, but ours are managed by singletons that are never released, and the UIWebView doesn't appear to release its location manager either."
+    email: kbongort@google.com
+    modified: "2014-06-09T22:51:07.987968Z"
+    number: "13611092"
+    number_intvalue: 13611092
+    originated: 09-Apr-2013 12:01 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "6"
+    reproducible: Sometimes
+    resolved: Duplicate of 11656859 (Open)
+    status: Closed
+    title: Crashes in CLConnectionClient

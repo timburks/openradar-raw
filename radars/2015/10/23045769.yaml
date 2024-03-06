@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23045769"
+    labels:
+        datastore_id: "6104753268326400"
+data:
+    classification: ""
+    created: "2015-10-09T09:48:34.58035Z"
+    description: "Summary:\r\nWe use Guided Access mode to create a ‘hand-off’ mode in our app, in which the iPad is handed to a non-privileged user.\r\nThe user ‘locks’ the app, causing Guided Access mode to be enabled, using “UIAccessibilityRequestGuidedAccessSession(TRUE, lockdownCallback);”.\r\nAfterwards, the ‘normal’ user can unlock the app by either re-entering his credentials or authenticating via TouchId, using “SecItemCopyMatching(query, &data);”\r\nIf the authentication went successful, we leave Guided Access mode. “UIAccessibilityRequestGuidedAccessSession(TRUE, nil);”\r\n\r\nAll of this worked perfectly prior to iOS 9. Now, in the current iOS (9.0.2), The  “SecItemCopyMatching” call blocks for 3 seconds or so, then returning “errSecAuthFailed” (-25293).\r\n\r\nHas this functionality been removed, or is it a temporary bug? I could not find any notice of this in any of the changelogs.\r\n\r\nSteps to Reproduce:\r\n0: You will need your iPad to be in a MDM which allows your app to run in Guided Access mode. \r\n\r\n1: Insert a keychain item with information like this (outside guided access mode)\r\n```\r\nNSData *secretData = [NSKeyedArchiver archivedDataWithRootObject:@{@\"username\":username,\r\n                                                                   @\"password\":password}];\r\nNSDictionary *addAttributes = @{\r\n                                (id)kSecClass: (id)kSecClassGenericPassword,\r\n                                (id)kSecAttrService: [self getLocalAuthServerName],\r\n                                (id)kSecValueData: secretData,\r\n                                (id)kSecAttrAccessControl: (id)TouchIdSecurityObject\r\n                                };\r\n\r\nSecItemAdd((__bridge CFDictionaryRef)addAttributes, nil);\r\n```\r\n \r\n2: Enter guided access mode\r\n```\r\nUIAccessibilityRequestGuidedAccessSession(TRUE, lockdownCallback);\r\n```\r\n\r\n3: Once in guided access mode\r\n```\r\nNSDictionary *query = @{\r\n                        (id)kSecClass: (id)kSecClassGenericPassword,\r\n                        (id)kSecAttrService: [LoginBox getLocalAuthServerName],\r\n                        (id)kSecReturnData: @YES,\r\n                        (id)kSecAttrAccessControl: (id)TouchIdSecurityObject,\r\n                        (id)kSecUseOperationPrompt: $(@\"TOUCHID IDENTIFY PROMPT\")\r\n                        };\r\nCFTypeRef dataTypeRef = NULL;\r\nOSStatus status = SecItemCopyMatching((CFDictionaryRef)(query), &dataTypeRef);\r\nif (status == errSecSuccess) {\r\n    NSData *authData = [NSKeyedUnarchiver unarchiveObjectWithData:(NSData *)dataTypeRef];\r\n    NSLog(@\"%@\", authData);\r\n} else {\r\n    NSLog(@\"Authentication failed\");\r\n}\r\n```\r\n\r\n\r\nExpected Results:\r\nTouchID prompt popping up, after successful TouchId authentication, “errSecSuccess” (0) return value.\r\n\r\nActual Results:\r\nLong block time, no TouchId prompt, “errSecAuthFailed” (-25293) return value.\r\n\r\nVersion:\r\niOS9.0.2\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nAny iDevice with TouchId\r\n\r\nAttachments:"
+    email: Mark2xV@gmail.com
+    modified: "2015-10-09T09:49:20.15538Z"
+    number: "23045769"
+    number_intvalue: 23045769
+    originated: 09-10-2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 9.0.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Keychain access no longer works in Guided Access mode (iOS9)

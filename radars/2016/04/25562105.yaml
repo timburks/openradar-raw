@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25562105"
+    labels:
+        datastore_id: "5000544892485632"
+data:
+    classification: ""
+    created: "2016-04-05T21:46:45.13864Z"
+    description: "Summary:\r\nWhen there are active animations on any views within the main window hierarchy, the test framework determines that the application isn't idled. For repeating animations, this means that the test framework will hang until it hits a timeout and fail with \"App failed to quiesce within 60s\"\r\n\r\nSteps to Reproduce:\r\n1. Start a new single-view iOS application project in Xcode with UI Testing enabled\r\n2. Add a button and an additional view to the View Controller nib in Main.storyboard and wire IBOutlets to ViewController.m (we'll call them \"button\" and \"animatingView\"\r\n3. In ViewController.m, modify viewDidLoad:\r\n\r\noverride func viewDidLoad() {\r\n    super.viewDidLoad()\r\n        \r\n    UIView.animateWithDuration(1,\r\n                               delay: 0,\r\n                               options: [.CurveEaseInOut, .Autoreverse, .Repeat],\r\n                               animations: {\r\n        self.animatingView.alpha = 0\r\n        }, completion: nil)\r\n}\r\n\r\n4. In the provided sample UI test file, add a dummy test:\r\n\r\nfunc testThatFailsDueToRepeatingAnimation() {\r\n    XCUIApplication().buttons.elementBoundByIndex(0).tap()\r\n}\r\n\r\n5. Run the test. Notice that the test fails with the following log:\r\n\r\nUI Testing Failure - App failed to quiesce within 60s\r\n\r\n6. Remove the .Repeat option from the animation code in ViewController.m\r\n7. Re-run the test. Notice that it passes after the animation completes.\r\n\r\nExpected Results:\r\nRepeating animations are ignored, or XCTest provides functionality to do so\r\n\r\nActual Results:\r\nRepeating animations cause tests to hang, and eventually fail\r\n\r\nVersion:\r\n9.3 (13E234)\r\n\r\nConfiguration:\r\niPhone 6S 64GB AT&T, using LTE"
+    email: johnhammerlund@gmail.com
+    modified: "2016-04-05T21:46:45.13881Z"
+    number: "25562105"
+    number_intvalue: 25562105
+    originated: 4/5/16
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "9.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Repeating animations cause UI tests to hang, and ultimately fail

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8132004"
+    labels:
+        datastore_id: "477401"
+data:
+    classification: Other Bug
+    created: "2010-06-25T19:07:19.101323Z"
+    description: "Summary:\r\nDuring event processing in a garbage-collected environment, AppKit abandons retained CFStrings containing the current locale identifier.\r\n\r\nSteps to Reproduce:\r\n* Create a new document-based Cocoa application in Xcode.\r\n* Add the build setting GCC_ENABLE_OBJC_GC = required\r\n* Select Run->Run With Performance Tool->GC Monitor\r\n* When the application runs, close the document window.\r\n* In Instruments, select the Allocations instrument and click Mark Heap.\r\n* Switch to the target application, select File->New, and close the new window.\r\n* Repeat the previous two steps several times.\r\n\r\nExpected Results:\r\nThe live object count for each intermediate heap shot should settle to zero.\r\n\r\nActual Results:\r\nThe live object count for each intermediate heap shot plateaus at 15–17 objects.\r\n\r\nAll the leaked objects were generated within AppKit’s event handling. The majority of them are CFStrings containing the current locale identifier (in my case, “en_GB”) with a retain count of one. These are created in various places, but the top of the stack is the same in each case:\r\n  _CFRuntimeCreateInstance\r\n  __CFstringCreateImmutableFunnel3\r\n  CFStringCreateWithCStringNoCopy\r\n  CFLocaleCreateCanonicalLocaleIdentifierFromScriptManagerCodes\r\n  utGetInputSourceScriptInfo\r\n\r\nRegression:\r\nUnknown.\r\n\r\nEnclosure:\r\nScreen shots of Instruments and gdb demonstrating the issue. [ http://jens.ayton.se/temp/leaktest.zip ]"
+    email: jens.ayton@gmail.com
+    modified: "2011-08-28T05:40:57.222856Z"
+    number: "8132004"
+    number_intvalue: 8132004
+    originated: "2010-06-25"
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.4/10F569
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: AppKit drools locale identifiers all over my nice clean floor

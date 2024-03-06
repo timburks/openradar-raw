@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10052528"
+    labels:
+        datastore_id: "2449401"
+data:
+    classification: Bug
+    created: "2012-12-17T20:09:36.972831Z"
+    description: "31-Aug-2011 07:56 AM Steven Baranski:\r\nSUMMARY:\r\nWhen interacting with the iPod MPMusicPlayerController, the API for MPMediaItemArtwork states that imageWithSize: \"Creates and returns a UIImage object of a specified size.\" This implies that the specified size can truly be any value, when in fact, only three different sizes are returned: 128x128, 320x320, and 768x768.\r\n\r\nIt's easy enough to adjust the returned image via UIImageView or similar, but perhaps the API would be more clear if the user were required to pass in an enumeration value for small, medium, and large graphic assets, etc.?\r\n\r\nSTEPS TO REPRODUCE:\r\nInstantiate an iPod player, identify an MPMediaItem with available cover art, and invoke the method with an array of sizes. Observe that in many cases, the sizes returned don't match that requested.\r\n\r\nEXPECTED RESULTS:\r\nThe API suggests that the method will do the sizing for you, but it appears to pick the closest cover art size available. The 128x128, 320x320, and 768x768 appear to be the standard iTunes graphics collateral sizes.\r\n\r\nACTUAL RESULTS:\r\nSpecifying sizes lower than 128x128 (e.g., CGSizeMake(100,100)) round up to that size; sizes lower than 320x320 round up to that; and every other size returns an image with size 768x768.\r\n\r\nREGRESSION:\r\n(intentionally left blank)\r\n\r\nNOTES:\r\nPresumably this applies to the iPhone SDK too.\r\n\r\nThank you!\r\n\r\n\r\n10-Oct-2011 06:01 PM Steven Baranski:\r\n'screenshot.png' was successfully uploaded\r\n\r\n10-Oct-2011 06:01 PM Steven Baranski:\r\nThank you for alerting me to the revisions. Although the results differ, they still do not seem to match what one might expect. The following are a list of a input sizes and the actual resulting sizes using the iOS 5 GM.\r\n   * 75x75 => 88x88\r\n   * 88x88 => 88x88\r\n   * 89x89 => 128x128\r\n   * 128x128 => 128x128\r\n   * 129x129 => 600x600\r\n   * 280x280 => 600x600\r\n   * 600x600 => 600x600\r\n   * 601x601 => 600x600\r\n\r\nSo it would appear that the \"threshold\" sizes have changed from one release to another. The sizes observed when the issue was originally reported were: 128x128, 320x320, and 768x768. Now it appears that those sizes are 88x88, 128x128, and 600x600.\r\n\r\nI have attached an image from one of my apps (StereoMatic) to illustrate the side effects. In this screenshot, the cover art \"frame\" is 306x306, but the image shown is 600x600.\r\n\r\nHere is the code that evinces the results observed:\r\n\r\nMPMediaItemArtwork *coverArt = [song valueForProperty:MPMediaItemPropertyArtwork];  \r\n// BEFORE: either 128x128, 320x320, 768x768 | AFTER: 88x88, 128x128, 600x600\r\nUIImage *albumArt = [coverArt imageWithSize:CGSizeMake(306.0f, 306.0f)]; \r\n// albumArt.size = 600x600\r\n\r\nThe following additional methods help reduce the size to achieve the results expected;\r\n\r\nUIImageView *artView = [[[UIImageView alloc] initWithImage:albumArt] autorelease];\r\nCGRect artRect = [artView frame];\r\nartRect.size = CGSizeMake(306.0f, 306.0f);  \r\n[artView setFrame:artRect];\r\n\r\nI did not create a sample project, but the AddMusic project in the Apple iOS Sample Code repository may be worth a look: [MainViewController handle_NowPlayingItemChanged:]\r\n\r\nI hope this information proves useful. Please let me know if you have any additional questions or comments. Thanks again!"
+    email: steven.baranski@gmail.com
+    modified: "2012-12-17T20:09:36.973006Z"
+    number: "10052528"
+    number_intvalue: 10052528
+    originated: 8/31/2011
+    parent_number: '&{NULL_VALUE}'
+    product: iPad SDK
+    product_version: 5.x
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'MPMediaItemArtwork imageWithSize: is somewhat misleading'

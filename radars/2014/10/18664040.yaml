@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18664040"
+    labels:
+        datastore_id: "5295604548763648"
+data:
+    classification: Other Bug
+    created: "2014-10-15T14:26:39.765004Z"
+    description: "Summary:\r\n\r\nThe preferred way of taking snapshot image of a view is to use UIView’s “drawViewHierarchyInRect:afterScreenUpdates:” method. This is explained in Technical Q&A QA1817 (https://developer.apple.com/library/ios/qa/qa1817/_index.html).\r\n\r\nWhen making a snapshot with this method on an app that is not optimised for iPhone 6 or iPhone 6+ there is a visible flicker of the current view after calling snapshotting code. \r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a new single view application project\r\n2. Disable iPhone6 and iPhone 6+ support by going to main target settings and removing launch screen file setting (deleting the LaunchScreen.xib)\r\n3. Add the following code to ViewController.m:\r\n\r\n- (UIImage *)snapshot:(UIView *)view\r\n{\r\n    UIGraphicsBeginImageContextWithOptions(view.bounds.size, YES, 0);\r\n    [view drawViewHierarchyInRect:view.bounds afterScreenUpdates:YES];\r\n    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();\r\n    UIGraphicsEndImageContext();\r\n    \r\n    return image;\r\n}\r\n\r\n- (IBAction)takeScreenshot:(id)sender\r\n{\r\n    UIImage *snapshot = [self snapshot:self.view];\r\n}\r\n\r\n3. In the storyboard add some views (to make the effect more visible) and a single button.\r\n4. Attach button to takeScreenshot: action in ViewController.m\r\n5. Launch app on iPhone 6 or iPhone 6+ (or corresponding simulators).\r\n6. Tap button to take the snapshot\r\n\r\nExpected Results:\r\n\r\nNothing visible should happen because snapshot image is produced and immediately discarded\r\n\r\nActual Results:\r\n\r\nScreen flickers after tapping the button.\r\n\r\nNotes:\r\n\r\nIt seems that a similar issue was reported happening on iPad (rdar://17292507) however it is marked as fixed."
+    email: Vytis@lemonlabs.lt
+    modified: "2014-10-22T07:05:34.26488Z"
+    number: "18664040"
+    number_intvalue: 18664040
+    originated: 15-Oct-2014 05:26 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 8.0.2
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 18283329 (Open)
+    title: View snapshotting on iPhone 6 and iPhone 6+ produces screen flicker

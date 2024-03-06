@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19020006"
+    labels:
+        datastore_id: "5887924025425920"
+data:
+    classification: Serious Bug
+    created: "2014-11-18T21:34:19.729256Z"
+    description: "Summary:\r\nUsing an AirPlay device's player controls (whether AppleTV, AirServer, etc) will not properly send a UIEvent to an application to be handled.\r\n\r\nSteps to Reproduce:\r\n1. Setup an application to use a UIApplication subclass such that - (void)remoteControlReceivedWithEvent:(UIEvent *)event is overridden and a breakpoint is added to the method for debugging.\r\n2. Setup an AVPlayer with AirPlay capabilities to play a video in the application and ensure that [[UIApplication sharedApplication] beginReceivingRemoteControlEvents] is called during the application's runtime before the AVPlayer starts playing.\r\n3. Add a symbolic breakpoint for the method -[UIResponder remoteControlReceivedWithEvent:].\r\n4. Run the application on a device (not simulator) and AirPlay the video to a remote device (i.e. Apple TV)\r\n5. Pause the video via the AirPlay device.\r\n\r\nExpected Results:\r\nThe symbolic breakpoint set up in step 3 should trigger. After hitting continue on the debugger enough, the standard breakpoint set up in step 2 should trigger, ensuring that the application did receive the UIEvent from the AirPlay device.\r\n\r\nActual Results:\r\nNeither of the two breakpoints are called, meaning the device did not receive a remote event.\r\n\r\nVersion:\r\niOS 7.1.2 (11D257) for iPad 2, iOS 8.0 (12A365) for iPad 4, Apple TV Software 7.0.2 (6915) for Apple TV.\r\n\r\nNotes:\r\nIf using the internal AirPlay controls for the device running the application, the appropriate breakpoints are triggered, signifying the application is properly set up as to handle remote control events via AirPlay.\r\n\r\nConfiguration:\r\niPad 2 Model A1395 and iPad 4 Model A1458 for application, Apple TV Model A1469 for AirPlay device"
+    email: atwhitcomb@gmail.com
+    modified: "2014-11-18T21:34:19.729485Z"
+    number: "19020006"
+    number_intvalue: 19020006
+    originated: November 18th, 2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: Multiple
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Play/Pausing from AirPlay Device Does Not Send UIEvent

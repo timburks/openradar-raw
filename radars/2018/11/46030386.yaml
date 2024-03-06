@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "46030386"
+    labels:
+        datastore_id: "5004489190801408"
+data:
+    classification: Other Bug
+    created: "2018-11-13T17:01:36.294772Z"
+    description: "Summary:\r\nOn iOS, when an NSItemProvider is created with an NSURL with a base URL and relative string, the URL can’t be read back from the item provider.\r\n\r\nSteps to Reproduce:\r\nOpen the attached sample project and run the tests (cmd-U) on iOS.\n\nLong way:\n\n1. Create an NSURL with URLWithString:relativeToURL:\n2. Create an NSItemProvider from the URL\n3. Try to load the URL from the item provider, either by type (kUTTypeURL) or class (NSURL).\r\n\r\nExpected Results:\r\nAll 4 tests should pass.\n\nShould load an identical NSURL, preserving the relative part.\r\n\r\nActual Results:\r\nOn iOS, only the test with absolute URLs pass: the tests with relative URLs fail.\n\nCoercion fails and an error is returning to the load handler block instead of an NSURL. The case of loading by class is also raising invalid argument exceptions. I haven’t checked if they’re being caught.\r\n\r\nVersion:\r\nXcode 10.1\r\n\r\nNotes:\r\nThis problem does not occur on macOS. It correctly loads the URL there. The tests confirm this.\n\nIn practice, the relative URL is being passed to a UIActivityViewController and loaded by share and action extensions. All the third-party apps I tried failed to load the URL (e.g. Slack, OmniFocus, Bear). Interestingly the system apps/actions (e.g. Mail, Messages) seem to handle it fine.\n\nIt is possible to not do coercion when loading by type and get back an NSData. Then you have to reverse engineer the format of the data and read that. It’s a binary property list of an array of the relative string then base URL string then an empty dictionary. I’m guessing you wouldn’t recommend we read this."
+    email: douglashill@douglashill.co
+    modified: "2018-11-13T17:01:36.294994Z"
+    number: "46030386"
+    number_intvalue: 46030386
+    originated: 14-Nov-2018 01:01 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: Xcode 10.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSItemProvider can’t load relative URLs on iOS

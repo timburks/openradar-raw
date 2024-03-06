@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17296585"
+    labels:
+        datastore_id: "5217352459223040"
+data:
+    classification: Enhancement
+    created: "2014-06-13T02:31:15.577803Z"
+    description: "Summary:\r\nSometimes a set of parameters to an initializer just won’t work—not because of a programming error, but simply because they don’t fit the environment. For instance, any initializer that takes a URL could fail, and there’s really nothing the programmer can do to avoid it—even checking for the file’s existence before initializing just introduces a race condition.\r\n\r\nSwift should acknowledge this and allow initializers to abort initialization and return nil.\r\n\r\n(There is a related bug in Swift—it assumes that Objective-C initializers never return nil, when in fact they often do. This is only tangentially related to that issue, though.)\r\n\r\nSteps to Reproduce:\r\n1. Write a dummy class:\r\n\r\n    class X {\r\n        let data: NSData\r\n        init(URL: NSURL, error: NSErrorPointer) {\r\n            if let data = NSData(contentsOfURL: URL, options: nil, error: error) {\r\n                self.data = data\r\n            }\r\n            else {\r\n                return nil\r\n            }\r\n         }\r\n    }\r\n\r\n2. Attempt to compile it.\r\n\r\nExpected Results:\r\nIt, or something similar, compiles and runs successfully.\r\n\r\nActual Results:\r\nAn obscure error on the return line that seems to boil down to “can’t turn nil into Void”.\r\n\r\nNotes:\r\nFor type safety’s sake, I would not allow just any initializer to return nil. Instead, I’d require the developer to mark the initializer, probably with a question mark:\r\n\r\n    init?(URL: NSURL, error: NSErrorPointer) {\r\n\r\nYou could support implicit optional initializers as well, but I wouldn’t bother; any initializer that is expected to potentially fail should be checked anyway. (You could also support them only for classes defined in Objective-C, where optional initializers are not clearly marked in the headers.)\r\n\r\nRather than “return nil”, you could introduce a different keyword, such as “fail”. Using “return nil” seems to be a little more parsimonious with keywords, though.\r\n\r\nAn initializer returning nil would probably require initializers calling it to immediately return nil as well. It would be an error to call an optional initializer from a non-optional one.\r\n\r\nTo ensure deinitialization works properly, Swift may need to require that the object be validly initialized, even with dummy data, and a superclass designated initializer be called, before an initializer was permitted to fail. That’d be fine."
+    email: brent@architechies.com
+    modified: "2014-06-17T00:12:27.086696Z"
+    number: "17296585"
+    number_intvalue: 17296585
+    originated: 12-Jun-2014 07:31 PM
+    parent_number: "16480364"
+    product: Developer Tools
+    product_version: Xcode6-Beta (6A215l)
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/16480364
+    title: Swift should allow initializers to return nil on failure

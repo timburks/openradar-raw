@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30667432"
+    labels:
+        datastore_id: "4950171955757056"
+data:
+    classification: ""
+    created: "2017-02-23T03:24:07.52412Z"
+    description: "Summary:\r\nManaging optionals in XCTest quickly becomes painful. Code like this is unfortunately common:\r\n\r\n```swift\r\nlet string: String? = nil\r\nXCTAssertNotNil(string)\r\nXCTAssert((string?.lengthOfBytes(using: .utf8))! > 0)\r\n```\r\nVery often, developers use `!` which leads to tests that crash in when tests fail. The root of the problem I think is the behavior of `XCTAssertNotNil` does not help with the unwrapping. If this method returned a discardable T and threw, it would discourage bad usage. I use a wrapper like:\r\n```\r\nstruct UnexpectedNilError: Error {}\r\nfunc AssertNotNilAndUnwrap<T>(_ variable: T?, message: String = \"Unexpected nil variable\", file: StaticString = #file, line: UInt = #line) throws -> T {\r\n    guard let variable = variable else {\r\n        XCTFail(message, file: file, line: line)\r\n        throw UnexpectedNilError()\r\n    }\r\n    return variable\r\n}\r\n```\r\n\r\nI added some more thoughts here:\r\nhttps://www.raizlabs.com/dev/2017/02/xctest-optional-unwrapping\r\n\r\nSteps to Reproduce:\r\nTry to write a unit test that unwraps a bunch of optionals and have it not duplicate a lot of code or use a helper.\r\n\r\nExpected Results:\r\nThe API should encourage proper unwrapping and error reporting so once optionality is confirmed, the developer has access to the unwrapped value.\r\n\r\nActual Results:\r\nTests usually fill with `?` or `!` to manage unwrapping which can miss failures or cause crashes\r\n\r\nVersion:\r\nXcode 8.3 beta 3\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nXCTest"
+    email: brian.king@raizlabs.com
+    modified: "2017-02-23T03:24:07.5243Z"
+    number: "30667432"
+    number_intvalue: 30667432
+    originated: 2/22/2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: XCTest does not help managing Optionality

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10529053"
+    labels:
+        datastore_id: "1475406"
+data:
+    classification: Serious bug
+    created: "2011-12-28T21:29:50.074941Z"
+    description: "When setting an NSOperationQueue on an NSURLConnection via setDelegateQueue to receive the delegate callbacks upon, these methods are never called if the setDelegateQueue and start methods are not called on the main thread, such as when the connection is used in an NSOperation subclass.\r\n\r\nSteps to Reproduce:\r\n\r\n- Create an NSOperation subclass.\r\n- Create and instantiate a strong NSOperationQueue property in this class.\r\n- Create an NSURLConnection with startsImmediately set to NO.\r\n- Set the queue on the connection via setDelegateQueue.\r\n- Start the connection in the NSOperation start methods.\r\n\r\n\r\nExpected Results:\r\n\r\nThe delegate callbacks should be called on this queue.\r\n\r\n\r\nActual Results:\r\n\r\nThe delegate callbacks are never called even if the operation, and thus the connection have started.\r\n\r\nThe setDelegateQueue method is unusable as per 5.0.1. This method should make using an asynchronous connection in an NSOperation easier but instead we have to use scheduleInRunLoop loosing all the benefits of the delegate queue.\r\n\r\nRegression:\r\n\r\nThis happens consistently, on both simulator and device (tested on a 4S, 3GS, iPad and iPad 2).\r\n\r\nNotes:\r\n\r\nThis works fine on Mac OS X.\r\nThis happens in iOS 5.0, 5.0.1 and does not seem to have been fixed yet on 5.1.\r\nAlso, it looks like calling setDelegateQueue and start on the main queue works. However, it leads to weird behaviours when more than one such connections are created, such as hanging.\r\n\r\nI have attached a sample project for iOS and a sample project for Mac OS X, demonstrating the difference in behaviour between the two platforms.\r\n\r\nDownload sample code at:\r\nhttp://ddvl.me/0g160z0t112J0H1d1a0P"
+    email: dd2284@gmail.com
+    modified: "2011-12-28T21:30:41.259452Z"
+    number: "10529053"
+    number_intvalue: 10529053
+    originated: 05/12/2011
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "5.0"
+    reproducible: yes
+    resolved: ""
+    status: Open
+    title: NSURLConnection setDelegateQueue is broken on iOS.

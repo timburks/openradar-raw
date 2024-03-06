@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20499961"
+    labels:
+        datastore_id: "5336177091543040"
+data:
+    classification: UI/Usability
+    created: "2015-04-10T17:38:47.552067Z"
+    description: "Summary:\r\nUIAlerts are delayed an indeterminate amount of time whenever presented from a UITableViewCell with a selection style of UITableViewCellSelectionStyleNone. Any other selection style does not appear to impact UIAlert display. This is reproducible 100% of the time.\r\n\r\nSteps to Reproduce:\r\nThe provided sample project contains all the necessary code to reliably reproduce the described behavior.\r\n1: Tap a cell with a selection style of UITableViewCellSelectionStyleNone. Notice the UIAlert is not displayed immediately.\r\n2: Tap a cell with a selection style of anything other than UITableViewCellSelectionStyleNone. Notice the UIAlert is displayed immediately.\r\n3: In the sample the project you can toggle between UITableViewCellSelectionStyleNone and UITableViewCellSelectionStyleGray by tapping the right bar button item.\r\n\r\nExpected Results:\r\nThe UIAlert should be presented immediately, regardless UITableViewCellSelectionStyle.\r\n\r\nActual Results:\r\nUITableViewCellSelectionStyleNone has an impact on alert display timing while all other selection styles do not.\r\n\r\nVersion:\r\niOS 8.1, iOS 8.2, iOS 8.3\r\n\r\nNotes:\r\nSometimes the very first cell interaction works as expected and all cell interactions after that are as described above. But that is not always the case.\r\n\r\nIf you wrap the presentViewController: call in a dispatch block like below, it will work as expected.\r\n\r\n    dispatch_async(dispatch_get_main_queue(), ^{\r\n        [self presentViewController:ac animated:YES completion:nil];\r\n    });\r\n\r\nor\r\n\r\n    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\r\n        [self presentViewController:ac animated:YES completion:nil];\r\n    });\r\n\r\nThis issue seems to be related to presenting any sort of view and is potentially related to radar 20482249\r\n\r\n\r\nConfiguration:\r\niPhone 6 & Simulator\r\n\r\nAttachments:\r\n'TableViewAlertBlocking.zip' was successfully uploaded.\r\n\r\nSample code available for download https://www.dropbox.com/s/m3a31d7w3q65s4a/TableViewAlertBlocking.zip"
+    email: JasonGrandelli@gmail.com
+    modified: "2015-04-10T17:50:02.657364Z"
+    number: "20499961"
+    number_intvalue: 20499961
+    originated: 4/10/2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 8.1, 8.2, 8.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIAlerts displayed from UITableView delayed if cell selection style is UITableViewCellSelectionStyleNone

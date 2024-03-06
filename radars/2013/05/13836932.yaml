@@ -1,0 +1,84 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13836932"
+    labels:
+        datastore_id: "3012403"
+data:
+    classification: Other Bug
+    created: "2013-05-08T11:13:39.05556Z"
+    description: |-
+        Summary:
+
+        You can set a view as inputView for a editable view to appear in place of a keyboard. If this inputView has a scroll view this will erroneously receive a setContentInset after the keyboard finished its incoming animation.
+
+        Steps to Reproduce:
+
+        - Create a UITableViewController
+        - On a UIView that canBecomeFirstResponder set this VC's view as inputView
+        - have the UIView becomeFirstResponder
+
+        Expected Results:
+
+        - The UITableViewController's tableView should not have a contentInset
+
+        Actual Results:
+
+        - Every UIScrollView receives a contentInset, even if it is itself the inputView that was showing "as keyboard".
+
+        Regression:
+
+        - This automatic setting of contentInset started with iOS 6. It does not occur in iOS 5.
+
+        Notes:
+
+        I believe that the notification that gets sent after the keyboard/inputView animated in should take into consideration that scroll views that are subviews of the showing inputView don't get a contentInset set.
+
+        As a workaround I am subclassing UITableView and overriding setContentInset: to ignore the erroneous setting.
+
+        This is the call stack I get on this overwritten contentInset:
+
+        * thread #1: tid = 0x1c03, 0x0000f6ca RTEDemoApp`-[DTFormatTableView setContentInset:](self=0x099e5000, _cmd=0x09405f60, contentInset=(null)) + 58 at DTFormatTableView.m:16, stop reason = breakpoint 3.1
+            frame #0: 0x0000f6ca RTEDemoApp`-[DTFormatTableView setContentInset:](self=0x099e5000, _cmd=0x09405f60, contentInset=(null)) + 58 at DTFormatTableView.m:16
+            frame #1: 0x0373c1bd CoreFoundation`__invoking___ + 29
+            frame #2: 0x0373c0d6 CoreFoundation`-[NSInvocation invoke] + 342
+            frame #3: 0x016c7def Foundation`NSKVOForwardInvocation + 375
+            frame #4: 0x03737cf9 CoreFoundation`___forwarding___ + 905
+            frame #5: 0x0373794e CoreFoundation`_CF_forwarding_prep_0 + 14
+            frame #6: 0x00bc5029 UIKit`-[UIScrollView(UIScrollViewInternal) _adjustForAutomaticKeyboardInfo:animated:lastAdjustment:] + 377
+            frame #7: 0x00c14ddc UIKit`-[UITableView(UITableViewInternal) _adjustForAutomaticKeyboardInfo:animated:lastAdjustment:] + 73
+            frame #8: 0x00d87af9 UIKit`-[UITableViewController _adjustTableForKeyboardInfo:] + 201
+            frame #9: 0x00d86c27 UIKit`-[UITableViewControllerKeyboardSupport _keyboardDidChangeFrame:] + 131
+            frame #10: 0x016d44f9 Foundation`__57-[NSNotificationCenter addObserver:selector:name:object:]_block_invoke_0 + 40
+            frame #11: 0x037a20c5 CoreFoundation`___CFXNotificationPost_block_invoke_0 + 85
+            frame #12: 0x036fcefa CoreFoundation`_CFXNotificationPost + 2122
+            frame #13: 0x01608bb2 Foundation`-[NSNotificationCenter postNotificationName:object:userInfo:] + 98
+            frame #14: 0x00f08a29 UIKit`-[UIInputViewTransition postNotificationsForTransitionEnd] + 682
+            frame #15: 0x00f01e5c UIKit`__53-[UIPeripheralHost(UIKitInternal) executeTransition:]_block_invoke_01079 + 203
+            frame #16: 0x00ba2df6 UIKit`-[UIViewAnimationBlockDelegate _didEndBlockAnimation:finished:context:] + 223
+            frame #17: 0x00b95d66 UIKit`-[UIViewAnimationState sendDelegateAnimationDidStop:finished:] + 237
+            frame #18: 0x00b95f04 UIKit`-[UIViewAnimationState animationDidStop:finished:] + 68
+            frame #19: 0x006a57d8 QuartzCore`CA::Layer::run_animation_callbacks(void*) + 284
+            frame #20: 0x01ff0014 libdispatch.dylib`_dispatch_client_callout + 14
+            frame #21: 0x01fe07d5 libdispatch.dylib`_dispatch_main_queue_callback_4CF + 296
+            frame #22: 0x036eeaf5 CoreFoundation`__CFRunLoopRun + 1925
+            frame #23: 0x036edf44 CoreFoundation`CFRunLoopRunSpecific + 276
+            frame #24: 0x036ede1b CoreFoundation`CFRunLoopRunInMode + 123
+            frame #25: 0x02b757e3 GraphicsServices`GSEventRunModal + 88
+            frame #26: 0x02b75668 GraphicsServices`GSEventRun + 104
+            frame #27: 0x00b57ffc UIKit`UIApplicationMain + 1211
+            frame #28: 0x00001fec RTEDemoApp`main(argc=1, argv=0xbffff208) + 92 at main.m:15
+
+        At first glance I assume that you would want to modify _adjustForAutomaticKeyboardInfo:animated:lastAdjustment: to check if the UITableViewController's view is part of the view hierarchy of the inputView that triggered the inputView frame size change notification.
+    email: oliver.drobnik@gmail.com
+    modified: "2013-05-08T11:13:39.057277Z"
+    number: "13836932"
+    number_intvalue: 13836932
+    originated: 08-May-2013 01:13 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 6.1.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIScrollView Should Not Adjust Content Inset if it is Input View

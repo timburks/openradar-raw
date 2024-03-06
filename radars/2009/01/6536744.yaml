@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6536744"
+    labels:
+        datastore_id: "3004"
+data:
+    classification: Serious Bug
+    created: "2009-01-28T21:41:26.218645Z"
+    description: "Summary:\r\n\r\nFSMoveObjectToTrashSync will fail with -50 (bad arg) when a file of the same name has already been trashed, and renaming the new file would lead to a filename > 31 characters.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a file with a longish name. e.g ccccccccccccccccccc\r\n\r\n2. Call FSMoveObjectToTrashSync with (an FSRef for) that file as an argument. It should succeed.\r\n\r\n3. Then recreate the file, and call FSMoveObjectToTrashSync again. It will fail with -50, as the renamed file would have a name longer > 31 characters.\r\n\r\nExpected Results:\r\n\r\nThe call should succeed, and trash and rename the file, even where the resulting filename > 31 chars long.\r\n\r\nActual Results:\r\n\r\nFSMoveObjectToTrashSync fails with -50 (bad arg)\r\n\r\nRegression:\r\n\r\nThe Finder has the correct behaviour.\r\n\r\nNotes: The attached project shows the issue. Its a bit messy, as its extracted from production code.\r\n\r\nBuild the project, run\r\n\r\ntouch ccccccccccccccccccc\r\n./DeleteTest ccccccccccccccccccc\r\ntouch ccccccccccccccccccc\r\n./DeleteTest ccccccccccccccccccc\r\n\r\nThe second call should fail.\r\n\r\n\r\nOther similar methods (e.g. FSPathMoveObjectToTrashSync, and the Async methods) may suffer a similar problem, but I haven't looked."
+    email: mildm8nnered@gmail.com
+    modified: "2011-08-28T05:48:18.476493Z"
+    number: "6536744"
+    number_intvalue: 6536744
+    originated: 28-Jan-2009 01:31 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.6/9G55
+    reproducible: Always
+    resolved: Unknown
+    status: Closed
+    title: FSMoveObjectToTrashSync fails when a trash rename would be > 31 characters

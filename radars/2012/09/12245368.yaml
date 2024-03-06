@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12245368"
+    labels:
+        datastore_id: "1941401"
+data:
+    classification: ""
+    created: "2012-09-06T12:13:05.928739Z"
+    description: "Summary:\r\nRepeatedly calling [[NSDocumentController sharedDocumentController] recentDocumentURLs] in a sandboxed application project will eventually cause the following Console output:\r\n06.09.12 09:58:36,544 TextEdit: Unable to consume sandbox extension for /Users/…/Library/Containers/com.apple.TextEdit/Data/Downloads/o11/Text.txt(9c6530d502e997dbd6d1e30a8a2ed6baa500ca66;00000000;0000000000000020;com.apple.app-sandbox.read-write;00000001;0e000002;000000000152baf8;/users/…/downloads/o11/text.txt): Cannot allocate memory\r\n\r\nThis message is printed for each document in the list of recently used documents and every time the method is called. In most cases, the output started at the 620th call to this method.\r\nAfter these messages appear, the document cannot be saved to disk anymore.\r\n\r\nThe problem originally appeared in our application, but we were able to reproduce it on other sandboxed applications (e.g. the TextEdit sample project, see attached files).\r\n\r\nThe only workaround is to restart the application.\r\n\r\nSteps to Reproduce:\r\n1. Open the TextEdit sample project (version 1.7) that comes with Xcode.\r\n2. Enable sandboxing for the project in the project settings, and set the \"user selected file\" option to \"Read/Write Access\".\r\n3. In the \"Document\" class, add the following lines in the \"init\" Method:\r\n        for (NSUInteger index = 0; index < 1000; index ++) {\r\n                [[NSDocumentController sharedDocumentController] recentDocumentURLs];\r\n                NSLog(@\"%lu\", index);\r\n        }\r\n4. Open and close a few documents in TextEdit so that there are a number of recently used documents. \r\n5. After about 620 iterations, the above Console output should start appearing in the Console app. Saving the currently open document should fail.\r\n\r\nExpected Results:\r\nNo Console output/sandbox exceptions no matter how many times the method [[NSDocumentController sharedDocumentController] recentDocumentURLs] is called. Document can be saved successfully. \r\n\r\nActual Results:\r\nSandbox exceptions, Document cannot be saved."
+    email: goetz.fabian@gmail.com
+    modified: "2014-10-13T08:29:45.425493Z"
+    number: "12245368"
+    number_intvalue: 12245368
+    originated: 06-Sep-2012 02:06 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.8.x
+    reproducible: Always
+    resolved: Duplicate
+    status: Open
+    title: Repeatedly fetching recent document URLs causes Sandbox exceptions

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14553560"
+    labels:
+        datastore_id: "3219401"
+data:
+    classification: Other Bug
+    created: "2013-07-26T02:42:15.808694Z"
+    description: "26-Jul-2013 10:32 AM Catherine Wise:\r\nSummary:\r\nWhen the expiry date on a certificate contained in a PKCS#12 format file is on or after January 1st, 10000 (AD), SecPKCS12Import returns errSecSuccess but the passed in CFArrayRef is returned empty. This is undocumented.\r\n\r\nSteps to Reproduce:\r\nToday: 26th July 2013. January 1st 10000 is 2,916,975 days from today.\r\n\r\nCreate certificate with OpenSSL (older built-in openssl okay):\r\n\r\nopenssl req -new -x509 -keyout key.pem -out cert.pem -days 2916985\r\nopenssl pkcs12 -export -out set.p12 -inkey key.pem -in cert.pem\r\n\r\nPass a NSURL with the location of set.p12, and the password chosen to:\r\n\r\n+ (void) fromP12File:(NSURL *)file withPassword:(NSString *)password {\r\n    OSStatus securityError = errSecSuccess;\r\n    NSData *fileData = [NSData dataWithContentsOfURL:file];\r\n    \r\n    const void *keys[] =   { kSecImportExportPassphrase };\r\n    const void *values[] = { (__bridge CFStringRef)password };\r\n    CFDictionaryRef optionsDictionary = NULL;\r\n    \r\n    optionsDictionary = CFDictionaryCreate(NULL, keys,\r\n                                           values, (password ? 1 : 0),\r\n                                           NULL, NULL);  \r\n    \r\n    CFArrayRef items = NULL;\r\n    securityError = SecPKCS12Import((__bridge CFDataRef)fileData,\r\n                                    optionsDictionary,\r\n                                    &items);                    \r\n    \r\n    if (securityError == 0 && CFArrayGetCount(items) > 0) {                                 \r\n        NSLog(@\"Count: %ld\", CFArrayGetCount(items));\r\n    } else if (securityError == 0) {\r\n        NSLog(@\"EMPTY RAGE.\");\r\n    } else {\r\n        NSLog(@\"Error: %ld\", securityError);\r\n    }\r\n    \r\n    if (optionsDictionary)                                     \r\n        CFRelease(optionsDictionary);\r\n    \r\n    if (items)\r\n        CFRelease(items);\r\n}\r\n\r\nExpected Results:\r\nShould log \"Count: 1\".\r\n\r\nActual Results:\r\nLogs \"EMPTY RAGE\".\r\n\r\nRegression:\r\nOccurs with iOS SDK, on device and simulator, so likely to also be a problem on Mac.\r\n\r\nNotes:\r\nReally, having certificates that expire after 10,000 AD isn't going to occur very often, unless you do what I did and just pick a very large number for days. Or something like MAX_INT. Just put a note in the document not to use dates on or after 10,000 AD please."
+    email: everbloom@gmail.com
+    modified: "2013-07-26T02:42:15.808896Z"
+    number: "14553560"
+    number_intvalue: 14553560
+    originated: 26-Jul-2013 10:32 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "6.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SecPKCS12Import returns empty array when certificate expires after Jan 1st 10000

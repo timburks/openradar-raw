@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12021880"
+    labels:
+        datastore_id: "1845408"
+data:
+    classification: Bug
+    created: "2012-08-03T00:31:11.73126Z"
+    description: "Summary:\r\n\r\nI have a simple CoreData-backed iOS project, with a test suite using an NSInMemoryStoreType data store.  When I perform a fetch request which uses an NSExpressionDescription (to calculate an average for a field) I get a crash with -[__NSCFNumber count]: unrecognized selector sent to instance.  When I switch the store type to NSSQLiteStoreType the fetch succeeds as expected.\r\n\r\nSteps to Reproduce:\r\n\r\ngiven an otherwise working NSFetchRequest, configure with the following code:\r\n\r\n        [fetchRequest setResultType:NSDictionaryResultType];\r\n\r\n        NSExpression *keyPathExpression = [NSExpression expressionForKeyPath:@\"duration\"];\r\n        NSExpression *avgExpression = [NSExpression expressionForFunction:@\"average:\" arguments:[NSArray arrayWithObject:keyPathExpression]];\r\n\r\n        NSExpressionDescription *expressionDescription = [[NSExpressionDescription alloc] init];\r\n        [expressionDescription setName:@\"averageDuration\"];\r\n        [expressionDescription setExpression:avgExpression];\r\n        [expressionDescription setExpressionResultType:NSDoubleAttributeType];\r\n\r\n        [fetchRequest setPropertiesToFetch:[NSArray arrayWithObject:expressionDescription]];\r\n\r\nNSArray *resultSet = [context executeFetchRequest:fetchRequest error:&error];\r\n\r\n\r\nExpected Results:\r\n\r\nExecuting the fetch request should succeed and return a dictionary in the resultSet array, with an NSNumber for the averageDuration key\r\n\r\n\r\nActual Results:\r\n\r\nAn exception/crash with -[__NSCFNumber count]: unrecognized selector sent to instance. Switching to an NSSQLiteStoreType results in the request succeeding as expected."
+    email: akitchen@gmail.com
+    modified: "2012-08-03T00:31:11.731495Z"
+    number: "12021880"
+    number_intvalue: 12021880
+    originated: 8/2/2012
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "5.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CoreData exception/crash using NSInMemoryStoreType and NSExpressionDescription

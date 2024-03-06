@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20356002"
+    labels:
+        datastore_id: "5888585047736320"
+data:
+    classification: ""
+    created: "2015-03-31T00:04:38.981541Z"
+    description: "Summary:\r\nIt appears that -ObjC causes the linker to link all LTO objects in all archives. If -dead_strip is also passed the linker can fail to link the program, producing \"loaded too late\" and \"undefined symbol\" errors in certain cases. \r\n\r\nSee also: https://llvm.org/bugs/show_bug.cgi?id=23007\r\n\r\nSteps to Reproduce:\r\nWith Xcode installed:\r\n\r\n$ cat main.cc\r\nint main() {}\r\n$ cat globalinit.cc\r\nclass A {\r\npublic:\r\n  A();\r\n};\r\nA a;\r\nint b;\r\n$ cat ctor.cc\r\n#include <stdio.h>\r\nclass A {\r\npublic:\r\n  A();\r\n};\r\nA::A() {\r\n  puts(\"hello world\");\r\n} \r\n$ clang++ -c -flto main.cc globalinit.cc\r\n$ clang++ -c ctor.cc\r\n$ rm -f libglobalinit.a\r\n$ ar cru libglobalinit.a globalinit.o\r\n$ rm -f libctor.a\r\n$ ar cru libctor.a ctor.o\r\n$ clang++ -Wl,-ObjC -o test1 main.o libglobalinit.a libctor.a\r\n$ clang++ -Wl,-ObjC -Wl,-dead_strip -o test2 main.o libglobalinit.a libctor.a\r\nld: warning: '_b' is implemented in bitcode, but it was loaded too late\r\nUndefined symbols for architecture x86_64:\r\n  \"_a\", referenced from:\r\n      __GLOBAL__I_a in lto.o\r\n      import-atom in libglobalinit.a(globalinit.o)\r\nld: symbol(s) not found for architecture x86_64\r\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\r\n$ ./test1\r\nhello world\r\n\r\nExpected Results:\r\ntest1 should print no output and test2 should link successfully.\r\n\r\nActual Results:\r\nThe global initializers in test1 are run causing the output \"hello world\" to be printed. test2 produces linker errors.\r\n\r\nVersion:\r\nOS X 10.9.5\r\nXcode 6.1.1"
+    email: pcc@google.com
+    modified: "2015-03-31T00:04:38.981686Z"
+    number: "20356002"
+    number_intvalue: 20356002
+    originated: 3/30/2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: '[LLVM] With LTO, ld -ObjC links too much and interacts badly with -dead_strip'

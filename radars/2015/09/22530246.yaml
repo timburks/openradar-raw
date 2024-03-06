@@ -1,0 +1,58 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22530246"
+    labels:
+        datastore_id: "5030149665849344"
+data:
+    classification: UI/Usability
+    created: "2015-09-02T00:09:12.51393Z"
+    description: |-
+        Summary:
+
+        The Objective-C generics syntax is non-ambiguous because types must be pointer types and protocols do not have a trailing asterisk. The compiler fails to disambiguate the case where a protocol and class have the same name and both are adopted - ie. when a collection class is known to fulfil a particular protocol and you also want to use generics with that collection.
+
+        Steps to Reproduce:
+
+        Compile:
+
+        @protocol Countable
+        - (NSUInteger)count;
+        @end
+
+        @interface Countable : NSObject <Countable>
+        @end
+
+        @interface MyModel : NSObject
+        @property (nonatomic, strong) NSArray<Countable,Countable*> * objects;
+        @end
+
+
+        Expected Results:
+
+        Compiles, with compile time generics applied to ensure only objects of class “Countable” are added, and a property that at runtime can be introspected to show that it conforms to the protocol “Countable”.
+
+        Actual Results:
+
+        Compile error:
+
+        error: type argument 'Countable' is neither an Objective-C object nor a block type
+
+        Regression:
+        nil
+
+        Notes:
+
+        Demo project attached. Note that objects and protocols of the same name are not uncommon, eg. NSObject and we can see that the name conflict does not in itself introduce a type since we can adopt either the protocol or the generic class, just not both at once - which makes the error even more mystifying since we know that the compiler does indeed know that “Countable” is an Objective-C object.
+    email: aufflick@gmail.com
+    modified: "2015-09-02T00:09:12.51414Z"
+    number: "22530246"
+    number_intvalue: 22530246
+    originated: 02-Sep-2015 10:08 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A192o)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode-beta (7A192o): Compiler fails when both using ObjC Generics and a protocol with the same name'

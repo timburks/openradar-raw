@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "38939209"
+    labels:
+        datastore_id: "4950139709947904"
+data:
+    classification: Serious
+    created: "2018-03-28T02:15:51.95726Z"
+    description: "Summary: Preallocating file space on APFS fails with error \"Invalid Arguments\"\r\n\r\nSteps to Reproduce:\r\nCompile the attached code using \"clang++ --std=c++14 radar.cpp -o radar\"\r\nRun the binary produced on an APFS file system. I used MacOS 10.13.3, and can also reproduce on a APFS ramdisk. However, the code attached works correctly on a HSF+ file system.\r\nOn APFS, the program outputs: \"Failed to preallocate space! Invalid argument\"\r\nOn HSF+, the program outputs: \"successfully preallocated file\"\r\n\r\nExpected Results:\r\nI expect the call to fcntl to succeed on APFS as it does on HSF+.\r\n\r\nActual Results:\r\nCalling fcntl to preallocate file space immediately after the file is created fails.\r\nNote that adding a sufficient delay between file creation and calling fcntl can cause the call to succeed so the issue seems to be timing related. We tried syncing the file before the preallocation, but this doesn't help.\r\n\r\nVersion/Build:\r\nMacBook Pro (Retina, 13-inch, Early 2015)\r\nProcessor: 3.1 GHz Intel Core i7\r\nMemory: 16 GB 1867 MHz DDR3\r\n\r\nClang version:\r\nApple LLVM version 9.0.0 (clang-900.0.39.2)\r\nTarget: x86_64-apple-darwin17.4.0\r\nThread model: posix\r\n\r\n\r\nSource Code of \"radar.cpp\":\r\n\r\n#include <fcntl.h>\r\n#include <iostream>\r\n#include <unistd.h>\r\n\r\nint main() {\r\n    const char* file_name = \"test.txt\";\r\n\r\n    if (access(file_name, F_OK) == 0) {\r\n        int rm_status = unlink(file_name);\r\n        if (rm_status == -1) {\r\n            std::cout << \"could not remove the existing file: \" << file_name << std::endl;\r\n        }\r\n    }\r\n    \r\n    int fd = ::open(file_name, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);\r\n    if (fd < 0) {\r\n        std::cout << \"could not open file\" << std::endl;\r\n        return 1;\r\n    }\r\n    \r\n    const size_t bytes_to_write = 5;\r\n    ssize_t written_bytes = ::write(fd, \"hello\", bytes_to_write);\r\n    if (written_bytes == bytes_to_write) {\r\n        const off_t space_to_allocate = 100;\r\n        fstore_t store = { F_ALLOCATEALL, F_PEOFPOSMODE, 0, space_to_allocate, 0 };\r\n        int ret = ::fcntl(fd, F_PREALLOCATE, &store);\r\n        if (ret == -1) {\r\n            int err = errno;\r\n            const size_t error_buffer_size = 256;\r\n            char error_buffer[error_buffer_size + 1];\r\n            const int result = ::strerror_r(err, error_buffer, error_buffer_size);\r\n            error_buffer[error_buffer_size] = '\\0';\r\n            std::cout << \"Failed to preallocate space! \" << error_buffer << std::endl;\r\n        } else {\r\n            std::cout << \"successfully preallocated file\" << std::endl;\r\n        }\r\n    } else {\r\n        std::cout << \"could not write to file, exiting\" << std::endl;\r\n    }\r\n\r\n    ::close(fd);\r\n}"
+    email: jamesandrewstone@gmail.com
+    modified: "2018-03-28T02:15:51.95748Z"
+    number: "38939209"
+    number_intvalue: 38939209
+    originated: 27 March 2018
+    parent_number: '&{NULL_VALUE}'
+    product: MacOS + SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: open
+    title: APFS failure to preallocate file space

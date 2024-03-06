@@ -1,0 +1,32 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23419605"
+    labels:
+        datastore_id: "5021239319986176"
+data:
+    classification: Other Bug
+    created: "2015-11-05T22:17:49.85511Z"
+    description: |-
+        I have two array properties. One is public, immutable, and readonly. The other is "private", mutable, and is used as the internal backing for the public property. I want KVO to work on the public property. The code looks very much like the class 'Foo' in the attached sample program.
+
+        The issue is that when `bar` is observed, the value of `NSKeyValueChangeKindKey` is always `NSKeyValueChangeSetting`, even when the notification was triggered by an insert or removal on `internalBar`. If `internalBar` is observed directly instead, `NSKeyValueChangeKindKey` is as expected (`NSKeyValueChangeInsertion` or `NSKeyValueChangeRemoval`), along with the expected array of indexes for `NSKeyValueChangeIndexesKey`.
+
+        I know the documentation says:
+        "You cannot set up dependencies on to-many relationships by implementing keyPathsForValuesAffectingValueForKey:. Instead, you must observe the appropriate attribute of each of the objects in the to-many collection and respond to changes in their values by updating the dependent key yourself."
+
+        However, that seems to imply that the problem is when value for the dependent key(Path) depends on properties of objects in the to-many relationship's array, rather than on the contents of the relationship/array itself. And of course, this does basically work, it's just the `NSKeyValueChangeKindKey` that's wrong (and the missing `NSKeyValueChangeIndexesKey`).
+
+        The attached program demonstrates this behavior. If keyPathToObserve is @"bars", the value for NSKeyValueChangeKindKey in the observation method is always 1. If keyPathToObserve is instead @"internalBars", the value for NSKeyValueChangeKindKey will be correct (2 or 3 depending on whether a value was added or removed).
+    email: armadsen@gmail.com
+    modified: "2015-11-05T22:17:49.85545Z"
+    number: "23419605"
+    number_intvalue: 23419605
+    originated: 05-Nov-2015 03:16 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: Mac OS X 10.11.1 (15B42)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'KVO: NSKeyValueChangeKind is wrong when observing to-many relationship which depends on another to-many relationship'

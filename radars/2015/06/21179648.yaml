@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21179648"
+    labels:
+        datastore_id: "5021668984487936"
+data:
+    classification: ""
+    created: "2015-06-01T07:25:31.74219Z"
+    description: "Applications packaged with a valid WatchKit Extension and App are required to include both a `Payload`directory and `WatchKitSupport` directory.\r\n\r\nJake Behrens outlines in this Developer Forums thread https://devforums.apple.com/message/1119973#1119973\r\n\r\nFurther outlined in this blog post\r\nhttp://www.matrixprojects.net/p/watchkit-command-line-builds\r\n\r\nXcode 6.3.2 (6D2105) will automatically package WatchKitSupport into a .ipa when Archiving and Exporting.\r\n\r\nWhen using `xcrun` in a command line script to perform the packaging manually, the .ipa is generating without the WatchKitSupport/WK needed. \r\n\r\nThis is not documented clearly anywhere, aside from in a brief post in the Developer Forums.\r\n\r\nCurrent workaround involves manually unzipping an .ipa, copying in a file from a hard coded location in the iOS SDK and repackaging the .ipa file. This is not a long term solution.\r\n\r\nSee below for sample -\r\n\r\nxcrun \\\r\n-log \\\r\n-sdk $IOS_RELEASE_SDK PackageApplication \"$PWD/$OUTPUTDIR/Products/$APP_NAME.app\" \\ \r\n-o \"$PWD/$OUTPUTDIR/Products/$APP_NAME.ipa\" \\\r\n-sign \"$DEVELOPER_NAME\" \\\r\n-embed \"$PROVISIONING_PROFILE\" \"$PROVISIONING_PROFILE_WATCHEXT\" \"$PROVISIONING_PROFILE_WATCHAPP\"\r\n\r\n# Extract IPA\r\nunzip \"$PWD/$OUTPUTDIR/Products/$APP_NAME.ipa\"\r\n\r\n# Include WatchKitSupport\r\nmkdir \"$PWD/$OUTPUTDIR/Products/$APP_NAME/WatchKitSupport\"\r\ncp \"/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/Library/Application\\ Support/WatchKit/WK\" WatchKitSupport/WK\r\n\r\n# Repackage\r\nzip -qr \"$APP_NAME.ipa\" Payload WatchKitSupport\r\n\r\nSteps to Reproduce:\r\n1. Open Xcode Project with WatchKit app\r\n2. Use Xcode to Archive and Export an .ipa\r\n3. Use xcrun to Package application as an .ipa\r\n4. Compare the .ipa contents\r\n5. Note that Xcode's output .ipa includes the WatchKitSupport directory but xcrun's output does not.\r\n\r\nExpected Results:\r\nxcrun should generate the exact same output as Xcode including the WatchKitSupport/WK files.\r\n\r\nActual Results:\r\nxcrun generates an .ipa that does not include all required files for WatchKit application deployment.\r\n\r\nVersion:\r\nXcode 6.3.2 (6D2105)\r\nxcrun Version 23"
+    email: me@phillfarrugia.com
+    modified: "2018-04-16T21:36:14.7088Z"
+    number: "21179648"
+    number_intvalue: 21179648
+    originated: 01-Jun-2015 05:22 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: xcrun Version 23
+    reproducible: Always
+    resolved: ""
+    status: Closed as Duplicate of 16703091
+    title: xcrun does not support Packaging IPA with a WatchKit App

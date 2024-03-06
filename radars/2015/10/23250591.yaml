@@ -1,0 +1,53 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23250591"
+    labels:
+        datastore_id: "5544879585230848"
+data:
+    classification: Serious Bug
+    created: "2015-10-25T16:56:55.72793Z"
+    description: |-
+        Summary:
+        Using `instance.instanceMethod(arguments)` computes transitivity correctly, but using `SomeType.instanceMethod(instance)(arguments)` does not.
+
+
+        Steps to Reproduce:
+        1. This code:
+        func fmap<A, B>(f: A -> B, _ x: A?) -> B? {
+        	return Optional.map(x)(f)
+        }
+
+
+        Expected Results:
+        should compile without error
+
+
+        Actual Results:
+        but totally doesn’t:
+
+        boom.swift:2:9: error: call can throw, but it is not marked with 'try' and the error is not handled
+                return Optional.map(x)(f)
+                       ^
+
+        This is bogus; `map` is marked as `rethrows` and its function argument is not marked as `throws`.
+
+
+        Regression:
+        If you change the body of the function to `return x.map(f)`, it compiles correctly.
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-10-25T16:56:55.72825Z"
+    number: "23250591"
+    number_intvalue: 23250591
+    originated: 25-Oct-2015 12:56 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode Version 7.1 (7B91b)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Curried methods compute transitivity of `throws`/`rethrows` incorrectly

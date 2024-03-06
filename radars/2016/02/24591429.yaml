@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24591429"
+    labels:
+        datastore_id: "4978737263149056"
+data:
+    classification: Other Bug
+    created: "2016-02-10T19:27:49.65238Z"
+    description: "Summary:\r\nWhen submitting a creation request (-[PHAssetChangeRequest creationRequestForAssetFromImage:]), and modifying the contentEditingOutput of that request. The original image cannot have an orientation other than UIImageOrientationUp. Otherwise the changes will fail, with error -1. \r\n\r\nExample:\r\nUIImage *ImgRed = [UIImage imageWithCGImage: Red scale: 1.0f orientation: UIImageOrientationDown]; //doesn't seem to matter what the orientation is as long as the original is UIImageOrientationUp\r\nUIImage *ImgBlue = [UIImage imageWithCGImage: Blue scale: 1.0f orientation: UIImageOrientationDown]; //only works if orientation is UIImageOrientationUp\r\n\r\n[[PHPhotoLibrary sharedPhotoLibrary] performChanges: ^{\r\n    PHAssetChangeRequest *ChangeRequest = [PHAssetChangeRequest creationRequestForAssetFromImage: ImgBlue];\r\n    \r\n    PHContentEditingOutput *EditingOutput = [[[PHContentEditingOutput alloc] initWithPlaceholderForCreatedAsset: ChangeRequest.placeholderForCreatedAsset] autorelease];\r\n    \r\n    EditingOutput.adjustmentData = [[[PHAdjustmentData alloc] initWithFormatIdentifier: @\"com.test.colour\" formatVersion: @\"1.0.0\" data: [NSData dataWithBytes: \"r\" length: 1]] autorelease];\r\n    \r\n    [UIImageJPEGRepresentation(ImgRed, 1.0) writeToURL: EditingOutput.renderedContentURL atomically: YES];\r\n    ChangeRequest.contentEditingOutput = EditingOutput;\r\n} completionHandler: ^(BOOL success, NSError * _Nullable error){\r\n    if (!success) NSLog(@\"%@\", error); //will print: 'Error Domain=NSCocoaErrorDomain Code=-1 \"(null)\"'\r\n}];\r\n\r\nIf not modifying the contentEditingOutput, then the original image can have any orientation. This is the behaviour that would be expected to be applied in either case.\r\n\r\nSteps to Reproduce:\r\n1. Request changes to be applied to the photo library\r\n2. Create a creation request for the image with an orientation other than UIImageOrientationUp\r\n3. Create an editing output object from the placeholder asset\r\n4. Set the adjustment data and save the result image\r\n5. Set the contentEditingOutput\r\n\r\nExpected Results:\r\nThe completion handler should be passed success. And the modified image (where it's preserved the original + adjustment data) should appear in the photo library.\r\n\r\nActual Results:\r\nThe completion handler is passed NO for success, and the error is set to a NSCocoaErrorDomain error with error code -1 and no userInfo. And the image is not in the photo library.\r\n\r\nWorkaround:\r\nA temporary workaround is to transform the image ourselves so it is oriented in the correct way. In which case we can then use UIImageOrientationUp. However this isn't ideal as it is extra work for the application."
+    email: ScrimpyCat@gmail.com
+    modified: "2016-02-10T19:27:49.65273Z"
+    number: "24591429"
+    number_intvalue: 24591429
+    originated: February 11 2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 9.0.2
+    reproducible: Yes
+    resolved: No
+    status: Open
+    title: -[PHContentEditingOutput initWithPlaceholderForCreatedAsset:] not working with assets in an orientation other than UIImageOrientationUp (default)

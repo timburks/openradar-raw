@@ -1,0 +1,59 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18368365"
+    labels:
+        datastore_id: "4517048109498368"
+data:
+    classification: Serious Bug
+    created: "2014-09-17T18:16:47.919885Z"
+    description: |-
+        Summary:
+        enum E<Q : Equatable> is treated differently from enum E<Q where Q : Equatable>, and it’s creeping me out.
+
+
+        Steps to Reproduce:
+        1. Try to compile this code:
+
+        enum E<Q where Q : Equatable> { case One }
+        func s<S : SequenceType where S.Generator.Element : Equatable>(s: S) -> E<S.Generator.Element> { return E.One }
+        let x = s([1, 2, 3])
+
+        That is, given:
+        1. a type E parameterized by a type Q which is constrained *via a where clause* to be Equatable; and
+        2. a function returning E<S.Generator.Element> given a sequence of type S whose elements are constrained to be Equatable
+
+        …when:
+        1. calling the function with an appropriate sequence
+
+
+        Expected Results:
+        …I expected it to succeed, but…
+
+
+        Actual Results:
+        …it errors:
+
+        error: type 'Array<Int>' does not conform to protocol 'Equatable'
+
+
+        Regression:
+        If you do enum E<Q : Equatable> instead of using the where clause, it typechecks and compiles correctly.
+
+
+        Notes:
+        I’m right in thinking that <Q : Equatable> is essentially shorthand for <Q where Q : Equatable>, right? This is causing me to question my understanding of Swift at a basic level.
+
+        I’m not sure that the error message isn’t masking another issue; i.e. I’m not sure if it’s actually testing Array<Int> for Equatable conformance or if it’s just saying that masking some other error internal to it. I don’t quite know how to find this out.
+    email: rix.rob@gmail.com
+    modified: "2014-09-17T18:16:47.920078Z"
+    number: "18368365"
+    number_intvalue: 18368365
+    originated: 17-Sep-2014 02:16 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-Beta (6A1030)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: constraint for protocol conformance fails to match associated type when applied via where clause'

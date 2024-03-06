@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11659831"
+    labels:
+        datastore_id: "1905405"
+data:
+    classification: Other Bug
+    created: "2012-08-30T19:12:06.147484Z"
+    description: "Summary:\r\nIf I have a Cocoa app containing Carbon windows, kEventTextInputUnicodeForKeyEvent are not sent to the Carbon event handler if Cmd-Enter or Ctrl-Enter are pressed.\r\n\r\nSteps to Reproduce:\r\n1) Create a Cocoa app\r\n2) Create a plain Carbon window and register for kEventTextInputUnicodeForKeyEvent events\r\n3) Press Cmd-Enter or Ctrl-Enter\r\n\r\nExpected Results:\r\nThe kEventTextInputUnicodeForKeyEvent handler would get called.\r\n\r\nActual Results:\r\nThe kEventTextInputUnicodeForKeyEvent event is eaten by Cocoa and not passed to the Carbon event handler.\r\n\r\nRegression:\r\nUnknown.\r\n\r\nNotes:\r\nI was able to debug this enough to figure out why it's happening. The implementation of -[NSCarbonWindow performKeyEquivalent] is looking for a default button in the Carbon window so that it can simulate a button click on Cmd-Enter or Ctrl-Enter. However, if the Carbon window doesn't have a button the GetWindowDefaultButton method returns NULL. In that case, -performKeyEquivalent is return YES which prevents the event from being further processed. If GetWindowDefaultButton returns NULL, it is my opinion that NSCarbonWindow should return NO so that other event handler can process the event.\r\n\r\nI was able to workaround this problem by swizzling -[NSCarbonWindow performKeyEquivalent] and always  returning NO.\r\n\r\nAttached is a sample project that demonstrates this issue. In the samepl, a message will be logged to the console when a key is pressed. However, when Cmd-Enter or Ctrl-Enter is pressed, no message appears. If you uncomment out line 107 of AppDelegate.m and run it again, the message is correctly logged when Cmd-Enter or Ctrl-Enter is pressed.\r\n\r\nI realize that the real solution here would be for me to migrate to Cocoa windows. That will happen eventually but this is a large, old project that was neglected for a long time and it's not possible for me to do that at the moment."
+    email: dustin.norman@gmail.com
+    modified: "2012-08-30T19:12:06.147736Z"
+    number: "11659831"
+    number_intvalue: 11659831
+    originated: 13-Jun-2012 04:39 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: NSCarbonWindow incorrectly eats Cmd-Enter and Ctrl-Enter

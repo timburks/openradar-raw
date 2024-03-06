@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12981426"
+    labels:
+        datastore_id: "2536401"
+data:
+    classification: Bug
+    created: "2013-01-09T17:58:21.267311Z"
+    description: "Summary:\r\n\r\nbuilding the following C++ snippet fails when building with 10.8sdk, with llvm-g++-4.2 and targeting 10.4\r\n\r\n#include <iostream>\r\n#include <sstream>\r\n#include <string>\r\n\r\nusing namespace std;\r\n\r\nint main()\r\n{\r\n  stringstream ss;\r\n  string s(\"hello world\");\r\n\r\n  ss << s;\r\n\r\n  cout << ss.str() << endl;\r\n  return 0;\r\n}\r\n\r\nSteps to Reproduce:\r\n\r\nllvm-g++-4.2 -arch i386 -mmacosx-version-min=10.4 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk main.cpp\r\n\r\nExpected Results:\r\n\r\nThe snippet should compile without errors.\r\nActual Results:\r\n\r\nerror: explicit instantiation of ‘std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::basic_string<_CharT, _Traits, _Alloc>&) [with _CharT = char, _Traits = std::char_traits<char>, _Alloc = std::allocator<char>]’ but no definition available\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\nI tracked the problem down to /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/include/c++/4.2.1/bits/basic_string.h line 2411\r\n\r\n  template<typename _CharT, typename _Traits, typename _Alloc>\r\n    inline basic_ostream<_CharT, _Traits>&\r\n    operator<<(basic_ostream<_CharT, _Traits>& __os,\r\n\t       const basic_string<_CharT, _Traits, _Alloc>& __str)\r\n#if __TARGETING_4_0_DYLIB\r\n    ; // __ostream_insert() not exported from libstdc++.6.0.4 dylib\r\n#else\r\n    {\r\n      // _GLIBCXX_RESOLVE_LIB_DEFECTS\r\n      // 586. string inserter not a formatted function\r\n      return __ostream_insert(__os, __str.data(), __str.size());\r\n    }\r\n#endif\r\n\r\nAs you can see, the template operator has no definition when __TARGETING_4_0_DYLIB is non 0.\r\n__TARGETING_4_0_DYLIB is defined in /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/include/c++/4.2.1/bits/os_defines.h line 111\r\n\r\n#if __IPHONE_OS_VERSION_MIN_REQUIRED\r\n\t#define __TARGETING_4_0_DYLIB  0\r\n#else \r\n\t#define __TARGETING_4_0_DYLIB (__MAC_OS_X_VERSION_MIN_REQUIRED < 1060)\r\n#endif\r\n\r\nSince I'm targeting 10.4 (our customers require Tiger support), __TARGETING_4_0_DYLIB gets defined to 1 preventing operator definition in bits/basic_string.h"
+    email: gregory.pakosz@gmail.com
+    modified: "2013-01-09T17:58:21.267435Z"
+    number: "12981426"
+    number_intvalue: 12981426
+    originated: 01/09/2013
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode Version 4.5.2 (4G2008a)
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: missing basic_ostream::operator<<(basic_ostream&, const basic_string&) definition

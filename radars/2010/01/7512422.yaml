@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7512422"
+    labels:
+        datastore_id: "135414"
+data:
+    classification: serious bug
+    created: "2010-01-06T00:04:12.981433Z"
+    description: "05-Jan-2010 06:34 PM David Fang:\r\nSummary: ld linking issue without -no_compact_linkedit\r\nExposed as a run-time dynamic_cast failure on 10.6.\r\n\r\nTo apple dev tools team:\r\ninstructions for reproducing bug(?)\r\n\r\nVersion (Developer Tools):\r\nBug is reproducible only on darwin10, not darwin9 or earlier.\r\n\r\nThe test case provided fails on 10.6 across the various compiler's I've tried:\r\napple-gcc-4.0, apple-gcc-4.2, FSF-gcc-4.4.\r\ngcc version 4.2.1 (Apple Inc. build 5646) (dot 1)\r\ngcc version 4.0.1 (Apple Inc. build 5493)\r\n\r\nHardware: 13\" Intel Macbook\r\nSystem: OS X 10.6.2\r\n\r\nThis test case has been difficult to reduce, as the executable involved\r\nbuilds against shared libraries, so I've shipped the whole package.\r\n\r\nprerequisites:\r\nflex 2.5.4, but just for this test case, version doesn't matter\r\n/usr/bin/yacc is sufficient\r\n\r\nsource: http://www.csl.cornell.edu/~fang/hackt/dists/hackt-0.1.4-devel-20100105.tar.bz2\r\n\r\nunpack:\r\ntar xjvf <source>.tar.bz2\r\n\r\nbuild:\r\ncd <srcdir>\r\nmkdir build-bad build-good\r\n\r\ncd build-bad\r\n../configure YACC=/usr/bin/yacc\r\nmake\r\n\r\n# also\r\ncd build-good\r\n../configure YACC=/usr/bin/yacc LDFLAGS=\"-Wl,-no_compact_linkedit\"\r\nmake\r\n\r\nI recommend MAKEFLAGS=-j4 or however many CPUs you got.\r\nThe compile takes a rather long time.\r\n\r\nrun:\r\n[in both build-bad/src and build-good/src, run:]\r\n./cast_test\r\n\r\nyou should see:\r\n\\-{ void expanded_test(std::ostream&)\r\ndp @ 0x14159ac\r\n\r\ndp->what(): bool-inst-ref\r\nrcdp = 0x14159a0\r\n\r\n/-} void expanded_test(std::ostream&)\r\n\r\nbut the failed test shows:\r\n\\-{ void expanded_test(std::ostream&)\r\ndp @ 0x26159ac\r\ndp->what(): bool-inst-ref\r\nrcdp = 0\r\n\r\nAssertion failed: (rcdp), function expanded_test, file ../../../src/test/cast_test.cc, line 99.\r\n\r\nThis test SHOULD pass, but it fails without LDFLAGS=-Wl,-no_compact_linkedit\r\nwhich was introduced in 10.6.\r\n\r\nProblem is deterministically reproducible, as a normal user.\r\n\r\nDon't hesitate to contact me by email <fang@csl.cornell.edu>,\r\nI'm willing to answer questions to the engineering team to get this resolved ASAP.\r\n\r\nDavid Fang"
+    email: fangism@gmail.com
+    modified: "2011-08-28T05:43:04.381787Z"
+    number: "7512422"
+    number_intvalue: 7512422
+    originated: "2010-01-05"
+    parent_number: "7246093"
+    product: Developer Tools
+    product_version: 3.2.1
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/7246093
+    title: linker causes dynamic_cast failure with compact_linkedit

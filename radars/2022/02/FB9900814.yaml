@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9900814
+    labels:
+        datastore_id: "5604366740357120"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2022-02-12T18:38:08.267069Z"
+    description: "The `Label` view of a `Button` that's contained within a `LazyVStack` loses any state stored in a `StateObject` when scrolled offscreen. Specifically, the `Label`'s `StateObject`-wrapped `ObservableObject` are deallocated once offscreen, and then are only re-initialized again when scrolled back onscreen with the `StateObject` reset to its initial value. \r\n\r\nBased on the definition of `StateObject`, the expected behavior would be that the `StateObject` continues to exist when offscreen. This is how `LazyVStack` content behaves when the the `Label` view is not contained within a `Button` and instead is added directly as content of the `LazyVStack`.\r\n\r\nThe attached project and video demonstrate the issue in practice. To reproduce the issue, enable one of the toggles, scroll it offscreen and then back onscreen, noting that the enabled state is lost. The following code reproduces the issue:\r\n\r\n```\r\nstruct Example: View {\r\n  var body: some View {\r\n    ScrollView {\r\n      LazyVStack {\r\n        ForEach(0..<100) { index in\r\n          Button { print(\"row \\(index) tapped\") } label: {\r\n            Content(index: index)\r\n          }\r\n        }\r\n      }\r\n    }\r\n  }\r\n}\r\n\r\nstruct Content: View {\r\n  var index: Int\r\n  @StateObject var state = State()\r\n\r\n  var body: some View {\r\n    Toggle(String(index), isOn: $state.isOn)\r\n  }\r\n\r\n  class State: ObservableObject {\r\n    @Published var isOn = false\r\n  }\r\n}\r\n```"
+    email: eric.horacek@airbnb.com
+    modified: "2022-02-12T18:38:08.267254Z"
+    number: FB9900814
+    number_intvalue: 9900814
+    originated: 2/11/21
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI Framework
+    product_version: iOS 15.2
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Offscreen StateObject are deallocated in a LazyVStack when contained within a Button, causing state to be lost

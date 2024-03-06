@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20509461"
+    labels:
+        datastore_id: "5007988993556480"
+data:
+    classification: Other Bug
+    created: "2017-06-15T09:52:04.20508Z"
+    description: "Summary:\r\nSomehow, the file ~/Library/Caches/CloudKit/CloudKitMetadata got corrupted:\r\n\r\n    ~/Library/Caches/CloudKit$ sqlite3 CloudKitMetadata\r\n    SQLite version 3.8.5 2014-08-15 22:37:57\r\n    Enter \".help\" for usage hints.\r\n    sqlite> .dump\r\n    PRAGMA foreign_keys=OFF;\r\n    BEGIN TRANSACTION;\r\n    /**** ERROR: (10) disk I/O error *****/\r\n    ROLLBACK; -- due to errors\r\n    sqlite> \r\n\r\nThis causes cloudd to crash and be relaunched repeatedly, and causes Finder and Save/Open panels to be very slow to display folder listings. This is not caused by disk performance because there are no such problems at the command line and in other situations that don't involve Finder or Save/Open panels (such as File --> Open Recent and File --> Save).\r\n\r\nSteps to Reproduce:\r\n1. Set up iCloud as per usual.\r\n2. Corrupt CloudKitMetadata somehow.\r\n3. Cause cloudd to be relaunched so it loads the corrupted database (ie, log out, or `launchctl stop com.apple.cloudd`).\r\n4. Navigate folders in Finder or a Save/Open panel. Additionally, watch the syslog and notice cloudd crash and relaunch repeatedly.\r\n\r\nExpected Results:\r\ncloudd determines that the database is corrupted, deletes it, and creates a new one. As far as I can tell, when CloudKitMetadata doesn't exist, cloudd creates it and retrieves data from iCloud.\r\n\r\nActual Results:\r\ncloudd throws an exception, and is repeatedly relaunched by launchd, causing an infinite loop. This requires user intervention to manually delete CloudKitMetadata{,-shm,-wal}. While cloudd is in this state, it causes Finder and Save/Open panels to be slow to display folder listings, between a few seconds to around 30 seconds.\r\n\r\nVersion:\r\nOS X 10.10.3 (14D131)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nI don't know how to reproduce this. It seems from these two threads that it might be related to Safari – I typically use Chrome, but I certainly did open Safari at least once: https://discussions.apple.com/thread/6667489, http://talk.tidbits.com/cloudd-app-quits-td4668122.html. I can't reproduce this even after using Safari for some time on the final 10.10.3 release."
+    email: adam@hbang.com.au
+    modified: "2017-06-15T09:52:04.2054Z"
+    number: "20509461"
+    number_intvalue: 20509461
+    originated: 11-Apr-2015 06:11 PM
+    parent_number: "19773164"
+    product: OS X
+    product_version: OS X 10.10.3 (14D131)
+    reproducible: Not Applicable
+    resolved: ""
+    status: Duplicate/19773164
+    title: Corrupted CloudKitMetadata database causes cloudd to crash repeatedly and slow down folder operations

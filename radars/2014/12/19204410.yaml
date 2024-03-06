@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19204410"
+    labels:
+        datastore_id: "5778983253704704"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2014-12-10T14:26:52.799352Z"
+    description: "Summary:\r\nDefined an F#-style pipe-forward operator, which is intended to allow the notation \"x |> f\" be equivalent to \"f(x)\"\r\n\r\nExpected code like this:\r\n\r\n    let aCString: [CChar] = createACString()\r\n    return aCString |> String.fromCString\r\n\r\nto work as if it had been written like this:\r\n\r\n    let aCString: [CChar] = createACString()\r\n    return String.fromCString(aCString)\r\n\r\nHowever, the compiler has a segmentation fault when it encounters the expression containing the pipe-forward operator.\r\n\r\nThe pipe-forward operator works as expected with many other expressions, so this seems to be an issue specific to String.fromCString or with the mechanism of treating an Array<T> like an UnsafePointer<T>.\r\n\r\nSteps to Reproduce:\r\nPaste the following into a Swift playground, and a compiler segmentation fault will occur:\r\n\r\n\r\nimport Foundation\r\n\r\n\r\n// Pipe-forward operator\r\n\r\ninfix operator |> { associativity left }\r\n\r\npublic func |> <T,U>(lhs: T, rhs: T -> U) -> U {\r\n    return rhs(lhs)\r\n}\r\n\r\n\r\nlet data = Array(\"Hello, world!\".utf8)\r\n\r\n// Create a null-terminated string\r\nfunc CStringAtAddress(index: Int, length: Int) -> [CChar] {\r\n    var result = Array<CChar>(count: length + 1, repeatedValue: 0)\r\n    for i in 0..<length {\r\n        result[i] = CChar(data[index + i])\r\n    }\r\n    return result\r\n}\r\n\r\n// Create null-terminated string \"Hello\"\r\nlet cstring = CStringAtAddress(0, 5)\r\nprintln(\"cstring = \\(cstring)\")\r\n\r\n\r\n// Create a Swift String\r\nfunc stringAtIndex(index: Int, length: Int) -> String? {\r\n    // This is safe\r\n    //return String.fromCString(CStringAtAddress(index, length))\r\n\r\n    // This causes compiler segmentation fault\r\n    return CStringAtAddress(index, length) |> String.fromCString\r\n}\r\n\r\n// Create Swift string \"Hello\"\r\nlet s = stringAtIndex(0, 5)\r\nprintln(\"s = \\(s)\")\r\n\r\nExpected Results:\r\nCode should run and provide expected results, or compiler should indicate error\r\n\r\nActual Results:\r\nSegmentation fault in compiler with no indication of anything wrong with the code\r\n\r\nVersion:\r\nXcode Version 6.1.1 (6A2008a)\r\nOS X 10.10.1\r\n\r\nNotes:\r\nIn the example code, uncomment the line under \"// This is safe\" and comment the line under \"// This causes compiler segmentation fault\" to verify that the code works as expected when the pipe-forward operator is not used."
+    email: kristopherdjohnson@gmail.com
+    modified: "2014-12-10T14:26:52.79963Z"
+    number: "19204410"
+    number_intvalue: 19204410
+    originated: 10-Dec-2014 09:24 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift compiler segmentation fault with String.fromCString and pipe-forward operator

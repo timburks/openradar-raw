@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB12188844
+    labels:
+        datastore_id: "5593995266752512"
+data:
+    classification: ""
+    created: "2023-08-10T16:36:21.667337Z"
+    description: "Safari Extension MV3 in MacBook Pro with Ventura 13.3.1, Safari 16.4 and Xcode 14.3\r\n\r\nAlthough the “webkit features in Safari 16.4” claims to support requestDomains condition, any attempt to load a ruleset containing that condition fails.\r\nThe extension’s manifest declares the permissions and the ruleset to use:\r\n…\r\n\"permissions\": [\t\t\r\n\t…\r\n        \"declarativeNetRequestWithHostAccess\",\r\n        \"declarativeNetRequestFeedback\"\r\n\t],\r\n\r\n\"declarative_net_request\": {\r\n\t\t\"rule_resources\": [\r\n\t\t\t{\r\n\t\t\t\"id\": \"ADS\",\r\n\t\t\t\"enabled\": false,\r\n\t\t\t\"path\": \"rules/adstest.json\"\r\n\t\t\t}\r\n\t\t]\r\n\t}\r\n…\r\n\r\nThe ruleset is enabled by the service worker with this function:\r\nfunction EnableDNRRules() {\r\n    return new Promise( (resolve, reject) => {\r\n        browser.declarativeNetRequest.updateEnabledRulesets(\r\n            { enableRulesetIds: [\r\n                'ADS'\r\n            ] }, () => {\r\n                console.log(\"LAST ERROR\",browser.runtime.lastError)\r\n                resolve(true);\r\n                console.log(\"dNR rules enabled\");            \r\n            });\r\n        });\r\n}\r\n\r\nThe result in last error is: “Failed to apply rules” and rule is not used at all. \r\nIf I enable the ruleset directly in manifest, and not using the function to load the ruleset, the rule is simply not applied (so not loaded at all).\r\nIn Chrome and Firefox the same code/ruleset works fine, but not in Safari 16.4, although the docs say it works.\r\nUsing different condition (e.g. urlFilter) works fine in Safari too.\r\n\r\nThe expected behavior is to have requestDomains working too, as per 16.4 documentation.\r\n\r\nThis is the ruleset used for tests:\r\n\r\n[\r\n {\r\n\"id\": 1,\r\n\"priority\": 1,\r\n  \"action\": { \"type\": \"block\" },\r\n  \"condition\": {\r\n   \"requestDomains\": [\"testpages.kzar.co.uk\"]\r\n  }\r\n }\r\n ]"
+    email: radiolondra57@gmail.com
+    modified: "2023-08-10T16:36:21.667503Z"
+    number: FB12188844
+    number_intvalue: 12188844
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'Safari 16.4 extension - declarativeNetRequest: worker unable to load rules with requestDomains condition'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8926031
+    labels:
+        datastore_id: "4994754592899072"
+data:
+    classification: ""
+    created: "2021-01-22T05:50:43.839459Z"
+    description: "The `/usr/bin/pkill` and `/usr/bin/pgrep` utilities when used with the `-f` option (match against the full argument list) truncate process lists to 2048 characters, despite `ps` utility on macOS showing command lines longer then 2048 characters and supporting command lines of 256 kB as output from `getconf ARG_MAX` utility, and as specified in /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/syslimits.h\r\n\r\nSteps to reproduce.\r\n\r\n1. Run the following in one terminal \r\n\r\nbash -s %testbug% $(seq -w 1 600)\r\n\r\n2. Then run in another terminal (bash or zsh)\r\n\r\nfor i in $(seq -w 1 600) ; do\r\n  REGEX=\"bash -s [%]testbug[%].* $i\"\r\n  if ! /usr/bin/pgrep -q -a -f \"$REGEX\"  ; then\r\n    echo \"error: pgrep failed for regex '$REGEX'\"\r\n    if test -n \"$PREV_REGEX\"; then\r\n      echo \"previously worked for regex '$PREV_REGEX'\"\r\n    fi\r\n    break;\r\n  fi\r\n  PREV_REGEX=$REGEX\r\ndone\r\n\r\n**Expected results**: no output should be written.\r\n\r\n**Actual results**: the following is written:\r\n\r\nerror: pgrep failed for regex 'bash -s [%]testbug[%].* 508'\r\npreviously worked for regex 'bash -s [%]testbug[%].* 507'"
+    email: tmoschou@gmail.com
+    modified: "2021-01-22T05:50:43.839645Z"
+    number: FB8926031
+    number_intvalue: 8926031
+    originated: "2020-12-03"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.15.7
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: pkill and pgrep truncates process lists to 2048 bytes (below ARG_MAX in syslimits.h)

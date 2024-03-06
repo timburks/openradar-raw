@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7424302"
+    labels:
+        datastore_id: "123404"
+data:
+    classification: Serious Bug
+    created: "2009-12-03T21:50:27.713212Z"
+    description: "Summary: \r\nwhen using PBOs and glTexSubImage2D() to asynchronously update (parts of) a texture, on NVIDIA, corruption occurs when the update does not start with ROW 0, i.e. when yoffset != 0\r\n\r\nSteps to Reproduce:\r\n1.) write a app that uses PBOs and glTexSubImage2D() to asynchronously update textures\r\n2.) run the app on mac with nvidia cards (8800 GT here)\r\n3.) when asynchronous updates using glTexSubImage2D() do not start at row 0, ie. yoffset > 0, corruption of the destination texture occurs, i.e. it is filled with wrong values\r\n\r\nExpected Results:\r\ni expect no corruption of the target texture\r\n\r\nActual Results:\r\ntexture corruption occurs on mac nvidia hardware\r\n\r\nRegression:\r\nno corruption occurs on mac ATI hardware.\r\n\r\nNotes:\r\nthe following code illustrates the problem. i.e. to work around the problem updates of a texture do always have to start at row 0 when PBOs are used:\r\n\r\n#if USE_PBO_PAGETABLE\r\n#if !WORK_AROUND_MAC_NVIDIA_PBO_BUG\r\n\t\t\t\tglTexSubImage2D(GL_TEXTURE_2D, i, 0, mipLevelMinrow[i], VIRT_TEX_PAGES >> i, mipLevelMaxrow[i] + 1 - mipLevelMinrow[i], GL_RGBA, GL_UNSIGNED_BYTE, (uint32_t *) NULL + (vt.pageTableMipOffsets[i] + (VIRT_TEX_PAGES >> i) * mipLevelMinrow[i])); \r\n#else\r\n\t\t\t\tglTexSubImage2D(GL_TEXTURE_2D, i, 0, 0, VIRT_TEX_PAGES >> i, mipLevelMaxrow[i] + 1, GL_RGBA, GL_UNSIGNED_BYTE, (uint32_t *) NULL + vt.pageTableMipOffsets[i])); \r\n#endif\r\n#else\r\n\t\t\t\tglTexSubImage2D(GL_TEXTURE_2D, i, 0, mipLevelMinrow[i], VIRT_TEX_PAGES >> i, mipLevelMaxrow[i] + 1 - mipLevelMinrow[i], GL_RGBA, GL_UNSIGNED_BYTE, vt.pageTables[i] + (VIRT_TEX_PAGES >> i) * mipLevelMinrow[i]); \r\n#endif\t\t\r\n\r\n\r\ni'd attach a minimal testcase but this would require some hours of work and you aren't gonna look at or even fix the problem anyway, so that seems like a waste of time. i can send you the complete project in binary or source exhibiting the problem if you want, though."
+    email: mayer.julian@gmail.com
+    modified: "2011-08-28T05:43:23.473538Z"
+    number: "7424302"
+    number_intvalue: 7424302
+    originated: 25-Nov-2009 07:49 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: OpenGL/Pixel Buffer Object/glTexSubImage2D() problems with yoffset!=0 on NVIDIA

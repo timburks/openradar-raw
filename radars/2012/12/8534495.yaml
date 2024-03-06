@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8534495"
+    labels:
+        datastore_id: "2401401"
+data:
+    classification: Other Bug
+    created: "2012-12-08T12:03:36.029012Z"
+    description: "Summary:\r\n\r\nsemctl(2) does not error (i.e., return a value of -1) when the \"SETVAL\" command is used, and the semval is greater than semvmx.\r\n\r\nSteps to Reproduce:\r\n\r\nCompile & run attached code (semtest.c) thus:\r\n########################################\r\n$ gcc -D_XOPEN_SOURCE=600 -std=c99 -Wall -Wextra -pedantic -o semtest semtest.c\r\n$ ./semtest\r\n########################################\r\n\r\nExpected Results:\r\n\r\nAn error message from perror(3) stating that the value is too large.  Per semctl(2), since this value exceeds SEMVMX on this system (verified with \"ipcs -T\"), semctl(2) should return -1, and errno should be set to ERANGE. The program should not continue to the next semctl() statement where the GETVAL command is used.\r\n\r\nActual Results:\r\n########################################\r\n$ gcc -D_XOPEN_SOURCE=600 -std=c99 -Wall -Wextra -pedantic -o semtest semtest.c\r\n$ ./semtest\r\n0\r\n########################################\r\n\r\nRegression: N/A\r\n\r\nNotes:\r\n\r\nOther systems I tested correctly detected when SEMVMX was exceeded. Examples:\r\n\r\nOn Fedora 13, where SEMVMX is 32767 (per the manual page for semop(2)):\r\n########################################\r\n$ gcc -D_XOPEN_SOURCE=600 -std=c99 -Wall -Wextra -pedantic -o semtest semtest.c\r\n$ ./semtest\r\nsemctl: Numerical result out of range\r\n########################################\r\n\r\nOn FreeBSD 8.1, where semvmx is 32767 (per \"ipcs -T\"):\r\n########################################\r\n$ uname -v\r\nFreeBSD 8.1-RELEASE #0: Mon Jul 19 02:36:49 UTC 2010     root@mason.cse.buffalo.edu:/usr/obj/usr/src/sys/GENERIC\r\n$ gcc -D_XOPEN_SOURCE=600 -std=c99 -Wall -Wextra -pedantic -o semtest semtest.c\r\n$ ./semtest\r\nsemctl: Result too large\r\n########################################\r\n\r\nI suggest checking for values < 0 as well; I did not do this in the example.\r\n\r\nAttachment:\r\n========================================\r\n/* semtest.c */\r\n#include <stdio.h>\r\n#include <stdlib.h>\r\n#include <sys/ipc.h>\r\n#include <sys/sem.h>\r\n#include <sys/stat.h>\r\n\r\nint main(void) {\r\n    key_t key;\r\n\r\n    if ((key = ftok(\".\", 1)) == (key_t)-1) {\r\n        perror(\"ftok\");\r\n        exit(EXIT_FAILURE);\r\n    }\r\n\r\n    int semid;\r\n    if ((semid = semget(key, 1, IPC_CREAT | S_IRUSR | S_IWUSR)) == -1) {\r\n        perror(\"semget\");\r\n        exit(EXIT_FAILURE);\r\n    }\r\n\r\n    union semun {\r\n        int val;\r\n        struct semid_ds *buf;\r\n        unsigned short  *array;\r\n    } arg;\r\n\r\n    arg.val = 32768;\r\n    if (semctl(semid, 0, SETVAL, arg) == -1) {\r\n        perror(\"semctl\");\r\n        exit(EXIT_FAILURE);\r\n    }\r\n    \r\n    int semval;\r\n    if ((semval = semctl(semid, 0, GETVAL, arg) == -1)) {\r\n        perror(\"semctl\");\r\n        exit(EXIT_FAILURE);\r\n    }\r\n\r\n    printf(\"%i\\n\", semval);\r\n\r\n    return 0;\r\n}\r\n========================================\r\n\r\n-- \r\nNathan Weeks\r\nSystems Analyst\r\nIowa State University -- IT Services (HPC Group)\r\nhttp://weeks.public.iastate.edu/"
+    email: weeks@iastate.edu
+    modified: "2012-12-08T12:16:36.011196Z"
+    number: "8534495"
+    number_intvalue: 8534495
+    originated: 10-Oct-2010 07:02 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.8
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'semctl(2): SETVAL with value > semvmx does not result in error'

@@ -1,0 +1,52 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23672205"
+    labels:
+        datastore_id: "4939464350629888"
+data:
+    classification: Serious Bug
+    created: "2015-11-26T18:50:31.44178Z"
+    description: |-
+        Summary:
+        UIInputViewController. dismissKeyboard does not always dismiss the keyboard. If standard keyboard is displayed first then all other custom input view controllers work fine, but if custom input view controller displayed first then dismissKeyboard does nothing. Keyboard seems to play some role in permanently fixing this, so I believe there is some inconsistency in UIInputViewController that breaks for custom input view controllers.
+
+        Steps to Reproduce:
+        1. Create UIView subclass and override the following methods:
+
+        @property (nonatomic, readwrite, strong) UIInputViewController *inputViewController;
+        @property (nonatomic, readwrite, strong) UIInputViewController *inputAccessoryViewController;
+
+        - (BOOL)canBecomeFirstResponder {
+            return YES;
+        }
+
+        2. Create and set custom input view controller for that view
+        3. Call becomeFirstResponder on custom view to trigger keyboard view with custom input view controller inside
+        4. Call dismissKeyboard on it
+
+        Expected Results:
+        Controller being dismissed
+
+        Actual Results:
+        Nothing happens.
+
+        Regression:
+        Describe circumstances where the problem occurs or does not occur, such as software versions and/or hardware configurations.
+
+        Notes:
+        Workaround is to use:
+
+        [[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];
+    email: and.mikhaylov@gmail.com
+    modified: "2015-11-26T18:50:31.44209Z"
+    number: "23672205"
+    number_intvalue: 23672205
+    originated: 26-Nov-2015 07:50 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 9.0.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIInputViewController's dismissKeyboard does not always work

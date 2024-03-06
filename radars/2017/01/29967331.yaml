@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29967331"
+    labels:
+        datastore_id: "5056359653441536"
+data:
+    classification: Serious Bug
+    created: "2017-01-11T13:13:51.0705Z"
+    description: "Area:\r\nStoreKit\r\n\r\nSummary:\r\nAn issue with in-app purchases not always updating with the SKPaymentTransactionStatePurchased state that cropped up in late 2015 seems to be back.\r\n\r\nStarting around January 6th or so, our support team started receiving reports from customers who successfully purchased an auto-renewing subscription but did not receive the premium membership. While it is difficult to reproduce locally, it appears to be the same issue that occurred in late 2015. What seems to be happening is that in cases where the user is asked to update their credit card, etc, we initially get the SKPaymentTransactionStateFailed as expected, but never receive the SKPaymentTransactionStatePurchased update after the user completes the purchase. This forum thread discusses the issue: https://forums.developer.apple.com/message/205427#205427\r\n\r\nSteps to Reproduce:\r\n1. Set up app store payment information in such a way that the user is asked to update/verify payment information during the purchase process (expired cc, no available credit, etc)\r\n2. Attempt to purchase a premium membership\r\n3. Update payment information\r\n4. Complete the purchase\r\n\r\nExpected Results:\r\n1. The app's SKPaymentTransactionObserver first receives a call to paymentQueue:updatedTransactions: with a SKPaymentTransactionStateFailed state and an error code of SKErrorPaymentCancelled\r\n\r\n2. After payment information is updated and purchase is completed, another call is made to paymentQueue:updatedTransactions: with a SKPaymentTransactionStatePurchased state and we process the subscription\r\n\r\nActual Results:\r\nWe only get the first, SKPaymentTransactionStateFailed call, and never the SKPaymentTransactionStatePurchased call, even though the purchase actually succeeded"
+    email: casey@geocaching.com
+    modified: "2017-01-11T13:13:51.07078Z"
+    number: "29967331"
+    number_intvalue: 29967331
+    originated: 01/11/17
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: SKPaymentTransactionStatePurchased not getting called for successful purchases of recurring subscription

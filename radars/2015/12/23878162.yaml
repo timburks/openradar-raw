@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23878162"
+    labels:
+        datastore_id: "5018137548292096"
+data:
+    classification: Serious Bug
+    created: "2015-12-14T08:45:16.03989Z"
+    description: "Summary:\nAccelerate/LAPACK 32-bit float matrix inversion returns incorrect values (Haswell+10.11).\n\nSummary:\nAccelerate/LAPACK 32-bit float matrix inversion returns incorrect values.\n\nSteps to Reproduce:\nI could not isolate the problem outside of our app, but I can provide steps to reproduce the problem inside of our app.\n\nHere's the code leading to erroneous results:\ntemplate<>\n\tbool matrix<float>::invert()  {\n\t\t//assert(cols == rows);\n\t\t__CLPK_integer n = rows;\n\t\t__CLPK_integer *ipiv = new __CLPK_integer[n];\n\t\t__CLPK_integer nwork = n*n;\n\t\tfloat *work = new float[nwork];\n\t\t__CLPK_integer info;\n\t\tbool res = false;\n\t\t\n\t\t// There is a pb with non-4/8 multiple on AVX2 (Haswell) + 10.11 (float, double are OK). \n\t\t//\t\t\tprint(\"mat\");\n\t\tsgetrf_(&n,&n,values(),&n,ipiv,&info);\n\t\tif(info == 0) {\n\t\t\tsgetri_(&n,values(),&n,ipiv,work,&nwork,&info);\n\t\t\tres = (info == 0);\n\t\t}\n\t\t//\t\t\tprint(\"imat\");\n\t\t\n\t\tdelete[] ipiv;\n\t\tdelete[] work;\n\t\t\n\t\treturn res;\n\t}\n\nTo reproduce the problem in Prizmo:\n- Unzip the provided app on an Haswell or more recent Mac (supposedly AVX2)\n- Open Prizmo.app\n- Menu > Help > Sample Documents > Open Text Document\n- Notice the document preview appears all black instead of actual contents.\n\n\nExpected Results:\n- Actual document contents.\n\nActual Results:\n- All black image. The inverted matrix mentioned above has a number of 'nan' lines instead of correct values, as compared to pre-Haswell CPUs (same code)\n\nRegression:\n- Problem occurs with Haswell or more recent CPU, running OS X 10.11.x\n- No problem with pre-10.11\n- No problem with pre-Haswell\n- No problem with double version (dgetrf_ / dgetri_)"
+    email: raphael@creaceed.com
+    modified: "2015-12-14T08:45:16.04034Z"
+    number: "23878162"
+    number_intvalue: 23878162
+    originated: 14-Dec-2015 09:38 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.11.2 (15C50)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Accelerate/LAPACK 32-bit float matrix inversion returns incorrect values (Haswell+10.11).

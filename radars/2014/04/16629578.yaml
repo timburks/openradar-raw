@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16629578"
+    labels:
+        datastore_id: "5908849307418624"
+data:
+    classification: Bug
+    created: "2014-04-23T00:09:31.471838Z"
+    description: "Summary:\r\npython-config --cflags emits -mno-fused-madd, but that option hasn't been supported by XCode compilers for quite some time.  However, a recent XCode (5.1?) seems to have made unsupported commandline options a hard failure by default, causing python modules with C code to fail to build.\r\n\r\nAs far as I can tell, this option was removed from the baseline Python source in 2.6:  http://bugs.python.org/issue1779871.\r\n\r\nThe option should be removed from OSX Python as well (all three versions).\r\n\r\nOne can workaround this in some cases by setting:\r\nexport ARCHFLAGS=\"-Wno-error=unused-command-line-argument-hard-error-in-future\"\r\n\r\nAlso of note is that the error message clang gives indicates that the unknown commandline option is NOT currently an error, but will be in the future, which is incorrect:\r\n  clang: error: unknown argument: '-mno-fused-madd' [-Wunused-command-line-argument-hard-error-in-future]\r\n  clang: note: this will be a hard error (cannot be downgraded to a warning) in the future\r\n\r\nSteps to Reproduce:\r\nEnvironment: OSX 10.9.2, XCode 5.1.1\r\n$ curl -O https://pypi.python.org/packages/source/S/SQLAlchemy/SQLAlchemy-0.7.9.tar.gz\r\n$ tar xf SQLAlchemy-0.7.9.tar.gz\r\n$ cd  SQLAlchemy-0.7.9\r\n$ python setup.py build\r\n\r\n\r\nExpected Results:\r\nThe python module above contains a C module that SHOULD compile, but doesn't; this particular module falls back to pure-python, but not all modules have that option.\r\n\r\nActual Results:\r\nThe C portion of the python module fails to compile, with the following errors output:\r\ncc -fno-strict-aliasing -fno-common -dynamic -arch x86_64 -arch i386 -g -Os -pipe -fno-common -fno-strict-aliasing -fwrapv -mno-fused-madd -DENABLE_DTRACE -DMACOSX -DNDEBUG -Wall -Wstrict-prototypes -Wshorten-64-to-32 -DNDEBUG -g -fwrapv -Os -Wall -Wstrict-prototypes -DENABLE_DTRACE -arch x86_64 -arch i386 -pipe -I/System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7 -c lib/sqlalchemy/cextension/processors.c -o build/temp.macosx-10.9-intel-2.7/lib/sqlalchemy/cextension/processors.o\r\nclang: error: unknown argument: '-mno-fused-madd' [-Wunused-command-line-argument-hard-error-in-future]\r\nclang: note: this will be a hard error (cannot be downgraded to a warning) in the future\r\n***************************************************************************\r\ncommand 'cc' failed with exit status 1\r\nWARNING: The C extension could not be compiled, speedups are not enabled.\r\nFailure information, if any, is above.\r\nRetrying the build without the C extension now.\r\n***************************************************************************"
+    email: mjr@busyloop.org
+    modified: "2014-06-12T16:47:12.254719Z"
+    number: "16629578"
+    number_intvalue: 16629578
+    originated: "2014-04-14"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.2
+    reproducible: Always
+    resolved: "2014-05-15"
+    status: dup of 16214764
+    title: python-config --cflags emits unsupported compiler option

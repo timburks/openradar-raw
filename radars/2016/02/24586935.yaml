@@ -1,0 +1,64 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24586935"
+    labels:
+        datastore_id: "4987409003446272"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2016-02-10T14:50:23.9009Z"
+    description: |-
+        Summary:
+        FD_SET() left shifts an signed integer (int) by 31 if the fd==31 which is illegal and causes a crash if compiled with -fsanitize=shift
+
+        Steps to Reproduce:
+        1. Save the following C program as /tmp/wrong-shift.c
+
+        #include <sys/types.h>
+        #include <sys/select.h>
+
+        int main()
+        {
+            int sock_fd=31;
+            fd_set input = {{0}};
+            FD_ZERO(&input);
+            FD_SET(sock_fd, &input);
+            return 0;
+        }
+
+        2. Compile it with
+             clang -fsanitize=shift -fsanitize-undefined-trap-on-error -o /tmp/wrong-shift /tmp/wrong-shift.c
+        3. Run it with
+             /tmp/wrong-shift
+
+        Expected Results:
+
+        Exits with exit code 0
+
+        Actual Results:
+
+        Prints 'Illegal instruction: 4', crashes with SIGILL and creates a crash report.
+
+        Regression:
+        don't know
+
+        Notes:
+
+        The Problem is given these macros
+
+        #define	FD_SET(n, p)	__DARWIN_FD_SET(n, p)
+        #define	__DARWIN_FD_SET(n, p)	do { int __fd = (n); ((p)->fds_bits[(unsigned long)__fd/__DARWIN_NFDBITS] |= ((__int32_t)(1<<((unsigned long)__fd % __DARWIN_NFDBITS)))); } while(0)
+
+        calling FD_SET(31, ...) will create an illegal shift ( 1<<((unsigned long)__fd % __DARWIN_NFDBITS) ) as the 1 is a signed integer (type int).
+    email: weissismail@gmail.com
+    modified: "2016-02-10T14:50:23.90124Z"
+    number: "24586935"
+    number_intvalue: 24586935
+    originated: 10-Feb-2016 02:50 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.2 (7C68)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: FD_SET() macro does wrong integer shift when fd=31 (and others)

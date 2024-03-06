@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16064972"
+    labels:
+        datastore_id: "4984171571183616"
+data:
+    classification: ""
+    created: "2014-02-13T23:42:19.496099Z"
+    description: "Summary:\r\nTN2302 with respect to adding passes to Passbook from a UIWebView in an app indicates that unspecified UIWebView delegate methods can be used to identify (based on MIME type) when the UIWebView has loaded a passbook file. UIWebView does not have any publicly available delegate methods that can allow inspection of MIME type.\r\n\r\n---- Quote ----\r\n\r\nI'm using a UIWebView in my app and it does not automatically support adding passes to Passbook. What should I do?\r\nUIWebViews do not automatically support adding passes to Passbook. To add passes using a UIWebView, implement the appropriate UIWebViewDelegate methods to identify when the view loads data with a MIME type of application/vnd.apple.pkpass. Download the data for the request and instantiate a PKPass object with that data. Use the PKAddPassesViewController class to present the pass to the user, or if the pass is already in the user's Passbook Library, use the -[PKPassLibrary replacePassWithPass:] method to update it.\r\n\r\n---- End Quote ----\r\n\r\n\"implement the appropriate UIWebViewDelegate methods\" is non-specific and misleading.  The only available UIWebViewDelegate methods are as follows.\r\n\r\n- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType\r\n- (void)webViewDidFinishLoad:(UIWebView *)webView\r\n- (void)webViewDidStartLoad:(UIWebView *)webView\r\n- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error\r\n\r\nNone of these methods, or the UIWebView instance available in them, provides access to the NSURLResponse (and therefore its -MIMEType) that could be used to detect application/vnd.apple.pkpass\r\n\r\nIt is therefore not possible to detect an NSURLResponse MIMEType without leveraging an NSURLProtocol subclass and an independent NSURLConnection in order to have access to the resulting NSURLResponse MIMEType.\r\n\r\nSteps to Reproduce:\r\nAttempt to access the NSURLResponse MIMEType from a UIWebView instance any of the above UIWebViewDelegate methods.\r\n\r\n\r\nExpected Results:\r\nThe documentation should be more specific about the specific \"appropriate UIWebViewDelegate methods\" that should be leveraged or otherwise more accurate recommendations should take their place.\r\n\r\n\r\nActual Results:\r\nFollowing the documentation there is no mechanism for detecting the MIMEtype of passbook data loaded by the UIWebView.\r\n\r\n\r\nVersion:\r\n\r\nTN2302\r\nPassbook FAQ\r\n\r\nhttps://developer.apple.com/library/ios/technotes/tn2302/_index.html\r\n\r\nNotes:\r\nAs described above, a complicated mechanism using NSURLProtocol can be used to detect a request for a .pkpass file, create a separate NSURLConnection and examine the NSURLResponse from that connection for the appropriate MIMEtype.\r\n\r\nPerhaps the author of the documentation was referencing private UIWebViewDelegate methods, such as those listed here: https://github.com/nst/iOS-Runtime-Headers/blob/d576a9cc197412e81aa87624b755e59b4f00e3cd/Frameworks/UIKit.framework/UIWebViewWebViewDelegate.h\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: david.anderson@robotsandpencils.com
+    modified: "2014-02-13T23:42:19.496227Z"
+    number: "16064972"
+    number_intvalue: 16064972
+    originated: 13-Feb-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Documentation
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: TN2302 Passbook FAQ is misleading with respect to UIWebView

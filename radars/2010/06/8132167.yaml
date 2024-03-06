@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8132167"
+    labels:
+        datastore_id: "478401"
+data:
+    classification: Enhancement
+    created: "2010-06-25T19:28:11.446921Z"
+    description: "Summary:\r\n\r\nIn Mac OS X 10.4, bzip2 compression was added with the introduction of the UDBZ encoding. In 10.5, the bzip2-level image-key was added, which allows adjustment of the bzip2 block size. Because of the way disk images seem to be encoded, bzip2 never sees blocks larger than 256kB, and compression efficiency suffers.\r\n\r\nbzip2 (bzlib) allows the block size to be specified in intervals of 100,000 bytes in the range of 100,000 (level 1) and 900,000 (level 9). Generally speaking, maximum compression efficiency is achieved with the largest block size, 900,000 bytes. This mode compresses 900,000 blocks of uncompressed data at a time.\r\n\r\nIt appears that a disk image is written by breaking up the uncompressed filesystem into 256kB (262,144 byte) chunks. Presumably this was done to ease random access of compressed images without imposing a substantial memory and time burden. Unfortunately, because each chunk is compressed independently, and only 262,144 bytes are given to the compressor at a time, bzip2 compression efficiency suffers, and will fall somewhere between level 2 and level 3. This limitation renders any setting of bzip2-level greater than 3 completely ineffective.\r\n\r\nI can sympathize with the desire to provide speedy random access to a disk image’s contents, but I doubt that a significant burden would be imposed if the chunk size of bzip2-compressed images were increased to match the native block size of the requested bzip2-level. That is, when compressing a disk image as UDBZ, set chunk_size to max(chunk_size, bzip2_level * 100000). For my common use of compressed disk images, distributing software which is expected to be installed from a disk image, I would find enhanced compression efficiency important enough to outweigh the drawbacks of increasing the chunk size. In any event, since bzlib only supports bzip2_level in the range of [1 .. 9], a 900,000-byte maximum chunk is not substantially larger than the present 262,144-byte chunks.\r\n\r\nAs an alternative, you could implement a way to direct the chunk size (within reason) during compression or conversion, by providing a chunk-size image-key in the same way that bzip2-level and zlib-level are permitted.\r\n\r\nSteps to Reproduce:\r\n\r\nCompress a largeish (>1MB) disk image having fairly compressible contents (like lots of source code) with -imagekey bzip2-level=9, and various other bzip2-levels.\r\n\r\nExpected Results:\r\n\r\nExpect the size of images compressed with higher bzip2-levels to be smaller than the size of those compressed with smaller bzip2-levels.\r\n\r\nActual Results:\r\n\r\nBeyond bzip2-level=3, no additional compression efficiency is attained.\r\n\r\nRegression:\r\n\r\nNo.\r\n\r\nNotes:\r\n\r\nI’d love a tech note officially documenting the .dmg format."
+    email: mark@chromium.org
+    modified: "2015-11-19T23:25:43.90494Z"
+    number: "8132167"
+    number_intvalue: 8132167
+    originated: "2014-07-24"
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.4 10F569 and others
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: 'DiskImages: bzip2 (UDBZ) .dmg compression could be more effective'

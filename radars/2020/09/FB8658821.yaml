@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8658821
+    labels:
+        datastore_id: "4928828824616960"
+data:
+    classification: ""
+    created: "2020-09-09T14:53:59.422217Z"
+    description: "DESCRIPTION\r\nBoth on macOS and iOS, NWListener ignores the value of NWParameters.allowLocalEndpointReuse and behave as it it were false, whatever value was set.\r\nWhen running on an iOS simulator, NWListener always behaves as it were true, whatever value was set.\r\n\r\n\r\nSTEP-BY-STEP\r\n- Download the attached proof of concept (PoC) TestAllowLocalEndpointReuse.zip\r\n- Run the attached PoC on macOS (e.g. macOS 10.15.6)\r\n- Run the attached PoC on an iOS device (e.g. iOS 13.6.1)\r\n- Run the attached PoC on an iOS simulator (e.g. iOS 13.6.1 simulator)\r\n\r\nThe test in the PoC creates a listener, and waits for it to be ready. Once it is ready, it tries to create another listener on the exact same IP+port, and will consider success or failure depending on whether allowLocalEndpointReuse was true or false.\r\nOn each run, the test is run twice, once with allowLocalEndpointReuse=false, and once with allowLocalEndpointReuse=true.\r\n\r\nWhen allowLocalEndpointReuse=false, the test will:\r\n- *succeed* if the second listener fails to listen (\"Address already in use\", which is expected); or\r\n- *fail* if the second listener succeeds (if reuse is forbidden, the second listener should actually fail)\r\n\r\nWhen allowLocalEndpointReuse=true, the test will:\r\n- *fail* if the second listener fails to listen (the second listener shouldn't fail since reuse was requested); or\r\n- *succeed* if the second listener succeeds (which is what is expected)\r\n\r\n\r\nEXPECTED RESULTS\r\n\r\nBoth test runs succeed on each platform\r\n\r\n\r\nACTUAL RESULTS\r\n\r\nOnly one test succeeds on each platform.\r\nOn macOS & iOS, allowLocalEndpointReuse always behaves as if it were false, even when set to true\r\nOn iOS Simulator or iOS Playground, allowLocalEndpointReuse always behaves as if it were true, even when set to false\r\n\r\nADDITIONAL NOTES\r\n\r\nThe issue reproduces whether NWParameters.tcp or NWParameters.udp is used\r\nThe issue also reproduces when using an external listener (e.g. with Python) as the first or second listener. \r\n\r\nOUTPUT\r\n\r\nOn macOS:\r\nRunning test with allowLocalEndpointReuse=false\r\n[OK] Listener #2 not started. Did not allow endpoint reuse, as expected: POSIXErrorCode: Address already in use\r\nRunning test with allowLocalEndpointReuse=true\r\n[FAIL] Failed to allow endpoint reuse despite being requested: POSIXErrorCode: Address already in use\r\n\r\nOn iOS:\r\nRunning test with allowLocalEndpointReuse=false\r\n[OK] Listener #2 not started. Did not allow endpoint reuse, as expected: POSIXErrorCode: Address already in use\r\nRunning test with allowLocalEndpointReuse=true\r\n[FAIL] Failed to allow endpoint reuse despite being requested: POSIXErrorCode: Address already in use\r\n\r\nOn iOS Simulator:\r\nRunning test with allowLocalEndpointReuse=false\r\n[FAIL] Allowed endpoint reuse, despite asking to deny it\r\nRunning test with allowLocalEndpointReuse=true\r\n[OK] Listener #2 started. Did allow endpoint reuse, as expected"
+    email: thibault.ml@gmail.com
+    modified: "2020-09-09T14:53:59.42241Z"
+    number: FB8658821
+    number_intvalue: 8658821
+    originated: 09/09/2020
+    parent_number: '&{NULL_VALUE}'
+    product: Network Framework
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NWListener ignores value of allowLocalEndpointReuse (macOS and iOS)

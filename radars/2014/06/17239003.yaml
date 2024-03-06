@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17239003"
+    labels:
+        datastore_id: "4990215261257728"
+data:
+    classification: ""
+    created: "2014-06-09T21:25:46.715682Z"
+    description: "Summary:\r\nUnexpected compiler error occurs with the attached code:\r\n'Int' is not convertible to 'T.IndexType.DistanceType'\r\n\r\nSteps to Reproduce:\r\n1. Create a new Swift command line app.\r\n2. Replace “main.swift” with the included file.\r\n3. Build & Run.\r\n\r\n\r\nExpected Results:\r\nCompiles and works correctly.\r\n\r\nActual Results:\r\nInstead, this will result in a compile-time error. The specific error is:\r\nCompiler Error:\r\n'Int' is not convertible to 'T.IndexType.DistanceType'\r\n\r\n\r\n\r\nVersion:\r\nXcode 6.0 (6A215l)\r\n\r\nNotes:\r\nI found that you can work around this my adding the explicit cast. Just remove the // to enable the workaround. \r\n\r\nThe code could be more idiomatic. In fact I have rewritten it to be so that it produces and returns a Range<T.IndexType>. Same error, but the workaround doesn’t work. Code available upon request.\r\n\r\nConfiguration:\r\nOS X 10.9.3\r\n\r\n\r\n/**\r\n* Determine the common prefix elements of two collections.\r\n* @param collection1 First collection.\r\n* @param collection2 Second collection.\r\n* @return The number of elements common to the start of each collection.\r\n*/\r\nfunc commonPrefixLength<T: Swift.Collection, U: Swift.Collection where\r\n\tT.GeneratorType.Element: Equatable,\r\n\tT.GeneratorType.Element == U.GeneratorType.Element,\r\n\tT.IndexType : ForwardIndex,\r\n\tU.IndexType : ForwardIndex>\r\n\t(collection1: T, collection2: U) -> T.IndexType.DistanceType {\r\n\t\tvar collection2generator = collection2.generate()\r\n\t\t\r\n\t\tvar i: T.IndexType.DistanceType = 0\r\n\t\t\r\n\t\tfor element1 in collection1 {\r\n\t\t\tlet element2 = collection2generator.next()\r\n\t\t\t\r\n\t\t\tif (element1 != element2) {\r\n\t\t\t\treturn i\r\n\t\t\t}\r\n\t\t\t\r\n\t\t\ti++\r\n\t\t}\r\n\t\t\r\n\t\treturn i\r\n}\r\nprintln(commonPrefixLength(\"abX\", \"abc\"))\r\n\r\n/**\r\n* Determine the common suffix elements of two collections.\r\n* @param collection1 First collection.\r\n* @param collection2 Second collection.\r\n* @return The number of elements common to the end of each collection.\r\n*/\r\nfunc commonSuffixLength<T: Swift.Collection, U: Swift.Collection where\r\n\tT.GeneratorType.Element: Equatable,\r\n\tT.GeneratorType.Element == U.GeneratorType.Element,\r\n\tT.IndexType : BidirectionalIndex,\r\n\tU.IndexType : BidirectionalIndex>\r\n\t(collection1: T, collection2: U) -> T.IndexType.DistanceType {\r\n\t\treturn commonPrefixLength(reverse(collection1), reverse(collection2))// as T.IndexType.DistanceType // Adding this explicit casting hack makes it compile and work correctly.\r\n}\r\nprintln(commonSuffixLength(\"Xabc\", \"abc\"))"
+    email: google@geheimwerk.de
+    modified: "2014-06-09T21:25:46.715878Z"
+    number: "17239003"
+    number_intvalue: 17239003
+    originated: 09-Jun-2014 11:19 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'Swift: Compiler error in nested call to generic function'

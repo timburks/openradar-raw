@@ -1,0 +1,79 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22298590"
+    labels:
+        datastore_id: "6116433868095488"
+data:
+    classification: Other Bug
+    created: "2015-08-15T15:33:45.15894Z"
+    description: |-
+        Summary:
+        You can use implicit scopes to e.g. initialize a variable with an enum:
+
+        let x: Optional<Int> = .Some(0)
+
+        You can use trailing closure syntax to pass a function a closure literal outside the parentheses:
+
+        let y = x.map { $0 }
+
+        But you can’t use both.
+
+
+        Steps to Reproduce:
+        This code:
+
+        enum E {
+        	case C(() -> ())
+        }
+
+        struct S {
+        	static func C(_:() -> ()) -> S { return S() }
+        }
+
+        let e: E = .C {}
+        let f: S = .C {}
+
+
+        Expected Results:
+        should compile
+
+
+        Actual Results:
+        but doesn’t:
+
+        rob@Resonance ~/Desktop> swiftc boom.swift; and ./boom
+        boom.swift:9:13: error: could not find member 'C'
+        let e: E = .C {}
+                   ~^
+        boom.swift:10:13: error: could not find member 'C'
+        let f: S = .C {}
+                   ~^
+
+
+        Regression:
+        It compiles if you use an explicit scope for the types:
+
+        let e = E.C {}
+        let f = S.C {}
+
+        It also compiles if you don’t use trailing closure syntax:
+
+        let e: E = .C({})
+        let f: S = .C({})
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-08-15T15:33:45.15915Z"
+    number: "22298590"
+    number_intvalue: 22298590
+    originated: 15-Aug-2015 11:33 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A176x)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2b5: Trailing closure syntax is unsupported on enum cases/static functions with implicit scope'

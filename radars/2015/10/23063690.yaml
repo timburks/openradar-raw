@@ -1,0 +1,60 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23063690"
+    labels:
+        datastore_id: "6161245778477056"
+data:
+    classification: Serious Bug
+    created: "2015-10-11T19:43:31.23436Z"
+    description: |-
+        Summary:
+        I have a protocol extension to which I have added extensions defining much of the behaviour of my system. Several methods use the same dictionary type involving Self for different purposes, so I made a typealias for each different purpose as documentation. This causes typechecking to fail.
+
+
+        Steps to Reproduce:
+        1. This code:
+        protocol P {}
+
+        extension P {
+        	typealias T = [String:Self]
+        }
+
+        extension P {
+        	func f(t: T) {
+        		g(t)
+        	}
+
+        	func g(t: T) {}
+        }
+
+
+        Expected Results:
+        should typecheck
+
+
+        Actual Results:
+        but totally doesn’t:
+        boom.swift:9:5: error: cannot convert value of type '[String : Self]' to expected argument type '[String : _]'
+                        g(t)
+                          ^
+
+
+        Regression:
+        It seems to be fine if `f`’s parameter type is changed from `T` to `[String:Self]`. I.e. it can match `[String:Self]` against the type `T` in `g`’s definition, but it can’t match `T` against `T`.
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-10-11T19:43:31.2347Z"
+    number: "23063690"
+    number_intvalue: 23063690
+    originated: 11-Oct-2015 03:43 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7B85)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Typealias involving `Self` in protocol extension cannot be matched

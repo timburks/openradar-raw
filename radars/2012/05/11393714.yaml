@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11393714"
+    labels:
+        datastore_id: "1707402"
+data:
+    classification: Performance
+    created: "2012-05-06T20:59:10.280349Z"
+    description: "06-May-2012 01:56 PM Nico Weber:\r\nSummary: libSystem's memchr() is slow (2x slower than naive loop, 5x slower than glibc's)\r\n\r\nSteps to Reproduce:\r\n\r\nUse a program that uses memchr().\r\n\r\nExpected Results:\r\n\r\nProgram doesn't have memchr() as a bottleneck.\r\n\r\nActual Results:\r\n\r\nmemchr() shows up as a bottleneck in Instruments.\r\n\r\nThe attached program reproduces this. See https://gist.github.com/2624336 for a version of the program that also includes the glibc functions for comparison (if you can look at lgpl'd code).\r\n\r\nThe output of the attached program on my system:\r\n\r\nstupid_memchr: 385.0us\r\nmemchr: 566.0us\r\n\r\nstupid_strchr: 383.0us\r\nstrchr: 386.0us\r\n\r\nNote that libSystem's memchr is significantly slower than \"stupid_memchr\", a naive implementation that looks like this:\r\n\r\nvoid* stupid_memchr(const void* s_in, int c, size_t n) {\r\n  const unsigned char* s = (const unsigned char*)s_in;\r\n  for (int i = 0; i < n; ++i)\r\n    if (s[i] == c)\r\n      return (void*)(s + i);\r\n  return NULL;\r\n}\r\n\r\n\r\nThe output of the program that also times the (portable, non-asm-optimized) glibc version of these functions:\r\n\r\nstupid_memchr: 376.0us\r\nglibc_memchr: 107.0us\r\nmemchr: 575.0us\r\n\r\nstupid_strchr: 378.0us\r\nglibc_strchr: 140.0us\r\nstrchr: 381.0us\r\n\r\nRegression: No\r\n\r\nNotes:\r\n\r\n06-May-2012 01:56 PM Nico Weber:\r\n'chr_bench.cc' was successfully uploaded\r\n\r\n06-May-2012 02:08 PM Nico Weber:\r\nAnd libSystem's fgets() seems to call memchr(), which means that function is a lot slower than necessary too.\r\n\r\n06-May-2012 10:28 PM Nico Weber:\r\nTurns out that clang is bad at compiling memchr() as implemented in libSystem: http://llvm.org/PR12750\uFEFF (but memchr() should do something smarter than a naive loop either way, see the perf difference to glibc's memchr)."
+    email: thakis@chromium.org
+    modified: "2012-05-07T05:28:35.320791Z"
+    number: "11393714"
+    number_intvalue: 11393714
+    originated: may 6 2012
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.3
+    reproducible: Always
+    resolved: ""
+    status: open
+    title: libSystem's memchr() is slow (2x slower than naive loop, 5x slower than glibc's)

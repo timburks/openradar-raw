@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "48740032"
+    labels:
+        datastore_id: "4944018647547904"
+data:
+    classification: ""
+    created: "2019-03-09T15:14:02.581304Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nWhen setting the frame of a UITextView, with specific settings (scrollEnabled, textContainerInset, textContainer.lineBreakMode) and an attributed string containing a Link, the framework crashes.\r\n\r\nSteps to Reproduce:\r\nExecute the attached sample code.\r\n\r\nExpected Results:\r\nThe frame should be set without a crash.\r\n\r\nActual Results:\r\nThe following exception is raised and the app crashes:\r\n019-03-09 15:04:55.022734+0000 TestBug122[2389:370598] <NSATSTypesetter: 0x2803c5140>: Exception *** -[NSBigMutableString getCharacters:range:]: Range {96, 5} out of bounds; string length 89 raised during typesetting layout manager <NSLayoutManager: 0x280ac3900>\r\n    1 containers, text backing has 89 characters\r\n    Currently holding 89 glyphs.\r\n    Glyph tree contents:  89 characters, 89 glyphs, 1 nodes, 64 node bytes, 512 storage bytes, 576 total bytes, 6.47 bytes per character, 6.47 bytes per glyph\r\n    Layout tree contents:  89 characters, 89 glyphs, 24 laid glyphs, 1 laid line fragments, 3 nodes, 192 node bytes, 1712 storage bytes, 1904 total bytes, 21.39 bytes per character, 21.39 bytes per glyph, 24.00 laid glyphs per laid line fragment, 1904.00 bytes per laid line fragment\r\n, glyph range {24 65}. Ignoring...\r\n\r\nVersion/Build:\r\n12.2 Beta 4\r\n\r\nConfiguration:\r\n - MacOS 10.14 (18A391)\r\n - Version 10.1 (10B61)\r\n - iOS 12.2 beta 4\r\n\r\nSample program:\r\n@implementation ViewController\r\n\r\n- (void)viewDidLoad {\r\n    [super viewDidLoad];\r\n\r\n    UITextView *textView = [[UITextView alloc] initWithFrame:CGRectZero textContainer:nil];\r\n    textView.scrollEnabled = NO;\r\n    textView.textContainerInset = UIEdgeInsetsZero;\r\n    textView.textContainer.lineBreakMode = NSLineBreakByTruncatingTail;\r\n\r\n    [self.view addSubview:textView];\r\n\r\n    UIFont *titleFont = [UIFont systemFontOfSize:15];\r\n    NSDictionary *defaultAttributes = @{ NSFontAttributeName: titleFont };\r\n    NSDictionary *linkAttributes = @{ NSFontAttributeName: titleFont, NSLinkAttributeName: @\"#test\" };\r\n\r\n    NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] init];\r\n    [attributedText appendAttributedString:[[NSAttributedString alloc] initWithString:@\"Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello \" attributes:defaultAttributes]];\r\n    [attributedText appendAttributedString:[[NSAttributedString alloc] initWithString:@\"#test\" attributes:linkAttributes]];\r\n    [attributedText appendAttributedString:[[NSAttributedString alloc] initWithString:@\" Hello Hello\" attributes:defaultAttributes]];\r\n\r\n    textView.attributedText = attributedText;\r\n\r\n    textView.frame = CGRectMake(100, 100, 200, 50);\r\n}\r\n\r\n@end"
+    email: rbourgoin@twitter.com
+    modified: "2019-03-09T15:14:02.581507Z"
+    number: "48740032"
+    number_intvalue: 48740032
+    originated: March 9 2019, 3:11 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 12.2 beta 4
+    reproducible: Yes
+    resolved: ""
+    status: ""
+    title: iOS 12.2 Beta - [UITextView setFrame] raises exception when attributed text contains a link

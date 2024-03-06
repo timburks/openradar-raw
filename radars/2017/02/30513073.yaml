@@ -1,0 +1,52 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30513073"
+    labels:
+        datastore_id: "6100489825419264"
+data:
+    classification: UI/Usability
+    created: "2017-02-14T16:36:05.69567Z"
+    description: |-
+        When using UIImagePickerController the image is shifted 44 pt (on iPhone 7 and 7 plus) downwards when tapping the shutter button.
+
+        1) this looks really ugly because it's not animated
+
+        2) a bigger issue: if a cameraOverlayView is set, the image shifts below the overlay. Imagine an avatar picker with a circular overlay to let the user center the face within the circle. After taking the photo, the face is shifted 44 pt and is not in the circle anymore. See the attached photos of the camera preview and the photo confirmation view.
+
+        For reference, this is my code to generate the circular overlay:
+
+        	UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
+        	imagePicker.delegate = self;
+        	imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+        		
+        	UIView *overlay = [[UIView alloc] initWithFrame:self.view.window.bounds];
+        	overlay.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5];
+        	overlay.userInteractionEnabled = NO;
+        		
+        	CGMutablePathRef path = CGPathCreateMutable();
+        	CGPathAddArc(path, &CGAffineTransformIdentity, overlay.center.x, overlay.center.y, self.view.$width/2 - 10, 0, 2*M_PI, NO);
+        	CGPathAddRect(path, &CGAffineTransformIdentity, UIEdgeInsetsInsetRect(overlay.bounds, UIEdgeInsetsMake(44, 0, 123, 0))); // ugly
+        		
+        	CAShapeLayer *mask = CAShapeLayer.layer;
+        	mask.path = path;
+        	mask.fillRule = kCAFillRuleEvenOdd;
+        	overlay.layer.mask = mask;
+        	imagePicker.cameraOverlayView = overlay;
+
+        	[self presentViewController:imagePicker animated:YES completion:nil];
+
+        Note:
+        The avatar image picker used in Contacts.app doesn't exhibit this issue: the image is not shifted after pushing the shutter button.
+    email: futuretap@googlemail.com
+    modified: "2017-02-14T16:36:05.69585Z"
+    number: "30513073"
+    number_intvalue: 30513073
+    originated: 14-Feb-2017 05:35 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 10.3 beta 2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'UIImagePickerController w/ cameraOverlayView: image offset is changed'

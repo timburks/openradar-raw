@@ -1,0 +1,69 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26406397"
+    labels:
+        datastore_id: "4978123552587776"
+data:
+    classification: Serious Bug
+    created: "2016-05-21T13:00:01.08383Z"
+    description: |-
+        Summary:
+        When visiting a website using HTTP/2, certain POST forms cannot submit after the connection has been interrupted and restored (case A).
+        The same issue also occurs when the initial page is preloaded as Top Hit, and the following action is the form submit (case B).
+        An example of a specific form that meets the requirements and is served over HTTP/2 is the Wikipedia account signup page (see the URL below).
+
+        Steps to Reproduce:
+        Case A:
+        1. Open Safari
+        2. Visit https://en.wikipedia.org/w/index.php?title=Special:UserLogin&type=signup
+        3. Turn off internet connection
+        4. Turn internet connection back on
+        5. Click the "Create your account" button on the Wikipedia website
+        Case B:
+        1. Open Safari
+        2. Make sure "Preload Top Hit in the background" is turned on in Safari Preferences
+        3. Visit https://en.wikipedia.org/w/index.php?title=Special:UserLogin&type=signup to add it to the browser history
+        4. Quit Safari
+        5. Open Safari
+        6. Paste https://en.wikipedia.org/w/index.php?title=Special:UserLogin&type=signup in the address bar but don't press return; instead, wait for it to show up as Top Hit and get preloaded
+        7. Click the Top Hit suggestion
+        8. Click the "Create your account" button on the Wikipedia website
+
+        Expected Results:
+        Returning to the Wikipedia account creation page with a red alert message "Account creation error".
+
+        Actual Results:
+        Safari showing error the following error message:
+          Safari Can't Connect to the Server
+          Safari can't open the page "..." because Safari can't connect to the server "en.wikipedia.org".
+
+        Regression:
+        The issue occurs on both Safari (Version 9.1.1 (11601.6.17)) and Safari Technology Preview (Version 9.1.1 (11601.6.17, 11602.1.31)).
+
+        Notes:
+        The issue only occurs with HTTP/2; after turning off HTTP/2 support on a test website, the issue went away.
+        The issue only occurs with certain HTML forms; the form has to have method="POST" and at least 1 named input. Certain forms do not trigger this issue, even if they do POST.
+        Attached is an AppleScript (http2.applescript) to simulate the issue (case A). Please note that this script temporarily disables your primary WiFi connection.
+        Also attached is an HTML page (form.html) which has a minimal HTML source that triggers this issue when being served over HTTP/2.
+        Monitoring the connections to the server with lsof, it can be seen that:
+        Case A:
+        - the persistent HTTPS connection (HTTP/2) gets disconnected when the internet connection is interrupted
+        - when clicking the button a new connection is made
+        - the first POST request (of the specific form) on this new connection fails; in contrast, a GET request after the interruption succeeds
+        Case B:
+        - the persistent HTTPS connection (HTTP/2) used for the Top Hit preload remains open
+        - for subsequent requests, it does not re-use the connection used by the preload, but instead makes a new connection
+        - the first POST request (of the specific form) on this new connection fails; in contrast, a GET request after the preload succeeds
+    email: avedesk@gmail.com
+    modified: "2016-05-21T13:00:01.084Z"
+    number: "26406397"
+    number_intvalue: 26406397
+    originated: 21-May-2016 02:59 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Safari
+    product_version: Safari 9.1.1 (11601.6.17)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Safari 9.1.1:  Safari fails HTTP/2 form POST after connection interruption or Top Hit preload'

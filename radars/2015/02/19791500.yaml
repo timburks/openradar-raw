@@ -1,0 +1,63 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19791500"
+    labels:
+        datastore_id: "5501231745204224"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-02-11T02:13:44.151848Z"
+    description: |-
+        Summary:
+        The compiler crashes when it tries to diagnose the failure to solve an expression involving && in the presence of an overload. Sometimes it doesn’t crash, so there’s actually a race condition, which impresses me.
+
+
+        Steps to Reproduce:
+        1. Compile this program:
+
+        func == <T> (T, T) -> Bool {
+        	return reduce(map("") { _ in false }, true, &&)
+        }
+
+        func && <T, U> ([T], [U]) -> [(T, U)] { return [] }
+
+
+        Expected Results:
+        Either for it to typecheck & compile or for it to print out the reason why it doesn’t typecheck.
+
+
+        Actual Results:
+        Quite a lovely crash down a fairly deep callstack. Except when it _does_ print out the valid errors:
+
+        a.swift:2:46: error: argument for generic parameter 'T' could not be inferred
+                return reduce(map("") { _ in false }, true, &&)
+                                                            ^
+        a.swift:5:6: note: in call to operator '&&'
+        func && <T, U> ([T], [U]) -> [(T, U)] { return [] }
+             ^
+
+        But usually (9 times out of 10? More?) it crashes.
+
+
+        Regression:
+        It doesn’t crash if there’s no overload of &&.
+        It doesn’t crash if the return type of && has includes only T or U; as originally written, this crashed with Either<T, U>, and it also crashed with DictionaryIndex<T, U>.
+        You don’t actually have to provide a valid implementation of &&—you can return a string (just don’t change the return type) and it will still crash.
+
+
+        Notes:
+        Fun fact™: The race condition crashed about half the time as originally written, this reduction crashes it almost every time.
+
+        This is blocking me.
+    email: rix.rob@gmail.com
+    modified: "2015-02-11T02:13:44.152017Z"
+    number: "19791500"
+    number_intvalue: 19791500
+    originated: 10-Feb-2015 09:13 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-Beta (6D520o)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2b1: Race condition around compiler crash solving constraints & diagnosing failure to typecheck overload of &&'

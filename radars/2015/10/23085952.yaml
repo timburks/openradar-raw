@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23085952"
+    labels:
+        datastore_id: "5619316334526464"
+data:
+    classification: Serious Bug
+    created: "2015-10-13T09:12:54.77661Z"
+    description: "Summary:\n„Open in Place“ is a handy feature that can be turned on/off globally in the Info.plist, but it doesn’t allow any configuration/opt-out of which file types are supported.\n\nOur app uses a file package format for storing its documents and therefore supports opening of documents with base UTIs of public.composite-content, com.apple.package and public.zip-archive.\nWhen the user taps on, e.g. a Keynote document in the iCloud Drive App, iOS automatically opens our app, since the current version of Keynote.app (2.5.5) doesn’t support „Open in Place“ yet and iOS determines our app as the „best“ app to open the keynote file format, which inherits from the same base UTI as our file format.\n\nWe have no option to prevent this behavior, since we need to support opening of files with the given UTIs, but we can’t specify a fine-grained control of file types/extensions for LSSupportsOpeningDocumentsInPlace. This bug is not related to the iWork apps, but to how iOS determines the correct app for opening a specific file and the API related to „open in place“.\n\nSteps to Reproduce:\n1. Install the latest version of MindNode.app from the iOS AppStore (4.1 or above)\n2. Install the current version of Keynote.app from the iOS AppStore (2.5.5)\n3. Create a Keynote document that is stored in iCloud Drive\n4. Open iCloud Drive.app on your iOS device\n5. Tap on the Keynote document stored in iCloud Drive to open it\n\nExpected Results:\niOS either opens Keynote.app to display the document, or it previews the document within the iCloud Drive.app.\nThe latter happens, if MindNode.app and no other app (that supports „open in place“) with a similar file format, is installed on the device.\n\nThis could be realized by not opening MindNode.app at all, if \n\n- (BOOL)application:(nonnull UIApplication *)app openURL:(nonnull NSURL *)url options:(nonnull NSDictionary<NSString *,id> *)options\n\nreturns NO, or by a fine-grained configuration of LSSupportsOpeningDocumentsInPlace in the Info.plist\n\nActual Results:\niOS opens MindNode.app and tries to open the Keynote document. Opening of the document fails, MindNode.app stays open, user is angry.\n\nRegression:\nDoes not occur in iOS 8, since there is no „open in place“ feature/iCloud Drive app.\n\nNotes:\nThe same problem most likely occurs with other iWork file formats, e.g. Pages documents, but is not related to iWork at all."
+    email: matthias.tretter@gmail.com
+    modified: "2015-10-13T09:12:54.77701Z"
+    number: "23085952"
+    number_intvalue: 23085952
+    originated: 13-Oct-2015 11:12 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "9"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: LSSupportsOpeningDocumentsInPlace does not allow fine-grained control over which documents can be opened

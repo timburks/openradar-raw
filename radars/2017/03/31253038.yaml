@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31253038"
+    labels:
+        datastore_id: "5007859205013504"
+data:
+    classification: networking
+    created: "2017-03-24T23:42:37.04596Z"
+    description: "Area:\r\nWi-Fi\r\n\r\nSummary:\r\nSometimes iOS will send an IPv4 packet over WiFi, but with the packet type set to 0x86dd, or IPv6.\r\n\r\nThis will cause the receiving router to parse the header as if it were IPv6, and if it makes it pass the parse, extract an incorrect destination address from the header. At best the packet appears to be destined for a nonsensical IP address. In general the packet is dropped, later the application on iOS retransmits, and the packet is sent correctly.\r\n\r\nWhile this only happens for a very small percentage of packets, it is 100% reproducable. The errors are enough to cause retransmits, and for IPv4 connections to suffer some performance. Our routers see these bad packets regularly. We have seen the problem both in U.S. and Europe.\r\n\r\nSteps to Reproduce:\r\n1. Connect an iOS device to an unencrypted WiFi network that offers both IPv4 and IPv6 service to the iOS device.\r\n2. Use the YouTube application on iOS.\r\n3. Watch a video. (This will send mostly IPv6, but with some IPv4)\r\n\r\nAt the same time, use an OS X device nearby, start \"Wireless Diagnostics\", and use the Sniffer function. This will capture packets off the air.\r\n\r\nExpected Results:\r\nAll IPv4 is sent as IPv4\r\n\r\nActual Results:\r\nSome small, but appreciable percentage of IPv4 packets will be sent over the air marked in the Logical-Link header as IPv6 (type 0x86dd).\r\n\r\nConfiguration:\r\niPhone 6s\r\n\r\nVersion:\r\niOS 10.2.1\r\n\r\nNotes:\r\n1) We have observed this on multiple models of iPhone, and with various iOS versions.\r\n\r\n2) If you capture the traffic off the device using the remote virtual interface (RVI) for developers - the packets as catpured there will have the correct ethernet type field, marking them IPv4. It is only over the air that they are sent with the incorrect type, marked IPv6.\r\n\r\n3) We do not see this issue on authenticated WiFi networks, only open, unencrypted ones."
+    email: mzero@google.com
+    modified: "2017-03-24T23:42:37.04625Z"
+    number: "31253038"
+    number_intvalue: 31253038
+    originated: "2017-03-24"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 10.2.1
+    reproducible: 100%
+    resolved: ""
+    status: Open
+    title: IPv4 packets sent over the air as IPv6

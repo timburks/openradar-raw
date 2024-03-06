@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6267445"
+    labels:
+        datastore_id: "650"
+data:
+    classification: Other Bug
+    created: "2008-11-20T10:03:12.663514Z"
+    description: "03-Oct-2008 06:54 AM:\r\nSummary:\r\nWhen compiling source code that uses the CoreServices/OSServices/Power API, it will fail if compiling in 64bit (x86_64) mode. The documentation states certain functions as deprecated, but not all. And there is no mention of dropped 64bit support.\r\n\r\nSteps to Reproduce:\r\n1. Create a .c file containing the following code:\r\n#include <CoreServices/CoreServices.h>\r\nint main(int argc, char **argv) {\r\n\tUpdateSystemActivity(UsrActivity);\r\n\treturn 0;\r\n}\r\n2. Compile using -arch i386 or -arch ppc\r\n3. Compile using -arch x86_64 or -arch ppc64\r\n\r\nExpected Results:\r\n2. and 3. should succeed without warning or error.\r\n\r\nActual Results:\r\n3. fails because the UsrActivity constant is unknown. If compiling with -Wall, a warning is thrown because the UpdateSystemActivity function is unknown.\r\n\r\nRegression:\r\nAccording to the documentation of PowerManager, the function UpdateSystemActivity has the following availability:\r\n\r\nAvailable in Mac OS X v10.0 and later.\r\n\r\nNo mention of deprecation or removal for 64bit apps.\r\n\r\nNotes:\r\nA quick check of the OSServices framework in gdb or otool shows that UpdateSystemActivity is available in all architectures (32 and 64bit).\r\n\r\nExamination of OSServices.h reveals this:\r\n#if !__LP64__\r\n#ifndef __POWER__\r\n#include <OSServices/Power.h>\r\n#endif\r\n\r\nIs this an oversight in the documentation or in the header files?\r\nAnd what are the alternatives for the aforementioned function? What's the recommended procedure of disabling sleep and the screensaver in 10.5+?"
+    email: onitake@gmail.com
+    modified: "2011-08-28T05:49:37.952344Z"
+    number: "6267445"
+    number_intvalue: 6267445
+    originated: 03-Oct-2008 06:54 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 9F2114
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: OSServices Power API not available in 64bit mode

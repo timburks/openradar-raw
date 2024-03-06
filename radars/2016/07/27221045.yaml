@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27221045"
+    labels:
+        datastore_id: "5512642298904576"
+data:
+    classification: Performance
+    created: "2016-07-07T14:24:52.51712Z"
+    description: "Summary:\r\nWhen using UITableView with self sizing cells:\r\n\r\n\ttableView.rowHeight = UITableViewAutomaticDimension\r\n\ttableView.estimatedRowHeight = 44.0\r\n\r\nand cells consisting of multiline labels, iOS 10 b2 shows a degraded scrolling performance over iOS 9.\r\n\r\nSteps to Reproduce:\r\nRun the attached sample app, a slightly modified version of @smileyborg's (your Tyler Fox) sample app (https://github.com/smileyborg/TableViewCellWithAutoLayoutiOS8). When scrolling, there are noticeable hickups as soon as a new cell appears.\r\n\r\nWhen analyzing the performance in Instruments, UILabel.intrinsicContentSize() is the biggest offender. We counted how often this method is called per label in iOS 9 vs. iOS 10  when a new cell comes up:\r\n\r\n7 times on iOS 9\r\n9 times on iOS 10b2\r\n\r\nIn my opinion it should be sufficient to call it once (for the height calculation) or twice (another one for the actual layout operation) since this is an expensive operation. 9 times is definitely too often. Also, this number is for one label. For table view cells with multiple labels, the number goes up quickly which renders the whole concept of Auto Layout for table view cells useless.\r\n\r\nNote: the problem is not limited to cells with UILabels. UITextView is affected as well.\r\n\r\nsee also rdar://27103510"
+    email: futuretap@googlemail.com
+    modified: "2018-02-22T14:27:01.73154Z"
+    number: "27221045"
+    number_intvalue: 27221045
+    originated: 07-Jul-2016 04:24 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 10.0 b2
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/27103510/Closed
+    title: UITableView Auto Layout performance regression

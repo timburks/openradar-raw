@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28633569"
+    labels:
+        datastore_id: "6150742419177472"
+data:
+    classification: Serious Bug
+    created: "2016-10-05T17:17:33.2067Z"
+    description: "Summary:\r\nWhen using Swift, the debugger holds on to any variable that's printed to the debugger. \r\n\r\nPut simply, if I hit a breakpoint and do \"po self\", that object will never be released (see attached DebuggerRetainsObject.xcodeproj). There are many variations of this (see Additional Information below)\r\n\r\nThe same scenario in Objective-C works as expected (see attached WorksFineInObjC.xcodeproj).\r\n\r\nSteps to Reproduce:\r\n1. Open the attached sample project (DebuggerRetainsObject)\r\n2. Put a break point in the initializer of SomeClass (line 23 in AppDelegate.swift)\r\n3. Build and run the application\r\n4. When the breakpoint is hit: type \"po self\" in the console\r\n5. Press continue\r\n\r\nExpected Results:\r\nThe instance of SomeClass is released and both \"init\" and \"deinit\" are printed to the console\r\n\r\nActual Results:\r\nThe instance is never released, and only \"init\" is ever printed to the console.\r\n\r\nVersion:\r\nXcode 8.0 (8A218a)\r\n\r\nNotes:\r\nThe issue doesn't appear to be with referencing self in the debugger, but with having self be the result of an expression. \r\n\r\nFor example:\r\n - \"po self == nil\" will output \"false\" without holding on to the instance of SomeClass.\r\n - \"po self.someProperty\" will output \"some value\" without holding on to the instance of SomeClass\r\n - \"po \"\\(self)\"\" will output \"<SomeClass: 0x600000043ae0>\" without holding on to the instance of SomeClass\r\n\r\nAlso, editing the break point to log  \"@self@\" will hold on to the instance preventing it from being released. \r\n\r\nHowever, choosing \"Print description of \"self\" \" in the context menu from the Variables View in the Debug Area outputs \"Printing description of self:\r\n<SomeClass: 0x600000043ae0>\" without holding on to the instance.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'DebuggerRetainsObject.zip' and 'WorksFineInObjC.zip' were successfully uploaded."
+    email: david.ronnqvist@gmail.com
+    modified: "2016-10-13T07:44:59.73627Z"
+    number: "28633569"
+    number_intvalue: 28633569
+    originated: 05-Oct-2016
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.0 (8A218a)
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 23342985 (Open)
+    title: Debugger holds strong reference to results of expressions when used with Swift

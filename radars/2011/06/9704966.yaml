@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9704966"
+    labels:
+        datastore_id: "1229409"
+data:
+    classification: Serious Bug
+    created: "2011-06-30T17:28:05.544696Z"
+    description: "I upgraded from iOS 5 beta 1 SDK to iOS 5 beta 2.  I found the new version of ICU included in the SDK defines a macro called StringPiece:\r\n\r\n% find . -type f -print0 | xargs -0 grep StringPiece\r\n./unicode/udraft.h:#        define StringPiece StringPiece_DRAFT_API_DO_NOT_USE\r\n./unicode/udraft.h:#        define StringPiece_48 StringPiece_DRAFT_API_DO_NOT_USE\r\n\r\nThis breaks any library that previously defined a function or class called StringPiece, including Google libphonenumber (which uses another library class, re2::StringPiece):\r\n\r\nlibphonenumber/cpp/src/phonenumberutil.cc:56: error: 're2::StringPiece_DRAFT_API_DO_NOT_USE' has not been declared\r\nlibphonenumber/cpp/src/phonenumberutil.cc: In function 'void i18n::phonenumbers::<unnamed>::FormatAccordingToFormatsWithCarrier(const std::string&, const google::protobuf::RepeatedPtrField<i18n::phonenumbers::NumberFormat>&, i18n::phonenumbers::PhoneNumberUtil::PhoneNumberFormat, const std::string&, const std::string&, std::string*)':\r\n\r\nSteps to Reproduce:\r\n\r\n% cat testStringPiece.cc\r\nnamespace foo {\r\nclass StringPiece { };\r\n}\r\n\r\n#include <unicode/uchar.h>\r\n#include <unicode/utf8.h>\r\n\r\nnamespace bar {\r\nusing foo::StringPiece;\r\n\r\nvoid DoStuff() {\r\n  StringPiece blah;\r\n}\r\n\r\n}\r\n\r\n% /Developer/usr/bin/g++ -arch i386 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk -c testStringPiece testStringPiece.cc\r\ntestStringPiece.cc:9: error: ‘foo::StringPiece_DRAFT_API_DO_NOT_USE’ has not been declared\r\ntestStringPiece.cc: In function ‘void bar::DoStuff()’:\r\ntestStringPiece.cc:12: error: ‘StringPiece_DRAFT_API_DO_NOT_USE’ was not declared in this scope\r\ntestStringPiece.cc:12: error: expected `;' before ‘blah’\r\n\r\nExpected Results:\r\n\r\nStringPiece should not be #defined in ICU headers included with iOS SDK 5.\r\n\r\nActual Results:\r\n\r\nStringPiece is #defined in ICU headers, causing existing code to fail to compile.\r\n\r\nRegression:\r\n\r\n100% reproducible.\r\n\r\nNotes:"
+    email: bgertzfield@gmail.com
+    modified: "2012-03-23T17:45:15.277718Z"
+    number: "9704966"
+    number_intvalue: 9704966
+    originated: "2011-06-30"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 5.0 beta 2
+    reproducible: 100%
+    resolved: ""
+    status: Closed
+    title: 'iOS 5 beta 2 SDK unicode/udraft.h #defines StringPiece, breaking libraries'

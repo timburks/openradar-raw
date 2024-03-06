@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6439564"
+    labels:
+        datastore_id: "343"
+data:
+    classification: Serious Bug
+    created: "2008-12-12T00:58:51.669034Z"
+    description: "11-Dec-2008 04:55 PM Mike Tyson:\r\nSummary: \r\n\r\nChanging the audio route using kAudioSessionProperty_OverrideAudioRoute from within a route change callback sometimes causes the audio system to freeze, and no longer call input/output callbacks.  This appears to happen for the PlayAndRecord category, but not MediaPlayback (I haven't tested others)\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n1. Initialise and start a PlayAndRecord audio session\r\n2. Initialise and start a RemoteIO audio unit (probably not necessary for crash, but useful to hear audio stopping)\r\n3. Assign a callback to watch for audio route changes ( AudioSessionAddPropertyListener(kAudioSessionProperty_AudioRouteChange,...)\r\n4. Change audio route (eg. removing headphones)\r\n5. From within audio route change callback, override audio route\r\n\r\n\r\nExpected Results:\r\n\r\nAudio route is overridden, operation continues\r\n\r\nActual Results:\r\n\r\nAudio system appears to freeze - no input or output callbacks are called.  Audio route change callbacks are still called when route changes.\r\n\r\nRegression:\r\n\r\nSeems to happen on 2.1 and 2.2, on device. Haven't tested in simulator.\r\n\r\nNotes:\r\n\r\nI'm writing a piece of software that records and plays simultaneously; it is meant for live performance, and thus needs to play through the speaker, not the receiver. Thus, when headphones are not plugged in, audio route must be rerouted to the speaker, not the receiver.\r\n\r\nFreeze occurs about one in two times. I have tried stopping the audio unit and starting it again after the route change: This works, no more freezes, but audio is always played through the speaker now, and never goes to the headphones when they are plugged in.\r\nAlso tried other things, like stopping and starting the audio session, to no avail.\r\n\r\n\r\n'AudioRouteFreeze.zip' was successfully uploaded"
+    email: mike@tyson.id.au
+    modified: "2011-08-28T05:48:52.894594Z"
+    number: "6439564"
+    number_intvalue: 6439564
+    originated: 11-Dec-2008 04:55 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 2.1-2.2
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: 'PlayAndRecord: Overriding audio route from route change callback freezes audio'

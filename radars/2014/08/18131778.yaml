@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18131778"
+    labels:
+        datastore_id: "4956567682154496"
+data:
+    classification: ""
+    created: "2014-08-26T11:26:46.41223Z"
+    description: "Summary:\r\nThe first step in the -[NSObject valueForKey:] search pattern is, as documented by https://developer.apple.com/library/mac/documentation/cocoa/conceptual/KeyValueCoding/Articles/SearchImplementation.html :\r\n\r\n> 1. Searches the class of the receiver for an accessor method whose name matches the pattern get<Key>, <key>, or is<Key>, in that order. If such a method is found it is invoked. \r\n\r\nA method which is added with `class_addMethod` should be found by `valueForKey:`. It is not.\r\n\r\nSteps to Reproduce:\r\nRun the following code:\r\n\r\nNSString *nameIMP(id self, SEL _cmd) {\r\n    return @\"name\";\r\n}\r\n\r\n@interface ExtendedClass : NSObject\r\n@end\r\n\r\n@implementation ExtendedClass\r\n@end\r\n\r\nint main(int argc, const char * argv[])\r\n{\r\n\r\n    @autoreleasepool {\r\n        \r\n        class_addMethod([ExtendedClass class], @selector(name), (IMP)nameIMP, \"v@\");\r\n        id object = [[ExtendedClass alloc] init];\r\n        \r\n        @try {\r\n            [object name];\r\n            NSLog(@\"[object name] success.\");\r\n        }\r\n        @catch (NSException *exception) {\r\n            NSLog(@\"[object name] failure.\");\r\n        }\r\n        \r\n        @try {\r\n            [object valueForKey:@\"name\"];\r\n            NSLog(@\"[object valueForKey:@\\\"name\\\"] success.\");\r\n        }\r\n        @catch (NSException *exception) {\r\n            NSLog(@\"[object valueForKey:@\\\"name\\\"] failure.\");\r\n        }\r\n        \r\n    }\r\n    return 0;\r\n}\r\n\r\n\r\nExpected Results:\r\nThe following lines appear in the log:\r\n\r\n[object name] success\r\n[object valueForKey:@\"name\"] success\r\n\r\nActual Results:\r\nThe following lines appear in the log:\r\n\r\n[object name] success\r\n[object valueForKey:@\"name\"] failure\r\n\r\nVersion:\r\nOSX 10.9.4 (13E28).\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nThis bug appears, at least, with code compiled by Xcode 5.1.1 (5B1008) on an iMac14,2 running OSX 10.9.4 (13E28)."
+    email: gwendal.roue@gmail.com
+    modified: "2014-08-26T11:26:46.412388Z"
+    number: "18131778"
+    number_intvalue: 18131778
+    originated: 26/08/2014
+    parent_number: '&{NULL_VALUE}'
+    product: OSX
+    product_version: 10.9.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: -[NSObject valueForKey:] does not find methods which are added at runtime

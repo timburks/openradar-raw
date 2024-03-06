@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "49442041"
+    labels:
+        datastore_id: "4926004078313472"
+data:
+    classification: Serious bug
+    created: "2019-04-01T18:04:00.994212Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary\r\nThe Mapbox Maps SDK for iOS has enabled `presentsWithTransactions`, to align UIViews to MGLMapViews since September 2018, without incident. Three days ago, the release of iOS 12.2 has introduced a bug. \r\n\r\niPhone X users on iOS 12.2 who rapidly shift between windows that have enabled `presentsWithTransactions` will experience extreme slowdown in the map. \r\n\r\nThis bug is isolated to iOS 12.2. We have reproduced this behavior on multiple iPhone/iPad devices running iOS 12.2. We have attempted to reproduce on iPhone/iPad devices running older versions of iOS (12.1.x) and have not seen this behavior.\r\n \r\nOur SDK uses OpenGL and UIKit views. We use `CAEAGLLayer.presentsWithTransaction == YES` to synchronize GL and UIViews.\r\n\r\nIn our test case, we have our custom view that uses OpenGL & UIViews embedded in a UITabBarController with two tabs: one tab contains our test view controller and custom UIView; the other is an empty view controller.\r\n\r\nWhen rapidly toggling between tabs, the application will eventually suffer from extreme slowdown.\r\n\r\nWe have a potential workaround to handle manifestations of this bug from this specific sequence of user actions. We remain concerned that the bug may manifest when simply displaying the OpenGL content, without changing tabs or changing the view hierarchy.\r\n\r\nOur workaround is as follows:\r\n\r\n- Set `presentsWithTransaction = NO` in `willMoveToWindow:` when `newWindow == nil`\r\n- Set `presentsWithTransaction = YES` in `didMoveToWindow:` when `self.window != nil`\r\n- See: https://github.com/mapbox/mapbox-gl-native/pull/14264/files\r\n\r\nChanges made in iOS 12.2 should be investigated for their potential to affect how `presentsWithTransaction` deals with switching windows.\r\n\r\nSteps to Reproduce\r\n- Build the supplied test project, targeting an iOS device running iOS 12.2: https://github.com/mapbox/mapbox-gl-native/tree/jmkiley-12.2-repro\r\n- Rapidly switch between tabs until the map’s tab (the first) becomes unresponsive\r\n- Eventually the app will suffer from poor performance and stuttering\r\n\r\nExpected Results\r\nToggling between a tab should not cause app to stutter and slowdown.\r\n\r\nActual Results\r\n- Running the app through instruments, we can see the main thread in repeated \"Blocked\" states for exactly 1 second each. We do not have any timers or code that have a 1 second duration.\r\n- When the map becomes unresponsive, it’s evidently stuck in a series of `semaphore_timedwait_trap`s, prompted by us calling `glClear`.\r\n- The Main Thread is made \"Runnable\" by an interrupt handler on CPU4 / CPU5\r\n- The \"Metal System Trace\" marks this blocked period as \"waiting for next drawable”\r\n- Nothing looks out of the ordinary when we look at the GPU trace from within Xcode.\r\n- Metal's equivalent to `presentsWithTransaction` behaves similarly: https://forums.developer.apple.com/thread/107302\r\n\r\nVersion/Build\r\n- Xcode 10.2\r\n- iOS SDK 12.2\r\n\r\nConfiguration\r\n- iPhone X, iPad Pro 10.5, iPhone 6s, etc."
+    email: nadia.barbosa@mapbox.com
+    modified: "2019-04-01T18:04:00.994405Z"
+    number: "49442041"
+    number_intvalue: 49442041
+    originated: 3/29/2019
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "12.2"
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: iOS 12.2 contains change that breaks `presentsWithTransactions`

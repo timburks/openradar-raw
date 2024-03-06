@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11772379"
+    labels:
+        datastore_id: "1794404"
+data:
+    classification: Serious Bug
+    created: "2012-06-28T21:34:52.398486Z"
+    description: "28-Jun-2012 04:34 PM Heath Borders:\r\nSummary:\r\nClang doesn't not warn that a class doesn't implement a required protocol method when that protocol method has an id parameter with a protocol and the implementing class only has the parameter as id.\r\n\r\nSteps to Reproduce:\r\n\r\nCompile the following in a .m file.\r\n\r\n@protocol Foo <NSObject>\r\n\r\n@end\r\n\r\n@protocol Bar <NSObject>\r\n\r\n- (void) barWithFoo: (id<Foo>) foo;\r\n\r\n@end\r\n\r\n@interface MyBar <Bar>\r\n\r\n@end\r\n\r\n@implementation\r\n\r\n- (void) barWithFoo: (id) foo;\r\n\r\n@end\r\n\r\nExpected Results:\r\nClang should issue a warning that -[Bar barWithFoo:] is unimplemented\r\n\r\nActual Results:\r\nClang issues no warning.\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\n05-Jul-2012 01:20 PM Heath Borders:\r\nThe following scenario occurred that I expected the compiler to catch.\r\n\r\nI originally had:\r\n\r\n@protocol Bar <NSObject>\r\n\r\n- (void) barWithFoo: (id) foo;\r\n\r\n@end\r\n\r\n@interface MyBar <Bar>\r\n\r\n@end\r\n\r\n@implementation\r\n\r\n- (void) barWithFoo: (id) foo;\r\n\r\n@end\r\n\r\nThen, I decided I wanted to create a Foo protocol:\r\n\r\n@protocol Foo <NSObject>\r\n\r\n- (void) doStuff;\r\n\r\n@end\r\n\r\n@protocol Bar <NSObject>\r\n\r\n- (void) barWithFoo: (id<Foo>) foo;\r\n\r\n@end\r\n\r\n@interface MyBar <Bar>\r\n\r\n@end\r\n\r\n@implementation\r\n\r\n- (void) barWithFoo: (id) foo {\r\n  [foo doStuff];\r\n}\r\n\r\n@end\r\n\r\nLater, I changed my Foo protocol method's name, but forgot to change the selector call in -{Bar barWithFoo:], which I expected the compiler to catch for me.  This caused a crash.\r\n\r\n@protocol Foo <NSObject>\r\n\r\n- (void) doDifferentStuff;\r\n\r\n@end\r\n\r\n@protocol Bar <NSObject>\r\n\r\n- (void) barWithFoo: (id<Foo>) foo;\r\n\r\n@end\r\n\r\n@interface MyBar <Bar>\r\n\r\n@end\r\n\r\n@implementation\r\n\r\n- (void) barWithFoo: (id) foo {\r\n  [foo doStuff]; // selector missing!\r\n}\r\n\r\n@end"
+    email: heath.borders@gmail.com
+    modified: "2012-07-05T18:21:03.17636Z"
+    number: "11772379"
+    number_intvalue: 11772379
+    originated: 28-Jun-2012 04:34 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPad SDK
+    product_version: Xcode 4.3.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Clang misses unimplemented protocol method if parameter protocols don't match

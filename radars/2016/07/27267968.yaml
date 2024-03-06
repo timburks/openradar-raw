@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27267968"
+    labels:
+        datastore_id: "4949484308004864"
+data:
+    classification: Bug
+    created: "2016-07-10T19:59:36.27245Z"
+    description: "Summary:\r\nSo if a UIWindow subclass redefines a delegate property and use it then, that leads to unexpected behavior and weird side effects (like interface rotations get disabled) which are difficult to debug.\r\n\r\nPrivate delegates in UIKit must be declared with custom accessors, e.g.:\r\n\r\n@property (getter=_delegate, setter=_setDelegate:, nonatomic <UIWindowInternalDelegate> *delegate;\r\n\r\nSteps to Reproduce:\r\nCompile and run the following code, which demonstrates harmful side effects:\r\n\r\n// UIWindow with redefined delegate.\r\n@interface Window : UIWindow\r\n@property (nonatomic, weak) id<NSObject> delegate;\r\n@end\r\n\r\n@implementation Window\r\n@end\r\n\r\n// View controller which can change UIWindow delegate.\r\n@interface ViewController : UIViewController\r\n@end\r\n\r\n@implementation ViewController\r\n\r\n- (instancetype)initWithWindow:(Window *)window {\r\n  self = [super init];\r\n  if (self) {\r\n    window.delegate = self;\r\n  }\r\n  return self;\r\n}\r\n\r\n- (void)viewWillTransitionToSize:(CGSize)size\r\n       withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {\r\n  [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];\r\n\r\n  // Never called because we've overridden UIWindow delegate and set it before setRootViewController.\r\n  assert(NO);\r\n}\r\n\r\n@end\r\n\r\n// Standard application delegate.\r\n@interface AppDelegate : UIResponder <UIApplicationDelegate>\r\n\r\n@property (nonatomic) Window *window;\r\n\r\n@end\r\n\r\n@implementation AppDelegate\r\n\r\n- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {\r\n  self.window = [[Window alloc] initWithFrame:[UIScreen mainScreen].bounds];\r\n  self.window.rootViewController = [[ViewController alloc] initWithWindow:self.window];\r\n  [self.window makeKeyAndVisible];\r\n\r\n  return YES;\r\n}\r\n\r\n@end\r\n\r\n\r\nExpected Results:\r\nPrivate UIKit properties do not cause collisions with public ones declared in subclasses.\r\nThe code above should invoke viewWillTransitionToSize:withTransitionCoordinator: on device rotation.\r\n\r\nActual Results:\r\nPrivate UIWindow delegate property causes collisions with public one declared in subclasses.\r\nThe code above does not invoke viewWillTransitionToSize:withTransitionCoordinator: on device rotation."
+    email: anthony@shoumikh.in
+    modified: "2016-07-10T19:59:36.27266Z"
+    number: "27267968"
+    number_intvalue: 27267968
+    originated: 07/10/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 9.3.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIWindow implicitly declares delegate property with standard accessors instead of private ones.

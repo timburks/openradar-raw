@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12705015"
+    labels:
+        datastore_id: "2287401"
+data:
+    classification: UI/Usability
+    created: "2012-11-15T01:07:54.33291Z"
+    description: "14-Nov-2012 08:02 PM John Hawkinson:\r\nSummary:\r\n  CrashReporter and gdb disagree on thread numbering (0-based vs. 1-based).\r\n  CrashReporter numbers threads starting from 0.\r\n  gdb numbers threads starting from 1.\r\n\r\n  This is medium-annoying if you are trying to discuss a particular thread in\r\na core dump with another developer -- are you talking about gdb's thread numbers or about CrashReporter's?\r\n\r\n  They should be consistent! Fix one. I would imagine gdb is more standard here, and platform-independent.\r\n\r\nSteps to Reproduce:\r\n\r\n  Crash an app. Compare CrashReporter and gdb output.\r\n\r\nExpected Results:\r\n\r\n   Consistent numbering.\r\n\r\nActual Results:\r\n\r\nCrashReporter reports this for an Adobe InDesign crash:\r\n\r\n    Exception Type:  EXC_BAD_ACCESS (SIGBUS)\r\n    Exception Codes: KERN_PROTECTION_FAILURE at 0x0000000000000000\r\n    Crashed Thread:  74\r\n    \r\n    Thread 0:  Dispatch queue: com.apple.main-thread\r\n    ...\r\n    Thread 74 Crashed:\r\n    0   com.adobe.InDesign.Text             0x2207a68f GetPlugIn + 945295\r\n    1   com.adobe.InDesign.Text             0x2207a94c GetPlugIn + 945996\r\n    ...\r\n    Thread 77:\r\n    ...\r\n    Thread 74 crashed with X86 Thread State (32-bit):\r\n\r\nAnd in gdb:\r\n\r\n  (gdb) info threads\r\n    78 0x923d7412 in __workq_kernreturn ()\r\n    77 0x923dfaa2 in __semwait_signal ()\r\n    76 0x923b1b42 in semaphore_wait_signal_trap ()\r\n    75 ComposeScannerCache::CalculateParagraph (this=0x1cb19468, position=27) at ComposeScanner.cpp:765\r\n    74 0x923b1b5a in semaphore_timedwait_signal_trap ()\r\n    73 0x923b1b5a in semaphore_timedwait_signal_trap ()\r\n  ...\r\n     3 0x923b1b5a in semaphore_timedwait_signal_trap ()\r\n     2 0x923d8382 in kevent ()\r\n  *  1 0x923b9962 in tiny_free_list_add_ptr ()\r\n  Current language:  auto; currently c++\r\n  (gdb)  \r\n\r\n\r\nThat is, crashreporter's Thread 74 is gdb's Thread 75.\r\n\r\nRegression:\r\n\r\nNotes:"
+    email: jhawk@mit.edu
+    modified: "2012-11-15T01:07:54.333289Z"
+    number: "12705015"
+    number_intvalue: 12705015
+    originated: 14 Nov 2012
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.6/11G63b
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CrashReporter and gdb disagree on thread numbering (0-based vs. 1-based)

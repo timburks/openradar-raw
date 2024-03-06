@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "48196961"
+    labels:
+        datastore_id: "4993323618009088"
+data:
+    classification: Bug
+    created: "2019-02-19T12:35:42.546799Z"
+    description: "Summary:\r\nAccidental retaining CPNavigationSession without cancelling or finishing produces a deadlock on the next session creation. Such behavior isn’t obvious when a developer hasn’t found yet the issue related to the memory management of the first retained session. \r\n\r\nSteps to Reproduce:\r\n1. Create a CPNavigationSession and retain it (for example in property)\r\n2. Create another CPNavigationSession without canceling, finishing or releasing 1st.\r\n\r\nIn the sample project:\r\n\r\n1. Press Plan route\r\n2. In the Preview dialog press Launch button\r\n3. Repeat 1-2 \r\n\r\nExpected Results:\r\nAn exception or another way to notify that previous session is still active\r\n\r\nActual Results:\r\nDead lock on [CPMapTemplate startNavigationSessionForTrip:]. The stacktrace:\r\n\r\n* thread #1, queue = 'com.apple.main-thread', stop reason = signal SIGSTOP\r\n  * frame #0: 0x000000010f70b1b6 libsystem_kernel.dylib`semaphore_wait_trap + 10\r\n    frame #1: 0x000000010f371cb8 libdispatch.dylib`_dispatch_sema4_wait + 16\r\n    frame #2: 0x000000010f3724c9 libdispatch.dylib`_dispatch_semaphore_wait_slow + 101\r\n    frame #3: 0x0000000108880e92 CarPlay`-[CPMapTemplate startNavigationSessionForTrip:] + 329\r\n    frame #4: 0x0000000108534fa0 CountryRoads`TemplateManager.createNavigationSession(trip=0x0000600003417630, mapTemplate=0x000060000085d4d0, self=0x0000600000d40210) at TemplateManager.swift:156\r\n    frame #5: 0x00000001085376c9 CountryRoads`TemplateManager.mapTemplate(mapTemplate=0x000060000085d4d0, trip=0x0000600003417630, routeChoice=0x00006000034174b0, self=0x0000600000d40210) at TemplateManager.swift:162\r\n    frame #6: 0x0000000108537806 CountryRoads`@objc TemplateManager.mapTemplate(_:startedTrip:using:) at <compiler-generated>:0\r\n    frame #7: 0x0000000108882d75 CarPlay`__58-[CPMapTemplate startTripIdentifier:usingRouteIdentifier:]_block_invoke_2 + 96\r\n    frame #8: 0x00000001088826b0 CarPlay`-[CPMapTemplate _resolveTrip:routeChoice:completion:] + 534\r\n    frame #9: 0x0000000108882cf4 CarPlay`__58-[CPMapTemplate startTripIdentifier:usingRouteIdentifier:]_block_invoke + 147\r\n    frame #10: 0x000000010f370595 libdispatch.dylib`_dispatch_call_block_and_release + 12\r\n    frame #11: 0x000000010f371602 libdispatch.dylib`_dispatch_client_callout + 8\r\n    frame #12: 0x000000010f37e99a libdispatch.dylib`_dispatch_main_queue_callback_4CF + 1541\r\n    frame #13: 0x000000010d9603e9 CoreFoundation`__CFRUNLOOP_IS_SERVICING_THE_MAIN_DISPATCH_QUEUE__ + 9\r\n    frame #14: 0x000000010d95aa76 CoreFoundation`__CFRunLoopRun + 2342\r\n    frame #15: 0x000000010d959e11 CoreFoundation`CFRunLoopRunSpecific + 625\r\n    frame #16: 0x0000000112edb1dd GraphicsServices`GSEventRunModal + 62\r\n    frame #17: 0x000000010b5e181d UIKitCore`UIApplicationMain + 140\r\n    frame #18: 0x0000000108545857 CountryRoads`main at AppDelegate.swift:13\r\n    frame #19: 0x000000010f3e7575 libdyld.dylib`start + 1\r\n\r\nVersion:\r\n12.1\r\n\r\nNotes:\r\nAdditional mentioning in the documentation of existing limitation is also missing.\r\n\r\nConfiguration:"
+    email: Yury.Lapitsky@gmail.com
+    modified: "2019-02-19T12:35:42.54694Z"
+    number: "48196961"
+    number_intvalue: 48196961
+    originated: 19.02.2019
+    parent_number: '&{NULL_VALUE}'
+    product: CarPlay
+    product_version: iOS 12.1
+    reproducible: 100%
+    resolved: ""
+    status: Open
+    title: Deadlock on second creation of CPNavigationSession

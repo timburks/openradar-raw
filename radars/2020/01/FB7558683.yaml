@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7558683
+    labels:
+        datastore_id: "5037219370762240"
+data:
+    classification: bug
+    created: "2020-01-31T09:18:31.240596Z"
+    description: "Attaching `onPreferenceChange` in certain view configurations causes SwiftUI error: Bound preference CollectionViewSizeKey tried to update multiple times per frame.\r\n\r\nIn my project this stops the later propagation of Preference Key/Value changes. The issue did occur only when the view with `onPreferenceChange` listener was part of the initial view hierarchy loaded during startup. If this view was loaded later, the issue did not occur. Reducing the bug test revealed the trigger is unrelated to setting a preference on a SwiftUI view, but is caused by mere registration of the `onPreferenceChange` event listener in certain view configurations.\r\n\r\nOnline search for the error message I was getting returned one case of the same issue, derived from objc.io project collection-view-swiftui. According to comments there, the error message caused nor observable issues in their case. Reducing test case from their example, it appears the common culprit could be the ScrollView?\r\n\r\nIssue occurs with Xcode Version 11.3.1 (11C504) in iOS simulator as well as on Device.\r\nPlease list the steps you took to reproduce the issue:\r\n1. Run the attached test case in iOS simulator or on device. \r\n2. Error message appears on console: \"Bound preference CollectionViewSizeKey tried to update multiple times per frame.\"\r\n\r\nSee the two reduced minimal test cases in the attached ContentView.swift (just drop this into empty SwiftUI project):\r\n\r\n````\r\nimport SwiftUI\r\n\r\nstruct CollectionViewSizeKey: PreferenceKey {\r\n    typealias Value = [CGSize]\r\n    static var defaultValue: [CGSize] { [] }\r\n    static func reduce(value: inout [CGSize], nextValue: () -> [CGSize]) { }\r\n}\r\n\r\n// Reduced test case from my project\r\nstruct ContentView: View {\r\n    var body: some View {\r\n        NavigationView {\r\n            TabView {\r\n                ScrollView(.horizontal, showsIndicators: false) {\r\n                    Text(\"Hello, World!\")\r\n                }\r\n                .onPreferenceChange(CollectionViewSizeKey.self) {\r\n                    print($0)\r\n                }\r\n            }\r\n            .navigationBarTitle(\"X\", displayMode: .inline)\r\n        }\r\n    }\r\n}\r\n\r\n\r\n//// Reduced test case from example with same error:\r\n//// https://gist.github.com/Thomvis/cb86cad637e21f5385cd243d4f7a8ad1#gistcomment-3061583\r\n//struct ContentView: View {\r\n//    var body: some View {\r\n//        ScrollView {\r\n//            ForEach(1...1, id: \\.self) {\r\n//                Text(\"\\($0)\")\r\n//            }\r\n//            .onPreferenceChange(CollectionViewSizeKey.self) {\r\n//                print($0)\r\n//            }\r\n//        }\r\n//    }\r\n//}\r\n\r\nstruct ContentView_Previews: PreviewProvider {\r\n    static var previews: some View {\r\n        ContentView()\r\n    }\r\n}\r\n\r\n````"
+    email: pavol.vaskovic@gmail.com
+    modified: "2020-01-31T09:18:31.240755Z"
+    number: FB7558683
+    number_intvalue: 7558683
+    originated: Jan 31, 2020
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI Framework
+    product_version: Xcode Version 11.3.1 (11C504)
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: Bound preference tried to update multiple times per frame

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29925225"
+    labels:
+        datastore_id: "5033631491817472"
+data:
+    classification: UI Bug
+    created: "2017-01-09T11:10:05.18192Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nWhen the UITableViewDelegate optional methods are implemented, in a certain configuration the section header for the 0th section will not be populated and the delegate method is not called\r\n\r\nReproduced always\r\n\r\nSteps to Reproduce:\r\nI've removed computation logic for clarity and only left the final flow configuration leading to the bug.\r\n\r\nNotice that when - tableView estimatedHeightForHeaderInSection:section\r\nreturns \"0\", the 0th section won't have a title. \r\n\r\nIf you return \"10\" , the 0th section will have a header\r\n\r\n\r\n\r\n#import \"ViewController.h\"\r\n\r\n@interface ViewController ()\r\n\r\n@end\r\n\r\n@implementation ViewController\r\n\r\n- (void)viewDidLoad {\r\n  [super viewDidLoad];\r\n  UITableView *tv = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];\r\n  tv.dataSource = (id <UITableViewDataSource>)self;\r\n  tv.delegate = (id <UITableViewDelegate>)self;\r\n  [tv registerClass:[UITableViewCell class] forCellReuseIdentifier:@\"cell\"];\r\n  [self.view addSubview:tv];\r\n  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\r\n    CGFloat f = [tv sectionHeaderHeight];\r\n    NSLog(@\"%@\",@(f).description);\r\n  });\r\n}\r\n\r\n\r\n\r\n- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section\r\n{\r\n  return 10;\r\n}\r\n\r\n- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView\r\n{\r\n  return 10;\r\n}\r\n// Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:\r\n// Cell gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)\r\n- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath\r\n{\r\n  return [tableView dequeueReusableCellWithIdentifier:@\"cell\" forIndexPath:indexPath];\r\n}\r\n\r\n- (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section\r\n{\r\n  return @(section).description;\r\n}\r\n\r\n- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section\r\n{\r\n  return -1;\r\n}\r\n\r\n//*******\r\n\r\n- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section\r\n{\r\n  return -1;\r\n}\r\n\r\n// Use the estimatedHeight methods to quickly calcuate guessed values which will allow for fast load times of the table.\r\n// If these methods are implemented, the above -tableView:heightForXXX calls will be deferred until views are ready to be displayed, so more expensive logic can be placed there.\r\n- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath\r\n{\r\n  return UITableViewAutomaticDimension;\r\n}\r\n\r\n////*******\r\n- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForHeaderInSection:(NSInteger)section\r\n{\r\n  return 0;\r\n}\r\n//- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForFooterInSection:(NSInteger)section\r\n//{\r\n//  return 0;\r\n//}\r\n\r\n// Section header & footer information. Views are preferred over title should you decide to provide both\r\n\r\n- (nullable UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section   // custom view for header. will be adjusted to default or specified header height\r\n{\r\n  return nil;\r\n}\r\n- (nullable UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section   // custom view for footer. will be adjusted to default or specified footer height\r\n\r\n{\r\n  return nil;\r\n}\r\n@end\r\n\r\n\r\nExpected Results:\r\n0th section should have a header title\r\n\r\nActual Results:\r\n0th section doesn't have a title"
+    email: avner@insert.io
+    modified: "2017-01-09T11:10:05.18216Z"
+    number: "29925225"
+    number_intvalue: 29925225
+    originated: 9/1/17
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: ""
+    reproducible: Always
+    resolved: NO
+    status: Open
+    title: UITableview doesn't populate section header for 0th section in a certain configuration

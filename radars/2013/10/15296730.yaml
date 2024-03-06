@@ -1,0 +1,43 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15296730"
+    labels:
+        datastore_id: "6086110392352768"
+data:
+    classification: Enhancement
+    created: "2013-10-23T09:34:28.57566Z"
+    description: |-
+        Summary:
+        If you ask Core Text for a run delegate that is too wide for its framesetter, neither the run delegate nor the content after it are displayed.
+
+        Steps to Reproduce:
+        1. Create an iOS app that can draw an attributed string with CTFramesetter. Make the frame setter's frame 300pt wide.
+        2. Use a run delegate to leave space for an image. Set the run delegate's width callback to return 320.
+
+        Expected Results:
+        One of the two following things happen:
+        a) The run delegate is positioned on a new line, starting at the left hand edge. The fact that it cannot completely fit in to the width of the frame is ignored — it is assumed that whatever is rendered in the blank space (e.g. an image) can overlap the edge of the frame.
+        b) The run delegate is resized proportionally to a size that fits. By iterating through the CTLines and CTRuns, the developer can learn what size was actually used, and scale down their media as appropriate.
+
+        Actual Results:
+        Core Text goes crazy and keeps adding blank lines until it has filled up its frame. The run delegate is never 'drawn', nor is any of the text after it.
+
+        Notes:
+        It would be great if there were a few modes you could choose for if a run delegate does not fit the current line width:
+        1. Scale proportionally down to current frame width
+        2. Overlap the right hand edge, so just reserve as much horizontal space as is available
+
+        For non-rectangular paths, the line width may differ as the frame is set. There should be a choice whether to use the above modes with the current line width of the frame (and ignore the fact it may widen later), or to 'look ahead' to see if there is a better place to render the run delegate later on… if there is, blank space is left until that place. This choice would be optional per run delegate.
+    email: amorya@gmail.com
+    modified: "2013-10-23T09:34:28.575851Z"
+    number: "15296730"
+    number_intvalue: 15296730
+    originated: 23-Oct-2013 10:34 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Core Text doesn't know what to do with a run delegate that doesn't fit

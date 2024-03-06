@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7841731"
+    labels:
+        datastore_id: "689401"
+data:
+    classification: Serious Bug
+    created: "2010-09-24T03:55:22.098727Z"
+    description: "Summary:\r\n- Connections created with NSURLConnection using a redirection URL causes a crash.\r\n\r\nSteps to Reproduce:\r\n- Create a delegate for NSURLConnection\r\n- Create a NSURLRequest object using URL that will cause a redirect.\r\n- Create a NSURLConnection using the delegate and NSURLRequest object\r\n\r\nExpected Results:\r\n- NSURLConnection should handle the response redirect and forward to the redirected request URL.\r\n\r\nActual Results:\r\n- NSURLConnection causes the running application to crash.\r\n\r\nRegression:\r\n- Occurs in 10.6.3 (10D573)\r\n- Does not occur in 10.5.8 (9L31a)\r\n\r\nNotes:\r\n- As a workaround, the NSURLConnection delegate must implement [NSURLConnection connection:willSendRequest:redirectResponse:] as follows:\r\n\r\n- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse;\r\n{\r\n    // If the URL response that caused a redirect, cancel the current \r\n    // connection and create a new one with the redirect request URL.\r\n    if ([redirectResponse URL])\r\n    {\r\n        [connection cancel];\r\n\r\n        [self createConnectionWithURL:[request URL]];\r\n\r\n        return nil;\r\n    }\r\n\r\n    return request;\r\n}"
+    email: verwymeren@gmail.com
+    modified: "2011-08-28T05:41:57.936425Z"
+    number: "7841731"
+    number_intvalue: 7841731
+    originated: 08-Apr-2010 01:44 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.3 (10D573)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '10D573: NSURLConnection crash when handling URL redirection'

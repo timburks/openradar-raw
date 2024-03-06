@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15358055"
+    labels:
+        datastore_id: "4561712682369024"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2013-10-31T00:29:14.602769Z"
+    description: "Summary:\r\nWhen linking certain object files, the generated branch islands will in some cases branch to random memory instead of the intended target address.\r\n\r\nSteps to Reproduce:\r\nExample data:\r\n\r\n__text section size: 0x4b90850, with 7 branch island regions.\r\n\r\nNeed to branch from 0x6A774 to 0x4B77250, thumb instruction.\r\n\r\nbranch island regions are at:\r\n1:   0x0de0860\r\n2:   0x14bd890\r\n3:   0x21810e0\r\n4:   0x2bcbe60\r\n5:   0x3996a50\r\n6:   0x476d680\r\n7:   0x4b90850\r\n\r\nSince target address is after branch island region #6, branch islands should be inserted into regions 1 through 6.\r\n\r\nPrevious code would assume a constant 14MB between each branch region, which would result in the following region addresses:\r\n\r\n1:   0x0E00000\r\n2:   0x1C00000\r\n3:   0x2A00000\r\n4:   0x3800000\r\n5:   0x4600000\r\n6:   0x5400000\r\n7:   0x6200000\r\n\r\nAnd the code would not insert a branch island into region #6, because it would think the target address is before region 6.\r\n\r\n\r\n\r\nExpected Results:\r\nThe final result would be that the branch from the island in region 5 to the 0x4B77250 would not fit into the thumb2 branch instruction, overflowing it so that it turned negative, and branch into random memory.\r\n\r\nActual Results:\r\nNot branch into random memory.\r\n\r\nVersion:\r\nXcode Version 5.0.1 (5A2053)\r\nMavericks 13A603.\r\n\r\n\r\nNotes:\r\nHere is a potential fix (which works for me): https://github.com/rolfbjarne/ld64/commit/29767a478ff6d3f15ebcf0001d1c572e1c754db2 \r\n\r\nConfiguration:\r\nAt least Xcode 4.6 and 5.0"
+    email: rolf@xamarin.com
+    modified: "2013-10-31T00:29:14.602978Z"
+    number: "15358055"
+    number_intvalue: 15358055
+    originated: 31/10/2013
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode Version 5.0.1 (5A2053)
+    reproducible: 100%
+    resolved: ""
+    status: Open
+    title: 'ld64: Incorrect calculation of branch islands.'

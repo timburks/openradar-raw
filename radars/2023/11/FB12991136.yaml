@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB12991136
+    labels:
+        datastore_id: "5515172458266624"
+data:
+    classification: Crash
+    created: "2023-11-14T14:54:54.087385Z"
+    description: "We’ve observed several random Mail crashes during development of our MailKit extension. The typical symptom is that while Mail is downloading new messages, at some point it will crash if there is an extension enabled, however this isn’t always the case whenever there are new messages (most times it’s not a problem).\r\n\r\nTypically the temporary solution is to disable the extension (via System Settings through Privacy & Security), relaunch Mail and let it download the new messages, and once that is completed, re-enabling the extension functions properly again until the next time Mail crashes when there’s new messages (but again, that’s not every time there’s new messages)\r\n\r\nThe common things we’ve observed so far:\r\n\r\n- while disabling the extension temporarily resolves the issue, the extension itself doesn’t seem to be the direct cause - that is, there’s no indication the extension process has crashed (no diagnostics reports for the extension is produced) and only Mail itself seems to crash (the crash produces a Mail diagnostics report)\r\n\r\n- messages that contain attachments seem to trigger the crash; it seems to happen more often when there are new messages where some contain attachments, but as there are several accounts types as listed in this report it’s difficult to narrow it down specifically - in the past disabling some accounts (namely a Yahoo account) altogether helped resolve the crash temporarily, but it’s unknown if it’s due to a specific message, or something specific about the account. As mentioned most times everything works without issue.\r\n\r\n- it’s been observed that typically there are more than 1 new messages that are being downloaded\r\n\r\n- the crash isn’t specific to any particular extension; we’ve run into this same type of crash with our own extension, as well as Apple’s sample MailKit extension.\r\n\r\n- in investigating this with another MailKit extension developer, one commonality among the extensions is that they all implement the MEMessageSecurity functionality (including Apple’s own MailKit sample extension)\r\n\r\n- One of our engineers noticed that disabling ‘Enable junk mail filtering’ seems to avoid triggering the crashes, though this isn't always a solution (both as user inconvenience, as well as it doesn't always avoid the crashes, so other Mail settings must also come into play, perhaps Mail rules?)\r\n\r\n- Some users have have done a 'clean slate' of Mail (as if a new macOS user, etc.) reported less crashes\r\n\r\nSteps & Observations:\r\n\r\nThere aren’t specific steps that directly lead to the crash each time consistently, but we can provide the following info on the general environment being used that can help to reproduce it:\r\n\r\n1. Compile and enable an extension that implements the MEMessageSecurity functionality; as mentioned previously Apple’s MailKit sample extension is one example and can be used for this (https://developer.apple.com/documentation/mailkit/build_mail_app_extensions)\r\n2. Receive one or more message(s) in Mail with the extension enabled.\r\n3. If Mail crashes, disable the extension temporarily and see if Mail downloads the messages. If messages are downloaded, re-enable the extension and observe for further crashes.\r\n\r\nAttached are some of the typical crashes that are generated when Mail crashes. As mentioned earlier, there aren’t any extension process crash reports generated when this occurs.\r\n\r\nIronically, it would seem Mail was far more stable when using plugins than it is now with extensions.\r\n\r\n[several Mail crash attachments]"
+    email: sebastienboisvert@gmail.com
+    modified: "2023-11-14T14:57:10.189879Z"
+    number: FB12991136
+    number_intvalue: 12991136
+    originated: Aug 17 2023
+    parent_number: '&{NULL_VALUE}'
+    product: Mail
+    product_version: "14.0"
+    reproducible: YES
+    resolved: NO
+    status: Open
+    title: Mail crashes while downloading new message(s) when a MailKit extension is enabled

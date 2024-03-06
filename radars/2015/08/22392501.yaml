@@ -1,0 +1,66 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22392501"
+    labels:
+        datastore_id: "4945650579931136"
+data:
+    classification: Serious Bug
+    created: "2015-08-22T21:34:06.97999Z"
+    description: |-
+        Summary:
+        The attached (freshly created in Xcode 7 Beta 5) project shows a very simple example demonstrating the following:
+        - iOS app.
+        - watchOS 2 extension.
+        - Shared framework (named CoreKit) used by main app and the extension.
+
+        Because watchOS 2 is now a different platform, CoreKit is actually 2 separate targets with 2 different names (CoreKit and CoreKit-watchos). These however share the same product name to allow other code (other frameworks, targets, etc.) to import them uniformly, without having to do something like #if os(watchos) import X #else import Y #endif. These technique works perfectly fine with 3rd party frameworks that are already built in a local directory (for example, created by Carthage), and obviously works for system frameworks (Foundation, etc.).
+
+        Building and running in a simulator, and even on a device (tested on iPhone 6 + Apple Watch Sport) works flawlessly.
+
+        However, archiving is impossible. And this is pretty important because without archiving, there is no way to actually get our apps in the App Store...
+
+        Steps to Reproduce:
+        - Unzip attached project.
+        - Open FrameworkTest.xcodeproj using Xcode 7.
+        - Select FrameworkTest scheme, and a device.
+        - Click Product -> Archive.
+
+        Expected Results:
+        Application archives successfully and one can then submit to the App Store.
+
+        Actual Results:
+        It doesn't. You receive this error when archiving:
+        ..../FrameworkTest/WatchFrameworkApp Extension/ComplicationController.swift:10:8: Module file was created for incompatible target armv7-apple-ios9.0: /Users/NachoSoto/Library/Developer/Xcode/DerivedData/Build/Intermediates/ArchiveIntermediates/FrameworkTest/BuildProductsPath/Release-watchos/CoreKit.framework/Modules/CoreKit.swiftmodule/arm.swiftmodule
+
+        If you run `lipo -i` on the framework you get this:
+        Architectures in the fat file: /Users/NachoSoto/Library/Developer/Xcode/DerivedData/Build/Intermediates/ArchiveIntermediates/FrameworkTest/BuildProductsPath/Release-watchos/CoreKit.framework/CoreKit are: armv7 arm64
+
+        armv7 and arm64? But this is in the Release-watchos build folder?
+        If you keep digging, you'd see that actually both `/Users/NachoSoto/Library/Developer/Xcode/DerivedData/Build/Intermediates/ArchiveIntermediates/FrameworkTest/BuildProductsPath/Release-watchos/CoreKit.framework` and `/Users/NachoSoto/Library/Developer/Xcode/DerivedData/Build/Intermediates/ArchiveIntermediates/FrameworkTest/BuildProductsPath/Release-iphoneos/CoreKit.framework` are symlinks to the same file: `/Users/NachoSoto/Library/Developer/Xcode/DerivedData/Build/Intermediates/ArchiveIntermediates/FrameworkTest/IntermediateBuildFilesPath/UninstalledProducts/CoreKit.framework`.
+
+        So, because they have the same product name, _they're overriding each other_.
+        How are we supposed to use our own frameworks from our different target types?
+
+        Regression:
+        Watch Chess is available on the App Store right now: it consists of four 1st-party frameworks and a few other 3rd-party frameworks. Linking them from the app and the watch extension works.
+
+        Notes:
+        **The project contains the flag STRIP_BITCODE_FROM_COPIED_FILES as mentioned in the release notes**
+
+        This is a real problem that has made me completely stuck in my app (Watch Chess). However, I decided to create a brand new project to see if I could easily reproduce the problem.
+        It took me a little under an hour to set up this project, which is more than it should take. There are way too many hidden settings that don't just work with their default values, like LD_RUNPATH_SEARCH_PATHS, EMBEDDED_CONTENT_CONTAINS_SWIFT, creating a build phase to manually embed frameworks... all of these things are implementation details that we shouldn't be required to know and understand, especially for such a small demo project. We should be able to create a project, add a watchOS target, a framework, and get it up and running without wasting time with Xcode implementation details.
+
+        I've asked this question in StackOverflow (http://stackoverflow.com/questions/32123383/linking-dual-iphoneos-and-watchos-frameworks-with-same-product-name) and in the developer forums, but after being able to reproduce this so easily in a new project I decided to file a radar.
+    email: info@nachosoto.com
+    modified: "2015-08-22T21:34:06.9802Z"
+    number: "22392501"
+    number_intvalue: 22392501
+    originated: 22-Aug-2015 02:34 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7 Beta 5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '[Xcode 7 beta] Linking dual (iphoneos and watchos) frameworks with same product name causes archive to fail'

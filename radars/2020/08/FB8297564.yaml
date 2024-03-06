@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8297564
+    labels:
+        datastore_id: "5055037646569472"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2020-08-10T08:56:00.472978Z"
+    description: "I make use of the Reflection APIs in Swift for the development my app. Specifically to use the Mirror type to access the properties of structs and associated values on enums. Starting with Xcode 12.0 beta 4 (12A8179i) I have found that the children property on the Mirror type when reflecting a values was not returning the children as expected. My code iterates over the children using the method given in the code sample on https://developer.apple.com/documentation/swift/mirror/children of wrapping the children property in a AnyBidirectionalCollection. The children property with Xcode 12.0 beta 3 (12A8169g) gave the struct properties / enum associated values as expected.\r\n\r\nI have attached a playground file that demonstrates the issues as well as including the output on beta 3 and beta 4.\r\n\r\n**** Output of playground in Xcode 12.0 beta 3 (12A8169g)\r\ndisplayStyle: Optional(Swift.Mirror.DisplayStyle.struct)\r\nsubjectType: Contact\r\n(label: Optional(\"name\"), value: \"Johnny Appleseed\")\r\n(label: Optional(\"age\"), value: 34)\r\n\r\n**** Output of playground in Xcode 12.0 beta 4 (12A8179i)\r\ndisplayStyle: Optional(Swift.Mirror.DisplayStyle.struct)\r\nsubjectType: Contact\r\nno children\r\n\r\n\r\n**** Content of playground\r\nimport UIKit\r\n\r\nfunc printReflection(_ value: Any) {\r\n    let mirror = Mirror(reflecting: value)\r\n    print(\"displayStyle: \\(mirror.displayStyle.debugDescription)\")\r\n    print(\"subjectType: \\(mirror.subjectType)\")\r\n\r\n    guard let children = AnyBidirectionalCollection(mirror.children), !children.isEmpty else {\r\n        print(\"no children\")\r\n        return\r\n    }\r\n\r\n    for child in children {\r\n        print(child)\r\n    }\r\n}\r\n\r\nstruct Contact {\r\n    var name: String\r\n    var age: Int\r\n}\r\n\r\nlet c1 = Contact(name: \"Johnny Appleseed\", age: 34)\r\nprintReflection(c1)"
+    email: raymccrae@yahoo.com
+    modified: "2020-08-24T08:04:23.714937Z"
+    number: FB8297564
+    number_intvalue: 8297564
+    originated: 8/7/20
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 14 beta 4
+    reproducible: Yes
+    resolved: Closed
+    status: Closed
+    title: children property on Mirror in Swift incorrect in iOS 14 beta 4

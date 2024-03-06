@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6437092"
+    labels:
+        datastore_id: "3406"
+data:
+    classification: Serious Bug / No Workaround
+    created: "2009-02-05T00:18:55.490698Z"
+    description: "currently, as of mDNSResponder-176.2, mDNSResponder listens to UDP *:5350 exclusively, without having SO_REUSEPORT set on the socket. It does so although 5350 is the NAT-PMP port for external IP address change announcements, which multiple processes should be entitled to listen.\r\n\r\nsuggested fix: set SO_REUSEPORT for this. This can be done by applying this diff:\r\n\r\n--- mDNSMacOSX.c\t2008-07-30 03:08:17.000000000 +0200\r\n+++ mDNSMacOSX.c\t2008-12-11 13:35:44.000000000 +0100\r\n@@ -1758,6 +1758,7 @@\r\n \r\n \t// ... with a shared UDP port, if it's for multicast receiving\r\n \tif (mDNSSameIPPort(port, MulticastDNSPort)) err = setsockopt(skt, SOL_SOCKET, SO_REUSEPORT, &on, sizeof(on));\r\n+\tif (mDNSSameIPPort(port, NATPMPAnnouncementPort)) err = setsockopt(skt, SOL_SOCKET, SO_REUSEPORT, &on, sizeof(on));\r\n \tif (err < 0) { errstr = \"setsockopt - SO_REUSEPORT\"; goto fail; }\r\n \r\n \tif (sa_family == AF_INET)\r\n\r\n\r\nside-effects:\r\ndue to the way the os network stack currently works (don't know if that is according to spec, but this is how it is) someone wanting to listen to UDP ALL-SYSTEMS.MCAST.NET:5350 with SO_REUSEPORT can do so although the mDNSResponder is listening to UDP *:5350 exclusively. however if the mDNSResponder dies or is restarted while another app sits on the UDP ALL-SYSTEMS.MCAST.NET:5350 with SO_REUSEPORT - it cannot get its exclusive listening rights to UDP *:5350, and cannot listen at all, but complains about it by loudly logging way to much (which i file as a different bug here)\r\n\r\n\r\n'domspiegel2.spx' was successfully uploaded\r\n\r\n11-Dec-2008 09:38 AM Dominik Wagner:\r\nadditional reproduction notes:\r\nyou must be behind an NAT-PMP supporting router for mDNSResponder to open 5350 at all so this is reproducible"
+    email: dasgenie@gmail.com
+    modified: "2011-08-28T05:48:53.350425Z"
+    number: "6437092"
+    number_intvalue: 6437092
+    originated: 11-Dec-2008 04:40 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.6
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: mDNSResponder listens exclusively on 5350, but needs to do that with REUSEPORT

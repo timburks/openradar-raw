@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24067155"
+    labels:
+        datastore_id: "4929984820936704"
+data:
+    classification: Severe
+    created: "2016-01-06T02:21:26.52153Z"
+    description: "Summary:\r\nNSRunningApplication has a memory leak and/or NSWorkspace.runningApplications does as well.\r\n\r\nCalling NSRunningApplication on it's own (via runningApplicationWithProcessIdentifier) does take quite a bit longer to see the leak, but it does still seem to happen.\r\n\r\nWhen called in a loop with NSWorkspace.runningApplications, the problem happens immediately and pretty quickly grows out of control (hits 100mb within a minute or two).\r\n\r\nI usually use KVO on runningApplications, but that was leaking as well. I traced the problem down to what is attached, which I think is a simplified version.\r\n\r\nI would never use a timer like this in production to monitor apps, but this is just a sample project to demonstrate the severity of the problem. This still happens with KVO and also seems to happen with alternate methods like NSWorkspaceDidLaunchApplicationNotification when using NSRunningApplication.\r\n\r\nSteps to Reproduce:\r\n1. Run sample application\r\n2. Watch memory usage climb and climb and climb\r\n\r\nExpected Results:\r\nMemory usage to stabilize and not grow out of control\r\n\r\nActual Results:\r\nMemory usage grows out of control\r\n\r\nVersion:\r\nXcode Version 7.2 (7C68) & OS X 10.11.2 (15C50\r\n\r\nNotes:\r\nSpent all day debugging this as it's causing a big memory leak in my application. Over time memory grows to hundreds of MB and my users complain, which makes me sad. Hopefully this can be solved.\r\n\r\nOriginally happened with KVO on [NSWorkspace sharedWorkspace].runningApplications, but completely eliminated that by calling it on a NSTimer, which I would normally never do in production—but demonstrates the problem a little bit faster. In my app it takes a bit longer to surface, but it does eventually (and consistently) surface.\r\n\r\nHave tried autoreleasepools. Those don't seem to help. Out of ideas. Please help me Apple Support—you're my only hope!\r\n\r\nConfiguration:\r\nHappens consistently on MacBook Pro with Xcode & OS X versions described.\r\n\r\nAttachments:\r\nhttps://github.com/bradjasper/NSRunningApplicationMemoryLeaks"
+    email: bjasper@gmail.com
+    modified: "2016-01-06T02:21:26.52174Z"
+    number: "24067155"
+    number_intvalue: 24067155
+    originated: 1/5/2016
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: Xcode Version 7.2 (7C68)
+    reproducible: Always
+    resolved: Not yet
+    status: Open
+    title: NSRunningApplication and/or NSWorkspace.runningApplications leaks memory

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22812548"
+    labels:
+        datastore_id: "6733296130064384"
+data:
+    classification: ""
+    created: "2015-09-30T20:17:27.88459Z"
+    description: "Summary:\r\nWhen a scrollview and it's delegate are deallocated in a particular order, UIKit attempts to access the scrollview after it's been deallocated, causing a crash in many situations.\r\n\r\nSpecifically I observed it in the following situation:\r\n - A custom UIView 'V' subclass contains a reference to a UIScrollView SV\r\n - V is SV's delegate\r\n - V holds the last reference to SV when it's dealloced\r\n\r\nThe error appears to be because ordinarily, deallocing SV would remove the UIAXDelegateClearer from it's delegate, but for some reason fails to here, perhaps because the delegate is in the process of being dealloced. Then when V continues to dealloc it has a stale delegate-clearer left pointing at the dead SV.\r\n\r\nSteps to Reproduce:\r\nOpen the attached project in XCode\r\nEdit your debugging scheme and check 'Enable'Zombie Objects'\r\nSelect the 'iPad Air' simulator\r\nBuild and run it\r\nClick the 'TAP ME' button, then go back again\r\n\r\nExpected Results:\r\nI would expect the project to run without error.\r\n\r\nActual Results:\r\nThe debugger traps an error warning that \"-[UIScrollView performSelector:withObject:]: message sent to deallocated instance ---\"\r\n\r\nVersion:\r\nVersion 7.0 (7A220)\r\n10.11.1\r\n\r\nNotes:\r\nAssociated dev forum post: https://forums.developer.apple.com/message/59615\r\n\r\nConfiguration:\r\nI've observed it on 64bit targets only.\r\n\r\nAttachments:\r\n'crashy2.zip' was successfully uploaded.\r\n\r\n---\r\n\r\nIMPORTANT!!!\r\nApologies, I forgot to add something very important: This appears to be related to accessibility. It was reported by several users with unremarkable setups, but I was only able to reproduce the crash in the simulator by first enabling the accessibility inspector in the simulator's settings app.\r\n\r\n---\r\n\r\nA more concise example:\r\n\r\n@interface Crasher: NSObject <UIScrollViewDelegate>\r\n@property (nonatomic,retain) UIScrollView *sv;\r\n@end\r\n@implementation Crasher\r\n- (instancetype)init {\r\n\tif( self = [super init] ) \t{\r\n\t\tself.sv = [UIScrollView new];\r\n\t\tself.sv.delegate = self;\r\n\t}\r\n\treturn self;\r\n}\r\n@end\r\n\r\nvoid test() {\r\n\t[Crasher new];\r\n}\r\n\r\n---\r\n\r\nThis looks like it's a result of UIScrollView.delegate becoming a weak reference - the delegate is zeroed at the start of it's delegate's dealloc, which bypasses [UIScrollViewAccessibility setDelegate], breaking an assumption in how it manages UIAXDelegateClearer."
+    email: mike.ferenduros@gmail.com
+    modified: "2015-09-30T20:17:27.88477Z"
+    number: "22812548"
+    number_intvalue: 22812548
+    originated: 23-Sep-2015 03:51 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: ""
+    reproducible: Always
+    resolved: Closed
+    status: Duplicate of 22473314 (Open)
+    title: UIKit accesses dead objects in certain view configurations

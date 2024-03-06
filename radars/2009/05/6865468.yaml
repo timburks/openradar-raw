@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6865468"
+    labels:
+        datastore_id: "38403"
+data:
+    classification: ""
+    created: "2009-05-07T16:18:50.710192Z"
+    description: "Apple have made me split this into two bugs!\r\n\r\nBug in relation to the below bug id's.\r\n\r\nBug ID# 6829785 (ours)\r\nBug ID# 6489529 (original)\r\n\r\nMachines that were demonstrating the autofs crashes, as in the above bug report, that were moved back to mounts.byname no longer panic, but instead now demonstrate a new issue.\r\n\r\nThe automounter feels the need to re-run at what appears to be every so often, a duration which is possibly the duration set in the autofs.conf file (default 3600). Below is a section of the system.log file, demonstrating the frequency of the automount re-run, on a machine that had the autofs.conf file configured as:\r\nAUTOMOUNT_TIMEOUT=7200\r\n\r\nApr 27 01:25:09 mac99 com.apple.autofsd[50]: automount: no unmounts\r\nApr 27 03:27:18 mac99 com.apple.autofsd[50]: automount: no unmounts\r\nApr 27 05:29:21 mac99 com.apple.autofsd[50]: automount: no unmounts\r\nApr 27 07:31:25 mac99 com.apple.autofsd[50]: automount: no unmounts\r\nApr 27 10:29:28 mac99 com.apple.autofsd[50]: automount: no unmounts\r\nApr 27 11:18:06 localhost com.apple.autofsd[49]: automount: no unmounts\r\nApr 27 11:18:18 mac99 com.apple.autofsd[49]: automount: no unmounts\r\nApr 27 11:18:32 mac99 com.apple.autofsd[49]: automount: no unmounts\r\nApr 27 12:12:53 mac99 com.apple.autofsd[49]: automount: no unmounts\r\nApr 27 14:14:07 mac99 com.apple.autofsd[49]: automount: no unmounts\r\nApr 27 14:14:08 mac99 com.apple.autofsd[49]: automount: no unmounts\r\n\r\nGenerally speaking this is every 2 hours, but not always! Machine rebooted at 11:18. Sometimes as noted on the last 2 lines, the automount will re-run twice\r\n\r\nThese re-runs aren't an issue on machines that have only ever used mounts.byname and only appear to be an issue with machines that were configured to autofs, panic'd and then re-configured for mounts.byname\r\n\r\nWhilst this re-run takes place, the machine becomes unusable This re-run may take as long as 15-20 mins. In some instances, the re-run has been continually stuck in a loop and hence the machine is continually unusable.\r\n\r\nExpected\r\n\r\nIf a mahine is re-configured for mounts.byname, we wouldn't expect to see new issues with the automounter re-running like this, with large user delays.  Clearly, the autofs is adding something new, even for mounts.byname, that wasn't there previously, which you would expect to be removed if you moved backward in setup.\r\n\r\nActual\r\n\r\nOn a machine that has been reconfigured for mounts.byname we see repeated mounts of servers. As this is so big, I have included it in a file, mounts.byname_df\r\n\r\nAlthough re-configuring back to mounts.byname removes the panics, we are instead left with machines that become unusable for some period of time, neither of which is ideal.\r\n\r\nMy only option appears to be to re-image the machine, back to an image that was never configured for autofs.  Ideally we would be using autofs, but due to the above bug report, this isn't feasible."
+    email: seansgm@gmail.com
+    modified: "2011-08-28T05:46:54.190344Z"
+    number: "6865468"
+    number_intvalue: 6865468
+    originated: 07-May-2009 05:14 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.4
+    reproducible: ""
+    resolved: ""
+    status: open
+    title: automounter re-running when using mounts.byname after removing autofs

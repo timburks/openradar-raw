@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17833218"
+    labels:
+        datastore_id: "6101593346801664"
+data:
+    classification: ""
+    created: "2014-07-28T20:50:10.448796Z"
+    description: "Summary:\r\nRight now, if you have a base protocol (e.g. BaseProtocol) and a bunch of protocols that extend that protocol (e.g. ProtocolA : BaseProtocol, ProtocolB : BaseProtocol, ProtocolC : BaseProtocol), you can create a variable or collection of type 'BaseProtocol' and then add instance(s) of objects that conform to ProtocolA, ProtocolB, or ProtocolC.\r\n\r\nHowever, it's not possible to use the 'is' and 'as' operators to downcast objects in that variable or collection to the appropriate specific protocol type, *unless* the protocols are declared with @objc and the objects are @objc-compatible classes. This precludes the use of many of Swift's most powerful new features.\r\n\r\nI want to propose that 'is' and 'as' should be extended to allow for checking for conformance with protocols and downcasting for all Swift objects, not just @objc classes. This would make composing types by using protocols far more effective.\r\n\r\nSteps to Reproduce:\r\nRun the following sample code in Xcode 6 DP 4 (either a playground or a simple command-line application):\r\n\r\n// Example application\r\nprotocol BaseProtocol {\r\n}\r\nprotocol ProtocolA : BaseProtocol {\r\n    func fooA()\r\n}\r\nprotocol ProtocolB: BaseProtocol {\r\n    func fooB()\r\n}\r\n\r\nstruct StructA : ProtocolA {\r\n    func fooA() { println(\"A\") }\r\n}\r\nclass ClassB : ProtocolB {\r\n    func fooB() { println(\"B\") }\r\n}\r\n\r\nvar myArray : [BaseProtocol] = [StructA(), StructA(), ClassB()]\r\nfor object in myArray {\r\n    switch object {\r\n    case let x as ProtocolA:\r\n        println(\"protocolA\")\r\n    case let x as ProtocolB:\r\n        println(\"protocolB\")\r\n    default:\r\n        println(\"none\")\r\n    }\r\n}\r\n\r\nExpected Results:\r\nCode compiles. At runtime \"protocolA\" and \"protocolB\" are printed out as appropriate, based on the contents of the array 'myArray'.\r\n\r\nActual Results:\r\nCode does not compile. Error: \"Cannot downcast from 'BaseProtocol' to non-@objc protocol type 'ProtocolA'\""
+    email: AustinZheng@gmail.com
+    modified: "2014-08-24T19:39:28.122793Z"
+    number: "17833218"
+    number_intvalue: 17833218
+    originated: 7/28/2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Duplicate of 17328443
+    title: '[Swift] Add support for ''is'' and ''as'' to check for conformance to protocols at runtime for non-@objc objects'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "36776294"
+    labels:
+        datastore_id: "5038858769006592"
+data:
+    classification: Performance
+    created: "2018-01-23T16:18:32.27857Z"
+    description: "Summary:\r\nWhen not using secure coding to unarchive data using `NSKeyedUnarchiver` on the simulator, the unarchive process can take significantly longer than the unarchive process when secure coding is enabled.\r\n\r\nSteps to Reproduce:\r\n1. Run the attached sample project in the simulator.\r\n2. Ensure \"Use Secure Coding?\" is on.\r\n3. Run the test.\r\n4. Observe the run time of the test.\r\n5. Turn off \"Use Secure Coding?\"\r\n6. Run the test.\r\n7. Observe and compare the results to the first test. \r\n\r\nExpected Results:\r\nThere should be nominal difference in time between running the two tests.\r\n\r\nActual Results:\r\nUnarchiving without secure coding enabled takes about 16x as long as unarchiving with secure coding enabled.\r\n\r\nNotes:\r\nThis issue only affects the simulator. If you run the attached project on a device, you will see a nominal slowdown when not using secure coding (for 1,000 objects, I was seeing ~0.3 seconds with secure coding, and ~0.38 seconds without secure coding).\r\n\r\nIn a past app I had worked on, we were fetching a bool value from user defaults to check if, from our set of color factory methods, we should return an actual color or a random color. We noticed that, in the simulator, it would take a while to open a screen in that app where we were displaying ~150 views that called maybe 5 different color factory methods. We were able to trace it to user defaults being slow, so we started caching the bool value whenever user defaults changed, instead of fetching it fresh each time. That change resulted in a significant improvement in the load time of the view when running the app in the simulator.\r\n\r\nI bring this up because some basic digging into this issue (and disassembling of Foundation) has revealed that the value for the user default key `com.apple.foundation.secure-coding.strict` is fetched every time a value is decoded from `NSKeyedUnarchiver`. Given my past experience with improving a view's load time by caching a user defaults value, this seems like this might be a good place to start investigating.\r\n\r\nVersion/Build:\r\niOS 11.2 (15C107)\r\nXcode 9.2 (9C40b)\r\n\r\nGithub Repo: https://github.com/grantjbutler/radars/tree/master/36776294"
+    email: butler.grant.j@gmail.com
+    modified: "2018-07-10T17:28:13.35819Z"
+    number: "36776294"
+    number_intvalue: 36776294
+    originated: 23-Jan-2018 11:07 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: iOS 11.2 (15C107), Xcode 9.2 (9C40b)
+    reproducible: Always
+    resolved: Resolved
+    status: Closed
+    title: Slow Unarchive Without Secure Coding in Simulator

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8811908
+    labels:
+        datastore_id: "4979112053571584"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2020-10-19T10:27:08.194642Z"
+    description: "CSSearchableItemAttributeSet.thumbnailData content is not shown on devices running iOS 14.0.1, but is shown in Simulators running iOS 14.0 and on devices running iOS 13.\r\n\r\nSteps to reproduce:\r\n1. Create new Xcode project using the iOS App template (Interface: SwiftUI, Life Cycle: UIKit App Delegate, Language: Swift, disable Core Data and Tests)\r\n2. Change deployment target to iOS 13.6 (also fails on iOS 14 without this step, but this is useful to show regression)\r\n3. In ContentView.swift, update ContentView to the following:\r\n\r\n```\r\nstruct ContentView: View {\r\n    var body: some View {\r\n        Text(\"Hello, UIKit!\")\r\n            .onAppear(perform: {\r\n                let attributeSet = CSSearchableItemAttributeSet(\r\n                    itemContentType: \"public.content\"\r\n                )\r\n                attributeSet.displayName = \"Hello UIKit?\"\r\n                attributeSet.thumbnailData = UIImage(\r\n                    systemName: \"hand.thumbsup.fill\"\r\n                )?.pngData()\r\n                let item = CSSearchableItem(\r\n                    uniqueIdentifier: \"uikit.shelloworld\",\r\n                    domainIdentifier: nil,\r\n                    attributeSet: attributeSet)\r\n                CSSearchableIndex.default()\r\n                    .indexSearchableItems([item]) { (error) in\r\n                    print(error as Any)\r\n                }\r\n            })\r\n    }\r\n}\r\n```\r\n\r\n4. Deploy to a physical device (tested on iPhone 11 Pro and iPad mini 5th gen) running iOS 14.0.1 and search for `Hello UIKit`, and observe the missing image. Contrast to results for the same search in simulator running iOS 14.0, or on devices running iOS 13.6."
+    email: steviebm@gmail.com
+    modified: "2020-10-19T10:27:08.194805Z"
+    number: FB8811908
+    number_intvalue: 8811908
+    originated: 2020/10/09
+    parent_number: '&{NULL_VALUE}'
+    product: Spotlight Search
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: CoreSpotlight thumbnails not shown on devices running iOS 14.0 (Regression from iOS 13.6)

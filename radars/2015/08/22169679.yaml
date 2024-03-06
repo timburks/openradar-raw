@@ -1,0 +1,55 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22169679"
+    labels:
+        datastore_id: "5510331942043648"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-08-06T13:26:05.08466Z"
+    description: |-
+        Summary:
+        `indirect case`s and direct `case`s holding type parameters cannot coexist in the same `enum`, apparently.
+
+
+        Steps to Reproduce:
+        This code:
+        enum E<T> {
+        	indirect case A(E)
+        	case B(T)
+        }
+
+
+        Expected Results:
+        should not cause swiftc to diverge and crash
+
+
+        Actual Results:
+        but totally does. It’s just looping through these two frames ad SIGSEGVum:
+        2   swift                         	0x0000000105123760 (anonymous namespace)::IsIRTypeDependent::visit(swift::CanType) + 896
+        3   swift                         	0x000000010512334b (anonymous namespace)::IsIRTypeDependent::visitEnumDecl(swift::EnumDecl*) + 155
+
+
+        Regression:
+        You can work around this by:
+
+        - Removing either `case`.
+        - Removing the type parameter.
+        - Not parameterizing `B` by the type parameter.
+        - Making `B` indirect.
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-08-06T13:26:05.08489Z"
+    number: "22169679"
+    number_intvalue: 22169679
+    originated: 06-Aug-2015 09:25 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A165t)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2.0b4: swiftc infinite loop checking IR for generic enum with indirect & parameterized cases'

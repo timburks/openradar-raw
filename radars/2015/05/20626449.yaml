@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20626449"
+    labels:
+        datastore_id: "6090497735000064"
+data:
+    classification: Serious Bug
+    created: "2015-05-01T00:08:14.17362Z"
+    description: "Summary:\r\nWhen using AppleScript to perform operations on media items in a Photos library, Photos will sometimes return a -10000 error and print out an error message to the console reading:\r\n\r\n4/20/15 4:53:28.560 PM Photos[19355]: An exception was thrown during execution of an NSScriptCommand...\r\n4/20/15 4:53:28.560 PM Photos[19355]: *** -[__NSArrayM objectAtIndex:]: index 8388 beyond bounds for empty array\r\n\r\nSteps to Reproduce:\r\nThere is no method to make the error occur with 100% reliability, but in my testing, the following script will  trigger an error almost every time when working with a test library of 9,200 photos.\r\n\r\ntell application \"Photos\"\r\n\tset destinationAlbum to make new album named \"Destination Test Album\"\r\n\tset totalPhotoCount to count of media items\r\n\t--Just repeat a bunch of times to try to trigger the error\r\n\trepeat with i from 1 to 50\r\n\t\tset aPhoto to media item (random number from 1 to totalPhotoCount)\r\n\t\tadd {aPhoto} to destinationAlbum\r\n\tend repeat\r\nend tell\r\n\r\nThe example script is adding a photo to an album, but any number of other commands will give the same problem, e.g. setting a property on the photo, adding keywords, etc. It also happens when using either index or unique ID object specifiers for the media items.\r\n\r\nExpected Results:\r\n50 random photos from the library should be added to a new album named \"Destination Test Album\"\r\n\r\nActual Results:\r\nEventually, one of the \"add\" commands will return a -10000 error, with Photos printing out exception info to the console.\r\n\r\nVersion:\r\nPhotos Version 1.0 (209.52.0), OS X 10.10.3 (14D131)\r\n\r\nNotes:\r\nThe problem definitely appears to be correlated to library size. The greater the number of media items in the Photos library, the more likely Photos is to generate AppleScript errors.\r\n\r\nAddendum:\r\nI've been able to boil down the reproduction to an even simpler script:\r\n\r\ntell application \"Photos\"\r\n\trepeat with i from 1 to count of media items\r\n\t\tget media item i\r\n\tend repeat\r\nend tell\r\n\r\nSimply calling the accessors to retrieve object specifiers for the items in the library seems to be enough to reproduce the errors."
+    email: bewebste@gmail.com
+    modified: "2015-05-01T00:08:14.17388Z"
+    number: "20626449"
+    number_intvalue: 20626449
+    originated: 20-Apr-2015 05:09 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iLife
+    product_version: Photos 1.0 (209.52.0)  OS X 10.10.3 (14D131)
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: Photos intermittently throws exceptions when accessing media items via AppleScript

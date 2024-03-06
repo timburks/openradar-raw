@@ -1,0 +1,63 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19058901"
+    labels:
+        datastore_id: "5777861193498624"
+data:
+    classification: Serious Bug
+    created: "2014-11-21T17:49:24.678508Z"
+    description: |-
+        Summary:
+        Having removed the use of Box from a single-payload enum, this branch of my framework Traversal deadlocks when you run the tests: https://github.com/robrix/Traversal/pull/19
+
+
+        Steps to Reproduce:
+        1. Clone & check out the branch in this PR: https://github.com/robrix/Traversal/pull/19
+        2. Open Traversal.xcworkspace
+        3. Select the scheme for Traversal if it isn’t already selected
+        4. Run the tests
+
+
+        Expected Results:
+        I expected them to complete and probably even succeed.
+
+
+        Actual Results:
+        The tests deadlock as soon as they hit Stream (which is almost immediately).
+
+
+        Regression:
+        This doesn’t happen if Cons’ first parameter is Box<T> instead of T.
+
+
+        Notes:
+        Pausing in the debugger shows that it’s locked somewhere inside swift_getGenericMetadata:
+
+        (lldb) bt
+        * thread #1: tid = 0x720d5, 0x00007fff90598132 libsystem_kernel.dylib`__psynch_cvwait + 10, queue = 'com.apple.main-thread', stop reason = signal SIGSTOP
+          * frame #0: 0x00007fff90598132 libsystem_kernel.dylib`__psynch_cvwait + 10
+            frame #1: 0x00007fff90efaea0 libsystem_pthread.dylib`_pthread_cond_wait + 693
+            frame #2: 0x00007fff879e9c95 libc++.1.dylib`std::__1::condition_variable::wait(std::__1::unique_lock<std::__1::mutex>&) + 47
+            frame #3: 0x0000000105809ac2 libswiftCore.dylib`swift_getGenericMetadata + 562
+            frame #4: 0x0000000105809c65 libswiftCore.dylib`swift_getGenericMetadata1 + 21
+            frame #5: 0x00000001007276fb Traversal`create_generic_metadata + 75 at Stream.swift:0
+            frame #6: 0x0000000105811299 libswiftCore.dylib`std::__1::__function::__func<swift::swift_getGenericMetadata::$_0, std::__1::allocator<swift::swift_getGenericMetadata::$_0>, (anonymous namespace)::GenericCacheEntry* ()>::operator()() + 25
+            frame #7: 0x0000000105809b27 libswiftCore.dylib`swift_getGenericMetadata + 663
+            frame #8: 0x0000000105809c65 libswiftCore.dylib`swift_getGenericMetadata1 + 21
+            frame #9: 0x00000001007114a6 Traversal`Traversal.ReducibleOf.init <A>(reducible=(null) at 0x00007fff5fbfec08)<B : Traversal.ReducibleType>(B) -> Traversal.ReducibleOf<A> + 54 at ReducibleOf.swift:22
+            frame #10: 0x000000010071e3c5 Traversal`Traversal.++ infix <A : Traversal.ReducibleType, B : Traversal.ReducibleType>(lhs=0x00007fff5fbfefe0 -> 0x0000000100711400 Traversal`partial apply forwarder for Traversal.ReducibleOf.(init <A>(Traversal.ReducibleOf<A>.Type) -> <B : Swift.GeneratorType>(() -> B) -> Traversal.ReducibleOf<A>).(closure #1) at ReducibleOf.swift, rhs=0x00007fff5fbfefc8 -> 0x0000000100711400 Traversal`partial apply forwarder for Traversal.ReducibleOf.(init <A>(Traversal.ReducibleOf<A>.Type) -> <B : Swift.GeneratorType>(() -> B) -> Traversal.ReducibleOf<A>).(closure #1) at ReducibleOf.swift) -> Traversal.ReducibleOf<A.Element> + 261 at Concat.swift:18
+            frame #11: 0x000000010068bace TraversalTests`TraversalTests.ConcatTests.testInfixConcatenation (self=0x000000010030fb80)() -> () + 878 at ConcatTests.swift:15
+        …
+    email: rix.rob@gmail.com
+    modified: "2014-11-21T17:49:24.678714Z"
+    number: "19058901"
+    number_intvalue: 19058901
+    originated: 21-Nov-2014 12:49 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2006)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Runtime deadlock when removing Box from a given enum'

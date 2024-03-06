@@ -1,0 +1,82 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17496151"
+    labels:
+        datastore_id: "5233468250259456"
+data:
+    classification: Enhancement
+    created: "2014-06-28T16:35:03.780512Z"
+    description: |-
+        Summary:
+        Operators have some unique advantages which make them very compelling:
+
+        - they’re defined globally, and as such can be defined to be as specific or generic as you need (e.g. ==<T>(T, T) or ==<T>(T[], T[]) or ==(Int[], Int[]))
+        - tuned precedence & associativity allows you to define DSLs with them (I’m using this in a parser combinator library to construct parsers with a very natural syntax)
+        - can be used infix/prefix/postfix without requiring parentheses; I think infix operators are the most obviously compelling case here. For example, my aforementioned parser library constructs the reduction of a parser by some function f as parser --> f
+
+        However, they also have some disadvantages:
+
+        - you can’t currently ⌘-click them in Xcode to jump to their definitions
+        - you can’t currently ⌥-click them in Xcode to jump to their definitions
+        - they can be extremely opaque as to their meaning. What does the -/|/|/- operator do? (Obviously it defines a flexible margin in an autoresizing mask!)
+        - they’re restricted to a (relatively) small set of characters that aren’t necessarily easy to type
+        - they don’t currently get autocompletion in Xcode
+
+        I’d like to be able to use words as operator names, for example with this algebraic NSLayoutConstraint pseudocode:
+
+        addConstraints([
+          view.leading == self.leading + 10 at_priority 750,
+          view.leading >= superview.leading + 10 at_priority 1000
+        ])
+
+        (Currently, I’m using “<>” to mean “at priority”.)
+
+
+        Steps to Reproduce:
+        N/A (See Summary)
+
+
+        Expected Results:
+        N/A (See Summary)
+
+
+        Actual Results:
+        N/A (See Summary)
+
+
+        Regression:
+        N/A
+
+        Notes:
+        Since just allowing bare words would presumably cause ambiguity in the parser and confuse the meaning of the syntax (cf Chris Lattner’s thoughtful response here: https://devforums.apple.com/message/991955#991955 ), I suggest disambiguating with a prefix/postfix/both.
+
+        For example, Haskell allows you to use arbitrary functions as operators by surrounding their names with backticks:
+
+        "a" `concat` "b"
+
+        (cf http://www.haskell.org/haskellwiki/Infix_operator )
+
+        For my purposes, I‘d rather see a single prefix/postfix character. I feel like a postfix colon could be quite compelling in some circumstances, but it would probably just lead to further ambiguity:
+
+        […] map: { … }
+
+        So perhaps instead, a prefix :, @, `, or other character:
+
+        view.leading == self.leading + 10 @priority 750
+        view.leading == self.leading + 10 :priority 750
+        view.leading == self.leading + 10 `priority 750
+
+        All of those look pretty good to me, but the flexibility & disambiguation of Haskell’s approach (w.r.t. being able to use arbitrary functions infix with `…` notation) seems like a pretty solid winner.
+    email: rix.rob@gmail.com
+    modified: "2014-06-28T16:35:03.780632Z"
+    number: "17496151"
+    number_intvalue: 17496151
+    originated: 28-Jun-2014 12:34 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta2 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Allow (prefixed?) words as operator names'

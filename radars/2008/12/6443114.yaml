@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6443114"
+    labels:
+        datastore_id: "128"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2008-12-13T02:58:20.66833Z"
+    description: "Summary:\r\n\r\nAlthough the NSNib class claims to support NSCoding and dates from well after the introduction of keyed archiving, NSNib throws an exception and fails to properly decode when used with keyed archiving. It does work correctly when used with unkeyed archiving.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nThe following Python program illustrates the problem using PyObjC:\r\n\r\n\r\n#!/usr/bin/python\r\nfrom Foundation import *\r\nfrom AppKit import *\r\n\r\nkeyed = False\r\n\r\nif keyed:\r\n    archiverClass = NSKeyedArchiver\r\n    unarchiverClass = NSKeyedUnarchiver\r\nelse:\r\n    archiverClass = NSArchiver\r\n    unarchiverClass = NSUnarchiver\r\n\r\nprint \"running test with keyed =\", keyed\r\n\r\nnib = NSNib.alloc().initWithContentsOfURL_(NSURL.fileURLWithPath_('/Applications/Safari.app/Contents/Resources/CacheController.nib'))\r\nprint \"loaded nib:\", nib\r\n\r\ndata = archiverClass.archivedDataWithRootObject_(nib)\r\nprint \"encoded to data of length\", data.length()\r\n\r\nnib2 = unarchiverClass.unarchiveObjectWithData_(data)\r\nprint \"unarchived nib:\", nib\r\n\r\n\r\nEdit the \"keyed = False\" line to read \"keyed = True\" to expose the problem.\r\n\r\n\r\nExpected Results:\r\n\r\nThe program should print something like the following when \"keyed\" is set to True:\r\n\r\nrunning test with keyed = True\r\nloaded nib: <NSNib: 0x556530>\r\nencoded to data of length 44126\r\nunarchived nib: <NSNib: 0x556530>\r\n\r\n\r\nActual Results:\r\n\r\nWhile correct output is obtained with keyed = False, when it is set to True the following occurs:\r\n\r\nrunning test with keyed = True\r\nloaded nib: <NSNib: 0x556530>\r\nencoded to data of length 44476\r\nTraceback (most recent call last):\r\n  File \"./nsnibnscoding.py\", line 22, in <module>\r\n    nib2 = unarchiverClass.unarchiveObjectWithData_(data)\r\nobjc.error: NSInvalidUnarchiveOperationException - *** -[NSKeyedUnarchiver decodeBoolForKey:]: value for key (NSNibFileIsKeyed) is not a boolean\r\n\r\n\r\nRegression:\r\n\r\nI have not tested this extensively but I have no particular reason to believe that it would not happen elsewhere.\r\n\r\n\r\nNotes:\r\n\r\nAlthough the above sample code uses PyObjC, the Python side is essentially only used for exercising the Cocoa side, so it is unlikely (although possible!) that it is a PyObjC fault."
+    email: michael.ash@gmail.com
+    modified: "2011-08-28T05:48:51.419908Z"
+    number: "6443114"
+    number_intvalue: 6443114
+    originated: 12-Dec-2008 06:57 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSNib does not work with keyed archiving

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32984063"
+    labels:
+        datastore_id: "6135038475239424"
+data:
+    classification: ""
+    created: "2017-06-26T18:12:16.06903Z"
+    description: "Area:\r\nAppKit\r\n\r\nSummary:\r\nThis was originally discovered while investigating https://github.com/Carthage/Carthage/issues/1982. I narrowed it down to a simple example, which I've attached, which results in an invalid binary being produced. I believe it's related to the APFS cloning capability, but it only seems to show up in certain circumstances\r\n\r\nSteps to Reproduce:\r\nIn the attached sample there's a 'runExample.sh' that performs these steps, but the reproduction is (on an APFS volume)\r\n- Create a simple swift 'main.swift' file\r\n- Create a subdirectory\r\n- Run `swift -o subdirectory/Binary main.swift` to compile the binary into another directory (the bug only happens if it gets compiled to a different directory)\r\n- Run the binary to verify it works correctly\r\n- In another program, use 'FileManager.copyItem(at:to:)' to copy the resulting binary from the subdirectory into the main directory\r\n- Run the copy. Mac os will throw an error.\r\n\r\nExpected Results:\r\nThe binary should be a valid copy, capable of running.\r\n\r\nObserved Results:\r\nThe binary is invalid. If you inspect the binary, it's the exact same size as the original, but filled with zeroed bytes. This only seems to happens when directories are involved, and only with binaries produced during compiling (at least I haven't found another way to produce a binary that does this). Note that if you cp the binary via the command line, that copy no longer produces this behavior, you can use copyItem on that binary without issue. It's only the originally produced binary that this behavior arises.\r\n\r\nVersion:\r\nmac os sierra 10.12.5 (16F73)\r\n\r\nThough it was originally found on High Sierra\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nThe most important aspect is it being on an APFS volume"
+    email: marquissm@gmail.com
+    modified: "2017-07-05T23:36:18.54926Z"
+    number: "32984063"
+    number_intvalue: 32984063
+    originated: 06/26/2017
+    parent_number: "32747641"
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Duplicate/32747641
+    title: Binary produced in a different directory cannot be copied correctly with NSFileManager.copyItem* on an APFS volume

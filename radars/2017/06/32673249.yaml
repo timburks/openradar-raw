@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32673249"
+    labels:
+        datastore_id: "4937807214673920"
+data:
+    classification: ""
+    created: "2017-06-09T12:28:59.16295Z"
+    description: "Summary:\r\nWatchOS apps with watch app extensions having App Groups (maybe something else as well) expanded entitlements enabled won't launch under specific conditions:\r\n- the user has apps installed with multiple Apple IDs on their iPhone (more than 5 Apple IDs to be correct).\r\n- the Apple ID the app was installed with belongs to account which was at position greater than 5th in the keybag when `AirFair2.syncBundle` built it during the synchronization with Watch (I assume encryption assets needed to run apps with certain expanded entitlements are gathered into the keybag only for first 5 Apple IDs in the system).\r\n\r\nWhen the user attempts to launch such an app, Watch shows spinner for 30 seconds, throws `AppleFairplayTextCrypterSession::fairplayOpen() failed, error -42004` in its console and kills the process with `EXC_CRASH (SIGKILL) EXC_CORPSE_NOTIFY` exception.\r\n\r\nSteps to Reproduce:\r\n1. Install at least one app with 5 different Apple IDs on the iPhone.\r\n2. Install some app supporting Watch which requires App Groups expanded entitlements (Weather Live, Bring! are examples of these) with the 6th Apple ID on the iPhone.\r\n3. Open Console.app, filter iPhone log output by process `atc`.\r\n4. Start syncing apps from (2) to Watch.\r\n5. Observe console for the `<private>|building keybag. account ids=(aaaaa2742, bbbbb5791, ccccc0747, ddddd9342, eeeeee4335, ffffff6975)` message. These are PurchaserIDs for Apple ID accounts. Now I'm not sure how the order is formed for these, sometimes it shuffles when the Apple ID is added or removed (here I mean it's removed when there is no apps installed with it in the system). I wrote a quick playground to find which apps are installed with which account (and with which PurchaserID) to find out at which position my current Apple ID is: https://github.com/rshev/iTunesBackupParser\r\n6. Make sure the apps you started syncing at (4) are installed with Apple ID which is at position number 6 in the console message at (5).\r\n7. Try to launch the apps installed at (4) on the Watch.\r\n\r\nExpected Results:\r\nWatch shows spinner for 30 seconds, throws `AppleFairplayTextCrypterSession::fairplayOpen() failed, error -42004` in its console and kills the process with `EXC_CRASH (SIGKILL) EXC_CORPSE_NOTIFY` exception.\r\n\r\nObserved Results:\r\nApps launch as expected.\r\n\r\nVersion:\r\nWatchOS 3.2.2 (14V485)\r\niOS 10.3.2 (14F89)\r\n\r\nNotes:\r\nIt was an enormous effort to track down the exact circumstances under which this bug occurs. It's reproducible 100% but the prerequisites are quite untypical (I have so many iTunes accounts because of changing countries 3 times from 2008, but this could happen for many reasons). Re-pairing Watch, restoring iPhone from backup, setting up iPhone as new doesn't fix it if the user has a baggage of apps bought on different iTunes accounts.\r\nThere are lots of users complaining on this on discussions.apple.com starting from WatchOS 2 release.\r\n\r\nConfiguration:\r\n- the user has apps installed with multiple Apple IDs on their iPhone (more than 5 Apple IDs to be correct).\r\n- the Apple ID the app was installed with belongs to account which was at position greater than 5th in the keybag when `AirFair2.syncBundle` built it during the synchronization with Watch (I assume encryption assets needed to run apps with certain expanded entitlements are gathered into the keybag only for first 5 Apple IDs in the system)."
+    email: roman.shevtsov@gmail.com
+    modified: "2017-06-09T12:28:59.16324Z"
+    number: "32673249"
+    number_intvalue: 32673249
+    originated: 09 June 2017
+    parent_number: '&{NULL_VALUE}'
+    product: watchOS + SDK
+    product_version: 3.2.2 (14V485)
+    reproducible: Yes
+    resolved: ""
+    status: ""
+    title: Apps requiring expanded entitlements won't start (fairplayOpen -42004) with some keybag configurations

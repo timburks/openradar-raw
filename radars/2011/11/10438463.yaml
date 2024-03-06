@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10438463"
+    labels:
+        datastore_id: "1423403"
+data:
+    classification: Serious Bug
+    created: "2011-11-13T10:46:45.662618Z"
+    description: "Summary:\r\n\r\nSwitching to a fullscreen application causes dragging onto a status item that registers for drag and drop events to no longer work.\r\n\r\nSteps to Reproduce:\r\n\r\n1) Try dragging a file onto a status item that supports drag and drop. Here are some applications that support drag and drop on their status items:\r\n\r\n-Cloud\r\n-DropIn\r\n-Facebook Notifications\r\n\r\nCloud & DropIn are both available on the Mac App Store.\r\nInitially, the drag and drop operation should behave as expected.\r\n\r\n2) Now open an application in fullscreen mode (e.g. iTunes) and switch to it using either the trackpad gesture or Ctrl + → \r\n\r\n3) Now switch back to the main space and try and drag and drop onto a status item that supports it. Note that drag and drop now no longer works. Clicking on the status item will make drag and drop work again.\r\n\r\nExpected Results:\r\n\r\nDrag and drop operations should always work with status items that register for dragging events, regardless of whether the user has switched to a fullscreen application.\r\n\r\nActual Results:\r\n\r\nDrag and drop breaks for status items after switching to a fullscreen application and then a click on the status item is needed before drag and drop operations will work with that status item again.\r\n\r\nRegression:\r\n\r\nThis did not happen on Mac OS X 10.6.\r\n\r\n\r\nNotes:\r\n\r\nI have found a short term workaround for this issue that I am using in my app until this is resolved, I initialize the status item with the following code:\r\n\r\nstatusItem = [[[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength] retain];\r\nStatusItemView *statusItemView = [[StatusItemView alloc] initWithFrame:NSMakeRect(0, 0, 26, 16)];\r\n\r\nI then set the view for the status item to my own custom view as follows:\r\n\r\n[statusItem setView:statusItemView];\r\n\r\nThis statusItemView registers for dragging events using registerForDraggedTypes: and in this view I setup a timer that fires once a second using the following code:\r\n\r\nwindowOrderingTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(windowOrderUpdate) userInfo:nil repeats:YES];\r\n\r\nThe code for the windowOrderUpdate code that this timer calls is as follows:\r\n\r\n- (void)windowOrderUpdate\r\n{\t\r\n    [[self window] orderFront:nil];\r\n}\r\n\r\nCalling this orderFront method on the window created for the status item seems to allow drag and drop to work after switching back from a fullscreen app.\r\n\r\nA short video demonstrating the bug can be downloaded at http://cl.ly/460j1T3i0P242n2T0g3H"
+    email: john@aptonic.com
+    modified: "2011-11-13T10:46:45.662966Z"
+    number: "10438463"
+    number_intvalue: 10438463
+    originated: "2011-11-13"
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Drag and drop to status items breaks after switching to fullscreen apps

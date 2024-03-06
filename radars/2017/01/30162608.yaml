@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30162608"
+    labels:
+        datastore_id: "5008734774362112"
+data:
+    classification: ""
+    created: "2017-01-24T11:04:00.78609Z"
+    description: "Summary:\r\nThe WebDriver spec defines a list of keyboard actions that are transmitted using private use unicode characters [1].\r\n\r\nWhen now an `\\uE007` is sent to to a text input, the Javascript's event `.keyCode` will be 13 which is the key code for the enter key. However, the input field will also have the private use unicode character in it, which should not be the case. \r\n\r\nI've added a simple HTML page that attaches an event listener to an input field and alert() when the value contains the private use unicode character on a `keydown`. If you have to tool `jq`[2] installed to parse JSON, you can use the supplied shell script to automate the reproduction steps.\r\n\r\nSee example here: https://github.com/PSPDFKit-labs/radar.apple.com/tree/master/30162608%20-%20Safaridriver%20appends%20private%20use%20unicode%20to%20text%20inputs\r\n\r\n[1] https://www.w3.org/TR/webdriver/#keyboard-actions\r\n[2] https://stedolan.github.io/jq/\r\n\r\nSteps to Reproduce:\r\n1. Start a simple HTTP server within the supplied archive. (e.g. python -m SimpleHTTPServer 8000)\r\n2. Start safaridriver\r\n3. Create a session like this: curl -s -d '{\"desiredCapabilities\":{}}' http://localhost:8910/session\r\n4. Navigate to the test HTML file like this: curl -s -d '{\"url\":\"http://localhost:8000/test.html\"}' http://localhost:8910/session/$SESSION/url\r\n5. Find the element like this: curl -s -d '{\"using\":\"id\", \"value\": \"input\"}' http://localhost:8910/session/$SESSION/element\r\n6. Send the private use unicode that should be interpreted as enter like this: curl -s -d '{\"value\":[\"\\uE007\"]}' http://localhost:8910/session/$SESSION/element/$ELEMENT/value\r\n\r\nExpected Results:\r\nNothing. The test will alert() when the text field contains the `\\uE007` character which should not happen.\r\n\r\nActual Results:\r\nThe test will alert() because the text field contains the `\\uE007` character.\r\n\r\nVersion:\r\nmacOS 10.12.2 (16C67)\r\nSafari Version 10.0.2 (12602.3.12.0.1)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nThis occurs on my MacBook Pro (15-inch, Late 2016)\r\n\r\nAttachments:\r\n'safaridriver-private-use-unicode.zip' was successfully uploaded."
+    email: hello@philippspiess.com
+    modified: "2017-01-24T11:04:00.7863Z"
+    number: "30162608"
+    number_intvalue: 30162608
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Safari
+    product_version: 10.0.2 (12602.3.12.0.1)
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Safaridriver appends private use unicode to text inputs

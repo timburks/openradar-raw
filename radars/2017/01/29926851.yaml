@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29926851"
+    labels:
+        datastore_id: "5047071652446208"
+data:
+    classification: Serious
+    created: "2017-01-09T14:43:31.70209Z"
+    description: "Summary:\r\nI bought myself a cheap china action cam and discovered that the video looks fine in Quicktime and quicklook. But as soon as I imported the video into iMovie, it was completely red tinted. A short search on youtube brought up that this is a problem known back to 2013.\r\n\r\nI digged around a little bit and was able to nail it down to being a problem color matrix codes. My camera records mp4 (don't ask me why, ugh) with a BT.601 color code (although the video can be in HD...). What I discovered is that when I convert this to BT.709 with ffmpeg, the red tint is gone in iMovie.\r\n\r\nI consider this to be a serious bug as the scope of this bug is iMovie/Final Cut Pro X and is not easy to discover and workarounds involve retranscoding which is generally not wanted before editing.\r\n\r\nSteps to Reproduce:\r\n1. Import the first attached file. It will appear red tinted in iMovie in the preview window on the right side\r\n2. Import the attached file with the suffix \"color_matrix_converted\" (this file is in BT.709). This file will not be red tinted.\r\n\r\nI used ffmpeg (easiest installation with homebrew or macports) with the following command to convert the first file:\r\n\r\nffmpeg -i pathToFile/20170101_000126A.mp4 -vf colormatrix=bt601:bt709 pathToFile/20170101_000126A_colormatrix_corrected.mp4 \r\n\r\n\r\nExpected Results:\r\nI'd expect iMovie to handle files with bt.601 encoding fine, especially as Quicktime and quicklook already do.\r\n\r\nActual Results:\r\nred tinted video in the case of bt.601 video under special circumstances.\r\n\r\nVersion:\r\niMovie 10.1.4 on macOS 10.12.2\r\n\r\nNotes:\r\nA workaround suggested on youtube is to use converters that convert the video in some other format.\r\n\r\nI poked it with a stick, and the most helpful stick was mediainfo.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'20170101_000126A.mp4' and '20170101_000126A_colormatrix_corrected.mp4' were successfully uploaded."
+    email: jvmscholz@gmail.com
+    modified: "2017-05-07T17:19:07.22469Z"
+    number: "29926851"
+    number_intvalue: 29926851
+    originated: 09-Jan-2017 03:30 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iLife
+    product_version: iMovie 10.1.4 on macOS 10.12.2
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: 'iMovie/Final Cut Pro X: Red tinted video when using bt601 color matrix'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15062440"
+    labels:
+        datastore_id: "6163235120087040"
+data:
+    classification: Crash
+    created: "2013-10-13T21:48:59.505534Z"
+    description: "Summary:\r\nA UIDynamicAnimator initialized using -initWithCollectionViewLayout: does not hold a strong reference to its collection view layout but attempts to message it when deallocated, causing a bad access crash if the collection view layout is deallocated before the dynamic animator.\r\n\r\nSteps to Reproduce:\r\n1. Allocate and initialize a UICollectionViewLayout.\r\n2. Allocate and initialize a UIDynamicAnimator using -initWithCollectionViewLayout: and passing in the collection view layout from step 1.\r\n3. Deallocate the collection view.\r\n4. Deallocate the dynamic animator.\r\n\r\nExpected Results:\r\nNothing; two objects are allocated and then deallocated with no effect on the behavior of the app at runtime.\r\n\r\nActual Results:\r\nThe app crashes in the dynamic animator's -dealloc method because it attempts to message the non-existant collection view layout.\r\n\r\nVersion:\r\niOS 7.0 (11A465)\r\n\r\nNotes:\r\nIt is not clear what type of reference the dynamic animator currently keeps to its collection view layout, but it appears neither to be a strong reference nor a weak zeroing reference because in neither case would this crash occur. Thus, one possible solution to this problem would be to expose the animator's collection view layout as a weak, readonly property, as is done with its reference view. Another possible solution would be to expose the collection view layout as a strong, readwrite property, eliminating the need to create a new animator every time the collection view's layout is replaced.\r\n\r\nConfiguration:\r\nThis occurs on my iPhone 4S running iOS 7.0 (11A465) when using Xcode 5 on a Macbook Pro with Retina Display running OS X 10.8.5. (This also occurs on the iPhone simulator that comes with Xcode 5.)"
+    email: gmws82@gmail.com
+    modified: "2013-10-13T21:48:59.505771Z"
+    number: "15062440"
+    number_intvalue: 15062440
+    originated: 09/23/13
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.0"
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: UIDynamicAnimator references its UICollectionViewLayout in -dealloc

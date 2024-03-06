@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19806400"
+    labels:
+        datastore_id: "4611022463696896"
+data:
+    classification: Enhancement
+    created: "2015-02-12T01:39:15.905031Z"
+    description: "Summary:\nWhile NSPersistentDocument has the method \n- configurePersistentStoreCoordinatorForURL:ofType:modelConfiguration:storeOptions:error: it is only called when opening an existing persistent store. But it’s not used when saving a new document or during Save As. These are handled automatically by the class. The problem is that it’s not possible to set options for the store. \n\nSpecifically, it makes a lot of sense for the SQLite stores to have the journal_mode = DELETE pragma set to avoid creating 3 files (WAL, SHM). Having 3 files for a document is a no-no! \n\nSteps to Reproduce:\nIn an application that uses NSPersistentDocument:\n\nOverride \nconfigurePersistentStoreCoordinatorForURL:ofType:modelConfiguration:storeOptions:error: and add to options: \noptions[NSSQLitePragmasOption] = @{ @\"journal_mode\" : @\"DELETE\" };\n\nRun application.\n1. Create a new, untitled document.\n2. Modify some data\n3. Save it\n\nExpected Results:\nSave only creates one file for the document.\n\nNSPersistentDocument should either consult the configure method (though it’s only used for opening, supposedly), or create a similar method for modifying options when save occurs. In any case, something is wrong here.\n\nActual Results:\nCreates 3 files: document and two files needed for WAL.\n\nRegression:\nN/A\n\nNotes:\nCurrently working around this by overriding:\n- (BOOL)writeToURL:(NSURL *)absoluteURL ofType:(NSString *)typeName forSaveOperation:(NSSaveOperationType)saveOperation originalContentsURL:(NSURL *)absoluteOriginalContentsURL error:(NSError **)error {\n\n    // Handle first saving and Saving As to set the correct options for SQLite because Core Data forgets our pragmas, stupid\n    BOOL success;\n    if (saveOperation == NSSaveAsOperation) {\n        NSMutableDictionary *options = [NSMutableDictionary dictionary];\n        options[NSSQLitePragmasOption] = @{ @\"journal_mode\" : @\"DELETE\" };\n        options[NSMigratePersistentStoresAutomaticallyOption] = @YES;\n        options[NSInferMappingModelAutomaticallyOption] = @YES;\n        NSPersistentStoreCoordinator *coordinator = [[self managedObjectContext] persistentStoreCoordinator];\n        NSPersistentStore *store;\n        if (absoluteOriginalContentsURL) {\n            store = [coordinator migratePersistentStore:[self persistentStore] toURL:absoluteURL options:[options copy] withType:NSSQLiteStoreType error:error];\n            success = (store != nil);\n        } else {\n            store = [coordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:absoluteURL options:[options copy] error:error];\n            success = (store != nil);\n            if (success) {\n                success = [[self managedObjectContext] save:error];\n            }\n        }\n    } else {\n        success = [super writeToURL:absoluteURL ofType:typeName forSaveOperation:saveOperation originalContentsURL:absoluteOriginalContentsURL error:error];\n    }\n    return success;\n}"
+    email: jacob@apparentsoft.com
+    modified: "2015-02-12T01:39:15.905187Z"
+    number: "19806400"
+    number_intvalue: 19806400
+    originated: 11-Feb-2015 07:39 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: Mac OS X 10.10.2 (14C109)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSPersistentDocument provides way to configure store options on initial Save or on Save As

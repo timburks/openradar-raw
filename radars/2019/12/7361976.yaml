@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7361976"
+    labels:
+        datastore_id: "4980838227771392"
+data:
+    classification: ""
+    created: "2019-12-03T16:02:14.346632Z"
+    description: "In macOS Catalina 10.15 (19A583), FileVault is not enforced at logout when using a Configuration Profile. In the Configuration Profile, FileVault is required and defer is also enabled. The Configuration Profile is successfully installed and all values are visible in System Preferences. When restarting or logging out the Mac, the user IS prompted to enable FileVault by entering the user password. The next prompt is telling FileVault is being enabled and takes a few seconds as usual. After the restart FileVault is not enabled. The prompt to enable FileVault keeps coming back every time the Mac is restarted or when the user logs out. FileVault is still not enabled. Manually enabling FileVault DOES work by the way. I did some research and it seems that FileVault is only enabled when enforcing at login in the Configuration Profile. Until macOS Mojave 10.14.6 FileVault would be enabled when enforcing at logout. I tested with Configuration Profiles from Jamf Pro, but also manually created a very basic Configuration Profile using the Apple MDM reference to rule out interference from the MDM tool.\r\n\r\nTo reproduce:\r\nDeploy a Configuration Profile from MDM or manually created with the following key/value pairs for the payload com.apple.MCX.FileVault2:\r\n- Enable: On\r\n- Defer: true\r\n- UseRecoveryKey: true\r\nRestart the Mac and fill in the user password when prompted to enable FileVault\r\n\r\nExpected Results:\r\n- When restarting the Mac or logging out the user should be prompted to enable FileVault\r\n- After the restart, FileVault is be enabled when going to System Preferences —> Security & Privacy —> FileVault.\r\n- ‘sudo fdesetup status’ output should be: \r\nFileVault is On.\r\n\r\nActual Results:\r\n- When restarting the Mac or logging out the user is prompted to enable FileVault\r\n- After the restart, FileVault is not enabled when going to System Preferences —> Security & Privacy —> FileVault. It shows: FileVault is turned off for the disk “Macintosh HD”\r\n- ‘sudo fdesetup status’ output is: \r\nFileVault is Off.\r\nDeferred enablement appears to be active for user 'jordy.witteman'.\r\n\r\nWorkaround:\r\nWe figured out a workaround that does enable FileVault by adding the following in the Configuration Profile:\r\n- DeferDontAskAtUserLogout: true\r\n- DeferForceAtUseLoginMaxBypassAttempts: 0\r\nThis way the user gets prompted when logging in to enable FileVault. After hitting ‘Enable’, FileVault is now enabled."
+    email: jordy.witteman@root3.nl
+    modified: "2019-12-03T16:02:14.346781Z"
+    number: "7361976"
+    number_intvalue: 7361976
+    originated: 09-10-2019
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: "10.15"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: FileVault not enforced at logout with MDM

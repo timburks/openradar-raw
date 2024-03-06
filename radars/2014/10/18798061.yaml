@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18798061"
+    labels:
+        datastore_id: "5107371164565504"
+data:
+    classification: Serious Bug
+    created: "2014-10-28T17:37:44.963434Z"
+    description: "Summary:\r\nI would like to create a subscription, which will send me notifications when record will be updated, but only that record which has non-empty `inviteCode` string field. Since there is no proper documentation about the restrictions for NSPredicate in comparison to Core Data's one, I spent hours to debug the problem, using well worked Core Data predicates as well some really fantastic ones. The results are listed below:\r\n\r\n1. Predicate: NSPredicate * sPredicate = [NSPredicate predicateWithFormat:@\"inviteCode != nil\"];\r\n\r\nResult: Error with description: \"Expected constant value in comparison expression: inviteCode != nil\"\r\n\r\n\r\n2. Predicate: NSPredicate * sPredicate = [NSPredicate predicateWithFormat:@\"length(inviteCode) > 0\"];\r\n\r\nResult: Crash with description: *** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: 'Unable to parse function name 'length:' into supported selector (length:) '\r\n\r\n\r\n3. Predicate: NSPredicate * sPredicate = [NSPredicate predicateWithFormat:@\"inviteCode.lenght > 0\"];\r\n\r\nResult: Error with description: recordKey (inviteCode.lenght) contains invalid characters\r\n\r\n4. Predicate: NSPredicate * sPredicate = [NSPredicate predicateWithFormat:@\"inviteCode != \\\"\\\"\"];\r\n\r\nResult: no errors in completion block, but subscription does not send any notifications after record with non-empty 'inviteCode' field gets updated.\r\n\r\nSteps to Reproduce:\r\nYou must save \"MyRecord\" record with non-empty string field \"myStringField\" on either public or private database.\r\nNSString * sID = @\"subscription ID\";\r\n    NSPredicate * sPredicate = [NSPredicate predicateWithFormat:@\"myStringField != nil\"];\r\n    CKSubscription * s = [[CKSubscription alloc] initWithRecordType:@\"MyRecord\" predicate:sPredicate subscriptionID:sID options:CKSubscriptionOptionsFiresOnRecordUpdate];\r\n    \r\n    CKNotificationInfo *note = [[CKNotificationInfo alloc] init];\r\n    note.alertLocalizationKey = @\"Notification text\";\r\n    s.notificationInfo = note;\r\n    [database saveSubscription:s completionHandler...];\r\n\r\nExpected Results:\r\nThe subscription created on a server and it will detect all updates of \"MyRecord\" records which field \"myStringField\" is not an empty string.\r\n\r\nProper documentation about all CloudKit's NSPredicate-related restrictions!\r\n\r\nActual Results:\r\nError with description: \"Expected constant value in comparison expression: stringField != nil\"\r\n\r\nVersion:\r\niOS 8+\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 5"
+    email: kaskaaddnb@gmail.com
+    modified: "2015-01-31T14:40:54.538063Z"
+    number: "18798061"
+    number_intvalue: 18798061
+    originated: 29-Oct-2014 00:34 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 8+
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 13348715 (Open)
+    title: 'CloudKit: can not build'

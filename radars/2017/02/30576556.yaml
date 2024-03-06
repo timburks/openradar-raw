@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30576556"
+    labels:
+        datastore_id: "6107337882337280"
+data:
+    classification: ""
+    created: "2017-02-17T13:49:01.60974Z"
+    description: "Area:\r\nCore Media\r\n\r\nSummary:\r\nThe documentation states that the value of a CMTimeRange's duration must not be negative. \r\n\r\n\"The epoch in a CMTime that represents a duration should always be 0, and the value must be non-negative.\"\r\n\r\nThe C macro CMTIMERANGE_IS_VALID includes a check (range.duration.value >= 0).\r\n\r\n#define CMTIMERANGE_IS_VALID(range) ((Boolean)(CMTIME_IS_VALID(range.start) && CMTIME_IS_VALID(range.duration) && (range.duration.epoch == 0) && (range.duration.value >= 0)))\r\n\r\nAnd a time range with a negative-value duration is invalid when checked with the C macro. But when checked in Swift via CMTimeRange's public var isValid: Bool { get }, a range with a negative duration is considered valid.\r\n\r\nUsing the public function CMTIMERANGE_IS_VALID in Swift is consistent with .isValid, and inconsistent with the C macro.\r\n\r\nSteps to Reproduce:\r\nExample project includes the following components.\r\n\r\n1) Wrap the CMTIMERANGE_IS_VALID macro in a C function\r\n\r\nBoolean timeRangeIsValid(CMTimeRange range)\r\n{\r\n    return CMTIMERANGE_IS_VALID(range);\r\n}\r\n\r\n2) In a swift program, we can now directly compare the outputs of the 3 methods of validating a time range.\r\n\r\nlet positiveOne = CMTime(value: 1, timescale: 1)\r\nlet negativeOne = CMTime(value: -1, timescale: 1)\r\nlet rangeWithNegativeDuration = CMTimeRange(start: positiveOne, duration: negativeOne)\r\n\r\nprint(\"swift : range is valid: \\(rangeWithNegativeDuration.isValid)\")\r\nprint(\"c     : range is valid: \\(timeRangeIsValid(rangeWithNegativeDuration))\")\r\nprint(\"macro : range is valid: \\(CMTIMERANGE_IS_VALID(rangeWithNegativeDuration))\")\r\n\r\n\r\nExpected Results:\r\nI expect CMTimeRange validity to be independent of language and mechanism used. And for it to be consistent with the documentation.\r\n\r\nProgram output above should be\r\n\r\nswift : range is valid: false\r\nc     : range is valid: false\r\nmacro : range is valid: false\r\n\r\nActual Results:\r\nCMTimeRange validity only agrees with documentation when using the C macro for checking validity. Validating with the two mechanisms available in Swift is incorrect.\r\n\r\nProgram output above is\r\n\r\nswift : range is valid: true\r\nc     : range is valid: false\r\nmacro : range is valid: true"
+    email: fcanas@gmail.com
+    modified: "2017-06-23T01:08:56.4139Z"
+    number: "30576556"
+    number_intvalue: 30576556
+    originated: 17-Feb-2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: ""
+    reproducible: Always
+    resolved: 22-Jun-2017
+    status: Closed
+    title: Swift and C disagree about whether a CMTimeRange is valid

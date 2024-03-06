@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7739943"
+    labels:
+        datastore_id: "5000159373033472"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2020-06-17T00:15:53.784928Z"
+    description: "Starting on iOS 13.5.1, an app which contains a WKWebView may consume CPU usage even when backgrounded.\r\n\r\nExample code:\r\n\r\n- (void)viewDidLoad {\r\n  [super viewDidLoad];\r\n \r\n  _webView = [[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)];\r\n  _webView.navigationDelegate = self;\r\n  [self.view addSubview:_webView];\r\n \r\n  [self doJS];  \r\n}\r\n\r\n- (void)doJS {\r\n  [_webView evaluateJavaScript:@\"setTimeout({console.log('text')}, 10000);\" completionHandler:^(id _Nullable arg, NSError * _Nullable error) {\r\n    NSLog(@\"Ran some JS!\");\r\n  }];\r\n \r\n  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\r\n    [self doJS];\r\n  });\r\n}\r\n\r\nSteps to reproduce:\r\n1. Create a blank app and add the provided code to the ViewController.\r\n2. Launch the app and then background it.\r\n\r\nExpected behavior:\r\nThe app ceases using the battery and CPU.\r\n\r\nObserved behavior:\r\nThe webview continues executing JS, using up both the battery and CPU.\r\n\r\nAfter around 30 seconds of backgrounding on iOS 13.5.1, the following errors show up:\r\n\r\n[ProcessSuspension] Background task expired while holding WebKit ProcessAssertion (isMainThread? 1).\r\n2020-06-16 17:00:07.314584-0700 FoundationExperiments[1685:89122] [ProcessSuspension] 0x2802523d0 - WKProcessAssertionBackgroundTaskManager: Ignored request to start a new background task because the application is already in the background\r\n2020-06-16 17:00:07.317894-0700 FoundationExperiments[1685:89122] [ProcessSuspension] 0x2802523d0 - WKProcessAssertionBackgroundTaskManager: Ignored request to start a new background task because the application is already in the background\r\n\r\nTesting the provided code on iOS 13.3.1, the JS runs while backgrounded for ~15 seconds before suspending."
+    email: jonahw.admob@gmail.com
+    modified: "2020-06-17T00:15:53.785103Z"
+    number: "7739943"
+    number_intvalue: 7739943
+    originated: 6/16/20
+    parent_number: '&{NULL_VALUE}'
+    product: WebKit
+    product_version: 13.5.1
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: WKWebView Does not Suspend JS When App is Backgrounded

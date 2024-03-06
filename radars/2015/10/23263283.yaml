@@ -1,0 +1,70 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23263283"
+    labels:
+        datastore_id: "4613574714458112"
+data:
+    classification: Feature (New)
+    created: "2015-10-26T20:23:58.51771Z"
+    description: |-
+        When implementing SPTask (a Promise class for Swift) and its wrap functionality (convert callback-based function into promise-based function), i ran into the problem of having to copy-paste its implementation for a fixed number of parameters.
+
+        Here’s the function, hard-coded for two parameters:
+
+        func taskize<R1, P1, P2> (
+        	asyncFunc: (
+        		p1: P1,
+        		p2: P2,
+        		callback: (
+        			r1: R1,
+        			err: NSError?
+        		) -> Void
+        	) -> Void
+        ) -> (P1, P2) -> Task<R1>
+        {
+        	let source = TaskCompletionSource<R1>()
+        	
+        	return { (p1: P1, p2: P2) -> Task<R1> in
+        		asyncFunc(p1: p1, p2: p2, { (r1: R1, error: NSError?) -> Void in
+        			source.completeWithValue(r1)
+        		})
+        		return source.task
+        	}
+        }
+
+        If it was generic over a variadic number of parameters, it could be written something like:
+
+        func taskize<R1, P…> (
+        	asyncFunc: (
+        		P p…,
+        		callback: (
+        			r1: R1,
+        			err: NSError?
+        		) -> Void
+        	) -> Void
+        ) -> (P…) -> Task<R1>
+        {
+        	let source = TaskCompletionSource<R1>()
+        	
+        	return { (p…) -> Task<R1> in
+        		asyncFunc(p…, { (r1: R1, error: NSError?) -> Void in
+        			source.completeWithValue(r1)
+        		})
+        		return source.task
+        	}
+        }
+
+        I’ve just copied the C++ style of doing variadics, but I’m not a language designer, I’m sure there are much better ways of doing it.
+    email: joachimb@gmail.com
+    modified: "2015-10-26T20:23:58.51791Z"
+    number: "23263283"
+    number_intvalue: 23263283
+    originated: 26-Oct-2015 01:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "7.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Variadic generics'

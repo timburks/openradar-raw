@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32664362"
+    labels:
+        datastore_id: "5055867275706368"
+data:
+    classification: Serious bug
+    created: "2017-06-09T01:42:30.728Z"
+    description: "Area:\r\nAVFoundation\r\n\r\nSummary:\r\nWhen stopping an AVAudioPlayer close to the end and then playing it again, it will enter into an infinite loop but without any audio being heard. The audio will not come back even after repeated play()/pause() attempts unless the player is de-inited and recreated.\r\n\r\nSteps to Reproduce:\r\nThis can be reproduced by playing back audio, and then tapping pause just before the end. If done at the right moment, the playback will enter into an infinite loop without anything being heard.\r\n\r\nThis code will reproduce it:\r\n\r\nimport UIKit\r\nimport AVFoundation\r\n\r\nclass ViewController: UIViewController, AVAudioPlayerDelegate {\r\n    var player: AVAudioPlayer?\r\n    var intercept: Bool = true\r\n    \r\n    @IBOutlet weak var progressView: UIProgressView!\r\n    \r\n    @IBOutlet weak var playButton: UIButton!\r\n    \r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n        let displayLink = CADisplayLink.init(target: self, selector: #selector(pollCurrentTime))\r\n        displayLink.add(to: RunLoop.main, forMode: RunLoopMode.defaultRunLoopMode)\r\n    }\r\n\r\n    override func didReceiveMemoryWarning() {\r\n        super.didReceiveMemoryWarning()\r\n        // Dispose of any resources that can be recreated.\r\n    }\r\n\r\n    @IBAction func onPlayButtonTapped(_ sender: UIButton) {\r\n        let asset = NSDataAsset(name:\"TestRecording\")!\r\n        player = try! AVAudioPlayer(data: asset.data, fileTypeHint: \"m4a\")\r\n        player!.delegate = self\r\n        player!.play()\r\n        playButton.isEnabled = false\r\n    }\r\n    \r\n    func pollCurrentTime() {\r\n        if let player = player {\r\n            progressView.progress = Float(player.currentTime / player.duration)\r\n            if intercept && progressView.progress > 0.97 {\r\n                intercept = false\r\n                player.pause()\r\n                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {\r\n                    player.play()\r\n                }\r\n            }\r\n        } else {\r\n            progressView.progress = 0\r\n        }\r\n    }\r\n    \r\n    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {\r\n        cleanup()\r\n    }\r\n    \r\n    func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {\r\n        cleanup()\r\n    }\r\n    \r\n    private func cleanup() {\r\n        self.player = nil\r\n        playButton.isEnabled = true\r\n        intercept = true\r\n    }\r\n}\r\n\r\nExpected Results:\r\nThis should not happen.\r\n\r\nObserved Results:\r\nHappens on iPhone 6, iOS 10.3.2\r\n\r\nVersion:\r\n10.3.2 (14F89)\r\n\r\nNotes:\r\nAdditional notes: Seems that currentTime goes to 0 even though we paused close to the end, but neither of the two delegate methods were called.\r\n\r\nConfiguration:\r\niPhone 6s"
+    email: digipom@gmail.com
+    modified: "2017-06-09T20:25:46.31349Z"
+    number: "32664362"
+    number_intvalue: 32664362
+    originated: June 8th, 2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 10.3.2
+    reproducible: Yes
+    resolved: ""
+    status: New
+    title: AVAudioPlayer enters an infinite loop if pause() is called very close to the end, and then playback is resumed with play()

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7961551"
+    labels:
+        datastore_id: "346401"
+data:
+    classification: Serious Bug
+    created: "2010-05-09T23:24:33.395634Z"
+    description: "Summary:\r\n\r\nSeveral times a week, I become unable to trigger services.  Killing pbs usually resolves the problem.\r\n\r\nSteps to Reproduce:\r\n\r\nUse services a lot?\r\n\r\nExpected Results:\r\n\r\nServices are available.\r\n\r\nActual Results:\r\n\r\nServices sometimes stop working. Keyboard equivalents stop responding and the Services submenu displays \"Building...\"  In Console, I see a lot of messages like:\r\n\r\n5/9/10 5:54:53 PM\tKeynote[15385]\t__CFServiceControllerBeginPBSLoadForLocalizations timed out while talking to pbs\r\n\r\nRegression:\r\n\r\nThis failure has been occurring since 10.6.0. I never ran into a similar problem with an earlier Mac OS X version (despite using services frequently before).\r\n\r\nNotes:\r\n\r\nSometimes, pbs seems to go into a restart loop after I kill it:\r\n\r\n5/9/10 6:13:35 PM\tcom.apple.launchd.peruser.502[113]\t(com.apple.pbs) Throttling respawn: Will start in 10 seconds\r\n5/9/10 6:13:36 PM\tSlimBatteryMonitor[165]\t__CFServiceControllerBeginPBSLoadForLocalizations timed out while talking to pbs\r\n5/9/10 6:13:36 PM\tGrowlHelperApp[163]\t__CFServiceControllerBeginPBSLoadForLocalizations timed out while talking to pbs\r\n[... repeats every 10 seconds or so ...]\r\n\r\nHere's a sample of pbs in the broken state:\r\n\r\nAnalysis of sampling pbs (pid 11525) every 1 millisecond\r\nCall graph:\r\n    879 Thread_256923   DispatchQueue_1: com.apple.main-thread  (serial)\r\n      879 0x100001a04\r\n        879 0x100004682\r\n          879 0x10000390a\r\n            879 -[NSOperationQueue waitUntilAllOperationsAreFinished]\r\n              879 -[NSOperation waitUntilFinished]\r\n                879 -[__NSOperationInternal waitUntilFinished]\r\n                  879 _pthread_cond_wait\r\n                    879 __semwait_signal\r\n    879 Thread_256925   DispatchQueue_6: com.apple.root.default-priority  (serial)\r\n      879 start_wqthread\r\n        879 _pthread_wqthread\r\n          879 _dispatch_worker_thread2\r\n            879 _dispatch_call_block_and_release\r\n              879 ____startOperations_block_invoke_2\r\n                879 -[__NSOperationInternal start]\r\n                  879 -[NSBlockOperation main]\r\n                    879 0x10000311e\r\n                      879 0x100004d8e\r\n                        879 -[NSCondition wait]\r\n                          879 _pthread_cond_wait\r\n                            879 __semwait_signal\r\n    879 Thread_256926   DispatchQueue_2: com.apple.libdispatch-manager  (serial)\r\n      879 start_wqthread\r\n        879 _pthread_wqthread\r\n          879 _dispatch_worker_thread2\r\n            879 _dispatch_queue_invoke\r\n              879 _dispatch_mgr_invoke\r\n                879 kevent\r\n\r\nTotal number in stack (recursive counted multiple, when >=5):\r\n\r\nSort by top of stack, same collapsed (when >= 5):\r\n        __semwait_signal        1758\r\n        kevent        879"
+    email: nriley@gmail.com
+    modified: "2011-08-28T05:41:35.661026Z"
+    number: "7961551"
+    number_intvalue: 7961551
+    originated: 09-May-2010 06:21 PM
+    parent_number: "7224434"
+    product: Mac OS X
+    product_version: 10.6.3/10D573
+    reproducible: Sometimes
+    resolved: ""
+    status: Duplicate/7224434
+    title: 'pbs: services stop working'

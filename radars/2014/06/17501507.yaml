@@ -1,0 +1,69 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17501507"
+    labels:
+        datastore_id: "5241750557818880"
+data:
+    classification: Serious Bug
+    created: "2014-06-30T03:44:29.148485Z"
+    description: |-
+        Summary:
+        The compiler crashes when I use the .Type of a generic type to populate the inferred or explicitly provided typealias of a protocol. That’s a bit hard to follow, but the steps to reproduce are easy.
+
+
+        Steps to Reproduce:
+        1. Write this code:
+
+        protocol A {
+        	typealias B
+        	func b(B)
+        }
+
+        struct X<Y> : A {
+        	func b(b: X.Type) {}
+        }
+
+        2. Try to compile it… if you dare.
+
+
+        Expected Results:
+        I expected it to compile and run just fine.
+
+
+        Actual Results:
+        The compiler crashed. SourceKitService crashes pretty hard too.
+
+        Makes no difference if you use struct, enum, or class, it always crashes. Likewise, using X<Y>.Type also crashes with the same backtrace.
+
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        3  libsystem_platform.dylib 0x00007fff5fb08208 _sigtramp + 3375770744
+        4  swift                    0x00000001001f0c60 swift::Lowering::ManagedValue::forwardInto(swift::Lowering::SILGenFunction&, swift::SILLocation, swift::SILValue) + 160
+        5  swift                    0x0000000100241328 getThunkResult(swift::Lowering::SILGenFunction&, swift::SILLocation, TranslationKind, swift::CanTypeWrapper<swift::SILFunctionType>, swift::Lowering::AbstractionPattern, swift::CanType, swift::SILValue, swift::SILValue, swift::SILValue) + 840
+        6  swift                    0x00000001002408dc swift::Lowering::SILGenFunction::emitProtocolWitness(swift::ProtocolConformance*, swift::SILDeclRef, swift::SILDeclRef, llvm::ArrayRef<swift::Substitution>, swift::Lowering::IsFreeFunctionWitness_t, swift::Lowering::HasInOutSelfAbstractionDifference_t) + 4236
+        7  swift                    0x000000010020fa75 swift::Lowering::SILGenModule::emitProtocolWitness(swift::ProtocolConformance*, swift::SILLinkage, swift::SILDeclRef, swift::SILDeclRef, swift::Lowering::IsFreeFunctionWitness_t, llvm::ArrayRef<swift::Substitution>) + 2741
+        8  swift                    0x00000001002105b2 (anonymous namespace)::SILGenConformance::emitFuncEntry(swift::FuncDecl*, swift::ValueDecl*, llvm::ArrayRef<swift::Substitution>) + 194
+        9  swift                    0x000000010020c85b swift::Lowering::SILGenModule::getWitnessTable(swift::ProtocolConformance*) + 1659
+        10 swift                    0x000000010021143b SILGenType::emitType() + 315
+        11 swift                    0x000000010020bf0e swift::Lowering::SILGenModule::visitNominalTypeDecl(swift::NominalTypeDecl*) + 30
+        12 swift                    0x00000001001fac8b swift::Lowering::SILGenModule::emitSourceFile(swift::SourceFile*, unsigned int) + 395
+        13 swift                    0x00000001001faf86 swift::SILModule::constructSIL(swift::Module*, swift::SourceFile*, unsigned int) + 406
+        14 swift                    0x00000001001fb012 swift::performSILGeneration(swift::Module*) + 18
+    email: rix.rob@gmail.com
+    modified: "2014-06-30T03:44:29.148618Z"
+    number: "17501507"
+    number_intvalue: 17501507
+    originated: 29-Jun-2014 11:44 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta2 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Compiler crash when populating a protocol typealias with a generic type’s type'

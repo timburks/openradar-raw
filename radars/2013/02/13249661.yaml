@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13249661"
+    labels:
+        datastore_id: "2743402"
+data:
+    classification: Crash/hang/data loss
+    created: "2013-02-20T01:21:05.030556Z"
+    description: "Summary:\r\n\r\nWhen optimizations are enabled, clang with ARC incorrectly generates code for code of the form:\r\n\r\n    void (^callBlock)(id) = (id)block;\r\n\r\nSpecifically, it generates a objc_retainBlock/objc_release pair with an incorrect argument to objc_release, potentially causing a memory leak.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nCompile and run the following code with ARC and -O3:\r\n\r\n#include <Foundation/Foundation.h>\r\n\r\n\r\n\r\nvoid f(void (^block)(id)) {\r\n    void (^callBlock)(id) = (id)block;\r\n    callBlock(nil);\r\n}\r\n\r\nint main(int argc, char **argv)\r\n{\r\n    for(int i = 0; i < 1000000; i++)\r\n        f(^(id x){ [x initWithFormat: @\"%d\", i]; });\r\n    \r\n    NSLog(@\"done\");\r\n    while(1)\r\n        sleep(1);\r\n    \r\n    return 0;\r\n}\r\n\r\nWhen it prints \"done\", run a leak checker on the process.\r\n\r\n\r\nExpected Results:\r\n\r\nNo leaks should be reported.\r\n\r\n\r\nActual Results:\r\n\r\nOne block is leaked for each iteration of the loop.\r\n\r\n\r\nRegression:\r\n\r\nThe bug appears to be new as of Xcode 4.6 or 4.5.2.\r\n\r\n\r\nNotes:\r\n\r\nHere is the generated assembly code for the function:\r\n\r\n\tmovq\t%rdi, %rbx\r\n\tcallq\t_objc_retainBlock\r\n\tmovq\t%rax, %rdi\r\n\txorl\t%esi, %esi\r\n\tcallq\t*16(%rax)\r\n\tmovq\t%rbx, %rdi\r\n\taddq\t$8, %rsp\r\n\tpopq\t%rbx\r\n\tpopq\t%rbp\r\n\tjmp\t_objc_release           ## TAILCALL\r\n\r\nAs I understand it, the calls are equivalent to:\r\n\r\n    callBlock = objc_retainBlock(block);\r\n    callBlock();\r\n    objc_release(block);\r\n\r\nThe obj_release should be called on callBlock, but is instead being called on block. In the case where the block is already on the heap, this mistake is harmless, as block and callBlock will contain the same pointer. However, in case where the block is originally on the stack, this is disastrous. In that case, block still points to the stack block, while callBlock points to the heap copy. Releasing the stack block does nothing, leaving the heap block behind to leak.\r\n\r\nBecause blocks, especially ephemeral ones, can capture large amounts of data, the potential leak here is huge."
+    email: michael.ash@gmail.com
+    modified: "2013-02-20T01:21:05.030792Z"
+    number: "13249661"
+    number_intvalue: 13249661
+    originated: 19-Feb-2013 08:20 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "4.6"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '[clang] Incorrect ARC codegen for block copies when optimizations enabled'

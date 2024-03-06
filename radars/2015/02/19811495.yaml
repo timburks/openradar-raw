@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19811495"
+    labels:
+        datastore_id: "5072340605992960"
+data:
+    classification: Enhancement
+    created: "2015-02-12T14:08:03.017032Z"
+    description: "Summary:\n\nCurrently (Swift 1.2), this class hierarchy cannot be defined:\n\nclass Sender<TItem> { \n\tfunc send(item: TItem) {}\n}\nclass Tweet {}\nclass TweetSender : Sender<Tweet> {\n\toverride func send(item: Tweet) {}\n}\n\nExpected Results:\nIt's possible to declare this kind of class hierarchies, where the TweetSender class can be used without its generic type parameter. For all usages of the specific type parameter, the subclass would have to use the specified type parameter in the declaration (see the 'send' function in the example above).\n\nThis would allow me to use the TweetSender class directly:\n\nfunc xxx() {\n    var x = TweetSender()\n    x.send(Tweet())\n}\n\nActual Results:\nThe compiler does not allow the TweetSender class (or any subclass of a generic class) to drop the generic type parameter by specifying it in the baseclass when declaring the class. The class needs another generic parameter, even if it is not used.\n\nWorkaround:\nAdd a useless type parameter to the derived class to satisfy the compiler:\n\nclass Sender<TItem> {\n    func send(item: TItem) {\n        \n    }\n}\n\nclass Tweet {}\nclass TweetSender<TUseless> : Sender<Tweet> {\n    override func send(item: Tweet) {\n        \n    }\n}\n\ncausing you to still have to specify the type parameter even though it's not used anywhere:\n\nfunc xxx() {\n    var x = TweetSender<Tweet>()\n    x.send(Tweet())\n}\n\nThe extra <Tweet> generic param is useless here and can only lead to confusion."
+    email: tom@inferis.org
+    modified: "2015-02-12T14:08:03.017236Z"
+    number: "19811495"
+    number_intvalue: 19811495
+    originated: 12-Feb-2015 03:07 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Swift 1.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Allow a subclass to drop a generic parameter by specifying the type parameter in the declaration

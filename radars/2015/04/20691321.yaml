@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20691321"
+    labels:
+        datastore_id: "6730121444589568"
+data:
+    classification: Other Bug
+    created: "2015-04-24T21:21:56.02518Z"
+    description: "Summary:\r\nIn the EAWiFiUnconfiguredAccessoryBrowserDelegate protocol, the method didFindUnconfiguredAccessories provides an accessories parameter of type Set<NSObject>. Attempting to cast members of this set as type EAWiFiUnconfiguredAccessory can result in an app crash, and ultimately prevents 3rd party app from being able to configure via WAC.\r\n\r\nSteps to Reproduce:\r\nCreate a Single View iOS app using Swift\r\nAdd a class that implements the EAWiFiUnconfiguredAccessoryBrowserDelegate\r\nImplement a function to handle the delegate callback - func accessoryBrowser(browser: EAWiFiUnconfiguredAccessoryBrowser!, didFindUnconfiguredAccessories accessories: Set<NSObject>!)\r\n\r\nUsing the following code inside the above function: \r\nfor object in accessories {\r\n  if let accessory = object as? EAWiFiUnconfiguredAccessory {\r\n    println(\"success\")\r\n  } else {\r\n    println(\"\\(object)\")\r\n  }\r\n}\r\nWill result in the console logging a description of the object, describing its class as EAWiFiUnconfiguredAccessory.\r\n\r\nUsing the following code:\r\nfor object in accessories {\r\n  let accessory = object as! EAWiFiUnconfiguredAccessory\r\n}\r\nWill crash the application, and will log the following message:\r\n\"Could not cast value of type 'EAWiFiUnconfiguredAccessory' (0x1009ee430) to 'EAWiFiUnconfiguredAccessory' (0x19539a6c8).\"\r\n\r\nFurthermore the following line:\r\nobject is EAWiFiUnconfiguredAccessory\r\nReturns false.\r\n\r\n\r\nExpected Results:\r\nThe members of the accessories collection should be allowed to be cast as an EAWiFiUnconfiguredAccessory class.\r\n\r\nActual Results:\r\nThe members of the accessories collection are not recognized as instances of EAWiFiUnconfiguredAccessory.\r\n\r\n\r\nVersion:\r\n8.3 (12F70)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 6 64GB Verizon, using WiFi\r\n\r\nAttachments:"
+    email: erik.krietsch@gmail.com
+    modified: "2016-03-22T13:53:07.97123Z"
+    number: "20691321"
+    number_intvalue: 20691321
+    originated: 4/24/2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 8.3 (12F70)
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: In iOS 8.3+, Attempting to cast members of accessories parameter from didFindUnconfiguredAccessories method as EAWiFiUnconfiguredAccessory fails

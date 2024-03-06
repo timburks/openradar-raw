@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21961187"
+    labels:
+        datastore_id: "4582089819160576"
+data:
+    classification: Crash
+    created: "2015-07-23T14:38:06.46011Z"
+    description: "Summary:\r\n\r\n\tSwiftc crashes with recursively defined indirect enums if they match a certain pattern.\r\n\r\nSteps to Reproduce:\r\n\r\n\tTake this simple recursive binary tree:\r\n\r\n\tindirect enum PersistentBinaryTree<T> {\r\n\t    case Tail(left: PersistentBinaryTree, element: T, right: PersistentBinaryTree)\r\n\t    case Nil\r\n\t}\r\n\t=> Build successful\r\n\r\n\tNow add a function to it:\r\n\r\n\tindirect enum PersistentBinaryTree<T> {\r\n\t    case Tail(left: PersistentBinaryTree, element: T, right: PersistentBinaryTree)\r\n\t    case Nil\r\n\t    func foo() { }\r\n\t}\r\n\r\nExpected Results:\r\n\r\n\t=> Build successful\r\n\r\nActual Results:\r\n\r\n\t=> Build failed. Command failed due to signal: Segmentation fault: 11\r\n\r\nRegression:\r\n\r\n\tHere's the fun part: Change the order of parameters of the \"Branch\" case:\r\n\r\n\tindirect enum PersistentBinaryTree<T> {\r\n\t    case Tail(element: T, left: PersistentBinaryTree, right: PersistentBinaryTree)\r\n\t    case Nil\r\n\t    func foo() { }\r\n\t}\r\n\t=> Build successful\r\n\r\nNotes:\r\n\r\n\tSame happens for PersistentList:\r\n\r\n\tindirect enum PersistentList<T> {\r\n\t    case Tail(head: T, tail: PersistentList)\r\n\t    case Empty\r\n\t    func foo() { }\r\n\t}\r\n\t=> Build successful\r\n\r\n\tindirect enum PersistentList<T> {\r\n\t    case Tail(tail: PersistentList, head: T)\r\n\t    case Empty\r\n\t    func foo() { }\r\n\t}\r\n\t=> Build failed. Command failed due to signal: Segmentation fault: 11\r\n\r\n\tLooks like indirect enums that have a recursive property at first position of a case AND functions segfault the compiler.\r\n\r\nUpdate:\r\n\r\n\tMoving the \"case Nil\" above \"case Branch(…)\" (or \"case Empty\" above \"case Tail(…)\" respectively) makes the code compile, too.\r\n\tSo for the segfault to trigger, a recursive property needs to be placed at the first position of the first case of a struct and it must have at least one function."
+    email: regexident@gmail.com
+    modified: "2015-07-23T19:55:23.57221Z"
+    number: "21961187"
+    number_intvalue: 21961187
+    originated: 23-Jul-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: Version 7.0 beta 4 (7A165t)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Segfault when compiling recursively defined indirect enums of a certain pattern.

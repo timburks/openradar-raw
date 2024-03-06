@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16268063"
+    labels:
+        datastore_id: "5874203416854528"
+data:
+    classification: Other Bug
+    created: "2014-03-08T01:43:49.379351Z"
+    description: "EDITED TO ADD: I just checked this and it is fixed in Xcode 6 beta 7. Now assigning the result of [NSCharacterSet decimalDigitCharacterSet] to a NSMutableCharacterSet * correctly generates a warning. Thanks!\r\n\r\nSummary:\r\nThe following code will not create any compile errors, raise any assertions, return an error code, or even log a warning message to the console. It also won't do what the developer intended.\r\n\r\nNSMutableCharacterSet* fakeMutableSet = [NSCharacterSet decimalDigitCharacterSet];\r\n[fakeMutableSet formUnionWithCharacterSet:[NSCharacterSet whitespaceCharacterSet]];\r\n\r\nObviously the code should call mutableCopy in the first line. That bug is on me. But the fact that formUnionWithCharacterSet can fail with no way to tell is troubling.\r\n\r\nSteps to Reproduce:\r\n1. Download the attached sample project.\r\n2. Build it (you can repro the problem on the simulator as well as every hardware platform I've tried it on.)\r\n3. Run the app and inspect the console log.\r\n\r\nExpected Results:\r\nThe underlying problem appears to be that both NSMutableCharacterSet and NSCharacterSet objects are really _NSCFCharacterSet objects. I don't *LIKE* that assigning a non-mutable set to a NSMutableSet pointer works, but I can live with that. At a minimum though I'd like to see the formUnionWithCharacterSet code that runs and *doesn't do what it says it does* at least print a message to the console.\r\n\r\nActual Results:\r\nThe runtime gives no indication at all that this has failed. I understand the problem and I don't know any way to code defensively against this, short of actually verifying the contents of the set changed.\r\n\r\nVersion:\r\nThis did not happen on iOS 5. I think the behavior either changed in iOS 6.0 or possibly in a point rev to iOS 6. It's present in 7, I have not yet tried it on a 7.1 beta.\r\n\r\nNotes:\r\nI've published the test application on GitHub: https://github.com/HiddenJester/MutableTestApp\r\n\r\nConfiguration:\r\nHappens all the time in iOS 7. I believe the problem extends to many of the NSMutableSet methods but I haven't built a comprehensive list.\r\n\r\nAttachments:\r\n'MutableTestApp.zip' was successfully uploaded.\r\n\r\nUpdate 2014-09-05:\r\n\r\nI just checked this and it is fixed in Xcode 6 beta 7. Now assigning the result of [NSCharacterSet decimalDigitCharacterSet] to a NSMutableCharacterSet * correctly generates a warning. Thanks!"
+    email: timothy.sanders@gmail.com
+    modified: "2014-10-08T16:05:54.445687Z"
+    number: "16268063"
+    number_intvalue: 16268063
+    originated: "2014-03-07"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.0"
+    reproducible: Always
+    resolved: Yes.
+    status: Closed
+    title: NSCharacterSet objects respond to NSMutableCharacterSet calls incorrectly.

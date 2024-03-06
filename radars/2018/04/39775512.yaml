@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39775512"
+    labels:
+        datastore_id: "5055473246011392"
+data:
+    classification: UI/Usability
+    created: "2018-04-26T23:18:44.97771Z"
+    description: "Summary:\r\nThe dots of a UIPageControl block taps from being handled by the page control. This leads to a poor user experience as the page control sometimes does not work when tapped.\r\n\r\nSteps to Reproduce:\r\n1. Open the attached sample project. It just puts a UIPageControl on screen and makes it big so the problem is easier to see.\n2. Tap on a dot towards the right end.\n3. Tap between the dots towards the right end.\r\n\r\nExpected Results:\r\nPage control should move from page 0 to 1 at step 2, then 1 to 2 at step 3. Wherever you tap on the page control, it should handle the event and change page.\r\n\r\nActual Results:\r\nThe page control does not change at step 2, only at step 3. This is because the subviews used for the dots have user interaction enabled and handle the touches, so they don’t reach the page control itself.\r\n\r\nVersion:\r\n11.3\r\n\r\nNotes:\r\nThis is easier with a mouse but it happens with touches too. With a normal size page control and finger touches you can’t tap with enough accuracy to reliably hit either the dots or the gaps so it affectivity becomes random whether the control works or not if touched around the dots.\n\nWorkaround is to subclass UIPageControl and override hit testing to return self instead of the dot subviews:\n\n    class PageControl: UIPageControl {\n        override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {\n            let hitView = super.hitTest(point, with: event)\n            if hitView == nil {\n                return nil\n            } else {\n                return self\n            }\n        }\n    }"
+    email: douglashill@douglashill.co
+    modified: "2018-04-26T23:18:44.97794Z"
+    number: "39775512"
+    number_intvalue: 39775512
+    originated: 27-Apr-2018 12:18 am
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "11.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Dots of UIPageControl block taps

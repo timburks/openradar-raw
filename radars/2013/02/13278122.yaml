@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13278122"
+    labels:
+        datastore_id: "2763401"
+data:
+    classification: Enhancement
+    created: "2013-02-23T00:27:33.525177Z"
+    description: "Summary:\n- [NSValue getValue:]  offers no way to confirm that a value passed by reference has been initialized.\nIt also offers no way to provide guidance as to the passed in value references expected size.\n\nSteps to Reproduce:\nUse - [NSValue getValue:] \n\nExpected Results:\nA return value that indicates success and failure on values where expected size doesn't match\n\nActual Results:\nNo expected size or return value.\n\nRegression:\nN/A\n\nNotes:\nSample code:\n\n#import <Foundation/Foundation.h>\n \n@interface RSTLValue : NSValue\n- (BOOL)getValue:(void *)value expectedSize:(size_t)expectedSize;\n@end\n \nstruct Foo {\n\tNSUInteger i;\n\tchar * bar;\n};\n \nint main(int argc, const char * argv[])\n{\n\t@autoreleasepool {\n\t\tstruct Foo foo;\n\t\tfoo.i = 1;\n\t\tfoo.bar = \"string\";\n\t\tRSTLValue *value = [[RSTLValue alloc] initWithBytes:&foo objCType:@encode(struct Foo)];\n\t\tstruct Foo foo2;\n\t\tif ([value getValue:&foo2 expectedSize:sizeof(struct Foo)])\n\t\t{\n\t\t\tNSLog(@\"%li %s\\n\", foo2.i, foo2.bar);\n\t\t}\n\t\telse\n\t\t{\n\t\t\tNSLog(@\"Fail\");\n\t\t}\n\t\tvalue = [[RSTLValue alloc] init];\n\t\tstruct Foo foo3;\n\t\tif ([value getValue:&foo3 expectedSize:sizeof(struct Foo)])\n\t\t{\n\t\t\tNSLog(@\"%li %s\\n\", foo3.i, foo3.bar);\n\t\t}\n\t\telse\n\t\t{\n\t\t\tNSLog(@\"Fail\");\n\t\t}\n\t}\n    return 0;\n}\n \n@implementation RSTLValue\n{\n\tNSValue *_realValue;\n\tsize_t _expectedSize;\n}\n \n- (instancetype)init\n{\n\tself = [super init];\n\tif (self)\n\t{\n\t\t_expectedSize = 0;\n\t}\n\treturn self;\n}\n \n- (id)initWithBytes:(const void *)value objCType:(const char *)type\n{\n\tself = [self init];\n\tif (self)\n\t{\n\t\t_realValue = [[NSValue alloc] initWithBytes:value objCType:type];\n\t\tNSUInteger size;\n\t\tNSUInteger align;\n\t\t//const char * retval = \n\t\tNSGetSizeAndAlignment(type, &size, &align);\n\t\t_expectedSize = size;\n\t}\n\treturn self;\n}\n \n- (BOOL)getValue:(void *)value expectedSize:(size_t)expectedSize\n{\n\tif (_realValue == nil)\n\t{\n\t\treturn NO;\n\t}\n\tif (_expectedSize != expectedSize)\n\t{\n\t\treturn NO;\n\t}\n\t[_realValue getValue:value];\n\treturn YES;\n}\n \n- (void)getValue:(void *)value\n{\n\t@throw [NSException exceptionWithName:@\"\" reason:@\"\" userInfo:nil];\n}\n \n- (id)forwardingTargetForSelector:(SEL)aSelector\n{\n\treturn _realValue;\n}\n \n@end"
+    email: doug@getitdownonpaper.com
+    modified: "2013-02-23T00:27:33.525309Z"
+    number: "13278122"
+    number_intvalue: 13278122
+    originated: 22-Feb-2013 04:27 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X SDK
+    product_version: "10.8"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '- [NSValue getValue:] should take a expectedSize argument and yield a success return value'

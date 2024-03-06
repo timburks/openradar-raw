@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14631637"
+    labels:
+        datastore_id: "6176010164764672"
+data:
+    classification: Serious Bug
+    created: "2015-05-12T22:32:32.79632Z"
+    description: "For almost all build actions, BUILT_PRODUCTS_DIR and TARGET_BUILD_DIR refer to the same directory. Only when archiving, they refer to different directories. In that case the real product files (which also includes the public and private header folders) are found in TARGET_BUILD_DIR. In BUILT_PRODUCTS_DIR is only a softlink to the real product files, but only for the actually target outputs, *NOT* for the public and private header folders.\r\n\r\nLet me quote from the Xcode Build Setting Reference:\r\n\r\nBUILT_PRODUCTS_DIR\r\nDirectory path. Identifies the directory under which all the product’s files can be found. This directory contains either product files or symbolic links to them. Run Script build phases can use the value of this build setting as a convenient way to refer to the product files built by one or more targets even when these files are scattered throughout a directory hierarchy (for example, when DEPLOYMENT_LOCATION is set to YES.\r\n\r\nTARGET_BUILD_DIR\r\nDirectory path. Identifies the root of the directory hierarchy that contains the product’s files (no intermediate build files). Run Script build phases that operate on product files of the target that defines them should use the value of this build setting. But Run Script build phases that operate on product files of other targets should use “BUILT_PRODUCTS_DIR” instead.\r\n\r\n\r\nMy problem is, that I have a run script phase of target B and this run script phase needs to access the build products of target A. The reference says, I must not use TARGET_BUILD_DIR in that case, which wouldn't work anyway, as target B is installed, while target A is not (SKIP_INSTALL). So my script is using BUILT_PRODUCTS_DIR instead, as the guide requests, but using BUILT_PRODUCTS_DIR it will only get access to the linked product of target A, it will not get access to the headers, since the header directory is not softlinked in BUILT_PRODUCTS_DIR. I also cannot access the headers using TARGET_BUILD_DIR, because TARGET_BUILD_DIR is completely different for target A and target B, since one of both is installed (ends up in the archive), but the other one is not."
+    email: m.hanauska@gmail.com
+    modified: "2015-05-12T22:32:32.79659Z"
+    number: "14631637"
+    number_intvalue: 14631637
+    originated: 02-Aug-2013
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "5"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Public and private header folders not softlinked when archiving

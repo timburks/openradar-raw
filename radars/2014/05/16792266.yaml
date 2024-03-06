@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16792266"
+    labels:
+        datastore_id: "5867641243697152"
+data:
+    classification: Serious Bug
+    created: "2014-05-02T05:58:25.013978Z"
+    description: "Summary:\r\nIn using AVCaptureConnection with AVVideoPreviewLayer, I've noticed something peculiar.  Connections associated with preview layers return NO from the supportsVideoFieldMode method, even though they are decidedly video-based connections.\r\n\r\nI'm seeing this using code derived trivially from your sample code (AVRecorder), so I'm assuming that this is a bug in the implementation rather than a problem in the way I'm using the API.\r\n\r\nSteps to Reproduce:\r\n1.  Modify AVRecorderDocument.m in the AVRecorder sample code project as shown:\r\n\r\n\t[super windowControllerDidLoadNib:aController];\r\n\t\r\n\t// Attach preview to session\r\n\tCALayer *previewViewLayer = [[self previewView] layer];\r\n\t[previewViewLayer setBackgroundColor:CGColorGetConstantColor(kCGColorBlack)];\r\n\tAVCaptureVideoPreviewLayer *newPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:[self session]];\r\n\t[newPreviewLayer setFrame:[previewViewLayer bounds]];\r\n\t[newPreviewLayer setAutoresizingMask:kCALayerWidthSizable | kCALayerHeightSizable];\r\n\t[previewViewLayer addSublayer:newPreviewLayer];\r\n\t[self setPreviewLayer:newPreviewLayer];\r\n\t[newPreviewLayer release];\r\n    \r\n    AVCaptureConnection *connection = self.previewLayer.connection;\r\n    \r\n    if (connection.supportsVideoFieldMode) {\r\n        NSLog(@\"Enabled deinterlacing\\n\");\r\n        [connection setVideoFieldMode:AVVideoFieldModeDeinterlace];\r\n    } else {\r\n        NSLog(@\"Deinterlacing not supported\\n\");\r\n    }\r\n\t\r\n\t// Start the session\r\n\t[[self session] startRunning];\r\n\t\r\n\t// Start updating the audio level meter\r\n\t[self setAudioLevelTimer:[NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(updateAudioLevels:) userInfo:nil repeats:YES]];\r\n\r\n\r\nExpected Results:\r\nI expected to find support for deinterlacing during preview.\r\n\r\nActual Results:\r\nInstead, it returns \"NO\", and won't deinterlace the incoming video.\r\n\r\nVersion:\r\n10.9.2/13C1021\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: dgatwood42@gmail.com
+    modified: "2014-05-02T05:58:25.014127Z"
+    number: "16792266"
+    number_intvalue: 16792266
+    originated: 01-May-2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.2/13C1021
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Not all video connections support deinterlacing?

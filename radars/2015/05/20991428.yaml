@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20991428"
+    labels:
+        datastore_id: "4959268847484928"
+data:
+    classification: ""
+    created: "2015-05-17T14:35:16.44907Z"
+    description: "Summary:\r\nThe /etc/zshenv initialization file for the zsh shell resets the PATH environment variable by calling /usr/libexec/path_helper. Since zshenv is executed every time a zsh script is executed (even in non-interactive non-login mode), the PATH environment variable of the script may differ from the one of its parent process for no good reason.\r\n\r\nThis behavior is incorrect. path_helper should be called either in /etc/zprofile (login shells only) or /etc/zshrc (login/interactive shells only). This is important so that bash and zsh exhibit similar behavior (for bash, path_helper is only called from /etc/profile, which is only executed if bash is running as a login shell).\r\n\r\nSteps to Reproduce:\r\nAssuming an environment with a MacPorts install, and a newer version of vim installed through it. The problem is not MacPorts-specific though, but is easier to demonstrate this way. \r\n\r\n1. Create a basic zsh script, like so, and make it executable:\r\n#!/bin/zsh\r\necho \"zsh script path is: $PATH\"\r\necho \"zsh will find vim in: $(which vim)\"\r\n\r\n2. Open a terminal window (you can use whatever shell you'd like).\r\n3. Add the MacPorts directories to the front of your PATH.\r\n(export PATH=\"/opt/local/bin:/opt/local/sbin:$PATH\")\r\n4. Execute the script.\r\n\r\n5. Create a similar script using bash, and make it executable:\r\n#!/bin/bash\r\necho \"bash script path is: $PATH\"\r\necho \"bash will find vim in: $(which vim)\"\r\n\r\n6. Repeat steps 2 and 3, then execute the script from step 5.\r\n\r\nExpected Results:\r\nThe script should print the PATH it inherited from its parent. Since that path contains the MacPorts directories at the beginning, they will be searched first, and \"which vim\" will return the MacPorts copy, like so:\r\n\r\nzsh script path is: /opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin...\r\nzsh will find vim in: /opt/local/bin/vim\r\n\r\nbash script path is: /opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin...\r\nbash will find vim in: /opt/local/bin/vim\r\n\r\nActual Results:\r\nThe PATH variable is reset and not inherited from the parent process. The results from the zsh script and the bash script differ.\r\n\r\nzsh script path is: /usr/local/bin:/usr/bin:/bin:/usr/sbin...\r\nzsh will find vim in: /usr/bin/vim\r\n\r\nbash script path is: /opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin...\r\nbash will find vim in: /opt/local/bin/vim\r\n\r\nVersion:\r\nReproduced on OS X 10.10.3 (14D136)\r\nAffects at least versions 10.8 and newer.\r\n\r\nNotes:\r\n\r\nConfiguration:\r\n\r\nAttachments:"
+    email: mdeaudelin@gmail.com
+    modified: "2015-05-17T14:35:16.44934Z"
+    number: "20991428"
+    number_intvalue: 20991428
+    originated: 2015/05/17
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: OS X 10.10.3 (14D136)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: OS X changes the PATH before executing a zsh script, even in non-interactive mode

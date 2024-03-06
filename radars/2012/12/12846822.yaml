@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12846822"
+    labels:
+        datastore_id: "2407401"
+data:
+    classification: UI/Usability
+    created: "2012-12-10T17:57:47.734794Z"
+    description: "Summary:\r\nWhen using Kerberos authentication with NetFSMountURLSync, mounting a WebDAV url (http://...) requires a dummy string be passed in for the username and password. While mounting an SMB url (smb://...) requires that username and password be NULL.\r\n\r\nSteps to Reproduce:\r\nObtain a TGT.\r\nAttempt to mount webDAV and SMB URLs using Kerberos authentication.\r\n\r\n\tNSURL *webDAVURL = [NSURL URLWithString:@\"https://my.sharepoint.school.edu/personal/grigutis\"];\r\n\tCFArrayRef webDAVMountpoints = NULL;\r\n\tint webDAVResult = 0;\r\n\twebDAVResult = NetFSMountURLSync((__bridge CFURLRef)webDAVURL,\r\n\t\tNULL,\r\n\t\tCFSTR(\"Kerberos\"),\r\n\t\tCFSTR(\"NoPassword\"),\r\n\t\tNULL,\r\n\t\tNULL,\r\n\t\t&webDAVMountpoints);\r\n\r\n\tNSURL *smbURL = [NSURL URLWithString:@\"smb://server.school.edu/Users\"];\r\n\tCFArrayRef smbMountpoints = NULL;\r\n\tint smbResult = 0;\r\n\tsmbResult = NetFSMountURLSync((__bridge CFURLRef)smbURL,\r\n\t\tNULL,\r\n\t\tCFSTR(\"Kerberos\"),\r\n\t\tCFSTR(\"NoPassword\"),\r\n\t\tNULL,\r\n\t\tNULL,\r\n\t\t&smbMountpoints);\r\n\r\n\r\nExpected Results:\r\nBoth function calls should produce the same results: either both using Kerberos authentication and succeeding or both failing/prompting for credentials.\r\n\r\nActual Results:\r\nThe call using the WebDAV URL will succeed, but the call using the SMB URL will show an authentication dialog with \"Kerberos\" in the Name field.\r\n\r\nRegression:\r\nUsing NULL for the username and password arguments will cause the WebDAV example to fail, but the SMB example to succeed.\r\n\r\nNotes:\r\nThere should be better documentation for NetFS. There is no mention of how to use Kerberos authentication. Using NULL for the username and password would be acceptable as long as it worked consistently and was documented."
+    email: j.a.grigutis@gmail.com
+    modified: "2012-12-10T17:57:47.735189Z"
+    number: "12846822"
+    number_intvalue: 12846822
+    originated: 10-Dec-2012 12:54 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X SDK
+    product_version: 10.8.2/12C60
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'NetFSMountURLSync: inconsistency between WebDAV and SMB when using Kerberos'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "43337516"
+    labels:
+        datastore_id: "4992468625915904"
+data:
+    classification: Bug
+    created: "2018-08-15T17:39:10.83638Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\n\r\nThere's a problem in `NSLayoutManager`'s `usedRect(for:)` when trying to calculate an `NSAttributedString` with Chinese characters in the San Francisco font. It doesn't calculate the appropriate height. The issue doesn't appear to be present when using other fonts (though I haven't tested exhaustively).\r\n\r\nSteps to Reproduce:\r\n\r\nIn the following Playground:\r\n\r\n//=======\r\n\r\nimport UIKit\r\nimport PlaygroundSupport\r\n\r\nclass MyViewController : UIViewController {\r\n    override func loadView() {\r\n        let view = UIView()\r\n        view.backgroundColor = .white\r\n\r\n        let string = \"这首诗并不是苏轼的名篇，但是初读便被最后一句吸引了。对仗工整，却不失灵动。“殷勤”二字用得别有趣味，又新巧。揣摩起诗人的心绪，是闲适中带着点轻快。“又得浮生一日凉”，能抛弃这对“浮生”的万千想象，尽情享受一日的欢喜，一日的凉爽，便自得其乐，心满意足。\"\r\n\r\n        let textView = UITextView()\r\n        textView.frame = CGRect(x: 0, y: 200, width: 300, height: getHeight(forString: string, width: 300))\r\n        textView.attributedText = attributedString(string)\r\n        \r\n        view.addSubview(textView)\r\n        self.view = view\r\n    }\r\n\r\n    func getHeight(forString string: String, width: CGFloat) -> CGFloat {\r\n        let textContainer = NSTextContainer(size: CGSize(width: width, height: CGFloat.greatestFiniteMagnitude))\r\n        textContainer.lineFragmentPadding = 0\r\n        let textStorage = NSTextStorage(attributedString: attributedString(string))\r\n        let layoutManager = NSLayoutManager()\r\n        layoutManager.addTextContainer(textContainer)\r\n        textStorage.addLayoutManager(layoutManager)\r\n\r\n        let rect = layoutManager.usedRect(for: textContainer)\r\n        let height = ceil(rect.height)\r\n\r\n        return height\r\n    }\r\n\r\n    func attributedString(_ string: String) -> NSAttributedString {\r\n        let mutableAttributedString = NSMutableAttributedString(string: string, attributes: [NSAttributedStringKey.foregroundColor: UIColor.gray, NSAttributedStringKey.font: UIFont(name: \"Helvetica Neue\", size: 20.0)])\r\n\r\n        return mutableAttributedString\r\n    }\r\n}\r\n// Present the view controller in the Live View window\r\nPlaygroundPage.current.liveView = MyViewController()\r\n\r\n//=======\r\n\r\n1) View the output. The `UITextView` appears correctly, displaying all text in the string.\r\n2) Change the `attributedString(_ :)` method to:\r\n\r\nfunc attributedString(_ string: String) -> NSAttributedString {\r\n        let mutableAttributedString = NSMutableAttributedString(string: string, attributes: [NSAttributedStringKey.foregroundColor: UIColor.gray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 20.0)])\r\n\r\n        return mutableAttributedString\r\n    }\r\n\r\n3) View the output. The `UITextView` is cut off at the bottom.\r\n\r\nExpected Results:\r\n\r\nText is properly measured and the resulting rect displays all text.\r\n\r\nActual Results:\r\n\r\nText is improperly measured, resulting in an inaccurate rect that clips the text.\r\n\r\nVersion/Build:\r\n\r\nVersion 9.4 (9F1027a)\r\n\r\nConfiguration:\r\n\r\nN/A"
+    email: jcrowley@tumblr.com
+    modified: "2018-08-15T17:39:10.83661Z"
+    number: "43337516"
+    number_intvalue: 43337516
+    originated: 8/15/2018
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Chinese character sizes not calculated correctly in NSLayoutManager's usedRect(for:) method when using San Francisco font

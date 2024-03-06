@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24498034"
+    labels:
+        datastore_id: "5013748225933312"
+data:
+    classification: Crash
+    created: "2016-02-04T05:43:22.29647Z"
+    description: "Summary:\r\nIn Objective-C, it's expected that you can pass in NULL to any NSError** parameter to ignore the error. However, when I try to pass NULL to a Swift method that throws an error, it generates a EXC_BAD_INSTRUCTION  runtime error.\r\n\r\nI'm surprised at this behavior. I would expect this to either work, or the compiler to generate a warning when you pass NULL to one of these methods.\r\n\r\nHere's what the generated header of the Swift method looks like:\r\n\r\n+ (BOOL)throwErrorAndReturnError:(NSError * __nullable * __null_unspecified)error;\r\n\r\nIf this is not supposed to work, it seems like this should generate NSError * __nullable * __nonnull, so that a compiler warning is generated when you try to pass in a nullable NSError*.\r\n\r\nSteps to Reproduce:\r\nCreate an empty project with this code (example project attached):\r\n\r\n// Thrower.swift\r\nclass Thrower: NSObject {\r\n    static func throwError() throws {\r\n        throw NSError(domain: \"bla\", code: 0, userInfo: nil)\r\n    }\r\n}\r\n\r\n...\r\n\r\n// AppDelegate.m\r\nBOOL success = [Thrower throwErrorAndReturnError:NULL];\r\n\r\n\r\nExpected Results:\r\nEither\r\n1. [Thrower throwErrorAndReturnError:] returns NO, and continues running.\r\nor\r\n2. The compiler generates a warning telling you you cannot pass NULL into this method.\r\n\r\nActual Results:\r\nThe app crashes with a EXC_BAD_INSTRUCTION error.\r\n\r\nVersion:\r\niOS 9.2\r\n\r\nConfiguration:\r\nSimulator & iPhone 6"
+    email: clindsay@gmail.com
+    modified: "2016-02-04T05:43:22.29671Z"
+    number: "24498034"
+    number_intvalue: 24498034
+    originated: 02/04/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "9.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Passing NULL to NSError** parameter of a Swift method crashes, with no compiler warning

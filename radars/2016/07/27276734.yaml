@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27276734"
+    labels:
+        datastore_id: "4939760502046720"
+data:
+    classification: Enhancement
+    created: "2016-07-11T14:11:54.65183Z"
+    description: "In WWDC 2016 session 224, at 36:33 they explain how to handle group conversations in message extensions by \"storing state in the cloud.\" Unfortunately this does not work.\r\n\r\nIn the example provided, Ben asks his friends which ice cream topping they would like. Both Amber and Chris reply with their preferred toppings, but due to the use of MSSession, one reply wins and is displayed as the last chat bubble and another loses and is displayed above it only as summary text.\r\n\r\nWhile we could store each participants ice cream topping choice in the cloud and just pass around a token for the session as recommended, there is no way to associate Amber with her choice and Chris with his choice.\r\n\r\nThe only identifier that Amber has to represent herself in the conversation is her localParticipantIdentifier. If she were to use that identifier in the payload sent to the cloud, it would be useless when either Ben or Chris retrieved that payload, since they know Amber by a different identifier unique to their device. All we could know is that someone in the group conversation picked a specific topping, but not which person picked it.\r\n\r\nThis gets even more complicated because it is possible that Amber responds to Ben from both her iPhone and iPad at the same time, and those devices will each have a different localParticipantIdentifier. In the cloud it would appear that two people have selected ice cream toppings when in fact only one person has responded.\r\n\r\nWhile the ice cream example is obviously contrived, it exposes problems that all non-trivial message extensions are going to face when handling group messages.\r\n\r\nSo far I've come up with two workarounds to this issue, and both have a pretty crappy user experience:\r\n1. Ask each person what their name is, and store that in the cloud. This assumes that the person replies honestly and also makes it difficult to distinguish between Amber having two devices and there being two distinct people named Amber.\r\n2. Don't support group conversations in our message extension (although I'm not sure what happens if someone is added or removed to a conversation)\r\n\r\nI understand that Apple designed message extensions to work this way to respect user privacy, but there must be some middle ground that respects privacy and allows for well meaning apps to function properly. One simple solution that would likely work is to allow developers to access all MSMessage's within the MSSession (i.e., providing access to messages that have been collapsed into summary text). If our extension never had to worry about race conditions it would essentially already have access to each message (or if we store contents of each message in the cloud, we also would have a similar set of information). And if this was done we could get the proper message content as well as the identifiers of the person who sent it (within the same participant identifier domain on each respective device) and be able to associate each message with the appropriate sender.\r\n\r\nExcept that even if we had proper access to the identifiers (either through the cloud or by locally providing access to prior messages in the session), there is no way use that identifier to show a participants name within the messages extension view controller (see radar 27226779)"
+    email: tbass134@gmail.com
+    modified: "2016-07-11T14:11:54.65213Z"
+    number: "27276734"
+    number_intvalue: 27276734
+    originated: 07-11-2016
+    parent_number: '&{NULL_VALUE}'
+    product: IOS
+    product_version: "10.0"
+    reproducible: Always
+    resolved: ""
+    status: duplicate
+    title: Can't identify participants in group conversation in messages extension

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15909578"
+    labels:
+        datastore_id: "6679124579975168"
+data:
+    classification: Crash
+    created: "2014-01-25T19:27:24.107942Z"
+    description: "Summary:\r\nI have noticed that when entering asian letters and emoji in my iOS app that my app is crashing. I have traced it down to URLByAppendingPathComponent and can reproduce the crash.\r\n\r\nThis may also crash on osx. I haven't checked.\r\n\r\nSteps to Reproduce:\r\nRun the attached snippet.\r\n\r\nExpected Results:\r\nI expect to run the attached snipped without it crashing.\r\n\r\nActual Results:\r\nRun the attached snippet always triggers a crash.\r\n\r\nVersion:\r\niOS 7.0.4.\r\nXcode 5.0.2\r\n\r\nConfiguration:\r\nThe attached snippet crashes both on the device and in the iPhone simulator. \r\n\r\nIt crashes in both the 32bit simulator and the 64bit simulator.\r\n\r\nIt crashes on my iPhone5S. \r\n\r\n--------------\r\n//\r\n//  main.m\r\n//  Created by Simon Strandgaard on 2014/01/25.\r\n//  Copyright 2014 opcoders.com. All rights reserved.\r\n//\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\nNSData *DataFromHex(NSString* hexString) {\r\n\tNSString *s = [hexString stringByReplacingOccurrencesOfString:@\" \" withString:@\"\"];\r\n\tNSMutableData *data= [[NSMutableData alloc] init];\r\n\tunsigned char whole_byte;\r\n\tchar byte_chars[3] = {'\\0','\\0','\\0'};\r\n\tfor (int i = 0; i < ([s length] / 2); i++) {\r\n\t\tbyte_chars[0] = [s characterAtIndex:i*2];\r\n\t\tbyte_chars[1] = [s characterAtIndex:i*2+1];\r\n\t\twhole_byte = strtol(byte_chars, NULL, 16);\r\n\t\t[data appendBytes:&whole_byte length:1];\r\n\t}\r\n\treturn data;\r\n}\r\n\r\nint main(int argc, char *argv[]) {\r\n    @autoreleasepool {\r\n\t\tNSString *hex = @\"fffe3100 3cd87adf 3dd891dc 3dd83ade 3dd868dc 3dd88bdc 3dd82e00 74007200 64007200\";\r\n\t\tNSString *evilPathComponent = [[NSString alloc] initWithData:DataFromHex(hex) encoding:NSUTF16StringEncoding];\r\n\t\tNSURL *url = [NSURL URLWithString:@\"file:///dir0/dir1\"];\r\n\t\tNSURL *result = [url URLByAppendingPathComponent:evilPathComponent]; // EXC_BAD_ACCESS\r\n\t\tNSLog(@\"We never gets here: %@\", result);\r\n\t\treturn EXIT_SUCCESS;\r\n\t}\r\n}"
+    email: neoneye@gmail.com
+    modified: "2014-01-25T19:27:24.108117Z"
+    number: "15909578"
+    number_intvalue: 15909578
+    originated: 01/25/2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.0"
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: '[NSURL URLByAppendingPathComponent] crashes with Emoji characters'

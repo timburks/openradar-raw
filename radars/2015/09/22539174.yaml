@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22539174"
+    labels:
+        datastore_id: "4973344797491200"
+data:
+    classification: ""
+    created: "2015-09-02T16:23:27.40936Z"
+    description: "When using MKMapkit, if you set:\r\n\"MapView.userTrackingMode = MKUserTrackingModeFollowWithHeading\"\r\nand you also set a custom \"MKMapCamera\",\r\nyou will get MKUserTrackingModeFollowWithHeading overwrites your custom camera settings (pitch , altitude).\r\nEven, if you turn on \"setCamera animated:YES\",the two conflicts and the animate perform completely wrong ,not showing your position, but a  place that in the middle of your MKCoordinateRegion and your current location.\r\n\r\nSteps to Reproduce:\r\n1.run the project please ,thank you :-)\r\n2.the project -> MapViewController.m contains two code blocks that conflict, they are\r\n\"\r\nself.HackMapView.userTrackingMode = MKUserTrackingModeFollowWithHeading\r\n\"\r\nAND\r\n\"\r\nMKMapCamera *newCamera = [[HackMapView camera] copy];\r\n        [newCamera setPitch:45.0];\r\n        [newCamera setHeading:90.0];\r\n        [newCamera setAltitude:500.0];\r\n        [HackMapView setCamera:newCamera animated:YES];\r\n\"\r\nthey aim at two different function but they conflict, you can remove one of code blocks to see the result.\r\n\r\nExpected Results:\r\nthe MKUserTrackingModeFollowWithHeading shouldn't overwrite my own mapcamera's settings, I mean, if I set TrackingMode to follow and I set a camera with pitch, the pitch should keep its degress even I moved around and map following my position.\r\n\r\nActual Results:\r\nMKUserTrackingModeFollowWithHeading overwrites my custom map camera settings (pitch , altitude).\r\nAt first ,map camera did changed its pitch and altitude ,\r\nbut after MKMapview have my location from CLLocationManager , map goes to my location and when the map going animation done, map camera settings had changed to the default one.\r\nOR EVEN, map not show my position ,but a  place that in the middle of your MKCoordinateRegion and your current location.\r\nI think the \"setCamera\" and \"MKUserTrackingModeFollowWithHeading\" are both performing map transition animations ,\"setCamera\" aims at MKCoordinateRegion and \"MKUserTrackingModeFollowWithHeading\" at my current location ,so at last it shows a place in the middle of my MKCoordinateRegion and my current location.\r\n\r\nVersion:\r\niOS 8.3\r\n\r\nNotes:\r\nSEE:\r\nhttp://openradar.appspot.com/15374402\r\nhttp://stackoverflow.com/questions/19606648/weird-mkmapview-behaviour-when-setting-mkmapcamera-in-mkusertrackingmodefollowwi"
+    email: JustZht@gmail.com
+    modified: "2015-09-18T03:20:14.89844Z"
+    number: "22539174"
+    number_intvalue: 22539174
+    originated: 03-Sep-2015 12:32 AM GMT +8
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 8.0+
+    reproducible: Always
+    resolved: Duplicate of 15374402 (Open)
+    status: Open
+    title: MKUserTrackingModeFollowWithHeading and setCamera conflicts

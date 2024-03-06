@@ -1,0 +1,54 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17315832"
+    labels:
+        datastore_id: "5495154165153792"
+data:
+    classification: Serious Bug
+    created: "2014-06-14T19:12:59.517811Z"
+    description: |-
+        Summary:
+        Assigning to a constant with the result of a closure which includes a parameter of the same name results in a spurious error.
+
+        Steps to Reproduce:
+        Attempt to compile these two functions:
+
+        func with<T, U>(value: T, f: (T) -> U) -> U {
+        	return f(value)
+        }
+
+        func without() {
+        	let foo: Int = with(1) { (foo: Int) -> Int in
+        		let bar = foo * 2
+        		return bar
+        	}
+        }
+
+
+        Expected Results:
+        I expected that it would compile. The closure in `without` has a parameter by the name of foo which ought to be shadowing the constant it is initializing.
+
+
+        Actual Results:
+        The use of foo in an expression is apparently being matched up with the constant and not the parameter.
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        Note that if you just return foo, you don’t get an error.
+    email: rix.rob@gmail.com
+    modified: "2014-06-14T19:12:59.517983Z"
+    number: "17315832"
+    number_intvalue: 17315832
+    originated: 14-Jun-2014 03:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta (6A215l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Spurious “variable used within its own initial value” error when shadowing constant w/ parameter'

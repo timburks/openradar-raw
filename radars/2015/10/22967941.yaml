@@ -1,0 +1,48 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22967941"
+    labels:
+        datastore_id: "4905240440602624"
+data:
+    classification: Serious Bug
+    created: "2015-10-05T04:32:41.82961Z"
+    description: |-
+        Summary:
+        When attempting to submit my Apple TV app, I’m getting a validation error:
+        Invalid Bundle - Info.plist of “AppleTVApp.app/Frameworks/SomeFramework.framework” specifies a simulator platform for the CFBundleSupportedPlatforms key...
+
+        These frameworks that are failing are built with Carthage. Currently, we use a workaround for rdar://19209161 that strips architectures from the fat binary. This has been a valid solution for iOS and watchOS apps. However, Apple TV introduces one new problem: these frameworks cannot include “appletvsimulator” as part of “SUPPORTED_PLATFORMS”.
+
+        Steps to Reproduce:
+        - Create an Apple TV app.
+        - Create _a separate project_ with an tvOS framework.
+        - Build tvOS framework.
+        - Link and embed framework in Apple TV app.
+        - Archive app and submit to App Store.
+
+        Expected Results:
+        - Application is accepted.
+
+        Actual Results:
+        - Verification fails with error “Invalid Bundle - Info.plist of “AppleTVApp.app/Frameworks/SomeFramework.framework” specifies a simulator platform for the CFBundleSupportedPlatforms key…”
+
+        Regression:
+        I imagine Apple is assuming that we’re building frameworks _from within the project_. However, that’s missing a very important usage of frameworks: being able to compile them, include them in the repo, and forget about having to build them again every time we archive an app. I imagine Xcode sets this flag to just “appletvos” when archiving frameworks that are included in the app. However, SUPPORTED_PLATFORMS needs to contain both values in order to use the same “.framework” file from both the simulator and from a device.
+
+        This is currently not a problem for iOS frameworks since the only thing that’s validated is the architectures that the fat binary includes (rdar://19209161)
+
+        Notes:
+        This is highly disappointing, as it’s yet another example that shows that you guys are not testing these very common scenarios and instead probably limiting QA to very basic test apps.
+    email: info@nachosoto.com
+    modified: "2015-10-05T04:32:41.82981Z"
+    number: "22967941"
+    number_intvalue: 22967941
+    originated: 04-Oct-2015 09:32 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.1 beta 2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Cannot submit Apple TV apps with frameworks that include 'appletvsimulator' in SUPPORTED_PLATFORMS

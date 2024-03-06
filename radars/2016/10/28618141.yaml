@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28618141"
+    labels:
+        datastore_id: "5041803338186752"
+data:
+    classification: Critical
+    created: "2016-10-04T21:52:27.30218Z"
+    description: "We use the method \"SecCertificateCreateWithData\" from the Security Framework to create a certificate object from a DER representation of the certificate when signing it.\r\n\r\nThis method used to return a valid SecCertificateRef in iOS9 but now returns Null. I checked to see if the DER representation of the certificate passed into \"SecCertificateCreateWithData\" is a valid DER using OpenSSL as described below:\r\n\r\nhttp://stackoverflow.com/questions/13975520/how-can-i-validate-that-a-certificate-really-is-in-der-format\r\n\r\nThe certificate data passed in seems to be valid. So, something changed in the Security Framework in iOS10. Either \"SecCertificateCreateWithData\" is broken in iOS10 or the method has become more strict. I am not sure which one it is. \r\n\r\nThe DER representation of the certificate doesn't use a trusted certificate authority (it is self signed). The keys used to sign the certificate use RSA encryption. I am not sure if any of those things are causing the issue?\r\n\r\nHere is the output from running \"openssl\" to validate the DER (removing some parts)\r\n\r\n~/Desktop:$ openssl x509 -text -inform DER -in MyDER25.txt\r\nCertificate:\r\n    Data:\r\n        Version: 3 (0x2)\r\n        Serial Number:\r\n            <REMOVED>\r\n        Signature Algorithm: rsaEncryption\r\n        Issuer: CN=ClientApp-<REMOVED>\r\n        Validity\r\n            Not Before: Oct  3 22:59:57 2016 GMT\r\n            Not After : Oct  3 22:59:53 2056 GMT\r\n        Subject: CN=ClientApp-<REMOVED>\r\n        Subject Public Key Info:\r\n            Public Key Algorithm: rsaEncryption\r\n            RSA Public Key: (1024 bit)\r\n                Modulus (1024 bit):\r\n                <REMOVED>\r\n                Exponent: 65537 (0x10001)\r\n    Signature Algorithm: sha1WithRSAEncryption\r\n               <REMOVED>\r\n-----BEGIN CERTIFICATE-----\r\n<REMOVED>\r\n-----END CERTIFICATE-----\r\n\r\nSteps to Reproduce:\r\nMake the following call passing in an \"NSData *data\" object representing a valid DER.\r\n\r\nSecCertificateRef cert = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);\r\n\r\nExpected Results:\r\nA valid SecCertificateRef should be returned by SecCertificateCreateWithData (as is done on iOS9) when the DER representation is passed in. \r\n\r\nActual Results:\r\nA null pointer is returned instead in iOS10 when SecCertificateCreateWithData is called.\r\n\r\nVersion:\r\niOS10.0.1 (14A403)\r\n\r\nConfiguration:\r\niPhone 6s 16 gbytes using wifi."
+    email: adealmeida.ehealth@gmail.com
+    modified: "2017-06-05T22:26:49.25854Z"
+    number: "28618141"
+    number_intvalue: 28618141
+    originated: "2016-10-04"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS SDK 10.0
+    reproducible: 100%
+    resolved: "2016-10-27"
+    status: Open
+    title: SecCertificateCreateWithData returns Null in iOS10, when it returned a valid SecCertificateRef in iOS9 and below.

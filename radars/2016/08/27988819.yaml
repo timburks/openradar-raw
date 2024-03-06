@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27988819"
+    labels:
+        datastore_id: "4942854002573312"
+data:
+    classification: ""
+    created: "2016-08-24T15:15:31.89001Z"
+    description: "Summary:\r\nWhen trying out official Apple sample code, (https://developer.apple.com/library/prerelease/content/LucidDreams) in share sheet attempting to save photo got a crash and the following message in the debugger: \r\n\r\n\"This app has crashed because it attempted to access privacy-sensitive data without a usage description.  The app's Info.plist must contain an NSPhotoLibraryUsageDescription key with a string value explaining to the user how the app uses this data.\"\r\n\r\nThis is just appalling. \r\n\r\nNOTE: NOT that to access photo library requires a usage description, the requirement is totally valid. \r\n\r\nBut there are so many problems with crashing the app this way:\r\n\r\n1) In this case, the app has passed the images off to the share sheet (UIActivityViewController) and that is trying to save an image to the photo library. The app is not trying to access the photo library. Saving an image in response to a user choosing \"save image\" from the share sheet is write-only action that shouldn't require special permission. *The whole point of the share sheet is that apps hand off content and the system directs it to where the user wants.*  \r\n2) This is a very easy mistake to make, as evidenced by the fact it is present in Apple-provided sample code. The compiler should really check if UIActivityViewController is used and if there are not appropriate flags in the info.plist; this is perhaps a larger issue. \r\n3) Most crucially, *apps should never crash.* Especially if there's another option. Crashing the app is a terrible user experience, reflecting badly on both the developer and the iOS platform. \r\nI don't want to make assumptions about the thought behind this, but my understanding has been that Apple would not want apps to crash because that very bad user experience reflects badly on the platform--an app crashes users think less of the iPhone. Crashing the app because the developer failed to fill in a usage description is cutting off your nose to spite your face.    \r\nIn this case, the system could simply decline to perform the action (save image) and inform the user why in an alert.\r\n\r\nSteps to Reproduce:\r\nRun app that saves images. (example https://developer.apple.com/library/prerelease/content/LucidDreams). \r\nAttempt to share images. \"Save Image.\" App crashes despite no warning. \r\n\r\nExpected Results:\r\n1) Saving only -- In the case of simply saving photos to the library in response to users choosing from the share sheet (UIActivityViewController) to \"save image,\" then NSPhotoLibraryUsageDescription should not be necessary for write-only. \r\n2) App does want to access the photo library -- System should simply decline to perform the action and inform the user why. Crashing the app is an always an appalling user experience that negatively impacts the user, negatively impacts the app, negatively impacts the developer and negatively impacts the iPhone experience. \r\n\r\nActual Results:\r\nTapping \"save image\" app crashes, message why in debugger."
+    email: mikexcite@gmail.com
+    modified: "2016-08-24T15:15:31.89022Z"
+    number: "27988819"
+    number_intvalue: 27988819
+    originated: 8/23/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: State:OpenProduct
+    title: Crash on share sheet "save image" even though 1) write-only through share sheet 2) system could gracefully decline

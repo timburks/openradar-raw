@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16205032"
+    labels:
+        datastore_id: "5027701870034944"
+data:
+    classification: Other Bug
+    created: "2014-03-01T20:07:32.578043Z"
+    description: "This is a duplicate of rdar://15798036\nThis is still happening in 7.1\n\nKevin Chen10-Jan-2014 05:38 PM\r\n\r\nSummary:\r\nAVSpeechSynthesizer provides a method called stopSpeakingAtBoundary:, which is supposed to stop speaking and clear the queue of utterance. However, it does not work after the first AVSpeechUtterance has been spoken.\r\n\r\nSteps to Reproduce:\r\n1. Create an AVSpeechSynthesizer and give it AVSpeechUtterances faster than it can speak.\r\n\r\nAVSpeechSynthesizer *synthesizer = [[AVSpeechSynthesizer alloc] init];\r\nfor (int i = 0; i < 100; i++)\r\n    [synthesizer speakUtterance:[AVSpeechUtterance speechUtteranceWithString:@\"I am a particularly annoying bug.\"]];\r\n\r\n2. Some time later, attempt to stop speech synthesis\r\n\r\n[synthesizer stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];\r\n\r\n(AVSpeechBoundaryWord works too)\r\n\r\nExpected Results:\r\nSpeaking stops immediately or after the current word is done, whichever was specified.\r\n\r\nActual Results:\r\nSpeaking will only stop if stopSpeakingAtBoundary: was called during the first AVSpeechUtterance. Afterwards, stopSpeakingAtBoundary: will not affect speech synthesis and will return NO, indicating that speaking did not stop.\r\n\r\nVersion:\r\niOS 7.1\r\n\r\nNotes:\r\nFor more information: http://stackoverflow.com/questions/19672814/an-issue-with-avspeechsynthesizer-any-workarounds"
+    email: timothy.broder@gmail.com
+    modified: "2014-03-01T20:07:32.57828Z"
+    number: "16205032"
+    number_intvalue: 16205032
+    originated: 01-Mar-2014 03:07 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 7.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: iOS 7.1 - Can't stop AVSpeechSynthesizer after first utterance

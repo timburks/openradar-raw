@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20188572"
+    labels:
+        datastore_id: "5890070703767552"
+data:
+    classification: Enhancement
+    created: "2015-03-17T15:02:55.753714Z"
+    description: "Summary:\r\nPresently, clang only produces a diagnostic in the context of a nonnull/__nonnull parameter when nil/NULL is passed as the argument.  For example, it will warn in this case:\r\n\r\nvoid takeInt(int * __nonnull f) {\r\n    NSLog(@\"%p: %d\", f, *f);\r\n}\r\n\r\nint main(int argc, char *argv[]) {\r\n    takeInt(NULL);\r\n}\r\n\r\nA warning (\"Null passed to a callee that requires a non-null argument\") is produced for <<takeInt(NULL);>>.  This is great.\r\n\r\nIt is not, however, as useful as it might be.  It would be great to be be warned when passing a nullable pointer as the argument to a nonnull parameter.  For example:\r\n\r\nint * __nullable makeInt() {\r\n    u_int32_t v = arc4random_uniform(5);\r\n    if (v) {\r\n        int *ptr = calloc(1, sizeof(int));\r\n        return ptr;\r\n    } else {\r\n        return nil;\r\n    }\r\n}\r\n\r\nvoid takeInt(int * __nonnull f) {\r\n    NSLog(@\"%p: %d\", f, *f);\r\n}\r\n\r\nint main(int argc, char *argv[]) {\r\n    int * __nullable ptr = makeInt();\r\n    takeInt(ptr);\r\n}\r\n\r\nA warning should be produced for <<takeInt(ptr);>>, perhaps something like (\"Nullable passed to a callee that requires a non-null argument\").\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nExpected Results:\r\nA warning should be produced when a nullable argument is passed to a callee that requires a non-null argument.\r\n\r\nActual Results:\r\nNo such warning is produced\r\n\r\nVersion:\r\nXcode 6.3 (6D543q)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: nathaniel.chandler@gmail.com
+    modified: "2015-04-19T18:09:44.9458Z"
+    number: "20188572"
+    number_intvalue: 20188572
+    originated: 2015/03/17
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 6D543q
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 19003620
+    title: A warning should be displayed when a nullable pointer is used as a nonnull pointer.

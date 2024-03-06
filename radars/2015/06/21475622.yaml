@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21475622"
+    labels:
+        datastore_id: "5099533889437696"
+data:
+    classification: ""
+    created: "2015-06-20T23:07:50.03329Z"
+    description: "Summary:\r\nBlock literals have trouble inferring its type, when the type conforms to multiple protocols. This only happens in certain circumstances.\r\n\r\nSteps to Reproduce:\r\nThe following example will not compile in Xcode 7 beta 1:\r\n\r\nprotocol A {\r\n    var x: B { get set }\r\n}\r\n\r\nprotocol B {}\r\nstruct B1:B {}\r\n\r\nstruct M: A, B {\r\n    var x: B\r\n}\r\n\r\nfunc f(bs: [B->B]) -> B {\r\n    return B1()\r\n}\r\n\r\nf([ { M(x: $0) } ]) // '(B) -> M' is not compatible with expected type 'B -> B'\r\n\r\n\r\n\r\nExpected Results:\r\nShould compile, as there's enough information for the compiler\r\n\r\nActual Results:\r\nDoes not compile unless the type is explicitly added in the last line of the sample code:\r\n\r\nf([ {b -> B in M(x: b) } ])  // ok\r\n\r\nVersion:\r\nXcode 7 beta (7A120f)"
+    email: DaNmarner@gmail.com
+    modified: "2015-06-20T23:07:50.03356Z"
+    number: "21475622"
+    number_intvalue: 21475622
+    originated: 6/20/2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7 beta (7A120f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift Block Type Inference Failure

@@ -1,0 +1,63 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20211581"
+    labels:
+        datastore_id: "5277492403240960"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-03-18T20:48:44.687181Z"
+    description: |-
+        Summary:
+        This code using ReactiveCocoa reproducibly crashes the compiler.
+
+        import UIKit
+        import ReactiveCocoa
+
+        class ViewController: UIViewController {
+
+          var kaboom = MutableProperty("")
+
+          override func viewDidLoad() {
+            super.viewDidLoad()
+
+            kaboom.producer |> start(next: { a in
+              println(a)
+            })
+          }
+        }
+
+        0   com.apple.SourceKitService    	0x00000001070daa33 (anonymous namespace)::TranslateArguments::translateParallelExploded(swift::Lowering::AbstractionPattern, swift::CanTypeWrapper<swift::TupleType>) + 131
+        1   com.apple.SourceKitService    	0x00000001070dbba7 createThunk(swift::Lowering::SILGenFunction&, swift::SILLocation, TranslationKind, swift::Lowering::ManagedValue, swift::Lowering::AbstractionPattern, swift::CanTypeWrapper<swift::AnyFunctionType>, swift::Lowering::TypeLowering const&) + 1159
+        2   com.apple.SourceKitService    	0x00000001070dc451 (anonymous namespace)::OrigToSubst::transformFunction(swift::Lowering::ManagedValue, swift::Lowering::AbstractionPattern, swift::CanTypeWrapper<swift::AnyFunctionType>) + 177
+        3   com.apple.SourceKitService    	0x00000001070d78ce (anonymous namespace)::Transform::transform(swift::Lowering::ManagedValue, swift::Lowering::AbstractionPattern, swift::CanType, swift::Lowering::SGFContext) + 62
+        4   com.apple.SourceKitService    	0x00000001070d8118 swift::Lowering::SILGenFunction::emitOrigToSubstValue(swift::SILLocation, swift::Lowering::ManagedValue, swift::Lowering::AbstractionPattern, swift::CanType, swift::Lowering::SGFContext) + 56
+        5   com.apple.SourceKitService    	0x000000010707e8af swift::Lowering::SILGenFunction::emitApply(swift::SILLocation, swift::Lowering::ManagedValue, llvm::ArrayRef<swift::Substitution>, llvm::ArrayRef<swift::Lowering::ManagedValue>, swift::CanTypeWrapper<swift::SILFunctionType>, swift::Lowering::AbstractionPattern, swift::CanType, bool, llvm::Optional<swift::AbstractCC>, swift::Lowering::SGFContext) + 2079
+        6   com.apple.SourceKitService    	0x00000001070a34b8 swift::Lowering::SILGenFunction::emitApplyOfDefaultArgGenerator(swift::SILLocation, swift::ConcreteDeclRef, unsigned int, swift::CanType, swift::Lowering::SGFContext) + 456
+
+
+        Steps to Reproduce:
+        Compile the attached project
+
+        Expected Results:
+        Compiles or error message
+
+        Actual Results:
+        Crash
+
+        Regression:
+        Also didn’t work in Xcode 6.2
+
+        Notes:
+    email: dieter.komendera@gmail.com
+    modified: "2015-03-18T20:48:44.6873Z"
+    number: "20211581"
+    number_intvalue: 20211581
+    originated: 18-Mar-2015 09:48 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.3b3 6D543q
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: crash in translateParallelExploded(swift::Lowering::AbstractionPattern, swift::CanTypeWrapper<swift::TupleType>)'

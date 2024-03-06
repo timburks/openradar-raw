@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18332184"
+    labels:
+        datastore_id: "6111793088823296"
+data:
+    classification: Serious Bug
+    created: "2014-09-14T19:09:05.575201Z"
+    description: "Summary:\nWhen you use a higher-order function like compose to return a function which calls a function which uses a type defined in an if block, Swift refuses to compile the file. In Xcode, no error is shown (which is perhaps a separate bug). From the CLI, you get this message:\n\nResonance:Desktop rob$ ./Failure.swift \ninvalid linkage type for global declaration\n%swift.full_type* @_TMdV7FailureL_1S\nLLVM ERROR: Broken module found, compilation aborted!\n\n\nSteps to Reproduce:\n1. Try to compile this code:\n\nif true {\n\tstruct S {\n\t\tlet v: Int\n\t}\n\tlet g = { S(v: $0) }\n\tlet f = { 0 }\n\tfunc compose<T, U, V>(g: U -> V, f: T -> U)(x: T) -> V { return g(f(x)) }\n\tlet h = compose(g, f)\n}\n\n\nExpected Results:\nI expected it to succeed without issue.\n\n\nActual Results:\nIn Xcode, it failed and wouldn’t tell me the issue. From the CLI, it failed and told me something about the issue, but nothing about the source it was operating on, or why it’s a problem. Further, I don’t think it should be a problem at all.\n\n\nRegression:\nIf you move the definition of struct S outside of the if statement, it succeeds.\nIf you let h = { g(f($0)) } (instead of using compose()), it succeeds.\nstruct, enum, class, all of them fail. There is no escape.\nA variant on this using the venerable class Box had a slightly different error:\n\nGlobal is external, but doesn't have external or weak linkage!\n\nFor my case the best workaround is not to define the type inside the if block.\n\n\nNotes:\nN/A"
+    email: rix.rob@gmail.com
+    modified: "2014-09-14T19:09:05.575422Z"
+    number: "18332184"
+    number_intvalue: 18332184
+    originated: 14-Sep-2014 03:08 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-Beta (6A1027)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Types declared in if block & used via higher-order functions fail to compile/link w/o error (in Xcode)'

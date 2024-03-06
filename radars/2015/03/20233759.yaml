@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20233759"
+    labels:
+        datastore_id: "5283522537324544"
+data:
+    classification: Serious Bug
+    created: "2015-03-20T01:25:04.195825Z"
+    description: "Summary:\r\nFunctions that load values at runtime by their name (CFBundleGetDataPointerForName and CFBundleGetFunctionPointerForName) don't work when the constants are from an iOS 8-style framework (the kind discussed in WWDC 2014 Session 416: Building Modern Frameworks). Instead, the functions always return NULL for the looked up value.\r\n\r\nSteps to Reproduce:\r\nInstructions using a project pre-built by me:\r\n\r\n1. git clone https://github.com/MaxGabriel/iOS8FrameworkGetDataPointer\r\n2. Open the .xcodeproject file\r\n3. Observe this code is in the AppDelegate:\r\n\r\n    void * versionPointer = CFBundleGetDataPointerForName(CFBundleGetMainBundle(), CFSTR(\"TestFramework2VersionNumber\"));\r\n    NSLog(@\"Version pointer is %@\",versionPointer ? @\"PRESENT\" : @\"NULL\");\r\n    NSAssert(versionPointer != NULL, @\"Version pointer should not be NULL\");\r\n\r\n4. Build the project and observe it crashes on the assertion. \r\n\r\nManual instructions, not using a pre-built git repo:\r\n\r\n1. Create an iOS 8-style framework project template in Xcode\r\n2. Build the framework for the simulator, open the derived data folder for that project, and find the built framework\r\n3. Create a new iOS project, using a template like \"Single View Application\". Drag in the framework built in the previous step.\r\n4. Add the built framework to \"Linked Frameworks and Libraries\" and \"Embedded Binaries\".\r\n5. Attempt to load the version constant from the framework, making sure to use the correct constant name, like so:\r\n\r\n    void * versionPointer = CFBundleGetDataPointerForName(CFBundleGetMainBundle(), CFSTR(\"TestFramework2VersionNumber\"));\r\n    NSLog(@\"Version pointer is %@\",versionPointer ? @\"PRESENT\" : @\"NULL\");\r\n    NSAssert(versionPointer != NULL, @\"Version pointer should not be NULL\");\r\n\r\n-----------\r\n\r\nYou can also reproduce this with a 3rd party framework, like the one AdMob uses https://developers.google.com/mobile-ads-sdk/download\r\n\r\nExpected Results:\r\nCFBundleGetDataPointerForName looks up a non-NULL pointer.\r\n\r\nActual Results:\r\nCFBundleGetDataPointerForName looks up a NULL pointer.\r\n\r\nVersion:\r\niOS 8.2 (12D508) and Xcode 6.2 (6C131e)\r\n\r\nNotes:\r\nGithub repo of the xcodeproject I used to make the iOS 8 framework: https://github.com/MaxGabriel/iOS8Framework\r\n\r\nGithub repo of the xcodeproject that tries to load a constant from that framework: https://github.com/MaxGabriel/iOS8FrameworkGetDataPointer\r\n\r\nConfiguration:\r\niPhone 6 Device and Simulator"
+    email: feedback.tagher@gmail.com
+    modified: "2015-03-20T01:25:04.195963Z"
+    number: "20233759"
+    number_intvalue: 20233759
+    originated: 19-Mar-2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "8.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CFBundleGetDataPointerForName (& co) doesn't work for values from iOS 8-style frameworks

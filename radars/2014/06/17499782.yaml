@@ -1,0 +1,81 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17499782"
+    labels:
+        datastore_id: "6447983532965888"
+data:
+    classification: Serious Bug
+    created: "2014-06-29T19:29:38.368072Z"
+    description: |-
+        Summary:
+        When designing an API, it’s reasonable to avoid exposing implementation details. One way these tend to escape in Swift is via return values, because while it is possible to return a protocol type, the associated types also have to be specified (and you can’t just parameterize protocols); and while you can specify those via a where clause, you end up running into ugly problems with type inferencing and conversions, with misleading errors suggesting that the simplest solution is just to explicitly declare the specific type you’ll be referring, rather than using a protocol.
+
+
+        Steps to Reproduce:
+        1. Write this short declaration of a Pair struct (because tuples can’t be associated in where clauses):
+
+        struct Pair<T, U> {
+        	let car: T
+        	let cdr: U
+        }
+
+        2. Write each of the following definitions of zip functions:
+
+        func zipInferred<A : Sequence, B : Sequence, C : Sequence where C.GeneratorType.Element == Pair<A.GeneratorType.Element, B.GeneratorType.Element>>(left: A, right: B) -> C {
+        	return map(Zip2(left, right)) { each in
+        		Pair(car: each.0, cdr: each.1)
+        	}
+        }
+
+        func zipSpecifyingClosureTypes<A : Sequence, B : Sequence, C : Sequence where C.GeneratorType.Element == Pair<A.GeneratorType.Element, B.GeneratorType.Element>>(left: A, right: B) -> C {
+        	return map(Zip2(left, right)) { (each: (A.GeneratorType.Element, B.GeneratorType.Element)) -> Pair<A.GeneratorType.Element, B.GeneratorType.Element> in
+        		Pair(car: each.0, cdr: each.1)
+        	}
+        }
+
+        func zipSpecifyingVariableTypes<A : Sequence, B : Sequence, C : Sequence where C.GeneratorType.Element == Pair<A.GeneratorType.Element, B.GeneratorType.Element>>(left: A, right: B) -> C {
+        	let mapped: MapSequenceView<Zip2<A, B>, Pair<A.GeneratorType.Element, B.GeneratorType.Element>> = map(Zip2(left, right)) { each in
+        		Pair(car: each.0, cdr: each.1)
+        	}
+        	return mapped
+        }
+
+        func zipCasting<A : Sequence, B : Sequence, C : Sequence where C.GeneratorType.Element == Pair<A.GeneratorType.Element, B.GeneratorType.Element>>(left: A, right: B) -> C {
+        	return map(Zip2(left, right)) { each in
+        		Pair(car: each.0, cdr: each.1)
+        	} as C
+        }
+
+
+        Expected Results:
+        I expected zipInferred() to work; that’s the zip I want to write (if any).
+        I expected the others all to work as well.
+        I expected the errors not to indicate completely the wrong solution.
+
+
+        Actual Results:
+        Only the casting versions work, the least terrible being zipCasting.
+        The errors en route were extremely misleading.
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        The compiler errors give when you don‘t specify the variable type lead you to believe that it can’t find an overload of map() for the given types, when in fact it just can’t find a __conversion to C.
+
+        But it’s really weird that it’s even looking for a __conversion to C given that C absolutely matches the returned type: map returns a Sequence, and the associated GeneratorType.Element type is Pair<A.GeneratorType.Element, B.GeneratorType.Element>
+    email: rix.rob@gmail.com
+    modified: "2014-06-29T19:29:38.368183Z"
+    number: "17499782"
+    number_intvalue: 17499782
+    originated: 29-Jun-2014 03:29 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta2 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Bad errors & type inferencing with protocol returns'

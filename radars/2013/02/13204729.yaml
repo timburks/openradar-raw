@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13204729"
+    labels:
+        datastore_id: "2711401"
+data:
+    classification: Other Bug
+    created: "2013-02-13T03:29:44.750411Z"
+    description: "Summary:\r\n\r\nIn the SceneKit SDK, the SCNNode pivot property is documented as animatable. However, any attempt to animate a change to this property results in the property value not changing at all (and no animation taking place).\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nCreate any SCNNode instance. Assign a new value to the pivot property, wrapped in a SCNTransaction. Run the app. Observe no change to the pivot point. Whereas, with the SCNTransaction lines removed (for no animation) the pivot point does change (non-animated).\r\n\r\nExample:\r\n\r\n    SCNTorus *torus = [SCNTorus torusWithRingRadius:8.0f pipeRadius:3.0f];\r\n    SCNNode *torusNode = [SCNNode nodeWithGeometry:torus];\r\n    [scene.rootNode addChildNode:torusNode];\r\n    \r\n    [SCNTransaction begin];\r\n    [SCNTransaction setAnimationDuration:1.0];\r\n    [SCNTransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];\r\n    \r\n    torusNode.pivot = CATransform3DMakeTranslation(0.0f, 8.0f, 0.0f);\r\n    \r\n    [SCNTransaction commit];\r\n\r\nThe same result is observed if an explicit animation is used on the pivot point. For example:\r\n\r\n    CABasicAnimation *pivotAnimation = [CABasicAnimation animationWithKeyPath:@\"pivot\"];\r\n    pivotAnimation.fromValue = [NSValue valueWithCATransform3D:torusNode.pivot];\r\n    pivotAnimation.toValue = [NSValue valueWithCATransform3D:CATransform3DMakeTranslation(0.0f, 8.0f, 0.0f)];\r\n    pivotAnimation.duration = 1.0;\r\n    [torusNode addAnimation:pivotAnimation forKey:@\"pivot\"];\r\n\r\n\r\nExpected Results:\r\n\r\nThe pivot property value should change with animation, as the API documentation for SCNNode pivot states that the property is animatable. Quote: \"The SCNNode object’s pivot. Animatable.\"\r\n\r\n\r\nActual Results:\r\n\r\nThe pivot property value does not change and does not animate.\r\n\r\n\r\nRegression:\r\n\r\nn/a\r\n\r\n\r\nNotes:\r\n\r\nn/a"
+    email: miles.chris@gmail.com
+    modified: "2013-02-21T00:44:33.855458Z"
+    number: "13204729"
+    number_intvalue: 13204729
+    originated: 13-Feb-2013 02:25 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X SDK
+    product_version: 10.8.2
+    reproducible: Always
+    resolved: 16-Feb-2013
+    status: Duplicate
+    title: SceneKit SCNNode pivot property does not animate

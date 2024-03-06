@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31811274"
+    labels:
+        datastore_id: "5701791165448192"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2017-04-25T14:08:28.70097Z"
+    description: "When storing large images using Image I/O of extremely large size (20,000x20,000) pixels the application is terminates due to memory issue.\r\n\r\nSteps to Reproduce\r\n\r\nexecuting the following code as a part of an application and calling testPhoto with valid photo URL (photo-asset://) of extremely large size terminates the application:\r\n\r\n    func testPhoto(url: URL) {\r\n        let result = PHAsset.fetchAssets(withALAssetURLs: [url], options: nil)\r\n\r\n        guard result.count > 0 else {\r\n            NSLog(\"Failed to load image\")\r\n            return\r\n        }\r\n\r\n        PHCachingImageManager\r\n            .default()\r\n            .requestImageData(for: result.firstObject!, options: nil) {\r\n                (data, uti, orientation, info) in\r\n                _ = self.addExif(data: data!)\r\n        }\r\n    }\r\n\r\n    func addExif(data: Data) -> NSData? {\r\n        let selectedImageSourceRef = CGImageSourceCreateWithData(data as CFData, nil)!\r\n\r\n        let imagePropertiesDictionaryRef =\r\n            CGImageSourceCopyPropertiesAtIndex(selectedImageSourceRef, 0, nil)\r\n\r\n        var imagePropsDictionary: [String: Any] =\r\n            imagePropertiesDictionaryRef as! [String : Any]\r\n\r\n        var exifData = [String: Any]()\r\n\r\n        let tempFileUrl = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)\r\n            .appendingPathComponent(NSUUID().uuidString)\r\n            .appendingPathExtension(\"jpg\")\r\n\r\n        guard let imageDestination = CGImageDestinationCreateWithURL(tempFileUrl as CFURL, kUTTypeJPEG, 1, nil) else {\r\n            NSLog(\"Could not create destination file\")\r\n            return nil\r\n        }\r\n\r\n        exifData[kCGImagePropertyExifDateTimeOriginal as String] = NSDate()\r\n\r\n        imagePropsDictionary[kCGImagePropertyExifDictionary as String] = exifData\r\n\r\n        CGImageDestinationAddImageFromSource(\r\n            imageDestination,\r\n            selectedImageSourceRef,\r\n            0,\r\n            imagePropsDictionary as CFDictionary)\r\n        \r\n        if !CGImageDestinationFinalize(imageDestination) {\r\n            NSLog(\"Could not finalize\")\r\n        } else {\r\n            NSLog(\"New image created\")\r\n        }\r\n        \r\n        return nil\r\n    }\r\n\r\n\r\nExpected Results\r\n\r\nCGImageDestinationFinalize either succeeds and creates output image or returns nil in case of failure (for example, for large images).\r\n\r\nActual Results\r\nThe application is terminated due to memory issue."
+    email: UrKHeH@gmail.com
+    modified: "2017-04-25T14:08:28.70115Z"
+    number: "31811274"
+    number_intvalue: 31811274
+    originated: 25/4/2017
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone 6
+    product_version: iOS 10.2.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: App terminated to memory issues when performing CGImageDestinationFinalize on large images

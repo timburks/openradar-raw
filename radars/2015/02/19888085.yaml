@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19888085"
+    labels:
+        datastore_id: "6372950655631360"
+data:
+    classification: Other bug
+    created: "2015-02-19T15:22:41.352808Z"
+    description: "Summary:\r\nThe \"Binary Interface and Notification Format\" section of the \"Provider Communication with Apple Push Notification Service\" chapter of the the \"Local and Remote Notification Programming Guide\" (https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html) states:\r\n\r\n\"If you send a notification that is malformed or otherwise unintelligible, APNs returns an error-response packet and closes the connection. Any notifications that you sent after the malformed notification using the same connection are discarded, and must be resent.\"\r\n\r\nHowever, we have observed that notifications sent in the time between a rejected notification and connection closure (i.e. in the period where, due to network latency, the gateway has sent the rejection notice, but the provider has not yet received the rejection notice) may still be delivered to their destinations. This appears to go against notification state guarantee made in the docs and makes it impossible to know whether notifications should be resent.\r\n\r\nSteps to Reproduce:\r\n1. Send a notification to the APNs gateway that will be rejected (e.g. a notification with a zero-length token).\r\n2. Immediately (i.e. before the rejection response arrives from the gateway and before the connection is closed) send a valid notification to the APNs gateway that, on its own, should be delivered to its destination.\r\n\r\nExpected Results:\r\nThe APNs gateway will reject the first notification and close the connection without delivering the second notification to its destination.\r\n\r\nActual Results:\r\nThe APNs gateway rejects the first notification and closes the connection, but may also deliver the second notification to its destination.\r\n\r\nVersion:\r\n\r\n\r\nNotes:\r\nPlease see https://github.com/relayrides/pushy/issues/149 and https://github.com/relayrides/pushy/pull/152 for additional discussion of the issue. This problem was discovered in conjunction with rdar://19875314 and may or may not be related.\r\n\r\nConfiguration:\r\nThis problem has been observed in the sandbox APNs environment. It is not immediately clear if it affects the production environment.\r\n\r\nAttachments:"
+    email: jon@relayrides.com
+    modified: "2015-03-05T23:33:08.868167Z"
+    number: "19888085"
+    number_intvalue: 19888085
+    originated: "2015-02-19"
+    parent_number: '&{NULL_VALUE}'
+    product: Other
+    product_version: ""
+    reproducible: Always
+    resolved: "2015-03-02"
+    status: Resolved
+    title: APNs gateway continues to accept notifications after rejecting a notification

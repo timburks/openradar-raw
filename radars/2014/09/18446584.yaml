@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18446584"
+    labels:
+        datastore_id: "5821426456068096"
+data:
+    classification: Enhancement
+    created: "2014-09-24T22:20:35.940046Z"
+    description: "Currently, NSApplication's -openURL: method is off limits to extensions (and is marked accordingly as NS_EXTENSION_UNAVAILABLE_IOS).\r\n\r\nThis accomplishes a reasonable goal of preventing extensions becoming app launchers or web URL shortcuts. There is no question that would be a crappy user experience.\r\n\r\nBut this also prevents a reasonable use case: giving a user an easy back to the app that hosts the extension. If someone has the CooolEffects Photos Extension installed, the only way to get this user back to the app is with a bunch of instructions:\r\n\r\n1. Hit the home button\r\n2. Scroll around on your home screen until you find CooolEffects\r\n3. Launch CooolEffects\r\n4. Go to the help screen\r\n\r\nChances are that the host app isn't near the first page on the homescreen, either.\r\n\r\nWhat I'd like to see is a restriction on the URLs that can be opened from the extension: only allow URL schemes supported by the host app.\r\n\r\nFor example, CooolEffects could add the following to its Info.plist:\r\n\r\n\t<array>\r\n\t\t<dict>\r\n\t\t\t<key>CFBundleURLName</key>\r\n\t\t\t<string>COM.CHOCKLOCK.CoolEffects</string>\r\n\t\t\t<key>CFBundleURLSchemes</key>\r\n\t\t\t<array>\r\n\t\t\t\t<string>coooleffects</string>\r\n\t\t\t</array>\r\n\t\t</dict>\r\n\t</array>\r\n\r\nThen the extension could do something like this:\r\n\r\n\tNSURL *URL = [NSURL URLWithString:@\"coooleffects:///help&page=1\"];\r\n\t[[UIApplication hostApplication] openURL:URL];\r\n\r\nThe extension can then parse the NSURL -query or -fragment as it sees fit. \r\n\r\nOf course, some butthead developer is going to come around and do something like this:\r\n\r\n\t[NSURL URLWithString:@\"coooleffects:///relay=http://playboy.com\"]\r\n\t\r\nor:\r\n\r\n\t[NSURL URLWithString:@\"coooleffects:///relay=anotherapp:///whatever\"]\r\n\r\nBut App Review can easily check that an app includes both a URL scheme and extension, and then give it more scrutiny during review.\r\n\r\nSteps to Reproduce:\r\nN/A\r\n\r\nExpected Results:\r\nN/A\r\n\r\nActual Results:\r\nN/A\r\n\r\nVersion:\r\niOS 8.0\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 6\r\n\r\n------\r\n\r\nAlternatively, use NSExtensionContext to create a \"one way street\" back to the application that hosts the extension. The use cases I'm envisioning are for things like help and settings: there's no need to have a completion handler with -openURL or even a URL for that matter. So the extension could do something like this:\r\n\r\n\tNSExtensionContext *extensionContext = myViewController.extensionContext;\r\n\t[extensionContext openWithParameters:@{ @foo : @123, @bar : @999 }];\r\n\t\r\nWhich would open the application that supplies the extension with:\r\n\r\n\t- (BOOL)application:(UIApplication *)application openFromExtensionWithParameters:(id)parameters\r\n\t{\r\n\t}"
+    email: craig.hockenberry@gmail.com
+    modified: "2014-10-02T16:34:54.760157Z"
+    number: "18446584"
+    number_intvalue: 18446584
+    originated: ""
+    parent_number: "17351373"
+    product: iOS SDK
+    product_version: "8.0"
+    reproducible: N/A
+    resolved: ""
+    status: Duplicate/17351373
+    title: 'Make NSApplication''s -openURL: available to extensions (with restrictions)'

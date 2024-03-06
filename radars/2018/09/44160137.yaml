@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "44160137"
+    labels:
+        datastore_id: "4962071087153152"
+data:
+    classification: Something not on this list
+    created: "2018-09-06T16:05:17.98985Z"
+    description: "Area:\r\nSomething not on this list\r\n\r\nSummary:\r\nScheduled VoIP wake up timer gets unscheduled if any other app is force-closed while your is in background. Please refer to Steps to Reproduce for more details and sysdiagnose analysis. Please let us know if it's a known iOS defect and it's going to be fixed or there's a workaround to address the problem. This bug makes the whole feature unusable.\r\n\r\nSteps to Reproduce:\r\n1) Force close and restart your VoIP Socket app with configured setKeepAliveTimeout handler as 600s\r\n2) Put the app to background state\r\n3) wait 10 minutes so there should be at least one KA wakeup\r\n4) Open any other app and the force close it\r\n5) Wait > 10 minutes to ensure that KA is missed\r\n\r\nExpected Results:\r\nsetKeepAliveTimeout handler has to be called stably within configured max guaranteed timeout value while the app is in background, user interaction with any other application shouldn't affect it.\r\n\r\nActual Results:\r\nsetKeepAliveTimeout handler stop working for a backgrounded application if killing any other application meanwhile. Attached sysdiagnose shows that at the moment of killing another app the wake timer is unscheduled for some reason:\r\n\r\ndefault    2018-09-05 09:30:24.218185 -0500    SpringBoard    Process exited:  ->  { stateAtExit = ; terminationRequest = ; }\r\n\r\ndefault    2018-09-05 09:30:24.218552 -0500    SpringBoard WakeScheduler[LegacyVOIPPeriodicWake] - unscheduling wake timer for .\r\n\r\nThe next VoIP log appears after moving your app foreground and back to background:\r\ndefault    2018-09-05 09:43:34.578451 -0500    SpringBoard WakeScheduler[LegacyVOIPPeriodicWake] - scheduling wake for  at .\r\n\r\nHere is 13 min gap but actually it can never appear until you re-set keepAliveTimeout.\r\n\r\n\r\nVersion/Build:\r\nOriginally found on iPhone 7 iOS 11.4.1. Replicated on iPhone 8 with the same version, replicated on iPhone 6s running iOS 12 Beta.\r\n\r\nConfiguration:\r\nThe app is configured to use VoIP Socket Access Entitlement, setKeepAliveTimeout handler timeout is set to 600s, connected TCP socket is marked VoIP."
+    email: pavel.kozlov@motorolasolutions.com
+    modified: "2018-09-06T16:05:17.99014Z"
+    number: "44160137"
+    number_intvalue: 44160137
+    originated: September 5 2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 11.4.1
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: LegacyVOIPPeriodicWake stops working if killing any other application

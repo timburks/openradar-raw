@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6407437"
+    labels:
+        datastore_id: "307"
+data:
+    classification: Other Bug
+    created: "2008-11-30T18:42:50.061403Z"
+    description: "Summary:\r\nKVO should support add<Key>Object: and remove<Key>Object: accessors for array properties.\r\n\r\nSteps to Reproduce:\r\n1. Where “propertyName” is the name of an array (NSArray) property that is read/write:\r\n\t[observedObject addObserver:self\r\n\t                 forKeyPath:@\"propertyName\"\r\n\t                    options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld\r\n\t                    context:NULL];\r\n2. Mutate the observed array using the observed object's addPropertyNameObject: or removePropertyNameObject: method.\r\n\r\nExpected Results:\r\nThe observer object receives a KVO notification whose change dictionary contains the old object, the new object, the kind of change (NSKeyValueChangeInsertion or NSKeyValueChangeRemoval), and an index set containing the affected indices.\r\n\r\nActual Results:\r\nadd<Key>Object::\r\n2008-11-30 10:23:59.525 TableViewKVOTest[4173:10b] *** -[NSCFArray member:]: unrecognized selector sent to instance 0x14c39da0\r\n2008-11-30 10:23:59.525 TableViewKVOTest[4173:10b] *** -[NSCFArray member:]: unrecognized selector sent to instance 0x14c39da0\r\n\r\nremove<Key>Object::\r\n2008-11-30 10:29:31.625 TableViewKVOTest[4235:10b] *** -[NSCFArray countForObject:]: unrecognized selector sent to instance 0x12c8a0\r\n2008-11-30 10:29:31.626 TableViewKVOTest[4235:10b] *** -[NSCFArray countForObject:]: unrecognized selector sent to instance 0x12c8a0\r\n\r\nRegression:\r\nProbably not; I'm not sure that KVO has ever handled this properly.\r\n\r\nWorkaround:\r\nUse indexed accessors only.\r\n\r\nNotes:\r\naddObject: and removeObject: do exist in NSArray (i.e., they are valid array accessors), so Cocoa should support this. KVO should handle the change as an array mutation when the property's type is a kind of NSArray.\r\n\r\nFixing this would also mean changes to the Model Object Implementation Guide and Key-Value Coding programming Guide; currently, neither document promises that add<Key>Object: and remove<Key>Object: will work for array properties."
+    email: boredzo@gmail.com
+    modified: "2011-08-28T05:49:05.03072Z"
+    number: "6407437"
+    number_intvalue: 6407437
+    originated: 2008-11-30T10:41-0800
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.5/9F33
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'KVO doesn''t support {add,remove}<Key>Object: as array accessors'

@@ -1,0 +1,52 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21967880"
+    labels:
+        datastore_id: "6191528150040576"
+data:
+    classification: Serious Bug
+    created: "2015-07-23T20:12:03.41338Z"
+    description: |-
+        Try the code below in a playground. np and dp are of identical formal types, but they dispatch differently, even though neither object has an actual doFoo() implementation of its own.
+
+        protocol Foo { func doFoo() }
+
+        protocol Qux {}
+
+        extension Foo {
+            func doFoo() { print("Called default doFoo") }
+        }
+
+        extension Foo where Self: Qux {
+            func doFoo() { print("Called Qux-specific doFoo") }
+        }
+
+        class BaseClass: Foo {}
+        class DerivedClass: BaseClass, Qux {}
+
+        class NativeFooQuxClass: Foo, Qux {}
+
+        let n = NativeFooQuxClass()
+        let d = DerivedClass()
+
+        n.doFoo() // Calls Qux-specific doFoo - correct
+        d.doFoo() // Calls Qux-specific doFoo - correct
+
+        let np: protocol<Foo, Qux> = n
+        let dp: protocol<Foo, Qux> = d
+
+        np.doFoo() // Calls Qux-specific doFoo - correct
+        dp.doFoo() // Calls default doFoo - incorrect
+    email: garth@garthsnyder.com
+    modified: "2015-07-23T20:12:03.41361Z"
+    number: "21967880"
+    number_intvalue: 21967880
+    originated: 23-Jul-2015 01:11 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7 beta 4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: internal type structure affects protocol extension dispatch'

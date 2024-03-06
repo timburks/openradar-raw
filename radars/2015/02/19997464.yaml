@@ -1,0 +1,79 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19997464"
+    labels:
+        datastore_id: "6378982937198592"
+data:
+    classification: Enhancement
+    created: "2015-02-28T22:52:31.538208Z"
+    description: |-
+        Swift’s tuples are much like a struct, but anonymous. The syntax supports them both as a type constructor (e.g. (T, U)) and as a value constructor (e.g. let x = (1, 1)), you can pattern match against them, etc., etc.
+
+        I want something much like an enum, but anonymous: support for them in the syntax both as a type constructor and as a value constructor, with support in pattern matching, etc., etc.
+
+        I’m going to use (T | U) for the type constructor syntax, (t | ) for the value constructor syntax selecting the left case, and ( | u) for the value constructor syntax selecting the right case. I don’t think these are very good syntaxes, so don’t worry about that—they’re not the point.
+
+
+        This would make a great replacement for NSErrorPointer:
+
+        	extension NSData {
+        		class func data(contentsOfFile: String, options: NSDataReadingOptions) -> (NSData | NSError) { … }
+        	}
+
+        (I bet you could do something even better by combining this with failible initializers, such that the failing cases would return NSError (or some other error type) instead of nil. I’m not going to sketch that out here, as it’s orthogonal.)
+
+        Obviously, this would immediately subsume Result.
+
+
+        It would also subsume Either:
+
+        	func earlyTerminatingReduce<S: SequenceType, Result>(sequence: S, initial: Result, combine: (Result, S.Generator.Element) -> (Result | Result)) -> Result { … }
+
+        Here the combine function can return one of two branches of the sum type, both being of type Result. By convention, the left branch would return the value immediately, while the right branch would continue evaluation.
+
+
+        You don’t have to rely on convention. Tuples are actually records, with (optional) labels; maybe these anonymous sums would actually be variants, with optional labels too:
+
+        	combine: (Result, S.Generator.Element) -> (finish: Result | resume: Result)
+
+
+        Pattern matching would work much like with tuples:
+
+        	for each in sequence {
+        		switch combine(initial, element) {
+        		case let (finish | ):
+        			return finish
+        		case let ( | resume):
+        			initial = resume
+        		}
+        	}
+
+
+        Further, anonymous tuples, whether labelled or unlabelled, should get branch properties much like tuples’ field properties, i.e. .0, .1, etc. These should also be made with the labels for the branches. However, unlike tuples, the types of these properties are all Optional:
+
+        	let term = parseInput() // => (add: Int, Int | multiply: Int, Int | constant: Int)
+        	term.add // synonym for term.0; returns (Int, Int)?
+        	term.multiply // synonym for term.1; returns (Int, Int)?
+        	term.constant // synonym for term.2; returns Int?
+
+
+        Finally, it would be amazing if ?? could know when its operands are exhaustive, and thus return T instead of T?:
+
+        	let next = combine(initial, element)
+        	return next.finish ?? next.resume // => Result, not Result?
+
+
+        Thank you for reading!
+    email: rix.rob@gmail.com
+    modified: "2015-02-28T22:52:31.538359Z"
+    number: "19997464"
+    number_intvalue: 19997464
+    originated: 28-Feb-2015 05:52 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (6D532l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Anonymous enums'

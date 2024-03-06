@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10612246"
+    labels:
+        datastore_id: "1475403"
+data:
+    classification: ""
+    created: "2011-12-21T07:32:19.832777Z"
+    description: "Summary:\r\n   Trying to adopt Application Sandboxing for Mac Application Store app that works with a user's photos in iPhoto.  The sandbox flag for accessing a users' Pictures folder works well to let us access \"AlbumData.xml\" inside the iPhoto library.  \r\n\r\nHOWEVER, if the user has unchecked the \"Copy items to the iPhoto Library\" checkbox in the Advanced tab of iPhoto preferences, and the actual photos are outside the Pictures folder, we are unable to access the pictures.\r\n\r\nGAME OVER\r\n\r\nNOTE:  this will also apply to any app trying to access files referenced by iTunes' \"iTunes Music Library.xml\" file if users have opted to NOT copy their music files to the Music folder.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n- Write an application that reads the AlbumData.xml file and then opens a picture using the path for an entry.\r\n- remove all photos from iPhoto\r\n- Uncheck \"Copy items to the iPhoto Library\" preference in the Advanced section of the iPhoto preferences.\r\n- put a picture onto the desktop\r\n   - Be careful that this picture does not have a non-destructive rotate applied (e.g., this happens (at least) if you open the picture in preview and rotate it and then save it as JPEG but check the \"Rotate without modifying contents\" checkbox).  If you do iPhoto will consider it modified and save a copy in the iPhoto Library and it'll work.\r\n- drag a picture from the desktop onto iPhoto to add it to the library.  \r\n- confirm that the picture didn't get auto-modified and copied to the iPhoto library by selecting the picture in iPhoto and then from the File Menu chose \"Review in Finder >\" and note that \"Modified File\" is disabled.\r\n\r\n- Run your program and note that it gets a sandbox violation trying to access the picture.\r\n\r\nExpected Results:\r\n\r\nWell, honestly, this is how I expected it to break.  Sandboxing is not the solution we want (see Wil Shipley's blog post on this:  http://blog.wilshipley.com/2011/11/real-security-in-mac-os-x-requires.html).\r\n\r\nBut more importantly, this is going to be a problem for every application that wants to integrate with iTunes and/or iPhoto which both offer the option to save files outside of the Music or Pictures folders for which there are sandbox entitlement keys.\r\n\r\nActual Results:\r\n\r\nRegression:\r\n\r\nNotes:"
+    email: haikusw@gmail.com
+    modified: "2011-12-21T07:32:19.833166Z"
+    number: "10612246"
+    number_intvalue: 10612246
+    originated: 12/20/2011
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X SDK
+    product_version: "10.7"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Sandboxing problem: can''t access iPhoto photos if "Copy To Library" unchecked'

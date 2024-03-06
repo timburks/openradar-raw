@@ -1,0 +1,64 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17411826"
+    labels:
+        datastore_id: "5051597860110336"
+data:
+    classification: Serious Bug
+    created: "2014-06-22T19:00:23.845379Z"
+    description: |-
+        Summary:
+        The stdlib’s declaration of Collection is:
+
+        protocol Collection : Sequence {
+            subscript (i: Self.IndexType) -> Self.GeneratorType.Element { get }
+        }
+
+        This makes it appear like any type which conforms to Sequence and implements that subscript method can conform to Collection. However, this is insufficient; it also needs to conform to another protocol, _Collection, whose definition is unavailable but which requires startIndex/endIndex properties.
+
+
+        Steps to Reproduce:
+        1. Make a type, e.g. Set, from here: https://gist.github.com/robrix/e9e6c6693382a579c62a
+        2. Declare that the type conforms to Collection.
+        3. Provide an implementation of subscript per the declaration above.
+
+
+        Expected Results:
+        I expected that the type would be fully conformed to Collection and I could proceed.
+
+
+        Actual Results:
+        The compiler gives the errors shown in Notes, below.
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        These are the compiler errors:
+
+        /Users/rob/Developer/Projects/Swift/Set/Set/Set.swift:27:1: error: type 'Set<Element>' does not conform to protocol '_Collection'
+        extension Set : Collection {
+        ^
+        Swift._Collection:3:7: note: protocol requires property 'startIndex' with type 'Set<Element>.IndexType'
+          var startIndex: IndexType { get }
+              ^
+        Swift._Collection:4:7: note: protocol requires property 'endIndex' with type 'Set<Element>.IndexType'
+          var endIndex: IndexType { get }
+              ^
+        Swift.Collection:1:10: note: type 'Set<Element>' does not conform to inherited protocol '_Collection'
+        protocol Collection : _Collection, Sequence
+    email: rix.rob@gmail.com
+    modified: "2014-06-22T19:00:23.845531Z"
+    number: "17411826"
+    number_intvalue: 17411826
+    originated: 22-Jun-2014 03:00 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta2 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: stdlib’s declaration of Collection is incomplete'

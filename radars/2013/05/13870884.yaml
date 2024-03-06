@@ -1,0 +1,84 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13870884"
+    labels:
+        datastore_id: "3002405"
+data:
+    classification: Other Bug
+    created: "2013-05-12T17:00:26.332787Z"
+    description: |-
+        Summary:
+        I'm working with OmniFocus through the Scripting Bridge. If I try to work with the flattened tasks of a document, I frequently get an unrecognised selector exception. I have a workaround.
+
+        Steps to Reproduce:
+        1. Generate scripting bridge headers for OmniFocus, with class prefix "OF"
+        2. Run the following code:
+
+        	OFApplication *omniFocus = [SBApplication applicationWithBundleIdentifier:@"com.omnigroup.omnifocus"];
+        	SBElementArray *inboxTasks = omniFocus.defaultDocument.inboxTasks;
+        	SBElementArray *arr = ((SBElementArray*)[inboxTasks filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"completed = NO"]]);
+        	
+        	for (OFFlattenedTask *task in arr)
+        	{
+        		NSLog(@"Name: %@", task.name);
+        	}
+
+        Expected Results:
+        A list of the names of all the uncompleted items in my OmniFocus inbox is logged.
+
+        Actual Results:
+        An exception is thrown (see below).
+
+        Workaround:
+        I can work around the issue by adding this category on SBObject:
+
+        @implementation SBObject (OmniFixing)
+        - (Class)classForCode:(FourCharCode)code
+        {
+        	return [((id)_ctx) classForCode:code];
+        }
+        @end
+
+
+        Notes:
+        Here's the exception:
+
+        2013-05-12 17:21:10.587 Do[16299:303] -[SBObject classForCode:]: unrecognized selector sent to instance 0x105bb2f40
+        2013-05-12 17:21:10.588 Do[16299:303] -[SBObject classForCode:]: unrecognized selector sent to instance 0x105bb2f40
+        2013-05-12 17:21:10.591 Do[16299:303] (
+        	0   CoreFoundation                      0x00007fff955a7b06 __exceptionPreprocess + 198
+        	1   libobjc.A.dylib                     0x00007fff8c8e83f0 objc_exception_throw + 43
+        	2   CoreFoundation                      0x00007fff9563e40a -[NSObject(NSObject) doesNotRecognizeSelector:] + 186
+        	3   CoreFoundation                      0x00007fff9559602e ___forwarding___ + 414
+        	4   CoreFoundation                      0x00007fff95595e18 _CF_forwarding_prep_0 + 232
+        	5   ScriptingBridge                     0x00007fff8f44a55f -[SBElementArray objectWithKeyForm:keyData:] + 58
+        	6   CoreFoundation                      0x00007fff95597b2f -[NSArray getObjects:range:] + 223
+        	7   CoreFoundation                      0x00007fff95597ce6 -[NSArray countByEnumeratingWithState:objects:count:] + 278
+        	8   Do                                  0x000000010000fcdc -[DayProcessorWindowController process] + 716
+        	9   Do                                  0x0000000100000fab -[AppDelegate plan:] + 235
+        	10  AppKit                              0x00007fff92679989 -[NSApplication sendAction:to:from:] + 342
+        	11  AppKit                              0x00007fff926797e7 -[NSControl sendAction:to:] + 85
+        	12  AppKit                              0x00007fff9267971b -[NSCell _sendActionFrom:] + 138
+        	13  AppKit                              0x00007fff92677c03 -[NSCell trackMouse:inRect:ofView:untilMouseUp:] + 1855
+        	14  AppKit                              0x00007fff92677451 -[NSButtonCell trackMouse:inRect:ofView:untilMouseUp:] + 504
+        	15  AppKit                              0x00007fff92676bcc -[NSControl mouseDown:] + 820
+        	16  AppKit                              0x00007fff9266e53e -[NSWindow sendEvent:] + 6853
+        	17  AppKit                              0x00007fff9266a674 -[NSApplication sendEvent:] + 5761
+        	18  AppKit                              0x00007fff9258024a -[NSApplication run] + 636
+        	19  AppKit                              0x00007fff92524c06 NSApplicationMain + 869
+        	20  Do                                  0x0000000100000e72 main + 34
+        	21  libdyld.dylib                       0x00007fff8b5687e1 start + 0
+        	22  ???                                 0x0000000000000003 0x0 + 3
+    email: amorya@gmail.com
+    modified: "2013-05-12T17:00:26.333578Z"
+    number: "13870884"
+    number_intvalue: 13870884
+    originated: 12-May-2013 06:00 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: "10.8"
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: 'Scripting Bridge tries to call classForCode: on SBObject'

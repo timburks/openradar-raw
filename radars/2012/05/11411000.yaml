@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11411000"
+    labels:
+        datastore_id: "1697409"
+data:
+    classification: crash
+    created: "2012-05-08T23:58:28.697464Z"
+    description: "I've got a customization of UIBarButtonItem:\r\n \r\nUIImage *buttonImage = [[UIImage imageNamed:@\"button_nav_black\"] resizableImageWithCapInsets:UIEdgeInsetsMake(14, 7, 14, 7)];\r\n[[UIBarButtonItem appearance] setBackgroundImage:buttonImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];\r\nbuttonImage = [[UIImage imageNamed:@\"button_nav_black\"] resizableImageWithCapInsets:UIEdgeInsetsMake(12, 7, 12, 7)];\r\n[[UIBarButtonItem appearance] setBackgroundImage:buttonImage forState:UIControlStateNormal barMetrics:UIBarMetricsLandscapePhone];\r\nA crash (seen at bottom) occurs when a view controller with custom left bar button item is popped off a navigation controller or when the iphone is rotated to landscape.  The crash does not occur if the UIAppearance customization is removed.  There's no problem if the view controller and bar button item are presented and dismissed modally.  There's no problem for a similarly customized back button item (different image, edge insets).  There's no problem if the view controller is pushed and popped in landscape.  So it seems the problem is with the UIBarMetricsDefault background image, except there's no crash if it's pushed in landscape, rotated to portrait, then popped.  The image itself is 20x29, so edge insets of 14 are appropriate for a one-pixel stretch in height.  Here things get really interesting, though Apple does state for -[UIImage resizableImageWithCapInsets:] \"For best performance, use a tiled area that is a 1x1 pixel area in size.\"    If I change one of the top/bottom insets, the crash does not occur.  If I change both the top and bottom insets such that their average remains 14, the crash occurs.  If I change the left and right insets such that their sum remains 14, the crash occurs, with the exceptions of {14,4,14,10} and {14,14,14,0}.  The exceptions are slightly different for asymmetric top/bottom insets (that average to 14), for instance {12,8,16,6} does not crash.  But the invariant otherwise appears that the crash occurs when the sum of the left/right insets equals the average of the top/bottom insets when the top/bottom insets leave a single pixel uncapped.\r\n \r\nAs it happens, the edge insets are not really important for this image, and the image is stretched appropriately even when the customization is done without using a resizable image.\r\n \r\nThe crash looks like\r\n-[_UIImageViewPretiledImageCacheKey hash]: message sent to deallocated instance 0x888add0\r\n \r\n \r\n<_NSCallStackArray 0xe8d31f0>(\r\n0   my_app                         0x00002600 start + 0,\r\n1   CoreFoundation                      0x00d99cb2 _CF_forwarding_prep_0 + 50,\r\n2   Foundation                          0x012a3cd1 objectHash + 33,\r\n3   Foundation                          0x012a3af3 probeGC + 71,\r\n4   Foundation                          0x012b8c48 -[NSConcreteMapTable removeObjectForKey:] + 57,\r\n5   UIKit                               0x0201e625 -[_UIImageViewPretiledImageWrapper dealloc] + 81,\r\n6   libobjc.A.dylib                     0x028f5e3d _objc_rootRelease + 47,\r\n7   libobjc.A.dylib                     0x028f5e00 objc_release + 48,\r\n8   libobjc.A.dylib                     0x028f6c50 _ZN12_GLOBAL__N_119AutoreleasePoolPage3popEPv + 528,\r\n9   CoreFoundation                      0x00d67ea8 _CFAutoreleasePoolPop + 24,\r\n10  CoreFoundation                      0x00d6a80b __CFRunLoopRun + 2011,\r\n11  CoreFoundation                      0x00d69d84 CFRunLoopRunSpecific + 212,\r\n12  CoreFoundation                      0x00d69c9b CFRunLoopRunInMode + 123,\r\n13  GraphicsServices                    0x0445d7d8 GSEventRunModal + 190,\r\n14  GraphicsServices                    0x0445d88a GSEventRun + 103,\r\n15  UIKit                               0x01b96626 UIApplicationMain + 1163,\r\n16  my_app                         0x000026bd main + 125,\r\n17  my_app                         0x00002635 start + 53"
+    email: michael.pederson@gmail.com
+    modified: "2012-05-08T23:58:45.038322Z"
+    number: "11411000"
+    number_intvalue: 11411000
+    originated: 5/8/2012
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "5.1"
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: 'crash: UIAppearance, UIBarButtonItem, resizableImageWithCapInsets'

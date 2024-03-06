@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34021573"
+    labels:
+        datastore_id: "4927027886948352"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2017-08-22T21:34:09.20088Z"
+    description: "We have been seeing an increasing number of crashes in our app due to a race condition in StartWebThread. The crash involves a race between the main thread and the web thread.\r\n\r\nThe main thread crashes in this RELEASE_ASSERT in ThreadIdentifierData:\r\n\r\n  https://opensource.apple.com/source/WTF/WTF-7603.1.30.1.33/wtf/ThreadIdentifierDataPthreads.cpp.auto.html (line 78)\r\n\r\nThe main thread's stack is:\r\n\r\n  https://gist.github.com/bnham/d5a78782c34f1fc85ee6a06f8364979b\r\n\r\nThis RELEASE_ASSERT fires if the pthread TSD key hasn't yet been created. The TSD key is created by WTF::initializeThreading, which is called by JSC::initializeThreading. So basically, the crash occurs because the MT called WTF::ThreadIdentifierData::initialize before another thread finished calling WTF::initializeThreading.\r\n\r\nThe thread that's responsible for calling WTF::initializeThreading is the WebThread (which is forked off by StartWebThread). The WebThread has this call stack in the crash:\r\n\r\n  https://gist.github.com/bnham/6646f15ad3d76606544bac03be0d23bf\r\n\r\nIf you look at the code, the WebThread is stuck two lines *before* the call to JSC::initializeThreading (which is what calls WTF::initializeThreading)--it's executing WTF::initializeMainThreadPlatform:\r\n\r\n  https://opensource.apple.com/source/WebCore/WebCore-7603.1.30.1.33/platform/ios/wak/WebCoreThread.mm.auto.html (line 653)\r\n\r\nIn theory, there is some synchronization in the existing code that should prevent this from happening. In pseudo-code, the synchronization code looks like this:\r\n\r\n  RunWebThread: (running on the web thread)\r\n    JSC::initializeThreading()\r\n    // other init...\r\n\r\n    pthread_mutex_lock(&lock)\r\n    pthread_cond_signal(&cond, &lock)\r\n    pthread_mutex_unlock(&lock)\r\n\r\n  StartWebThread: (running on the main thread)\r\n    pthread_lock(&lock)\r\n    pthread_cond_wait(&cond, &lock)\r\n    pthread_unlock(&lock)\r\n\r\n    WTF::initializeApplicationUIThreadIdentifier() // calls code which eventually asserts\r\n\r\nHowever, this synchronization code is buggy because pthread_cond_wait is allowed to spuriously wake up, and pthread_cond_wait is only called once. It is very easy to demonstrate that spurious wakeups exist with pthread condition variables, e.g. here is a simple test program: https://gist.github.com/bnham/f2ca3430a7c4f6f714a918b62702125e\r\n\r\nThe fix is to add a boolean flag variable and to check whether that boolean variable is set while calling pthread_cond_wait in a loop, i.e. textbook usage of Mesa condition variables.\r\n\r\nA possible mitigation for affected apps is to call some JSC API that eventually calls JSC::initializeThreading early on in app initialization.\r\n\r\nWebKit bugzilla: https://bugs.webkit.org/show_bug.cgi?id=175852\r\n\r\nSteps to Reproduce:\r\nIt's a race condition. Look at the stack traces I provided which clearly show the race condition in action.\r\n\r\nExpected Results:\r\nIt crashes...sometimes. Like I said, it's a race condition.\r\n\r\nObserved Results:\r\nYou should be able to use a WebView (or other things that eventually call WebKitInitialize, like -[NSAttributedString(NSAttributedStringUIFoundationAdditions) initWithData:options:documentAttributes:error:]) without crashing.\r\n\r\nVersion:\r\niOS 10.3.x"
+    email: ben@nhaminated.com
+    modified: "2017-08-22T21:34:09.20108Z"
+    number: "34021573"
+    number_intvalue: 34021573
+    originated: 8/22/2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS WebKit
+    product_version: 10.3.x
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: Race condition in StartWebThread causing crash

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9968385
+    labels:
+        datastore_id: "5554676091060224"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2022-03-28T07:14:00.035099Z"
+    description: "NavigationView ignores preference keys from its root view when popping back to the root view.\r\n\r\nAdditionally, the NavigationView returns the default value for a preference key before returning the root view's preference key value on the NavigationView's first appearance.\r\n\r\nGiven:\r\n\r\n* The code below\r\n* The user input: push, push, pop, pop, push, push, pop, pop\r\n\r\nExpected output: \r\n\r\n0, 1, 2, 1, 0, 1, 2, 1, 0\r\n\r\nOutput on iOS 15.4 (device and simulator): \r\n\r\n-1, 0, 1, 2, 1, 2, 1\r\n\r\nCode:\r\n\r\n```swift\r\nimport SwiftUI\r\n\r\n@main\r\nstruct navigation_view_preference_keyApp: App {\r\n    var body: some Scene {\r\n        WindowGroup {\r\n            ContentView()\r\n        }\r\n    }\r\n}\r\n\r\nstruct ContentView: View {\r\n    var body: some View {\r\n        NavigationView {\r\n            LeafView(count: 0)\r\n        }\r\n        .onPreferenceChange(CountKey.self) { newValue in\r\n            print(newValue)\r\n        }\r\n    }\r\n}\r\n\r\nstruct LeafView: View {\r\n    let count: Int\r\n\r\n    var body: some View {\r\n        NavigationLink(\"Push\") {\r\n            LeafView(count: count + 1)\r\n        }\r\n        .frame(maxWidth: .infinity, maxHeight: .infinity)\r\n        .navigationTitle(\"\\(count)\")\r\n        .preference(key: CountKey.self, value: count)\r\n    }\r\n}\r\n\r\nstruct CountKey: PreferenceKey {\r\n    static var defaultValue: Int = -1\r\n\r\n    static func reduce(value: inout Int, nextValue: () -> Int) {\r\n        value = nextValue()\r\n    }\r\n}\r\n```\r\n\r\nSEO: NavigationView NavigationLink PreferenceKey onPreferenceChange preferenceKey preference(key:value:)"
+    email: chris@twocentstudios.com
+    modified: "2022-03-28T07:15:33.514857Z"
+    number: FB9968385
+    number_intvalue: 9968385
+    originated: "2022-03-28"
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI Framework
+    product_version: "15.4"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NavigationView ignores preference keys from its root view

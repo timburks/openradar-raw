@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30299463"
+    labels:
+        datastore_id: "5013622782689280"
+data:
+    classification: Serious Bug
+    created: "2017-02-01T01:12:56.60679Z"
+    description: "Summary:\r\nWe utilise a proxy PAC file that is distributed to clients via DHCP option 252\r\nClients are configured for Auto Proxy Discovery.\r\n\r\nWhen using NSURLConnection to retrieve a resource on a HTTPS site,\r\nNSURLConnection first must retrieve the proxy pac file.\r\nPresumably because this proxy PAC file is a HTTP resource, App Transport Security jumps in and blocks the request with the following error:\r\n\r\n\"App Transport Security has blocked a cleartext HTTP (http://) resource load since it is insecure. Temporary exceptions can be configured via your app's Info.plist file.\"\r\n\r\n\r\nSteps to Reproduce:\r\n1. Install macOS 10.12.x\r\n2. Configure Auto Proxy Discovery.\r\n3. Confirm that the mac is receiving a PAC file URL and that URL is http with:\r\n# ipconfig getpacket en0\r\n\r\nExample output would look like:\r\nproxy_auto_discovery_url (string): http://pac.det.nsw.edu.au/det/itbproxy.pac\r\n\r\n4. Run attached python script calling NSURLConnection from Foundation to load a particular text file on a HTTPS server\r\n5. Note the error output from the script.\r\n\r\nExpected Results:\r\nThe script should execute and the https resource requested by NSURLConnection should load and be output to stdout\r\n\r\n\r\nActual Results:\r\nThe script fails with the error message from App Transport Security:\r\n\"App Transport Security has blocked a cleartext HTTP (http://) resource load since it is insecure. Temporary exceptions can be configured via your app's Info.plist file.\"\r\n\r\n\r\nRegression:\r\nThis issue does not occur under 10.11\r\n\r\nNotes:\r\nAs mentioned by the error message from ATS adding the following to the info plist in the python script does allow the script to execute correctly\r\n\r\ninfo = bundle.localizedInfoDictionary() or bundle.infoDictionary()\r\ninfo[u\"NSAppTransportSecurity\"] = {u\"NSAllowsArbitraryLoads\": True}\r\n\r\nHowever, this feels like a dirty hack and not something that I want to enable in my Applications."
+    email: calum.h@gmail.com
+    modified: "2017-04-19T02:04:07.33348Z"
+    number: "30299463"
+    number_intvalue: 30299463
+    originated: 01-Feb-2017 12:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.12.3 16D32
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: App Transport Security blocks requests to http hosted PAC file with NSURLConnection

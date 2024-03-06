@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "37340318"
+    labels:
+        datastore_id: "4979822228930560"
+data:
+    classification: Serious Bug
+    created: "2018-02-08T05:11:07.89633Z"
+    description: "Summary:\r\nIn a project in which the AppSandbox setting is never touched (under the Capabilities) for the target, all `CSSearchableIndex` operations fail with the error:\n\nError Domain=CSIndexErrorDomain Code=-1003 \"(null)\" UserInfo={NSUnderlyingError=0x60400044a020 {Error Domain=NSCocoaErrorDomain Code=4097 \"Couldn’t communicate with a helper application.\"}}\n\nFiltering by \"spotlight\" in macOS’s Console.app, the following messages also appear:\ncorespotlightd\tcom.apple.corespotlight\tCould not resolve bundle from <xpc object>\ncorespotlightd\tcom.apple.corespotlight\tCould not resolve bundle id for <xpc object>\nCSTest\tcom.apple.corespotlight\tRetrying <CSSearchableIndexRequest:0x60c00008bf90; id=0, label=\"delete-all-items\", index=\"SomeTestIndex\"/0x60c0000a46e0, retry=1/1> from Error Domain=NSCocoaErrorDomain Code=4097 \"Couldn’t communicate with a helper application.\"\ncorespotlightd\tcom.apple.corespotlight\tCould not resolve bundle from <xpc object>\ncorespotlightd\tcom.apple.corespotlight\tCould not resolve bundle id for <xpc object>\ncorespotlightd\tcom.apple.corespotlight\tCould not resolve bundle from <xpc object>\ncorespotlightd\tcom.apple.corespotlight\tCould not resolve bundle id for <xpc object>\nCSTest\tcom.apple.corespotlight\tRetrying <CSSearchableIndexRequest:0x60400008a000; id=1, label=\"index-items\", index=\"SomeTestIndex\"/0x60c0000a46e0, retry=1/1> from Error Domain=NSCocoaErrorDomain Code=4097 \"Couldn’t communicate with a helper application.\"\ncorespotlightd\tcom.apple.corespotlight\tCould not resolve bundle from <xpc object>\ncorespotlightd\tcom.apple.corespotlight\tCould not resolve bundle id for <xpc object>\n\n\r\n\r\nSteps to Reproduce:\r\n1. Run the attached sample application\r\n\r\nExpected Results:\r\nThe indexing of the searchable item completes successfully and \"Index completed successfully\" is logged to the console.\r\n\r\nActual Results:\r\nThe aforementioned error occurs, and \"An error occurred when indexing\" is logged.\r\n\r\nVersion:\r\n10.13.3\r\n\r\nNotes:\r\nA workaround for this issue is to toggle the \"App Sandbox\" capability for the app target. This adds the following section to the pbxproj, which somehow sets a flag in the binary that allows communication with corespotlightd:\n\nSystemCapabilities = {\n            com.apple.ApplicationGroups.Mac = {\n            enabled = 0;\n        };\n        com.apple.Sandbox = {\n             enabled = 0;\n        };\n    };\n};"
+    email: aditya@adityakd.me
+    modified: "2018-02-08T05:11:07.89661Z"
+    number: "37340318"
+    number_intvalue: 37340318
+    originated: 08-Feb-2018 10:41 am
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CoreSpotlight indexing fails with mysterious errors if AppSandbox isn't explicitly disabled in Xcode

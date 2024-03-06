@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27937005"
+    labels:
+        datastore_id: "5059010805891072"
+data:
+    classification: Serious Bug
+    created: "2016-08-20T17:46:12.86734Z"
+    description: "When using Swift 2.3, NSJSONSerialization serializes the dictionary [\"first\": true, \"second\": false] as:\r\n\r\n{\"first\":true,\"second\":false}\r\n\r\nWhen using Swift 3.0, JSONSerialization serializes the same dictionary as:\r\n\r\n{\"first\":1,\"second\":0}\r\n\r\nSome web service APIs, including the Gmail API, will reject 1 or 0 when expecting a boolean value.\r\n\r\n\r\nSteps to reproduce:\r\n\r\n1.  In a Swift 2.3 project, run this unit test. It will pass.\r\n\r\n    func testJson() {\r\n        \r\n        let inputJsonDictionary = [\"first\": true, \"second\": false]\r\n        \r\n        guard let data = try? NSJSONSerialization.dataWithJSONObject(inputJsonDictionary, options: []) else {\r\n            XCTFail()\r\n            return\r\n        }\r\n        \r\n        guard let jsonString = String(data: data, encoding: NSUTF8StringEncoding) else {\r\n            XCTFail()\r\n            return\r\n        }\r\n        print(jsonString)\r\n        XCTAssertTrue(jsonString == \"{\\\"first\\\":true,\\\"second\\\":false}\" || jsonString == \"{\\\"second\\\":false},\\\"first\\\":true\")\r\n    }\r\n\r\n2.  In a Swift 3.0 project, run this unit test\r\n\r\n    func testJson() {\r\n        \r\n        let inputJsonDictionary = [\"first\": true, \"second\": false]\r\n        \r\n        guard let data = try? JSONSerialization.data(withJSONObject: inputJsonDictionary, options: []) else {\r\n            XCTFail()\r\n            return\r\n        }\r\n        \r\n        guard let jsonString = String(data: data, encoding: String.Encoding.utf8) else {\r\n            XCTFail()\r\n            return\r\n        }\r\n        print(jsonString)\r\n        XCTAssertTrue(jsonString == \"{\\\"first\\\":true,\\\"second\\\":false}\" || jsonString == \"{\\\"second\\\":false},\\\"first\\\":true\")\r\n    }\r\n    \r\n\r\nExpected Results:\r\n\r\nI would expect the Swift 3.0 unit test to pass.\r\n\r\n\r\nActual Results:\r\n\r\nThe Swift 3.0 unit test fails. The value of jsonString is:\r\n\r\n{\"first\":1,\"second\":0}  - or -  {\"second\":0,\"first\":1}\r\n\r\n\r\nConfiguration:\r\n\r\nI encountered this using Xcode 8.0 beta 6 while developing an iOS app. I can reproduce the bug both on the simulator and on an iPod Touch running iOS 10 beta 7 (14A5345a). I am not certain, but I believe this is a change in behavior since Xcode 8.0 beta 5.\r\n\r\nAdditional Notes:\r\n\r\nI think this is an important bug. Many app developers write apps that talk to web services outside of their control.\r\n\r\nThank you for taking a look."
+    email: jbrayton@goldenhillsoftware.com
+    modified: "2016-09-09T16:15:18.27981Z"
+    number: "27937005"
+    number_intvalue: 27937005
+    originated: "2016-08-20"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode Version 8.0 beta 6 (8S201h) on Sierra (macOs 10.12 Beta (16A294a))
+    reproducible: Always
+    resolved: Fixed in Xcode 8 GM
+    status: Duplicate of 27897683 (Open)
+    title: When compiling with Swift 3, serializing with JSONSerialization translates boolean (Bool) values to 1 or 0 instead of true or false

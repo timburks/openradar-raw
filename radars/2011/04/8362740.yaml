@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8362740"
+    labels:
+        datastore_id: "1169405"
+data:
+    classification: Enhancement
+    created: "2011-04-15T01:44:12.23207Z"
+    description: "27-Aug-2010 02:36 AM Ryan Sleevi:\r\nSummary:\r\nWhen renegotiating using Secure Transport, upon receiving a HelloRequest, both readCipher.ready and writeCipher.ready are set to 0 (libsecurity_ssl-38500, sslTransport.c, lines 314 and 315), and the state machine is updated to send the client hello.\r\n\r\nDuring renegotiation, neither party is not required to abandon their current security parameters, and both parties are allowed to continue sending application data records interleaved with handshake records, with handshake records receiving transmission priority. Until the change cipher spec is sent, the party's active write state should remain valid. Until a change cipher spec is received, the party's active read state should remain valid.\r\n\r\nFor example, if the server has sent one or more application data records following the HelloRequest, such as when it's communicating an intent for the client to renegotiate at some point, such as due to key rotation, SSLRead will return errSSLProtocol. If SSLWrite is called while the renegotiation handshake is blocked on read (for example, waiting for the server hello), it will return errSSLWouldBlock, when it could otherwise write using the previously negotiated keys.\r\n\r\nSteps to Reproduce:\r\nEstablish a connection to a server using Secure Transport on the client\r\nPerform the initial handshake\r\nHave the server send the HelloRequest, followed by one or more application data records encrypted using the active write state of the server (active read state of the client) from the first handshake.\r\nCall SSLRead on the client\r\n\r\nExpected Results:\r\nSSLRead could return that handshaking has been requested upon processing the HelloRequest.\r\n\r\nSubsequent calls to SSLRead can return the existing application data records using the existing keys. Calls to SSLWrite could send records using the existing keys. Both of these are in accordance with RFC 2246, 7.4.1.1., which allows the client to begin immediately renegotiating, ignore renegotiation requests completely, or send a no_renegotiation message. My request is for API support for the latter two scenarios.\r\n\r\nUntil SSLHandshake (or SSLAdvanceHandshake, under the hood) receives a ChangeCipherSpec (RFC 2246, 7.1), the existing read keys should remain valid.\r\nUntil the client's ChangeCipherSpec message has been encoded, the existing write keys should remain valid.\r\n\r\nActual Results:\r\nSSLRead returns errSSLProtocol on encountering the first record following the HelloRequest that is not a protocol related message. SSLWrite will not write application data records during a renegotiation until the Finished message has been sent."
+    email: ryan.sleevi@gmail.com
+    modified: "2011-08-28T05:40:05.532259Z"
+    number: "8362740"
+    number_intvalue: 8362740
+    originated: 27-Aug-2010
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Secure Transport prematurely invalidates the active read and write states

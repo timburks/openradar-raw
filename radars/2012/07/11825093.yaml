@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11825093"
+    labels:
+        datastore_id: "1790411"
+data:
+    classification: Serious Bug
+    created: "2012-07-07T15:26:38.159054Z"
+    description: "There seems to be a pretty big bug in NSCharacterSet, the class doesn't allocate immutable instances.\r\n\r\nAlthough [NSCharacterSet newlineCharacterSet] is excepted to return an immutable instance, the line [[NSCharacterSet newlineCharacterSet] addCharactersInString:@\"'\"]; does not throw an exception, and this modifies the object returned by that method which makes this set invalid. After such a line, every time you use it there will be this foreign character and any operations performed with this set will be wrong.\r\n\r\nThe copy method behaves as expected, that is if the instance is considered immutable it will return self and just send retain to it, whereas if the instance is considered mutable it returns a new object. However, the fact that the object is immutable doesn't prevent it from being mutated which can trigger all kinds of bugs.\r\n\r\nAfter looking at the open source of Core Foundation I suspect that the issue is that the mutability of a set is not checked at all. Apparently the functions that are supposed to throw an exception in these cases can be annihilated with by #define CF_ENABLE_ASSERTIONS. If it was defined when CF was compiled it would explain why CFCharacterSet does not complain that an immutable set is mutated."
+    email: remy.demarest@gmail.com
+    modified: "2012-07-07T15:26:38.159197Z"
+    number: "11825093"
+    number_intvalue: 11825093
+    originated: 07-Jul-2012 10:50 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X SDK
+    product_version: "10.7"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSCharacterSet is not immutable

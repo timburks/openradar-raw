@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19343478"
+    labels:
+        datastore_id: "5851780801888256"
+data:
+    classification: Security
+    created: "2014-12-24T20:29:26.529953Z"
+    description: "Summary:\r\nWhen generating a CSR & key pair using the Certificate Assistant in Yosemite, it is not possible to chose the SHA256 hashing algorithm. The assistant is hard-coded to use SHA1, which is being phased out by some major browser vendors because they believe it to be too weak.\r\n\r\nSince some CA's determine the hashing algorithm of the SSL certificate they issue based on the hashing algorithm in your CSR, this can cause them to generate a certificate that is no longer considered secure enough (if they are a lousy CA with bad UI, as most are).\r\n\r\nSteps to Reproduce:\r\nIn Keychain Access for Yosemite:\r\n\r\n1. Go to Keychain Access > Certificate Assistant > Open...\r\n2. Click Continue\r\n3. Select \"Request a certificate from an existing CA\", then click \"Continue\".\r\n4. Enter a User Email Address, a Common Name, select \"Saved to disk\", and check \"Let me specify key pair information\".\r\n5. Save the CSR file somewhere.\r\n6. Choose a Key Size of 2048 and an Algorithm of \"RSA\", then click \"Continue\".\r\n7. From terminal, run \r\n    openssl req -text -noout -verify -in path_to_csr_file_you_just_saved | grep 'Signature Algorithm'\r\n\r\n\r\nExpected Results:\r\nopenssl output should be:\r\n    Signature Algorithm: sha256WithRSAEncryption\r\n\r\n\r\nActual Results:\r\n    Signature Algorithm: sha1WithRSAEncryption\r\n\r\n\r\nVersion:\r\n10.10.1 (14B25)\r\n\r\nNotes:\r\nCertificate Assistant should do one of the following:\r\n\r\nA. Hard-code the wizard to SHA256 instead of hard-coding it to SHA1. Users that need to support legacy browsers and OSes that only support SHA1 can use the openssl command line tool. \r\nB. Allow the user to chose between SHA256 and SHA1 hashing algorithms when generating a CSR. The default should be SHA256. \r\n\r\nhttp://googleonlinesecurity.blogspot.co.uk/2014/09/gradually-sunsetting-sha-1.html"
+    email: barry@barrysimpson.net
+    modified: "2014-12-24T20:29:26.53014Z"
+    number: "19343478"
+    number_intvalue: 19343478
+    originated: "2014-12-24"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.1 (14B25)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Certificate Assistant does not allow selection of SHA256 hashing algorithm

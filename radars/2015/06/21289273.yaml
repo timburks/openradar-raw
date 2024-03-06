@@ -1,0 +1,58 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21289273"
+    labels:
+        datastore_id: "4944930266939392"
+data:
+    classification: Other Bug
+    created: "2015-06-08T21:33:17.05832Z"
+    description: |-
+        Summary:
+        Partial application of SequenceType methods is not functioning.
+
+
+        Steps to Reproduce:
+        1. Write these:
+
+        let f = SequenceType.reduce
+        let g: [Int] -> (Int, (Int, Int) -> Int) -> Int = SequenceType.reduce
+        let h: ([Int], (Int, (Int, Int) -> Int)) -> Int = SequenceType.reduce
+
+
+
+        Expected Results:
+        The first is wishful thinking, I don’t expect Swift to suddenly have let-polymorphism.
+        The second is assuming that protocol extension methods are curried the way normal methods are.
+        The third is assuming that protocol extension methods are uncurried like free functions are.
+
+
+        Actual Results:
+        All three give the same unhelpful errors:
+
+        ./partial.swift:3:9: error: 'SequenceType.Protocol' does not have a member named 'reduce'
+        let f = SequenceType.reduce
+                ^            ~~~~~~
+        ./partial.swift:3:9: error: protocol 'SequenceType' can only be used as a generic constraint because it has Self or associated type requirements
+        let f = SequenceType.reduce
+                ^
+
+
+        Regression:
+        I could partially apply `reduce` as a free function in Swift 1.2.
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-06-08T21:33:17.05853Z"
+    number: "21289273"
+    number_intvalue: 21289273
+    originated: 08-Jun-2015 05:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-7-beta (7A120f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2: SequenceType extension methods cannot be partially applied'

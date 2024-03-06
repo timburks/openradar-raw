@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22852669"
+    labels:
+        datastore_id: "6141123219161088"
+data:
+    classification: Serious Bug
+    created: "2015-09-25T06:11:53.60566Z"
+    description: "Summary:\r\nHello, this (minimal and artificial-looking) code won't compile, with an unexpected error message:\r\n\r\n    protocol P1 { init() }\r\n    protocol P2 { }\r\n\r\n    extension Optional where Wrapped: P1 {\r\n        func f() -> Wrapped {   // f1 variant\r\n            return Wrapped()\r\n        }\r\n        func g() -> Wrapped {   // g1 variant\r\n            return f()\r\n        }\r\n    }\r\n\r\n    extension Optional where Wrapped: protocol<P1, P2> {\r\n        func f() -> Wrapped {   // f2 variant\r\n            return Wrapped()\r\n        }\r\n        func g() -> Wrapped {   // g2 variant\r\n            return f()          // Expect f2 variant\r\n        }\r\n    }\r\n\r\nSteps to Reproduce:\r\nCompile the code above.\r\n\r\nExpected Results:\r\nThe code compile, and the g2 variant of g() calls the f2 variant of f().\r\n\r\nActual Results:\r\nThe code does not compile, with the following error:\r\n\r\n    Playground execution failed: playground.swift:18:16: error: ambiguous use of 'f()'\r\n            return f()\r\n                   ^\r\n    playground.swift:5:10: note: found this candidate\r\n        func f() -> Wrapped {\r\n             ^\r\n    playground.swift:14:10: note: found this candidate\r\n        func f() -> Wrapped {\r\n             ^\r\n\r\n\r\nVersion:\r\nXcode 7.0 (7A218\r\nOSX 10.10.5 (14F27)"
+    email: gwendal.roue@gmail.com
+    modified: "2015-09-25T06:11:53.60613Z"
+    number: "22852669"
+    number_intvalue: 22852669
+    originated: 2015/09/25
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0 (7A218)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2: Erroneous "ambiguous use of" error message'

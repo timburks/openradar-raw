@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7012356"
+    labels:
+        datastore_id: "55410"
+data:
+    classification: Serious Bug
+    created: "2009-06-26T23:05:09.221534Z"
+    description: "** Summary:\r\n\r\nOS 3.0 introduced a new call-confirmation dialog that is presented to the user any time a 3rd-party app attempts to dial.\r\n\r\nIf that dialog is invoked from an Address Book UI view controller\r\n(ABPeoplePickerNavigationController or ABPersonViewController) then the\r\nconfirmation dialog displays the target phone number incorrectly.\r\n\r\nInstead of saying:\r\n\r\n    (444) 555-1212\r\n   [Cancel]  [Call]\r\n\r\ninstead it will say:\r\n\r\n   4445551212abuid2706\r\n   [Cancel]  [Call]\r\n\r\nThis makes my app look very broken to the end-user.\r\n\r\n\r\n** Steps to Reproduce:\r\n\r\n1) Create new project from the 'View-based Application' template\r\n2) Add to the bottom of -applicationDidFinishLaunching:\r\n\r\n    ABPeoplePickerNavigationController *picker =\r\n            [[ABPeoplePickerNavigationController alloc] init];\r\n    picker.peoplePickerDelegate = self;\r\n    [viewController presentModalViewController:picker animated:YES];\r\n    [picker release];\r\n\r\n3) Mark the delegate @interface as implementing\r\nABPeoplePickerNavigationControllerDelegate protocol, with\r\n<ABPeoplePickerNavigationControllerDelegate>\r\n\r\n4) Provide basic \"YES\" implementations for the\r\nABPeoplePickerNavigationControllerDelegate in the app delegate:\r\n- \r\n(void)peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationCon\r\ntroller *)peoplePicker\r\n{\r\n    NSLog(@\"peoplePickerNavigationControllerDidCancel:%@\", peoplePicker);\r\n    [viewController dismissModalViewControllerAnimated:YES];\r\n}\r\n\r\n\r\n- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController\r\n*)peoplePicker\r\n    shouldContinueAfterSelectingPerson:(ABRecordRef)person\r\n{\r\n    NSLog(@\"peoplePickerNavigationController:%@ shouldContinueAfterSelectingPerson:%@\", peoplePicker, person);\r\n    return YES;\r\n}\r\n\r\n- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController\r\n*)peoplePicker\r\n    shouldContinueAfterSelectingPerson:(ABRecordRef)person\r\n    property:(ABPropertyID)property\r\n    identifier:(ABMultiValueIdentifier)identifier\r\n{\r\n    NSLog(@\"peoplePickerNavigationController:%@ shouldContinueAfterSelectingPerson:%@ property:%ld identifier:%ld\", peoplePicker, person, property, identifier);\r\n    return YES;\r\n}\r\n\r\n5) Compile, install on device, run, choose contact, tap phone number, see\r\nbroken display in dialog.\r\n\r\n\r\n** Expected Results:\r\n\r\nCall-confirmation dialog displaying:\r\n\r\n    (444) 555-1212\r\n   [Cancel]  [Call]\r\n\r\n(or, better, no dialog -- this dialog is perhaps not the best idea to come out of Apple; but that's not the key point of this bug)\r\n\r\n\r\n** Actual Results:\r\n\r\nCall-confirmation dialog displaying:\r\n\r\n   4445551212abuid2706\r\n   [Cancel]  [Call]\r\n\r\n\r\n** Notes:\r\n\r\nScreen shot and sample project attached. The sample project matches the code in the steps-to-reproduce above, except also has a workaround that is disabled with an '#if 0' section.\r\n\r\nNote that the phone number is indeed correctly dialed, but in my experience so far most users have already become confused, assume it will do the wrong thing, and don't even try to complete the call, instead just assuming this functionality in my app is broken.\r\n\r\nThe apparent workaround is to intercept the initiate-call action, extract the phone number information, then create and open a tel: URL; however, this requires processing the phone number, as characters that address book may provide (such as parenthesis around area codes) can break the creation of the tel: URL."
+    email: yahoo@rkg.com
+    modified: "2011-08-28T05:46:10.797058Z"
+    number: "7012356"
+    number_intvalue: 7012356
+    originated: 26-Jun-2009 04:03 PM
+    parent_number: "7018549"
+    product: iPhone
+    product_version: 3.0 (7A341)
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/7018549
+    title: AB UI displays phone number incorrectly in call-confirmation dialog in OS 3.0

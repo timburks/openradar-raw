@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27519174"
+    labels:
+        datastore_id: "4953546810195968"
+data:
+    classification: ""
+    created: "2016-07-25T05:37:50.16665Z"
+    description: "Summary:\r\nWe’ve got a custom UICollectionViewFlowLayout subclass that consists of a number of decoration views as “section” backgrounds, interactive supplementary views that act as tappable headers to expand/collapse sections, and obviously cells, which are arranged in a section in a simple grid flow layout. In iOS 8 and 9 this layout has worked perfectly, but using it on iOS 10, we noticed that cells were missing. In debugging this problem we’ve found that it appears that in iOS 10 the UICollectionViewLayoutAttributes zIndex property isn’t being properly obeyed, and some cells, and supplementary views (headers) are being presented behind our decoration view backgrounds.\r\n\r\nSetting the section decoration view background to translucent shows the cells happily placed underneath. Also, inspecting the views in with the View Hierarchy debugger, shows the cells on the stack, but not in the proper hierarchy.\r\n\r\nSteps to Reproduce:\r\n1. Implement UICollectionViewFlowLayout which lays out a single decoration view for each section, supplementary view for each section, and multiple cells.\r\n2. Provide a zIndex value of -1 (or 0) to the decoration view attributes in layoutAttributesForDecorationViewOfKind.\r\n3. Provide a zIndex value of 10 to the cell attributes in layoutAttributesForItemAtIndexPath.\r\n4. Provide a zIndex value of 20 to the section header (supplementary view) attributes in layoutAttributesForSupplementaryViewOfKind.\r\n5. While running, if the layout is invalidated/reloaded, cells/supplementary views will randomly appear behind the decoration view, even though elements of both kinds have a higher int value for zIndex\r\n\r\n\r\nExpected Results:\r\nWhen the layout is invalidated/reloaded, cells and supplementary/decoration views are presented top to bottom layout order obeys the statement of “Items with higher index values appear on top of items with lower values.” as described in the UICollectionViewLayoutAttributes documentation.\r\n\r\n\r\nActual Results:\r\nWhen the layout is invalidated/reloaded, cells/supplementary views will randomly appear behind the decoration view, even though elements of both kinds have a higher int value for zIndex.\r\n\r\nVersion:\r\niOS 10.0 (14A5309d)\r\n\r\nNotes:\r\nAttached are two screenshots captured *during* the expand/collapse (ie. add/delete of section items) animations, showing cells being presented under the decoration view background.\r\n\r\nConfiguration:\r\niPhone 6s / iPad Air 2, iOS Sim\r\n\r\nAttachments:\r\n'section-expand.png' and 'section-collapsed.png' were successfully uploaded."
+    email: matt@lifx.co
+    modified: "2016-07-25T05:37:50.16695Z"
+    number: "27519174"
+    number_intvalue: 27519174
+    originated: 25/7/16
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 10.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UICollectionViewLayout not respecting element attributes z-index

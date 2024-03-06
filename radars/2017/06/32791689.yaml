@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32791689"
+    labels:
+        datastore_id: "4983321251545088"
+data:
+    classification: Serious Bug
+    created: "2017-06-15T15:38:58.16795Z"
+    description: "In 10.13db1 17A264c:\r\n\r\nWhen attempting to run a quarantined Google Chrome from its disk image downloaded from the web, XprotectService opens the main executable and holds on to it. XprotectService maintains this open file descriptor, preventing the disk image from being unmounted cleanly. This open file descriptor persists even after Chrome is quit. In fact, it’s not necessary to even allow Chrome to ever launch. Once you attempt to launch the quarantined app, it’s verified, and you’ll be asked if you want to launch it or not. You can cancel at this point without ever running Chrome, and XprotectService will have opened a file descriptor that it won’t close.\r\n\r\nSteps to Reproduce:\r\n1. Download Google Chrome from https://www.google.com/chrome/browser/desktop/. This will give you a quarantined “googlechrome.dmg”.\r\n2. Double-click googlechrome.dmg to mount it. After verification, this will result in a volume named “Google Chrome” being mounted.\r\n3. In the newly mounted volume, double-click the Google Chrome app icon.\r\n4. After verification, you’ll be asked if you want to launch the quarantined app. You can click “Cancel”. (You can also click “Open”. It doesn’t matter at this point. You never need to actually run Chrome to experience this bug, you just need to get to this dialog box.)\r\n5. Try to unmount (eject) the Google Chrome volume.\r\n\r\nExpected Results:\r\nThe volume should unmount cleanly.\r\n\r\nObserved Results:\r\nA dialog box appears saying:\r\n\r\nThe disk “Google Chrome” wasn’t ejected because one or more programs may be using it.\r\nTo eject the disk immediately, click the Force Eject button.\r\n[Cancel] [[Force Eject…]]\r\n\r\nYou can see that XprotectService is responsible:\r\n\r\n$ fuser -c /Volumes/Google\\ Chrome\r\n/Volumes/Google Chrome: 493\r\n$ ps -fp 493\r\n  UID   PID  PPID   C STIME   TTY           TIME CMD\r\n  501   493     1   0  3:12PM ??         0:00.16 /System/Library/PrivateFrameworks/XprotectFramework.framework/Versions/A/XPCServices/XprotectService.xpc/Contents/MacOS/XprotectService\r\n$ lsof -p 493\r\nCOMMAND   PID      USER   FD   TYPE DEVICE   SIZE/OFF   NODE NAME\r\nXprotectS 493 litterbox  cwd    DIR    1,2       1190      2 /\r\nXprotectS 493 litterbox  txt    REG    1,2      93824 381018 /System/Library/PrivateFrameworks/XprotectFramework.framework/Versions/A/XPCServices/XprotectService.xpc/Contents/MacOS/XprotectService\r\nXprotectS 493 litterbox  txt    REG    1,2      32768 519150 /private/var/db/mds/messages/501/se_SecurityMessages\r\nXprotectS 493 litterbox  txt    REG    1,2     376752 265514 /System/Library/Frameworks/Security.framework/Versions/A/PlugIns/csparser.bundle/Contents/MacOS/csparser\r\nXprotectS 493 litterbox  txt    REG    1,2   26687888 408037 /usr/share/icu/icudt59l.dat\r\nXprotectS 493 litterbox  txt    REG    1,2     800944 402252 /usr/lib/dyld\r\nXprotectS 493 litterbox  txt    REG    1,2 1128288256 499144 /private/var/db/dyld/dyld_shared_cache_x86_64\r\nXprotectS 493 litterbox    0r   CHR    3,2        0t0    299 /dev/null\r\nXprotectS 493 litterbox    1u   CHR    3,2        0t0    299 /dev/null\r\nXprotectS 493 litterbox    2u   CHR    3,2        0t0    299 /dev/null\r\nXprotectS 493 litterbox    4r   REG    1,2   63376898 519815 /Users/litterbox/Downloads/googlechrome.dmg\r\nXprotectS 493 litterbox    5r   REG    1,6      19088     35 /Volumes/Google Chrome/Google Chrome.app/Contents/MacOS/Google Chrome"
+    email: mark@chromium.org
+    modified: "2017-09-08T19:46:48.49592Z"
+    number: "32791689"
+    number_intvalue: 32791689
+    originated: "2017-06-15"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13db1 17A264c
+    reproducible: Always
+    resolved: "2017-09-06"
+    status: Duplicate/31180841 (Closed)
+    title: XprotectService hangs on to a file on my disk image and won’t let it unmount (10.13)

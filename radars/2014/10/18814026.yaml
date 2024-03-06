@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18814026"
+    labels:
+        datastore_id: "5221066465083392"
+data:
+    classification: Enhancement
+    created: "2014-10-29T18:54:12.896473Z"
+    description: "Summary:\r\nUnder the iOS 8 SDK, developers do not have a straightforward way to access the full-file content of a video PHAsset.\r\n\r\nWe have tried using the following APIs:\r\n1) -[PHImageManager requestAVAssetForVideo:options:resultHandler:]: This API often returns an AVURLAsset, from which we can open a file handle to the underlying URL to read the original bytes off disk. However, for slow-mo videos, this call returns an AVComposition, from which we cannot easily read the original bytes off disk.\r\n\r\n2) -[PHImageManager requestExportSessionForVideo:options:exportPreset:resultHandler:]: This API returns an export session. We have tried passing AVAssetExportPresetPassthrough to the export session in order to access the original data. However, even when passing the AVAssetExportPresetPassthrough setting, the header/footer of the video container may be altered. We have noticed that the file returned from this call often has a different length than the original file. Thus, fingerprinting techniques that rely on file content & file size to establish the uniqueness of a photo/video will fail when attempting to use this API.\r\n\r\n3)  -[PHAsset requestContentEditingInputWithOptions:completionHandler:]: This API returns a content editing input with an associated AVAsset. In our empirical studies, we have found that the AVAsset returned is always of type AVURLAsset. However, due to <rdar://18800190>, the application cannot read file content from the underlying URL of the AVURLAsset. The only workaround for this we have found is to first request an AVAsset from the requestAVAssetForVideo API and keep the returned AVAsset object alive, then call this API. Utilizing this workaround is fragile, and likely to break in future OS updates.\r\n\r\nIn both options (1) and (3) above, we need to rely on undocumented behavior (i.e. AVURLAsset being the type of AVAsset returned). Relying on such undocumented behavior is fragile.\r\n\r\nWhat we need:\r\nWe need an API that gives us access to the original full-file video content, without modification to the original bytes. Photo backup applications, for instance, may have developed a \"fingerprint\" for the uniqueness of a photo/video by relying on the content/size of a photo/video file. We therefore need an API that returns identical full-file video content to what the iOS 7 equivalent API (-[ALAssetRepresentation getBytes:fromOffset:length:error:]) would have returned.\r\n\r\nSteps to Reproduce:\r\nN/A\r\n\r\nExpected Results:\r\nN/A\r\n\r\nActual Results:\r\nN/A\r\n\r\nVersion:\r\niOS 8.1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nN/A\r\n\r\nAttachments:"
+    email: stephenpoletto@gmail.com
+    modified: "2014-10-29T18:54:12.896615Z"
+    number: "18814026"
+    number_intvalue: 18814026
+    originated: 29-Oct-2014 11:51 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "8.1"
+    reproducible: N/A
+    resolved: ""
+    status: Open
+    title: PhotoKit needs an API to access the full-file content of a video

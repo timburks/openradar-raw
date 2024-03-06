@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23314307"
+    labels:
+        datastore_id: "4926758629408768"
+data:
+    classification: ""
+    created: "2015-10-29T15:30:36.06742Z"
+    description: "Summary:\r\nMethods added in extensions to struct with generic type result in ambiguous methods if you provide two extensions with different generic type constraints using \"where\".\r\nIn same case for class or for protocol with type alias there is no ambiguity.\r\n\r\nSteps to Reproduce:\r\n1. Define some protocols:\r\nprotocol ProtocolA {}\r\nprotocol ProtocolB: ProtocolA {}\r\nprotocol ProtocolC {\r\n    fun act()\r\n}\r\n\r\n2. Define struct with generic type:\r\nstruct StructA: ProtocolA {}\r\nstruct StructB: ProtocolB {}\r\n\r\nstruct StructC<T: ProtocolA>: ProtocolC {}\r\n\r\n3. Define extensions with different generic type constraints:\r\n\r\nextension StructC {\r\n    func act() {\r\n        print(\"general\")\r\n    }\r\n}\r\n\r\nextension StructC where T: ProtocolB {\r\n    func act() {\r\n        print(\"special\")\r\n    }\r\n}\r\n\r\n4. Create instance of generic struct with different generic types and call method defined in extension:\r\n\r\nlet structCA = StructC<StructA>()\r\nlet structCB = StructC<StructB>()\r\n\r\nstructCA.act() //should print \"general\"\r\nstructCB.act() //should print \"special\"\r\n\r\n\r\n\r\nExpected Results:\r\nCode compiles and more specialised extension is chosen for more specialised type. Output should look like this:\r\n\"general\"\r\n\"special\"\r\n\r\n\r\nActual Results:\r\nResult: last line (structCB.act()) results in compiler  error: \"Ambigous use of 'act()'\"\r\nCompiler adds method 'act()' from both extensions on 'structCB'.\r\n\r\nIf StructC is defined as class, not a struct than it works as expected without ambiguity\r\n\r\nVersion:\r\nXcode 7.1(7B91b)"
+    email: ilyapuchka@gmail.com
+    modified: "2015-10-29T15:30:36.06766Z"
+    number: "23314307"
+    number_intvalue: 23314307
+    originated: 29.10.15
+    parent_number: '&{NULL_VALUE}'
+    product: Developer tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Extensions of Swift classes and structs behave differently

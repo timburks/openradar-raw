@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32883726"
+    labels:
+        datastore_id: "5039223337910272"
+data:
+    classification: Serious Bug
+    created: "2017-06-20T21:58:28.6115Z"
+    description: "Area:\r\nCore Graphics\r\n\r\nSummary:\r\n<CoreGraphics/CGColorSpace.h> provides two identical identifiers, CGColorSpaceCopyICCProfile() (the older name, since 10.5) and CGColorSpaceCopyICCData() (the newer name, since 10.12). The 10.13 SDK declares these in such a way as to produce code that will not run on 10.11 or earlier.\r\n\r\nThe 10.13 SDK from Xcode 9b1 9M136h has:\r\n\r\nCG_EXTERN CFDataRef __nullable CGColorSpaceCopyICCData(CGColorSpaceRef cg_nullable space)\r\nCG_AVAILABLE_STARTING(__MAC_10_12, __IPHONE_10_0);\r\n\r\n#define CGColorSpaceCopyICCProfile CGColorSpaceCopyICCData\r\n\r\nmeaning that any call to CGColorSpaceCopyICCProfile() will be translated at compile time to a call to CGColorSpaceCopyICCData(), which is only available on 10.12 and later. If you call CGColorSpaceCopyICCProfile() in your program, it’ll reference CGColorSpaceCopyICCData() and will crash at the point of use on 10.11 or earlier where that symbol is not present.\r\n\r\nThis change in the 10.13 SDK makes it impossible to use this SDK with code that calls CGColorSpaceCopyICCProfile() and is compatible with 10.11 and earlier.\r\n\r\nBy contrast, the 10.12 SDK has:\r\n\r\nCG_EXTERN CFDataRef __nullable CGColorSpaceCopyICCProfile(CGColorSpaceRef cg_nul\r\nlable space);\r\n//__CG_DEPRECATED_WITH_MSG(\"Don't this function; call \"\r\n//                         \"`CGColorSpaceCopyICCData' instead.\");\r\n\r\nCG_EXTERN CFDataRef __nullable CGColorSpaceCopyICCData(CGColorSpaceRef cg_nullable space)\r\nCG_AVAILABLE_STARTING(__MAC_10_12, __IPHONE_10_0);\r\n\r\nand the 10.11 SDK (and earlier) has:\r\n\r\nCG_EXTERN CFDataRef __nullable CGColorSpaceCopyICCProfile(CGColorSpaceRef __nullable space)\r\n  CG_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_6_0);\r\n\r\nIn order to make it possible to build code that will run on 10.11 and earlier while calling this function, you need to maintain separate declarations of CGColorSpaceCopyICCProfile() and CGColorSpaceCopyICCData() as was done in the 10.12 SDK. If you’d like to transition to the newer name, CGColorSpaceCopyICCData(), it would be prudent to mark CGColorSpaceCopyICCProfile() as deprecated in 10.13 to give developers the opportunity to migrate code to the newer name.\r\n\r\nSteps to Reproduce:\r\nBuild this program with the 10.13 SDK and run it on 10.11 or earlier.\r\n\r\nthirteen$ cat cgcolorspacecopyiccprofile.c\r\n// clang -mmacosx-version-min=10.5 cgcolorspacecopyiccprofile.c -o cgcolorspacecopyiccprofile -framework CoreGraphics\r\n#include <CoreGraphics/CGColorSpace.h>\r\nint main(int argc, char* argv[]) {\r\n  CFDataRef data = CGColorSpaceCopyICCProfile(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));\r\n  return 0;\r\n}\r\nthirteen$ clang -mmacosx-version-min=10.5 cgcolorspacecopyiccprofile.c -o cgcolorspacecopyiccprofile -framework CoreGraphics\r\nthirteen$ ./cgcolorspacecopyiccprofile\r\nthirteen$ sw_vers\r\nProductName:\tMac OS X\r\nProductVersion:\t10.13\r\nBuildVersion:\t17A264c\r\n\r\nNow, copy it to a 10.11 or earlier system and run it.\r\n\r\nten$ ./cgcolorspacecopyiccprofile\r\n\r\nExpected Results:\r\nThe program should run on 10.10 or earlier as it did on 10.13. Here, on 10.10:\r\n\r\nten$ ./cgcolorspacecopyiccprofile\r\nten$ sw_vers\r\nProductName:\tMac OS X\r\nProductVersion:\t10.10.5\r\nBuildVersion:\t14F1509\r\n\r\nObserved Results:\r\nThe program crashes on 10.11 and earlier.\r\n\r\nten$ ./cgcolorspacecopyiccprofile\r\nSegmentation fault: 11\r\nten$ sw_vers\r\nProductName:\tMac OS X\r\nProductVersion:\t10.10.5\r\nBuildVersion:\t14F1509\r\n\r\nVersion:\r\n10.13db1 17A264c\r\nXcode 9b1 9M136h with SDK 10.13\r\n\r\nConfiguration:\r\nWhen built with the 10.12 SDK or earlier, the program runs correctly (no crash) on all operating system versions, including 10.13, 10.12, 10.11 and earlier."
+    email: mark@chromium.org
+    modified: "2017-06-22T13:45:13.01474Z"
+    number: "32883726"
+    number_intvalue: 32883726
+    originated: "2017-06-20"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13db1 17A264c, Xcode 9b1 9M136h
+    reproducible: Always
+    resolved: "2017-06-21"
+    status: Duplicate/32277480 (Closed)
+    title: CGColorSpaceCopyICCProfile() in 10.13 SDK results in code that won’t run pre-10.12

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12623956"
+    labels:
+        datastore_id: "2238403"
+data:
+    classification: Serious Bug
+    created: "2012-11-02T16:00:17.89115Z"
+    description: "02-Nov-2012 11:58 AM Duncan Lewis:\r\nSummary:\r\nDecoration views are duplicated in the UICollectionView view hierarchy when changes to the UICollectionViewLayout are animated using the UICollectionView method `performBatchUpdates:completion:`\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a UICollectionView subclass\r\n\r\n@interface MyDecorationView : UICollectionReusableView\r\n\r\n@end\r\n\r\n@implementation MyDecorationView\r\n\r\n- (id)initWithFrame:(CGRect)frame\r\n{\r\n    self = [super initWithFrame:frame];\r\n    if (self) {\r\n        self.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.5f];\r\n    }\r\n    return self;\r\n}\r\n\r\n@end\r\n\r\n@interface MyCollectionViewLayout : UICollectionViewFlowLayout\r\n\r\n@property (nonatomic, assign) BOOL flag;\r\n\r\n@end\r\n\r\n@implementation MyCollectionViewLayout\r\n\r\n- (id)init\r\n{\r\n    self = [super init];\r\n    if(self) {\r\n        \r\n        [self registerClass:[MyDecorationView class] forDecorationViewOfKind:kDecorationKind];\r\n        \r\n    }\r\n    return self;\r\n}\r\n\r\n- (UICollectionViewLayoutAttributes *)layoutAttributesForDecorationViewOfKind:(NSString *)decorationViewKind atIndexPath:(NSIndexPath *)indexPath\r\n{\r\n    if ([decorationViewKind isEqualToString:kDecorationKind]) {\r\n        UICollectionViewLayoutAttributes *layoutAttributes = [UICollectionViewLayoutAttributes layoutAttributesForDecorationViewOfKind:decorationViewKind withIndexPath:indexPath];\r\n        layoutAttributes.frame = CGRectMake(0.0, 0.0, self.collectionViewContentSize.width, self.collectionViewContentSize.height);\r\n        return layoutAttributes;\r\n    }\r\n    \r\n    return nil;\r\n}\r\n\r\n- (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect\r\n{    \r\n    NSMutableArray *attributeArray = [[super layoutAttributesForElementsInRect:rect] mutableCopy];\r\n    \r\n    // add decoration\r\n    if (self.flag) {\r\n        [attributeArray addObject:[self layoutAttributesForDecorationViewOfKind:kDecorationKind atIndexPath:[NSIndexPath indexPathForItem:0 inSection:0]]];\r\n    }\r\n    \r\n    return attributeArray;\r\n}\r\n\r\n@end\r\n\r\n2. Create a UICollectionView with the above custom layout as its layout object. Place the collectionView in a view. \r\n3. Add a method to toggle the \"flag\" property on the collectionView's custom layout and call performBatchUpdates like so:\r\n\r\n- (void)toggle\r\n{\r\n    MyCollectionViewLayout *layout = self.collectionView.collectionViewLayout;\r\n    [layout setFlag:!layout.flag];\r\n\r\n    [self.collectionView performBatchUpdates:nil completion:nil];\r\n}\r\n\r\nExpected Results:\r\n\r\nWhen layout.flag == YES, decoration view should be visible after performBatchUpdates.\r\nWhen layout.flag == NO, decoration view should not be visible after performBatchUpdates.\r\n\r\nActual Results:\r\n\r\nRegardless of the value of layout.flag, and regardless of whether the decoration view layout attributes are added to the attributes array in  `layoutAttributesForElementsInRect:`, the decoration view is duplicated in the collectionView view hierarchy. \r\n\r\nSince the decoration view class has a background color of black and an alpha of 0.5, this can be observed by the continual darkening of the collectionView as successive performBatchUpdates calls are made. \r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\nDecoration views appear to be correctly removed from the collectionView when the method of update does not perform animations, e.g. calling invalidateLayout on the layout object instead of calling performBatchUpdates on the collectionView object after toggling the `flag` value causes the UI to be updated as expected."
+    email: duncan@twotoasters.com
+    modified: "2012-11-02T16:00:17.89201Z"
+    number: "12623956"
+    number_intvalue: 12623956
+    originated: 11/2/12
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone
+    product_version: iOS 6.0
+    reproducible: Always
+    resolved: ""
+    status: Unresolved
+    title: UICollectionView decoration views duplicate in view after performBatchUpdates

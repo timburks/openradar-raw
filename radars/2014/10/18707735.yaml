@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18707735"
+    labels:
+        datastore_id: "5891924250591232"
+data:
+    classification: Serious Bug
+    created: "2014-10-20T14:52:33.396659Z"
+    description: "Summary:\r\nIn a platform-agnostic C++ library, we use std::async to divide work between threads. On iOS 7.1 (11D167), this can fail because locking an internal mutex results in an \"invalid argument\" error.\r\n\r\nWith launch policy set to std::launch::async, the failure is thrown from the std::async call site.\r\n\r\nIf we change the launch policy to std::launch::async|std::launch::deferred, the failure will be thrown at the callsite of get() for the resulting std::future.\r\n\r\nI do not appear to get a failure if I use only std::launch::deferred, but this renders makes std::async somewhat useless, as I want to use it for launching asynchronous tasks. However, on iOS there is no way to safely do so.\r\n\r\n(The library in question is written in platform-agnostic C++11 code, which is why this uses std::async and not iOS-specific functionality such as GCD or direct pthreads.)\r\n\r\nSteps to Reproduce:\r\n[[[ See attached AsyncTest.cpp ]]]\r\n\r\nOn an iPad MD328LL/A running iOS 7.1 (11D167), the application will terminate within about two minutes with \"libc++abi.dylib: terminating with uncaught exception of type std::__1::system_error: mutex lock failed: Invalid argument\"\r\n\r\nExpected Results:\r\nNo failures.\r\n\r\nActual Results:\r\n\"libc++abi.dylib: terminating with uncaught exception of type std::__1::system_error: mutex lock failed: Invalid argument\" if launch policy is std::launch::async or std::launch::async|std::launch::deferred.\r\n\r\nVersion:\r\niOS 7.1 (11D167)\r\n\r\nNotes:\r\nThis may be related to libc++ bug 19766, http://llvm.org/bugs/show_bug.cgi?id=19766 which was closed as \"File a bug with Apple\"\r\n\r\nConfiguration:\r\niPad MD328LL/A; Xcode 6.0.1 (6A317)\r\n\r\n\r\n[[[ AsyncTest.cpp:\r\n\r\n#include <cstdio>\r\n#include <cstdlib>\r\n#include <vector>\r\n#include <thread>\r\n#include <future>\r\n\r\nvoid threadFunc(uint32_t* begin, uint32_t* end)\r\n{\r\n   // \"Work\". In the real thing this is a more complicated algorithm.\r\n   for (; begin != end; ++begin)\r\n   {\r\n      *begin = *begin ^ 0xDEADBEEF;\r\n   }\r\n}\r\n\r\nvoid asyncTest()\r\n{\r\n   printf(\"Starting.\\n\");\r\n\r\n   std::vector<uint32_t> data(1024*1024);\r\n\r\n   // Fill with random data.\r\n   for (size_t i = 0; i < data.size(); ++i)\r\n      data[i] = rand();\r\n\r\n   for (int iteration = 0; ; ++iteration)\r\n   {\r\n      std::vector<std::future<void>> tasks;\r\n      const size_t kTaskCount = 8;\r\n\r\n      // Split up work into kTaskCount chunks.\r\n      for (size_t chunk = 0; chunk < kTaskCount; ++chunk)\r\n      {\r\n         // !!!\r\n         // This can fail due to:\r\n         //    std::system_error, \"mutex lock failed: Invalid argument\"\r\n         // from the call to std::async.\r\n         // !!!\r\n         tasks.push_back(\r\n            std::async(\r\n               std::launch::async,\r\n               threadFunc,\r\n               data.data() + (chunk * (data.size()/kTaskCount)),\r\n               data.data() + ((chunk+1) * (data.size()/kTaskCount))));\r\n      }\r\n\r\n      // Wait for completion.\r\n      // !!!\r\n      // This can fail due to:\r\n      //     std::system_error, \"mutex lock failed: Invalid argument\"\r\n      // if the call to std::async used std::launch::async|std::launch::deferred!\r\n      // !!!\r\n      for (auto& t : tasks)\r\n      {\r\n         t.get();\r\n      }\r\n   }\r\n}\r\n]]]"
+    email: bstreiff@gmail.com
+    modified: "2014-10-20T14:52:33.39684Z"
+    number: "18707735"
+    number_intvalue: 18707735
+    originated: 10/20/2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 7.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'C++: std::async fails with "mutex lock failed: Invalid argument"'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29173153"
+    labels:
+        datastore_id: "5011924324450304"
+data:
+    classification: Serious bug
+    created: "2016-11-09T04:58:59.23875Z"
+    description: "Summary:\r\nI have an API than needs to scan all the frameworks in an app. The previous version of my code used NSBundle.allBundles to get a list of frameworks which it would then loop through, retrieving the class list for each one via objc_copyClassNamesForImage(const char *image, int *count).\r\n\r\nAfter updating to the latest iOS beta, my API stopped working. After much testing I found that NSBundle.allBundles is returning a list of all the bundles for the app, however these are not necessarily the bundles that the app has loaded. Therefore when objc_copyClassNamesForImage(...) was called, it was returning o classes.\r\n\r\nWhen running on a device I found that the bundles are sourced from a /private/... directory. \r\n\r\nWhen running in a simulator with a workspace with framework projects imported into the workspace, I found that the loaded bundles are coming from the derived data product path rather than the app's simulator installation path. \r\n\r\nIn both of these cases NSBundle.allBundles still returns the bundles from within the app bundle's ./Frameworks directory even though they are not loaded.\r\n\r\nI managed to fix this problem by switching my code from NSBundle.allBundles to Core Foundaton's CFBundleGetAllBundles(). Although the API documentation suggests that both NSBundle.allBundles and CFBundleGetAllBundles() should return the same results, CFBundleGetAllBundles() actually returns the bundle that the app has loaded as opposed to the bundles from the app's bundle.\r\n\r\nObivously these are coming from different locations.\r\n\r\nSteps to Reproduce:\r\n1. Build an app that has two (or more) (non-system) frameworks included. \r\n2. Make sure both frameworks are copied to the app's /Framework directory during the build.\r\n3. In the Xcode project, add the source project for one of the bundles so you can see the difference in locations.\r\n4. Add code to the app to get a list of bundles from NSBundle.allBundles and CFBundleGetAllBundles. \r\n5. Compare the results.\r\n \r\n\r\nExpected Results:\r\nBoth lists of bundles should be identical and show the loaded frameworks for the app.\r\n\r\nActual Results:\r\nOnly the system (Apple's) frameworks will be consistent.\r\n\r\nThe 3rd party framework copied in the build will have a different location. As will the framework whose source code project is included in the workspace. \r\n\r\nVersion:\r\nVersion 8.2 beta (8C23)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nMBP. Xcode 8.2\r\n\r\nAttachments:"
+    email: d4rkf1br3@gmail.com
+    modified: "2016-11-09T04:58:59.23911Z"
+    number: "29173153"
+    number_intvalue: 29173153
+    originated: 9/11/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "10.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '[NSBundle allBundles] returns incorrect bundle list.'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13702395"
+    labels:
+        datastore_id: "2950406"
+data:
+    classification: Serious Bug
+    created: "2013-04-21T19:59:50.444473Z"
+    description: "Summary:\r\n\r\nI have a UITableViewController with an NSFetchedResultsController as its data source, using change tracking. I make changes to Core Data objects on a background thread and then use a notification to progagate the changes to the main thread's context, which the FRC is connected to.\r\n\r\nThe FRC is sorted on the 'SortBy' field which is an Integer32. I'm not using sections or caching in the FRC.\r\n\r\nSteps to Reproduce:\r\n\r\nInitially the table looks like this \r\n\r\n1. Title: t1, SortBy: 0\r\n2. Title: t2, SortBy: 1\r\n3. Title: t3, SortBy: 2\r\n4. Title: t4, SortBy: 3\r\n5. Title: t5, SortBy: 4\r\n\r\nThen in a background thread, I make the following changes\r\n\r\nA) Add a new item: Title: t0, SortBy: 0\r\nB) Delete item t5\r\nC) Increment SortBy of the existing rows by 1. _except_ for item t3\r\n\r\nIn other words, I want to insert a new row at the top, move the rest down, but keep t3 at the same location.\r\n\r\nThen save and let the changes propagate to the main thread via notification. And let table be updated by FRC change tracking.\r\n\r\nExpected Results:\r\n\r\nThe table should look like this:\r\n\r\n1. Title: t0, SortBy: 0\r\n2. Title: t1, SortBy: 1\r\n3. Title: t3, SortBy: 2 <- t3 stays at row 3\r\n4. Title: t2, SortBy: 3\r\n5. Title: t4, SortBy: 4\r\n\r\nActual Results:\r\n\r\nThe table actually looks like this:\r\n\r\n1. Title: t0, SortBy: 0\r\n2. Title: t1, SortBy: 1\r\n3. Title: t2, SortBy: 3 \r\n4. Title: t3, SortBy: 2 <- t3 is in the wrong spot and SortBy is not honored\r\n5. Title: t4, SortBy: 4\r\n\r\nNotes:\r\n\r\nI don't think its the same bug as the url describes (because the work around suggested doesn't help):\r\nhttp://developer.apple.com/library/ios/#releasenotes/iPhone/NSFetchedResultsChangeMoveReportedAsNSFetchedResultsChangeUpdate/index.html#//apple_ref/doc/uid/TP40009210\r\n\r\nAfter the update runs, the table view is in the wrong order, but if I kill the app and restart it, the table view loads in the correct order, so the data is correctly updated and persisted, its just that the FRC isn't updating its in-memory state correctly."
+    email: aburgel@gmail.com
+    modified: "2013-04-21T19:59:50.444718Z"
+    number: "13702395"
+    number_intvalue: 13702395
+    originated: 4/21/2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 6.1.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSFetchedResultsController has wrong sort after insert/update/delete via notification

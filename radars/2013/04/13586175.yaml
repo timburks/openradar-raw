@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13586175"
+    labels:
+        datastore_id: "2990401"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2013-04-30T15:28:40.123559Z"
+    description: "Summary:\r\n\r\nFrequent opening and closing of a UIDocument subclass (not using iCloud) leads to a silent termination of the app.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n- have UIDocuments with hundreds of images in them\r\n- open these UIDocuments and close them several times until the app is just gone\r\n\r\n\r\nExpected Results:\r\n\r\nThe app should not be terminated with signal 9. In the least a useful crash report should be created.\r\n\r\n\r\nActual Results:\r\n\r\nApp is killed with signal 9, on the console this output is logged:\r\n\r\nApr  5 15:47:22 Stefan-Gugarels-iPad iCatalogTest[2700] <Error>: shared connection error: Connection interrupted\r\nApr  5 15:47:22 Stefan-Gugarels-iPad com.apple.launchd[1] (com.apple.librariand[2672]) <Notice>: (com.apple.librariand) Exited: Killed: 9\r\nApr  5 15:47:23 Stefan-Gugarels-iPad com.apple.launchd[1] (com.apple.tccd[2681]) <Notice>: (com.apple.tccd) Exited: Killed: 9\r\nApr  5 15:47:23 Stefan-Gugarels-iPad com.apple.launchd[1] (UIKitApplication:com.int-color.icatalogtest[0x114b][2700]) <Notice>: (UIKitApplication:com.int-color.icatalogtest[0x114b]) Exited: Killed: 9\r\nApr  5 15:47:23 Stefan-Gugarels-iPad com.apple.debugserver-199[2698] <Warning>: 1 +0.000000 sec [0a8a/1303]: error: ::read ( 5, 0x1c89fc, 18446744069414585344 ) => -1 err = Bad file descriptor (0x00000009)\r\nApr  5 15:47:23 Stefan-Gugarels-iPad backboardd[26] <Warning>: Application 'UIKitApplication:com.int-color.icatalogtest[0x114b]' exited abnormally with signal 9: Killed: 9\r\nApr  5 15:47:23 Stefan-Gugarels-iPad kernel[0] <Debug>: vnode: table is full\r\nApr  5 15:47:23 Stefan-Gugarels-iPad kernel[0] <Debug>: 1250 desired, 1250 numvnodes, 0 free, 0 dead, 0 rage\r\nApr  5 15:47:23 Stefan-Gugarels-iPad kernel[0] <Debug>: vnode: table is full\r\nApr  5 15:47:23 Stefan-Gugarels-iPad kernel[0] <Debug>: 1250 desired, 1250 numvnodes, 0 free, 0 dead, 0 rage\r\nApr  5 15:47:23 Stefan-Gugarels-iPad kernel[0] <Debug>: vnode: table is full\r\nApr  5 15:47:23 Stefan-Gugarels-iPad kernel[0] <Debug>: 1250 desired, 1250 numvnodes, 0 free, 0 dead, 0 rage\r\nApr  5 15:47:23 Stefan-Gugarels-iPad kernel[0] <Debug>: vnode: table is full\r\nApr  5 15:47:23 Stefan-Gugarels-iPad kernel[0] <Debug>: 1250 desired, 1250 numvnodes, 0 free, 0 dead, 0 rage\r\n\r\nWe suspect that this is a bug in the iOS SDK.\r\n\r\n\r\nRegression:\r\n\r\nThe problem started to occur when we switched to a UIDocument-based subclass for our document.\r\n\r\n\r\nNotes:\r\n\r\nI am using multiple UIDocuments for displaying Catalogs. I open UIDocuments show them and close them. I am repeating the previous step until the app is killed with signal 9.  (But i get no Crashlog and no Exception during Debugging). The only hint for me is found in iPad Console of device.\r\n\r\nWe verified that the UIDocument is being deallocated after showing. We are not using file presentation, but only the asynchronous loading facilities of UIDocument. We are not using iCloud and we do not need to save the UIDocument.\r\n\r\nThe out of vnodes condition seems to be related to using the NSFileWrapperReadingImmediate reading option of NSFileWrapper since we are able to show the termination both with an explicitly created file wrapper with this option as well as UIDocument. UIDocument appears to be using the same file wrapper reading option internally.\r\n\r\nIf we change the reading option to NSFileWrapperReadingWithoutMapping then the problem no longer occurs.\r\n\r\nEven if this is \"by design\" then in the least we would expect for a useful exception to be raised such that an unsuspecting developer would have a clue how to work around that."
+    email: oliver.drobnik@gmail.com
+    modified: "2013-04-30T15:28:40.126115Z"
+    number: "13586175"
+    number_intvalue: 13586175
+    originated: April 05,2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 6.1.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: App gets killed without Crash Log

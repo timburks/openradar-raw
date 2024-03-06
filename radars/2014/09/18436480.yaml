@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18436480"
+    labels:
+        datastore_id: "5842403076341760"
+data:
+    classification: Serious Bug
+    created: "2014-09-24T05:02:27.603844Z"
+    description: "Summary:\r\nConsider a UIViewController containing a UIWebView whose HTML content is long enough that it scrolls off the screen; at the bottom of the HTML is a button. Voiceover users can right-swipe through the content to have the text read aloud.\r\n\r\nBut when the Voiceover user swipes to the button and double-taps to activate the button, nothing happens; its onclick event handler never fires.\r\n\r\nSteps to Reproduce:\r\nHere's two ways to reproduce the bug: the quick way, and the clear way.\r\n\r\n1a) The quick way. Use the attached repro.git file to clone from it. (It's a git-bundle archive.)\r\ngit clone -b master repro.git repro\r\n\r\nOpen the included project, build the app, and install it to an iPhone.\r\n\r\n1b) The clear way. Using Xcode 6, create a new project with the \"Single View Application\" template. Replace ViewController.m with the attached file, or just replace the viewDidLoad method in the existing ViewController.m with this implementation:\r\n\r\n- (void)viewDidLoad {\r\n    [super viewDidLoad];\r\n    // Do any additional setup after loading the view, typically from a nib.\r\n    UIWebView* webView = [[UIWebView alloc] initWithFrame:self.view.frame];\r\n    NSURL* base = [NSURL URLWithString:@\"http://localhost\"];\r\n    [webView loadHTMLString:@\"<html><body>1<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><button onclick='alert(1);'>button\" baseURL:base];\r\n    [self.view addSubview:webView];\r\n}\r\n\r\n2) In non-Voiceover mode, you can see that the repro app displays some text (just the number \"1\") and then has a bunch of white space. Scroll all the way down to the bottom of the UIWebView; there's a button there named \"button.\" When you tap on the button, a JavaScript alert appears, displaying the text, \"1\".\r\n\r\nNow, enable Voiceover on the iPhone (Settings app -> General -> Accessibility -> Voiceover) and open the app. Voiceover will read the text aloud: \"Repro. 1.\" Swipe right. \"Button: Button.\" Double-tap to activate the button.\r\n\r\nExpected Results:\r\nA JavaScript alert should appear when you double tap, just as it does when you tap the button in non-Voiceover mode.\r\n\r\nActual Results:\r\nVoiceover makes the \"button tap\" sound effect and says, \"Button,\" but nothing else happens.\r\n\r\nVersion:\r\niOS 8.0 (12A365)\r\n\r\nNotes:\r\nThe bug goes away when the <br> elements are removed from the HTML, which would make the button visible on the screen. The bug only manifests when the button is scrolled off the screen, so it's not visible. (Note that in Voiceover mode there's no way to scroll the UIWebView to make the button visible on the screen, and even if there were a way to do it, visually impaired users would have no way of knowing that they'd need to do this as a workaround.)\r\n\r\nAlso note that this bug is a regression from iOS 7.1.\r\n\r\nConfiguration:\r\niPhone 6 16GB T-Mobile, using WiFi"
+    email: DanFabulich@gmail.com
+    modified: "2014-10-21T16:20:31.626435Z"
+    number: "18436480"
+    number_intvalue: 18436480
+    originated: 2014/09/23
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 8.0 (12A365)
+    reproducible: Always
+    resolved: 2014/10/21
+    status: Duplicate
+    title: Voiceover doesn't click on WebView buttons that are scrolled off the screen

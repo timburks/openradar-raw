@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13771056"
+    labels:
+        datastore_id: "2989401"
+data:
+    classification: UI/Usability
+    created: "2013-04-30T08:29:00.222486Z"
+    description: "Summary:\r\nIf a user with VoiceOver turned on selects the Section Index Titles (list of letters to the right of a table view) without making any adjustments and then swipes Left to get back to the rows of the UITableView and then continues to swipe Left, VoiceOver selection is stuck in a loop of (1st row -> 1st section header -> section index -> 1st row … ) and user is unable to swipe Left or Right to leave the UITableView (swiping Left doesn't take user to UISearchBar or UINavigationBar or similar).\r\n\r\nSteps to Reproduce:\r\nIn an UITableView with visible section indices (for example the Contacts app on iOS),\r\n1. Turn on VoiceOver.\r\n2. Tap on the table view section index --> section index is selected by VoiceOver.\r\n(Do not make adjustments to the section index by swiping up or down)\r\n3. Swipe left --> First row in first section is selected.\r\n4. Swipe left --> First section header is selected.\r\n5. Swipe left --> Section index is selected again    // This is the problem because you end up in a loop\r\n...\r\nContinuing to swipe left will cause the selection to go from 1st row -> 1st section header -> section index -> first row -> 1st section header -> section index … over and over\r\n\r\nExpected Results:\r\nVoiceOver selection should go from from 1st row -> 1st section header -> search (if applicable) -> navigation bar\r\nThis is exactly what happens if the section index is never selected (i.e. if the user taps on a row and swipes left until the navigation bar is reached).\r\n\r\nActual Results:\r\nVoiceOver selection is stuck in a loop that goes from 1st row -> 1st section header -> section index -> 1st row -> 1st section header -> section index … over and over\r\n\r\nRegression:\r\nAs far as I have seen there are two cases where this doesn't happen\r\n1. Section index is never selected.\r\nIf the user selects a row in the table and then swipes left the Expected Result is seen.\r\n\r\n2. Section index is \"adjusted\" after selection\r\nSection index is selected.\r\nSwipe Up or Down to change section       // This is what is different from the steps to reproduce\r\nSwipe Left -> 1st contact in that section is selected.\r\nSwipe Left many times -> Section index is _not_ selected after the 1st section header. Instead the search field (if applicable) or the navigation bar is selected (as expected)\r\n\r\nNotes:\r\nSeen on iOS 6.1.3 (not tested on previous versions)"
+    email: david.ronnqvist@gmail.com
+    modified: "2014-11-11T23:26:30.498602Z"
+    number: "13771056"
+    number_intvalue: 13771056
+    originated: 30-Apr-2013 10:28 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Accessibility
+    product_version: ""
+    reproducible: Always
+    resolved: 28-Aug-2013
+    status: Resolved
+    title: Can't swipe to navigate away from UITableView if section index is selected without being changed

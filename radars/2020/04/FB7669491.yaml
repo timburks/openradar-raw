@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7669491
+    labels:
+        datastore_id: "4935835694661632"
+data:
+    classification: Bug
+    created: "2020-04-19T15:54:35.920178Z"
+    description: "Please describe the issue:\r\nIf a SwiftUI Stepper has increment/decrement functions _outside of the View_, then the +/-buttons can become disabled unexpectedly\r\n\r\nPlease list the steps you took to reproduce the issue:\r\n1. Add the attached SwiftUI View to an iOS project\r\n2. Run the app\r\n3. Increment/decrement the first Stepper - note that it consistently works correctly\r\n4. Increment/decrement the second stepper - note that the +/- buttons become disabled after a few clicks\r\n\r\nThe first stepper uses increment/decrement functions inside the View itself. The second uses functions inside a ViewModel (ie, not the View).\r\n\r\nI don’t know why that would cause different behaviour, but I wouldn’t expect the +/- buttons to ever be disabled if the Stepper isn’t bound to a closed range.\r\n\r\nWhat did you expect to happen?\r\n+/- buttons should work, even if it’s using increment/decrement functions outside the View.\r\n\r\nWhat actually happened?\r\n+/- buttons can get disabled if the increment/decrement arguments reference a function outside of the View.\r\n\r\n\r\n\r\n//\r\n//  ContentView.swift\r\n//  SwiftUI-stepper-problem\r\n//\r\n\r\nimport SwiftUI\r\n\r\nclass ViewModel: ObservableObject {\r\n    @Published var valueString: String = \"\"\r\n    \r\n    private var value: Int = 10 {\r\n        didSet {\r\n            self.updateUI()\r\n        }\r\n    }\r\n    \r\n    init() {\r\n        self.updateUI()\r\n    }\r\n    \r\n    private func updateUI() {\r\n        self.valueString = \"value: \\(self.value)\"\r\n    }\r\n    \r\n    func increment() {\r\n        self.value += 1\r\n    }\r\n    \r\n    func decrement() {\r\n        self.value -= 1\r\n    }\r\n}\r\n\r\nstruct ContentView: View {\r\n    @ObservedObject var viewModel = ViewModel()\r\n    \r\n    var body: some View {\r\n        Form {\r\n            // This first Stepper uses the `increment` and `decrement` functions in the View\r\n            Section(header: Text(\"Increment/decrement functions in the view. This works well\")) {\r\n                Stepper(onIncrement: self.increment,\r\n                        onDecrement: self.decrement) {\r\n                            Text(self.viewModel.valueString)\r\n                }\r\n            }\r\n            \r\n            // This Stepper uses `increment` and `decrement` functions in the ViewModel directly. After a few clicks, the `-` or `+` button is disabled\r\n            Section(header: Text(\"Increment/decrement functions in the viewmodel. This gets stuck\")) {\r\n                Stepper(onIncrement: self.viewModel.increment,\r\n                        onDecrement: self.viewModel.decrement) {\r\n                            Text(self.viewModel.valueString)\r\n                }\r\n            }\r\n        }\r\n    }\r\n    \r\n    func increment() {\r\n        self.viewModel.increment()\r\n    }\r\n    \r\n    func decrement() {\r\n        self.viewModel.decrement()\r\n    }\r\n}\r\n\r\nstruct ContentView_Previews: PreviewProvider {\r\n    static var previews: some View {\r\n        ContentView()\r\n    }\r\n}"
+    email: mkflint@gmail.com
+    modified: "2020-04-19T15:54:35.920358Z"
+    number: FB7669491
+    number_intvalue: 7669491
+    originated: 19 April 2020
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: Xcode 11.4
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: SwiftUI Stepper buttons unexpectedly disabled when using increment/decrement functions

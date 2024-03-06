@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14999594"
+    labels:
+        datastore_id: "5707298571812864"
+data:
+    classification: Serious Bug
+    created: "2013-09-16T16:50:56.796635Z"
+    description: "Summary:\r\nOn Mac OS X, callers of close generally use close$UNIX2003 (32-bit x86) or close (x86_64). These map to close in 10.8.4 xnu-2050.22.13/bsd/kern/kern_descrip.c. The first thing that does is call pthread_testcancel, which can cause the entire system call to stop and return EINTR, before any actual work has been done. It then calls close_nocancel, which will close the FD before EINTR can be returned, but it appears that EINTR still may be returnable after the FD is actually closed, since callee closef_locked says that it might return anything if closef_finish is called. Considering that the FD may correspond to something other than a file on a local filesystem (for example, a file on a remote NFS/AFP/CIFS filesystem, or a socket), there are many possible ways that EINTR might be returned even after the FD is closed.\r\n\r\nFrom user space, it is thus impossible to know whether close failing with EINTR did so before or after closing the FD.\r\n\r\nAn application wishing to handle this case correctly is unable to do so. If close is retried when it fails with EINTR, and the FD was actually closed, the retry will either fail with an unrelated error (EBADF), or worse, if the FD was reused (such as by a concurrent operation on another thread), the close will succeed and close an unrelated FD. If close is not retried when it fails with EINTR, and the FD wasn’t actually closed, it will leak.\r\n\r\nThe standard does not provide clarity. Technically, Mac OS X is standards-conforming, although it is impossible to write a correct application given Mac OS X’ implementation.\r\n\r\nhttp://pubs.opengroup.org/onlinepubs/9699919799/functions/close.html:\r\n\r\n> If close() is interrupted by a signal that is to be caught, it shall return\r\n> -1 with errno set to [EINTR] and the state of fildes is unspecified.\r\n\r\nThe Austin Group has acknowledged this as a defect: http://austingroupbugs.net/view.php?id=529 .\r\n\r\nAn alternative version available on Mac OS X, close$NOCANCEL$UNIX2003 (32-bit x86) and close$NOCANCEL (x86_64) is available. These versions cannot return EINTR until the FD is actually closed. It is thus safe to not retry a close when it returns EINTR with this implementation without worrying that the FD will leak. This matches the behavior on Linux (http://linux.derkeiler.com/Mailing-Lists/Kernel/2005-09/3000.html). Chrome is taking advantage of this (http://crbug.com/269623).\r\n\r\nWhen close fails with EINTR on Mac OS X, the FD should be in a known state: either closed (thus no further action necessary, no FDs leaked) or open (thus requiring a retry to close the FD, guaranteed not to close an unrelated FD).\r\n\r\nNotes:\r\nWorkaround: use close$NOCANCEL in your application and don’t retry close when it fails with EINTR. https://codereview.chromium.org/23455051/ ."
+    email: mark@chromium.org
+    modified: "2013-09-16T16:50:56.796791Z"
+    number: "14999594"
+    number_intvalue: 14999594
+    originated: "2013-09-16"
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.8.4 12E55
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: When close fails with EINTR, it’s impossible to know if the FD is closed or open

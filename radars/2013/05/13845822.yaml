@@ -1,0 +1,68 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13845822"
+    labels:
+        datastore_id: "3001407"
+data:
+    classification: Enhancement
+    created: "2013-05-09T03:44:19.160151Z"
+    description: |-
+        Summary:
+        NSObject protocol is right now a monolithic grouping of a number of methods important for general use of objects. I propose splitting some of these methods into new protocols which NSObject conforms to, in order to better-document the requirements of methods that are currently using e.g. id. As a point of comparison, look at the recent change of the type of keys in NSMutableDictionary to id<NSCopying> from id; this change allows the compiler to check the conformance in many cases and is additionally excellent documentation for the developer on what a dictionary requires of its keys.
+
+        Proposed protocols follow:
+
+        - NSSending:
+        	- -performSelector:
+        	- -performSelector:withObject:
+        	- -performSelector:withObject:withObject:
+
+        - NSDescribing:
+        	- -description
+        	- -debugDescription (which should perhaps be made optional, with the debugger falling back to -description automatically, instead of putting the onus for this on the implementor)
+
+        - NSEquating:
+        	- -isEqual:
+
+        - NSHashing:
+        	- -hash
+
+        - NSIntrospection (this one could probably be broken down further):
+        	- -class
+        	- -superclass
+        	- -isMemberOfClass:
+        	- -isKindOfClass:
+        	- -respondsToSelector:
+        	- -conformsToProtocol:
+
+        …and so on.
+
+        The specific intended use case is adding type information to e.g. -isEqual: to allow the developer to build type-safe algorithms without resorting to id or the equally vague id<NSObject>. Thus my RXEqual() function (which simply returns (a == b) || [a isEqual:b]) can declare that its arguments require -isEqual:, and the compiler has that much more information available to it.
+
+        Steps to Reproduce:
+        Look at NSObject (the protocol).
+
+        Expected Results:
+        I expected it to be split into multiple logical sub-protocols.
+
+        Actual Results:
+        It was instead a monolithic protocol conflating various concerns.
+
+        Regression:
+        N/A
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2013-05-09T03:44:19.160348Z"
+    number: "13845822"
+    number_intvalue: 13845822
+    originated: 08-May-2013 11:44 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: N/A
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: Split NSObject protocol into logical sub-protocols

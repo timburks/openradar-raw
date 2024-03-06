@@ -1,0 +1,49 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17825602"
+    labels:
+        datastore_id: "5841516702466048"
+data:
+    classification: Enhancement
+    created: "2014-07-28T06:05:55.796424Z"
+    description: |-
+        Summary:
+        Swift provides a syntax to retrieve a closure that will call a given method: “obj.methodName”. With this syntax, however, “obj” is strongly referenced by the closure. There should be an easy syntax to retrieve a weakly-bound reference.
+
+        Steps to Reproduce:
+        1. Create a playground with the following prelude:
+
+            import Foundation
+            var obj = NSObject()
+
+        2. Attempt to retrieve a weakly-retaining closure for obj’s valueForKey(_:) method using the following idiomatic syntax:
+
+            let f = weak(obj).valueForKey
+
+        3. Attempt to retrieve a weakly-retaining closure for obj’s valueForKey(_:) method using the following low-impact syntax:
+
+           let g = NSObject.valueForKey(weak: obj)
+
+        Expected Results:
+        One of those approaches is valid Swift code.
+
+        Actual Results:
+        Neither is.
+
+        Notes:
+        It is possible to do this by explicitly creating a closure along the lines of “{ [weak obj] NSObject.valueForKey(obj!)($0) }”, but this is rather wordy (and handling the weakness safely would be even wordier). I think that at least #3, which introduces no new syntax and merely overloads the existing unbound method syntax, should be implemented. #2, which is significantly more readable, would be even better.
+
+        I’m not entirely sure what these closures should do if obj is deallocated before the closure is called. Perhaps the syntaxes proposed above should be altered to include a value to return in that circumstance. One small but important factor is that there needs to be a way for a Void function to remain Void even when bound to a weak target; this is critical if you want to replace uses of performSelector:, which is often used to call Void methods.
+    email: brent@architechies.com
+    modified: "2014-07-28T06:05:55.796534Z"
+    number: "17825602"
+    number_intvalue: 17825602
+    originated: 27-Jul-2014 11:05 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta4 (6A267n)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift should have a syntax to retrieve a weakly-bound method

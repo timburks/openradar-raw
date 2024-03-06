@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20616953"
+    labels:
+        datastore_id: "6740122175275008"
+data:
+    classification: UI / Usability
+    created: "2015-04-20T16:53:37.29963Z"
+    description: "UPDATE: Closed as Duplicate of 20335433\r\n\r\nSummary:\r\nXcode's Build and Analyze generates a spurious over-release warning in an object's -dealloc method when dispatch_release() is called for the ivar backing an assign dispatch_queue_t property.\r\n\r\nSteps to Reproduce:\r\n1. Create an iOS app project in Xcode\r\n2. Load the attached files into the project\r\n3. Ensure that DispatchQueueContainer.m is built without ARC\r\n4. Run Build and Analyze\r\n\r\nExpected Results:\r\nNo warnings are produced for DispatchQueueContainer\r\n\r\nActual Results:\r\n\"Incorrect decrement of the reference count of an object that is not owned at this point by the caller\" warning is produced.\r\n\r\nVersion:\r\nOS X 10.10.3 (14D131), Xcode 6.4 (6E7)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nThis issue is present in Xcode 6.3 and Xcode 6.4 beta, and is not present in Xcode 6.2\r\n\r\nAttached Files:\r\n\r\n// DispatchQueueContainer.h\r\n\r\n#import <UIKit/UIKit.h>\r\n\r\n@interface DispatchQueueContainer : UIView\r\n\r\n@end\r\n\r\n---\r\n\r\n// DispatchQueueContainer.m\r\n\r\n#import \"DispatchQueueContainer.h\"\r\n\r\n@interface DispatchQueueContainer ()\r\n\r\n@property (nonatomic, assign) dispatch_queue_t queue;\r\n\r\n@end\r\n\r\n@implementation DispatchQueueContainer\r\n\r\n- (instancetype)init {\r\n    self = [super init];\r\n    if (self) {\r\n        _queue = dispatch_queue_create(\"Test queue\", DISPATCH_QUEUE_SERIAL);\r\n    }\r\n    return self;\r\n}\r\n\r\n- (void)dealloc {\r\n    dispatch_release(_queue);\r\n    \r\n    [super dealloc];\r\n}\r\n\r\n@end"
+    email: greg.cooksey@droidcloud.mobi
+    modified: "2015-04-21T19:30:14.11839Z"
+    number: "20616953"
+    number_intvalue: 20616953
+    originated: "2015-04-20"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "6.3"
+    reproducible: Always
+    resolved: No
+    status: Duplicate
+    title: Spurious Build and Analyze warning for (assign) dispatch_queue_t properties

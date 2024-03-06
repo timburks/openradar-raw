@@ -1,0 +1,85 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23432210"
+    labels:
+        datastore_id: "6050728216887296"
+data:
+    classification: Enhancement
+    created: "2015-11-06T18:09:17.37119Z"
+    description: |-
+        Summary:
+        Swift protocol extensions currently allow you to constrain types using `==`, to define the extension only for a given type.
+        Example:
+
+        extension CollectionType where Generator.Element == Int {
+        	func firstInt() -> Int? {
+        		return self.first
+        	}
+        }
+
+        However, it’s not possible to do the opposite, and provide an extension if a type _is not_ a certain type.
+
+        Steps to Reproduce:
+        Compile this code:
+
+        enum NoError: ErrorType {
+        }
+        enum SomeError: ErrorType {
+        	case NotFound
+        	case Invalid
+        }
+
+        protocol TType {
+        	typealias Error: ErrorType
+        }
+
+        struct T<E: ErrorType>: TType {
+        	typealias Error = E
+        }
+
+        extension TType where Error == NoError {
+        	func f1() -> T<Error> {
+        		return T()
+         	}
+        }
+
+        extension TType where Error != NoError { // This won’t compile
+         	func f1() -> T<Error> {
+          		return T()
+        	}
+        }
+
+        func f<T: TType>(t: T) {
+        	// TType.f1 is implemented for any type, because there’s an implementation for `Error == NoError` and `Error != NoError`.
+        	t.f1()
+        }
+
+        let t1 = T<SomeError>()
+        let t2 = T<NoError>()
+
+        f(t1)
+        f(t2)
+
+        Expected Results:
+        The following code compiles. Calling `f` with both `t1` and `t2` works, as it’s defined for any given `ErrorType`.
+
+        Actual Results:
+        Fails to compile:
+        ./test.swift:25:29: error: expected ':' or '==' to indicate a conformance or same-type requirement
+        extension TType where Error != NoError {
+
+        Regression:
+        This means that it’s very hard for us to provide implementations that can be mutually exclusive to avoid ambiguity. The real-world example for this comes from the following feature: https://github.com/ReactiveCocoa/ReactiveCocoa/pull/2542
+    email: info@nachosoto.com
+    modified: "2015-11-06T18:09:17.37152Z"
+    number: "23432210"
+    number_intvalue: 23432210
+    originated: 06-Nov-2015 10:09 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Swift 2.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '[Swift 2.1] Ability to constraint protocol extensions with a negative condition to prevent ambiguity'

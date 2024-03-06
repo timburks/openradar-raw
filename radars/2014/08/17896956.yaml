@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17896956"
+    labels:
+        datastore_id: "6355044467212288"
+data:
+    classification: Other Bug
+    created: "2014-08-03T15:14:33.199765Z"
+    description: "Summary:\nNon-idiomatic Swift in the SceneKit template makes it easy to introduce a run time crash when modifying the template.\n\nSteps to Reproduce:\n1. Create a new project using the Game template specifying Swift and SceneKit\n\n2. Change this code so that it searches for a different node instead of “ship” and then animates it:\n\n    // retrieve the ship node\n    let ship = scene.rootNode.childNodeWithName(\"ship\", recursively: true)\n    \n     // animate the 3d object\n     ship.runAction(SCNAction.repeatActionForever(SCNAction.rotateByX(0, y: 2, z: 0, duration: 1)))\n\nThe only thing you need to change is the string “ship”, the animate line is included for context because that’s where the crash occurs. Note that a good reason to do search for a different node is you are using a different .dae file or constructing the scene yourself, but you do not need to do this to see the bug.\n\n3. Build and run\n\nExpected Results:\nIt finds nothing and doesn’t animate the ship\n\nActual Results:\nRuntime crash with message “fatal error: unexpectedly found nil while unwrapping an Optional value”\n\nRegression:\nNone\n\nNotes:\nTo fix, change the code to this:\n    // retrieve the ship node\n    if let ship = scene.rootNode.childNodeWithName(“ship”, recursively: true) {\n        // animate the 3d object\n        ship.runAction(SCNAction.repeatActionForever(SCNAction.rotateByX(0, y: 2, z: 0, duration: 1)))            \n    }\nThis will not crash even if the node is not found, and while my knowledge of Swift is limited I think this is the best way to do it. It’s possible that a root cause is that SceneKit should return an optional (?) instead of explicitly unwrapped (!) node, but I’m still figuring that stuff out."
+    email: blocksom@gmail.com
+    modified: "2014-08-03T15:14:33.199891Z"
+    number: "17896956"
+    number_intvalue: 17896956
+    originated: 03-Aug-2014 11:14 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6 B4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift SceneKit template not idiomatic

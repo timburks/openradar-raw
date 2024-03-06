@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21765827"
+    labels:
+        datastore_id: "6672962946072576"
+data:
+    classification: Other Bug
+    created: "2015-07-10T14:33:26.94713Z"
+    description: "Summary:\r\nIn Objective–C++ code, using the `auto` keyword correctly preserves type annotations for e.g. NSArray return values, such as the following:\r\n\r\n    // given that view is some UIView *:\r\n    auto const interestingViews = view.subviews;\r\n    // interestingViews is of type NSArray<__kindof UIView *> *const -- as expected\r\n\r\nIf, however, those values are indirected through other generic class methods, the type annotations are lost:\r\n\r\n    // again we have some UIView *view:\r\n    auto const viewsToFilter = [NSMutableArray arrayWithArray:view.subviews];\r\n    // type information is lost: viewsToFilter is of type NSMutableArray *const\r\n    // even though arrayWithArray: is annotated with ObjectType\r\n    // i.e. it _should_ produce NSMutableArray<ObjectType> *\r\n\r\nSteps to Reproduce:\r\n1. Create a new iOS single view app project in Xcode 7\r\n2. Change the view controller’s implementation file extension to .mm\r\n3. In the viewDidLoad method, after the super call add the line `auto view = self.view;`\r\n4. Copy and paste the code snippets from the description in there.\r\n5. Observe the types in the auto completion list when you type `viewsT` and `intere`\r\n\r\nExpected Results:\r\n`intere` yields `interestingViews` with a type of `NSArray<__kindof UIView *> *const` in the auto complete list, `viewsT` yields `viewsToFilter` with a type of `NSMutableArray<__kindof UIView *> *const` in the auto complete list\r\n\r\nActual Results:\r\n`intere` yields `interestingViews` with a type of `NSArray<__kindof UIView *> *const` in the auto complete list — that’s good.\r\n\r\n`viewsT` yields `viewsToFilter` with a type of `NSMutableArray *const` in the auto complete list — that’s bad: the type annotation has been swallowed.\r\n\r\nVersion:\r\nHappens in all Xcode 7 seeds, last checked with Version 7.0 beta 3 (7A152u)\r\n\r\nNotes:\r\nThis is a duplicate of rdar://21765641\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: steipete@gmail.com
+    modified: "2015-07-10T14:33:26.94743Z"
+    number: "21765827"
+    number_intvalue: 21765827
+    originated: 10-Jul-2015 04:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 7.0 beta 3 (7A152u)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 7: `auto` does not preserve Objective–C++ generics when indirected'

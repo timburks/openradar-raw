@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22685592"
+    labels:
+        datastore_id: "4968243181649920"
+data:
+    classification: ""
+    created: "2015-09-14T17:17:09.96501Z"
+    description: "Summary:\r\nAccessing a sub-property on a protocol-typed property of a class causes the `didSet` for that property to be called, leading to an EXC_BAD_ACCESS crash if anything in the `didSet` closure causes it to be accessed again.\r\n\r\nSteps to Reproduce:\r\nSimply use the following code in a playground:\r\n\r\nprotocol Bob {\r\n\tvar name: String { get }\r\n}\r\n\r\nclass Bobby: Bob {\r\n\tlet name: String = \"Bob\"\r\n}\r\n\r\nclass Fred {\r\n\tvar viewModel: Bob {\r\n\t\tdidSet {\r\n\t\t\tprint(\"setter\")\r\n\t\t\tself.bind()\r\n\t\t}\r\n\t}\r\n\t\r\n\tinit(viewModel: Bob) {\r\n\t\tself.viewModel = viewModel\r\n\t\tself.bind()\r\n\t}\r\n\t\r\n\tfunc bind() -> Void {\r\n\t\tprint(\"vm name is \\(self.viewModel.name)\")\r\n\t}\r\n}\r\n\r\nlet vm: Bobby = Bobby()\r\nlet fred: Fred = Fred(viewModel: vm)\r\n\r\nExpected Results:\r\nThe console should simply log \"my name is Bob\"\r\n\r\nActual Results:\r\nThe console goes into a never-ending loop eventually causing an EXC_BAD_ACCESS crash\r\n\r\nVersion:\r\nXcode 7A218 on OS X 10.10.5 (14F27)\r\n\r\nNotes:\r\nIf, in the protocol defined above, we add the `class` restriction then this no longer causes a crash, which would seem to imply that accessing the property's sub-property is seen as causing the property to mutate.\r\n\r\nConfiguration:\r\nMacBookPro11,1"
+    email: rupert@pearlshare.com
+    modified: "2015-09-14T17:17:09.96533Z"
+    number: "22685592"
+    number_intvalue: 22685592
+    originated: 14/09/2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 7A218
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: EXC_BAD_ACCESS recursion crash called by protocol property

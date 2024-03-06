@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25267344"
+    labels:
+        datastore_id: "6075032430182400"
+data:
+    classification: ""
+    created: "2016-05-17T07:04:01.15623Z"
+    description: "Summary:\r\nThere is a problem with MapKit on iOS - map sometimes fails to load, another time it loads partially, displaying plain grid for a tile which failed to load. The problem happens systemwide in every app that uses MapKit, even in Apple Maps app. The problem happens on both iPhones (6+) and iPads (iPad Air, iPad Air 2, iPad Mini) and a range of iOS versions (9.0, 9.0.2, 9.2.1). Furthermore it seems to happen more often when map zoom is high. The problem is very hard to reproduce, because it looks to happen randomly, persists on affected device for some time and suddenly disappears.\r\n \r\nI managed to analyse network traffic and found possible reason of this strange behaviour. Network requests associated with missing tiles fail with HTTP status code 410 and empty content:\r\n \r\nGET http://gspe19.ls.apple.com/tile.vf?flags=1&style=13&size=2&scale=0&v=11040322&z=15&x=17923&y=10756&sid=SOME_SID_1&accessKey=SOME_ACCESS_KEY_1 <- 410  \r\nGET http://gspe19.ls.apple.com/tile.vf?flags=1&style=20&size=2&scale=0&v=11040322&z=15&x=17923&y=10756&sid=SOME_SID_1&accessKey=SOME_ACCESS_KEY_1 <- 410  \r\n...  \r\n\r\n'v' parameter seems to be a map version number and grow with time. It looks that the version number can change after a 'geo_manifest' network call, which happens from time to time:\r\n \r\nGET https://gspe35-ssl.ls.apple.com/geo_manifest/dynamic/config?application=geod&application_version=1&country_code=PL&hardware=iPad4,2&os=ios&os_build=13C75&os_version=9.2  \r\n\r\nAfter downloading new geo_manifest, version number becomes valid once again and every tile request ends successfully with HTTP status code 200:\r\n \r\nGET http://gspe19.ls.apple.com/tile.vf?flags=1&style=13&size=2&scale=0&v=11040529&z=15&x=17923&y=10756&sid=SOME_SID_2&accessKey=SOME_ACCESS_KEY_2 <- 200  \r\nGET http://gspe19.ls.apple.com/tile.vf?flags=1&style=20&size=2&scale=0&v=11040529&z=15&x=17923&y=10756&sid=SOME_SID_2&accessKey=SOME_ACCESS_KEY_2 <- 200  \r\n...  \r\n\r\nI used an lldb to confirm, that a stale geo_manifest is the reason of 410 responses. I ran an arbitrary app on device that showed the symptoms using Xcode. Some tiles were missing on a MKMapView, and 410 responses appeared in network traffic. I closed the map, paused execution with lldb, executed a private GeoService framework method that seemed to force geo_manifest update:\r\n \r\n(lldb) po [[GEOResourceManifestManager sharedManager] forceUpdate]  \r\n\r\nAfter resuming execution, geo_manifest update request appeared in network traffic. After opening map view, successful tile responses appeared and map was fully loaded. Looks like com.apple.geod daemon itself fails to query for new geo_manifest from time to time. Because the problem is so ephemeral, it was impossible to find any com.apple.geod errors in device console logs.\r\n \r\nFollowing questions arise: why do com.apple.geod, GeoServices or MapKit not try to query for new geo_manifest when tile request results in 410 response? Is that a known issue? Does Apple plan to fix this in future iOS versions?\r\n\r\nSteps to Reproduce:\r\nUnknown, please read description.\r\n\r\nExpected Results:\r\nMapKit should try to get new geo_manifest when tile request results in 410, then retry to get tile.\r\n\r\nActual Results:\r\nMapKit displays empty map tile when a tile request result is 200.\r\n\r\nVersion:\r\niOS 9.0, iOS 9.0.2, iOS 9.2.1\r\n\r\nNotes:\r\nProblem described here: https://forums.developer.apple.com/thread/43077\r\n\r\nConfiguration:\r\niPhone 6+, iPad Air, iPad Air 2, iPad Mini\r\n\r\nAttachments:"
+    email: kamil.borzym@gmail.com
+    modified: "2016-07-10T16:05:38.17851Z"
+    number: "25267344"
+    number_intvalue: 25267344
+    originated: 21-Mar-2016 01:02 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "9.0"
+    reproducible: No
+    resolved: 10-Jul-2016 05:54 PM
+    status: Closed
+    title: MapKit tile requests result in 410

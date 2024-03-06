@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33396970"
+    labels:
+        datastore_id: "4934423988404224"
+data:
+    classification: Bug
+    created: "2017-07-19T08:32:00.54943Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nIn the attached project there is one view controller acting as a container view controller that embeds a child view controller.\r\n\r\nWhen the child view controller changes it's preferredContentSize the container gets a call back (preferredContentSizeDidChangeForChildContentContainer:) because it acts as a UIContentContainer.\r\n\r\nWhat I'd like to do is change the size of the child view controller animated (simple enough as I can just change the constraints). But also allow the child view controller to know that it's size is changing. Unfortunately just changing the size of the view doesn't call viewWillTransitionToSize:withTransitionCoordinator: on the child.\r\n\r\nThe docs seem to suggest this should happen automatically:\r\n\r\n\"This method (viewWillTransitionToSize:withTransitionCoordinator:) is called when the view controller's view's size is changed by its parent (i.e. for the root view controller when its window rotates or is resized).\"\r\n\r\nIf this isn't the case for custom container view controllers and we manually need to call that when making the size change then I have another problem in that I need to construct a UIViewControllerTransitionCoordinator but there isn't any public concrete class in UIKit and would have to make my own. \r\n\r\nThe docs aren't really clear on what is required to create one yourself and even say \"Typically, you do not adopt this protocol in your own classes.\" and for UIViewControllerTransitionCoordinatorContext it even says \"Do not adopt this protocol in your own classes.\"\r\n\r\nI notice that for a UIPopoverPresentationController when the preferredContentSize changes of the presented controller it calls the method viewWillTransitionToSize:withTransitionCoordinator: and the coordinator is of type _UIViewControllerNullAnimationTransitionCoordinator. Would it be possible to have this be made public so we can handle similar preferredContentSize changes in our custom container view controllers?\r\n\r\nThank you.\r\n\r\nSteps to Reproduce:\r\nRun sample project and notice that viewWillTransitionToSize:withTransitionCoordinator: on the ChildViewController is not called.\r\n\r\nExpected Results:\r\nviewWillTransitionToSize:withTransitionCoordinator: should be called, if possible automatically on the size change made by the parent. And if not automatically it would be nice to have a public way to construct a UIViewControllerTransitionCoordinator.\r\n\r\nObserved Results:\r\nAnimation setup in ChildViewController's viewWillTransitionToSize:withTransitionCoordinator: doesn't run.\r\n\r\nVersion:\r\niOS 10.3\r\n\r\nSample project:\r\nhttps://github.com/gspiers/radar_33396970"
+    email: gspiers@gmail.com
+    modified: "2017-07-19T08:32:00.54977Z"
+    number: "33396970"
+    number_intvalue: 33396970
+    originated: 19/07/2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS UIKit
+    product_version: "10.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIContentContainer and propagating size changes to child view controllers

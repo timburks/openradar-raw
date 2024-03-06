@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10509597"
+    labels:
+        datastore_id: "1458402"
+data:
+    classification: Other Bug
+    created: "2011-12-01T09:05:27.709357Z"
+    description: "Summary:\r\n\r\nSince Snow Leopard, Apple patched the OpenSSL library that ships with the OS to look for trusted root certificates in the Mac OS X keychain. Essentially, the patch is here: http://opensource.apple.com/source/OpenSSL098/OpenSSL098-27/src/crypto/x509/x509_vfy_apple.c\r\n\r\nThe patch correctly affects the output of SSL_get_verify_result (see \"Test 0\" below).\r\nHowever, the patched OpenSSL library operates incorrectly with respect to the \"verify callback\" functionality of OpenSSL (functions SSL_CTX_set_verify and SSL_set_verify); during the certificate verification, registered callback functions are called with wrong verification results (see \"Test 1\").\r\n\r\nThe problem originates from the fact that the patch is implemented as a wrapper to the original X509_verify_cert function in OpenSSL, so it comes \"too late\" to influence the callback mechanism.\r\n\r\nThe situation is even worse when a callback indicates to continue the certificate verification process in case of an error. In that case, the verify result may change into something other than the single verify result that the patch picks up (X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY), causing the patch not to work at all and causing the verification to fail entirely (see \"Test 2\" below).\r\n\r\nSteps to Reproduce:\r\n\r\nThe included ssl-client.c is a minimal program that makes an SSL connection to the https service of www.apple.com. It does basic certificate verification (\"Test 0\"), verification with a callback that does not indicate to continue in case of errors (\"Test 1\"), and verification with a callback that does indicate to continue (\"Test 2\").\r\n\r\n1. Compile ssl-client.c using the following command:\r\ngcc -o ssl-client ssl-client.c -lssl -lcrypto\r\n2. Verify that no trusted root certificates are installed in\r\n/System/Library/OpenSSL/cert.pem\r\nor\r\n/System/Library/OpenSSL/certs/\r\n3. Run ssl-client by tying:\r\n./ssl-client\r\n\r\nExpected Results:\r\n\r\nTest 0: No callback\r\nVerify OK\r\nTest 1: Callback without continue\r\nPreverify call: ok, depth 2, err 0\r\nPreverify call: ok, depth 1, err 0\r\nPreverify call: ok, depth 0, err 0\r\nVerify OK\r\nTest 2: Callback with continue\r\nPreverify call: ok, depth 2, err 0\r\nPreverify call: ok, depth 1, err 0\r\nPreverify call: ok, depth 0, err 0\r\nVerify OK\r\n\r\nActual Results:\r\n\r\nTest 0: No callback\r\nVerify OK\r\nTest 1: Callback without continue\r\nPreverify call: err, depth 1, err 20\r\nVerify OK\r\nTest 2: Callback with continue\r\nPreverify call: err, depth 1, err 20\r\nPreverify call: err, depth 1, err 27\r\nPreverify call: ok, depth 0, err 27\r\nVerify failed\r\n\r\nRegression:\r\n\r\nThis problem can be equally reproduced on both Snow Leopard (10.6.8) and Lion (10.7.2).\r\n\r\nNotes:\r\n\r\nThis problem affects other open source software that ships with Mac OS X. Please see the following reports on the web.\r\n\r\nhttp://redmine.ruby-lang.org/issues/3150\r\nhttp://permalink.gmane.org/gmane.comp.web.webdav.neon.general/815\r\n\r\nIt is very important to note that on Mac OS X Lion, the version of Neon that is included (0.29.0), employs OpenSSL callbacks and therefore fails to verify any certificates. This greatly affect the usability of the included Subversion, which employs Neon for https connection. (Back on Mac OS X Snow Leopard, the included version of Neon (0.28.6) did not use callbacks yet.)"
+    email: bruno@defraine.net
+    modified: "2011-12-01T09:05:27.70969Z"
+    number: "10509597"
+    number_intvalue: 10509597
+    originated: 01-Dec-2011 10:03 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: OpenSSL keychain certificate verification broken with callbacks

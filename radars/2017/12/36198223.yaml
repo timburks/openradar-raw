@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "36198223"
+    labels:
+        datastore_id: "5011211796086784"
+data:
+    classification: Other bug
+    created: "2017-12-22T23:47:43.99039Z"
+    description: "Using High Sierra on an APFS volume, files sent to the recycle bin won't be erased if they are hard linked and one of its instances with the same name already exists in the recycling bin.\r\n\r\nSteps to Reproduce:\r\n\r\nFor the manual version one can create the hard linked files from the command line and place them in different directories:\r\n\r\n$ mkdir a b\r\n$ ln some.txt  a\r\n$ ln some.txt  b\r\n$ open a\r\n\r\nNow, using the finder, drag some.txt to the recycling bin. Go to the other directory and send the some.txt file to the recycling bin. The file disappears and reappears immediately.\r\n\r\nTo test this mechanically, you can compile and run the following program which uses NSWorkspace's NSWorkspaceRecycleOperation:\r\n\r\n#import <AppKit/AppKit.h>\r\n#import <stdio.h>\r\n\r\n\r\n#define ORIGINAL \"original file.txt\"\r\n#define TARGET \"Linked version.txt\"\r\n\r\n\r\nint exists_file(const char* src)\r\n{\r\n\tFILE* out = fopen(src, \"rb\");\r\n\tif (NULL == out) return 0;\r\n\tfclose(out);\r\n\r\n\treturn 1;\r\n}\r\n\r\nint recycle(const char* src)\r\n{\r\n\tNSString *path = [[NSString alloc] initWithUTF8String:TARGET];\r\n\tNSString *folder = [path stringByDeletingLastPathComponent];\r\n\tNSArray *files = [NSArray arrayWithObject:[path lastPathComponent]];\r\n\t[path release];\r\n\r\n\tNSInteger tag = 0;\r\n\tconst BOOL ret = [[NSWorkspace sharedWorkspace]\r\n\t\tperformFileOperation:NSWorkspaceRecycleOperation\r\n\t\tsource:folder destination:nil files:files tag:&tag];\r\n\r\n\tprintf(\"Recycling Success? %d\\n\", (int)tag);\r\n\tif (tag) return tag;\r\n\r\n\tif (exists_file(src)) {\r\n\t\tprintf(\"Ooopes, %s still exists!\\n\", src);\r\n\t\treturn -1;\r\n\t}\r\n\r\n\treturn 0;\r\n}\r\n\r\n// Returns zero on success, non zero on failure.\r\nint main(int argc, char *argv[])\r\n{\r\n\tNSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];\r\n\r\n\tFILE* out = fopen(ORIGINAL, \"wb\");\r\n\tassert(out);\r\n\tfwrite(\"Hello\", 1, 3, out);\r\n\tfclose(out);\r\n\r\n\tint result = 0;\r\n\tfor (int f = 0; f < 10; f++) {\r\n\t\tprintf(\"Run %d\\n\", f);\r\n\t\tlink(ORIGINAL, TARGET);\r\n\t\tif (recycle(TARGET))\r\n\t\t\tbreak;\r\n\t}\r\n\r\n\t[pool release];\r\n\r\n\treturn result;\r\n}\r\n\r\nCompile with gcc -o test test.m -framework AppKit\r\n\r\nExpected Results:\r\n\r\nRunning the automatic program on an old machine with 10.11.6 the output of the program is:\r\n\r\n$ ./test \r\nRun 0\r\nRecycling Success? 0\r\nRun 1\r\nRecycling Success? 0\r\nRun 2\r\nRecycling Success? 0\r\nRun 3\r\nRecycling Success? 0\r\nRun 4\r\nRecycling Success? 0\r\nRun 5\r\nRecycling Success? 0\r\nRun 6\r\nRecycling Success? 0\r\nRun 7\r\nRecycling Success? 0\r\nRun 8\r\nRecycling Success? 0\r\nRun 9\r\nRecycling Success? 0\r\n\r\nMeaning that all the copies of the hard linked file are moved to the recycle bin, where they are put as renamed versions. Running this on a MBPr with 10.13.2 shows:\r\n\r\n$ ./test \r\nRun 0\r\nRecycling Success? 0\r\nRun 1\r\nRecycling Success? 0\r\nOoopes, Linked version.txt still exists!\r\n\r\nMeaning that after the first successful recycle operation, the second says it succeeds but leaves the file where it was, effectively not recycling it.\r\n\r\nAs a bonus, a mounted USB with HFS+ exhibits a similar problem on High Sierra, but after a few runs of the test, suggesting there is a race condition. APFS is deterministic."
+    email: supergradha@gmail.com
+    modified: "2018-08-04T12:00:02.2486Z"
+    number: "36198223"
+    number_intvalue: 36198223
+    originated: December 23 2017, 12:45 AM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK Appkit
+    product_version: 10.13.2
+    reproducible: Always
+    resolved: Mojave 10.14 beta 1 (18A293u)
+    status: Closed
+    title: Hardlinked file can't be sent twice to the recycle bin

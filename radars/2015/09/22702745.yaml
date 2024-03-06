@@ -1,0 +1,67 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22702745"
+    labels:
+        datastore_id: "4948821071101952"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-09-15T16:15:28.17322Z"
+    description: |-
+        The following configuration will cause the Swift compiler to crash when run from the commandline using -frontend -c. Every piece of this is required; very small modifications may avoid the crash, though some changes can cause the compiler to appear to hang.
+
+        * There must be at least two swift files, not including main.
+        * What is in main and the second swift file is unimportant (they can be empty)
+        * The crashing file looks like this:
+
+        —
+        struct A {
+            let x = UInt8(0)
+            let y = 0
+        }
+
+        let a = A()
+        let b = a
+        —
+
+        Each line is required, and order within the struct matters. This compiles fine within Xcode, but if compiled from the commandline (swift/swiftc or xcodebuild), it will crash. The simplest commandline that will crash it is (every piece of this is required; compiling other ways may work):
+
+        swift -frontend -c -primary-file crasher.swift other.swift -O
+
+        (In order for this project to compile in Xcode, there must also be a main.swift, but it is not required in order to demonstrate the problem.)
+
+        The crash:
+
+        0  swift                    0x00000001027b6edb llvm::sys::PrintStackTrace(__sFILE*) + 43
+        1  swift                    0x00000001027b761b SignalHandler(int) + 379
+        2  libsystem_platform.dylib 0x00007fff95156f1a _sigtramp + 26
+        3  swift                    0x0000000100a00862 swift::CanType swift::CanTypeVisitor<(anonymous namespace)::SubstDependentSILType<swift::SILFunction::mapTypeIntoContext(swift::SILType) const::$_0>, swift::CanType>::visit<>(swift::CanType) + 66
+        4  swift                    0x0000000100947764 llvm::StringMap<llvm::Constant*, llvm::MallocAllocator>::insert(std::__1::pair<llvm::StringRef, llvm::Constant*>) + 36
+        5  swift                    0x0000000100944fc5 swift::irgen::IRGenModule::getAddrOfGlobalUTF16String(llvm::StringRef) + 101
+        6  swift                    0x00000001009da402 getConstantValue(swift::irgen::IRGenModule&, llvm::StructType*, swift::StructInst*) + 450
+        7  swift                    0x00000001009da1e2 swift::irgen::IRGenModule::emitSILStaticInitializer() + 194
+        8  swift                    0x00000001009419aa swift::irgen::IRGenModuleDispatcher::emitGlobalTopLevel() + 490
+        9  swift                    0x00000001009c0f39 performIRGeneration(swift::IRGenOptions&, swift::ModuleDecl*, swift::SILModule*, llvm::StringRef, llvm::LLVMContext&, swift::SourceFile*, unsigned int) + 793
+        10 swift                    0x00000001009c13b0 swift::performIRGeneration(swift::IRGenOptions&, swift::SourceFile&, swift::SILModule*, llvm::StringRef, llvm::LLVMContext&, unsigned int) + 64
+        11 swift                    0x00000001008c88a8 performCompile(swift::CompilerInstance&, swift::CompilerInvocation&, llvm::ArrayRef<char const*>, int&) + 13704
+        12 swift                    0x00000001008c510a frontend_main(llvm::ArrayRef<char const*>, char const*, void*) + 2682
+        13 swift                    0x00000001008c1797 main + 2247
+        14 libdyld.dylib            0x00007fff8cf0f5c9 start + 1
+        15 libdyld.dylib            0x0000000000000007 start + 1930365503
+        Stack dump:
+        0.	Program arguments: /Applications/Xcode 7.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift -frontend -c -primary-file crasher.swift other.swift -O
+        Segmentation fault: 11
+
+        Attached is an example project to demonstrate.
+    email: robnapier@gmail.com
+    modified: "2015-09-15T16:15:28.17344Z"
+    number: "22702745"
+    number_intvalue: 22702745
+    originated: 15-Sep-2015 12:15 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Apple Swift version 2.0 (swiftlang-700.0.59 clang-700.0.72)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Compiler crash from commandline only, using -frontend -c

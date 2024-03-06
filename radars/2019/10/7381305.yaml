@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7381305"
+    labels:
+        datastore_id: "5050183024902144"
+data:
+    classification: bug
+    created: "2019-10-15T13:24:08.123798Z"
+    description: "# Filed as Feedback FB7381305\r\n\r\nIOHIDRequestAccess() not working if accessibility status was previously checked via AXIsProcessTrustedWithOptions(NULL)\r\n\r\nIOKit > \r\n\r\n# Steps to reproduce:\r\n1) Check Accessibility API trust status via \r\n\tBoolean isTruested = AXIsProcessTrustedWithOptions(NULL);\r\n\r\n2) At a later point (not the same runloop pass), request input monitoring permission via IOHIDRequestAccess:\r\n\tbool accessGranted = IOHIDRequestAccess(kIOHIDRequestTypeListenEvent);\r\n\t\r\n# Expected:\r\n- the IOHIDRequestAccess(kIOHIDRequestTypeListenEvent) brings up a prompt, asking the user for permission to monitor keyboard events.\r\n- the app making the call is listed under System Preferences > Security > Privacy > Input-Monitoring\r\n\r\n# Actual:\r\n- no prompt is shown\r\n- the app making the call is not listed under System Preferences > Security > Privacy > Input-Monitoring\r\n\r\n# Notes:\r\n- the prompt is only shown if AXIsProcessTrustedWithOptions(NULL) has not been called previously, making it impossible to check for accessibility permissions and request input monitoring permission in the same app\r\n- the issue affects usage with both kIOHIDRequestTypeListenEvent and kIOHIDRequestTypePostEvent\r\n\r\n# Sample code\r\nThe issue is reproducable with this code:\r\n\r\n```objc\r\nBoolean isTrusted = AXIsProcessTrustedWithOptions(NULL);\r\n\r\ndispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\r\n\tbool accessGranted = IOHIDRequestAccess(kIOHIDRequestTypeListenEvent);\r\n\r\n\tNSLog(@\"Access granted: %d %d\", accessGranted, isTrusted);\r\n});\r\n```"
+    email: iospiritongt@googlemail.com
+    modified: "2019-10-15T13:24:38.831744Z"
+    number: "7381305"
+    number_intvalue: 7381305
+    originated: "2019-10-15"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: "10.15"
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: IOHIDRequestAccess() not working if accessibility status was previously checked via AXIsProcessTrustedWithOptions(NULL)

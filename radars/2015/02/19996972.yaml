@@ -1,0 +1,82 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19996972"
+    labels:
+        datastore_id: "5871592680718336"
+data:
+    classification: Serious Bug
+    created: "2015-02-28T19:25:25.966943Z"
+    description: |-
+        Summary:
+        This is a really weird corner case where nil is getting promoted to non-nil, but only when it’s called from within a closure which is itself within a method, and only when T is also constrained to be the same type as an `Int?` which the closure captures.
+
+        I originally encountered this when writing tests for my unit tests assertions framework[1]: assert(x, !=, nil) will pass when x is nil, but only if it’s called within a closure.
+
+
+        Steps to Reproduce:
+        1. Run this:
+        struct S {
+        	func s() {
+        		let i: Int? = nil
+        		f(i, nil)
+        		g {
+        			f(i, nil)
+        		}
+        	}
+        }
+
+        func g(f: () -> ()) {
+        	f()
+        }
+
+        func f<T>(@autoclosure a: () -> T, @autoclosure b: () -> T) -> ()? {
+        	println("\(a()): \(T.self), \(b()): \(T.self)")
+        	return nil
+        }
+
+        let i: Int? = nil
+        f(i, nil)
+        g {
+        	f(i, nil)
+        }
+
+        S().s()
+
+
+        Expected Results:
+        I expected it to print this four times:
+        nil: Swift.Optional<Swift.Int>, nil: Swift.Optional<Swift.Int>
+
+
+        Actual Results:
+        It printed that three times, followed by this:
+        nil: Swift.Optional<Swift.Int>, Optional(0): Swift.Optional<Swift.Int>
+
+
+        Regression:
+        This does not repro if:
+        - f returns () or, equivalently, omits its return type
+        - f is not called within a closure
+        - the closure does not occur within a method
+        - i is constructed within the closure, not captured by it
+
+
+        Notes:
+        This is the most minimal case I can find for the repro. It _does_ repro if s() is a static function instead of an instance method, which I assume means that it’s key that i is not a global.
+
+        This is blocking my work on my test assertions framework, because there’s absolutely no way to trust assertions against nil of the form that I am trying to enable—i.e. assert(x, !=, nil)—when the language promotes nil to non-nil.
+
+        1: https://github.com/robrix/Assertions
+    email: rix.rob@gmail.com
+    modified: "2015-02-28T19:25:25.967107Z"
+    number: "19996972"
+    number_intvalue: 19996972
+    originated: 28-Feb-2015 02:25 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (6D532l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2b2: nil promoted to 0 when passed to function return type within closure capturing Int? within method'

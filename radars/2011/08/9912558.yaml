@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9912558"
+    labels:
+        datastore_id: "1287404"
+data:
+    classification: Serious Bug
+    created: "2011-08-08T06:51:53.272194Z"
+    description: "Summary:\r\nNSXMLParser does not call parser:foundCharacters: for entities like &something; anymore. It used to do that.\r\n\r\nSteps to Reproduce:\r\nCreate a minimal XML document like:\r\n\r\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<!DOCTYPE doc [\r\n<!ELEMENT doc (node)*>\r\n<!ELEMENT node ANY>\r\n<!ENTITY entity \"Lorem ipsum dolor\">\r\n]>\r\n<doc>\r\n\t<node>Foo &entity; bar</node>\r\n</doc>\r\n\r\nThen parse it using NSXMLParser.\r\n\r\nExpected Results:\r\nAfter the <node>-element started, NSXMLParser will call parser:foundCharacters: three times:\r\n1) foundCharacters: @\"Foo \"\r\n2) foundCharacters: @\"Lorem ipsum dolor\"\r\n3) foundCharacters: @\" bar\"\r\n\r\nActual Results:\r\nNSXMLParser will call parser:foundCharacters: only two times:\r\n1) foundCharacters: @\"Foo \"\r\n2) foundCharacters: @\" bar\"\r\n\r\nRegression:\r\nUse libxml2 (which is ironically used by NSXMLParser) or any other XML parser.\r\n\r\nNotes:\r\nNSXMLParser is not calling any other delegate method when it hits the entity &entity; either. In its current implementation, NSXMLParser is unusable."
+    email: roppongi765@gmail.com
+    modified: "2011-08-28T05:35:03.09873Z"
+    number: "9912558"
+    number_intvalue: 9912558
+    originated: 08-Aug-2011 03:49 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.0
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: NSXMLParser ignoring internal entity definitions

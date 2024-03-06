@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14794181"
+    labels:
+        datastore_id: "4517549681147904"
+data:
+    classification: Serious bug
+    created: "2013-08-21T10:24:13.704447Z"
+    description: "Summary:\r\nWhen a interactive transition that was initiated by updating the view controller stack using UINavigationController's setViewControllers:animated: is cancelled, the view controller stack is not restored to the state before the setViewControllers:animated:.\r\n\r\nSteps to Reproduce:\r\n1. Present a nav controller with a root controller\r\n2. Use setViewControllers:animated: to replace the top view controller with animated set to YES\r\n3. Have the nav controller delegate return a animation controller and interaction controller (i.e. the transition is interactive)\r\n4. Make the interaction controller cancel the transition\r\n\r\nExpected Results:\r\nThe view controller stack (navigationController.viewControllers) is restored to how it was before the setViewControllers:animated: call, with the original root controller as the top view controller.\r\n\r\nActual Results:\r\nThe view controller stack now has both the original root view controller and the view controller that we set as its replacement. The stack height increased by 1.\r\n\r\nRegression: N/A\r\n\r\nNotes:\r\nA workaround is to remove the second view controller when the transition cancels. I solved it by using the second view controller transitionCoordinator's notifyWhenInteractionEndsUsingBlock:. See for example the implementation of a method that replaces the top view controller:\r\n\r\n`- (void) replaceTopViewController: (UIViewController *) viewController animated: (BOOL) animated\r\n{\r\n    // setViewControllers:animated:YES is currently buggy in iOS 7 beta. See e.g. https://devforums.apple.com/message/861601\r\n    \r\n    NSMutableArray *viewControllers = [NSMutableArray arrayWithArray: self.viewControllers];\r\n\r\n    UIViewController *originalTopViewController = [viewControllers lastObject];\r\n    \r\n    [viewControllers replaceObjectAtIndex:viewControllers.count-1 withObject:viewController];\r\n    [self setViewControllers:viewControllers animated:animated];\r\n    \r\n    [viewController.transitionCoordinator notifyWhenInteractionEndsUsingBlock:^(id<UIViewControllerTransitionCoordinatorContext> context) {\r\n        if ([context isCancelled]) { // when the transition is cancelled, the to vc is unfortunately not removed by the navigation controller\r\n            [self popViewControllerAnimated: NO];\r\n            [self pushViewController:originalTopViewController animated:NO];\r\n        }\r\n    }];\r\n}`\r\n\r\nI would expect that the last lines (starting with [viewController.transitionCoordinator...) would not be necessary."
+    email: thomas@touchwonders.com
+    modified: "2013-08-21T10:24:13.704598Z"
+    number: "14794181"
+    number_intvalue: 14794181
+    originated: 21-Aug-2013 12:22 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 7 DP 5(-6)
+    reproducible: YES
+    resolved: ""
+    status: Open
+    title: 'UINavigationController''s setViewControllers:animated: & canceled transition'

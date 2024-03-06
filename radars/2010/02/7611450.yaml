@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7611450"
+    labels:
+        datastore_id: "145407"
+data:
+    classification: Other Bug
+    created: "2010-02-04T09:24:49.744676Z"
+    description: "04-Feb-2010 11:23 AM Nikita Zhuk:\r\nSummary: \r\nNSURLDownload's delegate method download:didReceiveDataOfLength: is called one too extra time at the end of the successful download, giving the total length of downloaded data as the second parameter. This causes the amount of downloaded bytes to be reported twice.\r\n\r\nSteps to Reproduce:\r\n1. Instantiate NSURLDownload\r\n2. Start downloading a file, accumulating the values of second parameter of the download:didReceiveDataOfLength: delegate method\r\n3. See the total of downloaded bytes\r\n\r\nExpected Results:\r\n4. The total of downloaded bytes is same as the size of file actually downloaded\r\n\r\nActual Results:\r\n4. The total of downloaded bytes is twice as large as the size of file actually downloaded\r\n\r\nRegression:\r\nThis has been tested on both Mac OS X 10.6.1 and Mac OS X 10.6.2.\r\n\r\nNotes:\r\nThe \"extra\" callback seems to be called from URLDownload::didFinishLoadingForReal, which, in turn calls URLDownload::downloadProcessData.\r\n\r\nExecutable test case (see the Console output for incorrect values).\r\n\r\n\r\n\r\n\r\n///////////////////////////////////////\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\n@interface DownloadDelegate : NSObject {\r\n\tNSURLDownload *download;\r\n\tlong long downloadedBytes;\r\n\tBOOL isDownloading;\r\n}\r\n@property(nonatomic, assign) BOOL isDownloading;\r\n@property(nonatomic, assign) long long downloadedBytes;\r\n@property(nonatomic, retain) NSURLDownload *download;\r\n\r\n- (void)startDownloadOfURL:(NSURL *)url;\r\n@end\r\n\r\n@implementation DownloadDelegate\r\n@synthesize download;\r\n@synthesize downloadedBytes;\r\n@synthesize isDownloading;\r\n\r\n- (void)startDownloadOfURL:(NSURL *)url\r\n{\r\n\tself.isDownloading = YES;\r\n\t\r\n\tNSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];\r\n    self.download = [[NSURLDownload alloc] initWithRequest:request delegate:self];\r\n\t[self.download setDestination:[NSTemporaryDirectory() stringByAppendingPathComponent:[[NSProcessInfo processInfo] globallyUniqueString]]\r\n\t\t\t\t   allowOverwrite:YES];\r\n}\r\n\r\n#pragma mark NSURLDownload delegate\r\n\r\n- (void)download:(NSURLDownload *)download didReceiveDataOfLength:(NSUInteger)length\r\n{\r\n\tNSLog(@\"%@ didReceiveDataOfLength:%ld\", NSStringFromSelector(_cmd), (unsigned long)length);\r\n\tself.downloadedBytes += length;\r\n}\r\n\r\n- (void)downloadDidFinish:(NSURLDownload *)download\r\n{\r\n\tNSLog(@\"%@ self.downloadedBytes = %qi\", NSStringFromSelector(_cmd), self.downloadedBytes);\r\n\tself.isDownloading = NO;\r\n}\r\n\r\n- (void)download:(NSURLDownload *)download didFailWithError:(NSError *)error\r\n{\r\n\tNSLog(@\"%@ self.downloadedBytes = %qi\", NSStringFromSelector(_cmd), self.downloadedBytes);\r\n\tself.isDownloading = NO;\r\n}\r\n\r\n@end\r\n\r\n\r\nint main (int argc, const char * argv[]) {\r\n    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];\r\n\t\r\n\tDownloadDelegate *del = [[DownloadDelegate alloc] init];\r\n\t[del startDownloadOfURL:[NSURL URLWithString:@\"http://images.apple.com/home/elements/worldwide_us.png\"]];\r\n\t\r\n\t// Expected file size of this url is 1434 bytes.\r\n\t\r\n\tdo {\r\n\t\t[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.2]];\r\n\t} while(del.isDownloading);\r\n\t\r\n    [pool drain];\r\n    return 0;\r\n}\r\n\r\n///////////////////////////////////////"
+    email: nikita.zhuk@gmail.com
+    modified: "2011-08-28T05:42:47.924558Z"
+    number: "7611450"
+    number_intvalue: 7611450
+    originated: 4-Feb-2010 11:23 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'NSURLDownload calls didReceiveDataOfLength: delegate method too many times'

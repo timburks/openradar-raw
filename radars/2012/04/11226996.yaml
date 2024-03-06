@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11226996"
+    labels:
+        datastore_id: "1643407"
+data:
+    classification: Other Bug
+    created: "2012-04-11T14:14:44.58939Z"
+    description: "Summary:\r\nThe equality test for NSPredicate seems to take into account the class of the subclass. The class doesn't matter at all when comparing predicates. If you want a specific class you can use isKind/MemberOfClass: for that. Otherwise equality should test the equality of the predicate itself, in which case it is equal.\r\n\r\nSteps to Reproduce:\r\nTry the following code:\r\n\r\nNSPredicate *predicate1 = [NSPredicate predicateWithFormat:@\"complete = 0\"];\r\nNSPredicate *predicate2 = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObject:predicate1]];\r\nNSLog(@\"%d\", [predicate1 isEqual:predicate2]);\r\n\r\nExpected Results:\r\nPrints out 1\r\n\r\nActual Results:\r\nPrints out 0\r\n\r\nNotes:\r\nI understand they aren't strictly 100% equal, but neither is a mutable array and its immutable copy. The fact is predicate1 and predicate2 are semantically equal. They both represent the same test and given the same objects they will always return the same result. If I built a compound predicate like so it returns a 1 like you expect:\r\n\r\nNSArray *subpredicates = [NSArray arrayWithObjects:[NSPredicate predicateWithFormat:@\"foo = 0\"], [NSPredicate predicateWithFormat:@\"bar = 1\"], nil];\r\nNSPredicate *predicate1 = [NSCompoundPredicate andPredicateWithSubpredicates:subpredicates];\r\nNSPredicate *predicate2 = [NSPredicate predicateWithFormat:@\"foo = 0 AND bar = 1\"];\r\nNSLog(@\"%d\", [predicate1 isEqual:predicate2]);"
+    email: apilky@gmail.com
+    modified: "2012-04-11T14:14:44.589567Z"
+    number: "11226996"
+    number_intvalue: 11226996
+    originated: 11-Apr-2012 03:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X SDK
+    product_version: "10.7"
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: Different NSPredicate subclasses don't class as equal even if predicates are

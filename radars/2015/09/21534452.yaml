@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21534452"
+    labels:
+        datastore_id: "6741806708424704"
+data:
+    classification: Security
+    created: "2015-09-18T16:26:39.35935Z"
+    description: "Summary:\r\nRegarding the new App Transport Security cipher suites for NSExceptionRequiresForwardSecrecy: The list of cipher suites is incorrect.\r\n\r\nhttps://developer.apple.com/library/prerelease/ios/technotes/App-Transport-Security-Technote/index.html#//apple_ref/doc/uid/TP40016240-CH1-SW3\r\n\r\nSteps to Reproduce:\r\nSee NSExceptionRequiresForwardSecrecy documentation\r\n\r\nIn Default Behavior the accepted cipher suites are listed as follows:\r\n\r\nThe accepted ciphers are:\r\n\r\nTLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384\r\nTLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256\r\nTLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384\r\nTLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA\r\nTLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256\r\nTLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA\r\nTLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\r\nTLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256\r\nTLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384\r\nTLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256\r\nTLS_ECDHE_RSA_WITH_AES_128_CBC_SHA\r\n\r\nDue to the ECDHE handshake these cipher suites provide forward secrecy. (Which is GREAT and we always must require forward secrecy!)\r\n\r\nThis list of cipher suites is missing TLS_DHE_* (non elliptic curve, Diffie Hellman Ephemeral) handshakes.\r\n\r\nExpected Results:\r\nI would expect, since „NSExceptionRequiresForwardSecrecy default is (correctly) set to YES that these cipher suites are also enabled since they definitely provide forward secrecy.\r\n\r\nTLS_DHE_RSA_WITH_AES_256_GCM_SHA384\r\nTLS_DHE_RSA_WITH_AES_128_GCM_SHA256\r\nTLS_DHE_RSA_WITH_AES_256_CBC_SHA256\r\nTLS_DHE_RSA_WITH_AES_256_CBC_SHA\r\nTLS_DHE_RSA_WITH_AES_128_CBC_SHA256\r\nTLS_DHE_RSA_WITH_AES_128_CBC_SHA\r\n\r\nPrioritizing ECDHE over DHE suites is ok, since they are a little faster and need a little less CPU work which benefits clients with less processing power like Phones (compared to desktop/laptop computers) and also helps with high-latency networks like GSM/UMTS/LTE.\r\n\r\nBut, these DHE suites must be included in accepted suites when NSExceptionRequiresForwardSecrecy is YES.\r\n\r\nActual Results:\r\nWhen NSExceptionRequiresForwardSecrecy is set to NO cipher suites that definitely support forward secrecy are added in addition to those that do not provide any FS (plain RSA handshakes).\r\n\r\nThese cipher suites should be in the forward secrecy list:\r\nTLS_DHE_RSA_WITH_AES_256_GCM_SHA384\r\nTLS_DHE_RSA_WITH_AES_128_GCM_SHA256\r\nTLS_DHE_RSA_WITH_AES_256_CBC_SHA256\r\nTLS_DHE_RSA_WITH_AES_256_CBC_SHA\r\nTLS_DHE_RSA_WITH_AES_128_CBC_SHA256\r\nTLS_DHE_RSA_WITH_AES_128_CBC_SHA\r\n\r\n\r\n\r\nThese ciphers are correctly added for NSExceptionRequiresForwardSecrecy NO.\r\n\r\nTLS_RSA_WITH_AES_256_GCM_SHA384\r\nTLS_RSA_WITH_AES_128_GCM_SHA256\r\nTLS_RSA_WITH_AES_256_CBC_SHA256\r\nTLS_RSA_WITH_AES_256_CBC_SHA\r\nTLS_RSA_WITH_AES_128_CBC_SHA256\r\nTLS_RSA_WITH_AES_128_CBC_SHA\r\n\r\nVersion:\r\niOS 9\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nn/a\r\n\r\nAttachments:"
+    email: pepi.zawodsky@gmail.com
+    modified: "2015-09-18T16:26:39.35965Z"
+    number: "21534452"
+    number_intvalue: 21534452
+    originated: "2015-06-25"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X, iOS
+    product_version: 10.11, iOS 9.0/9.1
+    reproducible: Always
+    resolved: ""
+    status: Reopened
+    title: App Security NSExceptionRequiresForwardSecrecy Cipher suites incorrect

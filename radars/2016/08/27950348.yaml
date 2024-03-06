@@ -1,0 +1,41 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27950348"
+    labels:
+        datastore_id: "5004480022052864"
+data:
+    classification: Enhancement
+    created: "2016-08-22T17:49:46.59808Z"
+    description: |-
+        It’s not immediately clear from the documentation and available sample code what the best way to handle a watch connectivity background task is.
+
+        The issue is knowing when to call setCompleted on the task you’re passed in the extension delegate. There are a lot of async operations you need to do in the delegate method, including activating your WCSession and setting a delegate, and waiting for any pending messages to be delivered to your WCSession delegate.
+
+        It’s very likely that your existing Apple Watch project doesn’t perform its WCSessionDelegate handling in the same place as its extension delegate would be handling incoming background tasks. This means you need to pass the task into your WCSessionDelegate code, keep an array of tasks that might have been passed to you, and then complete them when you’ve received all of your pending WCSessionDelegate messages.
+
+        There’s a huge amount of threading issues that a developer needs to solve for in this flow.
+
+        1) You have to protect a mutable collection of tasks in case you get multiple tasks while waiting for WCSession messages
+        2) You can’t be sure how much content is pending delivery in WCSession to know when it’s appropriate to call setComplete
+        3) You don’t know how long you should wait to handle incoming WCSession content because presumably you have to call setComplete within some short amount of time to prevent being killed in the background for using too much time
+
+        This type of handling flow is very confusing to implement. It’s going to lead to pretty much everyone implementing this flow in a different way, which isn’t good for anyone.
+
+        Honestly, the best solution I’ve found for handling this flow is an embarrassing hack. I am creating an NSTimer when I get the WC background task and firing it several times and checking the session delegate “hasContentPending” property and when that hits YES I am completing any asks I’ve received since it was last NO. There was just too much code I’d have had to add to my session delegate handling implementation for it to be worth handling any other way.
+
+        I think Apple can come up with a better solution for this flow that doesn’t force developers into this type of confusing handling flow. If not, please release a recommended implementation example and improved documentation on how to handle.
+
+        The last recommendation I have is to add a method to WCSession that allows the user to pass in a refresh background task that the WCSession can be responsible for completing itself when all of the content has been delivered. That method could even do things like throwing an exception if the delegate isn’t set or the session isn’t activated when you try to tell the session to handle the task for you.
+    email: conrad.stoll@mutualmobile.com
+    modified: "2016-08-22T17:49:46.59835Z"
+    number: "27950348"
+    number_intvalue: 27950348
+    originated: 22-Aug-2016 11:49 AM
+    parent_number: '&{NULL_VALUE}'
+    product: watchOS SDK
+    product_version: watchOS 3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: WKWatchConnectivityRefreshBackgroundTask - Release Sample Code and Improved Documentation on Handling of WC Refresh Tasks

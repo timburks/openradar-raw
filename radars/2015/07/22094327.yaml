@@ -1,0 +1,66 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22094327"
+    labels:
+        datastore_id: "5052294617890816"
+data:
+    classification: Other Bug
+    created: "2015-07-31T18:43:14.73297Z"
+    description: |-
+        Summary:
+
+        On OS X 10.10.x and later, disabling Gatekeeper does not mean it is permanently off. After a set amount of time (currently 30 days), Gatekeeper will automatically re-enable itself with the "Allow apps downloaded from: Mac App Store and identified developers" setting.
+
+        After doing some research, it looks like Gatekeeper’s automatic re-enablement function can be disabled by running the following command with root privileges:
+
+        defaults write /Library/Preferences/com.apple.security GKAutoRearm -bool false
+
+        This would allow Gatekeeper to be set to "Allow apps downloaded from: Anywhere" and have it stay that way.
+
+        However, it does not appear that I can manage this with a profile based on the CFPreferencesCopyValue variable being used.
+
+        https://github.com/aosm/security_systemkeychain/blob/master/syspolicyd/syspolicyd.cpp#L298
+
+        Instead, it looks like CFPreferencesCopyAppValue would need to be used. (see attached screenshot).
+
+        Steps to Reproduce:
+
+        1. Install profile
+        2. Check value for com.apple.security GKAutoRearm
+
+        Expected Results:
+
+        com.apple.security GKAutoRearm is set to False
+
+        Actual Results:
+
+        com.apple.security GKAutoRearm is set to True
+
+        Regression:
+
+        Running the defaults command listed above sets the following value:
+
+        GKAutoRearm is set to False
+
+        Notes:
+
+        I have more information on this issue available here:
+
+        https://derflounder.wordpress.com/2015/07/31/gatekeeper-automatically-re-enables-after-30-days-on-yosemite-and-later/
+
+        I have a sample management profile available here:
+
+        https://github.com/rtrouton/profiles/tree/master/DisableGatekeeperAutomaticReenablement
+    email: rtrouton@gmail.com
+    modified: "2015-07-31T18:43:14.73319Z"
+    number: "22094327"
+    number_intvalue: 22094327
+    originated: 31-Jul-2015 02:43 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: Mac OS X 10.10.4 (14E46)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Mac OS X 10.10.4: Managing Gatekeeper''s automated re-enable via a management profile'

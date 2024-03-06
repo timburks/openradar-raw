@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7139857"
+    labels:
+        datastore_id: "64413"
+data:
+    classification: Serious Bug
+    created: "2009-08-13T13:56:24.833141Z"
+    description: "Summary:\r\n\r\nView controllers already on a Navigation Controller stack do not receive willAnimateRotationToInterfaceOrientation:duration: messages when a Tab Bar Controller's \"More Navigation Controller\" is in use.\r\n\r\nSteps to Reproduce:\r\n\r\nA minimal test case app was provided to Apple. Source is available upon request. (Email this report's originator name at gmail dot com.)\r\n\r\nHere are the high level steps to reproduce:\r\n\r\n1. Create a Tab Bar-based application, then launch Interface Builder.\r\n2. In MainView.xib, remove the second view controller item.\r\n3. Change the remaining View Controller to a \"Navigation Controller\" class.\r\n4. A Navigation Controller object will be created, containing a Navigation Bar, a View Controller, and a Tab Bar Item.\r\n5. Set the view controller to the FirstViewController class.\r\n6. Add a View to the view controller.\r\n7. Duplicate the navigation controller five more times. This forces a \"More\" tab bar item at run-time.\r\n8. Back in Xcode, in FirstViewController, enable shouldAutorotateToInterfaceOrientation: and return YES.\r\n9. Also in FirstViewController, enable willAnimateRotationToInterfaceOrientation:duration:, add a return statement, and place a breakpoint on it.\r\n10. Compile and run.\r\n11. Rotate the device for any visible tab bar item, then for either tab bar item within the \"More\" hierarchy. Observe when the breakpoint is and isn't reached after a rotation.\r\n\r\nExpected Results:\r\n\r\nEach time the device is rotated, the breakpoint should be reached, no matter which tab bar item is selected, even if we are within the \"More\" hierarchy.\r\n\r\nActual Results:\r\n\r\nOnly when in the \"More\" hierarchy, willAnimateRotationToInterfaceOrientation:duration: is NOT called, and the breakpoint not reached.\r\n\r\nAlso, in the debugger console, when rotating the device with the \"More\" hierarchy in play, this message is displayed: \"Using two-stage rotation animation. To use the smoother single-stage animation, this application must remove two-stage method implementations.\"\r\n\r\nRegression:\r\n\r\nNone known.\r\n\r\nNotes:\r\n\r\nThis problem does not occur when the tab bar item view controllers are basic view controllers. Only when they are navigation controllers and only when the \"More\" navigation hierarchy is in use.\r\n\r\nThe console message (regarding two-stage rotation animation) suggests that something within the framework (the More Navigation Controller?) is still using a two-stage animation, even though single stage is now recommended as of iPhone OS 3.0.\r\n\r\nThat could explain why willAnimateRotationToInterfaceOrientation: is not called in that particular case. Per Apple's view controler documentation, this message will NOT be invoked when two-stage, first/second-half orientation messages are being responded to instead."
+    email: jdandrea@gmail.com
+    modified: "2011-08-28T05:45:23.689489Z"
+    number: "7139857"
+    number_intvalue: 7139857
+    originated: 13-Aug-2009 09:20 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 3.0 (7A341)
+    reproducible: Always
+    resolved: 9-Sep-2009 00:00 AM
+    status: Open
+    title: Tab Bar Controller can block single-stage rotation animation messages

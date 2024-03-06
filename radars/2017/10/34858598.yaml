@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34858598"
+    labels:
+        datastore_id: "5757332575223808"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2017-10-06T17:22:33.55704Z"
+    description: "Summary:\r\nA mysterious crash has showed up on iOS11 (including 11.0.1, and 11.0.2), iPhone 5S/6/6+ since the first beta.\n\nHere is what we know so far:\n- The crash is specific to iOS11, iPhone 5S/6/6+. It doesn’t occur on 6S and up.\n- The core of the OpenGL stack returns gpus_ReturnGuiltyForHardwareRestart\n- It occurs when we attempt to invoke [EAGLContext presentRenderbuffer] from a CAEAGLLayer\n- We don’t have a repro.\n- This is currently the top iOS11 crash for the Instagram app, and second for the Facebook app (across all devices).\n\nWhat we have tried so far:\n- Remove any reference to VBO/VAO in our rendering stack. Didn’t help.\n- We have tried reproing with a large range of drawing scenarios (rotation, resize, background/foreground). No luck.\n- As far as we can tell, there is nothing specific in our application logic between the iPhone 6 family and the iPhone 6S family.\n\nSome clues (that could be relevant but not necessarily):\n- We know that when the presentRenderBuffer is invoked off main thread, and some CATransaction are occurring at the same time on the main thread, the crash rate goes up.\n- When presentRenderBuffer is invoked on main thread (along with the whole drawing pipeline), the crash rate goes slightly down but not drastically.\n- A substantial chunk (~20%) of the crashes occurs when the layer goes off screen and/or gets out of the view hierarchy.\n\nHere is the stack trace:\n\nlibGPUSupportMercury.dylib gpus_ReturnGuiltyForHardwareRestart\n\n1 AGXGLDriver gldUpdateDispatch\n2 libGPUSupportMercury.dylib gpusSubmitDataBuffers\n3 AGXGLDriver gldUpdateDispatch\n4 GLEngine gliPresentViewES_Exec\n5 OpenGLES -[EAGLContext presentRenderbuffer:]\r\n\r\nSteps to Reproduce:\r\nUnable to reproduce but we're seeing very large crash numbers in production\r\n\r\nExpected Results:\r\nN/A since we can not reproduce it\r\n\r\nActual Results:\r\nN/A since we can not reproduce it\r\n\r\nVersion:\r\n11.0.2\r\n\r\nNotes:\r\n- This is currently the top iOS11 crash for the Instagram app, and second for the Facebook app (across all devices)."
+    email: dannyzatfb@gmail.com
+    modified: "2017-10-06T17:22:33.55722Z"
+    number: "34858598"
+    number_intvalue: 34858598
+    originated: 06-Oct-2017 10:22 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 11.0.2
+    reproducible: Unable
+    resolved: ""
+    status: Open
+    title: gpus_ReturnGuiltyForHardwareRestart Crash in [EAGLContext presentRenderbuffer]

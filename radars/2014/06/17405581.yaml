@@ -1,0 +1,82 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17405581"
+    labels:
+        datastore_id: "6442359810162688"
+data:
+    classification: Serious Bug
+    created: "2014-06-21T06:50:44.633597Z"
+    description: |-
+        Summary:
+        Implementing a generic algorithm over random-access collections is made substantially harder by a RandomAccessIndex's lack of reference to its start index.
+
+        I can't add indices. I can add a distance to an index by means of advance(), but to add two indices I'd need to convert one of them into a distance. I can get the distance *between* two indices with distance(), but I can't get the distance between an index and 0. This further means I can't multiply indices, because there's no base case.
+
+        For example, consider an OffsetView of a Collection (see Notes). I can pass the offset in generically as a T.IndexType.DistanceType, however:
+
+        - I can't operate on it generically so as to be able to provide a default offset of, say, half the collection's length (because I can't get the collection's length generically)
+        - I can't compute an index algebraically—or maybe I can. *Apparently* adding two RandomAccessIndex.DistanceTypes is well-defined (insofar as n + m satisfies the typechecker), but there's no way to find that in the headers currently: DistanceType is referred to but never declared, RandomAccessIndex has no public members, etc. So even if I could get the collection's length generically, as it stands it's unclear whether or not I could do division over it.
+
+        I suspect some of this is actually possible and just not documented, apparently as with the addition of DistanceType, but the lack of reference to the surrounding start/end indices hints at real trouble.
+
+        Finally, I think RandomAccessIndex, or at least its DistanceType, ought to be convertible to Int. countElements(...) returns DistanceType; DistanceType isn’t arbitrarily convertible to Int (as far as I can tell). This means that I can't make an array whose length is computed from an arbitrary RandomAccessIndex'd Collection's count and which is initialized with 0:
+
+            Int[](count: 2 * state.max + 1, repeatedValue: 0)
+
+        (state.max is a DistanceType computed from countElements.)
+
+
+        Steps to Reproduce:
+        1. Try to do arithmetic with RandomAccessIndex & its DistanceType
+
+        Expected Results:
+        Success
+
+        Actual Results:
+        Failure :(
+
+        Regression:
+        N/A
+
+        Notes:
+        Here's the OffsetView:
+
+        struct OffsetView<T : Collection where T.IndexType : RandomAccessIndex> : Collection {
+        	typealias GeneratorType = IndexingGenerator<OffsetView<T>>
+        	
+        	var _collection: T
+        	var _offset: T.IndexType.DistanceType
+        	
+        	init(collection: T, offset: T.IndexType.DistanceType) {
+        		_collection = collection
+        		_offset = offset
+        	}
+        	
+        	func generate() -> IndexingGenerator<OffsetView<T>> {
+        		return IndexingGenerator(self)
+        	}
+        	
+        	var startIndex: T.IndexType {
+        		return _collection.startIndex
+        	}
+        	var endIndex: T.IndexType {
+        		return _collection.endIndex
+        	}
+        	
+        	subscript (i: T.IndexType) -> T.GeneratorType.Element {
+        		return _collection[_offset + i] // requires an overload of + calling advance(i, _offset)
+        	}
+        }
+    email: rix.rob@gmail.com
+    modified: "2014-06-21T06:50:44.63371Z"
+    number: "17405581"
+    number_intvalue: 17405581
+    originated: 21-Jun-2014 02:50 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta2 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: RandomAccessIndex may or may not admit arithmetic'

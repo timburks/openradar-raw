@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12866303"
+    labels:
+        datastore_id: "2419401"
+data:
+    classification: Enhancement
+    created: "2012-12-12T18:27:44.434596Z"
+    description: "SUMMARY\r\nAs you may well know, extending a UIActivity requires the programmer to override a few methods.\r\n\r\nThe methods that are unequivocally required to be overridden are:\r\n- (NSString *)activityType;\r\n- (NSString *)activityTitle;\r\n- (UIImage *)activityImage;\r\n- (BOOL)canPerformWithActivityItems:(NSArray *)activityItems;\r\n- (void)prepareWithActivityItems:(NSArray *)activityItems;\r\n\r\nThe programmer also has to override one and just one of the following:\r\n- (UIViewController *)activityViewController;\r\n- (void)performActivity;\r\n\r\n\r\nTHE ISSUES\r\nThis API presents some issues regarding how programmers extend a UIActivity:\r\n\r\n1. activityType's only use for the programmer is to be able to exclude it from the UIActivityViewController. This renders useless as the programmer can instead not add it to the applicationActivities.\r\n\r\nIf an id is internally required, it should handled internally and thus transparently to the programmer.\r\n\r\n2. prepareWithActivityItems: just doesn't need to be there. It runs after the user has tapped on the UIActivity and practically immediately after this method is done, the activityViewController or performActivity is called, making it useless to be on a separated method.\r\n\r\nThe activity items should be passed as a parameters to whatever method performs the activity.\r\n\r\n3. Having to choose if the right method to override is activityViewController or performActivity is for ones confusing and for seconds restrictive, since the programmer needs to decide on build time if the activity will be silent or if it will present a UIViewController.\r\n\r\nBoth activityViewController and performActivity should be unified into a single method that will allow the programmer to decide if he wants to show a UIViewController or not while performing the activity.\r\n\r\n\r\nTHE REQUIREMENTS\r\nMain:\r\n* The programmer must be able to decide in run time if he wants to present a UIViewController or run in background, by using a unified method, to perform the activity.\r\n\r\nSecondaries:\r\n* The programmer shouldn't have to override a separate method to prepare the activity items while it could be simple sent as a parameter to the unified perform activity method.\r\n* The programmer shouldn't have to deal with the activityType at all.\r\n\r\n\r\nA PROPOSED SOLUTION\r\nThis project (attached also) is a sample of how much easier it is to extend a UIActivity with this proposed changes, while loosing none of its great functionality.\r\n\r\nhttps://github.com/marianoabdala/ZYActivity\r\n\r\n\r\nSUPPORT\r\nThe project was featured on:\r\nhttp://iosdevweekly.com/issues/71/\r\nhttp://uiactivities.com/post/37633196615/zyactivity-an-easier-to-inherit-uiactivity\r\n\r\nAlso, in 9 days it gathered over 30 stars on GitHub, which I interpret as support or preference over the regular UIActivity API.\r\n\r\n\r\nTHANKS!\r\nFor taking the time to read through this and for being open to suggestions."
+    email: mabdala@gmail.com
+    modified: "2012-12-12T18:27:44.434967Z"
+    number: "12866303"
+    number_intvalue: 12866303
+    originated: 12/12/2012
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "6.0"
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: Proposed new API for extending UIActivity

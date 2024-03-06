@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17587040"
+    labels:
+        datastore_id: "5844697394184192"
+data:
+    classification: Other Bug
+    created: "2014-07-08T07:20:16.597496Z"
+    description: "The Swift language can infer the concrete types of arguments passed to generic functions.  In previous beta versions of the compiler, it would allow shorthand notation for enum values in such arguments.  In the beta 3 compiler, however, XCTAssertEqual no long infers the correct type.  \r\n\r\nThis is the essence of the code the exhibits the issue.  I no longer have the Beta 2 Swift compiler, so I can’t completely verify that it compiled with Beta 2.  However, the error definite on Beta 3.\r\n\r\nimport XCTest\r\n\r\nenum SimpleToken {\r\n    case Name(String)\r\n    case Number(Int)\r\n}\r\n\r\nextension SimpleToken : Printable {\r\n    var description: String { get {\r\n        switch self {\r\n        case Name(let value): return \"Name(\\(value))\"\r\n        case Number(let value): return \"Number(\\(value))\"\r\n        }\r\n    }}\r\n}\r\n\r\nextension SimpleToken : Equatable {\r\n}\r\n\r\nfunc ==(lhs: SimpleToken, rhs: SimpleToken) -> Bool {\r\n    switch lhs {\r\n    case .Name(let lval): switch rhs {\r\n        case .Name(let rval): return lval == rval\r\n        default: return false\r\n        }\r\n    case .Number(let lval): switch rhs {\r\n        case .Number(let rval): return lval == rval\r\n        default: return false\r\n        }\r\n    }\r\n}\r\n\r\nclass TryPrintableEnum: XCTestCase {\r\n   \r\n    func testExample() {\r\n        XCTAssertEqual(SimpleToken.Number(1), .Name(\"Hello\"))\r\n    }\r\n    \r\n}\r\n\r\n\r\nThe error in the Beta 3 compiler is:\r\n\r\nTryPrintableEnum.swift:44:48: error: '(@auto_closure () -> SimpleToken).Type' does not have a member named 'Name'\r\n        XCTAssertEqual(SimpleToken.Number(1), .Name(\"Hello\"))\r\n                                               ^\r\n\r\nNote that the inferred type should be SimpleToken, but it resolves to Type."
+    email: jlieske@gmail.com
+    modified: "2015-03-02T07:43:12.305925Z"
+    number: "17587040"
+    number_intvalue: 17587040
+    originated: 08-Jul-2014 00:18 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 'Xcode 6 beta 3: Version 6.0 (6A254o)'
+    reproducible: Always
+    resolved: Resolved
+    status: Closed
+    title: Swift no longer infers type of XCTAssertEqual arguments

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6973133"
+    labels:
+        datastore_id: "43407"
+data:
+    classification: Other Bug
+    created: "2009-06-15T19:30:00.825632Z"
+    description: "15-Jun-2009 03:26 PM Jim Dovey:\r\nUnlike the iPhone OS 3.0 SDK for Leopard, the Snow Leopard download doesn't include any SDKs for iPhone OS 2.x. Any attempt to use a copy of the OS 2.x SDKs from Leopard causes problems, whether through copying the .sdk folders on their own or trying to create the (required) symlinks to gcc-4.0 and gcc-4.2 which the SDKs require.\r\n\r\nUltimately, the issues are with the #include_next statements in files such as /usr/include/stdarg.h. #include_next is expected to find a header file within a path similar to:\r\n\r\n$SDKROOT/usr/lib/gcc/i686-apple-darwin9/4.2.1/include/stdarg.h\r\n\r\n(this also hits float.h and immintrin.h, IIRC).\r\n\r\nWhen targetting anything other than the OS 3.0 SDKs under Snow Leopard, the compiler bails because it can't find the compiler-specific flavours of those header files. Since the SDK bundles are something of a black art, no-one is sure where the settings are which would need to change.\r\n\r\nI have no problem building my OS 2.x apps using gcc 4.2 (if it compiles, it compiles), but when I have clients demanding OS 2.x support it isn't acceptable for the SDK to tag my built product as requiring OS 3.0. For one thing, I can get layout glitches in some cases (UITableViewCell.contentView now reaches right up to the first pixel of the UITableViewCellAccessoryDisclosure view, meaning I'd have to alter my custom cell layouts for 3.0-SDK builds — this is unnecessary when the Info.plist tags it as built using 2.x SDKs). Secondly, this means that only users with OS 3.0 will be able to download and run the app.\r\n\r\nI have about $50'000 of potential contracts lined up for both Snow Leopard and the iPhone. Most of the iPhone ones are requesting OS 2.x support, and refuse to be swayed from that decision. With the recession, this puts me in a very awkward situation right now, because I can't afford to annoy these people and have word get out that I'm 'inflexible'.\r\n\r\nIt would be great if the Snow Leopard iPhone SDK installer would include iPhone 2.2.1 support. Alternatively, a tech note describing how to get a 2.x SDK running properly on Snow Leopard would also be great, no matter the level of detail. I've been trying all sorts of things for the past week while at WWDC, and so far nothing I've tried works.\r\n\r\n15-Jun-2009 03:38 PM Jim Dovey:\r\nI should also note: There is an option in Xcode 3.2 for 'iPhone OS Deployment Target'. This does NOT affect the build settings for iPhone SDK 3.0 much. I still get all the deprecation warnings when building for the simulator, and the final built version still has 'DTSDKName=iphone[os|simulator]3.0' when building.\r\n\r\nTo clarify:\r\n\r\n1. regardless of the deployment target, building for the Simulator will ALWAYS use iPhone SDK 3.0 APIs, thus generate deprecation warnings aplenty. Building for the Device will not give those warnings.\r\n\r\n2. Regardless of deployment target, the final binary will declare that it was built using the 3.0 SDK, thus triggering 3.0-only behaviour on the device and in the App Store upload process. So I can get the compiler to notice that I'm targeting 2.x, but the store/device will ignore that.\r\n\r\n15-Jun-2009 04:47 PM Jim Dovey:\r\nI've found the solution to the problem, and it is (as usual) irksomely simple: The $SDKROOT/usr/lib/gcc/i686-apple-darwin9 folder needs to have a symlink pointing to it at the path $SDKROOT/usr/lib/gcc/i686-apple-darwin10. This fixes all the issues (although having gcc 4.2.1 stuff in there also doesn't hurt).\r\n\r\n15-Jun-2009 04:48 PM Jim Dovey:\r\nMore information here: http://alanquatermain.net/post/124150829/iphone-2-x-sdks-on-snow-leopard"
+    email: jimdovey@gmail.com
+    modified: "2011-08-28T05:46:28.441441Z"
+    number: "6973133"
+    number_intvalue: 6973133
+    originated: 15-Jun-2009 03:26 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: "3.2"
+    reproducible: Always
+    resolved: ""
+    status: Third Party to resolve (closed)
+    title: No iPhone OS 2.x build capabilities under Snow Leopard

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6997896"
+    labels:
+        datastore_id: "50404"
+data:
+    classification: Serious Bug
+    created: "2009-06-23T15:59:07.000642Z"
+    description: "23-Jun-2009 10:56 AM Dave Dribin:\r\nSummary: \r\nThe managed object context does not receive NSEditorRegistration notifications when binding the underlying array controller's content set.\r\n\r\nSteps to Reproduce:\r\nUsing the attached MyTunes project:\r\n\r\n1. Add an album\r\n2. Add a song\r\n3. Edit the song's name\r\n4. Click the \"Commit MOC\" button\r\n5. Check the \"Bind to self\" checkbox\r\n6. Edit the song's name again\r\n7. Click the \"Commit MOC\" button\r\n\r\nExpected Results:\r\nThe in-process edit in Step 3 is committed when the button is pressed in Step 4 and the in-process edit in Step 6 is committed when the button is pressed in Step. 7.\r\n\r\nActual Results:\r\nThe edit does not get committed in Step 7.\r\n\r\nRegression:\r\nThis does not work on any version of Mac OS X 10.5, and does not work on 10.6 (tested on 10A380).\r\n\r\nNotes:\r\nWhen \"Bind to self\" is unchecked, the Songs array controller's content is bound to the selection of the Albums array controller.  When it is checked, it is bound to the \"selectedAlbum\" property of the document.  For some reason, binding directly to the document (or through an NSObjecController proxy) does not cause the MOC to get the NSEditorRegistration methods.\r\n\r\nWhile it is possible to commit editing directly on the Songs array controller or using [window makeFirstResponder:window], neither of these solutions very robust.\r\n\r\nThe best workaround is to implement objectDidBegin/EndEditing: in the document, and pass those down to the MOC.  This way, we can always call commitEditing: on the MOC when we need to ensure UI edits are complete before proceeding.\r\n\r\n- (void)objectDidBeginEditing:(id)editor\r\n{\r\n    [[self managedObjectContext] objectDidBeginEditing:editor];\r\n    if ([[MyDocument superclass] instancesRespondToSelector:@selector(objectDidBeginEditing:)]) {\r\n        [super objectDidBeginEditing:editor];\r\n    }\r\n}\r\n\r\n- (void)objectDidEndEditing:(id)editor\r\n{\r\n    [[self managedObjectContext] objectDidEndEditing:editor];\r\n    if ([[MyDocument superclass] instancesRespondToSelector:@selector(objectDidEndEditing:)]) {\r\n        [super objectDidEndEditing:editor];\r\n    }\r\n}\r\n\r\n\r\n\r\n\r\n'MyTunes.tbz2' was successfully uploaded\r\n\r\n23-Jun-2009 10:57 AM Dave Dribin:\r\nAttaching a screencast (MyTunes.mov).\r\n\r\n\r\n'MyTunes.mov' was successfully uploaded"
+    email: ddribin@gmail.com
+    modified: "2011-08-28T05:46:17.629847Z"
+    number: "6997896"
+    number_intvalue: 6997896
+    originated: 23-Jun-2009 10:56 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.6/9J61
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: MOC does not receive NSEditorRegistration notifications when binding content set

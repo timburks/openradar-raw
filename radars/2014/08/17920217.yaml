@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17920217"
+    labels:
+        datastore_id: "5899208850669568"
+data:
+    classification: Other Bug
+    created: "2014-08-05T19:27:10.258888Z"
+    description: "Summary:\r\nThis is a complicated one, and I've tried my best to provide an adequate sample project. Disclaimer: this workspace and library target was created using CocoaPods, but! Please don't close my bug! But! All the project is now is a collection of Xcode project files, workspace files, and xcconfig files. Nothing special. All of the special build phases and everything that CocoaPods does, I've taken out. This is a valid Xcode project setup, and it's got a problem. \r\n\r\nThe structure of the project is a little complex, but it's essentially iOS app named \"Kiosk\" depends on a library target in another project (same workspace), and that library target depends on another library target, where the Objective-C source files are. Good times. \r\n\r\nOK, so far so good. I created an Objective-C bridging header to use those files in the library I'm transitively linking against. Cool. I can use the classes defined there, and my code will compile. Great. But then I try and run my app, and I get a crash. \r\n\r\n2014-08-05 21:18:11.378 Kiosk[4230:4675017] *** NSForwarding: warning: object 0x4a9a0 of class 'Thing' does not implement methodSignatureForSelector: -- trouble ahead\r\n2014-08-05 21:18:11.379 Kiosk[4230:4675017] *** NSForwarding: warning: object 0x4a9a0 of class 'Thing' does not implement doesNotRecognizeSelector: -- abort\r\n\r\nI can't paste the full contents of the stack trace – here's the top of it:\r\n\r\n* thread #1: tid = 0x4755c9, 0x015f19b2 CoreFoundation`___forwarding___ + 1026, queue = 'com.apple.main-thread', stop reason = EXC_BREAKPOINT (code=EXC_I386_BPT, subcode=0x0)\r\n  * frame #0: 0x015f19b2 CoreFoundation`___forwarding___ + 1026\r\n    frame #1: 0x015f158e CoreFoundation`__forwarding_prep_0___ + 14\r\n    frame #2: 0x013e0981 libswiftCore.dylib`swift_getInitializedObjCClass + 33\r\n    frame #3: 0x000475b2 Kiosk`type metadata accessor for ObjectiveC.Thing + 50\r\n    frame #4: 0x000469b6 Kiosk`Kiosk.ViewController.viewDidLoad (self=0x7c46a6e0)() -> () + 950 at ViewController.swift:19\r\n    frame #5: 0x00046c42 Kiosk`@objc Kiosk.ViewController.viewDidLoad (Kiosk.ViewController)() -> () + 34 at ViewController.swift:0\r\n\r\nOK, so. What's going on? The object is being loaded at runtime – I checked that load was getting called on it. But, it turns out that something really weird was going on. The implementation file wasn't #import'ing the header file, so when it went to @implementation, it didn't have a base class at all. Even though the Swift code thought it did. \r\n\r\nSuper weird, since usually the compiler warns us that there is no base class. It didn't this time – spoooooky. \r\n\r\nRelatively minor bug, but I thought I should report it. Sorry I don't have better steps to reproduce. Here's the sample project: http://cloud.ashfurrow.com/3V3I1R3a2O35\r\n\r\nSteps to Reproduce:\r\nI've tried a few times to recreate this issue, and I just can't without this project. I'm hoping that you'll be able to debug it and discover the source of the error. Please see my sample app – just try and run it and it'll crash."
+    email: ash.furrow@gmail.com
+    modified: "2014-08-05T19:27:10.259014Z"
+    number: "17920217"
+    number_intvalue: 17920217
+    originated: Aug 5, 2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6 Beta 5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Type defined in header of another project within a workspace doesn't necessarily match superclass

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7019347"
+    labels:
+        datastore_id: "57411"
+data:
+    classification: Other Bug
+    created: "2009-06-30T09:57:29.104017Z"
+    description: "Summary:\r\nEven when the caller sets the request's HTTP method to HEAD, NSURLConnection uses GET to retrieve the resource.\r\n\r\nSteps to Reproduce:\r\n1. Create an NSURLRequest for an HTTP URL.\r\n2. Set its HTTP method to @\"HEAD\".\r\n3. Create an NSURLConnection for the request, and start it immediately.\r\n\r\nExpected Results:\r\nThe NSURLConnection uses HEAD to obtain a basic response with no body, and does not send connection:didReceiveData: to its delegate.\r\n\r\nActual Results:\r\nThe NSURLConnection uses GET, and sends connection:didReceiveData: to its delegate.\r\n\r\nRegression:\r\nUnknown.\r\n\r\nWorkaround:\r\nOne is to cancel and release the connection in connection:didReceiveResponse: or connection:didReceiveData:. Another is to set a Range header of “bytes=0-1” on the request, but that probably won't work for all resources. (Latter workaround suggested by Mo (@nevali) on Twitter.)\r\n\r\nNotes:\r\nHTTP 1.1 explicitly requires HEAD to not return a body. I confirmed using curl that the server I was testing with was not returning a body. However, my Cocoa app's connection delegate does receive a body. Therefore, the connection must be using GET (I'm assuming it's not using POST).\r\n\r\nIt doesn't matter whether I use the synchronous or asynchronous API. The synchronous API returns an empty data object, but I can tell by looking at network traffic that it is downloading the file.\r\n\r\nI wrote a test app using the asynchronous API:\r\n\r\n\thttps://bitbucket.org/boredzo/http-header-retriever/\r\n\r\n\tZip archive of source that's current as I write this:\r\n\thttps://bitbucket.org/boredzo/http-header-retriever/get/0b3d8cbe5db2.zip\r\n\r\n\tZip archive of whatever source is current when you download it:\r\n\thttps://bitbucket.org/boredzo/http-header-retriever/get/tip.zip\r\n\r\nAfter you enter a URL and hit Retrieve in the app's main window, switch over to Xcode and take a look at the Run Log."
+    email: boredzo@gmail.com
+    modified: "2011-08-28T05:46:05.614031Z"
+    number: "7019347"
+    number_intvalue: 7019347
+    originated: 2009-06-30T02:57-0700
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.7/9J61
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSURLConnection uses GET even when I ask for HEAD

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39833129"
+    labels:
+        datastore_id: "4939459602677760"
+data:
+    classification: Bug
+    created: "2018-04-30T12:06:07.18864Z"
+    description: "module loadiing bug in LLDB\r\n\r\nLLDB doesn't load modules/ast's correctly for some compiler flags that do compile.\r\n\r\n\r\n## structure\r\n```\r\n\tmodulebug \t\t(binary)\r\n\t├── swiftdep1\t(static lib, swift)\r\n\t│   └── dep1\t(static lib, objc)\r\n\t└── swiftdep2\t(static lib, swift)\r\n\t    └── dep2\t(static lib, objc)\r\n```\r\nImportant flags args are in .xcconfigs. Slightly simplified the important ones are:\r\n```\r\n\t# modulebug.xcconfig\r\n\tOTHER_LDFLAGS = -add_ast_path swiftdep1.swiftmodule -add_ast_path swiftdep2.swiftmodule\r\n\r\n\t# swiftdep1.xcconfig\r\n\tHEADER_SEARCH_PATHS = dep1\r\n\r\n\t# swiftdep2.xcconfig\r\n\tHEADER_SEARCH_PATHS = dep2\r\n```\r\n\r\n## problem\r\n- Run the project\r\n- Add a breakpoint in swiftdep1/swiftdep1.swift\r\n```\r\n\t(lldb) po self\r\n\twarning: Swift error in module modulebug.\r\n\tDebug info from this module will be unavailable in the debugger.\r\n\r\n\terror: <EXPR>:3:1: error: use of unresolved identifier 'self'\r\n\tself\r\n\t^~~~\r\n```\r\n\r\n- Add a breakpoint in swiftdep2/swiftdep2.swift\r\n\r\n```\r\n\t(lldb) po self\r\n\terror: in auto-import:\r\n\tfailed to get module 'swiftdep2' from AST context:\r\n\terror: missing required module 'dep2'\r\n```\r\n\r\n## Known workarounds\r\n- Add the header search paths for all transitively dependend modules for the top level binary to the `HEADER_SEARCH_PATHS` of the swift target is added as first to the binary using `-add_ast_path`.\r\n```\r\n\t# modulebug.xcconfig\r\n\tOTHER_LDFLAGS = -add_ast_path swiftdep1.swiftmodule -add_ast_path swiftdep2.swiftmodule\r\n\r\n\t# swiftdep1.xcconfig\r\n\tHEADER_SEARCH_PATHS = dep1 dep2\r\n\r\n\t# swiftdep2.xcconfig\r\n\tHEADER_SEARCH_PATHS = dep2\r\n```\r\n\r\n- Use SWIFT_INCLUDE_PATHS instead of HEADER_SEARCH_PATHS in the swift targets. This is not feasible for mixed targets that also need the headers included in objective c code.\r\n\r\n\r\n## Idea for root cause\r\n- It seems like lldb loads all `-I` paths from all swiftmodules available in a debuggable binary, but it only adds the clang importer search paths `-Xcc` flags from the first swiftmodule available in a debuggable binary."
+    email: robbert@uber.com
+    modified: "2018-04-30T12:06:07.18883Z"
+    number: "39833129"
+    number_intvalue: 39833129
+    originated: April 30 2018, 2:03 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'LLDB auto-import: failed to get module error when mixing swift and objective-c'

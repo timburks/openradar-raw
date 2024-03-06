@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35070721"
+    labels:
+        datastore_id: "5058829561626624"
+data:
+    classification: Serious bug
+    created: "2017-10-19T10:05:06.34575Z"
+    description: "Summary:\r\nI've configured amavisd in macOS Server to sign email with DKIM key.\r\nSince Server 5.2 signing did not work anymore.\r\n\r\nI was able to fix it by manually patching /Applications/Server.app/Contents/ServerRoot/usr/bin/amavisd\r\nusing advice from apple forums ->\r\nhttps://discussions.apple.com/thread/7684786?start=0&tstart=0\r\nAfter adding line 22852  $msginfo->originating(c('originating'));\r\nsigning works again.\r\n\r\nPlease fix this or create support article about proper DKIM configuration on macOS Server (or even better integrate this option into Server.app GUI).\r\n\r\nSteps to Reproduce:\r\nConfigure amavisd to sign email using dkim. See configuration files in attachment.\r\n=>\r\n1. Generate DKIM key\r\nmkdir -p /somedir/dkim \r\nchown _amavisd /somedir/dkim \r\nsudo -u _amavisd -H amavisd genrsa /somedir/domain.com 2048\r\nchown root:_amavisd /somedir/domain.com.pem  \r\nchmod 640 /somedir/domain.com.pem\r\n\r\n2. Add lines:\r\ndkim_key('domain.com', 'default', '/somedir/domain.com.pem');\r\n@dkim_signature_options_bysender_maps = ( { '.' => { ttl => 21*24*3600, c => 'relaxed/simple' } } ); \r\n$interface_policy{'10024'} = 'MYNETS';\r\n\r\n3. Restart mail service\r\n\r\nExpected Results:\r\n\r\nDKIM signing should work.\r\n\r\nActual Results:\r\n\r\nDKIM signing does not work until i patch amavisd as described in summary.\r\n\r\nVersion/Build:\r\nServer 5.2\r\nServer 5.3\r\nServer 5.4\r\n\r\nConfiguration:\r\nSee configuration in attachment"
+    email: michalm.mac@gmail.com
+    modified: "2018-10-26T15:19:23.774065Z"
+    number: "35070721"
+    number_intvalue: 35070721
+    originated: 19.10.2017
+    parent_number: '&{NULL_VALUE}'
+    product: Server
+    product_version: "5.4"
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: DKIM signing broken in Server 5.2 and later

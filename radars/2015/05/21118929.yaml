@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21118929"
+    labels:
+        datastore_id: "6632053550350336"
+data:
+    classification: Enhancement
+    created: "2015-05-27T08:08:42.36394Z"
+    description: "Summary:\r\nCommunication between members of an App Group (be they an app and its extensions, or multiple apps) is not straightforward. In the case of multiple App Group members sharing a Core Data store, if one member writes to the persistent store then there is no simple mechanism to communicate these changes to the other group members.\r\n\r\nThe ability to send notifications between App Group members would simplify this process and bring additional benefits to developers and users of app groups, extensions and Watch apps.\r\n\r\nSteps to Reproduce:\r\n1. Have two applications, A and B, that are members of an App Group and share a Core Data store in the group’s folder\r\n2. Application A is running in the background, perhaps receiving network or bluetooth events.\r\n3. Application B is running in the foreground\r\n4. Application A writes to the core data store\r\n\r\nExpected Results:\r\nThe above situation is analogous to the persistent store being updated by iCloud. A similar notification to NSPersistentStoreDidImportUbiquitousContentChangesNotification should be available to be consumed by a managed object context, which will update the relevant objects. A mechanism to pass this notification from one app group member to the others is also required.\r\n\r\nActual Results:\r\nApplication B is unaware of these changes\r\n\r\nVersion:\r\niOS 8\r\n\r\nNotes:\r\nThe workaround is simulated in the attached project:\r\n- Having the writing application listen for the NSManagedObjectContextDidSave notification\r\n- Translating the userInfo dictionary from this notification into a serialisable form by extracting the URIs of the object IDs of the managed objects held therein\r\n- Writing this dictionary to a folder in the app group shared folder\r\n- Having the reading application watch the folder using GCD, and when a file is written, read in the dictionary, convert the URIs back to managed object IDs, create a NSPersistentStoreDidImportUbiquitousContentChangesNotification and pass this to the managed object context to be consumed.\r\n\r\nA notification centre shared between app group members would greatly simplify this process if the NSManagedObjectContextDidSave notification would work when passed across members. If not, a separate notification would be needed which has similar content to NSPersistentStoreDidImportUbiquitousContentChangesNotification.\r\n\r\nConfiguration:\r\nAny"
+    email: jrturton@gmail.com
+    modified: "2015-05-27T08:08:42.36435Z"
+    number: "21118929"
+    number_intvalue: 21118929
+    originated: 27/05/2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "8"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Introduce an NSNotificationCenter shared by members of an App Group

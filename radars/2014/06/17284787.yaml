@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17284787"
+    labels:
+        datastore_id: "5594858609704960"
+data:
+    classification: New Feature
+    created: "2014-06-12T10:40:40.662161Z"
+    description: "Summary:\r\nEvery parameter to a Swift method should have a keyword by default.\r\n\r\nObjective-C got to be as readable as it is because every selector reads well. Part of “reading well” is that every parameter is labeled. Swift apparently has trouble \"seeing\" this structure, so it does not attempt to label the first parameter of Objective-C methods; instead it blindly translates them. For instance, the selector -postNotificationName:object:userInfo: is translated as postNotificationName(_:object:userInfo:), when it should clearly be postNotification(name:object:userInfo:).\r\n\r\nI think that an appropriate set of heuristics could nearly always split Objective-C names correctly. But even if you can't, Swift should not make the problem worse by encouraging native Swift methods to use the same broken syntax.\r\n\r\n(I actually think function parameters should be keyworded too, but that’s a different radar.)\r\n\r\nSteps to Reproduce:\r\n1. Create a Swift file.\r\n2. Define a method: class X { class func foo(x: Int, y: Int) { /* do nothing */ } }\r\n3. Write a call to it: X.foo(x: 1, y: 2)\r\n\r\nExpected Results:\r\nThe call works by default.\r\n\r\nActual Results:\r\nThe call does not work because some Swift parameters are not labeled.\r\n\r\nNotes:\r\nI noticed that the swift-ide-test tool has some heuristics to split Objective-C selectors. I think those heuristics could be improved, perhaps enough to fully activate them, by examining not only the selector, but not only the first parameter name. Here’s what I mean:\r\n\r\nCompare the keyword “postNotificationName” and the parameter “aName” case-insensitively. The two have a common suffix, “Name”, and the first letter of this suffix in the selector is capitalized. Therefore, “postNotification” is the method name and “name” is the keyword.\r\n\r\nYou may need to ignore common suffixes like “Ptr” on the parameter name, and there may be cases where it doesn’t work. But combined with your current heuristics, like splitting on words like “With” or “Using”, you can probably get nearly all Cocoa methods right."
+    email: brent@architechies.com
+    modified: "2014-06-12T10:49:54.415749Z"
+    number: "17284787"
+    number_intvalue: 17284787
+    originated: 12-Jun-2014 03:40 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta (6A215l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: All Swift method parameters should be keyworded

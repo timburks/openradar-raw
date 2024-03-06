@@ -1,0 +1,64 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25868181"
+    labels:
+        datastore_id: "5057917065625600"
+data:
+    classification: Serious Bug
+    created: "2016-04-22T01:11:34.41653Z"
+    description: |-
+        This is a duplicate of rdar://23551273
+
+        Summary:
+        This is a follow-up to rdar://22596105. Autocompletion got better after that radar, however, the situation is still very dire when it comes to debugging projects that link against frameworks compiled from outside. In particular, any attempt to print (`po`) objects or navigate through stack traces results in immediate crashes, which means that we are COMPLETELY unable to debug our code, which is extremely frustrating. It’s the year 2015 and we can’t debug code.
+
+        I was told that Xcode 7.2 made this better, but due to rdar://22993940 I hadn’t been able to test this myself.
+        After talking about this with other devs, and receiving lots of reports of this still broken (https://github.com/Carthage/Carthage/issues/832 for example) in Xcode 7.2, another developer put together the attached sample project.
+
+        Steps to Reproduce:
+        - Unzip attached project.
+        - Open project with Xcode 7.2 beta 3 (7C62). Or any other version of Xcode, for that matter. This has been broken since Xcode 7.0.
+        - Set a breakpoint on ViewController.swift:14, inside of -viewDidLoad.
+        - Run the app and wait for debugger to attach.
+        - If you're lucky and Xcode has not crashed yet, try to print *anything* (like `po self.view`) from the console.
+
+        Expected Results:
+        - The view description is printed.
+        - We are all happy because we can debug code!
+
+        Actual Results:
+        - Xcode crashes immediately.
+        - We are extremely unhappy.
+        - Software Development in 2015 is reduced to inserting `print` statements all around.
+
+        Some details from the crash report:
+        Application Specific Information:
+        ProductBuildVersion: 7C62
+        HandleCommand(command = "po self.view")
+
+        Thread 27 Crashed:
+        0   com.apple.LLDB.framework      	0x000000011996c14b swift::ModuleFile::getModule(llvm::ArrayRef<swift::Identifier>) + 443
+        1   com.apple.LLDB.framework      	0x000000011997feeb swift::ModuleFile::associateWithFileContext(swift::FileUnit*, swift::SourceLoc) + 1739
+        2   com.apple.LLDB.framework      	0x000000011998633d swift::SerializedModuleLoader::loadAST(swift::ModuleDecl&, llvm::Optional<swift::SourceLoc>, std::__1::unique_ptr<llvm::MemoryBuffer, std::__1::default_delete<llvm::MemoryBuffer> >, std::__1::unique_ptr<llvm::MemoryBuffer, std::__1::default_delete<llvm::MemoryBuffer> >, bool) + 589
+        3   com.apple.LLDB.framework      	0x000000011998874f swift::SerializedModuleLoader::loadModule(swift::SourceLoc, llvm::ArrayRef<std::__1::pair<swift::Identifier, swift::SourceLoc> >) + 5423
+        4   com.apple.LLDB.framework      	0x00000001195c4d74 swift::ASTContext::getModule(llvm::ArrayRef<std::__1::pair<swift::Identifier, swift::SourceLoc> >) + 276
+        5   com.apple.LLDB.framework      	0x000000011996c105 swift::ModuleFile::getModule(llvm::ArrayRef<swift::Identifier>) + 373
+
+        Regression:
+        - I assume that compiling and linking frameworks _from within the project_ is a workaround, BUT THIS IS NOT ACCEPTABLE. Tons of developers are trying to use a workflow that allows us to reuse and share built binaries in order to reduce (insanely high) Swift compilation times (rdar://20476599). Not to mention that it reduces the complexity in our projects (because frameworks lead to exponential complexity, see rdar://22645037 for more details).
+
+        Notes:
+        - Note that the project doesn't even _use_ any of the linked frameworks, but this problem reproduces despite that.
+    email: benchatelain@gmail.com
+    modified: "2016-04-22T01:11:34.4167Z"
+    number: "25868181"
+    number_intvalue: 25868181
+    originated: 21-Apr-2016 07:11 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.1, 7.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '[Xcode 7.2, LLDB] Constant crashes when debugging projects that link precompiled frameworks'

@@ -1,0 +1,64 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14080208"
+    labels:
+        datastore_id: "3076401"
+data:
+    classification: Other Bug
+    created: "2013-06-06T12:11:37.102857Z"
+    description: |-
+        Summary:
+
+        The documentation states that the full screen view controller acts as the root view controller in iOS 6 orientation handling.
+
+        However when a view controller is presented by a UINavigationController, not all of the methods are handled in this way.
+
+        Specifically:
+
+        - (NSUInteger)supportedInterfaceOrientations
+
+        *is* called on  the top / visible view controller, but the result is ignored. i.e. trying to restrict it to Portrait has no effect, and the view is still rotated to landscape.
+
+        The method:
+
+        - (BOOL)shouldAutorotate
+
+        is *not* called on the top/visible view controller.
+
+        Steps to Reproduce:
+
+        1. Create a UINavigationController
+        2. Add another view controller to it
+        3. In that view controller implement the supportedInterfaceOrientations and shouldAutorotate methods
+        4. Add breakpoints in both methods
+        5. Run app in portrait
+        6. Rotate to landscape
+
+        Expected Results:
+
+        That supportedInterfaceOrientations is called and shouldAutorotate is called.
+
+        Actual Results:
+
+        The method supportedInterfaceOrientations is called but the result not used (i.e. restricting to Portrait does nothing) and shouldAutorotate is not called.
+
+        Regression:
+
+        Don't know
+
+        Notes:
+
+        I may be wrong, but it seems fair to assume this behaviour of UINavigationController. Not having this logic in place means that you have to subclass UINavigationController to delegate these methods to the top/visibile UI controller
+    email: wangjammer5@googlemail.com
+    modified: "2013-06-06T12:11:37.104076Z"
+    number: "14080208"
+    number_intvalue: 14080208
+    originated: 06-Jun-2013 01:11 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "6.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UINavigationController does not delegate auto-rotation/orientation calls to the top view controller

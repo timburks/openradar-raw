@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9185232
+    labels:
+        datastore_id: "4986647808573440"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2021-07-09T16:27:04.699612Z"
+    description: "Our macOS app needs to access a file that is created inside the `/dev/` folder (i.e. `/dev/ttys007`) in order to preserve the ability for our main app to talk to our hardware simulator app. The hardware we are emulating is a usb force plate, which measures roughly 1.5ft x 2.0ft and weighs ~30 lbs. The force plate sends our app a stream of data while the user does physical assessments like jumping or balancing on the plate. Our customers would love to be able to use the simulator app because it would enable them to demo the main app without lugging around the actual cumbersome device or having to actually perform assessments. It would also be extremely useful for debugging real issues in the field.\r\n\r\nThis file is created by macOS posix_openpt function:\r\n`let mainFd = posix_openpt(O_RDWR | O_NOCTTY)`\r\n\r\nWe get the name of the file from ptsname function:\r\n`let followerName = ptsname(mainFd)!`\r\n\r\nWe take this name and pass it from the simulator app to our main app through shared container defaults.\r\n\r\nThis pseudo terminal file is used to establish communication between two of our apps that share the same sandbox container, such as: `~/Library/Group Containers/GB9B5L6A6K.com.spartascience.SimulatorCore`\r\n\r\nWe are using the MacOS pseudo terminal functionality to emulate USB hardware because it:\r\n1. Allows us to have two-way communication with a single file descriptor just like our real usb force plate device\r\n2. Is always created in the same folder (/dev/) just like our real usb force plate device\r\n\r\nOur app doesn't need access to anything in /dev/ except our file that is created by our app. However, because the pseudo terminal is always created inside /dev/ we need the entitlement `com.apple.security.temporary-exception.files.absolute-path.read-write` in order to reach it. We use this entitlement for our debug build and it works great. Unfortunately, when we submitted our app to the App Store with this entitlement, we were asked to remove it. Removing this entitlement disables simulator functionality entirely for our customers.\r\n\r\nApproaches we have tried:\r\n1. Using fifo files did not work, as fifo files become stale when simulator simulates USB device reset. Closing fifo file on one end also does not close it on other end.\r\n2. Asking users for access to selected files did not work because users cannot open /dev/ file in File Open Panel. Finder also is unable to open /dev/ folder.\r\n3. Using DriverKit we are only granted permission to access real usb devices. This would be a very expensive investment for us in terms of both time and money. \r\n4. Making a special device file via `mknod` requires sudo privileges which most of our customers do not have."
+    email: developer.computers@spartascience.com
+    modified: "2021-07-09T16:27:04.699774Z"
+    number: FB9185232
+    number_intvalue: 9185232
+    originated: "2021-06-16"
+    parent_number: '&{NULL_VALUE}'
+    product: MacOS
+    product_version: 11.3.1
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: App Sandbox does not allow access to /dev/

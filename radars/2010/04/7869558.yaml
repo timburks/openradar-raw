@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7869558"
+    labels:
+        datastore_id: "255402"
+data:
+    classification: BUG
+    created: "2010-04-16T03:08:28.648709Z"
+    description: "15-Apr-2010 02:13 PM Mike Pattee:\r\nSummary: \r\nWhen making web service calls with NSURLConnection, requests that include \"If-Modified-Since\" in the header and return a status code of 304 cause subsequent calls to also return status code 304 erroneously and may not even submit all subsequent calls while still reporting a status code of 304 for a call that didn't happen.\r\n\r\nSteps to Reproduce:\r\nI've provided a sample application that shows this happening.\r\n1. make 3 synchronous web service calls using NSURLConnection sendSynchronousRequest.\r\n2. include the \"If-Modified-Since\" header field on the first request and it returns a status code 304\r\n3. subsequent calls return status code 304 even if they don't actually attempt the request\r\n4. if you add a small sleep between calls, the 2nd and 3rd calls will work as expected and return status code 200\r\n5. if you remove the \"If-Modified-Since\" from the request header then all 3 calls return a 200.\r\n6. server is always returning accurate status as seen in screenshots from HTTP Scoop\r\n\r\nExpected Results:\r\nthe first calls 304 should not influence the subsequent calls. they should execute properly without needing to add a fake delay in between.\r\n\r\nActual Results:\r\nfirst web service call correctly returns a 304, second web service call is made and returns a 200 to the system but reports a 304 in code, third call isn't made but reports a 304. 2nd and 3rd calls don't have the \"If-Modified-Since\" field and should never return 304. Server is actually returning 200 for the call that is made.\r\n\r\nNotes:\r\nI've encountered an interesting issue with NSURLConnection and web services when the \"If-Modified-Since\" header field is used. I have three web service calls that executed during the startup of my application. Recently we added the \"If-Modified-Since\" fields to them to help speed up launch if the data on the server hadn't changed. What I noticed was that if the first of the three calls returns a 304 the subsequent calls will return 304's also even though thats not what is reported by the OS or the server being connected to. The status codes for the responses will indicate that they were 304's in code but that doesn't match with the packet sniffer tracking the traffic. I used HTTP Scoop to track the information being sent. Another oddity was that even though we received three 304 status codes for the three web service calls according to HTTP Scoop only two calls were made with one resulting in a 304 and the other in a 200. If I remove the \"If-Modified-Since\" header field then all 3 services work correctly with status 200's and show up correctly in HTTP Scoop. Another oddity is if I introduce a sleep between calls when the first call includes the \"If-Modified-Since\" header field the first call will return 304 correctly and then after the sleeps the remaining calls will also execute and return correctly. It appears that something in NSURLConnection is caching the connection or response and then returning them without even submitting the request. I've attached a project that will allow you to see all 3 of these states. I'm also including some pictures of the HTTP scoop results beside the iPhone simulator running the test app."
+    email: mpattee@gmail.com
+    modified: "2011-08-28T05:41:51.313159Z"
+    number: "7869558"
+    number_intvalue: 7869558
+    originated: 15-Apr-2010 02:13 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "3.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSURLConnection seems to assume responses after calls with "If-Modified-Since"

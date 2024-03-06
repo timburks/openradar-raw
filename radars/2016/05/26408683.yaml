@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26408683"
+    labels:
+        datastore_id: "4936872941846528"
+data:
+    classification: ""
+    created: "2016-05-22T03:12:10.22021Z"
+    description: "Summary:\r\n-[MPMediaPlaylist addItemWithProductID:completionHandler:] always returns the following error:\r\nError Domain=MPErrorDomain Code=4 \"The requested id could not be found\" UserInfo={NSLocalizedDescription=The requested id could not be found}\r\nWhen the given product ID is not present in the user's Apple Music library.\r\n\r\nFor this example let's use product ID 1049605633, it's the song Sorry by Justin Bieber (bear with me, it's just something I didn't have in my library haha) on the US store.\r\n\r\nI don't have that song in my library. Using the following code...\r\n\r\nMPMusicPlayerController *musicPlayer = [MPMusicPlayerController systemMusicPlayer];  \r\n[musicPlayer setQueueWithStoreIDs:@[@\"1049605633\"]];  \r\n[musicPlayer play];\r\n\r\n...the song plays.\r\n\r\nNow consider this code:\r\n\r\n[[MPMediaLibrary defaultMediaLibrary] getPlaylistWithUUID:uuid creationMetadata:[[MPMediaPlaylistCreationMetadata alloc] initWithName:@\"Test Playlist\"] completionHandler:^(MPMediaPlaylist * _Nullable playlist, NSError * _Nullable error) {  \r\n    NSLog(@\"%@\", error);\r\n\r\n    if (!error) {  \r\n        [playlist addItemWithProductID:@\"1049605633\" completionHandler:^(NSError * _Nullable error) {  \r\n            NSLog(@\"%@\", error);  \r\n        }];  \r\n    }  \r\n}];\r\n\r\nThe playlist is created, but when trying to add the product ID 1049605633 to it I get the error mentioned before.\r\nBut, if I do this before...\r\n\r\n[[MPMediaLibrary defaultMediaLibrary] addItemWithProductID:@\"1049605633\" completionHandler:^(NSArray<__kindof MPMediaEntity *> * _Nonnull entities, NSError * _Nullable error) {  \r\n    NSLog(@\"%@\", error);  \r\n}];\r\n\r\n...it does work. But that's no good, I don't want the song in the user's library.\r\n\r\nSteps to Reproduce:\r\n1. Get user's authorization to access Apple Music with +[SKCloudServiceController requestAuthorization:]\r\n2. Run the following code:\r\n\r\n[[MPMediaLibrary defaultMediaLibrary] getPlaylistWithUUID:[NSUUID UUID] creationMetadata:[[MPMediaPlaylistCreationMetadata alloc] initWithName:@\"Test Playlist\"] completionHandler:^(MPMediaPlaylist * _Nullable playlist, NSError * _Nullable error) {\r\n    if (!error) {\r\n        [playlist addItemWithProductID:@\"1049605633\" completionHandler:^(NSError * _Nullable error) {\r\n            NSLog(@\"%@\", error);\r\n        }];\r\n    }\r\n}];\r\n\r\n3. If you don't have the song Sorry by Justin Bieber you should get this error: Error Domain=MPErrorDomain Code=4 \"The requested id could not be found\" UserInfo={NSLocalizedDescription=The requested id could not be found}\r\n\r\n\r\nExpected Results:\r\nThe specified item with product ID should be added to the playlist even if the user doesn't have it in their library.\r\n\r\nActual Results:\r\nIf the user doesn't have that item in their library the following error is returned:\r\nError Domain=MPErrorDomain Code=4 \"The requested id could not be found\" UserInfo={NSLocalizedDescription=The requested id could not be found}\r\n\r\n\r\nVersion:\r\n9.3.2 (13F69)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 6s 64gb, US iTunes account\r\n\r\nAttachments:"
+    email: jpmfagundes@gmail.com
+    modified: "2017-03-18T13:07:11.65549Z"
+    number: "26408683"
+    number_intvalue: 26408683
+    originated: 22-May-2016 00:07 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 9.3.2 (13F69)
+    reproducible: Always
+    resolved: 15-Mar-2017 07:15 PM
+    status: Closed
+    title: -[MPMediaPlaylist addItemWithProductID:completionHandler:] returns not found error when item is not in user's library

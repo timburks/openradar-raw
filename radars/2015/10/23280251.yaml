@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23280251"
+    labels:
+        datastore_id: "5690874113556480"
+data:
+    classification: Serious Bug
+    created: "2015-10-27T18:49:33.35018Z"
+    description: "Summary:\r\nOn device (via TestFlight) but not in the Simulator, specifying a value for ProtectionUsed is not having an effect on the data entered into HealthKit\r\n\r\nSteps to Reproduce:\r\nMake a HealthKit app, using the Swift code below to save a sample:\r\n\r\n    public func writeData(callback: (success: Bool) -> Void) {\r\n        guard let sexualActivityIdentifier = HKCategoryType.categoryTypeForIdentifier(HKCategoryTypeIdentifierSexualActivity) else {\r\n            callback(success: false)\r\n            return\r\n        }\r\n\r\n        let metadata: [String: AnyObject]? = [HKMetadataKeySexualActivityProtectionUsed: true]\r\n        \r\n        let sample = HKCategorySample(type: sexualActivityIdentifier,\r\n            value: HKCategoryValue.NotApplicable.rawValue,\r\n            startDate: NSDate(),\r\n            endDate: NSDate(),\r\n            metadata: metadata)\r\n        \r\n        let store = HKHealthStore()\r\n        \r\n        store.saveObject(sample) { (success, error) -> Void in\r\n            callback(success: success)\r\n        }\r\n    }\r\n\r\n\r\nExpected Results:\r\nThe data point in Health shows “Protection used”\r\n\r\nActual Results:\r\nThe data point in Health shows “––” on device (with app installed using TestFlight), but “Protection used” in the simulator\r\n\r\nRegression:\r\nThis worked correctly on a data point entered on 10/6, but stopped working beginning with 10/14. I’m not sure if there was an iOS 9 point release update somewhere in there that may have affected it."
+    email: thedov@gmail.com
+    modified: "2016-04-03T16:33:21.61264Z"
+    number: "23280251"
+    number_intvalue: 23280251
+    originated: 27-Oct-2015 02:49 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9.1, Xcode 7.1
+    reproducible: Always
+    resolved: Duplicate of 22546920
+    status: Closed
+    title: HealthKit not saving metadata for sexual activity sample

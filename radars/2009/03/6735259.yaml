@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6735259"
+    labels:
+        datastore_id: "22409"
+data:
+    classification: UI
+    created: "2009-03-29T08:48:03.976791Z"
+    description: "Summary: \r\nWhen using the Finder to look at the \"on disk\" size of files from a mounted AFP volume, they often change when the user selects the items. This is irritating and should be looked into.\r\n\r\nSteps to Reproduce:\r\n1. Mount a network volume of a HFS+ volume served over AFP (e.g. from another 10.5.6 system).\r\n2. Change the window view to \"as List\".\r\n3. Find files on the volume that are below 1000KB in size.\r\n4. Click on (select) such files and watch the displayed file size before and after the click\r\n\r\nHere is a video showing what's happening:\r\nhttp://homepage.mac.com/tempelorg/finder-size-changing-bug.mov\r\n\r\nExpected Results:\r\nThe displayed file size should be constant\r\n\r\nActual Results:\r\nThe file size often gets reduced by a multiple of 4K, then switches back to the higher value once a different application gets frontmost.\r\n\r\nRegression:\r\nAll I know is that this happens for other people, too. See this discussion thread:\r\nhttp://lists.apple.com/archives/Macos-x-server/2009/Mar/msg00640.html\r\n\r\nI did some searching and found that this may indeed be related to assuming resource forks: If the file has a rsrc fork, the displayed size remains constant. Also, I check if it is related to other metadata, but found that even a freshly created file (using the \"touch\" cmd) with no extended data such as FinderInfo will show this misbehavior.\r\n\r\nOn a side note, the Finder also shows that a 0-length file occupies 4KB (or a multiple thereof) on disk, even though this is not correct: A 0-length file does not occupy any allocation blocks (apart from what's used in the directory file for it). It would be nice if the Finder would tell the user that an empty file is actually empty by showing \"0\" in the size column in list view."
+    email: tempelmann@gmail.com
+    modified: "2011-08-28T05:47:23.131858Z"
+    number: "6735259"
+    number_intvalue: 6735259
+    originated: 29-Mar-2009
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Finder displays invariable file sizes of remote volumes with variable values

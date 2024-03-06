@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7716688
+    labels:
+        datastore_id: "6132189943037952"
+data:
+    classification: Finder
+    created: "2020-05-28T00:30:59.659196Z"
+    description: "In macOS you can create an alias to a file that is on another volume, and when you later try to resolve the alias, it will attempt to mount the volume. An example is an alias to a disk image.\r\n\r\nThe problem is that if you initially create the alias on an APFS volume, it won't be able to resolve it. But it does work if the alias is created on an HFS+ volume, and that alias will work if it is later copied to the same APFS volume that doesn't work otherwise. That is, there is something different inside the alias itself that breaks it when it is initially created on APFS.\r\n\r\n[For this example, I'm creating an encrypted image, because this same exact example will also be used to illustrate another issue in another Feedback item.]\r\n\r\n1. Create and mount a disk image: hdiutil create -size 5m -fs HFS+ -encryption -volname Secure_Disk -attach Secure_Disk-dmg\r\n\r\n2. Give it a password: This is the password\r\n\r\n3. Create a file on the disk image: echo \"This is some secret text\">/Volumes/Secure_DIsk/super_secret.txt\r\n\r\n4. In the Finder, option-command drag the super_secret.txt file to an APFS volume to create a Finder alias to the file.\r\n\r\n5. Double-click the alias. It will successfully open the super_secret.txt file. Close the Text Edit window.\r\n\r\n6. Dismount the image: hdiutil detach /Volumes/Secure_Disk.\r\n\r\n7. Double-click the alias. It will fail to resolve, with error: The alias \"super_secret.txt\" can't be opened because the original item can't be found.\r\n\r\nThat demonstrated how it doesn't work on APFS. But let's try it with HFS+:\r\n\r\n8. Double-click the disk image to mount it again.\r\n\r\n9. In the Finder, option-command drag the super_secret.txt file to an HFS+ volume to create a Finder alias to the file.\r\n\r\n10. Double-click the alias. It will successfully open the super_secret.txt file. Close the Text Edit window.\r\n\r\n11. Eject the disk image again.\r\n\r\n12. Double-click the alias on the HFS+ volume. It will display the \"Enter password to access Secure_Disk.dmg\". Enter the password from step 2.\r\n\r\n13. The disk image will mount and the file inside will be opened.\r\n\r\nThat demonstrated that it works on HFS+. But there's one more anomaly:\r\n\r\n14. Eject the image again.\r\n\r\n15. In the Finder, copy the alias from the HFS+ volume to the same APFS volume that failed to work in step 4.\r\n\r\n16. Double-click the COPIED alias on the APFS volume. It will display the same password box as in step 12. This time it works.\r\n\r\nNotice that the alias created on HFS+ and copied to APFS (which works) is not the same size as the alias created on APFS (which doesn't work). It appears that the alias created on APFS contains more magic."
+    email: msschmitt@gmail.com
+    modified: "2020-05-28T00:30:59.659368Z"
+    number: FB7716688
+    number_intvalue: 7716688
+    originated: 5/27/2020
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: macOS Mojave 10.14.6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Can't create alias on APFS to file on a disk image

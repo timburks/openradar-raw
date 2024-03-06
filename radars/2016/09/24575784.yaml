@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24575784"
+    labels:
+        datastore_id: "6180006984155136"
+data:
+    classification: ""
+    created: "2016-09-22T00:56:20.91091Z"
+    description: "Summary:\r\nAdding a key to a keychain using SecItemAdd() inserts an incomplete, useless item in the keychain. The item is impossible to delete (\"A missing value was detected.\" in Keychain Access, or error errSecMissingValue / -67871 from SecItemDelete()).\r\n\r\nSteps to Reproduce:\r\nInsert a symmetric key using SecItemAdd, specifying the class, some data, an application tag, and a type.\r\n\r\nExamine the key that gets added to your keychain. Try to delete it.\r\n\r\nI've attached a C program which does this. To use it, compile it and run it with a test keychain's path on the command line. (You can only run this command once per keychain, due to a combination of this and other bugs in SecItemAdd().)\r\n\r\nExpected Results:\r\nThey keychain item will be deletable.\r\n\r\nActual Results:\r\nThe key cannot be deleted.\r\n\r\n2016-02-09 14:20:05.466 a.out[24731:391556] SecItemAdd({\r\n    atag = <84687650 6c0724c9>;\r\n    class = keys;\r\n    type = 2147483649;\r\n    \"u_Keychain\" = \"<SecKeychain 0x7f8208c019e0 [0x7fff7e133ed0]>\";\r\n    \"v_Data\" = <01020304 05060708 090a0b0c 0d0e0f10>;\r\n}) -> <SecKeychainItem 0x7f8208f206b0 [0x7fff7e133ed0]>\r\n2016-02-09 14:20:05.466 a.out[24731:391556] SecItemCopyMatching --> 0, (\r\n        {\r\n        bsiz = 0;\r\n        class = keys;\r\n        esiz = 0;\r\n        labl = \"<null>\";\r\n        type = 0;\r\n        \"v_Ref\" = \"<SecKeychainItem 0x7f8208f206b0 [0x7fff7e133ed0]>\";\r\n    }\r\n)\r\n2016-02-09 14:20:05.467 a.out[24731:391556] Will delete key: <SecKeychainItem 0x7f8208f206b0 [0x7fff7e133ed0]>\r\n2016-02-09 14:20:05.467 a.out[24731:391556] SecItemDelete({\r\n    \"v_Ref\" = \"<SecKeychainItem 0x7f8208f206b0 [0x7fff7e133ed0]>\";\r\n}) --> -67871\r\n\r\n\r\nVersion:\r\n10.10.5 / 14F27\r\n\r\nNotes:\r\nThe inserted key is missing several attributes which were specified in SecItemAdd(), but I'll report that as a separate RADAR.\r\nThe SecItemAdd() call fails if you try to explicitly specify kSecAttrKeyClass or kSecAttrKeySizeInBits, but I'll report that as a separate RADAR.\r\n\r\nI have attached a .keychain file produced by this program. Its password is the single letter \"x\".\r\n\r\n\r\nConfiguration:\r\nOSX\r\n\r\nAttachments:\r\n'secaddfail.m', 'testkeychain.keychain' and 'Screen Shot 2016-02-09 at 2.23.02 PM.png' were successfully uploaded."
+    email: wiml@omnigroup.com
+    modified: "2016-09-22T00:56:20.91115Z"
+    number: "24575784"
+    number_intvalue: 24575784
+    originated: 09-Feb-2016 02:24 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.10.5 / 14F27
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SecItemAdd() produces a broken, impossible-to-delete keychain entry

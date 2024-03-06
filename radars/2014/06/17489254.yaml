@@ -1,0 +1,60 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17489254"
+    labels:
+        datastore_id: "6335702887301120"
+data:
+    classification: Serious Bug
+    created: "2014-06-27T21:06:58.863446Z"
+    description: |-
+        Summary:
+        Swift fails to link projects which declare Hashable & Equatable conformance for the same type in two separate files.
+
+
+        Steps to Reproduce:
+        1. Declare a new type.
+        2. In separate files, explicitly conform it to Hashable & Equatable respectively using extensions, implementing the requirements for those protocols.
+        3. Build.
+
+
+        Expected Results:
+        I expected it to build & run just fine; the explicit conformance to Equatable is redundant, but not unreasonable as documentation.
+
+
+        Actual Results:
+        Instead, it fails with linker errors.
+
+
+        Regression:
+        This works fine if both extensions are in the same file.
+
+
+        Notes:
+        Code listing as follows:
+
+        File A:
+        struct Thing {
+            let value: Int
+        }
+
+        File B:
+        extension Thing : Hashable {
+            var hashValue: Int { return value }
+        }
+
+        File C:
+        extension Thing : Equatable {}
+        func == (a: Thing, b: Thing) { return a.value == b.value }
+    email: rix.rob@gmail.com
+    modified: "2014-06-27T21:06:58.863558Z"
+    number: "17489254"
+    number_intvalue: 17489254
+    originated: 27-Jun-2014 05:06 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta2 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: linker errors with Hashable & Equatable conformance in two separate files'

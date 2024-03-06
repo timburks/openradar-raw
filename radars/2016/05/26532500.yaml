@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26532500"
+    labels:
+        datastore_id: "5030859308531712"
+data:
+    classification: Other Bug
+    created: "2016-05-28T15:51:13.39079Z"
+    description: "Summary:\r\nApps with a deployment target of iOS 7 or iOS 8 using UIKeyCommand need to check if UIKeyCommand supports +keyCommandWithInput:modifierFlags:action:discoverabilityTitle:\r\n\r\nChecking with +instancesRespondToSelector: or -respondsToSelector: returns NO on iOS 9.3.2 even though iOS 9 supports this method. In a typical use case the app would fallback to the old iOS 7+ method +keyCommandWithInput:modifierFlags:action: thereby losing the discoverabilityTitle.\r\n\r\nSteps to Reproduce:\r\n\r\n# on iOS 9.3.2:\r\n\r\n(lldb) p (BOOL) [UIKeyCommand instancesRespondToSelector:@selector(keyCommandWithInput:modifierFlags:action:discoverabilityTitle:)]\r\n(lldb) p (BOOL) [[[UIKeyCommand alloc] init] respondsToSelector:@selector(keyCommandWithInput:modifierFlags:action:discoverabilityTitle:)]\r\n\r\nExpected Results:\r\n(lldb) p (BOOL) [UIKeyCommand instancesRespondToSelector:@selector(keyCommandWithInput:modifierFlags:action:discoverabilityTitle:)]\r\n(BOOL) $6 = YES\r\n(lldb) p (BOOL) [[[UIKeyCommand alloc] init] respondsToSelector:@selector(keyCommandWithInput:modifierFlags:action:discoverabilityTitle:)]\r\n(BOOL) $7 = YES\r\n\r\nActual Results:\r\n(lldb) p (BOOL) [UIKeyCommand instancesRespondToSelector:@selector(keyCommandWithInput:modifierFlags:action:discoverabilityTitle:)]\r\n(BOOL) $6 = NO\r\n(lldb) p (BOOL) [[[UIKeyCommand alloc] init] respondsToSelector:@selector(keyCommandWithInput:modifierFlags:action:discoverabilityTitle:)]\r\n(BOOL) $7 = NO\r\n\r\nRegression:\r\nThis is a regression from iOS 9.3.1 to 9.3.2.\r\n\r\nNote:\r\nEven if iOS 9.3.2 claims it doesn't respond to the +keyCommandWithInput:modifierFlags:action:discoverabilityTitle: selector, it actually does:\r\n\r\n(lldb) po [UIKeyCommand keyCommandWithInput:@\"a\" modifierFlags:UIKeyModifierCommand action:@selector(performKeyCommand:) discoverabilityTitle:@\"Select All\"]\r\n<UIKeyCommand: 0x15f154f0>"
+    email: futuretap@googlemail.com
+    modified: "2016-06-03T21:11:36.86442Z"
+    number: "26532500"
+    number_intvalue: 26532500
+    originated: 28-May-2016 05:50 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 9.3.2
+    reproducible: Always
+    resolved: ""
+    status: Closed/Behaves Correctly
+    title: 'UIKeyCommand incorrectly responds to respondsToSelector:'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39604024"
+    labels:
+        datastore_id: "5035482186514432"
+data:
+    classification: Serious Bug
+    created: "2018-04-20T18:48:11.66758Z"
+    description: "Summary:\r\nIn the PSPDFKit framework we use a collection view with custom layouts as the main component for document navigation. After removing our own prefetching code and switching to native UICollectionView prefetching, we noticed that when invoking some specific navigation steps and triggering `invalidateLayout` on the collection view layout, we could end up in a state where cells with `_isHiddenForReuse` set to `YES` were displayed in the visible area of the collection view. \r\n\r\nSteps to Reproduce:\r\nI'm attaching a GIF illustrating this behavior. Showing or hiding the navigation bar causes an `invalidateLayout` call on iOS 11, due to changes in the `safeAreaInsets`. That's why we first observed the issue on iOS 11. The same issue occurs on iOS 10, if we trigger `invalidateLayout` manually. \r\n\r\nI tried reproducing the same problem in an isolated sample, but was unable to do so. I'm however providing some more detailed findings during my debugging session that lead me to believe that this is not an issue on our side. \r\n\r\nExpected Results:\r\nVisible cells would always be visible `_isHiddenForReuse = NO`. \r\n\r\nActual Results:\r\nWith prefetching enabled, cells can become part of the `visibleCells` list with `_isHiddenForReuse = YES`. Those cells do not show up on screen. Even in the view debugger. They can however be accessed via the `visibleCells` property. \r\n\r\nTo trigger this behavior the prefetching state (prefetched cells) need to be in specific configurations and a `invalidateLayout` call needs to be triggered. \r\n\r\nVersion:\r\niOS 10 and 11\r\n\r\nNotes:\r\nSee DebuggingNotes.txt for a detailed description of the problematic state observed in UIKit."
+    email: matej@bukovinski.com
+    modified: "2018-06-05T23:34:38.37389Z"
+    number: "39604024"
+    number_intvalue: 39604024
+    originated: 20-Apr-2018 08:48 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 10 and 11
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 34932237
+    title: UICollectionView prefetching can cause display of pages hidden for reuse

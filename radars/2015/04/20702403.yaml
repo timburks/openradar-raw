@@ -1,0 +1,83 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20702403"
+    labels:
+        datastore_id: "5036174699659264"
+data:
+    classification: Performance
+    created: "2015-04-26T19:55:37.21572Z"
+    description: |-
+        Summary:
+        Arrays of arrays of strings are extremely slow to typecheck.
+
+
+        Steps to Reproduce:
+        1. Write a literal with arrays of arrays of strings. Here’s mine:
+
+        let _ = [
+        	[ "one" ],
+        	[ "two" ],
+        	[ "three" ],
+        	[ "four" ],
+        	[ "five" ],
+        	[ "six" ],
+        	[ "seven" ],
+        	[ "eight" ],
+        	[ "nine" ],
+        	[ "ten" ],
+        	[ "eleven" ],
+        	[ "twelve" ],
+        	[ "thirteen" ],
+        	[ "fourteen" ],
+        ]
+
+        2. time its compilation.
+        3. Comment out a few of the inner ones.
+        4. Repeat steps 2 and 3 until you have a good picture for how many it takes to bog down.
+
+
+        Expected Results:
+        I expected compilation to complete interactively.
+
+
+        Actual Results:
+        With seven elements it’s interactive:
+                0.08 real         0.06 user         0.01 sys
+
+        With eleven, it’s almost 2s:
+                1.80 real         1.76 user         0.02 sys
+
+        With fourteen, it’s over 20s:
+               22.75 real        22.53 user         0.17 sys
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        Using [String] completes interactively.
+
+        For more fun, try [[[String]]] instead. Here’s seven elements:
+                0.17 real         0.15 user         0.01 sys
+
+        and eleven:
+                5.97 real         5.88 user         0.08 sys
+
+        and you’re in luck, I got bored and wandered away while fourteen finished so I didn’t cancel it:
+               84.10 real        83.05 user         0.88 sys
+
+        It seems odd to me that going from [String] to [[String]] appears to be exponential while [[String]] to [[[String]]] appears to be linear (~4x slower). Or maybe [String] to [[String]] is just an extremely large factor? But that’d be weird too.
+    email: rix.rob@gmail.com
+    modified: "2015-04-26T19:55:37.21592Z"
+    number: "20702403"
+    number_intvalue: 20702403
+    originated: 26-Apr-2015 03:55 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.3 (6D570)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2: exponentially complex typechecking of [[String]] and [[[String]]] literals'

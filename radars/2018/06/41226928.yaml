@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "41226928"
+    labels:
+        datastore_id: "4978184932032512"
+data:
+    classification: Severe Bug
+    created: "2018-06-18T22:21:36.84033Z"
+    description: "Summary:\r\n\r\nAPFS (presumably the driver) on macOS 10.13 (up to an including at least 10.13.5 (17F77)) has a numeric precision / rounding error for file modification & other file metadata timestamps.\r\n\r\nI am unsure (due to a lack of syscall source code on macOS) if this is a bug in the utime(2) call itself as implemented in macOS 10.13, or the APFS driver, but the driver seems more likely to me (since the syscall is relatively un-complex and not at all new).\r\n\r\nThis same bug was also reported from the Ruby programming language, and the openradar report of it is the only way I was able to decisively narrow this down:\r\nhttp://www.openradar.me/33734892 or https://github.com/lionheart/openradar-mirror/issues/18144\r\n\r\nI can confirm that this is reproducible using only C syscalls.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nI have isolated one of the numeric values that causes incorrect precision handling / rounding, 1529011085547.0, from various test sources. \r\n\r\nThis value always causes this problem on only macOS 10.13, using APFS. macOS 10.12 and lower, other BSD platforms, linuxes, Windows, etc, do not have this issue. (AIX appears to also have the issue, but... oh well.)\r\n\r\nWhen this value is sent to utime(2) (for either atime, mtime, or both), the respective value as read from the file metadata in stat(2) will no longer be what it was set to, and instead somehow ends up being 9223372036.854776\r\n\r\nIn my case, this patch to the libuv cross-platform I/O library written in C always reproduces this issue in it's tests: https://github.com/Fishrock123/libuv/commit/29527a82e87871e48b976248b62b3be2c369b3d7\r\n\r\nHere is a test run from the libuv project's infrastructure showing platforms which it does and does not fail on: https://ci.nodejs.org/view/libuv/job/libuv-test-commit/929/  (Some test failures are from other tests, and not every failure if from this patch.)\r\n\r\nAttached is a C-only version. Compile it by running `cc apfs-precision-error.c` and then run the created `a.out` to get comparison output.\r\n\r\n\r\nExpected Results:\r\n\r\nAfter setting the mtime to 1529011085547.0 using utime(2)\r\nstat(2) should return mtime values that equal 1529011085547.0\r\n\r\n\r\nActual Results:\r\n\r\nAfter setting the mtime to 1529011085547.0 using utime(2)\r\nstat(2) returns mtime values that equal 9223372036.854776\r\n\r\n\r\nVersion/Build:\r\n\r\n10.13.5 (17F77)\r\n\r\n\r\nConfiguration:\r\n\r\nDefault configuration macOS 10.13 on colleagues' computers seems to also reproduce this always.\r\n\r\n\r\n### apfs-precision-error.c\r\n\r\n```c\r\n#include <stdio.h>\r\n#include <sys/stat.h>\r\n#include <utime.h>\r\n#include <fcntl.h>\r\n\r\nconst char* path = \"./.temp\";\r\nconst double controlValue = 1529011085547.0;\r\n\r\nint main(int argc, const char *argv[])\r\n{\r\n    open(path, O_CREAT);\r\n\r\n    struct utimbuf buf;\r\n    buf.actime = controlValue;\r\n    buf.modtime = controlValue;\r\n    utime(path, &buf);\r\n\r\n    struct stat s;\r\n    stat(path, &s);\r\n\r\n    double converted_atime = (unsigned long)s.st_atimespec.tv_sec + (s.st_atimespec.tv_nsec / 1000000000.0);\r\n    double converted_mtime = (unsigned long)s.st_mtimespec.tv_sec + (s.st_mtimespec.tv_nsec / 1000000000.0);\r\n\r\n    printf(\"atime - Actual: %f, Expected: %f\\n\", converted_atime, controlValue);\r\n    printf(\"mtime - Actual: %f, Expected: %f\\n\", converted_mtime, controlValue);\r\n}\r\n```"
+    email: Jeremiah.Senkpiel@gmail.com
+    modified: "2018-06-18T22:21:36.8406Z"
+    number: "41226928"
+    number_intvalue: 41226928
+    originated: June 18 2018
+    parent_number: '&{NULL_VALUE}'
+    product: APFS
+    product_version: 10.13.5 (17F77)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: APFS mtime timestamp numeric precision (rounding) error

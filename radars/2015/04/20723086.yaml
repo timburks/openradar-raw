@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20723086"
+    labels:
+        datastore_id: "4955909813960704"
+data:
+    classification: UI/Usability
+    created: "2015-04-28T06:27:34.23812Z"
+    description: "Summary:\r\n\r\nWhen a method prototype contains a block parameter whose type is provided as a typedef, Xcode Objective-C autocompletion does not work correctly and prevents from directly (and thus conveniently!) implementing the block.\r\n\r\nSteps to Reproduce:\r\n\r\nCreate a source file with the following contents:\r\n\r\nNS_ASSUME_NONNULL_BEGIN\r\ntypedef void (^SomeBlockSignature)(NSString * __nullable param);\r\n\r\n@interface SomeClass ()\r\n\r\n- (void)someMethodWithABlock:(SomeBlockSignature)block;\r\n\r\n@end\r\nNS_ASSUME_NONNULL_END\r\n\r\n@implementation SomeClass\r\n\r\n- (void)someMethodWithABlock:(SomeBlockSignature)block\r\n{\r\n\t// Implementation is irrelevant here\r\n}\r\n\r\n@end\r\n\r\nThen begin implementing another method which calls -someMethodWithABlock, by typing ‘[self someMethod’  and pressing Enter twice. Xcode fills the remaining of the prototype and attempts to fill in the block signature. You get the following annoying result, though:\r\n\r\n@implementation SomeClass\r\n\r\n// … see above\r\n\r\n- (void)otherMethod\r\n{\r\n\t[self someMethodWithABlock:(SomeBlockSignature __nonnull()block\r\n}\r\n\r\n@end\r\n\r\ninstead of the result\r\n\r\n@implementation SomeClass\r\n\r\n// … see above\r\n\r\n- (void)otherMethod\r\n{\r\n\t[self someMethodWithABlock:^(NSString * __nullable) {\r\n\t\t<#code#>\r\n\t}\r\n}\r\n\r\n@end\r\n\r\nyou would get if no block signature typedef was used, i.e. if the block signature was directly inlined in the method prototype itself:\r\n\r\nNS_ASSUME_NONNULL_BEGIN\r\n@interface SomeClass ()\r\n\r\n- (void)someMethodWithABlock:(void (^)(NSString * __nullable param))block;\r\n\r\n@end\r\nNS_ASSUME_NONNULL_END\r\n\r\nNote that the ‘param’ parameter incorrectly disappears from the autocompleted result in this case, though. If the NONNULL region is removed:\r\n\r\n@interface SomeClass ()\r\n\r\n- (void)someMethodWithABlock:(void (^)(NSString *param))block;\r\n\r\n@end\r\n\r\nautocompletion namely provides the usual convenient result:\r\n\r\n@implementation SomeClass\r\n\r\n// … see above\r\n\r\n- (void)otherMethod\r\n{\r\n\t[self someMethodWithABlock:^(NSString *param) {\r\n\t\t<#code#>\r\n\t}\r\n}\r\n\r\nwhich can immediately be used for implementation.\r\n\r\n@end\r\n\r\nExpected Results:\r\n\r\nAutocompletion correctly fills in the block signature, with immediately available parameters:\r\n\r\n@implementation SomeClass\r\n\r\n// … see above\r\n\r\n- (void)otherMethod\r\n{\r\n\t[self someMethodWithABlock:^(NSString * __nullable param) {\r\n\t\t<#code#>\r\n\t}\r\n}\r\n\r\n@end\r\n\r\nActual Results:\r\n\r\nThe autocompletion result is useless:\r\n\r\n@implementation SomeClass\r\n\r\n// … see above\r\n\r\n- (void)otherMethod\r\n{\r\n\t[self someMethodWithABlock:(SomeBlockSignature __nonnull()block\r\n}\r\n\r\n@end\r\n\r\nConfiguration:\r\n\r\nXcode 6.3\r\n\r\nNotes:"
+    email: defagos@gmail.com
+    modified: "2015-05-04T08:40:12.08464Z"
+    number: "20723086"
+    number_intvalue: 20723086
+    originated: 28-Apr-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: "6.3"
+    reproducible: Always
+    resolved: ""
+    status: Duplicate
+    title: Xcode autocompletion does not work correctly for block typedefs containing nullability specifiers

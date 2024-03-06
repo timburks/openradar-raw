@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15457042"
+    labels:
+        datastore_id: "5884110564229120"
+data:
+    classification: Serious Bug
+    created: "2013-11-13T09:35:38.913907Z"
+    description: "Summary: \nWhen creating a Bot that builds a Git project with submodules OS X Server stores the current branch name for the submodule and uses that information for subsequent checkouts. This leads to a number of problems - if a submodule is on a detached HEAD when the bot it created, it has no formal branch name and will fail to check out during an integration. If a submodule is on the tip of a branch, it will have a branch name, but the created bot will be tied to that branch name only. If the submodule is a shared project, then a specific branch needs to be created and maintained in order to ensure that the bot can continue to build. The Bot should use submodules in the same way that the developer does - if the developer specifies a submodule to use a specific commit, then the Bot should build the same code.\n\nSteps to Reproduce:\n1. Open a project that contains a Git submodule.\n2. Checkout the submodule to the master branch.\n3. Commit the new pathspec for the submodule in the main project, pushing the changes to the remote repository.\n4. Create a Bot and ensure that it integrates properly.\n5. Introduce a change to the submodule that breaks the main project and commit to the master branch, pushing the changes to the remote repository.\n6. Issue a \"git submodule update\" command in the Terminal to move the submodule back to the previous good commit.\n7. Start an integration on the Xcode server.\n\n\nExpected Results:\n8. The integration should check out the submodule to the pathspec in the .gitmodules file, and should succeed.\n\nActual Results:\n8. The integration actually checks out the submodule to master (the branch name at Bot creation time) and causes the integration to fail.\n\nRegression:\nN/A\n\nNotes:\nNone."
+    email: mauricerkelly@gmail.com
+    modified: "2013-11-13T09:35:38.914124Z"
+    number: "15457042"
+    number_intvalue: 15457042
+    originated: 13-Nov-2013 09:35 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X Server
+    product_version: 3.0.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Bot creation pins Git submodules to the tip of a named branch instead of respecting the .gitmodules file

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "48941363"
+    labels:
+        datastore_id: "6185951088869376"
+data:
+    classification: Bug
+    created: "2019-03-15T22:35:23.804657Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nCertain batch updates, which UICollectionView happily accepts without asserting, can cause the collection view to not call the completion handler of performBatchUpdates.\r\n\r\nTo be more specific, moving an item out of an existing section and into an appearing / inserted section causes no warning or assertion, but  internally results in reloadData getting called, rather than the incremental batch update path.\r\n\r\nThe place that reloadData is called (rather than continuing down the batch update path) is `[UICollectionView _endItemAnimationsWithInvalidationContext:tentativelyForReordering:animator:]`. It seems like UICollectionView internally understands that you shouldn't move an  item into an inserting section, and silently falls back to the sledgehammer approach - reloadData.\r\n\r\nSince reloadData ends up getting called, the UIView animator object's completion handler never gets called, meaning performBatchUpdate's completion handler doesn't get called either. If a batch update that  results in an  animation eventually runs, then all previous completion handlers will be invoked (seems they're getting stored off internally).\r\n\r\nSteps to Reproduce:\r\n1. Download sample code\r\n2. Tap anywhere to do the batch update\r\n\r\nExpected Results:\r\n- UICollectionView should tell me I'm doing something wrong (warning in the console at a minimum) AND the performBatchUpdates  documentation contains information about this limitation AND the completion handler should be invoked despite the lack of animation\r\n<OR>\r\n- UICollectionView should handle this correctly and allow a move from an existing section into a new section\r\n\r\nActual Results:\r\nNo warning, no error, no completion block\r\n\r\nVersion/Build:\r\niOS 12\r\n\r\nConfiguration:\r\n\r\n\r\n\r\n\r\n\r\nSample project: https://drive.google.com/file/d/1LQVo3WqeQOcTilIgZcwWddVgZhpI6g-d/view?usp=sharing"
+    email: kellerbryan19@gmail.com
+    modified: "2019-03-15T22:35:23.80487Z"
+    number: "48941363"
+    number_intvalue: 48941363
+    originated: 3/15/19
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: iOS 12
+    reproducible: Yes
+    resolved: No
+    status: Open
+    title: performBatchUpdates completion block not invoked

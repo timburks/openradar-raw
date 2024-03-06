@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6948045"
+    labels:
+        datastore_id: "57402"
+data:
+    classification: Serious Bug
+    created: "2009-06-28T21:01:34.357815Z"
+    description: "Summary:\r\nA UITableViewCell in a UITableView that contains the first responder is not recycled for reuse (if it goes offscreen) until the first responder is resigned. However, once the first responder is resigned, the cell is still reused too early. A UITableViewCell containing a UITextField that resigns its first responder status is recycled before the UITextFieldDelegate -textFieldDidEndEditing: message is sent, and as such the UITextField* parameter sent with the message points to a deallocated object, and any attempts to message it result in an EXC_BAD_ACCESS signal.\r\n\r\nSteps to Reproduce:\r\n1. Build a UITableView that has a cell with a UITextField subview, and set the delegate of the text field to the UITableViewController.\r\n2. Implement the following methods for the controller:\r\n\r\n- (BOOL)textFieldShouldReturn:(UITextField*)textField {\r\n\t[textField resignFirstResponder];\t\r\n\treturn YES;\r\n}\r\n\r\n- (void)textFieldDidEndEditing:(UITextField*)textField {\r\n\tNSLog(@\"%@\", [textField text]);\r\n}\r\n\r\n3. Build and Go, then begin typing in the text field and then scroll it off-screen, so that the cell would normally be reused.\r\n4. Cause the UITextField to resign first responder by pressing the return key on the keyboard.\r\n\r\nExpected Results:\r\nThe text of the UITextField should be logged to the debugging console and the application should continue operating normally.\r\n\r\nActual Results:\r\nThe application gets an EXC_BAD_ACCESS signal because of the -text message sent to the deallocated UITextField object.\r\n\r\n\r\n04-Jun-2009 04:02 PM Bryan Henry:\r\nAdded Xcode project attachment with minimal test case.\r\n\r\n\r\n'BugTestcase.zip' was successfully uploaded\r\n\r\n11-Jun-2009 04:34 PM Bryan Henry:\r\nJust an update - this is still an issue with no apparent workaround in the WWDC 3.0 GM release. When any UITextField scrolls offscreen while in a UITableView and then has its first responder status removed an unavoidable crash results. This seems to be a fairly widespread and serious issue according to corroboration from other developers."
+    email: bryanhenry@mac.com
+    modified: "2011-08-28T05:46:36.924554Z"
+    number: "6948045"
+    number_intvalue: 6948045
+    originated: 04-Jun-2009 03:02 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "3.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: First responder cell in table view recycled too early on resign

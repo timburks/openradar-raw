@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30013615"
+    labels:
+        datastore_id: "4929038300741632"
+data:
+    classification: Bug
+    created: "2017-01-13T16:36:51.476Z"
+    description: "Summary:\r\nWhen adding a `static let` property to an extension of a class, code completion within that extension is broken. It works fine everywhere else, and if the code is correct, it all compiles fine. But code completion remains unusable within the extension scope.\r\n\r\nSteps to Reproduce:\r\n1. Open the attached project in Xcode 8.2.1\r\n2. Open the file `THE_BUG_IS_HERE.swift`\r\n3. Try code completion with the implementation of `foobar2`\r\n4. Try code completion with the implementation of `foobar1`\r\n\r\nExpected Results:\r\nCode completion should succeed in steps 3 & 4\r\n\r\nActual Results:\r\nCode completion fails in step 3\r\nCode completion succeeds in step 4\r\n\r\nVersion:\r\nXcode 8.2.1\r\n\r\n\r\n\r\n----\r\n\r\nHere is the code\r\n\r\n//\r\n//  AppDelegate.swift\r\n//  CodeCompletionBugInStaticLetInExtension\r\n//\r\n//  Created by Charles Parnot on 1/13/17.\r\n//  Copyright © 2017 Charles Parnot. All rights reserved.\r\n//\r\n\r\nimport Cocoa\r\n\r\n@NSApplicationMain\r\nclass AppDelegate: NSObject, NSApplicationDelegate {\r\n\r\n    @IBOutlet weak var window: NSWindow!\r\n\r\n\r\n    func applicationDidFinishLaunching(_ aNotification: Notification) {\r\n        // Insert code here to initialize your application\r\n    }\r\n\r\n    func applicationWillTerminate(_ aNotification: Notification) {\r\n        // Insert code here to tear down your application\r\n    }\r\n\r\n    // Code completion works fine here. But does not work in foobar2.\r\n    static let foobar1 = {\r\n        return NSBezierPath()\r\n    }()\r\n}\r\n\r\nextension AppDelegate {\r\n    \r\n    static let foobar2 = {\r\n        return NSBezierPath()\r\n        \r\n        // Try code completion here, e.g. type 'nsbez' and then 'esc'. Xcode finds no completion. But that works in foobar1.\r\n        // return nsbez\r\n        \r\n    }()\r\n}\r\n\r\nstruct SomeStruct {\r\n    \r\n    static let foobar1 = {\r\n        return NSBezierPath()\r\n    }()\r\n\r\n}\r\n\r\nextension SomeStruct {\r\n    \r\n    static let foobar2 = {\r\n        return NSBezierPath()\r\n        \r\n        // Try code completion here, e.g. type 'nsbez' and then 'esc'. Xcode finds no completion. But that works in foobar1.\r\n        // return nsbez\r\n        \r\n    }()\r\n    \r\n}"
+    email: charles.parnot@gmail.com
+    modified: "2017-01-13T16:36:51.4763Z"
+    number: "30013615"
+    number_intvalue: 30013615
+    originated: 01/13/2017
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 8.2.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Code completion not working in Xcode 8 when a `let static` is used in an extension

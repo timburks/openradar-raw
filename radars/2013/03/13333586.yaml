@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13333586"
+    labels:
+        datastore_id: "2806401"
+data:
+    classification: Other Bug
+    created: "2013-03-03T22:56:06.27586Z"
+    description: "ATTN: SceneKit Team\r\n\r\nSummary:\r\n\r\nSceneKit hit testing does not take into account the scale applied to the camera when usesOrthographicProjection is enabled.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a SceneKit view and scene containing a few nodes with geometry, as normal.\r\n\r\n2. Add one camera and enable \"usesOrthographicProjection\" on the SCNCamera, to switch on orthographic projection.  Apply a scale to the camera.\r\n\r\n    SCNCamera *orthoCamera = [SCNCamera camera];\r\n    orthoCamera.usesOrthographicProjection = YES;\r\n  \tSCNNode *cameraNode = [SCNNode node];\r\n  \tcameraNode.camera = orthoCamera;\r\n  \tcameraNode.position = SCNVector3Make(0.0f, 0.0f, 1.0f);\r\n  \tcameraNode.scale = SCNVector3Make(0.3f, 0.3f, 0.3f);\r\n  \t[scene.rootNode addChildNode:cameraNode];\r\n\r\n\r\n3. Enable update tracking in the view and override the mouseMoved: method to hit test the scene with the mouse location.\r\n\r\n    - (void)mouseMoved:(NSEvent *)event\r\n    {\r\n        NSPoint mouseLocation = [self convertPoint:[event locationInWindow] fromView:nil];\r\n        NSArray *hits = [self hitTest:mouseLocation options:nil];\r\n        NSLog(@\"hits: %@\", hits);\r\n    }\r\n\r\n\r\nExpected Results:\r\n\r\nThe result of hit testing should correctly return all nodes underneath the mouse pointer. This is the result we get if \"usesOrthographicProjection\" is not enabled.\r\n\r\n\r\nActual Results:\r\n\r\nHit testing does not match nodes in their visible positions.  Nodes are matched, but in incorrect positions.\r\n\r\nIt turns out that hit testing is not taking into account the scale applied to the camera when usesOrthographicProjection is enabled.  The workaround suggested at http://blog.wadetregaskis.com/scnview-hittestoptions-doesnt-work-correctly-for-orthographic-projections/ demonstrates this.\r\n\r\n\r\nRegression:\r\nn/a\r\n\r\n\r\nNotes:\r\n\r\nReferences:\r\n  https://devforums.apple.com/thread/181198?tstart=0"
+    email: miles.chris@gmail.com
+    modified: "2013-06-25T05:41:10.866772Z"
+    number: "13333586"
+    number_intvalue: 13333586
+    originated: 04-Mar-2013
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X SDK
+    product_version: 10.8.2
+    reproducible: Always
+    resolved: 25-Jun-2013
+    status: Closed
+    title: SceneKit hit testing issue with orthographic camera

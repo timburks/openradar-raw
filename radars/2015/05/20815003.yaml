@@ -1,0 +1,40 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20815003"
+    labels:
+        datastore_id: "6105393755324416"
+data:
+    classification: Serious Bug
+    created: "2015-05-05T08:38:53.85075Z"
+    description: |-
+        Summary:
+        If a file exists which `xcrun simctl clean` does not have permission to delete, it will fail but not throw an error or different exit code.
+        Furthermore, it will stop deleting files at this point instead of attempting to delete other files.
+
+        We ran into this by creating a file which the user does not have permissions to delete. We did not intend to create the file but nonetheless found out about it by `xcrun simctl clean` not working.
+
+        Steps to Reproduce:
+        1. From an iOS app run:
+        NSString *path = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"test"];
+        mkdir([path cStringUsingEncoding:NSUTF8StringEncoding], 744);
+
+        Then run this app under a simulator, and run `xcrun simctl clean` on that device.
+
+        Expected Results:
+        The file should be deleted from the simulator (since SpringBoard is actually able to delete that file) or at least an error should have been outputted by `xcrun simctl clean`.
+
+        Actual Results:
+        The file is not removed.
+    email: mars.martian@gmail.com
+    modified: "2015-05-05T08:38:53.85095Z"
+    number: "20815003"
+    number_intvalue: 20815003
+    originated: 05-May-2015 09:38 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.3 (6D1002)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '`xcrun simctl clean` does not throw an error or warn if it fails'

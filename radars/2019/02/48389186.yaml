@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "48389186"
+    labels:
+        datastore_id: "4964167534510080"
+data:
+    classification: Bug
+    created: "2019-02-26T04:29:08.194203Z"
+    description: "Area:\r\nFoundation\r\n\r\nSummary:\r\n\r\nCreating a valid HTTPCookie with more than one port is not possible using this initializer, but the documentation seems to indicate that it should be. Only the first port will be parsed from the provided comma-separated string.\r\n\r\nIn addition, only the first port is persisted in the corresponding .binarycookies file, so I don't think it's a matter of this having the correct behaviour as far as sending cookies while only reporting the first port upon inspection. I didn't test what ports the cookie was sent to during real network requests, but it seems like at best only the first session would send the cookies because after loading from the .binarycookies there would only be the first port. I understand .binarycookies aren't public API but figured this would be helpful information to share.\r\n\r\nHTTPCookie.init?(properties:):\r\n> To successfully create a cookie, you must provide values for (at least) the path, name, and value keys, and either the originURL key or the domain key.\r\n\r\nHTTPCookiePropertyKey.port:\r\n> An NSString object containing comma-separated integer values specifying the ports for the cookie.\r\n> Only valid for Version 1 cookies or later.\r\n\r\nSteps to Reproduce:\r\n\r\n```\r\nimport Foundation\r\n\r\nlet cookie = HTTPCookie(properties: [\r\n    .name: \"name\",\r\n    .originURL: \"http://sub.domain.tld\",\r\n    .path: \"path\",\r\n    .value: \"value\",\r\n    .version: \"1\",\r\n    .port: \"80,443\",\r\n])\r\n\r\ndump(cookie)\r\n```\r\n\r\nOutputs:\r\n\r\n```\r\n▿ Optional(<NSHTTPCookie\r\n\tversion:1\r\n\tname:name\r\n\tvalue:value\r\n\texpiresDate:'(null)'\r\n\tcreated:'2019-02-26 04:13:07 +0000'\r\n\tsessionOnly:TRUE\r\n\tdomain:sub.domain.tld\r\n\tpartition:none\r\n\tsameSite:none\r\n\tpath:path\r\n\tisSecure:FALSE\r\n path:\"path\" isSecure:FALSE\tports:{ 80 }\r\n>)\r\n```\r\n\r\nExpected Results:\r\n\r\nThe cookie's portList property will return all (>1) ports specified in the initializer arguments.\r\n\r\nActual Results:\r\n\r\nOnly the first port is parsed and returned from portList.\r\n\r\nVersion/Build:\r\n\r\nVersion 10.1 (10B61)"
+    email: brandon@brandonevans.ca
+    modified: "2019-02-26T04:29:08.194393Z"
+    number: "48389186"
+    number_intvalue: 48389186
+    originated: 2019/2/25
+    parent_number: '&{NULL_VALUE}'
+    product: Foundation
+    product_version: 10.1 SDK
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: HTTPCookie.init?(properties:) only parses the first port, contrary to documentation

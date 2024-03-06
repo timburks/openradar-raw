@@ -1,0 +1,60 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19791100"
+    labels:
+        datastore_id: "6242989777092608"
+data:
+    classification: Serious Bug
+    created: "2015-02-11T01:40:36.342246Z"
+    description: |-
+        Summary:
+        Trying to implement equality over an Equatable struct with a dictionary of ints to arrays of ints crashes the compiler.
+
+
+        Steps to Reproduce:
+        1. Attempt to compile this code:
+
+        struct A: Equatable {
+        	var v: [Int: [Int]]
+        }
+
+        func == <T> (left: A, right: A) -> Bool {
+        	return reduce(map(Set(left.v.keys).union(right.v.keys)) {
+        			(left.v[$0] ?? []) == (right.v[$0] ?? [])
+        		}, true) { $0 && $1 }
+        }
+
+
+
+        Expected Results:
+        “Build succeeded”
+
+
+        Actual Results:
+        S̢҉̴̢͍̤̬͙͔̝̮̳̱̻̪͕͍̱̟́ͅĮ̫̲̯͓̦̥͙̦̝̗̘̝͘͜G̩̤̻̪̤̭͕̠̹̩͚͙͔̀͘ͅS̶̢̳͎̻̗̠̥̖͓͚̼̘̟̟͈̜̗̳̺͍̀E̶̴̴͓̝͈̪̻̠̣̮̣͓̲̘̣̱̳͈̤̝͖͘͜G̛̺̖͓̥̟̦͓̭͎̲͉͘͘V̷̢̻̮̝̩̺̻̟͖̰̮̼̥̼
+
+
+
+
+
+        (Compiler crash in swift::irgen::emitPolymorphicArguments.)
+
+        Regression:
+        It doesn’t crash if you remove the struct’s conformance to Equatable.
+
+
+        Notes:
+        This is a blocker for me at present and I don’t have a good workaround yet. I am writing this struct at all (vs. using raw dictionaries) because I need the thing to be Equatable, and it can’t be Equatable because Swift can’t express constrained extensions.
+    email: rix.rob@gmail.com
+    modified: "2015-02-11T01:40:36.342388Z"
+    number: "19791100"
+    number_intvalue: 19791100
+    originated: 10-Feb-2015 08:40 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-Beta (6D520o)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2b1: Compiler crashes doing IR generation for Equatable struct’s == function with booleans & things'

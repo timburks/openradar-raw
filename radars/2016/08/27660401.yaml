@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27660401"
+    labels:
+        datastore_id: "6105554481053696"
+data:
+    classification: Enhancement
+    created: "2016-08-02T17:25:02.09371Z"
+    description: "We are implementing a custom protocol Packet Tunnel Provider, using the NEPacketTunnelProvider API. Our extension code consists of a NEPacketTunnelProvider subclass, a tunneling engine, and a relay to feed IP packet flow between the tunneling engine and the NEPacketTunnelProvider API.\r\n\r\nWe have found that once we start our tunneling engine, our extension is terminated and we find a JetsamEvent diagnostic log indicating the \"reason\" is \"per-process-limit\". (We have also reproduced this termination by simply allocating a large byte buffer (~4MB) instead of starting our tunneling engine.)\r\n\r\nApple technical support has confirmed that there is a 5-6MB memory limit for network extensions, raised to 15MB in iOS 10 Beta 2. These limits are insufficient.\r\n\r\nOur tunneling engine is more complex than a simple VPN since our app is a censorship circumvention system (https://psiphon3.com) which needs to try different tunneling protocols and discover new proxy servers, using a variety of mechanisms, in order to establish multiple simultaneous tunnels. (It is also certain that, in the future, we will need to add increasingly complex and intelligent mechanisms for bypassing censorship.)\r\n\r\nOur app is used by people who have only censored access to the internet, typically preventing them from accessing Facebook, Twitter, and other sites and services. Our VPN app is quite literally the most important app that they run -- without it many other apps are unusable.\r\n\r\nWe are requesting that the memory limit be removed for VPN network extensions. (If there needs to be a limit, we are asking that it be at least 100MB.)\r\n\r\nWe have tested our tunneling engine running in a normal app and it works fine, although the app lifetime isn't suitable for a long running tunnel.\r\n\r\nWe have made efforts to reduce memory usage, such as limiting buffer sizes and growth, and restricting the number of tunnels. But there is absolutely no way that our censorship circumvention toolkit will run under the tiny network extension limit.\r\n\r\n\r\nSteps to Repro:\r\n\r\n1. Make a Packet Tunnel Provider extension.\r\n2. Allocate a large memory buffer.\r\n\r\nExpected Results:\r\n\r\nSuccessfully allocate required memory.\r\n\r\nActual Results:\r\n\r\nExtension is terminated with per-process-limit Jetsam event."
+    email: a.pritchard@psiphon.ca
+    modified: "2021-11-23T21:14:49.690717Z"
+    number: "27660401"
+    number_intvalue: 27660401
+    originated: "2016-08-02"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 9.x
+    reproducible: Always
+    resolved: "2021-11-23"
+    status: Resolved
+    title: Remove or raise memory limit for Packet Tunnel Provider extension

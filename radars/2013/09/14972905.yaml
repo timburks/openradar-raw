@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14972905"
+    labels:
+        datastore_id: "5893365145010176"
+data:
+    classification: Other
+    created: "2013-09-12T06:21:45.790406Z"
+    description: "In the 64-bit build there is an unexpected value for the method return type in one of the method signatures during an invocation (\"B\" instead of the expected \"c\").  \r\n\r\nThis breaks my code which checks for equality in the method signature for certain tasks.\r\n\r\n#### Original method invocation\r\n\r\n```\r\nBOOL allowChange = [[(id)self.delegateProxy copyThatDefaultsToYES] multiPDFController:self shouldChangeDocuments:documents];\r\n```\r\n\r\n#### Failure point\r\n\r\n```\r\n- (void)forwardInvocation:(NSInvocation *)invocation {\r\n    // Set a default return type if set.\r\n==> if (_defaultReturnValue && strcmp(_defaultReturnValue.objCType, invocation.methodSignature.methodReturnType) == 0) {\r\n        char buffer[invocation.methodSignature.methodReturnLength];\r\n        [_defaultReturnValue getValue:buffer];\r\n        [invocation setReturnValue:&buffer];\r\n    }\r\n}\r\n```\r\n\r\n#### 32-bit signature\r\n\r\n((lldb) p _defaultReturnValue\r\n(NSValue *) $3 = 0x03864350 1\r\n(lldb) p _defaultReturnValue.objCType\r\n(char *) $4 = 0x0380c2c2 \"c\"\r\n(lldb) p (char *)[invocation.methodSignature methodReturnType]\r\n(char *) $5 = 0x0d5d6fed \"c\"\r\n\r\n#### 64-bit signature\r\n\r\n(lldb) p _defaultReturnValue\r\n(NSValue *) $2 = 0x0000000103ba50d0 1\r\n(lldb) p _defaultReturnValue.objCType\r\n(char *) $3 = 0x0000000103b28fef \"c\"\r\n(lldb) p (char *)[invocation.methodSignature methodReturnType]\r\n(char *) $4 = 0x000000010cfafad5 \"B\"\r\n\r\nMy workaround is to do a special check for this case - but it's ugly.\r\n\r\n- (void)forwardInvocation:(NSInvocation *)invocation {\r\n    // Set a default return type if set.\r\n    if (_defaultReturnValue) {\r\n        const char *methodReturnType = invocation.methodSignature.methodReturnType;\r\n        if (strcmp(_defaultReturnValue.objCType, methodReturnType) == 0 ||\r\n            // The 64-bit runtime returns 'B' for BOOL, a bool in NSValue is still a char though.\r\n            (strcmp(_defaultReturnValue.objCType, \"c\") == 0 && strcmp(methodReturnType, \"B\") == 0)) {\r\n            char buffer[invocation.methodSignature.methodReturnLength];\r\n            [_defaultReturnValue getValue:buffer];\r\n            [invocation setReturnValue:&buffer];\r\n        }\r\n    }\r\n}\r\n\r\nSteps to Reproduce:\r\nPack a BOOL into NSValue, call `objCType`. \r\nThe code for this is also on GitHub: https://github.com/steipete/PSTDelegateProxy\r\n\r\nExpected Results:\r\nobjCType should return 'B' on iOS64, not 'c'.\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\n7.0 GM\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: steipete@gmail.com
+    modified: "2013-09-12T06:21:45.79058Z"
+    number: "14972905"
+    number_intvalue: 14972905
+    originated: Sept 12 2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: A BOOL stored in NSValue will get the 'c' type in the 64 bit runtime.

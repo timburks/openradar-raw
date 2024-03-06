@@ -1,0 +1,50 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25780530"
+    labels:
+        datastore_id: "5031981100302336"
+data:
+    classification: Enhancement
+    created: "2016-04-18T17:17:58.35175Z"
+    description: |-
+        Summary:
+        https://bugs.swift.org/browse/SR-1165 - The Apple XCTest team will need to specify a swift_name for the -[XCTest runTest] or -[XCTest run] method. Alternatively, the deprecated -[XCTest run] method should not be imported into Swift.
+
+        Steps to Reproduce:
+        Use apple/swift {{swift-api-dump.py}} to generate XCTest.framework headers using Xcode 7.3:
+
+        $ export SWIFT_BIN_DIR="/path/to/build/Ninja-ReleaseAssert/swift-macosx-x86_64/bin"
+        $ $SWIFT_BIN_DIR/swift-api-dump.py -s macosx -m XCTest \
+            --framework-dir /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/
+
+        Expected Results:
+        The methods are imported into Swift as XCTest.run() and XCTest.runTest(). They do not conflict. Or XCTest.run() is not imported at all.
+
+        Actual Results:
+        The two methods are imported with the same name. Which is used is based on return value type inference:
+
+        class XCTest : NSObject {
+          // ...
+          @available(*, deprecated)
+          func run() -> XCTestRun
+          func run()
+        }
+
+        Regression:
+        Describe circumstances where the problem occurs or does not occur, such as software versions and/or hardware configurations.
+
+        Notes:
+        Provide additional information, such as references to related problems, workarounds and relevant attachments.
+    email: B.Gesiak@gmail.com
+    modified: "2016-04-18T17:17:58.35194Z"
+    number: "25780530"
+    number_intvalue: 25780530
+    originated: 18-Apr-2016 01:17 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.3 (7D175)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: -[XCTest runTest] and -[XCTest run] generate duplicate method names in Swift 3

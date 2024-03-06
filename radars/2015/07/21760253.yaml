@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21760253"
+    labels:
+        datastore_id: "6067475636551680"
+data:
+    classification: Memory leak
+    created: "2015-07-10T03:21:20.91994Z"
+    description: "Summary:\r\nIf you add a keyframe animation using addKeyframeWithRelativeStartTime to a UIView that implements drawRect and then immediately remove that view from its superview, memory is leaked proportionally to the size of the view. The memory being leaked follows:\r\n\r\n#\tAddress\tCategory\tTimestamp\tLive\tSize\tResponsible Library\tResponsible Caller\r\n0\t0x10ffbd000\tVM: CoreAnimation\t00:38.965.672\t•\t2.93 MB\tQuartzCore\tCA::Render::Shmem::new_shmem(unsigned long)\r\n\r\nSteps to Reproduce:\r\nWhile instrumenting for memory allocations:\r\n\r\n1. Create a UIView subclass.\r\n2. Implement drawRect: with { [super drawRect:rect]; }\r\n3. Create an instance of the UIView subclass.\r\n3. Within a UIView::animateKeyframesWithDuration animation block, animate the view's alpha within a UIView::addKeyframeWithRelativeStartTime block.\r\n4. Immediately call [view removeFromSuperView];\r\n\r\nExpected Results:\r\nNearly all memory for the view to be released back to the system.\r\n\r\nActual Results:\r\nMemory proportional to the size of the view is leaked permanently.\r\n\r\nVersion:\r\niOS 8.3, 8.4, 9.0\r\n\r\nConfiguration:\r\niPhone 6, iOS simulator\r\n\r\nExample: https://gist.github.com/jverkoey/863ba4df71ca477249a4"
+    email: featherless@google.com
+    modified: "2015-07-10T03:21:20.92028Z"
+    number: "21760253"
+    number_intvalue: 21760253
+    originated: July 9, 2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 8, 9
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CALayer leaks with drawRect + keyframe animation + removeFromSuperView

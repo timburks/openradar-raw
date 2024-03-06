@@ -1,0 +1,65 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17405124"
+    labels:
+        datastore_id: "6458972743663616"
+data:
+    classification: Enhancement
+    created: "2014-06-21T04:35:16.090018Z"
+    description: |-
+        Summary:
+        Statements within functions & closures be valid as expressions, and all such scopes should implicitly return the value of their final expression
+
+        Steps to Reproduce:
+        1. Try to compile this code:
+
+        let sparkly = true
+        func foo() -> String {
+            let str = if sparkly {
+                "sparkly"
+            } else {
+                "dull"
+            }
+            str + "foo!"
+        }
+
+        Expected Results:
+        I expected that str would be assigned the string in the if/else block that was evaluated, and that the str + "foo!" expression’s result would be the return value of the function.
+
+        Actual Results:
+        Instead, it didn’t compile. You have to use explicit assignment to variables (not constants, mind! this has implications for what you can reason on!), or return early, or find some other workaround to pass values up your control flow. You also have to return explicitly, unless you‘re writing a single-line closure, which is a weird special case that makes me uncomfortable.
+
+        Regression:
+        N/A
+
+        Notes:
+        Early returns can make reasoning about code more difficult. Likewise with variables instead of constants. With @auto_closure we can actually lift some of these things into the framework proper:
+
+        func iff<T>(condition: LogicValue, then: @auto_closure () -> T) -> T? {
+        	return condition ? then() : nil
+        }
+
+        func iff<T>(condition: LogicValue, then: @auto_closure () -> T, els: @auto_closure () -> T) -> T {
+        	return condition ? then() : els()
+        }
+
+        (Note that I am not super confident that these type signatures are adequate; similarly, complain to whoever made “else” a keyword ;) )
+
+        However, this isn’t sufficient—for/in should also be an expression (effectively paving the way for comprehensions), and *especially* switch/case.
+
+        The syntactic noise required to explicitly return & pass state around otherwise is burdensome and detracts from the readability & ease of reasoning on the code in question.
+
+        All of that aside, I love that I get to file radars like this now. Thank you <3
+    email: rix.rob@gmail.com
+    modified: "2014-06-21T04:35:16.090178Z"
+    number: "17405124"
+    number_intvalue: 17405124
+    originated: 21-Jun-2014 12:34 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta2 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Feature request: Statement expressions & implicit returns'

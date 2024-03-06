@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12738154"
+    labels:
+        datastore_id: "2319401"
+data:
+    classification: Security
+    created: "2012-11-21T20:42:39.814927Z"
+    description: "Summary:\r\nMy IPWorldTV app (Apple ID 488282895) has been receiving IAP receipts for Cut The Rope (Apple ID 450542233) for some unknown reason. To verify the receipt I've been sending it and my shared secret to the App Store, but the App Store always returns that the receipt is valid even if my shared secret is not.\r\n\r\n\r\nSteps to Reproduce:\r\nYou can reproduce the issue by taking a valid non-renewable subscription receipt and validating it according to the IAP Programming Guide:\r\nhttp://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/StoreKitGuide/VerifyingStoreReceipts/VerifyingStoreReceipts.html\r\n\r\nI've been reproducing it on the command-line with curl:\r\n$ curl -d '{\"receipt-data\": \"<RECEIPT>\", \"password\": \"INVALID_SHARED_SECRET\"}' https://buy.itunes.apple.com/verifyReceipt\r\n\r\nYou can use the attached receipt to replace \"<RECEIPT>\" in the command-line above.\r\n\r\n\r\nExpected Results:\r\nI expect the App Store to mark transactions as invalid if the shared secret does not match the receipt, even for non-renewable subscriptions.\r\n\r\n\r\nActual Results:\r\nThe App Store ignores the shared secret for non-renewable subscriptions and marks the receipt as valid.\r\n\r\n\r\nRegression:\r\n\r\nNotes:\r\nI understand that the IAP Programming Guide only mentions the shared secret in association with auto-renewable subscriptions, but that leaves a large security hole since the shared secret is ignored for all other transactions. If you follow the In-App Purchase Receipt Validation on IOS guide (see http://developer.apple.com/library/ios/#releasenotes/StoreKit/IAP_ReceiptValidation/_index.html), it always sends the shared secret to verify the receipt and if the shared secret is ignored then you could be receiving a transaction for any app on the App Store.\r\n\r\nBy adding support for the shared secret for all transactions in the verifyReceipt request, it provides an additional layer of security against third-party or iOS bugs and makes it more difficult for future attacks on IAP."
+    email: freastro@gmail.com
+    modified: "2016-01-29T00:33:02.492Z"
+    number: "12738154"
+    number_intvalue: 12738154
+    originated: 21-Nov-2012 12:17 PM
+    parent_number: '&{NULL_VALUE}'
+    product: App Store
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Behaves correctly
+    title: App Store does not verify shared secret for non-renewable subscriptions

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "5177472"
+    labels:
+        datastore_id: "71419"
+data:
+    classification: ""
+    created: "2009-08-27T03:00:41.282926Z"
+    description: "02-May-2007 01:48 PM W Lewis:\r\nSummary: \r\n\r\nThe -getBuffer:length: call on NSStreams that correspond to CFStreams consumes data but doesn't return it.\r\n\r\nSteps to Reproduce: \r\n\r\nSee appended C program for a full example. Basically:\r\n  - Create a NSStream using [NSInputStream inputStreamWithData:foo]\r\n  - Open it, and notice that hasBytesAvailable=YES\r\n  - Invoke [stream getBuffer:&buf length:&buflen]\r\n  - Note that the call returns NO and does not fill in buf or length, but it still consumes all the stream's data (hasBytesAvailable=NO and status=NSStreamStatusAtEnd)\r\n\r\nExpected Results: \r\n\r\nEither -getBuffer:length: should do nothing and return NO, or it should fill in its arguments and return YES. You know, like the documentation says it does.\r\n\r\nActual Results: \r\n\r\nConsumes all data and drops it on the floor, returning NO.\r\n\r\nNotes: \r\n\r\nGDB suggests that the problem is in NSCFInputStream's method which calls CFReadStreamGetBuffer(). It does not correctly interpret the return value (it appears to ignore the return value altogether and base its behavior on *numBytesRead?).\r\n\r\nC program:\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\nint main()\r\n{\r\n    [[NSAutoreleasePool alloc] init];\r\n\r\n    NSData *s = [@\"This is a short piece of text.\" dataUsingEncoding:NSASCIIStringEncoding];\r\n    NSInputStream *is = [NSInputStream inputStreamWithData:s];\r\n    \r\n    [is open];\r\n    for(;;) {\r\n        NSLog(@\"status=%d hasBytesAvailable=%d\", [is streamStatus], [is hasBytesAvailable]);\r\n        uint8_t *xbuf;\r\n        unsigned xbuflength;\r\n        BOOL ok;\r\n        xbuf = NULL;\r\n        xbuflength = 0;\r\n        ok = [is getBuffer:&xbuf length:&xbuflength];\r\n        if (ok) {\r\n                NSLog(@\"getBuffer:length: returned buffer=%p length=%d (%.*s)\", xbuf, xbuflength, xbuflength, xbuf);\r\n        } else {\r\n                NSLog(@\"getbuffer:length: returned NO (buffer=%p length=%d)\", xbuf, xbuflength);\r\n        }\r\n\r\n\r\n        NSLog(@\"status=%d hasBytesAvailable=%d\", [is streamStatus], [is hasBytesAvailable]);\r\n        char buf[12];\r\n        int r = [is read:(void *)buf maxLength:12];\r\n        NSLog(@\"read %d bytes: [%.*s]\", r, r, buf);\r\n        if ([is streamStatus] != NSStreamStatusOpen)\r\n            break;\r\n    }\r\n\r\n    NSLog(@\"done\");\r\n    return 0;\r\n}\r\n\r\n\r\n\r\n\r\n'slowpoke.spx' was successfully uploaded\r\n\r\n25-Sep-2007 05:47 PM W Lewis:\r\nProblem persists in 10.5 / 9A559.\r\n\r\n12-Mar-2008 12:17 PM W Lewis:\r\nProblem persists unchanged in 10.5.2/9C31.\r\n\r\n\r\n\r\n\r\n01-Jul-2008 01:34 PM W Lewis:\r\nProblem persists unchanged in 10.5.4 / 9E17.\r\n\r\n13-Jul-2010 02:36 PM W Lewis:\r\nProblem persists unchanged in 10.6.4 / 10F569.  (Need to change the declaration of xbuflength to NSUInteger.)\r\n\r\n25-Sep-2012 04:45 PM Apple Developer Relations:\r\nMarked as duplicate of 9179106\r\n\r\n29-Dec-2014 03:16 PM W Lewis:\r\nThis bug still exists in 10.10/14A389 and 10.9.5/13F34"
+    email: wiml@omnigroup.com
+    modified: "2014-12-29T23:23:09.775308Z"
+    number: "5177472"
+    number_intvalue: 5177472
+    originated: 02-May-2007 01:48 PM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: 10.4.x, 10.5.x, 10.6.x, 10.9.x, 10.10.x
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '8P4037/9A559: -[NSCFInputStream getBuffer:length:] returns NO, consumes data anyway'

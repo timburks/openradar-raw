@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17284560"
+    labels:
+        datastore_id: "5613597552017408"
+data:
+    classification: UI/Usability
+    created: "2014-06-12T10:08:28.555634Z"
+    description: "Summary:\r\nCalling a computed property's getter or setter from within itself, without using super, almost always causes infinite recursion. It should be an error.\r\n\r\nSteps to Reproduce:\r\n1. Create a Swift playground.\r\n2. Declare a computed property like so:\r\n\r\nclass Foo {\r\n    class var foo: Int { return self.foo }\r\n}\r\n\r\n3. Try to use Foo.foo in any way.\r\n\r\nExpected Results:\r\nThe code in step 2 is flagged as an error and will not compile.\r\n\r\nActual Results:\r\nThe code compiles and causes infinite recursion. In a playground, this apparently manifests as the playground refusing to ever evaluate any new code.\r\n\r\nAdditional Notes:\r\nWhen \"self\" is left off, this produces a warning, but I see no reason why this should be a mere warning, nor why \"self\" should suppress it. Getters in particular have no parameters you can use to eventually terminate recursion, so the only way the recursion could possibly terminate would be if they had side effects—a pattern which should probably be discouraged, to say the least. Setters, at least, could vary the value to eventually terminate recursion, but this still seems esoteric.\r\n\r\nThis might be harmless, except that many developers don't realize that computed properties have no storage and naïvely try access it with a recursive call. I've seen this at least three times on the Developer Forums. To make things worse, if they're Objective-C refugees they probably use 'self', so they don't even see the warning normally given for this condition.\r\n\r\nSince recursive getters and setters don't seem very useful, while accidental recursion is very common, I think they should be banned."
+    email: brent@architechies.com
+    modified: "2014-06-12T10:08:28.555769Z"
+    number: "17284560"
+    number_intvalue: 17284560
+    originated: "2014-06-12"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.0 beta 1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Recursively calling a getter/setter should be an error'

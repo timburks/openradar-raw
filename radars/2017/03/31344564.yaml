@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31344564"
+    labels:
+        datastore_id: "5029692201500672"
+data:
+    classification: Serious bug
+    created: "2017-03-30T12:44:34.11531Z"
+    description: "Summary:\r\nApparently Xcode 8.3 test suite is including a symbols from popular networking library CocoaAsyncSocket. Namely, GCDAsyncSocketDelegate. This may conflict with a custom version of the library used in the main app.\r\n\r\nSteps to Reproduce:\r\n1. Create a new project using Xcode and enable unit testing\r\n2. Run the following test:\r\n- (void)testExample {\r\n    XCTAssertNil(NSProtocolFromString(@\"GCDAsyncSocketDelegate\"), @\"This should be nil\");\r\n}\r\n\r\nExpected Results:\r\nNSProtocolFromString(@\"GCDAsyncSocketDelegate\") should return nil and the test should pass.\r\n\r\nActual Results:\r\nThe test fails because GCDAsyncSocketDelegate protocol exists at runtime. \r\n\r\nRegression:\r\nThis problem only started after upgrading to Xcode 8.3. My tests ran fine on previous version.\r\n\r\nNotes:\r\nI’ve determined which classes are implementing that protocol with the following code:\r\n\r\nClass* classes = NULL;\r\n    int numClasses = objc_getClassList(NULL, 0);\r\n    if (numClasses > 0 ) {\r\n        classes = (Class *)malloc(sizeof(Class) * numClasses);\r\n        numClasses = objc_getClassList(classes, numClasses);\r\n        for (int index = 0; index < numClasses; index++) {\r\n            Class nextClass = classes[index];\r\n            if (class_conformsToProtocol(nextClass, NSProtocolFromString(@\"GCDAsyncSocketDelegate\"))) {\r\n                NSLog(@\"%@\", nextClass);\r\n            }\r\n        }\r\n        free(classes);\r\n    }\r\n\r\nwhich prints:\r\n\r\n DTAssetHTTPRequestHandler\r\n DTAssetHTTPServer\r\n\r\nThose two classes appear to be from Developer Tools provided with Xcode."
+    email: paulo@outercorner.com
+    modified: "2017-03-30T12:44:34.11559Z"
+    number: "31344564"
+    number_intvalue: 31344564
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Tests running in Xcode 8.3 do not use same version of GCDAsyncSocketDelegate main app uses

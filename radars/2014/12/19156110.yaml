@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19156110"
+    labels:
+        datastore_id: "6074688530808832"
+data:
+    classification: Serious Bug
+    created: "2014-12-05T13:44:26.489799Z"
+    description: "Summary:\r\nSee steps below for more detail, but effectively setting an \"unsupported\" preferredSampleRate on the AVAudioSession will not yield an error on the API call and will lead to many more errors and unexpected behaviors.\r\n\r\nSteps to Reproduce:\r\n1. On an inactive audio session, call  [[AVAudioSession sharedInstance] setPreferredSampleRate:48000.0f error:&error]\r\n2. Observe that the method returns YES and the NSError parameter is not set (remains nil)\r\n3. Call [[AVAudioSession sharedInstance] preferredSampleRate] and observe that 48000.0f is returned\r\n4. In Xcode, open the Devices window and expose the live device console for an the attached iPhone.\r\n5. Observe the following error fire every time setPreferredSampleRate is called:\r\nDec  4 19:00:35 Richards-iPhone-6 mediaserverd[8722] <Error>: 19:00:35.173 EXCEPTION:  ERROR:     [0x104360000] >va> 1765: kAudioDeviceUnsupportedFormatError: \"Attempt to set an unsupported sample rate (48000.000000 Hz)\"\r\n\r\n6. Despite this, continue to use the AVAudioSession in PlayAndRecord mode and initialize a basic AUGraph with input and output callbacks\r\n7. Observe that while output is routed to speaker/earpiece/headphones everything appears to work fine\r\n8. Adjust AVAudioSession to route I/O to attached Bluetooth device by setting the  AVAudioSessionCategoryOptionAllowBluetooth option\r\n9. Observe: Suddenly, no input/output callbacks are received at all, but no errors are fired\r\n10. Observe the following error firing continuously in the live console in Xcode/Devices:\r\nDec  4 18:42:45 Richards-iPhone-6 mediaserverd[8722] <Error>: kAudioUnitErr_TooManyFramesToProcess : inFramesToProcess=24576, mMaxFramesPerSlice=4096\r\n\r\n11. Observe that returning to speaker/earpiece/headphone will make this error disappear\r\n12. Both of these errors can be resolved by simply not calling setPreferredSampleRate with an “unsupported” rate\r\n\r\nExpected Results:\r\nI observe a few bugs in this flow:\r\n1) setPreferredSampleRate should be returning NO and setting a NSError with the above information when the call fails\r\n2) preferredSampleRate should *not* return the rate which failed to be set\r\n3) It is questionable whether or not there should be an error which only occurs when using a Bluetooth device, but this error *must* be exposed to the developer in some way\r\n\r\nHowever, at the end I think the core bug is that the developer is allowed to proceed with a mis-configured AVAudioSession that can lead to many more errors down the road.\r\n\r\nActual Results:\r\nSee steps 5, 9, and 10 for the actual results and errors in this flow leading to a non-functional audio session\r\n\r\nVersion:\r\niOS 8.1.1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 6 and 6+, AT&T, both WiFi and WWAN\r\n\r\nAttachments:"
+    email: speyer.richard@gmail.com
+    modified: "2014-12-05T13:44:26.489959Z"
+    number: "19156110"
+    number_intvalue: 19156110
+    originated: 12/5/2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 8.1.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AVAudioSession methods failing without returning an error and leading to a non-functional AUGraph

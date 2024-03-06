@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9086454
+    labels:
+        datastore_id: "4947080455913472"
+data:
+    classification: Bug
+    created: "2021-04-23T10:46:07.436021Z"
+    description: "Whenever the string \"Feedback\" is at the beginning of an accessibilityLabel of a UIKit View the German VoiceOver agent reads \"Komma Feedback\" (\"Komma\" == \"comma\" for \",\"-character).\r\n\r\nThis is very easy to reproduce in a sample Xcode project (I attached one - just run it on a device):\r\n- Have an iPhone device (I have an iPhone 12 mini with iOS 14.4.2)\r\n- My iPhone was set to German language and region, but I think this does not matter if you set the \"accessibilityLanguage\" to \"de\" on the view\r\n- Run a simple iOS Xcode project containing a ViewController with the following code:\r\n\r\n```\r\nclass ViewController: UIViewController {\r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n\r\n        // test it with other UIKit View types\r\n\r\n//        let label = UIView()\r\n//        let label = UIButton()\r\n//        let label = UIControl()\r\n        let label = UILabel()\r\n        label.translatesAutoresizingMaskIntoConstraints = false\r\n\r\n        // optionally set this for non-enabled UIKit types\r\n//        label.isAccessibilityElement = true\r\n\r\n        // this reads \"Komma Feedback\" in german voice over\r\n        label.accessibilityLabel = \"Feedback\"\r\n\r\n        // this reads \"Komma Feedback Text\" in german voice over\r\n//        label.accessibilityLabel = \"Feedback Text\"\r\n\r\n        // this reads \"Mein Feedback\" in voice over like expected\r\n//        label.accessibilityLabel = \"Mein Feedback\"\r\n\r\n        // set this to \"en\" and it just reads \"Feedback\"\r\n        label.accessibilityLanguage = \"de\"\r\n\r\n        self.view.addSubview(label)\r\n\r\n        NSLayoutConstraint.activate([\r\n            label.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),\r\n            label.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),\r\n            label.widthAnchor.constraint(equalToConstant: 10),\r\n            label.heightAnchor.constraint(equalToConstant: 10)\r\n        ])\r\n    }\r\n}\r\n```\r\n\r\nCode explanation:\r\nThis is a ViewController where a label was added to the center of the screen. \r\nOn that label \"accessibilityLabel\" was set to \"Feedback\". And to make sure the text is read in German the \"accessibilityLanguage\" was hard coded to \"de\".\r\nYou can set that viewController as root view controller of the window or have it loading from a Storyboard (like the example project does).\r\n\r\nWhen displayed VoiceOver selects and reads the label with the text \"Komma Feedback\". This is wrong!\r\n\r\nRun the sample project:\r\nIn order to reproduce the bug extract the attached zip file which contains a ready to use Xcode project to be run.\r\nTo run on a device simply enable automatic signing and run on a device with VoiceOver enabled.\r\n\r\nPlease give me feedback what is going on here and when it is going to be fixed.\r\nThank you."
+    email: rennerfabian@me.com
+    modified: "2021-04-23T10:46:07.436176Z"
+    number: FB9086454
+    number_intvalue: 9086454
+    originated: 4/23/2021
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 14.4.2
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: German string "Feedback" as accessibilityLabel reads "Komma Feedback" instead of just "Feedback"

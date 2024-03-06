@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12225387"
+    labels:
+        datastore_id: "1928401"
+data:
+    classification: Performance
+    created: "2012-09-03T16:35:05.200466Z"
+    description: "Summary:\r\nWhen an application that is resumed has a long, synchronous startup process (like an I/O heavy application), it interferes with the loading of login items.  Sometimes for only a few seconds, but for some applications this can take up to a minute, even on factory SSD-equipped Macs.\r\n\r\nWhile a portion of this problem falls on the head of a developer, it seems reasonable that if a developer is creating a regular application and not a background service or menu-bar only item that lends itself to being part of a startup process then they don't need to assume that their application should deploy quickly.\r\n\r\nConsider Sparrow, the third party email client.  Their startup process is long on my Early 2011 MBP with SSD, and without any knowledge of their inner mechanics I can assume that this is because their network + database I/O is done synchronously (not with regards to the application's main thread and UI, but with regards to its startup process as a whole).  In an email application, you can make an argument for this being sane; the application is mostly useless until emails have been loaded in to the list view.  If I don't quit Sparrow before a reboot, then my login items will be delayed for nearly a minute; this is a problem for me because my login items include such useful applications as Dropbox, Alfred, TextExpander, and KeyboardMaestro.\r\n\r\nObviously, the Resume feature *should* happen immediately in order for the feature itself to feel responsive and to make it feel like the Mac is being booted up instantaneously.\r\n\r\nBut I question the validity of app resume being a blocking operation.\r\n\r\nSteps to Reproduce:\r\n\r\nAdd a few apps to Login Items for your user account, launch an application that is very heavy on I/O (once again, I'm going with Sparrow), then reboot without quitting any running applications.\r\n\r\nExpected Results:\r\n\r\nApplications should resume in a timely manner, and login items should start up in a timely manner.  Especially on an SSD.\r\n\r\nActual Results:\r\n\r\nThe IO heavy application resume will cause all login item launches to be delayed, drastically.\r\n\r\nRegression:\r\n\r\nThis has been an issue since Lion, when Resume was introduced.\r\n\r\nNotes:\r\n\r\n03-Sep-2012 11:49 AM Douglas Stephen:\r\nFor more information regarding my process for identifying this issue, please see this thread on reddit.com/r/applehelp:\r\n\r\nhttp://www.reddit.com/r/applehelp/comments/za8ot/psa_ive_been_seeing_a_lot_of_people_upset_by_slow/\r\n\r\n03-Sep-2012 03:01 PM Douglas Stephen:\r\nJust as an additional experiment, I decided to quit Sparrow, add it as a Login Item, ensuring that it was at the top of the list of Login Items.\r\n\r\nAfter doing so, while Sparrow itself still takes a long time to load, it no longer has any impact on the rest of the Login Items loading in a timely manner.  This is the behavior I would expect."
+    email: dljs.jr@gmail.com
+    modified: "2012-09-03T20:02:18.616019Z"
+    number: "12225387"
+    number_intvalue: 12225387
+    originated: 03-Sep-2012 11:32 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.8.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Resume superseding login items can lead to major usability issues

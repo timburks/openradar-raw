@@ -1,0 +1,46 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14783825"
+    labels:
+        datastore_id: "5652331580358656"
+data:
+    classification: Serious Bug
+    created: "2013-08-20T13:24:33.662551Z"
+    description: |-
+        Summary:
+        When an object documented to be a NSURLSessionDataTask instance is asked whether it’s a NSURLSessionTask (through the isKindOfClass: method), the result should be true since NSURLSessionTask is a superclass of NSURLSessionDataTask.
+
+        Steps to Reproduce:
+        Run this code:
+        NSURLSessionDataTask *dataTask = [[NSURLSession sharedSession] dataTaskWithURL:[NSURL URLWithString:@"http://httpbin.org/get"]];
+        NSLog(@"isKindOfClass NSURLSessionTask: %@", [dataTask isKindOfClass:[NSURLSessionTask class]] ? @"YES" : @"NO");
+        NSLog(@"isKindOfClass NSURLSessionDataTask: %@", [dataTask isKindOfClass:[NSURLSessionDataTask class]] ? @"YES" : @"NO");
+
+        Expected Results:
+        This log:
+        isKindOfClass NSURLSessionTask: YES
+        isKindOfClass NSURLSessionDataTask: YES
+
+        Actual Results:
+        This log:
+        isKindOfClass NSURLSessionTask: NO
+        isKindOfClass NSURLSessionDataTask: YES
+
+        Regression:
+        Other factory methods that return NSURLSessionTask subclasses instances are also affected by this bug.
+
+        Notes:
+        Here is a real world use case where this buggy behavior is problematic: https://github.com/AFNetworking/AFNetworking/blob/ab880d72ca2d3f401ec0180915f6f5056a2dd77d/UIKit%2BAFNetworking/AFNetworkActivityIndicatorManager.m#L35
+    email: cedric.luthi@gmail.com
+    modified: "2013-08-20T13:24:33.662771Z"
+    number: "14783825"
+    number_intvalue: 14783825
+    originated: 20-Aug-2013 03:24 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 7.0b5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Objects returned by the `-[NSURLSession dataTaskWithURL:]` method lie about their class membership

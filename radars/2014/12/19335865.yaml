@@ -1,0 +1,79 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19335865"
+    labels:
+        datastore_id: "6106605506527232"
+data:
+    classification: Other Bug
+    created: "2014-12-23T14:59:43.666558Z"
+    description: |-
+        Summary:
+        Constraining the element type of a sequence to be of function type does not compile.
+
+
+        Steps to Reproduce:
+        1. Write this:
+        func uncons<S: Sliceable>(sliceable: S) -> (S.Generator.Element, S.SubSlice)? {
+        	return first(sliceable).map { ($0, dropFirst(sliceable)) }
+        }
+
+        func cond<T, U, S: Sliceable where S.SubSlice == S, S.Generator.Element == (T -> U?)>(x: T, patterns: S) -> U? {
+        	return uncons(patterns).map { pattern, rest in
+        		pattern(x) ?? cond(x, rest)
+        	} ?? nil
+        }
+
+
+        Expected Results:
+        I expected it to compile.
+
+
+        Actual Results:
+        It doesn’t:
+
+        error: expected identifier for type name
+
+
+        Regression:
+        Omitting the parentheses around the element type doesn’t work either:
+
+        error: expected '>' to complete generic parameter list
+
+
+        One workaround is to map the slices back to arrays. That defeats the purpose of using Sliceable:
+
+        func cond<T, U>(x: T, patterns: [T -> U?]) -> U? {
+        	return uncons(patterns).map { pattern, rest in
+        		pattern(x) ?? cond(x, map(rest, { $0 })) // note the map here
+        	} ?? nil
+        }
+
+        Another is to use iteration. That makes for ugly imperative code of exactly the sort I’m trying to avoid:
+
+        func cond<T, U>(x: T, patterns: [T -> U?]) -> U? {
+        	for pattern in patterns {
+        		if let result = pattern(x) {
+        			return result
+        		}
+        	}
+        	return nil
+        }
+
+        You can also wrap the function in a Pattern struct. That greatly decreases the usability of the resulting function, since everything has to be wrapped in Pattern constructors. It also crashes the compiler (radar to follow).
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2014-12-23T14:59:43.66669Z"
+    number: "19335865"
+    number_intvalue: 19335865
+    originated: 23-Dec-2014 09:59 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Same-type constraints don’t work with function types'

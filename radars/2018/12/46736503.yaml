@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "46736503"
+    labels:
+        datastore_id: "4954409469476864"
+data:
+    classification: Bug
+    created: "2018-12-14T19:43:34.364945Z"
+    description: "Area:\r\nNotification Center\r\n\r\nSummary:\r\nNot all alerts for notifications sent are seen in Notification Center groups. After investigating system logs, it appears that the notification messages are received on the device, but are not shown in Notification Center. \r\n\r\nThis appears to occur with Notification Grouping setting \"Automatic\" selected for the App in question. Changing this setting to \"Off\" appears to eliminate the problem, and all expected notification alerts are seen in Notification Center.\r\n\r\nSteps to Reproduce:\r\n1. Select Notification Grouping \"Automatic\" setting for the App in question (and leave all other Notifications settings enabled, as by default)\r\n2. Send a series of notifications (we've sent every 30 min in our testing)\r\n3. After a period of several hours, check Notification Center, ensure the App remains closed during this period\r\n\r\nExpected Results:\r\n- Alerts for all notifications received are displayed in Notification Center, grouped automatically (e.g. in the case of simple notification payload, grouped together for the same App)\r\n\r\nActual Results:\r\n- There are alerts missing from Notification Center, despite the system log showing that they were received. The attached screenshot shows an example of missing alerts from December 13 between 12:00AM and 7:00AM on a device. The logs from the attached sysdiagnose report show notifications were received every 30 min as expected during this timeframe.\r\n\r\nWe've been able to reproduce this multiple times, but only with Notification Grouping \"Automatic\" selected. We've also noted some differences in the system log entries from the Springboard process that appear related to notification \"coalescing\" when we search the logs for notifications that do appear in Notification Center vs. those that are missing. It seems like whatever is happening may be related to when Notification Grouping takes place. We've also noted more missing notification alerts when the device is locked for an extended period (eg. overnight), although we have observed the issue during shorter time-spans as well.\r\n\r\nVersion/Build:\r\n- iOS 12.1\r\n- Sample App com.peasi.notify-test build with Xcode Version 10.1\r\n\r\nConfiguration:\r\n- Notifications authorized\r\n- APNS development environment entitlement\r\n\r\nWe've tried sending different payloads to APNS with the same results. Most recent payloads are structured like this, changing the \"alert\" key value with notifications sent each 30 min:\r\n\r\n{\"aps\":{\"alert\":\"Test Message 14-00\",\"badge\":1,\"thread-id\":\"NotifyTest\"}}\r\n\r\nWe are not specifying an expiration or apns-collapse-id."
+    email: evan@peasi.com
+    modified: "2018-12-14T19:43:34.365111Z"
+    number: "46736503"
+    number_intvalue: 46736503
+    originated: Dec 14, 2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "12.1"
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: Notification Center alerts missing with Notification Grouping Automatic enabled

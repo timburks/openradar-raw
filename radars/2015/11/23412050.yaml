@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23412050"
+    labels:
+        datastore_id: "6711603424657408"
+data:
+    classification: Performance
+    created: "2015-11-05T15:46:44.2498Z"
+    description: "Summary:\r\nTake the following type Wrapper:\r\n\r\nstruct Wrapper {\r\n    private var buffer = Array<Int>()\r\n    \r\n    func slow() {\r\n        buffer.withUnsafeBufferPointer {\r\n            var index = $0.count\r\n            while index > 0 {\r\n                index = index - 1\r\n            }\r\n        }\r\n    }\r\n    \r\n    func fast() {\r\n        buffer.withUnsafeBufferPointer {\r\n            var index = $0.count\r\n            while index > 0 {\r\n                index = index &- 1\r\n            }\r\n        }\r\n    }\r\n}\r\n\r\nThe two methods slow() and fast() are almost identical, the only difference being the use of the overflow checking '-' in f() vs '&-' in fast().\r\n\r\nHowever, this small change leads to a (relatively) large change in performance as the overflow checking variant appears to prevent an ARC optimization.\r\n\r\nThe compiler's output for fast() is essentially what you'd expect but for slow(), the Array's backing store is retained before executing the closure contents and released afterwards.\r\n\r\nSince the containing type already owns buffer this should not be necessary and for fast() the compiler is able to optimize the retain/release calls away.\r\n\r\n\r\nAn example project is attached that includes some basic performance measurement code to demonstrate the issue.\r\n\r\nA few notes:\r\n\r\n* I tried to reduce the example code as much as possible. The following parts seems to be necessary for the issue to occur (although there certainly might be other constellations):\r\n    - The Wrapper type. If I put the contents of f() at the call site, the compiler is able to remove the redundant retain/release.\r\n    - The loop. An equivalent for loop works as well. I'm not sure this is actually necessary for the problem to occur, but I haven't found another way to trigger the issue.\r\n    - The overflow check. Obviously the issue doesn't occur without the overflow check. \r\n\r\n* The retain/release calls are present in the (optimized) SIL so I assume the issue is with the Swift optimizer (and not LLVM related).\r\n\r\n* Also both the SIL and the assembly output for slow() are quite a bit more complex than the one for fast(). I haven't analyzed it in detail but perhaps this is a side-effect of the same optimization blocker.\r\n\r\n* This issue is not Array specific (I originally noticed it with ManagedBuffer). Perhaps affects all class-methods with closure arguments but I haven't tested this further.\r\n\r\n* Unsurprisingly, disabling overflow checks (SWIFT_DISABLE_SAFETY_CHECKS) 'fixes' this issue\r\n\r\n\r\n\r\n* Not directly related, but I just found it interesting: When fast() is inlined, the loop in the closure body is essentially retained in the assembly. However, the standalone method implementation for fast() is empty (other than stack setup/teardown). So in that case the compiler seems to be able to determine that the function can be optimized away entirely but not when it's inlined :-)\r\n\r\nSteps to Reproduce:\r\n1) Open the attached project\r\n2) Build & Run (will build release config)\r\n3) The program will output the runtimes of 100000000 iterations of calling slow() and fast().\r\n\r\nExpected Results:\r\nThe two functions should have very similar performance, as both do no work in this case.\r\n\r\nAlso the assembly for slow() should not contain any retain/release calls for the array backing store.\r\n\r\nActual Results:\r\nOn my machine I get the following results:\r\n1.21469098329544\r\n0.033428966999054 \r\n\r\nslow() retains & releases the array backing store and profiling shows that execution time is dominated by that as expected.\r\n\r\nVersion:\r\nXcode 7.2b2 (7C46t)\r\nApple Swift version 2.1.1 (swiftlang-700.1.101.11 clang-700.1.79)\r\nOS X 10.11.1 (15B42)"
+    email: janoschhildebrand@gmail.com
+    modified: "2015-11-05T15:48:19.2031Z"
+    number: "23412050"
+    number_intvalue: 23412050
+    originated: 05-Nov-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.2b2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 7.2b2 (7C46t): [Swift] Overflow check & loop & closure combination prevents ARC optimization'

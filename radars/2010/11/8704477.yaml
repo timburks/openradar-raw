@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8704477"
+    labels:
+        datastore_id: "924401"
+data:
+    classification: Feature (New)
+    created: "2010-11-28T22:00:07.392082Z"
+    description: "28-Nov-2010 01:27 PM Timothy Wood:\r\nNSError is great for conveying the information about errors, but not so great about the extra syntax and correct usage by developers. This may be solvable with some extensions to the compiler and ObjC syntax without major language changes.\r\n\r\nIn the current ObjC error handling system, you get back both a value, which is typically testable as a boolean NO and an NSError by-ref. This means we are getting back two values when really only one value can be valid. All sorts of rules have to be made about whether you can look at *outError and nothing prevents/warns the user that they are doing it wrong other than documented convention (which people can accidentally mess up).\r\n\r\nConsider, though, if ObjC had simple syntactic sugar for optional types (at least this one case) for errors. It might look like:\r\n\r\n    - (@error id)doSomething;\r\n\r\nWith '@error id' being a type you could typedef or use as the type of a local variable/ivar/whatever.\r\n\r\nThe compiler would synthesize a C union return type of {NSError *error; X value;} for the type X. It would also handle the cases:\r\n\r\n- Using the synthesized union as a conditional would evaluate (u.error == nil).\r\n- Using the synthesized union as Rvalue of type X would evaluate as (u.value).\r\n- The static analyzer would also _warn_ if the result was interpreted as a value on a branch where error isn't guaranteed to be nil (\"Return value evaluated without checking for errors\"). This would be huge.\r\n- In the body of a method/function, return X would cons up a union with the value.\r\n- In the body of a method/function, @error [NSError ...] would cons up a union with the error (so you would \"return @error ... something making an NSError *...;\" to bail.\r\n\r\nThis would avoid the issue of outError being NULL (so having to check before filling it out), *outError getting stomped and devs looking at its contents when they shouldn't and devs looking at the return code when really an error happened.\r\n\r\nI'm sure there are holes in this approach, but I think it is worth considering and would have lots of benefits.\r\n\r\n\r\n28-Nov-2010 01:35 PM Timothy Wood:\r\nOh, one other case this would be nice for is that you could do \"@error void\". Meaning, there is no meaningful return value. In this case, the union would _just_ have the 'error' member, and no 'value'. Using the union in a Rvalue context would emit an error from the compiler stating that the operation has no value.  Also, a plain 'return' in the code could cons up {.error = nil} and we wouldn't have to have silly return YES/NO statements."
+    email: twiomood@gmail.com
+    modified: "2011-08-28T05:38:52.808636Z"
+    number: "8704477"
+    number_intvalue: 8704477
+    originated: 28-Nov-2010
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 3.2.5
+    reproducible: N/A
+    resolved: ""
+    status: Open
+    title: Reduce syntax and improve correctness of error handling support

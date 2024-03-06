@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7109508"
+    labels:
+        datastore_id: "63403"
+data:
+    classification: Enhancement
+    created: "2009-07-31T21:17:43.384577Z"
+    description: "Summary:\r\nThe CoreText.framework is listed under PrivateFrameworks. Yet, through dynamically loading framework symbols, CoreText seems to implement all functions, and constants described in the 10.5 CoreText framework.\r\n\r\nSteps to reproduce:\r\n1. Create an iPhone View-based application.\r\n2. In the AppDelegate.m file, add:\r\n#import <dlfcn.h>\r\ntypedef uint32_t (*CTGetCoreTextVersionPtr)(void);\r\nstatic CTGetCoreTextVersionPtr _CTGetCoreTextVersion = NULL;\r\n\r\n3. In the applicationDidFinishLaunching method, add:\r\nif (!_CTGetCoreTextVersion) {\r\n    _CTGetCoreTextVersion = (CTGetCoreTextVersionPtr)dlsym(RTLD_DEFAULT, \"CTGetCoreTextVersion\");\r\n}\r\nif (_CTGetCoreTextVersion) {\r\n    NSLog(@\"%X\", _CTGetCoreTextVersion());\r\n}\r\n\r\nExpected result:\r\nShould output \"20000\", as per 10.5 developer docs\r\n\r\nActual result:\r\nOutputs \"30000\", possibly meaning that this version implements the 10.5 implementation, and then some.\r\n\r\nNotes:\r\nSince Quartz2D drawing functions don't support advanced glyph rendering functionalities (character shaping, ligatures, etc.), doing low level text rendering with unicode is next to impossible without libraries like ATSUI or CoreText on the iPhone. Please open up CoreText."
+    email: jamesyjhu@gmail.com
+    modified: "2011-08-28T05:45:33.731814Z"
+    number: "7109508"
+    number_intvalue: 7109508
+    originated: 31-Jul-2009 12:54 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "3.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Open up CoreText on iPhone SDK

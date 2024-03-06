@@ -1,0 +1,62 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20774731"
+    labels:
+        datastore_id: "4957762287042560"
+data:
+    classification: UI/Usability
+    created: "2015-05-01T01:35:10.62237Z"
+    description: |-
+        Summary:
+        If using the -[NSButton setImage:] method to modify a button's image, after calling the method once to set an image, then calling it again with a 'nil' argument, any subsequent calls to setImage: do not alter the button's appearance, regardless of the new image being passed in.
+
+        Steps to Reproduce:
+        This can be reproduced using the attached "ButtonTest" project. The project has a single window set up with an NSButton to receive the images, and a series of other buttons used to set new images on the first button. For comparison, a plain NSImageView is placed just below the "target" button, and we set the same image on that as well. The actions for the three buttons that can be clicked looks like this:
+
+        - (IBAction)setImage1:(id)sender
+        {
+        	self.imageButton.image = [NSImage imageNamed:NSImageNameActionTemplate];
+        	self.imageView.image = [NSImage imageNamed:NSImageNameActionTemplate];
+        }
+
+        - (IBAction)setImage2:(id)sender
+        {
+        	self.imageButton.image = [NSImage imageNamed:NSImageNameAddTemplate];
+        	self.imageView.image = [NSImage imageNamed:NSImageNameAddTemplate];
+        }
+
+        - (IBAction)clearImage:(id)sender
+        {
+        	self.imageButton.image = nil;
+        	self.imageView.image = nil;
+        }
+
+        To reproduce the behavior;
+        1. Click the "Set Image 1" button
+        2. Click the "Clear Image" button
+        3. Click the "Set Image 1" button again
+
+        Expected Results:
+        An image should appear in the button after the first step, disappear after the second step, then reappear after the third
+
+        Actual Results:
+        After clicking the "Clear Image" button, all subsequent clicks on either "Set Image 1" or "Set Image 2" result in no change in the button's appearance
+
+        Regression:
+        I have tried numerous variations on the button's type and style, but all of them appear to exhibit the same behavior.
+
+        Notes:
+        In trying to debug this, I noticed that after setting an  image the first time, the NSButton appears to gain an NSImageView as its subview, with that view presumably actually drawing the image. Setting the image to nil will remove the image from both the button and the image view. However, after setting the image a second time, the button's 'image' property correctly returns the NSImage, but the NSImageViwe's 'image' property still returns nil.
+    email: bewebste@gmail.com
+    modified: "2015-05-01T01:35:10.62274Z"
+    number: "20774731"
+    number_intvalue: 20774731
+    originated: 30-Apr-2015 06:35 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: Mac OS X 10.10.3 (14D131)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: -[NSButton setImage:] fails to set image after setting image to nil

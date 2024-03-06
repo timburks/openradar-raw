@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15960119"
+    labels:
+        datastore_id: "5854426434633728"
+data:
+    classification: important
+    created: "2014-02-01T13:56:19.000749Z"
+    description: "Summary:\r\n\r\nPlease see https://devforums.apple.com/message/937435 for a detailed description.\r\n\r\nIn short: If I return custom cells from cellForRowAtIndexPath in an ARC project, the tableView retains as many cells as the dataSource has rows, as opposed to only the number of cells necessary to display the tableView.\r\n\r\nThis is NOT a re-use issue; cells are being reused (via dequeue ...), but from a pool of, say, 50 if that's the number of rows the dataSource, not of around 12 (the number of visible rows).\r\n\r\nAs soon as the tableView is deallocated, all cells are deallocated as well, so apparently there is no strong reference to the cells dangling somewhere in my own code.\r\n\r\nThe reuseIdentifier is set correctly in IB as well as in the source code using a static NSString*\r\n\r\nSteps to Reproduce:\r\n\r\n1. create NIB for a UITableViewCell with two UILabels as subviews, activate autoLayout, use constraints to let the UILabels define the row height\r\n\r\n2. in cellForRow ... try to dequeue, and if that fails, create cell \"the old way\" via loadNib (but the registerNib approach has the same effect)\r\n\r\n3. in the custom UITableViewCell subclass, create a static int that is incremented on awakeFromNib & decremented in dealloc\r\n\r\n4. log shows that the tableView allocates & retains as many cells as the dataSource has rows - that is, when scrolling down to the bottom, no dequeueing of used cells occurs until all rows have been displayed at least once\r\n\r\n5. when scrolling up again, cells are being reused, no more awakeFromNib\r\n\r\n6. when scrolling up and down again, no awakes / deallocs\r\n\r\n7. when deallocating the tableView - e.g., by removeFromSuperview in viewWillDisappear and nil-ing the property - all cells get deallocated at once\r\n\r\nI'm using ARC in my project.\r\n\r\nExpected Results:\r\n\r\ntableView retains roughly as many cells as are displayed at the same time (in my case ca. 12)\r\n\r\nActual Results:\r\n\r\ntableView retains cells for each and every row in dataSource, up to several hundreds\r\n\r\nVersion:\r\n\r\niOS SDK 7.0.3 / 7.1 b4\r\n\r\n\r\nNotes:\r\n\r\nThis reminds me of the issue reportedly fixed in 7.0.3 concerning rowAnimations in a tableView ... according to Instruments, the layers of my UILabels (subviews of the cells) are allocated in some animation as well, maybe the cells are over retained in that context.\r\n\r\nConfiguration:\r\n\r\nXcode 5.0.2 / 5.1 b4"
+    email: ubuermey@googlemail.com
+    modified: "2014-02-01T13:56:19.000877Z"
+    number: "15960119"
+    number_intvalue: 15960119
+    originated: 2014/01/31
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: always
+    resolved: ""
+    status: open
+    title: UITableView retaining WAY too many UITableViewCells

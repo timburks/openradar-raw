@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23225698"
+    labels:
+        datastore_id: "4951371610587136"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-10-22T21:53:58.3224Z"
+    description: "Summary:\r\nMy project is a user-mode file system that uses the third-party open-source software OSXFUSE. The OSXFUSE project includes a kext that makes writing user-mode file systems possible, by working as a conduit between the kernel and the user-mode file system implementation.\r\n\r\nThe OSXFUSE kext implements a character device that the user-mode file system uses to communicate with the kext. Prior to OSX 10.11 it had been possible for the user-mode file system to issue select(2) on the character device to determine whether input is available. Since OSX 10.11 a select(2) on the character device results in a hang system call, an unkillable process and often times a kernel panic.\r\n\r\nThe full list of symptoms is as follows:\r\n- select(2) hangs indefinitely even when called with a 0 timeout.\r\n- The FUSE process (i.e. the user-level file system) becomes unkillable (kill -9 does *not* work).\r\n- The mount_osxfusefs (an OSXFUSE helper process) hangs and becomes unkillable (kill -9 does *not* work).\r\n- The CPU time for either the FUSE process and/or the mount_osxfusefs process shoots to 100%.\r\n- Every few times this will also result in the rarely seen OS X BSOD.\r\n- - https://support.apple.com/en-us/TS3742\r\n- If the system does not crash it cannot be shutdown or restarted, unless forced to by holding down the power button.\r\n- When the system crashes it leaves a crash report behind. In most of these cases the OSXFUSE kext is being hinted to as the culprit.\r\n\r\nI understand that the obvious culprit is the OSXFUSE kext. I also understand that OSXFUSE is not an Apple provided framework. However I point out that this kext has worked on prior versions of the OS without any problems. Furthermore there have been no relevant changes in the kext in the last few months.\r\n\r\nThe complete code to OSXFUSE is available at this location:\r\n    https://github.com/osxfuse\r\nThe kext code in particular is here:\r\n    https://github.com/osxfuse/kext\r\n\r\nI believe that the code that handles select(2) in the kext is in function fuse_device_select() in the file fuse_device.c. This code has not been changed since 2012.\r\n\r\nI have for your use in tracking this issue a zip file containing:\r\n- A minimal implementation of a FUSE file system that exhibits the issue (hello_ll.c).\r\n- Two kernel crash reports.\r\n\r\nSteps to Reproduce:\r\n- Install OSXFUSE 2.8.1 from https://osxfuse.github.io\r\n- Compile the to be provided hello_ll.c using the command line:\r\n-- clang hello_ll.c -I /usr/local/include/osxfuse/fuse -D_FILE_OFFSET_BITS=64 -L/usr/local/lib -losxfuse\r\n- Create a temporary directory for mounting:\r\n-- mkdir /tmp/root\r\n- Mount the broken \"hello\" file system:\r\n-- ./a.out /tmp/root\r\n\r\nExpected Results:\r\nI expected the select(2) calls to complete without issues (esp. when issued with a 0 timeout).\r\n\r\n\r\nActual Results:\r\nThe select(2) call hangs, the process become unkillable (kill -9 does *not* work) and the system becomes unstable and often times results in a kernel panic.\r\n\r\nVersion:\r\nOS X: 10.11.1 (15B42)\r\n\r\n[Also on OS X 10.11.0]\r\n\r\nNotes:\r\nNo workaround has been found.\r\n\r\nThe problem also happens with the latest experimental OSXFUSE releases (currently 3.0.6).\r\n\r\nConfiguration:\r\nHardware: MacBook Pro (Retina, 13-inch, Early 2015)\r\n\r\n\r\nAttachments:\r\n'SelectBug.zip' was successfully uploaded."
+    email: billziss@navimatics.com
+    modified: "2015-10-22T21:56:14.34472Z"
+    number: "23225698"
+    number_intvalue: 23225698
+    originated: "2015-10-22"
+    parent_number: '&{NULL_VALUE}'
+    product: OSX
+    product_version: 10.11.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Select(2) on character device hangs and makes system unstable on El Capitan

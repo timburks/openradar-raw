@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27762788"
+    labels:
+        datastore_id: "6055347387105280"
+data:
+    classification: Enhancement
+    created: "2016-08-09T09:51:51.06783Z"
+    description: "Summary:\n\nWith UIWebView, when an <input> is tapped, and the keyboard is opened, the entire page (the whole contents of the web view) scroll so that the input becomes centered on the screen.\n\nThis is *good* in cases where the input is in a scrolling <body> — e.g. a form on a simple website. However, this isn’t always desirable, when a website or web app adds fixed interface elements (such as nav bars stuck to the top of the viewport), when the <input> is not on the main <body> but contained in a separate scroll view (i.e. <div> with `-webkit-overflow-scroll: touch` setting), or when an app uses a web view fragment for auxiliary UI and requires more control over how the keyboard and scroll views behave.\n\nTest case:\n\nPlease see the attached test case project and screenshots for one example where this behavior is problematic. When you open the project in a simulator, you can see that the web page has a nav bar fixed to the top, and a separate scroll view (that’s not <body>) below.\n\nBefore you tap on anything, you should see the page as <BeforeKeyboard.png>.\n\nBut then after you tap, you’ll see <AfterKeyboard.png>. This isn’t desirable. The top bar should remain fixed to the top of the viewport, irrespective of the keyboard behavior.\n\nProposed solution:\n\nAfter using web views on iOS for years, I see that in different cases, different keyboard/scrolling behaviors are desirable. I suggest that there should be a configuration switch on UIWebView and WKWebView with following options:\n\nenum KeyboardScrollBehavior {\n\ncase scroll // this is the current behavior and should remain default. However, I consider it a bug that the whole page (web view’s whole scroll view) scrolls when the input is contained within a HTML scroll view. Whenever possible, only the inner scroll view should scroll, not the whole page\n\ncase none // equivalent to behavior of native UITextFields in UIScrollViews. Nothing happens after keyboard is opened — the keyboard covers part of the web view port, and it’s programmer’s responsibility to offset the scroll view so that the input becomes visible and properly positioned on the screen\n\ncase resizeViewport // when keyboard is opened, the web view’s view port is resized so that it covers the space *above* the keyboard. This way, the whole web view remains visible on the screen. Similar to `.none`, no scrolling occurs, and it’s programmer’s responsibility to change scroll view’s offset\n\n} \n\nAlternatively, or additionally, it would be desirable if some of these options were possible to set as CSS or HTML attributes. This way, website authors could ensure that their web app appears properly in Safari as well."
+    email: radexpl@gmail.com
+    modified: "2016-08-09T09:51:51.068Z"
+    number: "27762788"
+    number_intvalue: 27762788
+    originated: 09-Aug-2016 11:51 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: '[UIWebView/WKWebView] Page shouldn''t (always) scroll when keyboard is opened -- add configuration switch'

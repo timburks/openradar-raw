@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31280899"
+    labels:
+        datastore_id: "5011778094235648"
+data:
+    classification: Other
+    created: "2017-03-27T20:24:47.43246Z"
+    description: "Area:\r\nApp Sandbox\r\n\r\nSummary:\r\nWhen using the official Apple demo code for getting the GUID of a Mac which can be found at https://developer.apple.com/library/content/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html and is critical for implementing Mac App Store receipt validation, the code results in a \"deny nvram-get BSD Name\" sandbox violation.\r\n \r\nThe offending function that triggers the sandbox violation seems to be io_service_get_matching_services_bin() in IOKit.\r\n\r\nSteps to Reproduce:\r\n1. Open Console.app and filter for the string \"SandboxViolation\"\r\n2. Open the attached demo project with Xcode\r\n3. Adjust the code signing parameters of the project's target to those of a valid team / mac developer account of yours\r\n4. Examine the copy_mac_address() function in main.m - it is an unaltered copy straight out of Apple's documentation\r\n5. Build and run\r\n\r\nExpected Results:\r\nThere should be no offending entries in the console log.\r\n\r\nActual Results:\r\nThe following error is logged and marked yellow in the console log.\r\n\r\nerror 22:05:35.664754 +0200\tsandboxd\tcom.apple.sandbox.reporting\tSandboxViolation: Demo(5545) deny nvram-get BSD Name\r\nViolation:       deny nvram-get BSD Name \r\nProcess:         Demo [5545]\r\nPath:            /Users/redacted/Library/Developer/Xcode/DerivedData/Demo-hgmrugolpnwblmglupkfiklymlvs/Build/Products/Debug/Demo.app/Contents/MacOS/Demo\r\nLoad Address:    0x100000000\r\nIdentifier:      com.redacted.Demo\r\nVersion:         1 (1.0)\r\nCode Type:       x86_64 (Native)\r\nParent Process:  debugserver [5546]\r\nUser ID:         501\r\n\r\nDate/Time:       2017-03-27 22:05:35.648 GMT+2\r\nOS Version:      Mac OS X 10.12.4 (16E195)\r\nReport Version:  8\r\n\r\nThread 0 (id: 125403):\r\n0   libsystem_kernel.dylib        \t0x00007fffacad134a mach_msg_trap + 10\r\n1   IOKit                         \t0x00007fff98c8a985 io_service_get_matching_services_bin + 188\r\n2   IOKit                         \t0x00007fff98c0d1ea IOServiceGetMatchingServices + 208\r\n3   Demo                          \t0x0000000100000d37 copy_mac_address + 151 (main.m:36)\r\n4   Demo                          \t0x0000000100000e4b main + 27 (main.m:65)\r\n5   libdyld.dylib                 \t0x00007fffac9aa235 start + 1\r\n6   Demo                          \t0x0000000000000003\r\n\r\nBinary Images:\r\n       0x100000000 -        0x100000ffb  com.redacted.Demo (1.0 - 1) <30fa2d22-4ec4-3695-bba1-0e4952515618> /Users/redacted/Library/Developer/Xcode/DerivedData/Demo-hgmrugolpnwblmglupkfiklymlvs/Build/Products/Debug/Demo.app/Contents/MacOS/Demo\r\n    0x7fff98c08000 -     0x7fff98c9dfff  com.apple.framework.IOKit (2.0.2) <ba7dc917-35a9-3d1b-bbec-adf4495a166d> /System/Library/Frameworks/IOKit.framework/Versions/A/IOKit\r\n    0x7fffac9a5000 -     0x7fffac9aaffb  libdyld.dylib (433.5) <129d3b44-fb21-3750-9a68-48b5c3dc632b> /usr/lib/system/libdyld.dylib\r\n    0x7fffacabf000 -     0x7fffacae1ff7  libsystem_kernel.dylib (3789.51.2) <fc51d7b0-8292-3f6a-9231-64340b237eb7> /usr/lib/system/libsystem_kernel.dylib\r\n\r\nMetaData: {\"build\":\"Mac OS X 10.12.4 (16E195)\",\"action\":\"deny\",\"target\":[\"BSD Name\"],\"hardware\":\"Mac\",\"platform_binary\":\"no\",\"profile\":\"unknown\",\"process\":\"Demo\",\"op\":\"nvram-get\"}\r\n\r\nVersion:\r\nmacOS 10.12.4 (16E195)\r\n\r\nNotes:\r\nThe problem seems to have been introduced with macOS 10.12.4. but I have not checked older point releases of 10.12.\r\nIt does not appear on 10.11.x\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'Demo.zip' was successfully uploaded."
+    email: kastansn@gmail.com
+    modified: "2017-05-31T14:08:51.31357Z"
+    number: "31280899"
+    number_intvalue: 31280899
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.12.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Official Apple demo code for validating App Store receipts results in SandboxViolation

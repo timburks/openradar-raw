@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14864491"
+    labels:
+        datastore_id: "5102369608040448"
+data:
+    classification: ""
+    created: "2013-08-29T15:31:52.873959Z"
+    description: "28-Aug-2013 11:25 PM Erik Price:\r\nSummary:\r\nAdding a periodic time observer to an AVPlayer playing an HLS asset using a serial dispatch queue results in a crash in -[AVPlayerPeriodicCaller _effectiveRateChange] .\r\n\r\nSteps to Reproduce:\r\n1. Create an AVPlayer for a HLS URL and add its AVPlayerLayer to the view hierarchy.\r\n2. Call -play on the AVPlayer.\r\n3. Create a dispatch_queue_t using dispatch_queue_create(\"myQueue\", DISPATCH_QUEUE_SERIAL).\r\n4. Add a periodic time observer to the AVPlayer on the created dispatch queue using an interval of CMTimeMake(120.0f, 600) and an empty block (or just put a call to NSLog in the block).\r\n\r\nExpected Results:\r\nI expected the periodic time observer to execute the block with no problems.\r\n\r\nActual Results:\r\nNearly every time I can get this to EXC_BAD_ACCESS in -[AVPlayerPeriodicCaller _effectiveRateChange]. If I can't, then I just have to add another periodic observer or two and it will crash reliably.\r\n\r\nRegression:\r\n\r\nNotes:\r\nI'm attaching a zipped Xcode project that demonstrates the bug. Run the app in the iOS simulator and then click the \"BOOM\" button to add the periodic time observer(s).\r\n\r\n28-Aug-2013 11:25 PM Erik Price:\r\n'AVPlayerPeriodicCallerCrash.zip' was successfully uploaded\r\n\r\n29-Aug-2013 11:17 AM Erik Price:\r\nI do not experience the crash if I insert a call to -pause immediately before adding the periodic observer and then insert a call to -play immediately afterward. This is a sufficient workaround for my needs, but it should be documented that periodic observers should not be added to an already-playing AVPlayer when using private serial dispatch queues."
+    email: erikprice@gmail.com
+    modified: "2013-08-29T15:31:52.874112Z"
+    number: "14864491"
+    number_intvalue: 14864491
+    originated: 28-Aug-2013 11:25 PM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Add periodic time observer to playing AVPlayer, EXC_BAD_ACCESS in serial dispatch queue

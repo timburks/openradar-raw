@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26051182"
+    labels:
+        datastore_id: "4984669619617792"
+data:
+    classification: Serious Bug
+    created: "2016-05-02T22:50:47.85249Z"
+    description: "Summary:\r\nThe documentation for the String struct in the Swift Standard Library Reference states that \"String is bridged to Objective-C as NSString\", which implies that the Swift convenience initializer String(format:_:) should behave the same as the Objective-C initializer -[NSString initWithFormat:...].  However, the behavior actually differs when the format string contains positional specifiers such as \"%1$@\" (which the String Programming Guide documents as supported by NSString in the section \"String Format Specifiers\").\r\n\r\nSpecifically, when running in an Xcode playground, the use of a positional specifier in the format string causes an EXC_BAD_INSTRUCTION exception.  \r\n\r\n(When running equivalent code on the command line, the initializer returns a String object that represents a tuple containing the unprocessed format string and the argument(s) that would have been applied.  This bug is being reported separately to the Swift project.)\r\n\r\nSteps to Reproduce:\r\nIn Xcode 7.3, create a playground with the following program:\r\n\r\nimport Foundation\r\n\r\nlet fmtstr = \"%1$@ shall be the number thou shalt count, and the number of the counting shall be %1$@.\"\r\nlet stext = String(format: fmtstr, \"THREE\")\r\nlet nstext = NSString(format:fmtstr, \"THREE\")\r\n\r\n\r\nExpected Results:\r\nThe variables stext and nstext should contain the same text, namely:\r\n\r\n\"THREE shall be the number thou shalt count, and the number of the counting shall be THREE.\"\r\n\r\nActual Results:\r\nThe line defining stext fails with an EXC_BAD_INSTRUCTION error.\r\n\r\nVersion:\r\nXcode Version 7.3.1 (7D1012)\r\n(also reproducible in Xcode Version 7.3)\r\n\r\nOS X Version 10.11.4 (15E65)\r\n\r\nNotes:\r\nAs suggested by the program description, invoking the NSString initializer directly works around the problem on OS X when the Foundation framework is available; but this workaround is presumably not portable to Linux."
+    email: rsfinn@gmail.com
+    modified: "2017-07-20T03:01:30.03689Z"
+    number: "26051182"
+    number_intvalue: 26051182
+    originated: 5/2/2016
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: "7.3"
+    reproducible: Always
+    resolved: Fixed
+    status: Closed
+    title: 'Swift: String(format:_:) with positional specifiers causes exception in Xcode playground'

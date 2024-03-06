@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11676678"
+    labels:
+        datastore_id: "1762405"
+data:
+    classification: Other Bug
+    created: "2012-06-15T16:02:27.854213Z"
+    description: "15-Jun-2012 08:52 AM Roman Busyghin:\r\nSummary:\r\nPackageApplication doesn't update application prefix identifier while resigning application from regular App Store account to Enterprise. \r\n\r\nSteps to Reproduce:\r\n1. Create an app with shared keychain access feature enabled (or any other feature that relies on application prefix identifier).\r\n2. Build it for App Store.\r\n3. Check entitlements by running \"codesign --display --entitlements - YourApp.app\". Note that \"keychain-access-groups\" array has strings that begin with application prefix identifier XXXXXX.\r\n3. Run \"xcrun -sdk iphoneos -run PackageApplication --sign 'Your Enterprise Distribution Identity' --embed '/Full/Path/To/Enterprise.mobileprovision' '/Full/Path/To/Your.app' -o '/Desired/Full/Path/To/YourApp.ipa'\" in order to resign it.\r\n4. Unpack IPA file and check app entitlements. Note that entitlements remain the same (from App Store mobile provisioning profile) but they mismatch embedded provisioning profile (which is from Enterprise).\r\n\r\nExpected Results:\r\nApplication identifier prefix should match provisioning profile from Enterprise account. I don’t know whether entitlements should match entirely or not.\r\n\r\nActual Results:\r\nApplication identifier prefix matches App Store mobile provision file.\r\n\r\nRegression:\r\nIt looks like the bug persists from day one of iOS SDK.\r\n\r\nNotes:\r\nThe bug prevents app from accessing shared keychain or any other feature that relies on application prefix identifier. \r\n\r\nIn our company we have two iPhone Developer programs: Regular and Enterprise. We use regular one to publish out apps into App Store. Enterprise program is for testing the same application inside our company. We need to resign out apps before submitting to App Store in order to test it properly.\r\n\r\nThis bug happens because of PackageApplication script doesn’t handle this case. I’ve attached modified version of PackageApplication script that works for me.\r\n\r\n15-Jun-2012 08:52 AM Roman Busyghin:\r\n'PackageApplication' was successfully uploaded"
+    email: nskboy@gmail.com
+    modified: "2012-07-12T06:52:54.405989Z"
+    number: "11676678"
+    number_intvalue: 11676678
+    originated: 15-Jun-2012 08:52 AM
+    parent_number: "8139026"
+    product: Developer Tools
+    product_version: 4.3.2/4E2002
+    reproducible: Always
+    resolved: 11-Jul-2012 03:46 AM
+    status: Duplicate/8139026
+    title: PackageApplication doesn't update application prefix identifier

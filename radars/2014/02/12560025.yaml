@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12560025"
+    labels:
+        datastore_id: "5336857910968320"
+data:
+    classification: Serious Bug
+    created: "2014-02-19T00:52:00.366944Z"
+    description: "This means that it's not possible to calculate the status bar frame change by only comparing the notification's userInfo UIApplicationStatusBarFrameUserInfoKey key to [[UIApplication sharedApplication] statusBarFrame]. One must instead cache the current status bar frame at view controller init or viewDidLoad: or some other point in time.\r\n\r\n---\r\n\r\n(A sample project is attached, and also uploaded at http://cl.ly/323K280K1T2p)\r\n\r\nSteps to reproduce: (using the attached sample project)\r\n1. Launch the application in the iPhone Simulator with a single-height status bar.\r\n2. Select \"Hardware: Toggle In-Call Status Bar\".\r\n3. In Xcode, Select \"View: Debug Area: Activate Console\".\r\n\r\nResults:\r\n\r\nExpected:\r\n- The console should print: \r\n\"statusBarWillChange: the status bar is about to be 20 points taller\"\r\nand current status bar frame should be: \"{{0, 0}, {320, 20}}\", since we were launched with a single height status bar and this is the UIApplication *WillChange* StatusBarFrameNotification.\r\n(Next status bar frame should be: \"{{0, 0}, {320, 40}}\", since the status bar was normal height, and is now double height.)\r\n\r\nActual:\r\nThe console prints: \r\n\"statusBarWillChange: the status bar is about to be 0 points taller\"\r\nand the current status bar frame is 40 points tall: \"{{0, 0}, {320, 40}}\".\r\n\r\nRegression:\r\nUnknown. This bug exists in at least iOS 4.3. 5.0 and 6.0 in the Simulator, and on the device in at least iOS 6.0 (I don't have older devices to test on.)\r\n\r\nNotes:\r\n\r\nUIApplication*Did*ChangeStatusBarFrameNotification does not suffer from this bug: since [[UIApplication sharedApplication] statusBarFrame] returns the current status bar frame, and the notification userInfo object contains the old status bar height, calculating the status bar height change is very simple:\r\n\r\n\tCGRect currentStatusBarFrame = [[UIApplication sharedApplication] statusBarFrame];\r\n\tCGRect oldStatusBarFrame = [[[note userInfo] valueForKey:UIApplicationStatusBarFrameUserInfoKey] CGRectValue];\r\n\tCGFloat statusBarHeightDifference = currentStatusBarFrame.size.height - oldStatusBarFrame.size.height;\r\n\r\n\r\n---\r\n\r\nExample output demonstrating the bug:\r\n\r\nLaunched with a single height status bar:\r\n\r\nviewDidLoad: the status bar is currently 20 points tall.\r\n\r\nSingle height to double height:\r\nstatusBarWillChange: current status bar frame: {{0, 0}, {320, 40}}\r\nstatusBarWillChange: next status bar frame: {{0, 0}, {320, 40}}\r\nstatusBarWillChange: the status bar is about to be 0 points taller\r\nstatusBarWillChange: BUG DETECTED: the status bar is about to change by 0 points? I'm skeptical of that.\r\n\r\nstatusBarDidChange: current status bar frame: {{0, 0}, {320, 40}}\r\nstatusBarDidChange: old status bar frame: {{0, 0}, {320, 20}}\r\nstatusBarDidChange: the status bar just became 20 points taller\r\n\r\n\r\nDouble height to single height:\r\n\r\nstatusBarWillChange: current status bar frame: {{0, 0}, {320, 20}}\r\nstatusBarWillChange: next status bar frame: {{0, 0}, {320, 20}}\r\nstatusBarWillChange: the status bar is about to be 0 points taller\r\nstatusBarWillChange: BUG DETECTED: the status bar is about to change by 0 points? I'm skeptical of that.\r\n\r\nstatusBarDidChange: current status bar frame: {{0, 0}, {320, 20}}\r\nstatusBarDidChange: old status bar frame: {{0, 0}, {320, 40}}\r\nstatusBarDidChange: the status bar just became 20 points shorter"
+    email: cbowns@gmail.com
+    modified: "2014-02-19T00:52:00.367086Z"
+    number: "12560025"
+    number_intvalue: 12560025
+    originated: 23-Oct-2012
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 7.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Notifications for registered observers of UIApplicationWillChangeStatusBarFrameNotification don't receive the notification until after [[UIApplication sharedApplication] statusBarFrame] has been updated to the new status bar frame.

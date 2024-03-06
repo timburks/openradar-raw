@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24409763"
+    labels:
+        datastore_id: "4957459995164672"
+data:
+    classification: ""
+    created: "2016-01-29T16:08:01.43764Z"
+    description: "Boris Sotillos\r\n29-Jan-2016 04:46 PM\r\n\r\nSummary:\r\nAttached you will find 2 versions of the same tvOS application.\r\n- Compiled in debug, they produce an application that relies on Xcode debugger to do the ODR simulation.\r\n- Compiled in release, they produce an application that uses a web server to download the ODR files.\r\nTo run the latter, you will need to archive the application, do the export process and set up an \"ad hoc\" web server appropriately. You may have to modify the project to point to your web server.\r\n\r\nBoth versions have an ODR catalog. The relevant assets are:\r\n- \"d1\" is the same in both versions\r\n- \"d2\" is different on each version.\r\n- \"d3\" is present only on version 2.\r\n\r\nAll assets are small text files.\r\nThe content of the files is dumped during execution to the device log, to help in identifying what was just being downloaded.\r\n\r\nThe issue is:\r\nAfter installing one version and running it -downloading ODR- and then installing the other version and running it, we get the ODR from the first version. As if it was cached.\r\n\r\nInstalling/updating the applications via Xcode's Device Window also causes the issue.\r\n\r\nDoing the initial installation over Xcode/Device Window (and running it) will also cause the issue, even if the updated version was installed from store/TestFlight. The moment something is downloaded, the \"caching\" happens.\r\n\r\nSteps to Reproduce:\r\nIn both debug or release (ODR via Xcode simulation or via a web server), the behaviour is the same, on the same steps:\r\n1) Uninstall application. This should get rid of the ODR files as well.\r\n2) Install v1.\r\n3) Run it. Wait for it to complete(*). Kill application.\r\n4) Check logs. It should download \"d1\" and \"d2\".\r\n5) Install v2. To simulate an update.\r\n6) Run it. Wait for it to complete(*). Kill application.\r\n7) Check logs. It should download \"d2\" and \"d3\".  ----> BUT it doesn't. Application behaves as if ODR was the same as in v1.\r\n\r\n(*) Regarding the \"wait for it to complete\" instructions above.: Testing this on tvOS 9.2 beta 2, we have seen that downloads take over 1 minute to complete. seems that beginAccessingResourcesWithCompletionHandler waits for (exactly) 1 minute before issuing the actual HTTP GET request. This happens both with Xcode simulated downloads and a web server. We are opening a separate bug on this.\r\n\r\nExpected Results:\r\nODR to work the same no matter how the application was installed.\r\n\r\nActual Results:\r\nAfter the repro steps, application behaves as if ODR was the same as in v1.\r\nSeems that once ODR is downloded, something gets cached an it can't be updated.\r\n\r\nVersion:\r\ntvOS 9.2 (13Y5189e)\r\n\r\nNotes:\r\nWe don't get this behaviour when doing the initial installation and the application update from the appStore of the TestFlight application. In that case, ODR is updated as expected.\r\nWe believe (this is pure speculation) that unless installing from the store or TestFlight, some ODR meta information is cached in the device, rendering next updates unable to update the ODR.\r\n\r\n\r\nConfiguration:\r\nATV over LAN\r\n\r\nAttachments:\r\n'odrup.rar' was successfully uploaded."
+    email: borissotillos@gmail.com
+    modified: "2016-01-29T16:08:01.43795Z"
+    number: "24409763"
+    number_intvalue: 24409763
+    originated: 29-Jan-2016 04:46 PM
+    parent_number: '&{NULL_VALUE}'
+    product: tvOS SDK
+    product_version: apple TV 9.1 (13U85)
+    reproducible: 100%
+    resolved: ""
+    status: open
+    title: Updating an application that uses ODR from Xcode or 'ad hoc' webserver renders ODR cached and non-updatable

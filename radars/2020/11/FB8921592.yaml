@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8921592
+    labels:
+        datastore_id: "4936572919087104"
+data:
+    classification: System Bug
+    created: "2020-11-30T01:04:27.874854Z"
+    description: "## The Problem\r\n\r\nWhen setting the preferred input on AVAudioSession to a bluetooth headset multiple times and then disconnecting the bluetooth headset while receiving I/O data from it (via AVCaptureSession or AVAudioEngine), AVAudioSessionMediaServicesWereLostNotification will be fired consistently. This kills all media related work in my application.\r\n\r\nThe use case is a broadcasting application that allows the user explicit control over what audio input device they are using. In this scenario, if the user starts with bluetooth headphones connected, swaps to the built-mic mic, swaps back to the bluetooth headset, and then turns the bluetooth device off, it will cause mediaserviced to die.\r\n\r\n## Repro Steps\r\n\r\nIn a new example application:\r\n\r\n1. Set your AVAudioSession category to record with the allowBluetooth option.\r\n2. Set your AVAudioSession to active.\r\n3. Grab a reference to both the built-in port and bluetooth port via AVAudioSession.availablePorts.\r\n4. Set the preferred input to the bluetooth headset, then back to the built-in port, then the bluetooth headset again. You can do this serially without any delay in between. You can also trigger the swap via a button press with significant delay, it doesn't matter as long as you swap the preferred input multiple times and end on the bluetooth port.\r\n5. Start monitoring port I/O with either AVCaptureSession (AVCaptureAudioDataOutputSampleBufferDelegate) or AVAudioEngine (installTap).\r\n6. Disconnect the bluetooth headset by powering it off.\r\n7. AVAudioSession.mediaServicesWereLostNotification will be fired.\r\n\r\nThis reproduces on the following headsets of mine:\r\nBose QuietComfort 35 II\r\nSony WH-1000XM3\r\nTaoTonics TT-BH07\r\n\r\nThis reproduces on the following iOS devices of mine:\r\niPhone 7 on iOS 14.2\r\niPhone Xr on iOS 14.0.1\r\niPad Air 2 on iOs 13.7\r\n\r\n## What I Expected to Happen\r\n\r\nI would accept a couple different results from this that are not mediaserviced dying.\r\n\r\n1. Automatically set AVAudioSession.preferredInput to nil and resort to the next best input port.\r\n2. Notify the user via an AVAudioSession notification that the device has disconnected and let them handle changing the port.\r\n3. Notify the AVAudioEngine or AVCaptureSession instances that something went wrong and stop sampling the input.\r\n\r\n## What Happened\r\n\r\nmediaserviced crashes, and all media related work in my application stops.\r\n\r\nThere is an example repo that reproduces the issue here - https://github.com/bclymer/ios-preferredinput-crash"
+    email: crdnilfan@gmail.com
+    modified: "2020-11-30T01:04:27.875012Z"
+    number: FB8921592
+    number_intvalue: 8921592
+    originated: "2020-11-29"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 13 and 14
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: mediaserviced dies when disconnected bluetooth headset after setting it as the preferred input multiple times

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12027625"
+    labels:
+        datastore_id: "1851410"
+data:
+    classification: Performance
+    created: "2012-08-03T20:12:30.884775Z"
+    description: "03-Aug-2012 01:25 PM David Barnard:\r\nSummary: Slow app launches are incredibly frustrating to users. So much so that an entire session was dedicated to app launch at WWDC this year. Unfortunately, no mention was made of how memory management and system processes impact launch time.\r\n\r\nIn theory, iOS maintains as many apps as possible in memory specifically to speed launch time. The problem is, this can create low memory situations that force the system to perform memory management tasks during the launch of an app, which can significantly slow launch time and negate all the hard work a developer has done in optimizing that process. It seems as though more aggressively freeing memory upon return to the springboard (or activation of the multitasking tray) would significantly improve the average launch time of apps and therefore the overall user experience of iOS.\r\n\r\nHaving to relaunch apps that would otherwise have been in memory might actually increase the overall time a user spends waiting for apps to launch, but I think adding 1s to 4 app launches is preferable to adding 2s to the launch of a single app. Especially given the fact that games and entertainment apps are likely to be the ones pushed from memory, and productivity apps might be the ones that are forced into a slow launch due to low memory conditions.\r\n\r\nThe system seems to currently be optimized assuming that the benefit of keeping apps in memory is appropriate given the high probability that recently launched apps will be the next app launched. In practice however, the consequences of launching apps in low memory conditions seems to be worse for overall UX than just preemptively freeing a bit more memory and potentially pushing frequently used apps out of memory.\r\n\r\nSteps to Reproduce:\r\n\r\nLaunch various apps and watch in Instruments until you can get the device to stay in a memory contained state. Then launch an app that isn't in memory. Time this against launching the same app when there is plenty of free memory.\r\n\r\nExpected Results: iOS should maintain enough free memory so that memory management doesn't impact the launch time of apps not in memory.\r\n\r\nActual Results: App launch time can vary wildly depending on how much memory is free and what the system has to do to free memory while an app is launching.\r\n\r\nRegression:\r\n\r\nNotes: Here's a video demonstrating a 2.2s difference in iBooks launching under normal memory conditions vs. launching while the system has almost no free memory: https://vimeo.com/46893744\r\n\r\n03-Aug-2012 03:05 PM David Barnard:\r\nIt just dawned on me (but will be incredibly obvious to anyone reading this), that the real problem is that iOS memory management somewhat presupposes that apps will be good neighbors and free up as much memory as possible on suspend. Unfortunately, that's just not the case. Many — if not most — apps in the App Store do a poor job managing memory and don't free much on close (even if they could). So, maybe it's just time to embrace the fact that the theory of how memory management should work on iOS has been thwarted by so many crappy apps. Adjusting memory management to that reality would likely provide a better overall UX in the real world, even if testing and theory might seem to prove otherwise."
+    email: drbarnard@gmail.com
+    modified: "2012-09-10T21:51:26.486054Z"
+    number: "12027625"
+    number_intvalue: 12027625
+    originated: 8/3/12
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 5.1.1
+    reproducible: Always
+    resolved: 9/10/12
+    status: Closed
+    title: Memory management slows app launch in low memory conditions

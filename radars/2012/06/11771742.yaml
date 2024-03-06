@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11771742"
+    labels:
+        datastore_id: "1790406"
+data:
+    classification: Serious Problem/Bug
+    created: "2012-06-28T20:57:28.148807Z"
+    description: "Summary: With IPv4 off, a Mac sends DHCPv6 SOLICIT packets, but ignores or drops the ADVERTISE response.\r\n\r\nSteps to Reproduce: Disable IPv4 in Advanced settings for the WiFi Interface, apply, associate with an SSID which has a configured DHCPv6 server. \r\n\r\nExpected Results:  The Mac receives the ADVERTISE packet and continues the DHCPv6 process, and assigns an address.\r\n\r\nActual Results: The Mac will timeout and not receive or accept the ADVERTISE packet.\r\n\r\nRegression:  I *believe* this was not a problem on 10.7.3, but I no longer have a 10.7.3 machine to test with.\r\n\r\nNotes:\r\n\r\nIn my scenario, the router is a Juniper SRX210H-POE running 12.1R2.9.  The wireless access-point is a Juniper AX411-US running 10.1.3.16.  (Also tested with an Airport extreme running in bridge-mode attached to an access-port of the SRX210h)\r\n\r\nThe Juniper's router-advertisement protocol configuration specifies 'no-autonomous', 'managed', and 'other' configuration bits, which should cause a wireless client to invoke its DHCPv6 client.\r\n\r\nWhen connected via hard-wired ethernet, the Mac reliably executes this process.\r\n\r\nWhen connected via WiFi, the Mac almost always fails this process.  A tcpdump on the Mac suggests that an ADVERTISE packet was not received.  However, an equivalent tcpdump on the Juniper SRX and AX411 shows the ADVERTISE packet was sent.  As DHCPv6 works via hard-wired ethernet connection to the Mac, and a TCPDUMP reveals the DHCPv6 ADVERTISE packet is sent out this same ethernet interface on the Juniper SRX when connected to the Airport Extreme, I believe this isolates the problem to the WiFi driver within the Mac.\r\n\r\nIt is also worth noting that once in a while it will work over WiFi, though I cannot manage to duplicate a success.  I have a sneaking suspicion that most successes are when resuming from sleep and the WiFi interfaces is appropriate configured (IPv4 Off, set to the right SSID).  And, once it works, I can toggle wireless on and off and it will continue to work, though I suspect only because the Mac sends a DHCPv6 CONFIRM rather than SOLICIT."
+    email: pheller@gmail.com
+    modified: "2012-06-28T20:57:28.148976Z"
+    number: "11771742"
+    number_intvalue: 11771742
+    originated: 8/28/12
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Wireless Driver ignoring DHCPv6 Advertise packets

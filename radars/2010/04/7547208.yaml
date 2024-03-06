@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7547208"
+    labels:
+        datastore_id: "287403"
+data:
+    classification: UI/Usability
+    created: "2010-04-28T21:20:43.357238Z"
+    description: "Unison 2 (http://www.panic.com/unison/) uses CoreAnimation extensively in its UI: the source list and main content view in the window are layer-hosting views, and everything inside is built from CALayers. During development, I found that if a CATransaction is left open (usually due to an uncaught exception thrown inside a transaction) the entire UI freezes up. (See also radar #6848104.)\r\n\r\nSo far we haven't found any instances of our code leaving the UI wedged like this, but it turns out that resizing the window with a Wacom tablet will occasionally leave a transaction open. I don't think it's in our code because it works fine with a mouse or trackpad, and I'm not seeing any exceptions or warnings in the console.\r\n\r\nHere's an ugly fix using the unpublished [CATransaction currentState] method. In my NSWindow subclass:\r\n\r\n- (void)setFrame:(NSRect)frame display:(BOOL)display\r\n{\r\n\t[super setFrame:frame display:display];\r\n\t\r\n\tif ( [CATransaction currentState] == 2 )\r\n\t\t[CATransaction commit];\r\n}"
+    email: dave@opaque.net
+    modified: "2011-08-28T05:42:58.49014Z"
+    number: "7547208"
+    number_intvalue: 7547208
+    originated: 15-Jan-2010 02:11 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.6.2
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: CATransaction left open after window resize w/ wacom tablet

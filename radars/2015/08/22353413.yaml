@@ -1,0 +1,77 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22353413"
+    labels:
+        datastore_id: "4600232666988544"
+data:
+    classification: Other Bug
+    created: "2015-08-19T23:49:47.36084Z"
+    description: |-
+        Summary:
+        The custom mirror is ignored for yes that conform to the CustomReflectable when using dump() or String(reflecting:). Creating a Mirror and iterating through the children shows the custom mirror correctly.
+
+        Steps to Reproduce:
+
+        1) Create a new playground.
+        2) Build a type Foo with two stored properties and one computed property, then add conformance to CustomReflectable. The custom mirror should contain all three properties as children:
+
+            struct Foo : CustomReflectable {
+                let a: Int
+                let b: String
+                var c: String {
+                    return "\(a) - \(b)"
+                }
+
+                func customMirror() -> Mirror {
+                    return Mirror(self, children: ["a": a, "b": b, "c": c])
+                }
+            }
+
+        2) Create an instance of Foo and try the different ways of reflecting on its contents:
+
+            let foo = Foo(a: 1, b: "Hi")
+
+            dump(foo)
+            print(String(reflecting: foo))
+
+            Mirror(reflecting: foo).children.forEach {
+                print("\($0!): \($1)")
+            }
+
+        Expected Results:
+
+        Each of the three methods should show three properties of foo:
+
+        ▿ Foo
+          - a: 1
+          - b: Hi
+          - c: 1 - Hi
+        Foo(a: 1, b: "Hi”, c: “1 - Hi”)
+        a: 1
+        b: Hi
+        c: 1 - Hi
+
+        Actual Results:
+
+        Only the method using Mirror(…)… correctly displays the third property, c:
+
+        ▿ Foo
+          - a: 1
+          - b: Hi
+        Foo(a: 1, b: "Hi")
+        a: 1
+        b: Hi
+        c: 1 - Hi
+    email: natecook@gmail.com
+    modified: "2015-08-19T23:49:47.36114Z"
+    number: "22353413"
+    number_intvalue: 22353413
+    originated: 19-Aug-2015 04:49 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A176x)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode-beta (7A176x): Custom mirror ignored for CustomReflectable types'

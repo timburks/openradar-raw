@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10212664"
+    labels:
+        datastore_id: "1570406"
+data:
+    classification: Serious Bug
+    created: "2012-03-02T00:42:37.543534Z"
+    description: "Summary:\r\n\r\nI've just spent about 2 days trying to figure out why the following code in our Mac app wasn't ever giving me a URL (it always returned nil).\r\n\r\nNSFileManager* defaultFileManager = [NSFileManager defaultManager];\r\nNSURL* cloudURL = [defaultFileManager URLForUbiquityContainerIdentifier:nil];\r\nNSLog(@\"%@\", cloudURL);\r\nI got to the point where I created a new app from the template, and added that code in - (void)applicationDidFinishLaunching:\r\n\r\nNow I managed to get this working and returning a valid Ubiquity Container URL in the sample app.\r\n\r\nHowever if I took the same code and the same bundle ID, container identifier, code signing identity etc, and put into my existing mac app, it always returns nil for the cloudURL!\r\n\r\nAfter much digging I realised that the problem was, our app uses garbage collection and the : If I turn on garbage collection in my little sample app (-fobjc-gc-only) I now get a nil ubiquity URL.\r\n\r\nI've attached a simple sample application, that you will you need to use your own App ID to replicate the problem.\r\n\r\nSteps to Reproduce:\r\n\r\nDownload the sample app\r\nSet the App bundle ID and signing identity to match your own App ID and provision profile.\r\nBuild and run the sample with Garbage Collection disabled.\r\nYou should see a valid iCloud URL logged to the console.\r\nRebuild the sample with Garbage Collection enabled.\r\nYou should see nil logged as the iCloud URL.\r\nExpected Results:\r\n\r\nAt the very least we need this made clear in the iCloud documentation. But a better result would be an error logged to the console. Better yet the URLForUbiquityContainerIdentifier: should take an NSError parameter and let us know that GC enabled apps aren't supported.\r\n\r\nIdeally though iCloud should actually work in GC Enabled apps!"
+    email: alancse@gmail.com
+    modified: "2012-03-02T00:42:37.54379Z"
+    number: "10212664"
+    number_intvalue: 10212664
+    originated: 30/09/2011
+    parent_number: '&{NULL_VALUE}'
+    product: iCloud
+    product_version: 10.7 +
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: iCloud for Mac doesn't work in GC enabled apps

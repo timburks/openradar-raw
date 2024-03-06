@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8902463
+    labels:
+        datastore_id: "5052075226431488"
+data:
+    classification: ""
+    created: "2020-11-17T03:36:19.168639Z"
+    description: "Some illegal instructions cause the process to hang instead of generating an illegal instruction signal (SIGILL).\r\n\r\nCompile and run the following program:\r\n\r\nmain.c:\r\n\r\nvoid foo();\r\nint main(int argc, char *argv[]) {\r\n  foo();\r\n}\r\n\r\nmain.s:\r\n\r\n\t.globl _foo\r\n_foo:\r\n\tvpopcntw\t%zmm1, %zmm0\r\n\tret\r\n\r\nCompile with:\r\n\r\n    gcc main.c main.s\r\n\r\nRun with\r\n\r\n    ./a.out\r\n\r\nIt should generate the text \"Illegal instruction\" and exit. Instead, it hangs forever.\r\n\r\nYou need to run this on a mac for which vpopcntw is an unsupported instruction, which may be all macs at the moment.\r\n\r\nDisassembling the binary shows the correct instruction, so I don't think the instruction is getting compiled incorrectly (to a jump with 0 offset, say).\r\n\r\nThe same program behaves correctly on Linux (remove the underscores on in the assembly file to port it to Linux).\r\n\r\nThe program also behaves correctly if you replace vpopcntw with ud2. So it isn't all instructions, just some of them (maybe some subset of avx512?).\r\n\r\nWhen run under a debugger, there's no signal being generated. Any interrupt from the debugger end shows the PC at the vpopcntw instruction.\r\n\r\nFirst observed in the Go project, https://github.com/golang/go/issues/42649"
+    email: keithr@alum.mit.edu
+    modified: "2020-11-17T03:36:19.168796Z"
+    number: FB8902463
+    number_intvalue: 8902463
+    originated: 11/15/2020
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Illegal instruction causes hang instead of fault

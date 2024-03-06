@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7735913
+    labels:
+        datastore_id: "4985033035087872"
+data:
+    classification: 4.0, 5.0
+    created: "2020-06-13T17:40:19.3379Z"
+    description: "Issue: I can only speak to the FUJIFILM X-E3, as it's the only camera I have. But when using that camera, with any of my lenses, Photos handles its internal Lens field inconsistently. I believe this will happen with other cameras, but I'm not certain.\r\n\r\nThe problem: The same lens on the same camera will generate two different values in the Lens field in Photos, depending only on the format of the photo. See lens_values.jpg for an example: These two photos were taken 10 seconds apart, with the same camera and the same lens, yet their Lens value is different in Photos.\r\n\r\n***********************\r\nNOTE: I can't attach images in Open Radar, so here's what's in the screenshot: A RAW image shows a Lens value of \"XF16mmF2.8 R WR,\" while the same lens on the same camera, but shot in JPEG mode, shows a Lens value of \"16.0 mm f/2.8.\"\r\n***********************\r\n\r\nThe *only* difference between the two photos is that the leftmost one is a RAW image, the rightmost one is a JPEG. When I tested, this happened with each of my lenses: Any RAW photo get the \"XF16mm...\" name, all other photos (even the RAW photo in a RAW+ format) get the \"16.0 mm f/2.8\" name.\r\n\r\nI looked at the raw exif values, and it appears Photos is using \"Lens Model\" for Lens when it imports RAW, but \"Lens\" when it imports any other format. These values need to be the same—either always Lens Model or Lens—because it's otherwise nearly impossible to build a Smart Album that correctly selects the proper lens (especially if you have more than on 16mm lens in your collection.)\r\n\r\nIn the raw exif data, for both the RAW and JPEG photos, the data is identical for lens; here's what it contains:\r\n\r\n$ exiftool DSCF1422.JPG | grep Lens\r\nLens Modulation Optimizer       : On\r\nLens Info                       : 16mm f/2.8\r\nLens Make                       : FUJIFILM\r\nLens Model                      : XF16mmF2.8 R WR\r\nLens Serial Number              : 123456\r\n\r\n$ exiftool DSCF1421.RAF | grep Lens\r\nLens Modulation Optimizer       : On\r\nLens Info                       : 16mm f/2.8\r\nLens Make                       : FUJIFILM\r\nLens Model                      : XF16mmF2.8 R WR\r\nLens Serial Number              : 9AA06132\r\n\r\nThis is a seemingly minor thing, but it causes major issues with any Smart Albums that try to read the Lens field."
+    email: manytricks.rg@gmail.com
+    modified: "2020-06-13T17:40:19.338057Z"
+    number: FB7735913
+    number_intvalue: 7735913
+    originated: 6/13/2020
+    parent_number: '&{NULL_VALUE}'
+    product: Photos
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Photos imports Lens information incorrectly (or at least inconsistently)

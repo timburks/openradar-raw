@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11706832"
+    labels:
+        datastore_id: "1805403"
+data:
+    classification: Performance
+    created: "2012-07-11T01:39:02.351403Z"
+    description: "Summary:\r\nWhen Exporting an h264 video from 32 bit ARGB frames using AVAssetWriter and AVAssetWriterInputPixelBufferAdaptor, my application uses an alarming amount of memory (over 1GB), even though frames are being supplied at a low rate (1 frame per second or less)\r\n\r\nThis only occurs when using AVVideoCodecH264. When another codec is used (such as AVVideoCodecJPEG or AVVideoCodecAppleProRes422) and less than 50 MB of ram is typically used, with no increase of allocations for each frame. This is the behavior I expected from the h264 exporter as well.\r\n\r\nRecording at one frame per second may seem odd, but the application I'm developing (ScreenNinja) is a time lapse screen recorder - a typical recording session in the app will capture a full screen frame every 1 to 60 seconds (depending on configuration) and recording sessions can last for hours or even days.\r\n\r\n\r\n\r\nSteps to Reproduce:\r\nI've attached a sample application that demonstrates the issue. To reproduce:\r\n\r\nBuild and profile MiniNinja with the allocations instrument.\r\n\r\nHit \"Record\"\r\n\r\nAs soon as you choose a save location, the application will begin recording for 60 seconds. It will take a screenshot of your main screen once a second.\r\n\r\nWatch memory be allocated at alarming rates using instruments.\r\n\r\nAfter 60 seconds when the recording is finished, the AVAssetWriter and it's inputs are released causing memory usage to go back down to the baseline.\r\n\r\n\r\n\r\nExpected Results:\r\nExporting to h264 should use a similar amount of RAM as other codecs, or other methods of exporting. Code similar to this, but based on QTKit uses less than 150MB of RAM for my full app plus the QTKitServer background process (However, exporting with QTKit is currently broken under 10.8 due to issue #11537327)\r\n\r\n\r\nActual Results:\r\nWhen the recording begins, several hundred megs will be allocated immediately, and more memory is used after each frame is added, then over the next 30-45 seconds memory usage stabilizes at what seems like an abnormally high amount (The exact amount seems to vary based on the dimensions of the frames - 2560x1440 stabilizes at over 1GB, 1440x900 at around 650MB)\r\n\r\n\r\nRegression:\r\nI've tested this issue under every OS I have available. It occurs in 10.7.4 (11E53) and every developer preview of 10.8 (through build 12A239 - the most recent at time of writing)\r\n\r\nNotes:\r\nI showed this issue to several engineers in the AVFoundation labs during WWDC2012. All agreed that the memory usage I'm seeing seems rather high and that there's nothing obviously wrong with my code."
+    email: krisharris@improbablesciences.com
+    modified: "2012-07-11T01:39:02.351803Z"
+    number: "11706832"
+    number_intvalue: 11706832
+    originated: 20-Jun-2012 01:43 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X SDK
+    product_version: 10.7.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Exporting h264 with AVAssetWriterInputPixelBufferAdaptor uses GB of RAM

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12082665"
+    labels:
+        datastore_id: "1860410"
+data:
+    classification: Other Bug
+    created: "2012-08-12T12:17:56.32038Z"
+    description: "Summary:\r\nThe kernel's IORegistryEntry class has a set of methods called copyProperty(). The source code for these reveals that the property value is in fact NOT copied.\r\n\r\nSteps to Reproduce:\r\n- Obtain a dictionary or array property value from a registry entry using copyProperty()\r\n- attempt to modify the property value\r\n\r\nExpected Results:\r\n- modifying the copied collection should work\r\n\r\nActual Results:\r\n- kernel panic: \"Trying to change a collection in the registry\"\r\n\r\nNotes:\r\nI suspect this is an optimisation for legacy code that uses copyProperty and does not in fact require a copy. However, this makes it essentially superfluous as IORegistryEntry::getProperty() is almost identical - IORegistryEntry::copyProperty() in fact calls getProperty() and retain()s the result.\r\nWorse, the name suggests copying, and the documentation for this method is vague and does not explicitly state that no copy is performed.\r\n\r\nSuggested fix:\r\n- Mark copyProperty() as deprecated\r\n- Update the documentation for copyProperty() to be clear about the non-copying behaviour.\r\n- Update getProperty() method documentation to say that returned values are immutable and should be copied before modification."
+    email: phil@philjordan.eu
+    modified: "2012-08-12T12:17:56.320854Z"
+    number: "12082665"
+    number_intvalue: 12082665
+    originated: 12-Aug-2012 02:16 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: "10.7"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: IORegistryEntry::copyProperty() does not actually copy the property

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14844488"
+    labels:
+        datastore_id: "5873951892832256"
+data:
+    classification: Other bug
+    created: "2013-08-27T14:07:58.038261Z"
+    description: "27-Aug-2013 03:04 PM Oliver Mason:\r\nSummary:\r\nThe \"possibleTagsAtIndex\" method of the NSLinguisticTagger class does not return scores.\r\n\r\nSteps to Reproduce:\r\nExecute the attached code. This takes a single (English) sentence, analyses it, and logs the results.\r\n\r\nExpected Results:\r\nApart from the list of possible tags, a list containing the respective likelihood scores should also be returned.\r\n\r\n2013-08-27 14:42:15.281 NLPlayground[29985:303] train: Noun\r\n2013-08-27 14:42:15.282 NLPlayground[29985:303] poss: (\r\n    Noun,\r\n    Verb\r\n); scores: (**HERE SHOULD BE TWO NSVALUE OBJECTS CONTAINING SCORES**)\r\n\r\nActual Results:\r\n\r\n2013-08-27 14:42:15.281 NLPlayground[29985:303] train: Noun\r\n2013-08-27 14:42:15.282 NLPlayground[29985:303] poss: (\r\n    Noun,\r\n    Verb\r\n); scores: (null)\r\n\r\nRegression:\r\nThis issue does not seem to affect tagging performance.\r\n\r\nNotes:\r\nThe salient parts of the source code are:\r\n\r\n\r\n        NSString *question = @\"When is the next train to Aberystwyth?\";\r\n        NSLinguisticTaggerOptions options = NSLinguisticTaggerOmitWhitespace | NSLinguisticTaggerOmitPunctuation | NSLinguisticTaggerJoinNames;\r\n        NSLinguisticTagger *tagger = [[NSLinguisticTagger alloc] initWithTagSchemes: [NSLinguisticTagger availableTagSchemesForLanguage:@\"en\"] options:options];\r\n        tagger.string = question;\r\n        [tagger enumerateTagsInRange:NSMakeRange(0, [question length]) scheme:NSLinguisticTagSchemeNameTypeOrLexicalClass options:options usingBlock:^(NSString *tag, NSRange tokenRange, NSRange sentenceRange, BOOL *stop) {\r\n            NSString *token = [question substringWithRange:tokenRange];\r\n            NSLog(@\"%@: %@\", token, tag);\r\n            NSArray *scores = nil;\r\n            NSArray *poss = [tagger possibleTagsAtIndex:tokenRange.location scheme:NSLinguisticTagSchemeLexicalClass tokenRange:&tokenRange sentenceRange:&sentenceRange scores:&scores];\r\n            NSLog(@\"poss: %@; scores: %@\",poss,scores);\r\n        }];\r\n\r\n\r\nThe final three lines (starting from the NSArray *scores declaration) are the relevant parts."
+    email: o.j.mason@gmail.com
+    modified: "2013-11-19T16:19:47.356288Z"
+    number: "14844488"
+    number_intvalue: 14844488
+    originated: 27/08/2013
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.7.5
+    reproducible: always
+    resolved: Works as expected in OS X 10.9
+    status: Closed
+    title: NSLinguisticTagger does not return evaluation scores

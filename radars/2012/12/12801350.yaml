@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12801350"
+    labels:
+        datastore_id: "2378401"
+data:
+    classification: Other Bug
+    created: "2012-12-04T00:24:56.609267Z"
+    description: "Summary:\r\n\r\nThe documentation for NSOperation fails to explain that when Operation 2 is dependent on Operation 1, Operation 2 will not begin to execute until the completion block for Operation 1 has finished executing.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Execute the following code:\r\n\r\n    NSOperationQueue *queue = [[NSOperationQueue alloc] init];\r\n    \r\n    NSBlockOperation *op1 = [NSBlockOperation blockOperationWithBlock:^{ NSLog(@\"Operation 1 work!\"); }];\r\n    [op1 setCompletionBlock:^{ sleep(5); NSLog(@\"Operation 1 done!\"); }];\r\n    \r\n    NSBlockOperation *op2 = [NSBlockOperation blockOperationWithBlock:^{ NSLog(@\"Operation 2 work!\"); }];\r\n    [op2 setCompletionBlock:^{ NSLog(@\"Operation 2 done!\"); }];\r\n    \r\n    [op2 addDependency:op1];\r\n    \r\n    [queue addOperation:op1];\r\n    [queue addOperation:op2];\r\n\r\nExpected Results:\r\n\r\nAccording to the documentation:\r\n\r\n\"The completion block you provide is executed when the value returned by the isFinished method changes to YES.\"\r\n\"An operation object does not clear a dependency until the value at the isFinished key path changes to YES.\"\r\n\r\nI would expect both the completionBlock of op1 and op2 to execute simultaneously, when the operation is completed.\r\n\r\nActual Results:\r\n\r\nThe second operation, op2, does not execute until both op1 is marked as finished *and* its completion block finishes executing. Something not explained in the documentation.\r\n\r\nRegression:\r\n\r\nN/A\r\n\r\nNotes:\r\n\r\nN/A"
+    email: ckrames1234@gmail.com
+    modified: "2012-12-04T00:24:56.609626Z"
+    number: "12801350"
+    number_intvalue: 12801350
+    originated: 03-Dec-2012 07:24 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "6.0"
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: NSOperation documentation omission

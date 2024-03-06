@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27630979"
+    labels:
+        datastore_id: "6083573912174592"
+data:
+    classification: Bug
+    created: "2016-07-31T19:16:41.46485Z"
+    description: "As of WWDC 2016 the Core Data team updated their framework to be friendlier to generics and the new beefed up `NSFetchRequest` now returns objects that conform to the `NSFetchRequestResult`. \r\n\r\nSo in the code below I have my base protocol that conforms to the said `NSFetchRequestResult` protocol, and in an extension of its child protocol `ManagedObjectFetchable` I want to return fetch objects of conforming types:\r\n\r\n    import CoreData\r\n\r\n    @objc protocol ManagedObjectType: class, NSFetchRequestResult { }\r\n\r\n    protocol ManagedObjectFetchable: ManagedObjectType { }\r\n\r\n    extension ManagedObjectFetchable {\r\n      static func preFetch(for predicate: Predicate, sortedBy sortDescriptors: [SortDescriptor]) throws -> [Self] {\r\n        let fetchRequest = NSFetchRequest<Self>(entityName: Self.entityName)\r\n        fetchRequest.predicate = predicate\r\n        fetchRequest.sortDescriptors = sortDescriptors\r\n\r\n        let dummyContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)\r\n        return try dummyContext.fetch(fetchRequest)\r\n      }\r\n    }\r\n\r\nThe problem here is this line:\r\n\r\n    // Error: Binary operator '<' cannot be applied to operands of type 'NSFetchRequest<_>.Type' and 'Self.Type'\r\n    let fetchRequest = NSFetchRequest<Self>(entityName: Self.entityName)\r\n\r\nI don't think this has anything to do with binary operators but rather a bug in Swift\r\n\r\nAs pointed out by a Stackoverflow answer this code works:\r\n\r\n    let fetchRequest: NSFetchRequest<Self> = NSFetchRequest(entityName: Self.entityName)\r\n\r\nStackoverflow link: http://stackoverflow.com/questions/38678318/extending-protocols-conforming-to-nsfetchrequestresult/38687263#38687263"
+    email: J.osseiran@gmail.com
+    modified: "2017-06-14T16:20:22.21868Z"
+    number: "27630979"
+    number_intvalue: 27630979
+    originated: 31/07/2016
+    parent_number: '&{NULL_VALUE}'
+    product: Swift
+    product_version: "3.0"
+    reproducible: Yes
+    resolved: ""
+    status: Closed
+    title: Extending Protocols conforming to NSFetchRequestResult

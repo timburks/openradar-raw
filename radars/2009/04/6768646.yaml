@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6768646"
+    labels:
+        datastore_id: "18450"
+data:
+    classification: Serious Bug
+    created: "2009-04-08T04:30:16.374985Z"
+    description: "Summary:\r\n\r\nWhen serializing an NSDate to an XML property list, the property list format does not store the fractional seconds of the NSDate. As a result, when the plist is deserialized, the fractional seconds are lost.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nThe following PyObjC program demonstrates the problem:\r\n\r\n#!/usr/bin/python\r\n\r\nfrom Foundation import *\r\n\r\ndef plist(obj):\r\n    return NSString.alloc().initWithData_encoding_(NSPropertyListSerialization.dataFromPropertyList_format_errorDescription_(obj, NSPropertyListXMLFormat_v1_0, None)[0], NSUTF8StringEncoding)\r\n\r\ndef unplist(s):\r\n    return NSPropertyListSerialization.propertyListFromData_mutabilityOption_format_errorDescription_(s.dataUsingEncoding_(NSUTF8StringEncoding), NSPropertyListImmutable, None, None)[0]\r\n\r\n\r\ndate = NSDate.date()\r\npl = plist(date)\r\nnewdate = unplist(pl)\r\n\r\nprint \"original is\", date.timeIntervalSinceReferenceDate(), \"new is\", newdate.timeIntervalSinceReferenceDate()\r\n\r\n\r\nExpected Results:\r\n\r\nThe original and new values should be identical.\r\n\r\n\r\nActual Results:\r\n\r\nThe fractional seconds part of the date is truncated. Here are some example runs from my system:\r\n\r\n$ ./datetest.py \r\noriginal is 260857355.27 new is 260857355.0\r\n$ ./datetest.py \r\noriginal is 260857373.353 new is 260857373.0\r\n$ ./datetest.py \r\noriginal is 260857374.794 new is 260857374.0\r\n\r\n\r\nRegression:\r\n\r\nOnly tested on my computer with 10.5.6, but given that it appears to be a limitation of the plist format, I expect this problem to have been present from the beginning.\r\n\r\n\r\nNotes:\r\n\r\nThis behavior may be desirable, or at least unavoidable without breaking compatibility. If so it should at least be documented. I could not find any mention of this behavior in the docs when I looked."
+    email: michael.ash@gmail.com
+    modified: "2011-08-28T05:47:11.11688Z"
+    number: "6768646"
+    number_intvalue: 6768646
+    originated: 08-Apr-2009 12:27 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSDate fractional seconds are truncated by XML plist serialization

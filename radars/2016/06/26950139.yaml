@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26950139"
+    labels:
+        datastore_id: "5589017152192512"
+data:
+    classification: Serious Bug
+    created: "2016-06-22T19:33:49.10808Z"
+    description: "Summary:\r\nA scheme contains the combination of target and configuration for a number of possible actions. In theory and according to its manpage, `xcodebuild -showBuildSettings` should list the resolved build settings for a scheme.\r\n\r\nIn practice `xcodebuild -showBuildSettings` completely ignores the configuration set in the scheme, and instead uses the configuration set in the project’s info tab for “Use <Configuration> for command-line builds”.\r\nThis is extremely unpleasant, as it makes it unnecessarily hard to get at the build output of an `xcodebuild build` — which in fact uses the configuration set for the `Run` action.\r\n\r\nSteps to Reproduce:\r\n1. create a new static library target for iOS\r\n2. verify that in the info tab of the project, the “Release” configuration is selected for command–line builds\r\n3. Duplicate the “Release” configuration under the name “Run”\r\n4. Duplicate the “Release” configuration under the name “Archive”\r\n5. Duplicate the “Release” configuration under the name “Analyze”\r\n6. Turn the default scheme into a shared one,\r\n7. Select “Run” as the configuration to use for the “Run” action, and use the other freshly created configurations for the other actions accordingly\r\n8. In Terminal, change into the directory containing the project.\r\n9. Run the following command, substituting `build`, `archive`, and `analyze` for `${build_action}`:\r\n\r\nxcodebuild \\\r\n      -scheme \"${your_scheme_name}\" \\\r\n      -showBuildSettings \\\r\n      ${build_action} \\\r\n    | grep -E '^[[:space:]]*CONFIGURATION =' \\\r\n    | sed -E 's/^[[:space:]]*CONFIGURATION = (.+)$/\\1/'\r\n\r\nExpected Results:\r\nWhen run with the build actions `build`, `archive`, and `analyze`, this should yield `Run`, `Archive`, and `Analyze` — in that order.\r\n\r\nActual Results:\r\nThe output of the command is `Release`, `Release`, and `Release`.\r\n\r\nVersion:\r\nHappens on both Xcode 7.3 (7D175) and Xcode 8.0 (8S128d)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: daniel@puppiesonacid.de
+    modified: "2016-06-22T19:33:49.10826Z"
+    number: "26950139"
+    number_intvalue: 26950139
+    originated: 22-Jun-2016 12:31 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.3 (7D175) and Xcode 8.0 (8S128d)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: xcodebuild -showBuildSettings ignores configuration from scheme

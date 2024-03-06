@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14169735"
+    labels:
+        datastore_id: "3130402"
+data:
+    classification: Crash / Data Loss
+    created: "2013-06-16T23:32:10.847279Z"
+    description: "Under the current iTunesLibrary.framework, albums that are on iCloud cannot fetch their cover art using either -[ITLibrary artworkForMediaFile:] or -[ITLibMediaItem artwork].\r\n\r\nThis is a HUGE problem, since most users (like me!) will have the vast majority of their collection on iCloud only, so previews in any program but iTunes will look horrible. See the attached screenshots—Delicious Library 3 looks like crud, while iTunes 11 looks fine with the same items.\r\n\r\n:(\r\n\r\n--\r\n\r\nUse this sample code if you have none. It just dumps the raw data to the debugger console. Note that iCloud items will have “null” images of {0, 0} size.\r\n\r\n//\r\n//  ITTAppDelegate.m\r\n//  iTunesTest\r\n//\r\n//  Created by William Shipley on 6/12/13.\r\n//  Copyright (c) 2013 Delicious Monster Software. All rights reserved.\r\n//\r\n\r\n#import \"ITTAppDelegate.h\"\r\n\r\n#import <iTunesLibrary/ITLibrary.h>\r\n#import <iTunesLibrary/ITLibAlbum.h>\r\n#import <iTunesLibrary/ITLibArtist.h>\r\n#import <iTunesLibrary/ITLibArtwork.h>\r\n#import <iTunesLibrary/ITLibMediaItem.h>\r\n#import <iTunesLibrary/ITLibPlaylist.h>\r\n\r\n\r\n@implementation ITTAppDelegate\r\n\r\n- (void)applicationDidFinishLaunching:(NSNotification *)aNotification\r\n{\r\n    NSError *error = nil;\r\n    ITLibrary *const iTunesLibrary = [ITLibrary libraryWithAPIVersion:@\"1.0\" error:&error];\r\n\r\n    NSLog(@\"iTunesLibrary %@, error %@\", iTunesLibrary, error);\r\n\r\n\r\n    for (ITLibPlaylist *playlist in iTunesLibrary.allPlaylists) {\r\n        NSLog(@\"playlist %@\", playlist.name);\r\n\r\n\r\n        if (playlist.distinguishedKind == ITLibDistinguishedPlaylistKindMusic)\r\n            for (ITLibMediaItem *mediaItem in playlist.items) {\r\n                NSLog(@\" %@—%@—%@ [%@], %@ %@\", mediaItem.title, mediaItem.album.title, mediaItem.artist.name, mediaItem.genre, mediaItem.artwork.image, NSStringFromSize(mediaItem.artwork.image.size));\r\n                if (!mediaItem.artwork)\r\n                    NSLog(@\"          artwork for item %@\", [iTunesLibrary artworkForMediaFile:mediaItem.location].image);\r\n            }\r\n    }\r\n}\r\n\r\n@end\r\n\r\n\r\n--\r\n\r\niTunesLibrary.framework is now public API, according to this doc: https://developer.apple.com/library/prerelease/mac/releasenotes/MacOSX/WhatsNewInOSX/Articles/MacOSX10_9.html#//apple_ref/doc/uid/TP40013207-CH100\r\n\r\n\"iTunes Media Library (iTunesMediaLibrary.framework in /Library/Frameworks). iTunes Media Library provides support for accessing media provided by iTunes from within sandboxed apps. This framework is considered to be a public API as of iTunes 11.\""
+    email: wil.shipley@gmail.com
+    modified: "2013-06-16T23:32:10.847471Z"
+    number: "14169735"
+    number_intvalue: 14169735
+    originated: 16-Jun-2013 04:29 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iTunes
+    product_version: 11.0.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'iTunesLibrary.framework: doesn’t get cover images from iCloud'

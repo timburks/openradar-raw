@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18762927"
+    labels:
+        datastore_id: "5867868675637248"
+data:
+    classification: ""
+    created: "2014-12-04T20:36:08.388718Z"
+    description: "Summary:\r\nWe have received crash reports (through Crashlytics) that our application is crashing when users are taking photos. The stack trace shows a message being sent to a selector \"didHideZoomSlider:\", which does not exist in our code base. It seems to be a part of CameraKit (a private Apple framework).\r\n\r\nSteps to Reproduce:\r\n\r\nUsing any application that uses UIImagePickerController, a simple one screen application that presents this will do fine. Hook up a button action to present the UIImagePickerController using the camera.\r\n\r\n1) tap button to take a photo\r\n2) do a 2 finger pinch zoom gesture to show the zoom slider\r\n3) take a picture\r\n4) tap use photo\r\n\r\nRepeat those steps and eventually the application will crash on calling \"didHideZoomSlider:\" selector on an already released object.\r\n\r\nWorkaround:\r\nWe are able to work around the crash by walking through the view hierarchy looking for an instance of the \"CAMZoomSlider\" class. Then we are setting it's delegate property to nil and the crash doesn't happen. \r\n\r\nTherefore, we believe this is due to the CAMZoomSlider instance's delegate property not being set to nil in dealloc. This is a problem because the delegate property is \"assign\" and not weak, so it's possible for it to be pointing to an already deallocated instance instead of nil."
+    email: ben.rigas@modernizingmedicine.com
+    modified: "2014-12-04T20:36:08.388943Z"
+    number: "18762927"
+    number_intvalue: 18762927
+    originated: Oct 24, 2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 8.x
+    reproducible: Yes
+    resolved: No
+    status: Open
+    title: Application sometimes crashes when taking photos (didHideZoomSlider:)

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33069344"
+    labels:
+        datastore_id: "4941667853402112"
+data:
+    classification: Serious Bug
+    created: "2017-06-30T02:19:22.7822Z"
+    description: "Summary:\r\nThis is a duplicate of radar #21961293\n\nConsider the following setup:\r\n1. There's a modal view controller, dismissed using a simple custom transition.\r\n2. UIPercentDrivenInteractiveTransition is used to drive the interactive part of the dismissal, controlled via a pan gesture recognizer.\r\n3. Dismissed view controller has a different status bar style than the presenting view controller and is configured to capture status bar appearance.\r\n\r\nPrior to iOS 8.3, status bar transition during view controller dismissal happened instantly. Starting from iOS 8.3, there's now a crossfade animation. However, if the interactive part of the dismissal happens too quickly and \"finishInteractiveTransition\" or \"cancelInteractiveTransition\" method of UIPercentDrivenInteractiveTransition is thus called *before* status bar crossfade finishes, the non-interactive part of the transition never completes. As a result, in this scenario:\r\n- Completion block of the custom transition animation is never called.\r\n- Thus, transition is never completed.\r\n- Completion block of \"dismissViewControllerAnimated:completion:\" method is never called.\r\n- \"viewDidDisappear:\" method of dismissed view controller is never called.\r\n- Most critically, the dismissed view controller's view is not removed from the view hierarchy, view hierarchy is left in inconsistent state, and user interaction is completely disabled.\r\n\r\nAdditionally, it seems like starting from iOS 8.3, the value of \"modalPresentationCapturesStatusBarAppearance\" property is ignored, and view controllers presented modally using a custom transition always capture status bar appearance.\n\r\n\r\nSteps to Reproduce:\r\n1. Create an app with two view controllers: the first one being the root view controller, the second one presented modally on top of the first upon user action.\r\n2. Configure the modal view controller to use a custom modal presentation style and a transitioning delegate that returns a simple custom animator object that animates dismissal using a simple UIView block animation.\r\n3. Configure the transitioning delegate to use UIPercentDrivenInteractiveTransition object that's being controlled by user interaction via a pan gesture recognizer attached to the modal view controller's view.\r\n4. Make modal view controller use a different status bar style than the presenting view controller.\r\n5. Present the modal view controller. After it's presented, **quickly** (in less that 300ms) dismiss it using the pan gesture (interactive transition).\r\n\r\nExpected Results:\r\nWhen interactive part of the animation finishes, the non-interactive part completes the transition animation, all completion blocks are called and dismissal completes.\r\n\r\nActual Results:\r\nWhen interactive part of the animation finishes, the non-interactive part visually completes the animation, but no completion blocks are called and dismissal never completes, leaving view hierarchy in inconsistent state and user interaction completely disabled.\r\n\r\nVersion:\r\niOS 11 beta 2\r\n\r\nNotes:\r\nPlease use the attached demo project to see the bug in action. Follow the instructions, console logs and comments in code. https://github.com/vlas-voloshin/InteractiveDismissalBug http://www.openradar.me/21961293"
+    email: keithbsmiley@gmail.com
+    modified: "2017-06-30T02:19:22.78241Z"
+    number: "33069344"
+    number_intvalue: 33069344
+    originated: 29-Jun-2017 19:19
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 11 beta 2
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: UIPercentDrivenInteractiveTransition can cause dismissal transition to stall if interactive part finishes before status bar crossfade animation

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7470096"
+    labels:
+        datastore_id: "133401"
+data:
+    classification: Other Bug
+    created: "2009-12-14T21:40:05.137526Z"
+    description: "Summary:\r\nThe In-App Purchase Guide says that subscriptions are consumables that follow a user from device to device.  However, since purchased subscription products cannot be restored, implementing this feature is seemingly impossible.\r\n\r\nSteps to Reproduce:\r\nMy application provides a third-party mapping service that I have to pay a service fee for. It includes three months of service with the purchase price, then allows the user to use in-app purchase to purchase an additional 12 months of service.  As this period starts to run out, we want the user to be able to re-subscribe for ongoing service.\r\n\r\nSubscriptions are consumable (they're used up, over the 12 month period), but are supposed to be shared from device to device.  If the user buys another device nine months into that subscription period, the new device should also be able to get the last three months of the subscription (they shouldn't, however, be able to \"reset the clock\" by installing onto a new device, or wiping and reinstalling on this one, and getting a fresh 12 months).\r\n\r\nI've attempted to deal with this problem by using a \"magazine\" like model: subscription products encode the month and year of their expiration in their product IDs, and only the appropriate subscription, based on the current expiration, is offered to the user.  For example, if your trial period is ending in December, 2009, the subscription you're offered is the one product that ends in December 2010 (specifically, on the last day of the month, at 23:59:59 UTC).\r\n\r\nMy assumption has been that when the user buys a new device, and logs in with the same iTunes account, they can restore their purchases. In this example, the restore is expected to tell the new device that it has a subscription that's good until December 2010.\r\n\r\nExpected Results:\r\nMy application provides a \"restore\" button (with verbiage explaining its function), which calls [[SKPaymentQueue defaultQueue] restoreCompletedTransactions] to restore any purchases made with my app on another device and the same iTunes account.\r\n\r\nActual Results:\r\nThe SKPaymentTransactionObserver gets the paymentQueueRestoreCompletedTransactionsFinished: callback with an empty array.\r\n\r\nThis is consistent with the statement in the In-App Purchase Programming Guide:\r\n\"Subscriptions and consumable products are not automatically restored by Store Kit. To restore these products, you must record the transactions on your own server when they are purchased and provide your own mechanism to restore those transactions to the user’s devices.\"\r\n\r\nNotes:\r\nUnfortunately, Store Kit does not provide a practical means of associating a user (not a device) with a purchase for the purpose recording on the developer's own server.  There is no access to the iTunes account ID, or anything else that could be logged now and queried later from a different device.\r\n\r\n[SKPaymentQueue restoreCompletedTransactions] was clearly always meant to fill this role of enabling purchases on new devices. Its API docs state: \"For example, your application would use this to allow a user to unlock previously purchased content onto a new device.\"\r\n\r\nIt's possible the correct behavior could be achieved by using non-consumable products and then treating them like subscriptions.  In this example, \"subscription through December, 2010\" would be a durable product that would follow a user from device to device, but wouldn't actually have any value to the user after December, 2010.  Depending on the GUI, the user wouldn't even have to see the old product; they'd just know that the subscription, as expressed by an expiration date, got updated correctly.  But it's not clear whether this semantic difference would get the in-app purchase products rejected by Apple."
+    email: invalidname@gmail.com
+    modified: "2011-08-28T05:43:11.259825Z"
+    number: "7470096"
+    number_intvalue: 7470096
+    originated: 14-Dec-2009 04:38 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "3.1"
+    reproducible: Always
+    resolved: 05-Jan-2010 03:08 PM
+    status: Duplicate
+    title: -[SKPaymentQueue restoreCompletedTransactions] should include subscriptions

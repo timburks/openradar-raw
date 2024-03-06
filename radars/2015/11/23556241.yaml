@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23556241"
+    labels:
+        datastore_id: "6052981464104960"
+data:
+    classification: ""
+    created: "2015-11-16T16:04:04.00514Z"
+    description: "Summary:\r\nWhen one attempts to AirPrint a PDF open in WKWebView using [WKWebView viewPrintFormatter], the previews and the printed output are blank. \r\nNote that Safari on iOS prints normally.\r\n\r\nSteps to Reproduce:\r\nUnzip attached project, build & run. A pdf document will be loaded, and once it's loaded, the print dialog will open.\r\n\r\nExpected Results:\r\nPreview in print dialog shows a small PDF preview. PDF prints normally.\r\n\r\nActual Results:\r\nPreviews in print dialog shows a blank page. Printed page is blank.\r\n\r\nVersion:\r\niOS 9.1\r\n\r\nConfiguration:\r\niPhone 6s, also simulator\r\n\r\nAttachments:\r\n'TestPrint.zip' was successfully uploaded. Since attachments are not available on openradar, you need to do the following:\r\n1. create a \"Single View\" project\r\n2. Replace ViewController.m with the following:\r\n#import \"ViewController.h\"\r\n\r\n#import <MobileCoreServices/MobileCoreServices.h>\r\n#import <WebKit/WebKit.h>\r\n\r\n@interface ViewController () <WKNavigationDelegate>\r\n@property(nonatomic, weak) WKWebView* webView;\r\n@end\r\n\r\n@implementation ViewController\r\n\r\n- (void) viewDidAppear:(BOOL)animated {\r\n  [super viewDidAppear:animated];\r\n  \r\n  NSString* pdfLink = @\"http://www.cbu.edu.zm/downloads/pdf-sample.pdf\";\r\n  NSURL* pdfURL = [NSURL URLWithString:pdfLink];\r\n  \r\n  WKWebView* webView = [[WKWebView alloc] init];\r\n  [self.view addSubview:webView];\r\n  webView.frame = self.view.bounds;\r\n  webView.navigationDelegate = self;\r\n  [webView loadRequest:[NSURLRequest requestWithURL:pdfURL]];\r\n  self.webView = webView;\r\n}\r\n\r\n- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation {\r\n  // Start printing\r\n  UIPrintInfo* printInfo = [UIPrintInfo printInfo];\r\n  printInfo.outputType = UIPrintInfoOutputGrayscale;\r\n  printInfo.jobName = @\"PDF Sample\";\r\n\r\n  UIPrintInteractionController* printController = [UIPrintInteractionController sharedPrintController];\r\n  [printController setPrintInfo:printInfo];\r\n  [printController setPrintFormatter:[self.webView viewPrintFormatter]];\r\n  [printController presentAnimated:YES completionHandler:nil];\r\n}\r\n\r\n@end\r\n\r\n3. Add WebKit and MobileCoreServices frameworks to linked frameworks section."
+    email: stkhapugin@chromium.org
+    modified: "2015-11-16T16:04:04.00547Z"
+    number: "23556241"
+    number_intvalue: 23556241
+    originated: 16-11-2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "9.1"
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: WKWebView does not render PDF pages in AirPrint preview.

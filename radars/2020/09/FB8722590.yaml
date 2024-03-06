@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8722590
+    labels:
+        datastore_id: "5056164974821376"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2020-09-21T08:27:15.483495Z"
+    description: "Description of the problem:\r\n\r\nBy its very nature video playback is usually supposed to happen when the application is in the foreground. Still it has always been possible to let video playback seamlessly continue when the application is sent to the background. As described in the official QA1668 article (https://developer.apple.com/library/archive/qa/qa1668/_index.html) this is achieved by detaching the player layer from its player when entering background. This avoids the player layer pausing playback, yielding the expected behavior.\r\n\r\nAs of iOS 14, though, playback is paused when entering background, even if the player layer has been correctly detached in response to `UIApplication.didEnterBackgroundNotification` (see QA1668 reference implementation). Playback can be resumed in the background if the app implements control center support, but the end user experience is poor.\r\n\r\nNote that playback is not paused if the player layer was detached before or never attached in the first place, which leads me to think there is a subtle timing issue which changed this documented behavior in iOS 14. If you detach the player layer in `UIApplication.willResignActiveNotification` video playback namely continues as expected in the background, which incidentally provides a potential workaround or official solution to this issue.\r\n\r\nSuch changes could affect apps in other subtle ways, which is why I reported this issue so that your teams can determine whether this change is a regression or not.\r\n\r\nIf this behavior is expected starting with iOS 14 and is not a regression, it should at least be documented correctly and the QA1668 article mentioned above should be updated, maybe to mention that `UIApplication.willResignActiveNotification` is now the way to go.\r\n\r\nHow to reproduce the issue:\r\n\r\nI attached a sample project to this issue, whose implementation is based on QA1668. This project compiles with Xcode 11.7 / iOS 13.7 SDK as well as Xcode 12 / iOS 14 SDK.\r\n\r\n1. Open the sample project and set a development team for deployment on a physical device.\r\n2. Run the project on an iOS device.\r\n3. Tap on the play button. This plays a video.\r\n4. Send the application to the background.\r\n\r\nHere is the result you obtain, which is different between iOS versions:\r\n\r\n- On iOS 14 (project built with the iOS 14 SDK or iOS 13.7 SDK), video playback is incorrectly paused when moving to the background.\r\n- On iOS 13 (project built with the iOS 14 SDK or iOS 13.7 SDK), video playback correctly continues when moving to the background.\r\n\r\nTwo additional variants mentioned above can be tested with this project:\r\n\r\n- If you comment occurrences of `playerLayer.player = player` in the sample code (i.e. the player layer is never attached) and run the project on iOS 14, the behavior is correct and video playback continues while moving the app to the background.\r\n- If you replace `UIApplication.didEnterBackgroundNotification ` with `UIApplication.willResignActiveNotification` video playback continues while moving the app to the background.\r\n\r\nPossible solutions:\r\n\r\n- The new behavior might be desired, in which case QA1668 should be updated to mention this iOS 14 change.\r\n- The new behavior is a regression, QA1668 is still valid and the regression should be fixed.\r\n\r\nExpected behavior:\r\n\r\nIf an `AVPlayer` is playing a video and its video layer is detached when moving to the background according to QA1668 (`UIApplication.didEnterBackgroundNotification`), playback continues, no matter the iOS version.\r\n\r\nActual behavior:\r\n\r\nIf an `AVPlayer` is playing a video and its video layer is detached when moving to the background according to QA1668 (`UIApplication.didEnterBackgroundNotification`), playback is incorrectly paused starting with iOS 14."
+    email: defagos@gmail.com
+    modified: "2020-09-21T08:27:15.483664Z"
+    number: FB8722590
+    number_intvalue: 8722590
+    originated: Sep 21, 2020
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "14"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'iOS 14 regression or documentation issue: Video playback is incorrectly paused when moving to the background if implemented according to QA1668'

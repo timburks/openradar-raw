@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9892143
+    labels:
+        datastore_id: "5591086005223424"
+data:
+    classification: ""
+    created: "2022-02-09T10:49:38.582628Z"
+    description: "Using the `PHAssetCollection.fetchAssetCollections(with:subtype:options)` API to fetch user's smart albums returns a panoramas collection when trying to find the imported photos collection, using the call below:\r\n\r\n`PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumImported, options: nil)`\r\n\r\nIf one would take the resulting collection from the call above, and use the `PHAsset.fetchAssets(in:options)`, they would receive all user's panoramas instead all of the user's imported photos. Here's a more complete example on how to reproduce the issue:\r\n\r\n```\r\nfunc panoramasEqualsImported() {\r\n      let importedCollection = PHAssetCollection.fetchAssetCollections(with: .smartAlbum,\r\n                                                                       subtype: .albumImported,\r\n                                                                       options: nil)\r\n\r\n      let panoramasCollection = PHAssetCollection.fetchAssetCollections(with: .smartAlbum,\r\n                                                                        subtype: .smartAlbumPanoramas,\r\n                                                                        options: nil)\r\n\r\n      guard let importedCollection = importedCollection.firstObject, let panoramasCollection = panoramasCollection.firstObject else { return }\r\n\r\n      let importedResults = PHAsset.fetchAssets(in: importedCollection, options: nil)\r\n      let panoramaResults = PHAsset.fetchAssets(in: panoramasCollection, options: nil)\r\n\r\n      let importedAssets = importedResults.objects(at: IndexSet(integersIn: 0..<importedResults.count)).map { $0.localIdentifier }\r\n      let panoramaAssets = panoramaResults.objects(at: IndexSet(integersIn: 0..<panoramaResults.count)).map { $0.localIdentifier }\r\n\r\n      let areAlbumsEqual = importedAssets.elementsEqual(panoramaAssets) // true\r\n}\r\n```"
+    email: constantin@mixbook.com
+    modified: "2022-02-09T11:02:25.717813Z"
+    number: FB9892143
+    number_intvalue: 9892143
+    originated: 08/02/2022
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "15"
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: albumImported smart album returns the panoramas collection instead of imported photos collection

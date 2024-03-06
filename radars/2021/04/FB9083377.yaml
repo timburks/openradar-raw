@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9083377
+    labels:
+        datastore_id: "4993916906504192"
+data:
+    classification: ""
+    created: "2021-04-19T19:19:42.463533Z"
+    description: "This issue relates to another issue reported on the Apple Developer forum titled [How to avoid Data Races in deinit](https://developer.apple.com/forums/thread/49930) from 4 years ago. I am seeing crashes in production related to associated data and `outlined consume` code added by the compiler to deinitialize enums with associated data that contain reference types.\r\n\r\nWhen trying to find if someone else has faced the same issue, I stumbled across the above post. I reduced the example from that post to a simpler example below and reliably get a crash due to bad access.\r\n\r\n\r\nRun in playground:\r\n\r\n```\r\nimport Foundation\r\nclass Racer {\r\n    let queue = DispatchQueue(label: \"Racer-\\(UUID())\")\r\n    var value: String? = \"\" // Desugars to Optional<String>, an enum\r\n    func race() {\r\n        queue.async {[weak self] in\r\n            self?.value = UUID().uuidString\r\n        }\r\n    }\r\n}\r\nlet racer = Racer()\r\nwhile true {\r\n    racer.race()\r\n}\r\n```\r\n\r\n> error: Execution was interrupted, reason: EXC_BAD_ACCESS (code=1, address=0x357d20cc94c0)."
+    email: parthv21@gmail.com
+    modified: "2021-04-19T19:19:42.463813Z"
+    number: FB9083377
+    number_intvalue: 9083377
+    originated: 04/19/2021
+    parent_number: '&{NULL_VALUE}'
+    product: Swift Playgrounds
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: 'Swift: Enums with stored properties not thread safe even when mutated using a serial queue'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8235153"
+    labels:
+        datastore_id: "561402"
+data:
+    classification: ""
+    created: "2010-08-06T22:45:29.471647Z"
+    description: "Summary:\r\nI am trying to profile my C++ code in Shark, but it only profiles functions called more than once. Certain large, toplevel functions take a lot of the time, but one cant see the profiled code. Below, I reproduce the problem in a toy example.\r\n\r\n\r\nSteps to Reproduce:\r\nI use the gcc 4.2.1 included with XCode 3.2.2.\r\ncompile the following program (prof.cpp) :\r\n/usr/bin/g++ -g -O0 prof.cpp\r\n\r\n\r\n#include <iostream>\r\n\r\ndouble myfunc(double a) {\r\n        int x = (a/100);\r\n        a = a - x*100;\r\n        if (a<50) a = 3.5*a;\r\n        else a = -.5*a;\r\n        return a;\r\n}\r\n\r\ndouble bigFunc() {\r\n        float x,y,z;\r\n        x=1; y=2;z=3;\r\n        for (int i=0;i<1000000;i++) {\r\n                x = x + myfunc(y+z/x);\r\n                x = x + myfunc(x+y);\r\n                x = x + myfunc(z+y);\r\n                y = (x+z)/2.34;\r\n        }\r\n        return x;\r\n}\r\n\r\nint main() {\r\n        double ans = bigFunc();\r\n        std::cout << \"ans = \"<<ans<<\"\\n\";\r\n        //ans = bigFunc();\r\n        return 0;\r\n}\r\n\r\nI run shark as shark -i -T 1s ./a.out\r\n\r\nI get the result as session_001.mshark\r\n\r\nI open the session as\r\nopen session_001.mshark\r\n\r\nIn shark, I can't open bigFunc in the tree display to see the source code with the self and total time displayed. Instead, it says \"Unable to read process memory. Either you have insufficient privileges or the process exited and could not be cached.\" I can, however, click on myfunc, since it is called multiple times. If, instead I uncomment the second call to bigFunc, I generate a new session (session_002.mshark) file, and in that, I can click on bigFunc to see its profiled source code.\r\n\r\nExpected Results:\r\n\r\nI expect to see the profiled source code when I click on bigFunc.\r\n\r\nActual Results:\r\n\r\nI see the error message \"Unable to read process memory. Either you have insufficient privileges or the process exited and could not be cached.\""
+    email: BaltCode@gmail.com
+    modified: "2011-08-28T05:40:30.10733Z"
+    number: "8235153"
+    number_intvalue: 8235153
+    originated: 26-Jul-2010
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 4.7.3
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Shark 4.7.3 doesnt profile functions called once

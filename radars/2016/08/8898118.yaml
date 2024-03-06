@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8898118"
+    labels:
+        datastore_id: "5055360083689472"
+data:
+    classification: ""
+    created: "2016-08-31T10:07:13.54317Z"
+    description: "Summary:\r\n========\r\n\r\nWe have a KExt which registers a KAuth callback with the KAUTH_SCOPE_FILEOP. However the callback is not called for file operations which happen on file descriptor inherited from parent process.\r\n\r\n\r\nSteps to Reproduce:\r\n===================\r\n\r\n(1) Load the KExt provided with the attachement. It logs all SCOPE_FILEOP (and also SCOPE_VNODE) events into /var/log/kernel.log (or system.log on older systems).\r\n\r\n  $ sudo cp -R AvastBlame.kext /tmp\r\n  $ sudo kextload /tmp/AvastBlame.kext\r\n\r\n\r\n(2) In user space, write to two files through a pipe. In one case we do that through bash echo built-in (i.e. bash opens the file, it's written then closed), in other case we do that through /bin/echo, i.e. bash forks new process, who inherits stdin,out,err file descriptors from parent, it's written and closed twice (once in parent, once in child).\r\n\r\n  $ echo > /tmp/foo\r\n  $ /bin/echo Hello > /tmp/bar\r\n\r\n\r\nExpected Results:\r\n=================\r\n\r\nThe kernel.log should contain (among others) something similar to these three lines:\r\n\r\n  $ grep \"foo\\|bar\" /var/log/kernel.log | grep FILEOP_CLOSE\r\n  Jan 21 15:16:17 imac4 kernel[0]: AvastBlame: FILEOP_CLOSE[modified] uid=502 pid=15332 vnode=0xf748ea4[reg] path1='/private/tmp/foo' path2=''\r\n  Jan 21 15:16:19 imac4 kernel[0]: AvastBlame: FILEOP_CLOSE[modified] uid=502 pid=16822 vnode=0xf748ea4[reg] path1='/private/tmp/bar' path2=''\r\n  Jan 21 15:16:19 imac4 kernel[0]: AvastBlame: FILEOP_CLOSE uid=502 pid=15332 vnode=0xf748ea4[reg] path1='/private/tmp/bar' path2=''\r\n\r\n(The last line without the [modified] flag is close from parent process who does not midfy the file).\r\n\r\n\r\nActual Results:\r\n===============\r\n\r\nThe log message about modification of /private/tmp/bar is missing.\r\nI.e. for the file /tmp/bar, the KExt's callback has not been called for action KAUTH_FILEOP_CLOSE with the flag KAUTH_FILEOP_CLOSE_MODIFIED altough the file has been modified.\r\n\r\n\r\nRegression:\r\n===========\r\n\r\nThe bug is exhibited on all tested systems:\r\n - Mac OS X 10.4.x (IDK exact version and build number at the moment)\r\n - Mac OS X 10.5.8 build 9L31a \r\n - Mac OS X 10.6.2 build 10C2234\r\n - Mac OS X 10.6.6 build 10J567\r\n\r\n\r\nNotes:\r\n======\r\n\r\nWe consider the bug to be serious security issue: any software tracking changes in file system (e.g. anti-virus) can be easily worked around easily."
+    email: mitas@avast.com
+    modified: "2016-08-31T10:07:13.54338Z"
+    number: "8898118"
+    number_intvalue: 8898118
+    originated: 04-Mar-2011
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: all
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: KAuth scope KAUTH_SCOPE_FILEOP does not work for inherited file descriptors

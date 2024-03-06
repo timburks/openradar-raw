@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24956853"
+    labels:
+        datastore_id: "6156081415847936"
+data:
+    classification: ""
+    created: "2016-03-03T20:51:24.10638Z"
+    description: "Summary:\r\nRelated to the Apple Dev Forums thread: https://forums.developer.apple.com/thread/26168\r\n\r\nRetrieving items from the iOS Keychain sometimes results in a -25300 errSecItemNotFound result despite the keychain items existing.\r\n\r\nI'm fairly confident that the keychain items are configured properly since they can be read back without issue the vast majority of the time and they are only set once on the first run of the app (and are never deleted by the application).\r\n\r\nThe problem does seem to resolve itself after a period of time (on the order of hours, according to affected users) which also seems to suggest the keychain item configuration is not the problem. Dumping the keychain when experiencing this issue shows none of the expected keychain entries.\r\n \r\nWe have only experienced this issue with iOS 9 devices, and approximately 3% of our users have experienced it at least once. It seems like some users are much more likely to experience it than others but we haven't identified any unique characteristics that might point to a reason.\r\n\r\nThe attached device log captures some information just prior to an app launch where keychain access failed with an unexpected -25300.\r\n\r\nThere are a bunch of securityd errors in there that might shed a little light. These each were logged before the application launched (launch is on line 496):\r\n \r\nsecurityd[83] <Error>:  SecDbRecordChange db <SecDbConnection rw open> changed outside txn\r\nsecurityd[83] <Error>: __SOSUpdateKeyInterest_block_invoke_2 Error getting ring interests (null)\r\nsecurityd[83] <Error>: SecOCSPSingleResponseCalculateValidity OCSPSingleResponse: nextUpdate 0.73 days ago\r\nsecurityd[83] <Error>:  securityd_xpc_dictionary_handler cloudd[166] copy_matching Error Domain=NSOSStatusErrorDomain Code=-50 \"query missing class name\" UserInfo={NSDescription=query missing class name}\r\nsecurityd[83] <Error>: secTaskDiagnoseEntitlements MISSING keychain entitlements: no stored taskRef found\r\n\r\nNotes:\r\n- The keychain items are accessed in application:didFinishLaunchingWithOptions:\r\n- We use a library to do the actual keychain access: https://github.com/kishikawakatsumi/KeychainAccess \r\n- The issue has occurred on App Store distributed builds, enterprise distributed builds, and debug builds – but I don't know of any reliable reproduction steps\r\n- Keychain sharing is not enabled\r\n- The app makes frequent use of silent push notifications (content-available flag).\r\n- Failures have been observed while the app is in UIApplicationStateInactive and UIApplicationStateBackground\r\n- All keychain items use the kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly accessibility setting\r\n- Having the user force close & re-open the app doesn't seem to resolve the problem.\r\n- Known iOS versions with this issue: 9.2.1, 9.2.0, 9.1.0\r\n\r\nSteps to Reproduce:\r\nUnfortunately I don't know of a reliable way to reproduce this error. The setup we have is basically:\r\n\r\n- Set keychain items on first launch & never remove them\r\n- Retrieve keychain items on future app launches\r\n\r\nWe make use of silent push notifications (content-available flag) to wake the app up at regular intervals which does increase the frequency of experiencing this issue (since the app is launched much more frequently than it otherwise would be) so that may be one approach to take when attempting to reproduce.\r\n\r\nExpected Results:\r\nKeychain items that are set & never deleted should never fail with -25300 errSecItemNotFound when fetched.\r\n\r\nActual Results:\r\nKeychain item fetch occasionally fails with -25300 errSecItemNotFound even though item exists and becomes available on future launches.\r\n\r\nVersion:\r\niOS 9.1.0, iOS 9.2, iOS 9.2.1\r\n\r\nNotes:\r\nNot reliably reproducible.\r\n\r\nOur app also makes use of a background NSURLSession.\r\n\r\nConfiguration:\r\niPhone 5, 6, 6 Plus"
+    email: rob@steamclock.com
+    modified: "2016-03-03T20:51:24.10668Z"
+    number: "24956853"
+    number_intvalue: 24956853
+    originated: 03-Mar-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 9.1.0, iOS 9.2, iOS 9.2.1
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: iOS Keychain -25300 errSecItemNotFound sporadically for items that exist

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19289232"
+    labels:
+        datastore_id: "5802539001839616"
+data:
+    classification: Enhancement
+    created: "2014-12-18T03:31:53.461267Z"
+    description: "Summary:\r\nIt certain circumstances, it would be desirable to create an NSWindowController subclass which doesn't have a corresponding XIB.  One very sensible way to do this would be to override -loadWindow.\r\n\r\nThis works just fine if -windowNibName is implemented to return something non-nil.  However, if one does not have a NIB, one would not expect to have to provide a NIB name.\r\n\r\nThis seems to be due to the implementation of -[NSWindowController isWindowLoaded] which apparently checks whether _wcFlags.nibIsLoaded is 0 and whether windowNibName is nil.  Here's the decompilation from Hopper.app:\r\n\r\nchar -[NSWindowController isWindowLoaded](void * self, void * sel) {\r\n    rdi = self;\r\n    LOBYTE(rax) = 0x1;\r\n    if ((rdi->_wcFlags & 0x4) == 0x0) {\r\n            rax = [rdi windowNibName];\r\n            LOBYTE(rax) = rax == 0x0 ? 0x1 : 0x0;\r\n    }\r\n    LODWORD(rax) = LOBYTE(rax) & 0xff;\r\n    return rax;\r\n}\r\n\r\nwhich massages into\r\n\r\n- (BOOL)isWindowLoaded {\r\n    BOOL result = YES;\r\n\r\n    if (!_wcFlags.nibIsLoaded) {\r\n        if ([self windowNibName] = nil) {\r\n            result = YES;\r\n        } else {\r\n            result = NO;\r\n        }\r\n    }\r\n\r\n    return result;\r\n}\r\n\r\nThis means that if windowNibName is nil, isWindowLoaded returns YES.\r\n\r\nWhen creating an NSWindowController subclass without a corresponding XIB file, if one only overrides loadWindow to programmatically create an NSWindow to assign to self.window but does not override windowNibName to return a non-nil object, loadWindow will never be called.\r\n\r\nSteps to Reproduce:\r\n1. Open the attached project.  ( http://cl.ly/3Q3u162c0F17 )\r\n2. Open WindowController.m and observe the implementation of windowNibName:\r\n\r\n// COMMENT ME OUT!\r\n- (NSString *)windowNibName\r\n{\r\n    return @\"nonsense\";\r\n}\r\n\r\n3. Run the app.  You will see a window presented.\r\n4. Comment out windowNibName in WindowController.m.\r\n5. Run the app.  You will not see a window presented.\r\n\r\nExpected Results:\r\nAn NSWindowController subclass which programmatically creates its window in loadWindow should function properly without windowNibName being non-nil.\r\n\r\nActual Results:\r\nWhen creating an NSWindowController subclass that implements loadWindow to programmatically create a window, it is necessary to ensure that windowNibName is non-nil, either by overriding the method to return a non-nil value or by passing one to the initializer (-initWithWindowNibName:owner:).\r\n\r\nVersion:\r\nXcode 6.2 Beta 2, OS X 10.10.1.\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'ProgrammaticWindowControllerDemo.zip' was successfully uploaded."
+    email: nathaniel.chandler@gmail.com
+    modified: "2014-12-18T03:31:53.461527Z"
+    number: "19289232"
+    number_intvalue: 19289232
+    originated: "2014-12-17"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.10.1
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: NSWindowController subclasses must override windowNibName for programmatically created windows

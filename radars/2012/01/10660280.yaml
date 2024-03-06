@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10660280"
+    labels:
+        datastore_id: "1488402"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2012-01-08T03:08:32.986787Z"
+    description: "Summary:\r\nI have a reproducible case where calling\r\nobjc_collect(OBJC_EXHAUSTIVE_COLLECTION | OBJC_WAIT_UNTIL_DONE);\t\t\r\nwill cause the application to freeze/block the application and never finish. The command never finishes executing. I must kill the application.\r\n\r\n\r\n\r\nSteps to Reproduce:\r\nAttached is a sample program containing LuaCocoa which can easily reproduce the problem. You must change the configuration to Release. Debug doesn't seem to do it. Build and run the SimpleLuaView project. (SimpleLuaOpenGLView will also do it).\r\n\r\nWhen the application runs, it will open a window with something drawn in the view (red rectangle or yellow triangle depending on the project).\r\n\r\nYou may quit the application (Cmd-Q).\r\nOn shutdown, my code eventually calls \r\nobjc_collect(OBJC_EXHAUSTIVE_COLLECTION | OBJC_WAIT_UNTIL_DONE);\t\t\r\nThis is the line that things hang on.\r\n\r\n\r\n\r\nExpected Results:\r\nApplication should quit normally.\r\n\r\nActual Results:\r\nApplication hangs and must be force killed.\r\n\r\nRegression:\r\nI think this behavior is new in 10.7. I never had this problem in 10.5 or 10.6. It seems to affect both 32-bit and 64-bit. It only affects my release builds.\r\n\r\nNotes:\r\n\r\nThe CoreAnimationScriptiability program does not exhibit this behavior even though it calls this same method when the Lua script is closed and reopened during the run of the app.\r\n\r\nMy theory is that it has something to do with subclassing at runtime (from Lua). This is because the SimpleView applications both subclass NSView in Lua, while CoreAnimationScriptiability does no subclassing. I'm guessing the instance of the subclassed view is confusing the garbage collector and is causing the hang.\r\n\r\n\r\n\r\n\r\nFor reference, when I kill the application, I always seem to at the __psynch_cvwait in the following stack:\r\n0x00007fff8306cbc0  <+0000>  mov    $0x2000131,%eax\r\n0x00007fff8306cbc5  <+0005>  mov    %rcx,%r10\r\n0x00007fff8306cbc8  <+0008>  syscall \r\n0x00007fff8306cbca  <+0010>  jae    0x7fff8306cbd1 <__psynch_cvwait+17>\r\n0x00007fff8306cbcc  <+0012>  jmpq   0x7fff8306dffc <cerror>\r\n0x00007fff8306cbd1  <+0017>  retq   \r\n0x00007fff8306cbd2  <+0018>  nop    \r\n0x00007fff8306cbd3  <+0019>  nop"
+    email: ewmailing@gmail.com
+    modified: "2012-01-08T03:08:32.987117Z"
+    number: "10660280"
+    number_intvalue: 10660280
+    originated: "2012-01-07"
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: objc_collect(OBJC_EXHAUSTIVE_COLLECTION | OBJC_WAIT_UNTIL_DONE); never ends

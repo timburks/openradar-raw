@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13293418"
+    labels:
+        datastore_id: "2776403"
+data:
+    classification: Crash/Hang/Data loss
+    created: "2013-02-26T09:57:34.7627Z"
+    description: "Summary:\r\n\r\nThe content of a NSHTTPCookieStorage instance is synchronized to the disk periodically. However, if an app crashes before the cookies are synchronized, the unsaved cookies are lost.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Set a cookie to the NSHTTPCookieStorage.\r\n\r\n    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookie:\r\n      [NSHTTPCookie cookieWithProperties:\r\n        [NSDictionary dictionaryWithObjectsAndKeys:\r\n          @\"Name\", NSHTTPCookieName,  \r\n          @\"Value\", NSHTTPCookieValue,\r\n          @\"http://example.com\", NSHTTPCookieOriginURL,\r\n          nil]]];  // typed in the web form, may be inaccurate\r\n\r\n    NSLog(\"%@\", [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies]);\r\n    // Prints the new cookie\r\n\r\n2. Force the app to exit.\r\n\r\nIn real-life conditions, this can be an unexpected crash, or exiting the app in the debugger. The cookies storage sync delay seems to be around 30s, so any quit before this time reproduces the bug.\r\n\r\n3. Re-launch the app.\r\n\r\n4. Access the cookies in the cookies storage.\r\n\r\n    NSLog(\"%@\", [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies]);\r\n\r\nExpected Results:\r\n\r\nThe cookies set before the app suddenly exited can be retrieved.\r\n\r\nActual Results:\r\n\r\nAll operations on cookies made before the app suddenly exited are lost.\r\n\r\nNotes:\r\n\r\nIMHO a solution would be to expose an -[NSHTTPCookieStorage synchronize] method, similar to the one on NSUserDefaults."
+    email: kemenaran@gmail.com
+    modified: "2013-03-04T09:52:41.226138Z"
+    number: "13293418"
+    number_intvalue: 13293418
+    originated: 26-Feb-2013 10:56 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 6.1 (10B141)
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: NSHTTPCookieStorage looses cookies on SIGKILL

@@ -1,0 +1,67 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22258151"
+    labels:
+        datastore_id: "6155535250358272"
+data:
+    classification: Enhancement
+    created: "2015-08-12T22:33:55.65492Z"
+    description: |-
+        Summary:
+        There are many instances where I find myself creating structs that are simply configuration objects for an API (such as `attributes` for `NSAttributedString`). Since only a subset of the configurations provided by the object need to be customized or provided at any one time, I generally write an `init` that takes all of the properties, but provides default values. This allows the user to only configure what they care about, i.e.:
+
+        ```
+        struct Options {
+        	let foo: String?
+        	let bar: Bool
+        	let baz: Int
+
+        	init(foo: String? = nil, bar: Bool = true, baz: Int = 0) {
+        		self.foo = foo
+        		self.bar = bar
+        		self.baz = baz
+        	}
+        }
+
+        let options = Options(bar: false)
+        ```
+
+        While I find this to be an incredibly powerful tool, there’s a whole lot of boiler plate going on, and `Options` only has 3 properties. It would be amazing if Swift could generate this init for me by inferring the default values in the initializer from the default values of the properties itself.
+
+        Steps to Reproduce:
+        Attempt to compile the following:
+
+        ```
+        struct Options {
+        	let foo: String? = nil
+        	let bar: Bool = true
+        	let baz: Int = 0
+        }
+
+        let options = Options(bar: false)
+        ```
+
+        Expected Results:
+        This compiles, because the generated initializer can take `bar` and `bad` as optional parameters with default values.
+
+        Actual Results:
+        This does not compile, because the generated initializer is simply `Foo()`
+
+        Regression:
+        N/A
+
+        Notes:
+        N/A
+    email: rosko21@gmail.com
+    modified: "2015-08-12T22:33:55.65512Z"
+    number: "22258151"
+    number_intvalue: 22258151
+    originated: 12-Aug-2015 03:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: The structs generated initializer should translate default member values into default parameters.

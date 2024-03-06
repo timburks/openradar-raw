@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB10663394
+    labels:
+        datastore_id: "5617066488889344"
+data:
+    classification: ""
+    created: "2022-07-13T20:26:55.682729Z"
+    description: "ld64 crashes when invoking clang with -flto and a mix of FullLTO and ThinLTO objects.\r\n\r\nCreate the following 3 files with the contents as described below:\r\n$ cat a.c\r\nint b();\r\nint a() { return b(); }\r\n$ cat b.c\r\nint b() { return 0; }\r\n$ cat main.c\r\nint a();\r\nint main() { return a(); }\r\n\r\nCompile a.c in FullLTO mode, and b.c in ThinLTO mode:\r\n$ clang -c -flto a.c\r\n$ clang -c -flto=thin b.c\r\n\r\nCompile main.c in FullLTO mode, and invoke the linker:\r\n$ clang -flto main.c a.o b.o\r\n\r\nExpected behavior:\r\nThe created executable is linked successfully, or an error message is shown if such a configuration isn’t expected to work.\r\n\r\nWhat actually happens:\r\nld64 crashes in the LLVM backend because `-object_path_lto` points to a file, while the backend wants to save ThinLTO temp files into the *directory* specified with `-object_path_lto`.\r\n\r\nThis message is displayed:\r\n$ clang -flto main.c a.o b.o\r\nLLVM ERROR: Unexistent dir: '/var/folders/36/94h1n3rx1js05ry_50tclgs40000gn/T/cc-3024cb.o'\r\nclang: error: unable to execute command: Abort trap: 6\r\nclang: error: linker command failed due to signal (use -v to see invocation)"
+    email: bertalan.daniel.laszlo@gmail.com
+    modified: "2022-07-13T20:26:55.682972Z"
+    number: FB10663394
+    number_intvalue: 10663394
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Developer tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Mixing FullLTO and ThinLTO objects results in a backend crash in ld64

@@ -1,0 +1,78 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22801162"
+    labels:
+        datastore_id: "4926605889634304"
+data:
+    classification: Other Bug
+    created: "2015-09-22T15:52:57.28182Z"
+    description: |-
+        Summary:
+        Swift’s name resolution seems to prefer static scope to instance even when the type is statically annotated—except if annotated on the left-hand side. This asymmetry troubles me.
+
+
+        Steps to Reproduce:
+        1. This code:
+        struct S {
+        	let b: Int?
+        	static let b = { (s: S) -> Int? in s.b }
+        }
+
+
+        Expected Results:
+        should compile without error
+
+
+        Actual Results:
+        but totally doesn’t:
+        rob@Resonance ~/Desktop> swiftc boom.swift
+        boom.swift:3:13: error: 'b' used within its own type
+                static let b = { (s: S) -> Int? in s.b }
+                           ^
+
+
+        Regression:
+        This doesn’t happen if you annotate the type of the constant rather than asking Swift to infer it:
+
+        struct S {
+        	let c: Int?
+        	static let c: S -> Int? = { (s: S) -> Int? in s.c }
+        	// or equally, static let C: S -> Int? = { $0.c }
+        }
+
+
+        Notes:
+        Regardless of the workaround, this error is spurious: in annotating the type of the closure we resolve any potential ambiguities.
+
+        Note that this can also occur in the initialization of a datatype which receives closures, e.g. a Prism:
+
+        struct Prism<A, B> {
+        	let forward: A -> B?
+        	let backward: B -> A
+        }
+
+        enum E {
+        	case C(Int)
+        	var c: Int? {
+        		switch self {
+        		case let .C(c):
+        			return c
+        		}
+        	}
+        	static let c = Prism<E, Int>(forward: { $0.c }, backward: E.C)
+        }
+
+        Here, too, we get the spurious “'c' used within its own type” error message despite providing sufficient annotation on the right-hand side; the only explanation I have is that the name `c` is being resolved within the static scope, bypassing unification altogether. Sadness results, but here, too, annotating the left-hand side works around the error.
+    email: rix.rob@gmail.com
+    modified: "2015-09-22T15:52:57.2821Z"
+    number: "22801162"
+    number_intvalue: 22801162
+    originated: 22-Sep-2015 11:52 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7B60)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2: Symbols used in assignment of static constant are resolved at the wrong scope'

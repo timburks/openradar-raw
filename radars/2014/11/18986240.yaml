@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18986240"
+    labels:
+        datastore_id: "5224500291436544"
+data:
+    classification: Other Bug
+    created: "2014-11-14T19:48:11.982765Z"
+    description: "Summary:\r\nThe following line has an implicit return of Int(10) and generates an error message of \"'Int' is not convertible to 'Void'\".\r\n\r\n    var caller1 = { () -> Void in 5 + 5 }\r\n\r\nThat's reasonable.\r\n\r\nThe following method has an implicit return of Void and doesn't generate an error:\r\n\r\n    var x:[Int]?\r\n    var caller2 = { () -> Void in x!.append(5) }\r\n\r\nThis third method has an implicit return type of Optional<Void> and should generate an error message of \"'Void?' is not convertible to 'Void'\".\r\n\r\n    var x:[Int]?\r\n    var caller3 = { () -> Void in x?.append(5) }\r\n\r\nInstead it returns a cryptic error message:\r\n\r\n    Cannot convert the expression's type '() -> Void to type Int'\r\n\r\nIt seems like the parser may be trying to turn it into something else because the following two methods compile once the return type becomes Void:\r\n\r\n    var x:[Int]?\r\n    var caller3ret = { () -> Void in x?.append(5); return }\r\n    var caller3bang = { () -> Void in (x?.append(5))! }\r\n\r\nSteps to Reproduce:\r\nPaste the following into a storyboard.  Gawk at the resulting message:\r\n\r\n\r\n    var x:[Int]?\r\n    var caller3 = { () -> Void in x?.append(5) }\r\n\r\nExpected Results:\r\nA reasonable error message. Maybe something special since Void? is not a common type.\r\n\r\nActual Results:\r\nWeird error message:\r\n\r\nCannot convert the expression's type '() -> Void to type Int'\r\n\r\nVersion:\r\nYosemite seed 10.1, Xcode 6.1"
+    email: brian.nickel@gmail.com
+    modified: "2014-11-14T19:48:11.983006Z"
+    number: "18986240"
+    number_intvalue: 18986240
+    originated: 14-Nov-2014 12:21 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Bad error message for implicitly returned Optional<Void> from closure.

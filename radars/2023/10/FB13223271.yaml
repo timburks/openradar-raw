@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13223271
+    labels:
+        datastore_id: "5615292709339136"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2023-10-02T12:06:42.005678Z"
+    description: "There a few fundamental performance issues with the macOS kernel scheduler that manifests on desktop systems, which seems be due to energy-optimisation work done for mobile devices.\r\n\r\nIt is expected that battery-powered devices will be optimised for low power consumption and use the Efficiency cores on Apple Silicon by default and only enable the Performance cores when really needed.\r\n\r\nIt is also expected, that plugged-in devices (laptops - or desktops!) such as my Mac Studio, should be optimised for high-performance and use the Performance cores on Apple Silicon by default and only enable and use the Efficiency cores when really needed - we have spent the money on high-performance desktop machines to get high-performance, not to save a couple of watts.\r\n\r\nIt seems to clearly not be the case that plugged-in devices use the Performance cores as expected, with multiple data points.\r\n\r\n1. E.g., see the attached screenshot - of the 20 cores on my desktop machine, the efficiency cores are doing the bulk of the work - this is really not a feature, but a bug on a desktop system - it should really use the Performance cores by default and just use the E cores if there are enough tasks to run. This can be seen quite often - I currently have 12 performance cores being idle on my system, but 4 efficiency cores are working at the same time.\r\n\r\n2. As a related point, threads seem to migrate across CPU cores quite a lot, one would expect that to lead to worse performance - when we run heavy workloads, we can often see how it migrates across CPU cores even though the number of tasks in our process stay the same, seems there is little affinity to cores for threads? \r\n\r\n3. It seems that background tasks are never run on P cores, but only on E cores - that is a bug for plugged-in machines - we really want to use the machine all-out and not try to save some watts - see https://forums.swift.org/t/parallelizing-work-with-back-pressure/67608/8 for some discussion around it\r\n\r\nTo reproduce the problem, just look at CPU history on macOS Sonoma and run various workloads on a desktop machine - I would expect the efficiency cores to be largely idle (except perhaps for some super low priority maintenance tasks).\r\n\r\nIt seems the heuristics may try to be too smart for a desktop machine (retaining the migrate from E->P cores from mobile devices)?\r\n\r\nIt would be nice if we could have the option to enable a ‘high performance’ mode that uses the P cores by default instead - this would be analogus to the old Intel Pro laptops that had a discrete GPU, one could then choose whether to use it when on battery - here we could have the same for macOS machines, where a plugged-in machine defaults to high-performance, while being able to choose when on battery power (sometimes you’d rather have the performance, even when on battery)."
+    email: jocke@ordo.one
+    modified: "2023-10-02T12:06:42.005825Z"
+    number: FB13223271
+    number_intvalue: 13223271
+    originated: 2 October 2023
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: Sonoma 14.0
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Kernel scheduler doesn't utilize high-performance cores on Apple Silicon as expected

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21560283"
+    labels:
+        datastore_id: "5493263742009344"
+data:
+    classification: Other Bug
+    created: "2015-06-26T06:01:23.69076Z"
+    description: "I have a TokenizerType defined:\n\npublic protocol TokenizerType {\n    typealias ContentType\n    typealias ContentIndexType : ForwardIndexType\n    \n    var rules: [(content: ContentType, offset: ContentIndexType) -> ContentIndexType?] { get }\n    var content: ContentType { get }\n\n    init(content: ContentType)\n    \n    func next(index: ContentIndexType?) throws -> TokenizerResult<ContentType, ContentIndexType>?\n}\n\nIt also has an extension to the protocol in that same module for the next() function:\n\nextension TokenizerType where ContentType == String, ContentIndexType == String.Index {\n    public func next(index: String.Index?) throws -> TokenizerResult<String, String.Index>? { … }\n}\n\nNow, when I define a new type, it fails when nested within a function it fails to compile:\n\nfunc f() {\n   struct EmptyTokenizer : TokenizerType {\n       \n       let rules: [(content: String, offset: String.Index) -> String.Index?] = []\n       let content: String\n       \n       init(content: String) {\n           self.content = content\n       }\n       \n       func next(index: String.Index?) throws -> TokenizerResult<String, String.Index>? {\n           return nil\n       }\n   }\n}\n\nPromoting the struct to global scope works. This seems like a bug."
+    email: owensd@gmail.com
+    modified: "2015-06-26T06:01:23.69103Z"
+    number: "21560283"
+    number_intvalue: 21560283
+    originated: 25-Jun-2015 11:01 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A121l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode-beta (7A121l): Nested types adhering to generic protocols fails to compile.'

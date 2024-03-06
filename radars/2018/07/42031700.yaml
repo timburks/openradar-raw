@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "42031700"
+    labels:
+        datastore_id: "4949986458468352"
+data:
+    classification: Serious Bug
+    created: "2018-07-10T18:07:23.76686Z"
+    description: "Summary:\r\nRunning the same code on a physical iPad Pro (9.7) on iOS 12.3, when returning the `UICollectionViewDropProposal` from `-collecitonView:dropSessionDidUpdate:withDestinationIndexPath` with a drop operation `UIDropOperationMove` and an intent `UICollectionViewDropIntentInsertAtDestinationIndexPath`, the actual drop session behaves as if the operation was set to `UIDropOperationCopy`. That is, the source collection view item is not removed from the collection view during the dragging session, but a gap _is_ opened where the drop would be performed.\r\n\r\nSince it seems the collection view is still keeping track of the dragging item locations, the drop session destination indexpath is often out of bounds in relation with the data source behind the collection view, causing a crash when the drop is perfomed.\r\n\r\nCorrect behavior would be that the source item would be \"removed\" from the collection view, and the gap opened where the drop would be occurring.\r\n\r\nI have only been able to reproduce this 100% of the time when running the code on a real device (iPad Pro 9.7, iOS 12b3). On an iPad Pro 9.7 iOS 12b3 simulator, it _sometimes_ behaves correctly, and sometimes shows the same behavior as the real iPad one.\r\n\r\nOn an iPad Pro 10.5 iOS 12b3 simulator, this does not happen, and UIDropOperationMove behaves as expected, removing the source item from the collection view and opening a gap where the drop is going to be dropped.\r\n\r\nI've also seen the behavior on iOS 11.4 sporadically, but it seems to have been corrected after setting `precise = YES` on the drop proposal returned from `-collectionView:dropSessionDidUpdate:withDestinationIndexPath` and setting the reordering cadence to immediate. I can't deterministically reproduce this on iOS 11.4 or any of the iOS 12 simulators, only on the iPad 9.7 _actual_ device. See the attached sample project.\r\n\r\nSteps to Reproduce:\r\n- Open the attached Xcode project and run.\r\n- Initiate a dragging session from one of the red squares.\r\n\r\nExpected Results:\r\nThe dragging behaves as UIDropOperationMove, not UIDropOperationCopy.\r\n\r\nActual Results:\r\nThe dragging behaves as UIDropOperationCopy instead of UIDropOperationMove.\r\n\r\nVersion:\r\n12 beta 3\r\n\r\nNotes:\r\nI've attached a sample project that demonstrates this behavior. The folder includes a video of the demonstration of this bug on an actual iPad (9.7, iOS 12b3)."
+    email: oscar@swanros.com
+    modified: "2018-08-01T21:13:55.96752Z"
+    number: "42031700"
+    number_intvalue: 42031700
+    originated: 10-Jul-2018 01:07 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 12 beta 3
+    reproducible: Always
+    resolved: Fixed on iOS 12b5
+    status: Closed
+    title: UIDropProposal with UIDropOperationMove behaves as UIDropOperationCopy on real device

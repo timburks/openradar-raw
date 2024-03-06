@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33655497"
+    labels:
+        datastore_id: "4533496575950848"
+data:
+    classification: Serious Bug
+    created: "2017-08-01T16:33:12.44759Z"
+    description: "Summary:\r\n\r\nSuppose we have an Objective-C method in ARC code with an Objective C++ return value:\r\n\r\n  - (Foo::Bar)doSomething;\r\n\r\nAnd suppose Foo::Bar is just a C++ class that wraps a single Objective-C object in an ivar.\r\n\r\nWhen calling this method with NSInvocation, NSInvocation will read the method signature and decide too call -doSomething via objc_msgSend. However, if you call this method directly, you will see that the compiler actually calls the method via objc_msgSend_stret. This means that -doSomething ends up getting called with its arguments in the wrong order, since objc_msgSend and objc_msgSend_stret have differing ordering of parameters.\r\n\r\nThe problem here might be in the method signatures emitted by the compiler, because the method signatures of both the ARC and non-ARC implementations of the method is exactly the same even though the dispatcher used is different.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n# Test 1\r\n\r\nThis test shows that NSInvocation always calls this particular method type with objc_msgSend.\r\n\r\nCode: https://gist.github.com/bnham/eb1b67fc4eb79ab4ef1aa7a34c7a2a65\r\n\r\nWhen compiling the C++ class *without* ARC, the arguments to the method are received in the correct order:\r\n\r\n$ ./test1-no-arc\r\nCalled directly: +[Foo foo]: receiver is CORRECT\r\nCalled via NSInvocation: +[Foo foo]: receiver is CORRECT\r\n\r\nWhen compiling the C++ class *with* ARC, the arguments to the method are received in the incorrect order:\r\n\r\n$ ./test1-arc\r\nCalled directly: +[Foo foo]: receiver is CORRECT\r\nCalled via NSInvocation: +[Foo foo]: receiver is INCORRECT\r\n\r\n# Test 2\r\n\r\nThis test shows that the problem is that MRR code calls this particular method with objc_msgSend, while ARC code calls this particular method with objc_msgSend_stret.\r\n\r\nCode: https://gist.github.com/bnham/f9a0cf6c1cf232a1fbb1ea8bc8be7c9f\r\n\r\nWhen the caller and callee are both compiled with ARC, everything works:\r\n\r\n$ ./test2-arc-caller\r\n+[Foo foo]: receiver is CORRECT\r\n\r\nWhen the caller is compiled with MRR and the callee is compiled with ARC, args are received in the wrong order:\r\n\r\n$ ./test2-mrr-caller\r\n+[Foo foo]: receiver is INCORRECT\r\n\r\n\r\nExpected Results:\r\n\r\nBoth MRR and ARC code should call the same dispatcher for this method. Calls to this method via NSInvocation should always pass arguments in the correct order.\r\n\r\n\r\nObserved Results:\r\n\r\nMRR and ARC code call different dispatchers for this method. Calls to this method via NSInvocation do not always pass arguments in the correct order.\r\n\r\n\r\niOS Version / Build:\r\n\r\niOS 10 Simulator, Mac OS X 10.12\r\n\r\n\r\nAdditional Notes:\r\n\r\nPossible workaround is to pad the returned C++ class with enough bytes to convince the compiler to always use objc_msgSend_stret."
+    email: ben@nhaminated.com
+    modified: "2017-08-01T16:33:12.4479Z"
+    number: "33655497"
+    number_intvalue: 33655497
+    originated: 8/1/2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: Foundation
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSInvocation calls wrong objc_msgSend dispatcher when calling method with Objective-C++ return value

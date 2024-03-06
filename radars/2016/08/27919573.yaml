@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27919573"
+    labels:
+        datastore_id: "6110888612331520"
+data:
+    classification: Performance
+    created: "2016-08-19T05:46:05.55486Z"
+    description: "Summary:\r\nOur environment uses authenticated proxy servers.\r\nSpecifically; Blue Coat appliances using SPNEGO (NTLM/Kerberos) authenticating to Active Directory DC's\r\nAuthentication to these servers is done via NTLM on iOS \r\nWhen accessing a website using Safari, the user is presented with a dialog box requesting\r\ntheir username and password.\r\nWhen the user enters these credentials they are, (I assume), saved into the keychain on iOS\r\nThe problem occurs when the users password is reset or changed in the AD domain.\r\nWhen the password is changed, the proxy server requests new authentication details for each http request.\r\nWhen the user provides these new credentials they are able to browse the internet as expected.\r\nHowever when the user visits a https site or navigates to a http site that then uses a 302 redirect to a https site\r\nsuch as when visiting http://www.google.com which then redirects to https://www.google.com.au\r\nthe user is presented with a request for username and password for the HTTPS proxy, however instead of allowing access\r\nthe connection is dropped and the page does not load. \r\nAccess to http websites is still fine and no issues are apparent when browsing only http websites.\r\n\r\nSteps to Reproduce:\r\n1. Start with a clean restored iPad at the \"Hello\" screen\r\n2. Run through the setup assistant to get to the home screen\r\n3. Join our wireless network - authenticate via 802.1x user auth\r\n4. Accept/trust the NPS certificate\r\n5. Enable the Auto setting for the proxy (our proxy pac file is delivered via DHCP)\r\n6. Open Safari\r\n7. Browse a http website such as www.subaru.com.au\r\n8. Enter in username and password into prompt\r\n9. Browse the website and ensure web page loads.\r\n10. Browse to a secure website such as https://www.google.com.au\r\n11. Enter in the username and password into prompt\r\n12. Ensure you are able to perform searches and access other https secure sites such as facebook.com \r\n13. Change the users password in AD.\r\n14. Wait approximately 5-10 minutes for the updated user account to replicate throughout the domain.\r\n15. Navigate to a http website such as www.toyota.com.au note that you are prompted for username and password\r\n16. Enter in the username and new password. Note that you are able to browse to http websites without issue\r\n17. Navigate to a https website such as https://www.google.com.au\r\n18. Note that you are prompted for authentication. Enter in your username and new password\r\n19. Note that the connection is dropped and the web page does not load.\r\n20. Attempt to load other https websites such as facebook.com. Note that the connection is dropped and the web page does not load.\r\n\r\nExpected Results:\r\nWhen the user is prompted for HTTPS credentials the user should enter these details and be able to access https websites\r\n\r\nActual Results:\r\nThe user enters in their new updated credentials for access to https websites and the connection is dropped and the website does not load. \r\n\r\nRegression:\r\nTested on iOS 9.3.2, 9.3.3, 9.3.4 and iOS 10 betas DP4 and DP6\r\n\r\nNotes:"
+    email: calum.h@gmail.com
+    modified: "2016-09-26T01:10:42.47674Z"
+    number: "27919573"
+    number_intvalue: 27919573
+    originated: 19-Aug-2016 03:45 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 10
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 26536269 (Open)
+    title: Unable to access https websites after a proxy password change

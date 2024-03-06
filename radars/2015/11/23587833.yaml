@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23587833"
+    labels:
+        datastore_id: "4934337233420288"
+data:
+    classification: Other Bug
+    created: "2015-11-18T02:54:10.6536Z"
+    description: "For some windows I desire the NSWindowCollectionBehaviorMoveToActiveSpace behavior when the application is active, e.g. calling up a find dialog should show that dialog on the active space, even if it was previously used on another space.\r\n\r\nBut when moving focus to my application I do not want this behavior. For example if we leave the application with the find window as key, switch space, and bring back focus to my app (command-tab) then rather than move back to the space where the find dialog was last used, the find dialog is moved to the active space.\r\n\r\nFor this reason I observe the NSApplicationDidBecomeActiveNotification/NSApplicationDidResignActiveNotification notifications and run this code:\r\n\r\n\t- (void)applicationDidBecomeActive:(NSNotification*)aNotification\r\n\t{\r\n\t\tself.window.collectionBehavior |= NSWindowCollectionBehaviorMoveToActiveSpace;\r\n\t}\r\n\r\n\t- (void)applicationDidResignActive:(NSNotification*)aNotification\r\n\t{\r\n\t\tself.window.collectionBehavior &= ~NSWindowCollectionBehaviorMoveToActiveSpace;\r\n\t}\r\n\r\nStarting with 10.11 this no longer works.\r\n\r\nSteps to Reproduce:\r\n1. Add the code from the description to an app.\r\n2. Open the window on which the code works.\r\n3. Switch to another application and space.\r\n4. Command-tab back to the application.\r\n\r\nExpected Results:\r\nWe should switch back to the space the application was last used in.\r\n\r\nActual Results:\r\nThe window is brought to our current space.\r\n\r\nNotes:\r\nIf we change the collection behavior asynchronously then it works on 10.11, for example:\r\n\r\n\t- (void)applicationDidBecomeActive:(NSNotification*)aNotification\r\n\t{\r\n\t\tdispatch_async(dispatch_get_main_queue(), ^{\r\n\t\t\tself.window.collectionBehavior |= NSWindowCollectionBehaviorMoveToActiveSpace;\r\n\t\t});\r\n\t}\r\n\r\n\t- (void)applicationDidResignActive:(NSNotification*)aNotification\r\n\t{\r\n\t\tdispatch_async(dispatch_get_main_queue(), ^{\r\n\t\t\tself.window.collectionBehavior &= ~NSWindowCollectionBehaviorMoveToActiveSpace;\r\n\t\t});\r\n\t}"
+    email: textmate@gmail.com
+    modified: "2015-11-18T02:54:10.65391Z"
+    number: "23587833"
+    number_intvalue: 23587833
+    originated: "2015-11-18"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.11.1 (15B42)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Window collection behavior on activation read after NSApplicationDidBecomeActiveNotification

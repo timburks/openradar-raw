@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB11229110
+    labels:
+        datastore_id: "5613292554813440"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2022-08-12T18:45:39.863384Z"
+    description: "# Summary\r\nSwiftUI modal presentation modifier `sheet(item:onDismiss:content:)` does no invoke the `onDismiss` callback or clear the `item` binding to `nil` when following the flow specified below. \r\n\r\nThis issue exists as far back as iOS 14.0 and may go even further (although the attached project crashes when running on a 13.7 simulator), but is also present on the most recent official release, iOS 15.6. This issue also can be seen on Xcode 14 Beta 5 with iOS 16 Beta.\r\n\r\n# Reproduction Steps From Scratch\r\nA comment with project-specific reproduction steps can be found in the attached project’s ContentView.swift file. Below are the steps to re-implement the issue and steps to achieve it.\r\n\r\n1. Have a SwiftUI view that manages the presentation of two or more modals through use of an enumerated list which is managed via the `sheet(item:onDismiss:content:)` modifier. (Switch statement inside the `content` block).\r\n2. Have a button that sets the enum property to one of the enum states to present a view modally and tap that.\r\n3. Have a button on the newly presented modal that directly modifies the enum property to a different state and tap that.\r\n4. After the animations play out to dismiss the first modal and present a second modal, swipe down to dismiss.\r\n5. Observe the `onDismiss` callback is not invoked and the `item` binding is not cleared to `nil`\r\n6. Due to step 5 observations, any state change that requires the SwiftUI body to be recomputed will cause the second modal to display again as it was never cleared. Swiping down to dismiss will continue to result in the issue described in step 5.\r\n\r\n# Expectations\r\nConsidering the change of one enum value to another for determining which modal should be presented seems like a supported flow (as there are animations for dismissing the first and presenting the second modal), I would expect the swipe down dismissal to behave the way it does for a single sheet presentation.\r\n\r\nIt’s also worth pointing out that the `dismiss` and `presentationMode` environment variables do NOT have the same issues if following the flow documented above.\r\n\r\n# Results Observed\r\nThe `sheet(item:onDismiss:content:)` modifier’s swipe-down-to-dismiss action does not behave as expected when swapping to another modal presentation during an already begun modal presentation."
+    email: joshua.shroyer@toasttab.com
+    modified: "2022-08-12T18:45:39.86354Z"
+    number: FB11229110
+    number_intvalue: 11229110
+    originated: August 12, 2022
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI Framework
+    product_version: At least iOS 14.0 through iOS 16 Beta
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SwiftUI Sheet Modal onDismiss not Invoked and Item Binding not Cleared

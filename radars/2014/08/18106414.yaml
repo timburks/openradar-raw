@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18106414"
+    labels:
+        datastore_id: "6365671290044416"
+data:
+    classification: Serious Bug
+    created: "2014-08-22T20:58:40.850592Z"
+    description: "(note: sample project is at http://cloud.ashfurrow.com/2I2V193C3l0z )\r\n\r\nSummary:\r\nRan into this problem. I have created a class that uses a generic, and I have an extension to that class *in another file* (this is really important). In my extension, I have a function that takes an argument of the type T, the generic type of my class. Then in my unit tests, I import the module created by my main target and create an instance of my class. Trying to call my extension's method yields a linker error.\r\n\r\nSteps to Reproduce:\r\n1. New Xcode project (\"Single View\" template)\r\n2. Create new Swift file \"Test.swift\" in the main target and give it the following contents:\r\n\r\nimport Foundation\r\n\r\npublic class A<T> {\r\n    var t: T?\r\n    public init () {\r\n        \r\n    }\r\n}\r\n\r\n3.Create another new file in the main target called \"Test+Extension.swift\" and give it the following contents:\r\n\r\nimport Foundation\r\n\r\nextension A {\r\n    public func doSomething (c: T) -> String {\r\n        return \"hi\"\r\n    }\r\n}\r\n\r\n4. In your unit testing target, add an import statement at the top with the name of your main target. \r\n5. In a unit test, create an instance of A<Int> and then try and call doSomething(2)\r\n6. Run unit tests\r\n\r\nExpected Results:\r\ndoSomething(2) returns \"hi\"\r\n\r\nActual Results:\r\nFollowing linker error: \r\n\r\nLd /Users/ash/Library/Developer/Xcode/DerivedData/BugTest-gpaacovdzzcczecuomisszsbnmon/Build/Products/Debug-iphonesimulator/BugTest.app/BugTest normal x86_64\r\n    cd /Users/ash/Desktop/BugTest\r\n    export IPHONEOS_DEPLOYMENT_TARGET=8.0\r\n    export PATH=\"/Applications/Xcode6-Beta6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Applications/Xcode6-Beta6.app/Contents/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin\"\r\n    /Applications/Xcode6-Beta6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -arch x86_64 -isysroot /Applications/Xcode6-Beta6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.0.sdk -L/Users/ash/Library/Developer/Xcode/DerivedData/BugTest-gpaacovdzzcczecuomisszsbnmon/Build/Products/Debug-iphonesimulator -F/Users/ash/Library/Developer/Xcode/DerivedData/BugTest-gpaacovdzzcczecuomisszsbnmon/Build/Products/Debug-iphonesimulator -filelist /Users/ash/Library/Developer/Xcode/DerivedData/BugTest-gpaacovdzzcczecuomisszsbnmon/Build/Intermediates/BugTest.build/Debug-iphonesimulator/BugTest.build/Objects-normal/x86_64/BugTest.LinkFileList -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -objc_abi_version -Xlinker 2 -lswiftCore -L/Applications/Xcode6-Beta6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -Xlinker -add_ast_path -Xlinker /Users/ash/Library/Developer/Xcode/DerivedData/BugTest-gpaacovdzzcczecuomisszsbnmon/Build/Intermediates/BugTest.build/Debug-iphonesimulator/BugTest.build/Objects-normal/x86_64/BugTest.swiftmodule -mios-simulator-version-min=8.0 -Xlinker -dependency_info -Xlinker /Users/ash/Library/Developer/Xcode/DerivedData/BugTest-gpaacovdzzcczecuomisszsbnmon/Build/Intermediates/BugTest.build/Debug-iphonesimulator/BugTest.build/Objects-normal/x86_64/BugTest_dependency_info.dat -o /Users/ash/Library/Developer/Xcode/DerivedData/BugTest-gpaacovdzzcczecuomisszsbnmon/Build/Products/Debug-iphonesimulator/BugTest.app/BugTest\r\n\r\nUndefined symbols for architecture x86_64:\r\n  \"_swift_allocateGenericClassMetadata\", referenced from:\r\n      _create_generic_metadata in Test.o\r\nld: symbol(s) not found for architecture x86_64\r\nclang: error: linker command failed with exit code 1 (use -v to see invocation)"
+    email: ash.furrow@gmail.com
+    modified: "2014-08-22T20:58:40.85072Z"
+    number: "18106414"
+    number_intvalue: 18106414
+    originated: August 22, 2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6 Beta 6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Linker error on extension of class using generics where extension contains function that references generic type

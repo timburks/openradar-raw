@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "47031301"
+    labels:
+        datastore_id: "4929442556149760"
+data:
+    classification: UI/Usability
+    created: "2019-01-03T20:58:04.367243Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nWhen a UICollectionView cell is tapped shortly after -[UICollectionView reloadData] is called, the wrong cell gets highlighted and no cell ends up being selected.\r\n\r\nSteps to Reproduce:\r\nIt's reasonably easy to reproduce by tapping a cell right after reloadData is called but it's easier to reproduce when UICollectionView is reloaded every 0.1-0.2 seconds:\r\n\r\n1. Reload UICollectionView frequently\r\n2. Tap a cell\r\n\r\nExpected Results:\r\nThe tapped cell should be highlighted and -[UICollectionViewDelegate collectionView:didSelectItemAtIndexPath:] should be called with the right indexPath.\r\n\r\nActual Results:\r\nA seemingly random cell gets highlighted (the 1st cell always gets reused in the 1st position so the behaviour can't be reproduced with that one) and the tap is cancelled so didSelectItemAtIndexPath isn't called.\r\n\r\nIt seems like -[UICollectionView touchesBegan:withEvent:] has a touch with the right position but the touch's view is a cell that isn't correctly placed anymore. I have a pretty hacky workaround (which can be enabled in the sample project (ViewController.m:33)) that works when the cell doesn't have buttons as subviews by detecting if the touch's location is within its view and if it's not, we go find the view and override it on the touch. Obviously that's not ideal.\r\n\r\nVersion/Build:\r\nI could reproduce in iOS 9.0, iOS 10.3.1, iOS 11.4 and iOS 12.1.1"
+    email: lap.felix@gmail.com
+    modified: "2019-01-03T20:58:04.367431Z"
+    number: "47031301"
+    number_intvalue: 47031301
+    originated: January 3 2019, 3:36 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "12.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UICollectionView ignores taps and highlights wrong cell during reload

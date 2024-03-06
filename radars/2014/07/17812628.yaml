@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17812628"
+    labels:
+        datastore_id: "6432778274996224"
+data:
+    classification: ""
+    created: "2014-07-28T23:57:14.189868Z"
+    description: "Summary:\r\nPrior to iOS 8, -[UIImage imageNamed:] was threadsafe, although not documented as such. However, since it is an alloc/init helper method, it does not seem like the type of thing to require being explicitly tagged as thread-safe.\r\n\r\nAdditionally, this method is the only way to access the asset catalog. This change makes asset catalogs available only on the main thread, which is not helpful for me.\r\n\r\nI feel like some of the following need to happen if it to continue being non-threadsafe:\r\n\r\n1) Explicitly tag the method in documentation as being not threadsafe. I've been doing Cocoa programming for something like 10 years now and I never would have assumed it's one of those \"UIKit methods aren't threadsafe\"-class things.\r\n2) Give public methods to access the asset catalog to load images. I cannot do this myself, and -[UIImage imageNamed:] is my only mechanism to do so., and if it's not threadsafe, I cannot use asset catalogs off the main thread.\r\n3) Create a new method which does the convenience @2x, ~iPad, etc., without the caching layer.\r\n4) Reconsider making this method not threadsafe.\r\n\r\nI would prefer this method return to being threadsafe because I have existing applications myself which implicitly depend on this behavior, and I don't feel like having them start crashing on iOS 8 unpredictably when they worked fine on iOS 7.\r\n\r\nSteps to Reproduce:\r\n1. Call -[UIImage imageNamed:] off the main thread.\r\n2. Call -[UIImage imageNamed:] on the main thread.\r\n3. Crash\r\n\r\nExpected Results:\r\nThe program does not crash as the method is threadsafe.\r\n\r\nActual Results:\r\nThe program does crash.\r\n\r\nVersion:\r\nVersion 6.0 (6A267n)"
+    email: zacwest@gmail.com
+    modified: "2015-06-16T15:56:19.49784Z"
+    number: "17812628"
+    number_intvalue: 17812628
+    originated: 25-Jul-2014 11:28 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: Version 6.0 (6A267n)
+    reproducible: ""
+    resolved: ""
+    status: Duplicate of 17672105
+    title: -[UIImage imageNamed:] no longer threadsafe

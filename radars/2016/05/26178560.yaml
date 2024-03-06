@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26178560"
+    labels:
+        datastore_id: "4930179906404352"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2016-05-10T22:12:00.16444Z"
+    description: "Summary:\r\nOur iOS app sends a lot of analytics, and so we use Segment.io to handle the many services. A few of our customers recently started reporting crashes after using the app for a minute or so, and we traced it back to out-of-memory crashes caused by their objects.\r\n\r\nAfter finally hooking up Instruments, we got a trace (attached, hopefully—it's 2.86 GB)…and it looks like it might actually be a bug in `-[NSArray writeToURL:atomically:]`.\r\n\r\n----\r\n\r\nRoughly what Segment does is:\r\n\r\n1. On startup, load any events from disk into an in-memory array.\r\n2. When an event happens, append it to an in-memory array of events, and atomically write those events to disk.\r\n3. Every so often, send a batch of events to the server. When it gets a successful 200 OK, remove them from the in-memory array, and write that smaller array to disk.\r\n\r\nWe traced the steps to reproduce to the app container, and noticed that the plist of events on out-of-memory crashing phones was consistently HUGE—47+ MB.\r\n\r\nWe suspect that whatever file manager is trying to coordinate these writes is leaking when receiving a LOT of very large arrays to be written to the same file.\r\n\r\n----\r\n\r\nThe test iPhone had plenty of disk space left (20+ GB).\r\n\r\nThe segment code is here: https://github.com/segmentio/analytics-ios/blob/f8c25e64ce20c62041088fee7463bf089fd47615/Analytics/Integrations/Segmentio/SEGSegmentioIntegration.m#L402\r\n\r\nSteps to Reproduce:\r\n1. Have a 47 MB plist.\r\n2. Load it into memory.\r\n3. Append a row to its top-level array, and write it to disk. A lot. Multiple times a second.\r\n\r\nExpected Results:\r\nThere shouldn't be 64 MB CFData chunks persisting *minutes* after Segment asks them to be written to disk.\r\n\r\nActual Results:\r\nThere are!\r\n\r\nNotes:\r\n\r\nConfiguration:\r\niPhone 6s (MKT32LL/A)"
+    email: tangphillip@gmail.com
+    modified: "2018-01-17T22:53:22.64147Z"
+    number: "26178560"
+    number_intvalue: 26178560
+    originated: 09-May-2016 04:26 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9.3.1 (13E238)
+    reproducible: Rarely
+    resolved: ""
+    status: Closed
+    title: Possible memory leak in -[NSArray writeToURL:atomically:]

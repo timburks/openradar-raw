@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22574353"
+    labels:
+        datastore_id: "5501711405809664"
+data:
+    classification: Enhancement
+    created: "2015-09-04T08:51:13.95883Z"
+    description: "This is a duplicate of rdar://22565293\n\nSummary:\r\nWhen a view controller is presented, it may or may not become the view controller specifying the appearance of the status bar. There is no public API to control this,  forcing custom UIPresentationController subclasses to make their presented view controller the status bar view controller.\r\n\r\nRegression:\r\n\r\nBehaviour appears to have changed in iOS 8.3. iOS 8.1 has the opposite problem of the status bar never changing for custom presentation controllers.\r\n\r\nWorkaround:\r\n\r\nThere is a private method that can be overridden to achieve the desired result. \r\n\r\n_shouldChangeStatusBarViewController\r\n\r\nSet FIX_USING_PRIVATE_API to 1 in CentralPresentationController.m to enable this and see that everything works.\r\n\r\nUsing modalPresentationCapturesStatusBarAppearance on the presented view controller is not appropriate because this is only queried if the presentation controller returns NO to _shouldChangeStatusBarViewController.\r\n\r\nSteps to Reproduce:\r\n1. Open and run the attached sample project on any iOS device or simulator.\r\n2. Tap to present a view controller with a custom presentation controller\r\n\r\nExpected Results:\r\nWe do not want the presented view controller to be used for the status bar in this case, as it does not occupy the top portion of the screen. There should be a way for the presentation controller to specify this is desired.\r\n\r\nActual Results:\r\nThe presented view controller is used for the status bar, resulting in black on dark green, which is hard to read. Searching for ‘status bar’ on the UIPresentationController class reference returns no results.\r\n\r\nVersion:\r\niOS 9 beta 5, Xcode 7.0 beta 6 (7A192o)\r\n\r\nNotes:\r\nIt would make sense to me if _shouldChangeStatusBarViewController was replaced by a public property on UIPresentationController returning an enum with three possible values:\r\n\r\n• Always change status bar view controller, ignoring modalPresentationCapturesStatusBarAppearance (presented view is opaque, covering the top of the screen — e.g. full screen)\r\n• Never change status bar view controller, ignoring modalPresentationCapturesStatusBarAppearance (presented view does not cover the top of the screen — e.g. popover)\r\n• Defer to the presented view controller’s modalPresentationCapturesStatusBarAppearance (presented view covers the top of the screen and may be transparent — e.g. over full screen)\r\n\r\nConfiguration:\r\niPad Air, various simulators\r\n\r\nAttachments:\r\n'custom-presentation-controller-status-bar.zip' was successfully uploaded."
+    email: steipete@gmail.com
+    modified: "2015-09-04T08:51:13.95919Z"
+    number: "22574353"
+    number_intvalue: 22574353
+    originated: 04-Sep-2015 10:51 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Custom presentation controllers are forced to change the status bar view controller

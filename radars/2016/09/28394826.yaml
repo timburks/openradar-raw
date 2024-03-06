@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28394826"
+    labels:
+        datastore_id: "5647133881401344"
+data:
+    classification: ""
+    created: "2016-09-20T22:23:00.10925Z"
+    description: "Summary:\r\nAfter upgrading to macOS Sierra and using SSH to login to an SSH server, I noticed that the passphrase for my SSH key has been permanently remembered by the system. That is, after rebooting the system, SSH still knows the passphrase for my SSH key, such that I do not need to enter any passphrase to log in to my SSH hosts anymore. This permanent storage of my passphrase was done by default without prompting me, and I cannot find any documentation for this new default feature, so I have no idea how to disable it to restore the original El Capitan behavior that I prefer.\r\n\r\nAs far as I can tell, `ssh-add` is not able to manage this storage of my passphrase. `ssh-add -l` reports that \"The agent has no identities.\" even after having just used SSH to log into a server without using my passphrase. Running `ssh-add -D` reports \"All identities removed.\" but that isn't actually true, because I'm still able to log into my SSH servers without entering my passphrase.\r\n\r\nIndeed, I have no idea where in the system my passphrase has been stored. I assume it has been stored somewhere in the keychain, but if so, I cannot find it using the usual methods:\r\n\r\n$ security find-generic-password -s SSH\r\nsecurity: SecKeychainSearchCopyNext: The specified item could not be found in the keychain.\r\n$ security find-generic-password\r\nkeychain: \"/Users/[username]/Library/Keychains/login.keychain\"\r\nversion: 256\r\nclass: \"genp\"\r\nattributes:\r\n    0x00000007 <blob>=\"AppleID\"\r\n[.. this is the only generic password found, and it has nothing to do with SSH ..]\r\n\r\nSteps to Reproduce:\r\n1. upgrade to macOS Sierra\r\n2. run `ssh-keygen` to generate a new SSH key at the default file location, `/Users/username/.ssh/id_rsa` with a passphrase\r\n3. add the newly-generated public SSH key to the `authorized_keys` file on some SSH server (say, `example.com`)\r\n4. run `ssh example.com`\r\n5. enter the passphrase for the new SSH key and confirm login success\r\n6. reboot\r\n7. run `ssh example.com`\r\n8. run `ssh-add -l`\r\n\r\nExpected Results:\r\nAfter rebooting, I expect running `ssh example.com` to ask for my passphrase again. This was the default behavior on El Capitan and prior. Also on El Capitan, the remembered identities could be managed by `ssh-add` such that running `ssh-add -l` shows the identities that have been learned by `ssh-agent`, and running `ssh-add -D` causes those identities to be forgotten, such that the passphrase is required upon the next attempt to use SSH. On macOS Sierra, running `ssh-add -l` in step 8 reports \"The agent has no identities.\"\r\n\r\nIn other words, I expect macOS to not remember my passphrase by default. I'm aware that I can optionally run `ssh-add -K` to cause my passphrases to be stored in the keychain, so that I can later run `ssh-add -A` to load those identities into `ssh-agent`. But I have never used the `-K` or `-A` options to `ssh-add`, because I do not wish my passphrase to be remembered by the system.\r\n\r\nActual Results:\r\nAfter rebooting, running `ssh example.com` logs into the SSH server without requiring my passphrase be entered.\r\n\r\nVersion:\r\nmacOS Sierra version 10.12.\r\n\r\n$ /usr/bin/ssh -V\r\nOpenSSH_7.2p2, LibreSSL 2.4.1\r\n\r\nNotes:\r\nBug rdar://27348363 filed by Karoly.Lorentey seems to be related:\r\nhttps://openradar.appspot.com/27348363\r\n\r\nBut I'm confused, because that bug seems to be complaining about the opposite: that ssh-agent is NOT remembering the passphrases automatically across reboots like it did in El Capitan. Apple Developer Relations explained that this is the new expected behavior, and to run `ssh-add -A` in an rc script to cause the keys to be automatically loaded. The behavior that Lorentey complained about is actually the behavior I *prefer*, so I don't understand why macOS Sierra behaved differently for him."
+    email: fjarlq@gmail.com
+    modified: "2016-09-20T22:23:00.10944Z"
+    number: "28394826"
+    number_intvalue: 28394826
+    originated: 20-Sep-2016 04:04 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: "10.12"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: macOS Sierra permanently remembers SSH key passphrase by default

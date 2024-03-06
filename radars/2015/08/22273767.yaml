@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22273767"
+    labels:
+        datastore_id: "6090811166949376"
+data:
+    classification: Performance
+    created: "2015-08-13T19:36:21.75368Z"
+    description: "Summary:\r\nIf you instantiate many NSURLSessions with a background configuration while the app is running. Once backgrounded, when foregrounded again if another instance of NSURLSession with a background configuration is created, e.g.\r\n\r\nNSURLSessionConfiguration *backgroundSessionConfiguration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:backgroundSessionIdentifier];\r\n[NSURLSession sessionWithConfiguration:backgroundSessionConfiguration delegate:nil delegateQueue:nil]\r\n\r\nit will hang for several seconds. Use of the NSURLSession after instantiation is not required for the problem to occur.\r\n\r\nSteps to Reproduce:\r\n1. Launch attached sample app on any device iOS 8 - 9. In -application:didFinishLaunchingWithOptions:, 100 instances of NSURLSession with a background configuration are created.\r\n2. Lock the device.\r\n3. Unlock the device, and immediately start pressing the button repeatedly. Notice that the main thread is blocked because on -applicationDidBecomeActive, the app tries to instantiate an NSURLSession with a background configuration, which takes several seconds to complete.\r\n\r\nExpected Results:\r\nThe thread should not hang, and -sessionWithConfiguration: should return quickly. Its reasonable to expect that -sessionWithConfiguration: can be called on the main thread without hindering user experience.\r\n\r\nActual Results:\r\n-sessionWithConfiguration: blocks the thread for several seconds, depending on the number of NSURLSessions instantiated while the app was previously in the foreground.\r\n\r\nVersion:\r\niOS 8 - iOS 9 Beta 5\r\n\r\nNotes:\r\nThis does not occur with NSURLSessions that do not use a background session configuration.\r\n\r\nConfiguration:\r\nAny iOS device\r\n\r\nAttachments:\r\nhttps://dl.dropboxusercontent.com/u/46435935/URLSessionLocking.zip"
+    email: mliberatore09@gmail.com
+    modified: "2015-08-13T19:36:21.75403Z"
+    number: "22273767"
+    number_intvalue: 22273767
+    originated: August 13th, 2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 8 - 9
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Many Background URL Sessions Cause Hang on Subsequent App Foregrounding

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "40287604"
+    labels:
+        datastore_id: "4958673809965056"
+data:
+    classification: Bug
+    created: "2018-05-16T08:23:07.74012Z"
+    description: "Summary:\r\nA memory leak is caused when checking if a UIViewController subclass conforms to a protocol that is not a class protocol.\r\n\r\nThis looks like a recurrence (or alternate version) of the bug described here... https://forums.developer.apple.com/thread/15425\r\n\r\nI have also given an in depth description of the bug here... https://stackoverflow.com/questions/50355375/why-does-this-stop-a-view-controller-from-deallocating\r\n\r\nSteps to Reproduce:\r\nI have created a very small project to show this.\r\n\r\nThe code is as follows...\r\n\r\n```protocol MyProtocol {}\r\n\r\nclass ViewController: UIViewController, UINavigationControllerDelegate {\r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n        \r\n        navigationController?.delegate = self\r\n    }\r\n    \r\n    func navigationController(_ navigationController: UINavigationController,\r\n                              animationControllerFor operation: UINavigationControllerOperation,\r\n                              from fromVC: UIViewController,\r\n                              to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {\r\n        switch (fromVC, toVC) {\r\n        case (is MyProtocol, is MyProtocol):\r\n            print(\"\U0001F34E NOOOOOO!\")\r\n            return nil\r\n        default:\r\n            print(\"\U0001F34F Yippee!\")\r\n            return nil\r\n        }\r\n    }\r\n    \r\n    deinit {\r\n        print(#function, \"View Controller\")\r\n    }\r\n}\r\n\r\nclass AnotherViewcontroller: UIViewController, MyProtocol {\r\n    deinit {\r\n        print(#function, \"Another View Controller\")\r\n    }\r\n}```\r\n\r\nThe storyboard contains a UINavigationController with rootViewController of `ViewController`. This pushes on to `AnotherViewController`.\r\n\r\nExpected Results:\r\nWhen popping back to `ViewController` the `AnotherViewController` should be deallocated.\r\n\r\nActual Results:\r\nIt isn't deallocated. It causes a memory leak.\r\n\r\nVersion/Build:\r\nVersion 9.3.1 (9E501)\r\niPhone 8 plus simulator"
+    email: oliver.foggin@googlemail.com
+    modified: "2018-05-16T08:23:07.74031Z"
+    number: "40287604"
+    number_intvalue: 40287604
+    originated: 16/05/18
+    parent_number: '&{NULL_VALUE}'
+    product: iOS/Swift
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Memory leak caused by checking protocol conformance in a switch

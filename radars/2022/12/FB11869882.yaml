@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB11869882
+    labels:
+        datastore_id: "5575612202745856"
+data:
+    classification: ""
+    created: "2022-12-12T16:24:51.121547Z"
+    description: "## Context\r\n\r\nAs of macOS 12.2, I believe as part of a response to CVE-2022-22583, the Installer no longer unpacks into a temporary folder, but instead now unpacks into /Library/InstallerSandboxes/.PKInstallSandboxManager/<<UUID>>. When things go correctly, this isn’t a problem; the unpacking succeeds, the unpacked package is moved to its final destination, and the temporary folder is cleaned up.\r\n\r\n## The Issue\r\n\r\nSometimes the unpacking/installation fails, for whatever reason. In that case, /Library/InstallerSandboxes/ is never cleaned up. Because that location is SIP-protected (or has some other protection that also prevents root from deleting files in it), tens of gigabytes of junk can sit around for years.\r\n\r\nMy personal laptop had three failed extractions of Xcode 13.x, totalling 13 GB of lost disk space. Those installations were from the end of 2021, which meant that the 13 GB of junk had sat around for more than a year.\r\n\r\nMy colleague reports: “Oof. Mine is 41G (10% of my used disk space!), dating back before migration to my current machine which means it was carefully moved along with the machine. I’ve had many spinning installs of Xcode (on both my machines, though my desktop is old and doesn’t have SIP, so has not remnants left).”\r\n\r\nThis is also widely reported across the internet:\r\n80 GB: https://discussions.apple.com/thread/253601509\r\n55 GB: https://www.mac-help.com/threads/how-do-i-manage-installersandboxes.229149/\r\n20 GB: https://discussions.apple.com/thread/251857321\r\n9 GB: https://discussions.apple.com/thread/7019457\r\n\r\n## Manual recovery\r\n\r\nBecause this is SIP-protected, or an equivalent, the junk from failed installations cannot be removed normally. If you boot to Recovery, mount the Data partition, and then use `rm -rf` carefully in the Recovery Terminal, the space can be recovered. This is not something that an average user should have to do, and is itself very risky.\r\n\r\n## Conclusion\r\n\r\nBefore the introduction of that directory, the Installer unpacked into a temporary folder, which are cleaned out regularly. Even though the Installer now unpacks into /Library/InstallerSandboxes/, that location is still conceptually a temporary location and needs to have a mechanism to clean it out when unpacking of package archives fails, which is a real thing."
+    email: avi@drissman.com
+    modified: "2022-12-12T16:24:51.121709Z"
+    number: FB11869882
+    number_intvalue: 11869882
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: /Library/InstallerSandboxes/.PKInstallSandboxManager not cleaned, accumulates 10-100 GB of junk

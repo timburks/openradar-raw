@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18793520"
+    labels:
+        datastore_id: "6174991183773696"
+data:
+    classification: Serious bug
+    created: "2015-08-10T09:28:27.33496Z"
+    description: "Summary:\r\nWhile an Inter-App Audio session is active, launching any audio app (from the home screen) that attempts to enable AVAudioSessionModeMeasurement results in the Inter-App Audio node's audio engine being frozen, causing the most recent buffer to be repeated indefinitely.\r\n\r\nThis continues until either (a) the launched audio app is closed via the multitasking menu, or (b) the Inter-App Audio node app is brought to the foreground.\r\n\r\nSteps to Reproduce:\r\n1. Open an Inter-App Audio host (such as GarageBand or Audioshare)\r\n2. Host an Inter-App Audio node (such as Figure), and set it up to play a continuous sound\r\n3. Press the Home button, and launch an audio app that uses Measurement Mode, such as Echo Pad, Crystalline, Swoopster, Stereo Designer, AUFX:Space, AUFX:Dub\r\n\r\nExpected Results:\r\nInter-App Audio session audio continues unmolested; new app's audio is audible.\r\n\r\nActual Results:\r\nInter-App Audio session is frozen, repeating the most recent buffer continually.\r\n\r\nVersion:\r\nReproduced on iOS 8.1. Not reproducible on iOS 7.\r\n\r\nNotes:\r\nNote that there are some Inter-App Audio node apps, such as ThumbJam, with which this problem cannot be reproduced, and audio continues unaffected. This is because these apps' Inter-App Audio support is provided by the Audiobus SDK, using 'ABSenderPortSend' (http://goo.gl/zOZgKK) instead of providing a reference to the main app audio unit. In this mode, Audiobus creates its own secondary IO audio unit which is hosted. It is surmised that this bug does not interfere with the secondary audio unit.\r\n\r\nNote that launching apps that use AVAudioSessionModeMeasurement from within an IAA host app (launching them into the background via IAA, rather than launching them from the home screen) does not result in frozen audio.\r\n\r\nThis bug presents very serious problems for Audiobus, as apps are added to Audiobus sessions by launching them outside of Inter-App Audio, then hosting them upon launch. We do this to avoid issue 18793517 (Background-launched IAA nodes do not appear in multitasking menu).\r\n\r\nConfiguration:\r\nReproduced on an iPad 3 WiFi, and an iPad Mini\r\n\r\nAttachments:"
+    email: michael@tyson.id.au
+    modified: "2015-08-10T09:28:27.33527Z"
+    number: "18793520"
+    number_intvalue: 18793520
+    originated: 28-Oct-2014 07:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: ""
+    reproducible: Sometimes
+    resolved: 03-Jun-2015 06:30 AM
+    status: Behaves correctly
+    title: Inter-App Audio node session interruptions

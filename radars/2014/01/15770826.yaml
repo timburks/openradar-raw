@@ -1,0 +1,87 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15770826"
+    labels:
+        datastore_id: "5070447800483840"
+data:
+    classification: Serious Bug
+    created: "2014-01-08T09:46:31.832054Z"
+    description: |-
+        Summary:
+        Creating an NSTextField in code and giving its layer a shadow causes the shadow to disappear as soon as the text field gains keyboard focus. Creating an NSTextField that has a shadow from a XIB and then changing its attributes works fine and causes the shadow to remain even when focused.
+
+        Steps to Reproduce:
+        Run the following code in a Cocoa application:
+        ==== SNIP! ====
+        NSRect          wdBox = NSMakeRect(0,0,100,100);
+        NSWindow    *   theWindow = [[[NSWindow alloc] initWithContentRect: wdBox styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask backing: NSBackingStoreBuffered defer: NO] autorelease];
+        NSView* cv = [[[NSView alloc] initWithFrame: wdBox] autorelease];
+        cv.wantsLayer = YES;
+        [cv setLayerUsesCoreImageFilters: YES];
+        theWindow.contentView = cv;
+        [theWindow setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
+        [theWindow setTitle: @"foo"];
+
+        NSTextField* mView = [[NSTextField alloc] initWithFrame: NSMakeRect(10, 10, 100, 80)];
+        [mView setLayerUsesCoreImageFilters: YES]; // *
+        [mView setWantsLayer: YES]; // *
+        mView.layer.masksToBounds = NO; // *
+        [mView.layer setShadowColor: [NSColor.redColor CGColor]];
+        [mView.layer setShadowOffset: CGSizeMake(4, 4)];
+        [mView.layer setShadowRadius: 8];
+        [mView.layer setShadowOpacity: 1.0];
+        [mView setStringValue: @"bar"];
+        [theWindow.contentView addSubview: mView];
+        ==== UNSNIP! ====
+
+        Hit tab or click to get keyboard focus in that field.
+
+        Expected Results:
+        A window containing a pushbutton with a red shadow below it.
+
+        Actual Results:
+        The shadow draws, but as soon as the field gains focus, it disappears. Tabbing back out of the field doesn't restore the shadow.
+
+        Regression:
+        This used to work in 10.8 and earlier. The issue is new since 10.9.0.
+
+        Notes:
+        Here's my Stackoverflow thread on the issue: http://stackoverflow.com/questions/20962005/why-is-my-layer-shadow-clipped-to-my-nsviews-rect/
+
+        The workaround is to use the following code to create the field:
+
+        ==== SNIP! ====
+        @interface WILDButtonOwner : NSViewController
+
+        @property (retain,nonatomic) IBOutlet NSTextField* textField;
+
+        @end
+
+
+        @implementation WILDButtonOwner
+
+        @end
+        ==== UNSNIP ====
+
+        ==== SNIP2 ====
+        WILDButtonOwner * mButtonOwner = [[WILDButtonOwner alloc] initWithNibName: @"WILDButtonOwner" bundle: nil];
+        [mButtonOwner view];
+        NSTextField* mView = [mButtonOwner textField];
+        ==== UNSNIP2====
+
+        And a WILDButtonOwner.xib containing an NSTextField that already has a shadow offset, blur radius and color set. The field created from the XIB doesn't lose its shadow.
+
+        This bug may be related to rdar://15770532, but filing separately since it may be a similar fix in several places.
+    email: kusterer@gmail.com
+    modified: "2014-01-08T09:46:31.832243Z"
+    number: "15770826"
+    number_intvalue: 15770826
+    originated: 08-Jan-2014 10:46 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.1 (13B42)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSTextField layer shadow disappears on focus unless created from XIB

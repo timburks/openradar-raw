@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22357787"
+    labels:
+        datastore_id: "4943984568827904"
+data:
+    classification: Performance
+    created: "2015-08-20T07:21:49.64384Z"
+    description: "Summary:\nThe isSubsetOf Set method performance has decreased dramatically in Xcode7-beta5 in comparison ti Xcode6.4 \n\nXcode 6.4:        0.00000046 sec\nXcode 7-beta5:    5.96 sec  \n\nSteps to Reproduce:\n- make 2 random Set<Int>\n-call set.isSubsetOf(otherSet) \n- measure speed with CACurrentMediaTime\n\nCode: \n\nfunc makeRandomSet(count: Int) -> Set<Int> {\n  \n  var set = Set<Int>(minimumCapacity: count)\n  for _ in 0...count  {\n    set.insert(Int(arc4random()))\n  }\n  return set\n}\n\nfunc measure(_ title: String? = nil, times: Int = 20, call: () -> Void) {\n  var results = [CFTimeInterval]()\n  for _ in 1...times {\n    let startTime = CACurrentMediaTime()\n    call()\n    let endTime = CACurrentMediaTime()\n    let time =  endTime - startTime\n    results.append(time)\n  }\n  \n  title.map { print(\"\\($0) : \", appendNewline: false) }\n  let avarage = results.reduce(0, combine: +) / Double(times)\n  print(\"() Average - \\(avarage)\")\n}\n\nfunc test () {\n  let set = makeRandomSet(5_000_000)\n  let otherSet = makeRandomSet(set.count)\n  \n  var res: Bool = false\n  \n  measure(\"IsSubsetOf\") {\n    res = set.isSubsetOf(otherSet)\n  }\n  print(res)\n}\n\nExpected Results:\nThe performance should be at least the same as in old Xcode and Swift version or better.\n\nActual Results:\nIt get worse. Much worse!!!\n\nNotes:\nTest project is attached"
+    email: konstantin.koval1@gmail.com
+    modified: "2015-08-20T07:21:49.64416Z"
+    number: "22357787"
+    number_intvalue: 22357787
+    originated: 20-Aug-2015 09:22 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A176x)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: The Set isSubsetOf method performance decrease in Xcode 7-beta5

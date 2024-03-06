@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6407406"
+    labels:
+        datastore_id: "305"
+data:
+    classification: Other Bug
+    created: "2008-11-30T16:19:48.019052Z"
+    description: "Summary:\r\nKVO ignores array accessors such as add<Key>Object: and removeObjectFrom<Key>atIndex: unless their counterparts are present.\r\n\r\nSteps to Reproduce:\r\n1. Implement -addFramistansObject:.\r\n2. Don't implement -removeFramistansObject:.\r\n3. Bind an array controller to your object's “framistans” property.\r\n4. Bind a table column to the array controller's arranged objects.\r\n5. Send -addFramistansObject: to your object.\r\n\r\nExpected Results:\r\nYour implementation of -addFramistansObject: adds the object to the array, and the KVO wrapper posts the requisite notifications to inform the array controller (and table view) of the change.\r\n\r\nActual Results:\r\nYour implementation of -addFramistansObject: adds the object to the array, but the array controller and table view don't notice.\r\n\r\nRegression:\r\nNot that I know of.\r\n\r\nWorkaround:\r\nAlways implement both of each accessor pair.\r\n\r\nNotes:\r\nNormally, when another object registers for KVO notifications from your object (e.g., by binding to it), KVO overrides your accessors, in order to provide KVO notifications for free if you send yourself accessor messages.\r\n\r\nFor array properties, KVO looks for each of at least three pairs:\r\n* -add<Key>Object: and -remove<Key>Object:\r\n* -insertObject:in<Key>AtIndex: and -removeObjectFrom<Key>AtIndex:\r\n* -insert<Key>:atIndexes: and -remove<Key>AtIndexes:\r\n\r\nThe bug is that, if exactly one method in a pair is missing, KVO does not override the other method. For example, if you implement add<Key>Object: but not remove<Key>Object:, KVO will not override add<Key>Object:. The same is true the other way: if you implement remove<Key>Object: but not add<Key>Object:, KVO will not override remove<Key>Object:.\r\n\r\nKVO should not consider the presence of other methods in overriding accessor methods that do exist."
+    email: boredzo@gmail.com
+    modified: "2011-08-28T05:49:05.513857Z"
+    number: "6407406"
+    number_intvalue: 6407406
+    originated: 2008-11-30T07:50-0800
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.5/9F33
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: KVO doesn't notify on accessors unless their counterparts are present

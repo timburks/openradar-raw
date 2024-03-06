@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB12597594
+    labels:
+        datastore_id: "5519125732392960"
+data:
+    classification: ""
+    created: "2023-07-17T09:42:44.068286Z"
+    description: "In an iOS 17 simulator running a UIKit app, when a text field gains first reponder status, the UIResponder.keyboardFrameEndUserInfoKey notification is received multiple times.\r\n\r\nThe first time the field becomes the first responder, the notification is received twice. When the field resigns first responder and then becomes first responder again, the notification is even received three times.\r\n\r\nI can reproduce this reliably in the iOS 17 iPhone 14 Pro simulator as installed with Xcode 15.0 beta 4 (15A5195m). This is independent of whether I build the app with Xcode 15 beta or with Xcode 14.3.1, as long as I run it in the iOS 17 simulator.\r\n\r\nI can't reproduce it on an iPhone 12 Pro running iOS 16.5.1 (c), but I do see a similar bug on a iOS 16.4 simulator: There, only one keyboardWillShowNotification notification is sent when the text field becomes the first responder, but when it resigns first responder, it receives a keyboardWillShowNotification and a keyboardWillHideNotification in short succession.\r\n\r\nI unfortunately can't test on iOS 17 on a real device because I don't have a spare one that I can upgrade to the beta at the moment.\r\n\r\nI attached a full demo project. Here's the most relevant code (from viewDidLoad of a view controller with a text field):\r\n\r\n        NotificationCenter.default\r\n            .publisher(for: UIResponder.keyboardWillShowNotification)\r\n            .sink { notification in\r\n                print(\"Show: \\(notification.userInfo![UIResponder.keyboardFrameEndUserInfoKey]!)\")\r\n            }\r\n            .store(in: &tokens)\r\n\r\n        NotificationCenter.default\r\n            .publisher(for: UIResponder.keyboardWillHideNotification)\r\n            .sink { notification in\r\n                print(\"Hide: \\(notification.userInfo![UIResponder.keyboardFrameEndUserInfoKey]!)\")\r\n            }\r\n            .store(in: &tokens)\r\n\r\nConsole output when opening and dismissing the keyboard on iOS 17 simulator the first time after app launch:\r\n\r\nShow: NSRect: {{0, 516}, {393, 336}}\r\nShow: NSRect: {{0, 516}, {393, 336}}\r\nHide: NSRect: {{0, 852}, {393, 336}}\r\n\r\n… and the second time after app launch:\r\n\r\nShow: NSRect: {{0, 852}, {393, 0}}\r\nShow: NSRect: {{0, 516}, {393, 336}}\r\nShow: NSRect: {{0, 516}, {393, 336}}\r\nHide: NSRect: {{0, 852}, {393, 336}}"
+    email: daniel@ynab.com
+    modified: "2023-07-17T09:42:44.068425Z"
+    number: FB12597594
+    number_intvalue: 12597594
+    originated: "2023-07-13"
+    parent_number: '&{NULL_VALUE}'
+    product: Simulator
+    product_version: Xcode 15 beta 4
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: keyboardWillShowNotification is sent multiple times in iOS simulator

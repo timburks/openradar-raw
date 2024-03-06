@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16880113"
+    labels:
+        datastore_id: "5865020239904768"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2014-05-12T01:04:01.892306Z"
+    description: "Summary:\r\nI recently added a new domain to the named.conf file and HUPped it.  When I added the domain to my slave server, I discovered that it couldn't connect to the OS X box to transfer the domain record.\r\n\r\nAfter spending half a hour HUPping named on my OS X master and my Linux slave box, trying dozens of different config tweaks to try to figure out why my zone transfers stopped working, I stumbled across this thread from 2009:\r\n\r\n    https://lists.isc.org/pipermail/bind-users/2009-June/076939.html\r\n\r\nApparently, named on OS X occasionally stops listening for incoming connections on port 53, and does not start listening unless you kill and restart the named process.\r\n\r\nI tried doing a \"kill -TERM\" on the named process, and it stopped listening immediately, but the process never exited, so after almost a minute, I resorted to doing a \"kill -9\".  Half a second later, launchd restarted it, and the new named process was listening on port 53 as expected.\r\n\r\nI wish I had thought to run sample on the process so that I could tell you where the process was wedged, but I didn't.  If I see it again, I will.  In any case, I wanted to make sure you were aware of the bug.  I suspect that if you write a script that repeatedly adds new domains and HUPs named over and over (maybe without even adding domains), you'll eventually be able to reproduce the wedge/failure to re-bind to non-loopback interfaces.  I'm guessing it's a race condition somewhere in the reinitialization code.\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\n3.1.1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nOS X v10.9.2\r\n\r\nAttachments:"
+    email: dgatwood42@gmail.com
+    modified: "2014-05-12T01:04:01.892432Z"
+    number: "16880113"
+    number_intvalue: 16880113
+    originated: 11-May-2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X Server
+    product_version: 3.1.1
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: BIND stops listening on TCP port 53 sometimes.

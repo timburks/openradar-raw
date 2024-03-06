@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32972223"
+    labels:
+        datastore_id: "5005291217223680"
+data:
+    classification: Suggestion
+    created: "2017-06-25T19:48:42.61159Z"
+    description: "Summary:\r\nOn iOS, it is somewhat difficult to perform an action upon release of a keyboard key. It can be done, but it requires relying upon the fact that the responder's keyCommands property is queried when a key is released (i.e. the function call has to be in this property getter; I'll put an example below). This should be made officially supported with a nicer API — while it may seem like a bit of an edge case, doing this enables the user to prepare for something and begin when they are ready rather than have it start when they aren't expecting it, which can be crucial for i.e. timer apps.\r\n\r\nSteps to Reproduce:\r\n1. Leverage the UIKeyCommand API to configure an action to be performed upon release of a key.\r\n2. Press and hold the key in question.\r\n\r\nExpected Results:\r\nThere should be a clean configuration to allow the performance of an action only after the release of a key.\r\n\r\nObserved Results:\r\nI instead watch in dismay as the target action is triggered repeatedly and am forced to put the actual logic in the getter for keyCommands, which is definitely not where it belongs, simply to get this functionality to work.\r\n\r\nVersion:\r\niOS 10 for sure, but I'm almost certain this has been around for as long as UIKeyCommand has (iOS 7, I believe).\r\n\r\nNotes:\r\nHere's some example code I used.\r\n\r\n    var spaceBarIsDown = false\r\n    \r\n    func spaceBarPressed(command: UIKeyCommand) {\r\n        if activeTimer != nil { // We're in the middle of an attempt\r\n            startOrStopAsNeeded()\r\n        } else {\r\n            button.isEnabled = false\r\n            spaceBarIsDown = true\r\n        }\r\n    }\r\n    \r\n    override var keyCommands: [UIKeyCommand]? {\r\n        if spaceBarIsDown {\r\n            startOrStopAsNeeded()\r\n            spaceBarIsDown = false\r\n            button.isEnabled = true\r\n        }\r\n        let newCommand = UIKeyCommand(input: \" \", modifierFlags: [], action: #selector(spaceBarPressed(command:)), discoverabilityTitle: \"Start/Stop\")\r\n        return [newCommand]\r\n    }"
+    email: alex.hamilton@ou.edu
+    modified: "2017-06-25T19:48:55.57243Z"
+    number: "32972223"
+    number_intvalue: 32972223
+    originated: 25/06/2017
+    parent_number: '&{NULL_VALUE}'
+    product: IOS (UIKit)
+    product_version: 10 (7.0+)
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: UIKeyCommand should allow action upon release of a key

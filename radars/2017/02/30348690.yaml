@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30348690"
+    labels:
+        datastore_id: "5554449896439808"
+data:
+    classification: Serious Bug
+    created: "2017-02-03T16:17:32.20301Z"
+    description: "Area:\r\nContacts\r\n\r\nSummary:\r\nWhen calling CNContactStore.defaultContainerIdentifier, the current user's default contact account identifier, as configured in the Contacts.app preferences, should be returned.\r\n\r\nIn a non-sandboxed app, this works and correctly returns the default account, regardless of type (CardDAV, Exchange, etc.) or host (Google, Other).\r\n\r\nIf Sandboxing is enabled (with \"Contacts\" checked in App Data) in app's entitlements, the call to CNContactStore.defaultContainerIdentifier always returns the identifier for the user's iCloud container. **Even if Contacts and turned off for the iCloud Account**\r\n\r\nSimilarly, CN*Requests which specify a nil container, are passed to the iCloud container - again  **Even if Contacts and turned off for the iCloud Account**.  e.g. an add request will create a new contact in iCloud which is not even visible to the user because contacts are disabled.\r\n\r\nIn the same Sandboxed app, calls which create a contact using the old ABAddressBook API correctly create the new contact in the user's default container.\r\n\r\nSteps to Reproduce:\r\n1. Open attachment.\r\n2. Open Contacts.app. Change default contacts account to something other than iCloud.\r\n3. Run \"BUG_NoSandbox\" sample project, look at console output-correct default contact container will be reported as default.\r\n4. Run \"BUG_Sandbox\" sample project, look at console output-iCloud contact container will be reported as default, even though it is not.\r\n5. Go to System Preference, uncheck \"Contacts\" for iCloud.\r\n6.  Run \"BUG_Sandbox\" sample project, look at console output-iCloud contact container will be reported as default, even though it is not and should not even be enabled and available.\r\n\r\nExpected Results:\r\nEven in Sandboxed app, the user's correct default contact container should be reported.\r\n\r\nActual Results:\r\nIn Sandboxed app, iCloud is always reported as default Contact container - even if iCloud has Contacts disabled.\r\n\r\nVersion:\r\nmacOS 10.12.3 (16D32)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'Archive.zip' was successfully uploaded."
+    email: agiletortoise@gmail.com
+    modified: "2017-02-03T16:17:32.2032Z"
+    number: "30348690"
+    number_intvalue: 30348690
+    originated: 03-Feb-2017 10:16 AM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CNContactStore.defaultContainerIdentifier always returns iCloud container in Sandboxed app

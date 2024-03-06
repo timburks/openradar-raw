@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14568899"
+    labels:
+        datastore_id: "5279698607144960"
+data:
+    classification: ""
+    created: "2013-12-13T13:46:34.132078Z"
+    description: "Summary:\r\n\r\nIf scrollEnabled is set to NO on a UITextView, and it is resized with autolayout, then giving it a custom NSLayoutManager will crash with the exception \"*** -[NSLayoutManager glyphRangeForTextContainer:]: given container does not appear in the list of containers for this NSLayoutManager.'\"\r\n\r\nSteps to Reproduce:\r\n\r\n  UITextView *textView = [[UITextView alloc] initWithFrame:CGRectZero];\r\n  [textView setTranslatesAutoresizingMaskIntoConstraints:NO];\r\n  [self.view addSubview:textView];\r\n\r\n  NSDictionary *views = NSDictionaryOfVariableBindings( textView );\r\n  [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@\"H:|-[textView]-|\" options:0 metrics:nil views:views]];\r\n  [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@\"V:|-[textView]-|\" options:0 metrics:nil views:views]];\r\n\r\n  textView.scrollEnabled = NO;\r\n\r\n  self.textStorage = [[NSTextStorage alloc] initWithString:@\"This is some stuff\"];\r\n  self.layoutManager = [[NSLayoutManager alloc] init];\r\n  [self.textStorage addLayoutManager:self.layoutManager];\r\n  [self.layoutManager addTextContainer:textView.textContainer];\r\n\r\n\r\nExpected Results:\r\n\r\nThis should behave the same with or without the scrollEnabled=NO.\r\n\r\nActual Results:\r\n\r\nWithout scrollEnabled=NO, this works as expected (the text appears). With scrollEnabled=NO, this crashes as noted:\r\n\r\n'*** -[NSLayoutManager glyphRangeForTextContainer:]: given container does not appear in the list of containers for this NSLayoutManager.'\r\n\r\n\r\nRegression:\r\n\r\nUnknown.\r\n\r\nNotes:\r\n\r\nI've seen this crash using autosizing as well (without autolayout), but have had more trouble reproducing it as reliably. I believe the problem is actually just when the text view resizes rather than autolayout specifically.\r\n\r\nThe same behavior occurs if a custom NSTextContainer is passed to the text view:\r\n\r\n  self.textContainer = [[NSTextContainer alloc] initWithSize:self.view.bounds.size];\r\n  UITextView *textView = [[UITextView alloc] initWithFrame:self.view.bounds textContainer:self.textContainer];"
+    email: robnapier@gmail.com
+    modified: "2013-12-13T13:46:34.132224Z"
+    number: "14568899"
+    number_intvalue: 14568899
+    originated: 30-Jul-2013 09:29 AM
+    parent_number: "14571453"
+    product: iOS SDK
+    product_version: ""
+    reproducible: ""
+    resolved: 30-Jul-2013 09:29 AM
+    status: Duplicate/14571453
+    title: Turning off text view scrolling crashes layout manager

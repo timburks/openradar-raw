@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12284894"
+    labels:
+        datastore_id: "1960403"
+data:
+    classification: Enhancement
+    created: "2012-09-12T14:50:53.787511Z"
+    description: "Summary:\r\n\r\nCurrently, if a web page viewed in Mobile Safari attempts to open a URL using a custom URL scheme for an iOS application and that application has not been installed, the user is presented with a modal alert message indicating that the page cannot be opened. This enhancement request describes a mechanism to allow web developers to gracefully handle this exception. \r\n\r\nThe primary use case is to allow to a web page to render a subset of the information that would be displayed in the application to visitors without the target application without the negative connotations of displaying a error message to visitors. \r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a simple web page containing the following hyperlink: <a href=\"fakeapp://launch\">Open Fake App</a>\r\n2. View the web page in Mobile Safari on an iPhone, iPod Touch, or iPad. \r\n3. Click the Open Fake App link. \r\n4. You will see a alert with the title \"Cannot Open Page\" and the message \"Safari cannot open the page because the address is invalid\".\r\n\r\nSuggested Enhancement: \r\n\r\nThe web developer should be allowed to override the default browser behaviour and provide their own mechanism for handling the scenario where the target application is not installed. \r\n\r\nThe solution I propose is that the browser should raise a JavaScript exception prior to displaying the default exception alert. The JavaScript exception provides the web developer with the opportunity to handle the exception within their own code. This will lead to a better user experience and will give web developers the flexibility to decide what to do in the event that the target application has not been installed by the user. \r\n\r\nAn example of the JavaScript code a developer wishing to gracefully handle the URL scheme exception may write:\r\n\r\n<script type=\"text/javascript\">\r\nwindow.onerror = function(msg, url, line) {\r\n\tif (msg === 'Cannot Open Page') {\r\n\t\t// At this point, the developer can choose to ignore the exception, \r\n\t\t// redirect to the App Store, or display an error page to the user. \r\n\t\t\r\n\t\t// This line prevents the \"Cannot Open Page\" alert from being displayed\r\n\t\treturn true;\r\n\t}\r\n}\r\n</script>\r\n<a href=\"fakeapp://launch\">Open Fake App</a>\r\n\r\nSimilarly, if the web page attempts to call a custom URL scheme via JavaScript, the developer may proceed as below:\r\n\r\n<script type=\"text/javascript\">\r\nfunction tryToLaunchFakeApp() {\r\n\ttry {\r\n\t\twindow.location = \"fakeapp://launch\";\r\n\t} catch(e) { \r\n \t\tif (e instanceof URLSchemeException) {\r\n\t\t\t// This line prevents the \"Cannot Open Page\" alert from being displayed\r\n\t\t\te.handled = true; \r\n\t\t\r\n\t\t\t// At this point, the developer can choose to ignore the exception, \r\n\t\t\t// redirect to the App Store, or display an error page to the user. \r\n\t\t}\r\n\t}\r\n}\r\n</script>\r\n<a href=\"#\" onclick=\"tryToLaunchFakeApp()\">Open Fake App</a>"
+    email: neilco@gmail.com
+    modified: "2012-09-12T15:01:55.899799Z"
+    number: "12284894"
+    number_intvalue: 12284894
+    originated: 12-Sep-2012 03:44 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone/iPod Touch
+    product_version: 5.1.1
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: Provide a way for web pages to gracefully handle invalid URL scheme exceptions

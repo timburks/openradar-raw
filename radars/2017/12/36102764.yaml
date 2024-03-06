@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "36102764"
+    labels:
+        datastore_id: "5008966333497344"
+data:
+    classification: Bug
+    created: "2017-12-18T10:22:15.39594Z"
+    description: "Summary:\r\nIf new cells are added to a UITableView from the top (via beginUpdate/insertRowAtIndexPath/endUpdate, or performBatchUpdate), and the amount of cells if big, so a few of them happen to be added at roughly the same time, sometimes \"garbage cells\" appear in the table view. These garbage cells are shown on top of normal cells (can be seen in the UI debugger), and they are not cleared away, even if reloadData is called, and DataSource is set to return an empty data set.\r\n\r\nSteps to Reproduce:\r\n1) Download this project: https://github.com/DMAPro/iOS11TableViewIssue\r\n(it's also attached to this bug report).\r\n2) Launch on an iOS 11 device / simulator (tested on iPhone SE / iPad 2). The problem doesn't occur on iOS 10 / 9.\r\n3) Click \"Generate Data\" about 20 times, fast.\r\n4) Note that although new cells are added all the time from the top of the table view, and old cells are pushed to the bottom, certain cells start to appear that seem \"fixed\", so normal cells are moving underneath these garbage cells. \r\nNote that although the data is added from multiple threads, all threads dispatch to the main thread before actually adding it, so multithreading shouldn't be an issue (see [ViewController generateDataPressed:] method).\r\n5) Click \"Clear Table\"\r\n\r\nExpected Results:\r\n• All cells are rendered correctly on step 4.\r\n• Empty table view on step 5.\r\n\r\nActual Results:\r\n• Garbage cells are displayed on top of normal cells, so some cells appear \"truncated\", and since garbage cells come from different parts of the table view, the order is incorrect.\r\n• After clearing the table view, garbage cells still persist.\r\n\r\nVersion/Build:\r\nTested on\r\n• iPhone SE simulator iOS 11.1.2.\r\n• iPad Air 2 device iOS 11.1.2.\r\n• iPad Air 2 device iOS 11.2.1\r\nAlso tested on iOS 10 devices and iOS 9 / 10 simulators, but the issue doesn't occur there.\r\n\r\nPartial workaround:\r\nThese garbage cells can be detected by going through all UITableView's subviews and checking \"tableView.indexPathForCell\" for all cells. If it's nil, then it's a garbage cell. I do it in the completion block of \"tableView.performBatchUpdates\", but it doesn't help in all the cases, and it has a performance impact (going through all the subviews on each table view update)."
+    email: demid.itsk@gmail.com
+    modified: "2018-01-22T11:59:03.22135Z"
+    number: "36102764"
+    number_intvalue: 36102764
+    originated: 18.12.2017
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK UIKit
+    product_version: 11.2.1
+    reproducible: Sometimes
+    resolved: No, as of iOS 11.2.2
+    status: Closed (Duplicate of 35929807)
+    title: Garbage cells appear in UITableView on iOS 11, when cells are added simultaneously

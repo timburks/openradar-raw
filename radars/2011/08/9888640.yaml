@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9888640"
+    labels:
+        datastore_id: "1287405"
+data:
+    classification: Serious Bug
+    created: "2011-08-10T10:13:23.684859Z"
+    description: "Summary:\r\n\r\nInstruments (v. 4.0) detect a memory leak in -[EKEvent endDate] in iOS 4.3. The planner application I'm developing I need to use the Event Kit. The app behaves oddly: Some views disappear from the screen with no visible reasons, the app sometimes crashes. I started an investigation and the Leaks instrument detected a leak in the endDate method. After replacing\r\n\r\nNSDate *endDate = [event endDate];\r\n\r\nwith a fixed date, the abnormal behavior stopped. I was able to reproduce the bug by creating a brand new project which fetches an event and displays the endDate in a label when a button is pressed.\r\n\r\nSteps to Reproduce:\r\n\r\nTo reproduce the bug the simplest way is the following\r\n\r\n1. Create a new project targeted for iPad and based on the View-based application template.\r\n2. Add the Event Kit Framework.\r\n3. Open the nib-file with main view.\r\n4. Add a label and a button.\r\n5. Add and connect an outlet named `label' for the label and an action named `displayEndDate' for the button.\r\n6. Type following code as an implementation of the action.\r\n\r\n- (IBAction)displayEndDate:(id)sender {\r\n    EKEventStore *store = [[EKEventStore alloc] init];\r\n    // Create the predicate's start and end dates.\r\n    CFGregorianDate gregorianStartDate, gregorianEndDate;\r\n    CFGregorianUnits startUnits = {0, 0, -30, 0, 0, 0};\r\n    CFGregorianUnits endUnits = {0, 0, 15, 0, 0, 0};\r\n    CFTimeZoneRef timeZone = CFTimeZoneCopySystem();\r\n    \r\n    gregorianStartDate = CFAbsoluteTimeGetGregorianDate(\r\n                                                        CFAbsoluteTimeAddGregorianUnits(CFAbsoluteTimeGetCurrent(), timeZone, startUnits),\r\n                                                        timeZone);\r\n    gregorianStartDate.hour = 0;\r\n    gregorianStartDate.minute = 0;\r\n    gregorianStartDate.second = 0;\r\n    \r\n    gregorianEndDate = CFAbsoluteTimeGetGregorianDate(\r\n                                                      CFAbsoluteTimeAddGregorianUnits(CFAbsoluteTimeGetCurrent(), timeZone, endUnits),\r\n                                                      timeZone);\r\n    gregorianEndDate.hour = 0;\r\n    gregorianEndDate.minute = 0;\r\n    gregorianEndDate.second = 0;\r\n    \r\n    NSDate* startDate =\r\n    [NSDate dateWithTimeIntervalSinceReferenceDate:CFGregorianDateGetAbsoluteTime(gregorianStartDate, timeZone)];\r\n    NSDate* endDate =\r\n    [NSDate dateWithTimeIntervalSinceReferenceDate:CFGregorianDateGetAbsoluteTime(gregorianEndDate, timeZone)];\r\n    \r\n    CFRelease(timeZone);\r\n    \r\n    // Create the predicate.\r\n    NSPredicate *predicate = [store predicateForEventsWithStartDate:startDate endDate:endDate calendars:nil];\r\n    \r\n    // Fetch all events that match the predicate.\r\n    NSArray *events = [store eventsMatchingPredicate:predicate];\r\n    [store release];\r\n    EKEvent *event = [events objectAtIndex:0];\r\n    label.text = [NSDateFormatter localizedStringFromDate:event.endDate dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterLongStyle];\r\n}\r\n\r\n7. Make sure you have some events for the period from the code above in the calendar.\r\n8. Build and run the project using the Instruments.\r\n9. Choose Leaks template.\r\n10. Tap the button in the application.\r\n\r\nExpected Results:\r\n\r\nNo memory leaks.\r\n\r\nActual Results:\r\n\r\nLeaked object __NSDate of 16 Bytes with -[EKEvent endDate] as responsible frame\r\n\r\nRegression:\r\n\r\nThe problem occurs on a device as well as in the simulator.\r\n\r\nNotes:\r\n\r\nNo workaround found.\r\nApple says it's a duplicate of rdar://problem/9053792"
+    email: adubrovsky@gmail.com
+    modified: "2011-08-28T05:35:11.597426Z"
+    number: "9888640"
+    number_intvalue: 9888640
+    originated: 03-Aug-2011 05:11 PM
+    parent_number: "9053792"
+    product: iPad SDK
+    product_version: "4.3"
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/9053792
+    title: Memory leaks when calling -[EKEvent endDate] in iOS 4.3

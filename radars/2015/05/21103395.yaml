@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21103395"
+    labels:
+        datastore_id: "5499120366125056"
+data:
+    classification: UI/Usability
+    created: "2015-05-26T14:51:53.22223Z"
+    description: "Summary:\r\nI have a UITabBarController with more than 8 viewControllers. Most of the viewControllers are UINavigationControllers with their own viewController stacks. When in portrait-orientation the iPhone 6 Plus displays 4 tabBarItems and a \"More\" button. In landscape-orientation the iPhone 6 Plus displays 7 tabBarItems and a \"More\" button. The problem occurs if the user is on the 6th or 7th tab in landscape-orientation, rotates to portrait-orientation and then back to landscape-orientation. At this point the user is presented with an empty UINavigationController with a black background. In portrait-orientation it will still be fine, but it will never recover in landscape-orientation. The console also starts displaying the \"Unbalanced calls to begin/end appearance transitions\" message when rotating back to portrait-orientation.\r\n\r\nI suspect that during the first access of the sixth or seventh tab in landscape-orientation the viewController hierarchy is left intact as intended. Once it is rotated to portrait-orientation the contents of the tab's UINavigationController are removed and pushed onto the moreNavigationControllers stack. Once the phone is rotated back to landscape-orientation the viewControllers are never properly inserted back into their original navigationController and instead remain inside of moreNavigationController.\r\n\r\nSteps to Reproduce:\r\n1. Create a new 'Tabbed Application' project in XCode. (I've uploaded a sample project)\r\n2. Copy the provided viewControllers and attach the copies to the UITabBarController under the \"viewControllers\" relation until you have at least 9 viewControllers.\r\n3. Make sure that at least the sixth and seventh viewControllers are embedded inside of a UINavigationController.\r\n4. Run the project on the iPhone 6 Plus simulator.\r\n5. Rotate to landscape mode.\r\n6. Select the sixth tab.\r\n7. Rotate to portrait.\r\n8. Rotate back to landscape.\r\n9. Notice the black background. If you put in a breakpoint and 'po' the contents of moreNavigationController you will notice that the view controller associated with the  sixth tab's UINavigationController is still attached.\r\n\r\nExpected Results:\r\nI would expect the original contents of the sixth and seventh tab to be displayed in their original parent UINavigationController when rotating back to landscape-orientation from portrait-orientation.\r\n\r\nActual Results:\r\nThe sixth and seventh tabs would look like empty UINavigationControllers with black backgrounds when in landscape-orientation after a couple of rotations.\r\n\r\nVersion:\r\n8.3 (12F70)\r\n\r\nNotes:\r\nIt may also be worth noting that if the user is looking at the first item in the \"More\" tab (eighth view controller) in landscape-orientation and then rotates to portrait-orientation they are redirected to the fifth view controller.\r\n\r\nConfiguration:\r\nOnly occurs on iPhone 6 Plus in Landscape-Orientation"
+    email: Ryan.Zulkoski@gmail.com
+    modified: "2015-05-26T14:51:53.22258Z"
+    number: "21103395"
+    number_intvalue: 21103395
+    originated: 05/26/2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 8.3 (12F70)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Issue with UINavigationController embedded in UITabBarController in Landscape-Orientation on iPhone 6 Plus

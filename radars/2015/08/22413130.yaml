@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22413130"
+    labels:
+        datastore_id: "5093312092438528"
+data:
+    classification: Other Bug
+    created: "2015-08-25T01:51:40.0697Z"
+    description: "Summary:\r\nObjects referenced abstractly by protocol cannot be mutated by changing var properties declared in the protocol. See the attached playground for an example of the issue.\r\n\r\nThe issue can be partially worked around by either:\r\n1. Capturing the property into an explicit var temporary variable and modifying it. Results in a warning that \"var was never mutated\".\r\n2. Making the protocol a 'class' protocol. Not ideal, but doable.\r\n3. Referencing the objects by their concrete type instead of by the protocol they conform to.\r\n\r\nSteps to Reproduce:\r\n1. Declare a non-class protocol that has a variable property with a getter and setter.\r\n2. Declare an object (class or struct, doesn't matter) that holds an array of objects, typed as an array of the protocol and not the concrete type.\r\n3. Iterate over the collection with for/in syntax and attempt to mutate the object via the property declared in the protocol.\r\n\r\nExpected Results:\r\nExpected that the collection of objects would be mutated without raising an error.\r\n\r\nActual Results:\r\nReceived a compiler error. \"Cannot assign to property: 'object' is a 'let' constant\"\r\n\r\nVersion:\r\nXcode 7.0 beta 6 (7A192o)\r\nOS X 10.10.5 (14F27)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nOccurs reliably in Xcode 7.0 beta 6 (7A192o) when compiling an iOS app written in Swift 2, against iOS 8.0 and 9.0.\r\n\r\nAttachments:\r\n'Playground.playground.zip' was successfully uploaded.\r\n\r\n-----------\r\n\r\nThis issue behaves as intended based on the following:\r\n\r\nThis is correct behavior. Consider a case like this:\r\n\r\nprotocol P { var x: Int { get set } }\r\nstruct S: P { var x: Int }\r\nclass C: P { var x: Int }\r\n\r\nfunc foo(p: P) { p.x += 1 }\r\nfoo(S(x: 1))\r\n\r\nSince the protocol is not class-constrained, the protocol value ‘p’ may contain a struct. To mutate the property, it needs to be able to potentially mutate the value in-place, so it must be a ‘var’ or ‘inout’ binding.\r\n\r\nPlease update your bug report to let us know if this is still an issue for you."
+    email: mark.adams86@gmail.com
+    modified: "2016-01-20T17:15:39.37272Z"
+    number: "22413130"
+    number_intvalue: 22413130
+    originated: 8/24/2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0 beta 6 (7A192o)
+    reproducible: Always
+    resolved: 9/2/2015
+    status: Behaves correctly
+    title: Objects referenced by protocol type cannot be mutated

@@ -1,0 +1,55 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21928143"
+    labels:
+        datastore_id: "6124065051901952"
+data:
+    classification: Other Bug
+    created: "2015-07-21T21:30:57.38444Z"
+    description: |-
+        Summary:
+        String.init works fine when the type it’s being applied to is well-known, but doesn’t seem to in a generic context.
+
+
+        Steps to Reproduce:
+        1. This code:
+        extension Array {
+        	func f() -> String {
+        		return ", ".join(lazy(self).map(String.init))
+        	}
+        }
+
+
+        Expected Results:
+        should compile
+
+        Actual Results:
+        but totally doesn’t:
+        rob@Resonance ~/Desktop> swiftc boom.swift
+        boom.swift:3:42: error: could not find an overload for 'String.init' that accepts the supplied arguments
+                        return ", ".join(lazy(self).map(String.init))
+                                                        ~~~~~~~^~~~
+
+        Regression:
+        It works fine if the type is known statically:
+        extension Array {
+        	func f() -> String {
+        		return ", ".join(lazy([1, 2, 3]).map(String.init))
+        	}
+        }
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-07-21T21:30:57.38466Z"
+    number: "21928143"
+    number_intvalue: 21928143
+    originated: 21-Jul-2015 05:30 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A165t)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2b4: Pointfree reference to generic initializer in generic context does not compile'

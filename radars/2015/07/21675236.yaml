@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21675236"
+    labels:
+        datastore_id: "4966017751056384"
+data:
+    classification: UI/Usability
+    created: "2015-07-04T21:35:24.99677Z"
+    description: "Summary:\r\nIf you have a generic function that returns the generic type, in cases where the return type cannot be inferred from context, the Swift compiler correctly produces an error. Unfortunately, that error is confusing and unhelpful, emphasizing the arguments, and the info on the error is similarly unhelpful, telling you what arguments it expected rather than that the return type cannot be inferred (by, say, storing the result of the function into a typed var or let).\r\n\r\nThough the steps to reproduce specifies a playground, the same error occurs in a normal project's Swift files as well.\r\n\r\nSteps to Reproduce:\r\n1. Install Xcode 7 and open a new Swift playground. \r\n2. Replace the contents with the following code: \r\n\r\nimport Cocoa\r\n\r\nfunc readFromData<T: UnsignedIntegerType>(data: NSData, inout cursor:Int) -> T {\r\n    var temp : T = 0\r\n    data.getBytes(&temp, range: NSMakeRange(cursor, sizeof(T)))\r\n    cursor += sizeof(T)\r\n    return temp\r\n}\r\n\r\nlet data = \"FooBar\".dataUsingEncoding(NSUTF8StringEncoding)\r\nvar cursor : Int = 0\r\nvar temp4 = readFromData(data, cursor: &cursor)\r\n\r\n3. Open the console for the playground.\r\n4. Read the error.\r\n\r\nExpected Results:\r\nError should read something like (most of the path removed for brevity):\r\n\r\n\"Playground execution failed: playground66.swift:14:13: error: cannot invoke 'readFromData' with ambiguous return type at call site\r\nvar temp4 = readFromData(data, cursor: &cursor)\r\n            ^\r\nplayground66.swift:14:25: note: expected an unambiguous destination for return value. Assignment requires explicitly specified storage. Explicitly specify the type after the var name, e.g. var temp4 : Int = ...\r\nvar temp4 = readFromData(data, cursor: &cursor)\r\n         ^\r\n\"\r\n\r\nActual Results:\r\nError reads (most of the path removed for brevity:)\r\n\"Playground execution failed: playground66.swift:14:13: error: cannot invoke 'readFromData' with an argument list of type '(NSData?, cursor: inout Int)'\r\nvar temp4 = readFromData(data, cursor: &cursor)\r\n            ^\r\nplayground66.swift:14:25: note: expected an argument list of type '(NSData, cursor: inout Int)'\r\nvar temp4 = readFromData(data, cursor: &cursor)\r\n                        ^\r\n\"\r\n\r\nThis is wrong and confusing because it makes it appear that there's an invisible problem with the argument list rather than an obvious problem with the return type. \r\n\r\nVersion:\r\nXcode Version 7.0 beta (7A121l)\r\nOS X 10.10.4 (14E46)\r\n\r\nNotes:\r\nNo workaround exists. Unsure about regressions. \r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: chaos42@gmail.com
+    modified: "2015-07-04T21:35:24.9971Z"
+    number: "21675236"
+    number_intvalue: 21675236
+    originated: 04-Jul-2015 02:29 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 7.0 beta (7A121l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift 2 error for ambiguity of return type at call site is confusing and unhelpful

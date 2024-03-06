@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15557367"
+    labels:
+        datastore_id: "5903080897904640"
+data:
+    classification: UI/Usability
+    created: "2013-11-28T14:11:44.473215Z"
+    description: "Summary:\r\nNSLog, when it reports a log entry to stderr and ASL, uses the wrong values as the thread ID.  This confounds debugging, since tools such as lldb, sample, spindump, Activity Monitor, etc, use the actual thread ID.  (NSLog reports the Mach thread self port name in hex, instead of the thread ID in decimal.)\r\n\r\nSteps to Reproduce:\r\n1. Observe stderr of any program that writes to NSLog.  Log entries are formatted as: date time progname[pid:tid] message. Note the tid.\r\n2. Debug the same program in lldb (aka Xcode debugger).  Run the lldb command \"thread list\". Note the tids.\r\n3. Observe the same program in Activity Monitor, sample, or spindump. Note the thread IDs.\r\n\r\nExpected Results:\r\nThread IDs should be consistent and correct.\r\n\r\nActual Results:\r\nlldb, sample, spindump, and Activity Monitor are consistent (although lldb reports tid in hexadecimal).  NSLog inconsistent is with the other tools.\r\n\r\nVersion:\r\nOS X 10.9 (13A603)\r\n\r\nNotes:\r\nFix: In CoreFoundation, CFUtilities.c, lines 623 and 624 (as of CF-855.11):\r\nOn both lines, change \"pthread_mach_thread_np(pthread_self())\" to \"pthread_threadid_np(NULL, &pthreadThreadId)\".\r\nAnd, while you're there, please change the format specifier \"%x\" to \"%u\" -- most other tools use decimal for thread ids, and the other fields in a log message (pid, for example) are decimal.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: jthywissen@gmail.com
+    modified: "2013-11-28T14:11:44.473442Z"
+    number: "15557367"
+    number_intvalue: 15557367
+    originated: 28-Nov-2013 08:05 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: OS X 10.9 (13A603)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSLog uses wrong value as thread ID

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17929884"
+    labels:
+        datastore_id: "6360479748325376"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2014-08-06T11:37:39.615263Z"
+    description: "Summary:\r\nIf a method is defined to use a generic type that is constrained to be a subclass of a specified class, and to also implement a specified protocol, the compiler crashes.\r\n\r\nSteps to Reproduce:\r\nPaste this code into a playground:\r\n\r\nprotocol CanBark {\r\n    func bark() -> String\r\n}\r\n\r\nclass Animal {\r\n    func animalType() -> String {\r\n        return \"Animal\"\r\n    }\r\n}\r\n\r\nclass Dog: Animal, CanBark {\r\n    override func animalType() -> String {\r\n        return \"Dog\"\r\n    }\r\n\r\n    func bark() -> String {\r\n        return \"Woof\"\r\n    }\r\n}\r\n\r\nfunc makeAnimalBark<T where T: CanBark, T: Animal>(barkingAnimal: T) {\r\n    let animalType = barkingAnimal.animalType()\r\n    let bark = barkingAnimal.bark()\r\n    println(\"\\(animalType) says \\\"\\(bark)\\\"\")\r\n}\r\n\r\nlet dog = Dog()\r\nmakeAnimalBark(dog)              // Dog says \"Woof\"\r\n\r\n\r\nExpected Results:\r\nShould print 'Dog says \"Woof\"'\r\n\r\nActual Results:\r\nCompiler crashes.\r\n\r\n\r\n\r\nVersion:\r\nXcode 6 beta 5 (6A279r)\r\n\r\nNotes:\r\nA workaround is to explicitly cast the argument to the protocol type before calling the function defined by the protocol, like this:\r\n\r\nfunc makeAnimalBark<T where T: CanBark, T: Animal>(barkingAnimal: T) {\r\n    let animalType = barkingAnimal.animalType()\r\n    let canBark = barkingAnimal as CanBark\r\n    let bark = canBark.bark()\r\n    println(\"\\(animalType) says \\\"\\(bark)\\\"\")\r\n}\r\n\r\nConfiguration:\r\nOS X 10.9.4\r\n\r\nAttachments:\r\n'com.apple.dt.Xcode.Playground_2014-08-06-072356_pluto.crash' was successfully uploaded.\r\n\r\n----\r\n\r\nApple Developer Relations 29-Sep-2014 06:54 PM\r\n\r\nWe believe this issue has been addressed in the latest Xcode 6.1 beta.  \r\n\r\nThis pre-release version of the Xcode 6.1 developer tools is required when developing for OS X Yosemite, and includes the Swift programming language. Xcode 6.1 beta runs on OS X Mavericks and OS X Yosemite Developer Preview.\r\n\r\nXcode 6.1 beta - Build 6A1042b"
+    email: kristopherdjohnson@gmail.com
+    modified: "2014-10-13T16:29:17.680628Z"
+    number: "17929884"
+    number_intvalue: 17929884
+    originated: 06-Aug-2014 07:35 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6 beta 5 (6A279r)
+    reproducible: Always
+    resolved: Fixed
+    status: Closed/Fixed
+    title: Swift compiler crashes when using generic type constrained to both class and protocol

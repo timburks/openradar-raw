@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28503166"
+    labels:
+        datastore_id: "5535852033736704"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2016-09-27T21:19:33.20861Z"
+    description: "Summary:\r\nWe are uploading symbols with our build. iTunes Connect says “Includes Symbols: Yes”. But the resulting dSYMs that we download from iTunes Connect have lots of symbols like ___hidden#9608_.\r\n\r\nSteps to Reproduce:\r\n1. Build an app with BitCode enabled.\r\n2. Upload the app to iTunes Connect. We’re using Fastlane, and enabling the parameter for including symbols. This seems to be working, since iTunes Connect shows “Includes Symbols: Yes” under the Build Details.\r\n3. Wait for the build to finish processing, and release it to internal testers on TestFlight.\r\n4. Go to Build Details for the build and click “Download dSYM”.\r\n5. Open the resulting .zip file.\r\n6. Look through the resulting .dSYM files, showing package contents on each, until you find the one containing your main app framework. In the attached sample dSYMs, this is 58C2505D-334B-30FA-8F19-08183E13832C.dSYM.\r\n7. Run `nm 58C2505D-334B-30FA-8F19-08183E13832C.dSYM/Contents/Resources/DWARF/*`.\r\n\r\nExpected Results:\r\nAll of the app’s symbols appear in the resulting list.\r\n\r\nActual Results:\r\nAside from a few system framework symbols, the whole list looks like this:\r\n\r\n00008d40 t ___hidden#0_\r\n000a5178 t ___hidden#10035_\r\n000a5310 t ___hidden#10038_\r\n000a532c t ___hidden#10040_\r\n000a5384 t ___hidden#10041_\r\n000a53b8 T ___hidden#10045_\r\n000a53d0 T ___hidden#10046_\r\n000a53d8 T ___hidden#10047_\r\n\r\nThis makes it difficult or impossible to do accurate crash reporting, since we can only really interpret the parts of the stack trace that are in properly symbolicated system frameworks.\r\n\r\nRegression:\r\nUnknown.\r\n\r\nNotes:\r\nWe are building with Xcode 7.3.1 and targeting iOS 9.3."
+    email: igeek1@gmail.com
+    modified: "2017-04-05T17:03:35.77999Z"
+    number: "28503166"
+    number_intvalue: 28503166
+    originated: 27-Sep-2016 05:19 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iTunes Connect
+    product_version: N/A
+    reproducible: Always
+    resolved: 07-Feb-2017 02:27 AM
+    status: Resolved
+    title: 'iTunes Connect: Missing symbols in dSYMs after uploading symbols with build'

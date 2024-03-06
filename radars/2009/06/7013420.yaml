@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7013420"
+    labels:
+        datastore_id: "56403"
+data:
+    classification: UI/Usability
+    created: "2009-06-27T13:21:28.745717Z"
+    description: "26-Jun-2009 05:52 PM Joe Hannon:\r\nSummary: \r\nManually configured IPv6 tunnel does work if using a DHCP assigned IPv4 address.\r\n\r\nSteps to reproduce:\r\n1. Connect your LAN to the internet using an AEBS configured to obtain its IPv4 address dynamically (DHCP).  (Internet pane, Internet connection tab, set \"connect using\" to ethernet, and \"configure IPv4\" to \"Using DHCP\".\r\n\r\n2. Obtain an IPv6 tunnel and a block of IPv6 addresses, for example using Hurricane Electric's service at tunnelbroker.net.\r\n\r\n3.  Update the AEBS with the tunnel information (Advanced pane, IPv6 tab, set \"IPv6 mode\" to tunnel, set \"configure IPv6\" to \"manually\".  Enter your remote and local IPv6 addresses, LAN IPv6 address (I get my LAN IPv6 address by appending '1' to my tunnel's routed /64 network number), and remote IPv4 address, assigned by your tunnel).\r\n\r\n4.  Upon saving the AEBS config, the device will reboot, and may be assigned a new IPv4 address.  If so, update the tunnel.\r\n\r\nExpected Results:\r\nIn Terminal on my Mac on the LAN, \r\n1.  \"ifconfig en0 inet6\" should show an IPv6 address autoconfigured by my AEBS.\r\n2.  \"ping6 -c 4 <assigned LAN IPv6 address>\" should show 4 response pongs from my AEBS's LAN interface.\r\n3.  \"ping6 -c 4 <assigned remote IPv6 address>\" should show 4 response pongs from my tunnel's remote endpoint.\r\n\r\nFrom the other end of my tunnel (for example, using the Hurricane Electric's \"looking glass\" connectivity test app at http://lg.he.net/),\r\n4.  ping6 <assigned local IPv6> should show response pongs.\r\n\r\nActual Results:\r\nIn Terminal on my Mac on the LAN, \r\n1.  \"ifconfig en0 inet6\" does not show an IPv6 belonging to the assigned /64 network.  It only shows a non-routable link local address from the fe80::/10 network.\r\n2.  \"ping6 -c 4 <assigned LAN IPv6 address>\" shows error message \"ping6: UDP connect: No route to host\".\r\n3.  \"ping6 -c 4 <assigned remote IPv6 address>\" shows error message \"ping6: UDP connect: No route to host\".\r\n\r\nFrom the other end of my tunnel (for example, using the Hurricane Electric's \"looking glass\" connectivity test app at http://lg.he.net/),\r\n4.  Pinging my AEBS from the remote end shows 100% packet loss.\r\n\r\nRegression:\r\nIn firmware 7.2.1, this problem did not occur.  One could configure a manual IPv6 tunnel and have a dynamic IPv4 address, and have successful IPv6 connectivity via the tunnel.\r\n\r\nIn firmware 7.3.x, device did not allow the config to be saved with a manual tunnel and dynamic IPv4 endpoint.\r\n\r\nIn firmware 7.4.x, device allows config to be saved, and then silently fails.\r\n\r\nNotes:\r\nIn firmware 7.3.x and 7.4.x, the problem may be worked around by switching to an automatically configured tunnel and keeping the dynamic IPv4 address.  Alternatively, the problem may be worked around by switching to fixed IPv4 addressing and keeping the manually configured IPv6 tunnel.  Note that this causes problems if the IPv4 service provider requires dynamically allocated IPv4 addresses."
+    email: ziggurism@gmail.com
+    modified: "2011-08-28T05:46:09.7338Z"
+    number: "7013420"
+    number_intvalue: 7013420
+    originated: 27-Jun-2009 05:52 AM
+    parent_number: "5964572"
+    product: Other (Airport Extreme Base Station firmware)
+    product_version: 7.4.2
+    reproducible: Always
+    resolved: No
+    status: Duplicate/5964572
+    title: Airport Extreme Base Station does not support manual IPv6 tunnel with DHCP IPv4

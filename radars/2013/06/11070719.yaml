@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11070719"
+    labels:
+        datastore_id: "3046404"
+data:
+    classification: Performance
+    created: "2013-06-08T04:13:31.458695Z"
+    description: "Summary:\r\niOS leaks when UIPageControl is scrolled.\r\n\r\n\r\nSteps to Reproduce:\r\n1. Download the PageControl project from the iOS Developer Library.\r\n2. Open the project in Xcode 4.3.1.\r\n3. Upgrade the debugger from GDB to LLDB.\r\n4. Profile the project using the Leaks instrument.\r\n\r\n\r\nExpected Results:\r\nNo Leaks\r\n\r\nActual Results:\r\nEach time the a new page is scrolled, a 48 byte leak occurs.\r\n\r\nRegression:\r\n\r\nNotes:\r\nI have recreated this bug using the iPhone 5.1 simulator and an iPhone 4 running iOS 5.1.  Debug results from instruments follow.\r\n\r\nLeaks:\r\nLeaked Object\t#\tAddress\tSize\tResponsible Library\tResponsible Frame\r\nMalloc 48 Bytes,3\t< multiple >\t144 Bytes\tlibsystem_c.dylib\tstrdup\r\n Malloc 48 Bytes,1\t0x1aea90\t48 Bytes\tlibsystem_c.dylib\tstrdup\r\n Malloc 48 Bytes,1\t0x1aeb00\t48 Bytes\tlibsystem_c.dylib\tstrdup\r\n Malloc 48 Bytes,1\t0x1ba2e0\t48 Bytes\tlibsystem_c.dylib\tstrdup\r\nMalloc 48 Bytes,1\t0x1ad200\t48 Bytes\tlibsystem_c.dylib\tstrdup\r\n\r\nCall Tree (Obj-C only)\r\nBytes Used\t# Leaks\t\tSymbol Name\r\n    192 Bytes  100.0%\t4\t \t-[UIApplication sendEvent:]\r\n    192 Bytes  100.0%\t4\t \t -[UIWindow sendEvent:]\r\n    192 Bytes  100.0%\t4\t \t  -[UIWindow _sendGesturesForEvent:]\r\n    192 Bytes  100.0%\t4\t \t   -[UIGestureRecognizer _updateGestureWithEvent:]\r\n    192 Bytes  100.0%\t4\t \t    -[UIScrollView handlePan:]\r\n    192 Bytes  100.0%\t4\t \t     -[UIScrollView _endPanWithEvent:]\r\n    192 Bytes  100.0%\t4\t \t      -[UIScrollView(Static) _startTimer:]\r\n\r\nCall Tree (full):\r\nBytes Used\t# Leaks\t\tSymbol Name\r\n    192 Bytes  100.0%\t4\t \tstart\r\n    192 Bytes  100.0%\t4\t \t main\r\n    192 Bytes  100.0%\t4\t \t  UIApplicationMain\r\n    192 Bytes  100.0%\t4\t \t   GSEventRunModal\r\n    192 Bytes  100.0%\t4\t \t    CFRunLoopRunInMode\r\n    192 Bytes  100.0%\t4\t \t     CFRunLoopRunSpecific\r\n    192 Bytes  100.0%\t4\t \t      __CFRunLoopRun\r\n    144 Bytes   75.0%\t3\t \t       __CFRunLoopDoSource1\r\n    144 Bytes   75.0%\t3\t \t        __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE1_PERFORM_FUNCTION__\r\n    144 Bytes   75.0%\t3\t \t         PurpleEventCallback\r\n    144 Bytes   75.0%\t3\t \t          _UIApplicationHandleEvent\r\n    144 Bytes   75.0%\t3\t \t           -[UIApplication sendEvent:]\r\n    144 Bytes   75.0%\t3\t \t            -[UIWindow sendEvent:]\r\n    144 Bytes   75.0%\t3\t \t             -[UIWindow _sendGesturesForEvent:]\r\n    144 Bytes   75.0%\t3\t \t              _UIGestureRecognizerUpdateGesturesFromSendEvent\r\n    144 Bytes   75.0%\t3\t \t               _UIGestureRecognizerUpdate\r\n    144 Bytes   75.0%\t3\t \t                _UIGestureRecognizerApplyBlocksToArray\r\n    144 Bytes   75.0%\t3\t \t                 ___UIGestureRecognizerUpdate_block_invoke_0541\r\n    144 Bytes   75.0%\t3\t \t                  -[UIGestureRecognizer _updateGestureWithEvent:]\r\n    144 Bytes   75.0%\t3\t \t                   _UIGestureRecognizerSendActions\r\n    144 Bytes   75.0%\t3\t \t                    -[UIScrollView handlePan:]\r\n    144 Bytes   75.0%\t3\t \t                     -[UIScrollView _endPanWithEvent:]\r\n    144 Bytes   75.0%\t3\t \t                      -[UIScrollView(Static) _startTimer:]\r\n    144 Bytes   75.0%\t3\t \t                       CFNotificationCenterAddObserver\r\n    144 Bytes   75.0%\t3\t \t                        _CFXNotificationRegisterObserver\r\n    144 Bytes   75.0%\t3\t \t                         notify_register_dispatch\r\n    144 Bytes   75.0%\t3\t \t                          notify_register_mach_port\r\n    144 Bytes   75.0%\t3\t \t                           token_table_add\r\n    144 Bytes   75.0%\t3\t \t                            strdup\r\n    144 Bytes   75.0%\t3\t \t                             malloc\r\n     48 Bytes   25.0%\t1\t \t       __CFRunLoopDoSources0"
+    email: addstudios@gmail.com
+    modified: "2013-06-08T04:13:31.458937Z"
+    number: "11070719"
+    number_intvalue: 11070719
+    originated: 3/18/2012
+    parent_number: "10703036"
+    product: iOS SDK
+    product_version: "5.1"
+    reproducible: Yes
+    resolved: Yes
+    status: Duplicate/10703036
+    title: iOS 5.1 leaks when using UIPageControl

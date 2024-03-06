@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17415068"
+    labels:
+        datastore_id: "4567104074285056"
+data:
+    classification: Other Bug
+    created: "2014-06-23T06:24:33.915557Z"
+    description: "Enums can implement the Equatable and Printable protocols.  An example follows:\r\n\r\nenum SimpleToken {\r\n    case Name(String)\r\n    case Number(Int)\r\n}\r\n\r\nextension SimpleToken : Printable {\r\n    var description: String { get {\r\n        switch self {\r\n        case Name(let value): return \"Name(\\(value))\"\r\n        case Number(let value): return \"Number(\\(value))\"\r\n        }\r\n    }}\r\n}\r\n\r\nextension SimpleToken : Equatable {\r\n}\r\n\r\nfunc ==(lhs: SimpleToken, rhs: SimpleToken) -> Bool {\r\n    switch lhs {\r\n    case .Name(let lval): switch rhs {\r\n        case .Name(let rval): return lval == rval\r\n        default: return false\r\n        }\r\n    case .Number(let lval): switch rhs {\r\n        case .Number(let rval): return lval == rval\r\n        default: return false\r\n        }\r\n    }\r\n}\r\n\r\n\r\nWhen such enums are used in XCTest assertions, the error reports should use the printable value of the enum.  At present, however, XCTest assertions do not access the description property of the printable value.  \r\n\r\nAt present, Swift does not automatically implement an equality operator for enums, even when the associated values are all supported by the equality operator.  For example, the code:\r\n\r\nclass TryPrintableEnum: XCTestCase {\r\n   \r\n    func testExample() {\r\n        XCTAssertEqual(SimpleToken.Number(1), SimpleToken.Name(\"Hello\"))\r\n    }\r\n    \r\n}\r\n\r\nThis test is expected to fail, and it should display the descriptions of the two values.  However, the XCTest report displays the values as “(Enum Value)”.  The full report is the following:\r\n\r\nfails with the error:\r\nTest Case '-[_TtC16TryPrintableEnum16TryPrintableEnum testExample]' started.\r\nTest Case '-[TryPrintableEnum testExample()]' started.\r\n/Users/jay/Coding/Swift/TrySwift/TryPrintableEnum/TryPrintableEnum.swift:44: error: -[_TtC16TryPrintableEnum16TryPrintableEnum testExample] : ((expressionStr1) equal to (expressionStr2)) failed: (\"(Enum Value)\") is not equal to (\"(Enum Value)\") - \r\n/Users/jay/Coding/Swift/TrySwift/TryPrintableEnum/TryPrintableEnum.swift:44: error: -[TryPrintableEnum testExample()] : ((expressionStr1) equal to (expressionStr2)) failed: (\"(Enum Value)\") is not equal to (\"(Enum Value)\") - \r\nTest Case '-[_TtC16TryPrintableEnum16TryPrintableEnum testExample]' failed (0.011 seconds).\r\nTest Case '-[TryPrintableEnum testExample()]' failed (0.011 seconds)."
+    email: jlieske@gmail.com
+    modified: "2014-08-06T06:02:40.775964Z"
+    number: "17415068"
+    number_intvalue: 17415068
+    originated: 22-Jun-2014 11:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 'Xcode6 beta: Version 6.0 (6A216f)'
+    reproducible: Always
+    resolved: Fixed in Xcode 6 Beta 5
+    status: Closed
+    title: Swift XCTestCase fails to print Printable enums

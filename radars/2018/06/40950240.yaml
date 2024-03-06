@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "40950240"
+    labels:
+        datastore_id: "4959342080032768"
+data:
+    classification: Suggestion
+    created: "2018-06-08T21:14:09.90713Z"
+    description: "Many string-backed types that were brought into Swift as stucts from the macOS 10.13 SDK are now brought in as String typedefs in the 10.14 SDK. This has the effect of making APIs easier to use by allowing strings to be entered directly, such as NSImage(named: \"MyImage\").\r\n\r\nThere are a few major downsides to this change that I would like to bring up, including one major issue where an Xcode fixit won't fix.\r\n\r\n\r\n\r\nA common approach to some of these types, for example NSImage.Name, that I've seen is to write an extension to provide a single definition of a resource.\r\n\r\nextension NSImage.Name {\r\n\r\n    static var car: NSImage.Name {\r\n        return NSImage.Name(\"car-image\")\r\n    }\r\n}\r\n\r\nBecause of the change in 10.14, this is now an extension on String and so it would now have a car property, such as String.car, which I'm not sure makes a lot of sense.\r\n\r\n\r\n\r\nIf a codebase contains extensions on other types like this, there's now a possibilty of conflict. Take the following extension.\r\n\r\nextension NSSound.Name {\r\n\r\n    static var car: NSSound.Name {\r\n        return NSSound.Name(\"car-sound\")\r\n    }\r\n}\r\nWhen this is added alongside the previous code snippet, the two extensions will cause the Swift compiler to correctly identify a conflict on the definition of the second static variable, because there is already a static variable named car defined on String.\r\n\r\n\r\n\r\nI'm worried that this change has been made to gain easier writing of NSImage(named:) using string itself, when conforming the 10.13 struct NSImage.Name to ExpressibleByStringLiteral would provide most of the benefits that is desired, but not remove the stronger type which can be extended without leaking into the String type.\r\n\r\n\r\nI have attached a playground which worked in the macOS 10.13 SDK but no longer works with the 10.14 SDK, as well as a screenshot showing the error that Xcode shows."
+    email: danielctull@gmail.com
+    modified: "2018-06-08T21:14:09.90738Z"
+    number: "40950240"
+    number_intvalue: 40950240
+    originated: 8 June 2018
+    parent_number: '&{NULL_VALUE}'
+    product: macOS SDK
+    product_version: "10.14"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Types typealias-ed to String in the macOS 10.14 SDK provide less type safety

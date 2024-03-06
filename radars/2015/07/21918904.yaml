@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21918904"
+    labels:
+        datastore_id: "5463741646766080"
+data:
+    classification: Serious Bug
+    created: "2015-07-21T13:46:07.68688Z"
+    description: "Summary:\r\nA data task scheduled with NSURLSession to load from an HTTP Basic Auth protected resource will result in an authentication challenge callback on 10.10 with protectionSpace authenticationMethod \"NSURLAuthenticationMethodDefault\" while on 10.11 the same code (or importantly, precompiled binary) will result in a challenge that has authenticationMethod \"NSURLAuthenticationMethodHTTPBasic\".\r\n\r\nIt seems like it was a bug in 10.10 that NSURLAuthenticationMethodDefault was listed as the literal authenticationMethod, but now there is a problem becauses apps that relies upon testing NSURLSession authentication challenges for HTTP Basic on 10.10 must compare the challenge type with \"default\" while on 10.11 they must compare the challenge type with the more explicit HTTP Basic.\r\n\r\nI can work around the problem by adding a special case to my own client code that changes the comparison based on OS release version, but is there some way Apple can finesse this so it works as expected for existing apps but also addresses the issue for the longer run?\r\n\r\nAdvice appreciated. Thanks!\r\n\r\nSteps to Reproduce:\r\n1. Open the attached sample project.\r\n2. Build and run on 10.10. The output is yielded:\r\n\r\nGot challenge for HTTP Basic Auth endpoint with protection space method: NSURLAuthenticationMethodDefault\r\n\r\n3. Archive a binary and run the resuilting binary on 10.11 (to demonstrate the issue with pre-built, already shipped code). The output is yielded:\r\n\r\nGot challenge for HTTP Basic Auth endpoint with protection space method: NSURLAuthenticationMethodHTTPBasic\r\n\r\n\r\n\r\n\r\nExpected Results:\r\nThe protection space method reported by NSURLSession's authentication challenges should be consistent for a given compiled binary. Perhaps a \"linked on or after\" test should be made for the change in behavior, and documentation should be updated to reflect the caveat that on 10.10.x the challenge will report as NSURLAuthenticationMethodDefault.\r\n\r\nActual Results:\r\nThe protection space method reported is different depending on the OS version being run against.\r\n\r\nVersion:\r\n10.11 Beta (15A216g)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'SessionChallengeTest.zip' was successfully uploaded."
+    email: jalkut@gmail.com
+    modified: "2015-08-07T18:50:32.77456Z"
+    number: "21918904"
+    number_intvalue: 21918904
+    originated: 21-Jul-2015 09:44 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: "10.11"
+    reproducible: Always
+    resolved: 07-Aug-2015 02:50 PM
+    status: Fixed
+    title: NSURLSession authentication challenge type disparity between 10.10 and 10.11

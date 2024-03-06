@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17221898"
+    labels:
+        datastore_id: "4591260044099584"
+data:
+    classification: ""
+    created: "2014-06-08T12:45:17.710288Z"
+    description: "Summary:\r\nWhen you have a function:\r\n\r\nfunc f(r: Range<Int>) { ... }\r\n\r\nand you call it with f(3..6) then the Range's endIndex is 6. When you call it when f(3...6), then Range's endIndex is 7. That might make sense for integers (the function can always consider endIndex to be exclusive), but not for floats.\r\n\r\nfunc g(r: Range<Float>) { ... }\r\n\r\nCalling g(3.0 .. 6.0) creates an endIndex of 6.0; calling g(3.0 ... 6.0) creates an endIndex of 7.0. There is no way for g() to see whether the endIndex is supposed to be inclusive or exclusive. It cannot treat endIndex as always being exclusive by subtracting 1.0 from it.\r\n\r\nFor example if g() is supposed to return a random number in the range, then g(3.0 .. 6.0) should return a number between 3.0 and 5.99999 and g(3.0 ... 6.0) should return a number between 3.0 and 6.0. If we were to always subtract 1.0 from endIndex then g(3.0 .. 6.0) returns a number between 3.0 and 5.0, not 5.9999.\r\n\r\nSteps to Reproduce:\r\nWrite a function that takes a Range<Float> or Range<Double>. It is impossible for the function to determine whether the upper bound of the range is inclusive or exclusive.\r\n\r\nExpected Results:\r\nThe Range<> struct should have a field that indicates whether the upper bound is inclusive or exclusive.\r\n\r\nActual Results:\r\nFor floating-point ranges there is no way to tell how the upper bound should be treated."
+    email: mail@hollance.com
+    modified: "2014-06-08T12:45:17.710447Z"
+    number: "17221898"
+    number_intvalue: 17221898
+    originated: "2014-06-08"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Swift's Range<> is misleading for floating-point values

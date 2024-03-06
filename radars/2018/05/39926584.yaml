@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39926584"
+    labels:
+        datastore_id: "4948924234203136"
+data:
+    classification: bug
+    created: "2018-05-03T01:21:40.00841Z"
+    description: "Summary:\r\ncommand line llvm crashes when compiling source attached in crash.tgz as per direction by llvm\r\n\r\nSteps to Reproduce:\r\nc++ -Wno-unused -MP -MD -std=c++11 -g3 -ggdb -I. -c main.cpp -o main.o\r\n\r\nExpected Results:\r\nIt shouldn't crash\r\n\r\nCompiler output:\r\n--- start ---\r\n(neal@Neal-MBP3-55.local) 18:52:22\r\n(553 / 53) [~/src/vs.git/t2]$: make\r\nc++ -Wno-unused -MP -MD -std=c++11 -g3 -ggdb -I. -c main.cpp -o main.o\r\nclang: error: unable to execute command: Segmentation fault: 11\r\nclang: error: clang frontend command failed due to signal (use -v to see invocation)\r\nApple LLVM version 9.0.0 (clang-900.0.38)\r\nTarget: x86_64-apple-darwin16.7.0\r\nThread model: posix\r\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin\r\nclang: note: diagnostic msg: PLEASE submit a bug report to http://developer.apple.com/bugreporter/ and include the crash backtrace, preprocessed source, and associated run script.\r\nclang: note: diagnostic msg:\r\n********************\r\n\r\nPLEASE ATTACH THE FOLLOWING FILES TO THE BUG REPORT:\r\nPreprocessed source(s) and associated run script(s) are located at:\r\nclang: note: diagnostic msg: /var/folders/6r/cw6_jzqx32n9pq4rl5jy2wkw0000gn/T/main-32bc2f.cpp\r\nclang: note: diagnostic msg: /var/folders/6r/cw6_jzqx32n9pq4rl5jy2wkw0000gn/T/main-32bc2f.sh\r\nclang: note: diagnostic msg: Crash backtrace is located in\r\nclang: note: diagnostic msg: /Users/neal/Library/Logs/DiagnosticReports/clang_<YYYY-MM-DD-HHMMSS>_<hostname>.crash\r\nclang: note: diagnostic msg: (choose the .crash file that corresponds to your crash)\r\nclang: note: diagnostic msg:\r\n\r\n********************\r\nmake: *** [main.o] Error 254\r\n\r\n(neal@Neal-MBP3-55.local) 18:53:54\r\n--- end ---\r\n\r\n\r\n--- main.cpp ---\r\n#include <stdio.h>\r\n#include <stdlib.h>\r\n#include <unistd.h>\r\n#include <dispatch/dispatch.h>\r\n#include <functional>\r\n\r\nclass C1Sub\r\n{\r\npublic: \r\n        C1Sub() {};\r\n        virtual ~C1Sub() {};\r\n};\r\n\r\n\r\nclass C1\r\n{\r\npublic: \r\n        C1() {};\r\n        virtual ~C1() {};\r\n\r\n        C1Sub Sub(std::function<void()> fn) { return C1Sub(); };\r\n};\r\n\r\nclass C2Item\r\n{\r\npublic: \r\n        C2Item() {};\r\n        virtual~C2Item() {};\r\n\r\n        bool Test() const { return false; };\r\n};\r\n\r\nclass C2\r\n{\r\npublic: \r\n        C2() {};\r\n        virtual ~C2() {};\r\n\r\n        void Iterate(std::function<void(C2Item const &ifi)> fn) {};\r\n};\r\n\r\nC1 gHub;\r\nC2 gIfi;\r\n\r\nvoid test1()\r\n{\r\n        __block C1Sub c1sub = gHub.Sub([&]()\r\n        {\r\n                gIfi.Iterate(\r\n                        [&](C2Item const &ifi)\r\n                        {\r\n                                // All is fine if there is no conditional flow logic interal to this block\r\n                                // ie. if(), switch(), while(), for() \r\n                                if(ifi.Test()) // <<<----- comment this line to compile \r\n                                {\r\n                                }\r\n                        });\r\n        });\r\n}\r\n\r\nint main(int argc, char **argv)\r\n{\r\n        test1();\r\n\r\n        return 0;\r\n}\r\n\r\n--- end main.cpp ---"
+    email: nkhorman@gmail.com
+    modified: "2018-05-03T01:21:40.00865Z"
+    number: "39926584"
+    number_intvalue: 39926584
+    originated: 5/2/2018
+    parent_number: '&{NULL_VALUE}'
+    product: llvm
+    product_version: Apple LLVM version 9.0.0 (clang-900.0.38)
+    reproducible: yes
+    resolved: ""
+    status: open
+    title: llvm crash

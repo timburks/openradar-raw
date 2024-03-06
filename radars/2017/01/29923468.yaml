@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29923468"
+    labels:
+        datastore_id: "6152523085774848"
+data:
+    classification: ""
+    created: "2017-01-09T08:21:53.64401Z"
+    description: "Area:\r\nFoundation\r\n\r\nSummary:\r\n`NSNumberFormatter.generatesDecimalNumbers = YES` makes `-[NSNumberFormatter numberFromString:]` producing `NSDecimalNumber` instead of `NSNumber`. Unfortunately this is merely a class rewrapping, does not change actual number parsing, so decimal numbers are affected by binary approximation error.\r\n\r\nIn case of numbers parsing, `-[NSNumberFormatter numberFromString:]` uses `CFNumberFormatterCreateNumberFromString` which in turn uses `cficu_unum_parseDecimal`, then `strtod` and then `CFNumberCreate` to create `CFNumber` wrapped double type. At the end, when `NSNumberFormatter.generatesDecimalNumbers == YES`, `NSNumberFormatter` executes `[NSDecimalNumber decimalNumberWithDecimal:number.decimalValue]` which is merely a class rewrapping – NSDecimalNumber stores decimal representation of binary approximation, not a true decimal representation of actual number.\r\n\r\nSteps to Reproduce:\r\n```\r\nNSNumberFormatter *fmt = [[NSNumberFormatter alloc] init];\r\nfmt.generatesDecimalNumbers = YES;\r\nfmt.locale = [NSLocale localeWithLocaleIdentifier:@\"en_US\"];\r\nNSDecimalNumber *number = (NSDecimalNumber *)[fmt numberFromString:@\"99.9\"];\r\nNSString *value = [number stringValue]; // \"99.90000000000001\", should be \"99.9\"\r\nNSDecimal decimal = [number decimalValue];\r\nint exponent = decimal._exponent; // -14, should be -1\r\nint mantissa = decimal._mantissa[0]; // should be 999\r\n```\r\n\r\nExpected Results:\r\nWhen `NSNumberFormatter.generatesDecimalNumbers == YES`, `-[NSNumberFormatter numberFromString:]` should produce `NSDecimalNumber` with true decimal representation. \r\n\r\nActual Results:\r\nWhen `NSNumberFormatter.generatesDecimalNumbers == YES`, `-[NSNumberFormatter numberFromString:]` should produces `NSDecimalNumber` with decimal representation of rewrapped number binary approximation. Produced number is affected by binary approximation error.\r\n\r\nVersion:\r\niOS 10.2, macOS 10.11.6\r\n\r\nNotes:\r\nOptionally `NSNumberFormatter.generatesDecimalNumbers` could be deprecated, and `-[NSNumberFormatter numberFromString:]` could always produce `NSDecimalNumber`.\r\n\r\nConfiguration:\r\niPhone 6 Plus, MacBook Pro (Retina, 13-inch, Early 2015)\r\n\r\nAttachments:"
+    email: kamil.borzym@gmail.com
+    modified: "2017-01-09T08:21:53.64424Z"
+    number: "29923468"
+    number_intvalue: 29923468
+    originated: 09-Jan-2017 09:17 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Foundation
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '`NSDecimalNumber`s from `NSNumberFormatter` are affected by binary approximation error'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12578679"
+    labels:
+        datastore_id: "2211402"
+data:
+    classification: UI/Usability
+    created: "2012-10-26T00:46:52.428711Z"
+    description: "Summary:\r\nDebugging concurrency/mutexes in GCD gets harder the more you do it, especially as you make an effort to do things more asynchronously.\r\n\r\nExample: \"how did this block come to be scheduled?\"\r\n\r\nSteps to Reproduce:\r\n- foo {\r\n    dispatch_async(dispatch_get_global_queue(0,0), ^{\r\n        [self bar];\r\n    });\r\n}\r\n\r\n- bar {\r\n    // breakpoint\r\n}\r\n\r\nExpected Results:\r\nSome way to determine the history:\r\n#0\t0x00002005 in -[Foo bar] at /Users/.../Foo.m:28\r\n#1\t0x049ea53f in __59-[Foo foo]_block_invoke_0 at /Users/.../Foo.m:23\r\n#2\t0x049fc014 in -[Foo foo] at /Users/.../Foo.m:22\r\n\r\n\r\nActual Results:\r\n#0\t0x00002005 in -[Foo bar] at /Users/.../Foo.m:28\r\n#1\t0x00002105 in __59-[Foo foo]_block_invoke_0 at /Users/.../Foo.m:22\r\n#2\t0x049ea53f in _dispatch_call_block_and_release ()\r\n#3\t0x049fc014 in _dispatch_client_callout ()\r\n#4\t0x049ed2e8 in _dispatch_root_queue_drain ()\r\n#5\t0x049ed450 in _dispatch_worker_thread2 ()\r\n#6\t0x96267e12 in _pthread_wqthread ()\r\n\r\n...what?"
+    email: numist@gmail.com
+    modified: "2012-10-26T00:46:52.428951Z"
+    number: "12578679"
+    number_intvalue: 12578679
+    originated: 25-Oct-2012 05:29 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode Version 4.5.1 (4G1004)/LLDB-167.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'GCD should be easier to debug: backtrace'

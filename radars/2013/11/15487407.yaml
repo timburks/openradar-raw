@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15487407"
+    labels:
+        datastore_id: "6455289674989568"
+data:
+    classification: 1-high
+    created: "2013-11-16T17:16:12.342531Z"
+    description: "Summary:\r\nInvoking with NSInvocation a method returning a double (or CGFloat) value on an arm64 device returns 0 instead of the result returned by the method.\r\n\r\nSteps to Reproduce:\r\n1. With Xcode create an empty application\r\n2. In the AppDelegate class, set the code as in the attached file CDVAppDelegate.m:\r\n- define a simple method getAFloat as:\r\n\r\n     - (CGFloat) getAFloat {\r\n         return 1.0;\r\n     }\r\n\r\n - in method application:didFinishLaunchingWithOptions: add the following code\r\n\r\n    SEL methodSelector = @selector(getAFloat);\r\n    NSMethodSignature* methodSignature = [self methodSignatureForSelector:methodSelector];\r\n    NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:methodSignature];\r\n    \r\n    [invocation setTarget:self];\r\n    [invocation setSelector:methodSelector];\r\n    [invocation invoke];\r\n    \r\n    CGFloat returnValue = 0.0;\r\n    [invocation getReturnValue:&returnValue];\r\n    \r\n    NSLog(@\"Invocation return value: %f; getAFloat return value: %f\", (double)returnValue, [self getAFloat]);\r\n\r\n3. run the application\r\n\r\n\r\nExpected Results:\r\nThe app log should display:\r\nInvocation return value: 1.000000; getAFloat return value: 1.000000\r\n\r\nActual Results:\r\nThe app log actually displays:\r\nInvocation return value: 0.000000; getAFloat return value: 1.000000\r\n\r\nVersion:\r\niOS version: 7.0.4 (11B554a)\r\n\r\nNotes:\r\nThe problem may be located in the class NSMethodSignature, as displaying the description of variable methodSignature in the sample code prints an incorrect result offset:\r\n\r\n(lldb) po methodSignature\r\n<NSMethodSignature: 0x170079640>\r\n    number of arguments = 2\r\n    frame size = 224\r\n    is special struct return? NO\r\n    return value: -------- -------- -------- --------\r\n        type encoding (d) 'd'\r\n        flags {isFloat}\r\n        modifiers {}\r\n        frame {offset = 80, offset adjust = 248, size = 16, size adjust = 0}\r\n        memory {offset = 0, size = 8}\r\n    argument 0: -------- -------- -------- --------\r\n        type encoding (@) '@'\r\n        flags {isObject}\r\n        modifiers {}\r\n        frame {offset = 0, offset adjust = 0, size = 8, size adjust = 0}\r\n        memory {offset = 0, size = 8}\r\n    argument 1: -------- -------- -------- --------\r\n        type encoding (:) ':'\r\n        flags {}\r\n        modifiers {}\r\n        frame {offset = 8, offset adjust = 0, size = 8, size adjust = 0}\r\n     \r\n\r\n\r\n\r\nConfiguration:\r\nXcode Version 5.0.2 (5A3005)\r\ndevice: iPad Air (Model A1475)\r\n\r\n-------------------------------\r\n\r\nAdditional note - 16-Nov-2013 06:07 PM\r\n\r\nIt seems confirmed that the issue lays in the NSSignature class:\r\nWhen running the program in the simulator in mode \"iPad retina (64 bits), the description of the methodSignature instance gives a correct offset for the return value:\r\n\r\npo methodSignature\r\n<NSMethodSignature: 0x109062040>\r\n    number of arguments = 2\r\n    frame size = 224\r\n    is special struct return? NO\r\n    return value: -------- -------- -------- --------\r\n        type encoding (d) 'd'\r\n        flags {isFloat}\r\n        modifiers {}\r\n        frame {offset = 16, offset adjust = 0, size = 16, size adjust = -8}\r\n        memory {offset = 0, size = 8}\r\n    argument 0: -------- -------- -------- --------\r\n        type encoding (@) '@'\r\n        flags {isObject}\r\n        modifiers {}\r\n        frame {offset = 0, offset adjust = 0, size = 8, size adjust = 0}\r\n        memory {offset = 0, size = 8}\r\n    argument 1: -------- -------- -------- --------\r\n        type encoding (:) ':'\r\n        flags {}\r\n        modifiers {}\r\n        frame {offset = 8, offset adjust = 0, size = 8, size adjust = 0}\r\n        memory {offset = 0, size = 8}"
+    email: jl.jumpertz@gmail.com
+    modified: "2013-12-15T10:57:19.093044Z"
+    number: "15487407"
+    number_intvalue: 15487407
+    originated: 16-Nov-2013 06:07 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 7.0.4 (11B554a)
+    reproducible: Always
+    resolved: 'iOS 7.1 beta 2 - Build: 11D5115d'
+    status: Fixed - Duplicate of 15441632
+    title: NSinvocation returns incorrect double result on arm64

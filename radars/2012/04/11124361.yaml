@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11124361"
+    labels:
+        datastore_id: "1645411"
+data:
+    classification: Regression
+    created: "2012-04-17T22:38:23.285752Z"
+    description: "26-Mar-2012 04:09 PM W Lewis:\r\nSummary:\r\n\r\nIf rlimit values for RLIMIT_NOFILE or RLIMIT_NPROC are specified in /etc/launchd.conf, then launchd will overwrite kern.maxfiles or kern.maxproc (respectively) with the rlimit hard limits, and maxfilesperproc/maxprocperuid with the corresponding soft limits. Neither of these makes sense and both make it difficult to administer an OSX system.\r\n\r\nFor the rest of this bug report I'll just talk about the file-descriptor limits, but the process limits have the same problem. See adjust_rlimits() in launchd_unix_ipc.c for details.\r\n\r\nSteps to Reproduce:\r\n\r\nPlace a command like \"limit maxfiles 512 1024\" in /etc/launchd.conf, and optionally \"kern.maxfiles=16384\" in /etc/sysctl.conf. Restart the system.\r\n\r\nExpected Results:\r\n\r\nThe \"limit maxfiles\" will set the systemwide default per-processrlimit inherited from pid 1 and overridden by any child process that has the priviliges to do so, and the \"kern.maxfiles\" will set the whole-system limit.\r\n\r\nActual Results:\r\n\r\nThe per-process rlimit overrides the whole-system limit, meaning that you can't set the limit for an individual process to be lower that the total limit for the entire sysem.\r\n\r\nNotes:\r\n\r\nThere are four values being manipulated here:\r\n\r\nRLIMIT_NOFILE rlim_cur   : soft (adjustable) max number of fds in a given proc; settable per-proc\r\nRLIMIT_NOFILE rlim_max   : hard (not adjustable) max number of fds in a given proc; settable per-proc\r\nkern.maxfilesperproc     : system-wide hard limit of fds in a single proc\r\nkern.maxfiles            : system-wide hard limit of total fds among all procs\r\n\r\nlaunchd forces kern.maxfiles to be equal to the NOFILES hard limit, and kern.maxfilesperproc to be equal to the soft limit. Both of these are nonsensical:\r\n\r\n1. Setting kern.maxfiles to be the same as RLIMIT_NOFILE.rlim_max means that it is possible for any single process to exhaust the entire system's spply of fds. kern.maxfiles limits the number of fds open in the system; RLIMIT_NOFILE limits the number of fds open in a process--- they're different things.\r\n2. Setting kern.maxfilesperproc (the system-wide hard limit) equal to RLIMIT_NOFILE.rlim_cur (the per-process soft limit) means that the soft limit is no longer soft (increasing it will not allow the process to open more files) and also no longer per-process (since kern.maxfilesperproc applies to all processes in the system).\r\n\r\nRegression:\r\n\r\nThis behavior appears to have been introduced in 10.7. In 10.6, launchd behaves in a more reasonable manner, and allows the systemwide and per-process limits to be different."
+    email: wiml@omnigroup.com
+    modified: "2012-04-17T22:38:23.2859Z"
+    number: "11124361"
+    number_intvalue: 11124361
+    originated: 26-Mar-2012 04:09 PM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: "10.7"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: launchd sets kern.maxfiles/kern.maxproc based on rlimit_max

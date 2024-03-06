@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15215690"
+    labels:
+        datastore_id: "4971570674008064"
+data:
+    classification: Other Bug
+    created: "2013-10-12T18:54:53.981919Z"
+    description: "Summary:\r\nIf UINavigationControllerDelegate's `navigationController:animationControllerForOperation:fromViewController:toViewController:` is present, even if only returning nil (which the documentation states will use the default transitions), UINavigationController's interactivePopGestureRecognizer.delegate is nil. If the delegate is nil, then the default interactive pop transition can't be triggered.  This is a problem if you only want to use custom push transitions (not pop), or maybe custom transitions only to/from certain views or in specific situations.\r\n\r\nSteps to Reproduce:\r\n1. Setup new project with one view controller that can push new VCs within a navigation controller\r\n2. Set up a UINavigationController delegate\r\n3. Push VCs and see that you can pop them with the default interactive pop pan gesture transition.\r\n4. Add `navigationController:animationControllerForOperation:fromViewController:toViewController:` and set the body to `return nil;` which should provide the defaults.  You can even add the interactive equivalent method.\r\n5. Run the project and try to use the interactive pop gesture recognizer transition\r\n\r\nExpected Results:\r\nSince we return nil in these delegate methods, the defaults should be maintained.  You should be able to navigate backwards with the default interactive left-to-right pan gesture.\r\n\r\nActual Results:\r\nPanning left-to-right only leaves fingerprint smudges on your screen.  The navigation controller does not pop.\r\n\r\nVersion:\r\nXcode Version 5.0.1 (5A2034a), iOS 7\r\n\r\nNotes:\r\nWorkaround I've found is to set the interactivePopGestureRecognizer.delegate to self when viewWillAppear and nil out the delegate on viewWillDisappear, where self is a UIViewController<UINavigationControllerDelegate> within a UINavigationController where the animation transitions delegate methods are defined.\r\n\r\nAttachments:\r\n'Tst.zip' was successfully uploaded."
+    email: greg@gregfiumara.com
+    modified: "2013-10-12T18:54:53.982141Z"
+    number: "15215690"
+    number_intvalue: 15215690
+    originated: 10/12/2013
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 5A2034a
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: interactivePopGestureRecognizer.delegate is not wired correctly when custom transition delegate methods present

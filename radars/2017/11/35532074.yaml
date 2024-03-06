@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35532074"
+    labels:
+        datastore_id: "4957433571049472"
+data:
+    classification: Other Bug
+    created: "2017-11-14T16:30:16.31124Z"
+    description: "Summary:\r\nWhen a transform is applied to a view, it’s safeAreaInsets are recalculated with respect to the effective frame of the presentation. As a result of this, subviews laid out with respect to safeAreaLayoutGuides are moved.\n\nThis is in contrast to the documentation for UIView’s transform property[1], which states:\n“In iOS 8.0 and later, the transform property does not affect Auto Layout. Auto layout calculates a view’s alignment rectangle based on its untransformed frame.”\n\nCalculating the view’s safeAreaInsets per the untransformed frame seems like the more correct method. Apart from subviews laid out with respect to safeAreaLayoutGuides, as best as I can tell, transforms do not cause any layout changes in subviews. It seems only right that safeAreaInsets follow the same established pattern\n\n[1]: https://developer.apple.com/documentation/uikit/uiview/1622459-transform\r\n\r\nSteps to Reproduce:\r\n1. Lay out a subview with respect to UIViewController’s view’s safeAreaLayoutGuides. As of now, depending on the device, the subview should be inset along the edges, depending on the device and orientation\n2. Apply a CGAffineTransform to the view which scales it to 0.5 along both axes\r\n\r\nExpected Results:\r\nWhen the view scales, all elements within it appear to be the same, just zoomed out. The subview should still be inset along the same edges, and with proportional inset values.\r\n\r\nActual Results:\r\nAfter the transform is applied, the view’s safeAreaInsets are updated to .zero, and the subview now covers the entirety of the parent view\r\n\r\nVersion:\r\n11.1\r\n\r\nNotes:"
+    email: harshilshah1910@gmail.com
+    modified: "2017-11-14T16:30:16.3115Z"
+    number: "35532074"
+    number_intvalue: 35532074
+    originated: 14-Nov-2017 10:00 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "11.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Applying a transform to a view recalculates its safeAreaInsets

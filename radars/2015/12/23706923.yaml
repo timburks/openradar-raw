@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23706923"
+    labels:
+        datastore_id: "5558718775164928"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-12-01T17:55:34.6055Z"
+    description: "[Want to discuss? Get in touch with me @jamesreggio.]\r\n\r\nThere appears to be a memory leak in the ImageIO libraries for scaling animated GIFs. (A Google search for \"ImageIO_GIF_Data\" will turn up several complaints and workarounds for unbounded memory consumption for scaled, looped GIFs.) SFSafariViewController appears susceptible to this problem when viewing a webpage that has looped, high-framerate animated GIFs that are being scaled via CSS.\r\n\r\nDue to the problems described in Radar #23706636, this memory leak will eventually crash the remote SFSafariViewController process, which in turn will crash the host app.\r\n\r\nSteps to Reproduce:\r\n1. Open and interact with a number of apps on a *physical device* in order to create memory pressure. (e.g., open and use Maps, Facebook, Uber, etc. for a couple of minutes.)\r\n2. Open the app referenced below.\r\n3. Tap the 'Bugs' tab bar item.\r\n4. Tap the 'Animated GIF OOM Crash (Bloomberg)' button.\r\n5. Scroll through the page to cause all three animated instructional GIFs to load.\r\n6. Leave the viewport over one of the three instructional GIFs.\r\n7. Wait a couple minutes for the leak to exhaust available memory.\r\n\r\nExpected Results:\r\nNo memory leak should exist, so the page should always work.\r\n\r\nActual Results:\r\nThe host app terminates.\r\n\r\nVersion:\r\niOS 9.1 (13B137)\r\n\r\nNotes:\r\nThe sample project is available on GitHub here:\r\nhttps://github.com/jamesreggio/SFSafariViewControllerPlayground\r\n\r\nIt is somewhat difficult to reproduce this issue because it depends upon the presence of significant memory pressure on the device. (The crash doesn't reproduce on a simulator because simulators are not subject to the same memory limitations.)\r\n\r\nHowever, it is relatively easy to see the leak using Instruments. Simply attach Instruments to the SafariViewService (or com.apple.WebKit.WebContent) process and navigate to the problematic page. You'll see an ever-increasingly growth in allocations made by the 'ImageIO_GIF_Data' method.)\r\n\r\nStrangely, in October 2015, I was able to attach Instruments to these processes remotely, but in November 2015, I am no longer able to attach to these processes. (I receive a 'Unable to attach to task; port invalid' error.) However, I'm sure you'll be able to side-step whatever limitations I'm encountering as I attempt to debug an Apple-distributed binary.\r\n\r\nConfiguration:\r\niPhone 6 on iOS 9.1 (13B137)"
+    email: james.reggio@gmail.com
+    modified: "2016-09-27T01:10:13.49295Z"
+    number: "23706923"
+    number_intvalue: 23706923
+    originated: 12/01/2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9.1 (13B137)
+    reproducible: Sometimes
+    resolved: Fixed in iOS 10.0.1
+    status: Fixed
+    title: Looped, scaled animated GIFs will eventually crash SFSafariViewController and the host app

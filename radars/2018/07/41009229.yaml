@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "41009229"
+    labels:
+        datastore_id: "5060476505423872"
+data:
+    classification: Bug
+    created: "2018-07-06T12:58:15.15585Z"
+    description: "Area:\r\nCFNetwork Framework\r\n\r\nSummary:\r\nWhen using Mutual Authentication (client-side certificate), successful HTTP 403 responses are reported back as CFNetwork errors, more specifically:\r\n\r\nError Domain=NSURLErrorDomain Code=-1206 \"The server “localhost” requires a client certificate.\" UserInfo={NSUnderlyingError=0x600003aac9c0 {Error Domain=kCFErrorDomainCFNetwork Code=-1206 \"(null)\" UserInfo={NSErrorPeerAddressKey=<CFData 0x6000010f2040 [0x11116ab58]>{length = 28, capacity = 28, bytes = 0x1c1e20fb000000000000000000000000 ... 0000000100000000}}}, NSErrorFailingURLStringKey=https://localhost:8443/, NSErrorFailingURLKey=https://localhost:8443/, NSLocalizedDescription=The server “localhost” requires a client certificate.}\r\n\r\nThis happens even if the client has indeed provided the client certificate.\r\nThis happens both on actual devices and the simulator.\r\n\r\nPlease find attached an example app that reliably reproduces the issue.\r\nIt contains a sample Go HTTP server with MTLS enabled. Note that using Go is not a requirement to reproduce the bug; In my app's production server, we use Nginx.\r\n\r\nThe iOS app simply makes an HTTP request at startup (AppDelegate.swift) after loading pre-generated private key/certificate pair from a hardcoded PEM string. \r\nThe accompanying keys are in the mtls-go-example folder (3_application for the server credentials and 4_client for the embedded client credentials).\r\n\r\nI've included some small sections of code from my app for loading/storing the credentials and setting up MTLS using URLSessionDelegate's urlSession(session: didReceive challenge: completionHandler:).\r\n\r\nThe sample was created in Xcode 10, but the issue is still present in earlier versions.\r\n\r\nSteps to Reproduce:\r\n- Connect to an MTLS-enabled server (See attached example)\r\n- Make a request that returns a 403 response\r\n\r\nExpected Results:\r\nExpected an NSHTTPURLResponse with status code 403\r\n\r\nActual Results:\r\nGot an NSURLError:\r\nError Domain=NSURLErrorDomain Code=-1206 \"The server “localhost” requires a client certificate.\" UserInfo={NSUnderlyingError=0x600003aac9c0 {Error Domain=kCFErrorDomainCFNetwork Code=-1206 \"(null)\" UserInfo={NSErrorPeerAddressKey=<CFData 0x6000010f2040 [0x11116ab58]>{length = 28, capacity = 28, bytes = 0x1c1e20fb000000000000000000000000 ... 0000000100000000}}}, NSErrorFailingURLStringKey=https://localhost:8443/, NSErrorFailingURLKey=https://localhost:8443/, NSLocalizedDescription=The server “localhost” requires a client certificate.}\r\n\r\nVersion/Build:\r\nPresent since Xcode 9\r\nConfirmed until Version 10.0 beta (10L176w)"
+    email: victor.maraccini@nubank.com.br
+    modified: "2018-07-06T12:58:15.15616Z"
+    number: "41009229"
+    number_intvalue: 41009229
+    originated: June 11 2018, 2:25 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: HTTP 403 with MTLS causes unexpected CFNetwork error

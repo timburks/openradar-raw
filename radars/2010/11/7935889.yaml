@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7935889"
+    labels:
+        datastore_id: "828401"
+data:
+    classification: ""
+    created: "2010-11-03T19:40:09.536418Z"
+    description: "03-May-2010 01:39 PM W Lewis:\r\nSummary:\r\n\r\nSafari will claim that a website's certificate is invalid because it has an invalid issuer, while simultaneously saying that the issuer certificate is valid.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Connect to https://bugreport.apple.com/\r\n\r\nExpected Results:\r\n\r\nCert chain will be checked and it will either succeed, or if it fails, the failure will be described to the user\r\n\r\nActual Results:\r\n\r\nFails incorrectly, and self-contradictory message is presented to the user.\r\n\r\nIt's not possible to copy & paste the error dialogs (see RADAR 7935659), so I've attached a bunch of screenshots.\r\n\r\nRegression:\r\n\r\nThis started happening about a week after I changed my HTTP proxy to one which requires a password. (HTTPS does not require a proxy.) Changing my proxy settings back to the non-password-requiring HTTP proxy cleared up the problem. Changing my proxy to the password-requiring proxy again did not cause the problem to recur immediately (but in a week, who knows?).\r\n\r\nNotes:\r\n\r\nPresumably what's happening is that Safari is attempting to verify a certificate's validity by retrieving a CRL or OCSP info (since bugreport.apple.com's cert's issuer offers both of those extensions, see screenshots). This fails because it tries to use the password-requiring proxy and doesn't know how to get the proxy's password from my keychain. The error is then mis-reported as an invalid issuer instead of correctly being described as an online-validity-check failure.\r\n\r\nNo messages were logged to the console or to any other system logs that I can find, so this is all conjecture.\r\n\r\n\r\n\r\n12-May-2010 02:57 PM W Lewis:\r\nYep, the problem recurred after a few days of being on the password-protected proxy again. So the OCSP theory seems likely."
+    email: wiml@omnigroup.com
+    modified: "2012-03-27T20:28:03.44428Z"
+    number: "7935889"
+    number_intvalue: 7935889
+    originated: 03-May-2010 01:39 PM
+    parent_number: "5004474"
+    product: Mac OS X
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/5004474
+    title: Safari incorrectly claims cert has invalid issuer if OCSP can't get through proxy

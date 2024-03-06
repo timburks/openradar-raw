@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22569408"
+    labels:
+        datastore_id: "4955425925496832"
+data:
+    classification: Other Bug
+    created: "2015-09-04T00:22:01.36829Z"
+    description: "[Want to discuss? Get in touch with me @jamesreggio.]\r\n\r\nSFSafariViewController will send the safariViewController:didCompleteInitialLoad: message to its delegate almost immediately following initialization of the browser—it always fires before the initial page finishes loading, and it will fire even if the page never loads.\r\n\r\nWe expected this message to fire around the time that the window.load event fires within the browser, and we expected the boolean argument to indicate whether the page loaded successfully (i.e., with a 200 HTTP status). As it presently stands, we cannot derive any useful information about the state of the SFSafariViewController from this message, other than that it didn't crash.\r\n\r\nSteps to Reproduce:\r\n1. Instantiate a SFSafariViewController and assign a delegate that implements the SFSafariViewControllerDelegate protocol.\r\n2. Navigate to the following types of URLs (expected results are listed below for each):\r\n  a. http://ThisWillFailDNSResolution.co\r\n  b. a simple page with no redirects that returns a 200 HTTP status\r\n  c. a heavy page with no redirects that returns a 200 HTTP status\r\n  d. a page that provides a [301, 302, 303, 307, 308] HTTP status redirect to a 200 HTTP status response\r\n  e. a page that returns a 404 HTTP status\r\n\r\nExpected Results:\r\na. (DNS failure) ~immediate message with NO boolean\r\nb. (simple 200) ~immediate message with YES boolean\r\nc. (slow 200) message when page is loaded, with YES boolean\r\nd. (30x redirects) message when final 200 page is loaded, with YES boolean\r\ne. (404) message when page is loaded, with NO boolean\r\n\r\nActual Results:\r\nFor all cases, the current implementation will immediately deliver the message with the YES boolean.\r\n\r\nVersion:\r\niOS 9.0 (13A4325c)\r\n\r\nNotes:\r\nThis other radar describes the problem with the boolean always being YES for 404 HTTP statuses: https://openradar.appspot.com/22340386\r\n\r\nConfiguration:\r\niPhone 6 Simulator in Xcode 7.0-beta6 (7A192o)"
+    email: james.reggio@gmail.com
+    modified: "2015-12-03T15:31:44.89928Z"
+    number: "22569408"
+    number_intvalue: 22569408
+    originated: 09/03/2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9.0 (13A4325c)
+    reproducible: Always
+    resolved: Duplicate of 22340386
+    status: Open/Duplicate
+    title: 'SFSafariViewController fires didCompleteInitialLoad: delegate before load completes, and always reports success'

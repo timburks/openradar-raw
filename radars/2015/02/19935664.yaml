@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19935664"
+    labels:
+        datastore_id: "6636584338194432"
+data:
+    classification: Serious Bug
+    created: "2015-02-24T11:51:50.45936Z"
+    description: "Summary:\n\nWhen using code like this to set the HTTP “Accept” header:\n\n        let conf = NSURLSessionConfiguration.defaultSessionConfiguration()\n        conf.HTTPAdditionalHeaders = [\"Accept\": \"application/json;odata=verbose\"]\n        \n        let session = NSURLSession(configuration: conf)\n        \n        let url = NSURL(string: \"http://ip.jsontest.com/\")!\n        \n        session.dataTaskWithURL(url).resume()\n\n…and viewing the resulting request in a proxy like Charles Proxy, the “Accept” value no longer gets set in iOS 8.3 for both Simulator and device.  This previously worked fine in iOS 7 and 8.1.3\n\nHeaders resulting from above code under iOS 7 & 8.1.3:\n\n\tGET / HTTP/1.1\nHost\tip.jsontest.com\nAccept\tapplication/json;odata=verbose\nUser-Agent\tAcceptHeaderB0rkag3Test/1 CFNetwork/672.1.13 Darwin/14.1.0\nAccept-Language\ten-us\nAccept-Encoding\tgzip, deflate\nConnection\tkeep-alive\n\n\nHeaders resulting from above code under iOS 8.3 (both beta 1 & 2):\n\n\tGET / HTTP/1.1\nHost\tip.jsontest.com\nAccept\t*/*\nUser-Agent\tAcceptHeaderB0rkag3Test/1 CFNetwork/711.3.12 Darwin/14.1.0\nAccept-Language\ten-us\nAccept-Encoding\tgzip, deflate\nConnection\tkeep-alive\n\n\nSteps to Reproduce:\n\n1. Setup a device to route through a proxy like Charles Proxy, or any other tool that will let you view HTTP headers for requests made\n2. Run the attached project\n3. Press the “Make Request” button\n4. Review HTTP headers\n5. Observe the “Accept” header is not set - it remains */*\n6. Re-run on iOS 8.1.3 and observe the header is set.\n\nExpected Results:\n\nI would expect setting the “Accept” header to still work as it has done on previous iOS releases.\n\nActual Results:\n\n“Accept” header not set.\n\nRegression:\n\nProblem NOT present on iOS 7, 8.1.3\nProblem IS present on iOS 8.3 beta 1 & 2\n\nNotes:\n\nThis has actually broken an app I’m developing for a client, so it’s not a contrived example."
+    email: andrew@tenero.co.uk
+    modified: "2015-02-24T11:51:50.459529Z"
+    number: "19935664"
+    number_intvalue: 19935664
+    originated: 24-Feb-2015 11:51 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (6D532l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Xcode-beta (6D532l)/iOS 8.3 beta 2 breaks setting "Accept" header value in NSURLSessionConfiguration.HTTPAdditionalHeaders

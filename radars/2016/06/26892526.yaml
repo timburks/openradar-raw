@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26892526"
+    labels:
+        datastore_id: "5518649347538944"
+data:
+    classification: Other Bug
+    created: "2016-06-20T15:28:44.13591Z"
+    description: "Summary:\r\nI get the following error, when a swift extension is used to implement a NSFetchedResultsControllerDelegate method:\r\n\r\nObjective-C method 'controller:didChange:at:for:newIndexPath:' provided by method 'controller(_:didChange:at:for:newIndexPath:)' does not match the requirement's selector ('controller:didChangeObject:atIndexPath:forChangeType:newIndexPath:')\r\n\r\nWhen the method is inside the main class declaration, the code compiles. When the same method is inside an extension, the compiler show the error above.\r\n\r\nSee the attached sample project (rdardemo.zip)\r\n\r\nSteps to Reproduce:\r\n1. Open sample project\r\n2. compile - no errors\r\n3. remove the comment block to put the method inside the extension - compiler error\r\n\r\n\r\nExpected Results:\r\nThe compiler is happy, no matter where the delegate method is declared.\r\n\r\nActual Results:\r\nObjective-C method 'controller:didChange:at:for:newIndexPath:' provided by method 'controller(_:didChange:at:for:newIndexPath:)' does not match the requirement's selector ('controller:didChangeObject:atIndexPath:forChangeType:newIndexPath:')\r\n\r\nVersion:\r\nXcode 8.0b1 / 8S128d, OSX 10.11.5 / 15F34\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nXcode 8.0b1, OSX 10.11.4, SDK 10.12 / iOS SDK 10\r\n\r\n\r\n\r\nSample code:\r\n---------------------8<---------------------\r\n//  rdar 26892526  demo\r\n\r\nimport Foundation\r\nimport CoreData\r\n\r\n@available(OSX 10.12, *)\r\npublic class SomeClass : NSObject, NSFetchedResultsControllerDelegate {\r\n    private var deviceFetcher : NSFetchedResultsController<NSFetchRequestResult>?\r\n\r\n    /****************************  <--- remove comment block to trigger issue\r\n\r\n}\r\n\r\n// MARK: NSFetchedResultsControllerDelegate\r\n@available(OSX 10.12, *)\r\nextension SomeClass {\r\n\r\n   **************************/\r\n    // Error: Objective-C method 'controller:didChange:at:for:newIndexPath:' provided by method\r\n    //                           'controller(_:didChange:at:for:newIndexPath:)' does not match the requirement's selector\r\n    //\r\n    // When this delegate method is in a category\r\n    @available(OSX 10.12, *)\r\n    public func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: AnyObject, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {\r\n        //\r\n    }\r\n}\r\n\r\n\r\n\r\n\r\n---------------------8<---------------------"
+    email: thomas.mellenthin@gmail.com
+    modified: "2016-10-05T08:46:31.50808Z"
+    number: "26892526"
+    number_intvalue: 26892526
+    originated: "2016-06-20"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS SDK
+    product_version: "10.12"
+    reproducible: always
+    resolved: "2016-10-04"
+    status: Closed
+    title: 'Swift extensions: Objective-C method ''A'' provided by method ''A*'' does not match the requirement''s selector'

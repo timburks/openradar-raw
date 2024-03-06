@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "45024092"
+    labels:
+        datastore_id: "4967767555964928"
+data:
+    classification: Bug
+    created: "2018-10-04T22:23:33.240505Z"
+    description: "Summary:\r\n\r\nWhen an app is initially installed on a standard iPhone, the value of INPreferences.siriAuthorizationStatus is .notDetermined, as expected.  When INPreferences.requestSiriAuthorization() is called, the user is prompted to grant or deny authorization, and siriAuthorizationStatus is set to .authorized or .denied accordingly.  All subsequent calls to requestSiriAuthorization are ignored.  All of this behavior is expected.\r\n\r\nThe documentation for INPreferences.siriAuthorizationStatus states that the status can be changed in the Settings app, but in fact its value does not correspond to any setting in the Settings app.  Therefore once the value is set based on the user's choice the first time requestSiriAuthorization() is called, it can never be changed.\r\n\r\nAlso, Siri shortcuts can be created and used regardless of the current value of siriAuthorizationStatus.\r\n\r\nSteps to Reproduce:\r\n\r\nScenario A:\r\n1. Install your application on a device that it has never been installed on\r\n2. Donate some intents using INInteraction.donate()\r\n3. Go to Settings > Siri & Search > MyApp > Shortcuts\r\n4. Create a shortcut\r\n\r\nScenario B:\r\n1. Install your application on a device that it has never been installed on\r\n2. Donate some intents using INInteraction.donate()\r\n3. Trigger a call to INPreferences.requestSiriAuthorization()\r\n4. Deny the request\r\n5. Go to Settings > MyApp > Siri & Search\r\n\r\n\r\nExpected Results:\r\nScenario A:\r\nIt should not be possible to create a shortcut\r\n\r\nScenario B:\r\nSome setting should exist that's switched off.  Switching it on and going back to MyApp should result in the value of INPreferences.siriAuthorizationStatus being .authorized\r\n\r\nActual Results:\r\nScenario A:\r\nShortcuts can be created and used in Siri\r\n\r\nScenario B:\r\nAll settings shown are switched on.  No configuration of the toggles will result in the value of INPreferences.siriAuthorizationStatus being .authorized\r\n\r\nVersion/Build:\r\niOS 12.0, Swift 4.2\r\n\r\nConfiguration:\r\nSeen on an iPhone X device and iPhone 8 simulator."
+    email: JAltreuter@gmail.com
+    modified: "2018-10-04T22:23:33.240688Z"
+    number: "45024092"
+    number_intvalue: 45024092
+    originated: 10/4/2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK | SiriKit
+    product_version: iOS 12
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: INPreferences.siriAuthorizationStatus cannot be modified after it is initially set

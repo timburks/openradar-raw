@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27017942"
+    labels:
+        datastore_id: "6152745434218496"
+data:
+    classification: Crash
+    created: "2016-06-26T12:24:26.5656Z"
+    description: "chained code (meaning in the same scope) will not crash. You have to get out of the scope to trigger the subsequent crash: once you've did that, even a \"po [UIColor redColor]\" in lldb will trigger an exception\r\n\r\n\"Warming up\" the cached colors using standard calls make the issue disappear.\r\n\r\nRetaining the variable by marking the NSInvocation output pointer as __unsafe_retained and then copying it in a \"normal\" variable also fixes the issue. While this may have been the right way to do it all along,  it doesn't seem right for UIKit to crash like that.\r\n\r\nSteps to Reproduce:\r\n1. Write some code that calls the equivalent of \"[UIColor redColor]\"  using NSInvocation\r\n2. Make sure you don't mark the result variable with \"__unsafe_unretained\"\r\n3. Call it twice\r\n\r\nExpected Results:\r\nThe wanted UIColor is returned every time\r\n\r\nActual Results:\r\nThe UIColor is returned the first time.\r\nOn the second run, the app crashes with EXC_BAD_ACCESS\r\nTurning on NSZombies will show that a call to a deallocated object occurs.\r\n\r\nVersion:\r\nXcode Version 8.0 beta (8S128d) - iOS 10.0 14A5261u\r\n\r\nNotes:\r\nTested under an iOS 8.4 simulator with Xcode 8 : doesn't crash\r\nTested under an iOS 9 simulator with Xcode 7 : doesn't crash.\r\n\r\nOnly crashes on a iOS 10 simulator with Xcode 8\r\n\r\nI've yet to test on a real device.\r\n\r\nSample Xcode project attached\r\n\r\n(Also note that it's never code I would use in a production app, it just occurred during some dev tests ;) )\r\n\r\nConfiguration:\r\nOSX El Capitan, Macbook Pro 15\", running the Xcode 8 iOS Simulator\r\n\r\nAttachments:\r\n'ColorCrashReproTest.zip' was successfully uploaded."
+    email: abarisain@gmail.com
+    modified: "2016-06-26T12:24:26.56578Z"
+    number: "27017942"
+    number_intvalue: 27017942
+    originated: 06/26/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 10.0 14A5261u
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Getting a predefined UIColor with a NSInvocation crashes the app

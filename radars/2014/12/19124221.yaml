@@ -1,0 +1,63 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19124221"
+    labels:
+        datastore_id: "5820967632764928"
+data:
+    classification: Serious Bug
+    created: "2014-12-03T03:28:49.561504Z"
+    description: |-
+        Summary:
+        Xcode adds the path to the folder containing linked frameworks to the FRAMEWORK_SEARCH_PATHS build setting if they aren’t system frameworks.
+
+        I think the intent was to be helpful, in practice it is at best chaff and at worst it masks errors (like forgetting to add a copy frameworks phase) until your beta testers get the app and it can’t run.
+
+
+        Steps to Reproduce:
+        1. Make a new framework project.
+        2. Add a workspace.
+        3. Copy another framework project (to use as a dependency) into the dir or check one out in a submodule.
+        4. Add the dependency project to the workspace.
+        5. In the build phases for the dependent framework target, add the dependency framework to the link phase with the + button.
+
+
+        Expected Results:
+        I expected it to set up the linkage but not to mess with build settings because they don’t need to be messed with.
+
+
+        Actual Results:
+        It messes with the build settings, adding e.g.:
+
+        				FRAMEWORK_SEARCH_PATHS = (
+        					"$(inherited)",
+        					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Memo-gckjwjhvobgrrpgheuyaonxcriig/Build/Products/Debug",
+        				);
+
+        That’s the path to the build dir. The transiently-named build dir!
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        My framework project templates (and possibly Xcode’s default ones, too, I don’t recall) have good default settings for install name path and runpath search paths. Xcode pays these no heed and blithely adds the setting anyway.
+
+        This sort of thing results:
+
+        https://github.com/typelift/swiftz/pull/79
+
+        I’ve been making a bunch of frameworks lately and I’m willing to bet I’ve committed the broken search paths to several of them.
+    email: rix.rob@gmail.com
+    modified: "2014-12-03T03:28:49.561632Z"
+    number: "19124221"
+    number_intvalue: 19124221
+    originated: 02-Dec-2014 10:28 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2006)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 6.1.1: Linking against a framework from the workspace adds the build dir to FRAMEWORK_SEARCH_PATHS'

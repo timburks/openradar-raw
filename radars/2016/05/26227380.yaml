@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26227380"
+    labels:
+        datastore_id: "5036849445732352"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2016-05-11T19:31:52.4165Z"
+    description: "Summary:\r\nWhen adding subviews to a view that obtains its tint color from the window or a parent view performance gets exponentially worse the more subviews you add. When adding 6000 subviews execution takes over 10 minutes in the following method chain:\r\n\r\nIn _postMovedFromSuperview, _UIViewVisitorRecursivelyEntertainDescendingVisitors, _UITintColorVisitor.visitView, checking NSArray.containsObject.\r\n\r\nIt appears UIKit is visiting all sibling views to set their tintColor when only a single sibling is added.\r\n\r\nHere is a really simple sample project demonstrating the problem. If you tap the Custom Tint Color button it will take several minutes to run. If you tap the No Tint Color button the subviews are added so quickly you might miss it. The identical code is running in both cases, the only difference is whether the application UIWindow has a tintColor set.\r\n\r\nSteps to Reproduce:\r\nSet window tintColor to a non-default color\r\nCreate a subview class\r\nAdd 6000 subviews to the parent view\r\nObserve exponentially decreasing performance as UITintColorVisitor continuously re-scans the growing array.\r\n\r\nExpected Results:\r\nPerformance should not get exponentially worse with more subviews\r\n\r\nActual Results:\r\nPerformance gets exponentially worse\r\n\r\nVersion:\r\niOS 9.3, Xcode 7.3.1\r\n\r\nNotes:\r\nA temporary workaround is to explicitly set the tintColor on all subviews but that defeats the purpose of tintColor's inheritance system. This is a duplicate of rdar://25934331"
+    email: steipete@gmail.com
+    modified: "2017-04-06T10:52:31.06781Z"
+    number: "26227380"
+    number_intvalue: 26227380
+    originated: 11-May-2016 09:31 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 9.3.1
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: UITintColorVisitor causes exponentially worsening performance when adding subviews

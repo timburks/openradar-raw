@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16410396"
+    labels:
+        datastore_id: "5317918178934784"
+data:
+    classification: ""
+    created: "2014-03-24T20:50:16.720772Z"
+    description: "Summary:\r\nWhile using AD account with FileVault 2 on OS X 10.9.2 (13C64), I get the error \"Module: FDESupport - Failed to update passphrase for <UUID>\" in /var/log//var/log/opendirectoryd.log after logging into the system with an account that has recently changed it's AD password. This error results in the failure to update the pre-boot password for the account. This appears to only happen when the \"destroyfvkeyonstandby\" setting is enabled.\r\n\r\nSteps to Reproduce:\r\n1. Enable FileVault 2 with a current AD account and password.\r\nsudo fdesetup enable\r\nEnter the user name:mnetest\r\nEnter the password for user 'mnetest':<current ad password>\r\n\r\n2. Reboot the machine.\r\nAD account appears at the EFI pre-boot login and successfully accepts the current AD password and passes the credentials through the loginwindow and presents me with the desktop for the AD user.\r\n\r\n3. Log out and reset password.\r\nChange password in AD via the Active Directory Users and Computers (ADUC) \"Reset password...\" option.\r\n\r\n4. Sucessfully log in at loginwindow with the reset password.\r\nUpdate keychain using previous AD password.\r\n\r\n/var/log/opendirectoryd.log shows \"Module: FDESupport - Updated passphrase for 8796F4D2-970A-4E12-B71D-B9C6CD8FD596\"\r\n\r\n5. sudo pmset -a destroyfvkeyonstandby 1\r\n\r\n6. Reboot.\r\nAD account appears at the EFI pre-boot login and successfully accepts the current AD password and passes the credentials through the loginwindow and presents me with the desktop for the AD user.\r\n\r\n7. Log out and reset password.\r\nChange password in AD via the Active Directory Users and Computers (ADUC) \"Reset password...\" option.\r\n\r\n8. Sucessfully log in at loginwindow with the reset password.\r\nUpdate keychain using previous AD password.\r\n\r\n/var/log/opendirectoryd.log shows \"Module: FDESupport - Failed to update passphrase for 8796F4D2-970A-4E12-B71D-B9C6CD8FD596\"\r\n\r\n9. Reboot\r\nAD account appears at the EFI pre-boot login but denies the recent password change. It accepts the PREVIOUS password. Single Sign On fails and I am presented with the loginwindow. Using the accounts CURRENT password allows me to log in at the loginwindow.\r\n\r\n10. sudo pmset -a destroyfvkeyonstandby 0\r\n\r\n11. Logout and attempt to log in again. Current AD password is accepted, however \r\n/var/log/opendirectoryd.log shows \"Module: FDESupport - Failed to update passphrase for 8796F4D2-970A-4E12-B71D-B9C6CD8FD596\"\r\n\r\n12. reboot\r\nAD account appears at the EFI pre-boot login but denies the recent password change. It accepts the PREVIOUS password. Single Sign On fails and I am presented with the loginwindow. Using the accounts CURRENT password allows me to log in at the loginwindow.\r\n\r\n/var/log/opendirectoryd.log shows \"Module: FDESupport - Updated passphrase for 8796F4D2-970A-4E12-B71D-B9C6CD8FD596\"\r\n\r\n13. reboot\r\nAD account appears at the EFI pre-boot login and successfully accepts the current AD password and passes the credentials through the loginwindow and presents me with the desktop for the AD user.\r\n\r\nExpected Results:\r\nA user should be able to change their AD account password and have it update the pre-boot account password while the \"destroyfvkeyonstandby\" is enabled.\r\n\r\nActual Results:\r\nAD account password changes are not updating the FileVault pre-boot environment account password while \"destroyfvkeyonstandby\" is enabled.\r\n\r\nVersion:\r\nProductName:    Mac OS X\r\nProductVersion: 10.9.2\r\nBuildVersion:   13C64\r\n\r\nNotes:\r\nThis is causing issues with McAfee's Management of Native Encryption 1.0.0 product as well.\r\n\r\nhttps://kc.mcafee.com/corporate/index?page=content&id=KB81289\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: n8felton@gmail.com
+    modified: "2019-06-04T11:57:35.972527Z"
+    number: "16410396"
+    number_intvalue: 16410396
+    originated: "2014-03-24"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.2 13C64
+    reproducible: Yes
+    resolved: Duplicate of 8322580 - Closed
+    status: Closed
+    title: 'FileVault 2 AD Password Sync Fails - Module: FDESupport - Failed to update passphrase for <UUID> when using destroyfvkeyonstandby power setting.'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10905456"
+    labels:
+        datastore_id: "1524407"
+data:
+    classification: Security
+    created: "2012-02-21T21:28:10.872856Z"
+    description: "Summary:\r\nCGWindowListCopyWindowInfo() fails (returns nil) in any sandboxed app that has been launched by calling  SMLoginItemSetEnabled(YES);\r\n\r\nSteps to Reproduce:\r\n\r\n(See attachment for Xcode project that reproduces bug)\r\n1. Create a sandboxed front end application\r\n2. Create a sandboxed back end application\r\n3. Build it so backend application is copied into the front end app's bundle, and is launched by a call to SMLoginItemSetEnabled().\r\n4. Have the backend application call CGWindowListCopyWindowInfo(), or any of the CGWindowList* functions.\r\n\r\nExpected Results:\r\n\r\nEither one of two things:\r\n1. CGWindowListCopyWindowInfo() would succeed with the list of windows.\r\n2. sandboxd daemon would log an error stating that it was denied, or some kind of error from someone would be logged into the Console so it would be clear why it is failing.\r\n\r\nAlso, I expected this behavior, if it is intentional, to be documented in Apple's docs.\r\n\r\nActual Results:\r\n\r\nCGWindowListCopyWindowInfo() returns nil, which according to the only documentation I could find (in the headers), means \"the caller is not running within a Quartz GUI session or the window server is disabled.\" However, the app is able to present UI and everything, so neither of these conditions appear not to be the case.\r\n\r\nRegression:\r\n\r\nIf the backend is not sandboxed, or if it is launched by another means other than SMLoginItemSetEnabled(), then CGWindowListCopyWindowInfo() works fine. It ONLY fails if it is both sandboxed AND launched by SMLoginItemSetEnabled().\r\n\r\nNotes:\r\n\r\nThis is preventing my shipping app from being sandboxed. It is also not clear to me if this is a bug or desired behavior. If it is intended behavior, then this bug report is for documenting the behavior somewhere, and adding an entitlement (or another way) to have CGWindowListCopyWindowInfo() succeeded in these circumstances."
+    email: andyfinnell@mac.com
+    modified: "2012-02-21T21:28:10.873291Z"
+    number: "10905456"
+    number_intvalue: 10905456
+    originated: 21-Feb-2012 01:25 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 11D50b
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CGWindowListCopyWindowInfo fails in Sandbox app launched SMLoginItemSetEnabled

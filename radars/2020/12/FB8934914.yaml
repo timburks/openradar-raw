@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8934914
+    labels:
+        datastore_id: "4972788083326976"
+data:
+    classification: Unexpected behavior
+    created: "2020-12-10T01:44:03.825977Z"
+    description: "A basic AVAssetReader/AVAssetWriter setup produces full color range video (yuvj420p(pc, bt709)) on iOS 14.3 and TV range video (yuv420p(tv, bt709)) on iOS 14.1. Is this expected behavior, and if so, is there a way to control this?\r\n\r\n---\r\n\r\n    AVAsset *const asset = [AVAsset assetWithURL:url];\r\n    AVAssetTrack *const videoTrack = [[asset tracksWithMediaType:AVMediaTypeVideo] firstObject];\r\n    NSError *error = nil;\r\n    AVAssetReader *const assetReader = [AVAssetReader assetReaderWithAsset:asset error:&error];\r\n    XCTAssertNil(error);\r\n    AVAssetWriter *const assetWriter = [AVAssetWriter assetWriterWithURL:outputUrl fileType:AVFileTypeMPEG4 error:&error];\r\n    XCTAssertNil(error);\r\n\r\n    NSMutableDictionary *const compressionProperties = [NSMutableDictionary new];\r\n    compressionProperties[AVVideoAverageBitRateKey] = @(bitRate);\r\n\r\n    if (profile) {\r\n        compressionProperties[AVVideoProfileLevelKey] = profile;\r\n    }\r\n\r\n    AVAssetWriterInput *const input = [[AVAssetWriterInput alloc] initWithMediaType:AVMediaTypeVideo\r\n                                                                     outputSettings:@{\r\n                                                                         AVVideoCodecKey: codec,\r\n                                                                         AVVideoWidthKey: @(720),\r\n                                                                         AVVideoHeightKey: @(1280),\r\n                                                                         AVVideoCompressionPropertiesKey: compressionProperties,\r\n                                                                     }];\r\n    input.transform = videoTrack.preferredTransform;\r\n\r\n    AVAssetReaderOutput *const output = [[AVAssetReaderTrackOutput alloc] initWithTrack:videoTrack\r\n                                                                         outputSettings:@{\r\n                                                                             (id)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA),\r\n                                                                         }];\r\n\r\n    [assetReader addOutput:output];\r\n    [assetWriter addInput:input];\r\n\r\n    XCTAssertNil(assetReader.error);\r\n    XCTAssertNil(assetWriter.error);\r\n\r\n    CFTimeInterval start = CACurrentMediaTime();\r\n\r\n    [assetReader startReading];\r\n    [assetWriter startWriting];\r\n\r\n    [assetWriter startSessionAtSourceTime:kCMTimeZero];\r\n\r\n    const dispatch_queue_t queue = dispatch_queue_create(\"transcode\", DISPATCH_QUEUE_SERIAL);\r\n    const dispatch_semaphore_t transcode = dispatch_semaphore_create(0);\r\n    [input requestMediaDataWhenReadyOnQueue:queue usingBlock:^{\r\n        while ([input isReadyForMoreMediaData]) {\r\n            const CMSampleBufferRef sampleBuffer = [output copyNextSampleBuffer];\r\n\r\n            XCTAssertNil(assetReader.error);\r\n            XCTAssertNil(assetWriter.error);\r\n\r\n            if (sampleBuffer) {\r\n                [input appendSampleBuffer:sampleBuffer];\r\n                CFRelease(sampleBuffer);\r\n            } else {\r\n                [input markAsFinished];\r\n                dispatch_semaphore_signal(transcode);\r\n            }\r\n        }\r\n    }];\r\n\r\n    dispatch_semaphore_wait(transcode, DISPATCH_TIME_FOREVER);\r\n\r\n    const dispatch_semaphore_t write = dispatch_semaphore_create(0);\r\n    [assetWriter finishWritingWithCompletionHandler:^{\r\n        dispatch_semaphore_signal(write);\r\n    }];\r\n\r\n    XCTAssertNil(assetWriter.error);\r\n\r\n    dispatch_semaphore_wait(write, DISPATCH_TIME_FOREVER);"
+    email: cellsworth@gmail.com
+    modified: "2020-12-10T01:44:03.826132Z"
+    number: FB8934914
+    number_intvalue: 8934914
+    originated: "2020-12-09"
+    parent_number: '&{NULL_VALUE}'
+    product: AVFoundation
+    product_version: "14.3"
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: iOS 14.3 AVAssetWriter produces full range color video

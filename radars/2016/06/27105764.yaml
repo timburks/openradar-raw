@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27105764"
+    labels:
+        datastore_id: "4943780859871232"
+data:
+    classification: ""
+    created: "2016-06-30T13:52:17.53887Z"
+    description: "Summary:\r\nWhen XML data contains elements consisting of certain offending characters like the en dash (–), umlauts or Emoji, an attempt to convert such XML documents into the ISO-8859-15 character set (and others) fails. Worse, in addition the XML document's validity is broken because a closing quotation mark is omitted in the resulting XML.\r\n\r\nSteps to Reproduce:\r\nPaste the following code into a macOS playground:\r\n\r\nimport Cocoa\r\n\r\n// Select an offending character, for example a simple – a.k.a. &ndash; a.k.a. U+2013 (nothing too exotic, is it?)\r\n// The bug is also triggered by other characters such as Ä or \U0001F914.\r\nlet char = \"–\"\r\n\r\n// Create a XML document which contains the offending character.\r\nlet attribute = XMLElement.attribute(withName: \"enDash\", stringValue: char) as! XMLNode\r\nlet element = XMLElement.element(withName: \"Demo\", children: nil, attributes: [attribute]) as! XMLElement\r\nlet doc = XMLDocument.document(withRootElement: element) as! XMLDocument\r\n\r\n// This is the statement that causes the bug.\r\n// Some other encodings, f.ex. \"UTF-8\" or \"ISO-2022-KR\", do work correctly.\r\ndoc.characterEncoding = \"ISO-8859-15\"\r\n\r\n// This object already contains corrupted XML. The next step is only necessary to visualize it.\r\nlet data = doc.xmlData\r\n\r\n// Prints\r\n//      <Demo enDash=\"&#34;></Demo>\r\n// and renders the whole XML invalid because of the missing closing quotation mark after the semicolon.\r\n//\r\n// It *should* print the following:\r\n//      <Demo enDash=\"–\"></Demo>\r\nprint(String.init(data: data, encoding: String.Encoding.utf8)!)\r\n\r\nExpected Results:\r\nCocoa should be able to correctly translate the whole XML into the ISO-8859-15 charset.\r\n\r\nActual Results:\r\nIt fails converting the offending character, which is bad, but additionally breaks the XML's validity by omitting a closing quotation mark:\r\n<Demo enDash=\"&#34;></Demo>\r\n\r\nVersion:\r\nXcode 8.0 beta (8S128d)\r\nOS X 10.11.5 (15F34)\r\n\r\nConfiguration:\r\nThis bug is present in OS X SDKs down to at least version 10.9"
+    email: kastansn@gmail.com
+    modified: "2016-06-30T13:52:17.53905Z"
+    number: "27105764"
+    number_intvalue: 27105764
+    originated: 2016/06/30
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: (NS)XMLElement fails to correctly encode certain characters when using ISO-8859-* charsets, breaking the resulting XML's validity

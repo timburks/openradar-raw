@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7939738"
+    labels:
+        datastore_id: "352401"
+data:
+    classification: Other Bug
+    created: "2010-05-12T13:56:39.030125Z"
+    description: "Summary:\r\nkinit options for address-less ticketing are different than what the man page states they should be on a 10.6.3 system.\r\n\r\nExample/Reproduction steps:\r\n[To properly reproduce, you will need access to a Kerberos 5 realm and a valid user principal in that realm].\r\n\r\nThe kinit man page lists these flags, relative to a ticket's address state:\r\n\r\n -a     request tickets containing the host's local address(es).\r\n\r\n -A     request address-less tickets.\r\n\r\nIn practice though, those options are swapped. Here is an example from a productions system (actual names have been changed):\r\n\r\nLast login: Tue May  4 07:56:28 on ttys001\r\nd-v16425:~ adnetmin$ kinit -a username@KREALM.GOV    <------ “-a” should get a ticket with an address…\r\nPlease enter the password for username@KREALM.GOV: \r\nd-v16425:~ adnetmin$ klist -a\r\nKerberos 5 ticket cache: 'API:Initial default ccache'\r\nDefault principal: username@KREALM.GOV\r\n\r\nValid Starting     Expires            Service Principal\r\n05/04/10 07:57:43  05/04/10 17:57:29  krbtgt/KREALM.GOV@KREALM.GOV\r\n\trenew until 05/11/10 07:57:43\r\n\tAddresses: (none)\t\t\t\t\t\t\t<-------- … but no address is listed\r\n\r\nd-v16425:~ adnetmin$ kdestroy\r\nd-v16425:~ adnetmin$ kinit -A username@KREALM.GOV    <-------“-A” should get a ticket that is address-less…\r\nPlease enter the password for username@KREALM.GOV: \r\nd-v16425:~ adnetmin$ klist -a\r\nKerberos 5 ticket cache: 'API:Initial default ccache'\r\nDefault principal: username@KREALM.GOV\r\n\r\nValid Starting     Expires            Service Principal\r\n05/04/10 07:58:12  05/04/10 17:58:07  krbtgt/KREALM.GOV@KREALM.GOV\r\n\trenew until 05/11/10 07:58:12\r\n\tAddresses: d-v16425.dhcp.krealm.gov\t\t\t<------- … yet there is an address listed.\r\n\r\nNotes:\r\nHave duplicated on an out of the box system without custom krb5.conf file. A machine running 10.5.8 uses the -a and -A flags correctly as stated in the man page"
+    email: zoocoup@gmail.com
+    modified: "2011-08-28T05:41:37.4574Z"
+    number: "7939738"
+    number_intvalue: 7939738
+    originated: 04-May-2010
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.3 build 10d573
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: kinit option for address-less tickets is incorrect

@@ -1,0 +1,83 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21783908"
+    labels:
+        datastore_id: "4938243808165888"
+data:
+    classification: Other Bug
+    created: "2015-07-12T01:47:12.44265Z"
+    description: |-
+        Summary:
+        Xcode’s autocompletion for the *LiteralConvertible protocols defined in Swift’s stdlib uses the typealias from the protocol definitions, which is never actually what you want; you want a specific type for the literal.
+
+        Also, doing so crashes the Swift frontend right now (rdar://21783882) which is cool I guess.
+
+        Steps to Reproduce:
+        1. Write this code:
+        struct S: StringLiteralConvertible {
+        	init
+        }
+        2. Immediately after `init` bring up the autocompletion panel (ctrl space does it on my machine but I honestly have no idea if that’s the default shortcut or one which I assigned).
+        3. Select the init(stringLiteral) autocompletion.
+
+        Expected Results:
+        I expected it to result in:
+        struct S: StringLiteralConvertible {
+        	init(stringLiteral value: String) {
+        		<#code#>
+        	}
+        }
+
+
+        Actual Results:
+        It actually resulted in:
+        struct S: StringLiteralConvertible {
+        	init(stringLiteral value: Self.StringLiteralType) {
+        		<#code#>
+        	}
+        }
+
+
+        Regression:
+        N/A
+
+        Notes:
+        This result is “correct” insofar as it’s what the protocol defines:
+        protocol StringLiteralConvertible : ExtendedGraphemeClusterLiteralConvertible {
+            typealias StringLiteralType
+
+            /// Create an instance initialized to `value`.
+            init(stringLiteral value: Self.StringLiteralType)
+        }
+
+        However, you’re never going to define a separate StringLiteralType typealias, you’re going to let the compiler infer it. And you’re almost never going to use anything other than String; you might use StaticString if you’re particularly mean-spirited, but it’s unclear that there are any other types you could use. IntegerLiteralType clearly has more possible alternatives than StringLiteralConvertible, but you’re encouraged to just use Int instead of any of them. And is there any other possible BooleanLiteralType at all?
+
+        If you felt like accommodating the possibilities, then you could provide completions for each:
+
+        1. init(stringLiteral value: String) {
+        	<#code#>
+        }
+        2. init(stringLiteral value: StaticString) {
+        	<#code#>
+        }
+
+        Or you could make the type into a completion placeholder containing the global StringLiteralType typealias’ value:
+
+        init(stringLiteral value: <#String#>) {
+        	<#code#>
+        }
+
+        But for my money you could get away with just providing String and letting folks take care of the weird cases themselves.
+    email: rix.rob@gmail.com
+    modified: "2015-07-12T01:47:12.44298Z"
+    number: "21783908"
+    number_intvalue: 21783908
+    originated: 11-Jul-2015 09:47 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A152u)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 7.0b3: Autocompletion for *LiteralConvertible constructors uses dumb typealias instead of actual types'

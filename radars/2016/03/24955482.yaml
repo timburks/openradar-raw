@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24955482"
+    labels:
+        datastore_id: "5057586084708352"
+data:
+    classification: UI/Usability
+    created: "2016-03-03T17:58:12.90794Z"
+    description: "Summary:\r\nOften when I write code using the NSURLSession API, I initially write this:\r\n\r\n    let config = NSURLSessionConfiguration()\r\n    let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)\r\n\r\nWhen I write this, my expectation is that config will be a default session configuration. But this code crashes at runtime with an \"unrecognized selector\" error.\r\n\r\nThe correct code is\r\n\r\n    let config = NSURLSessionConfiguration.defaultSessionConfiguration()\r\n\r\nI find it surprising that calling the default (and only) constructor for NSURLSessionConfiguration results in an unusable instance. Some web searches indicate that other people have been similarly surprised.\r\n\r\nI propose that the NSURLSessionConfiguration no-arg constructor be changed so that it produces the same result as defaultSessionConfiguration(). If that would have a bad effect on existing applications, then I propose that the no-arg constructor be deprecated (with a warning from Xcode when used) in favor of a new constructor that makes the intent explicit, like\r\n\r\n    NSURLSessionConfiguration(usingDefaultConfiguration: bool)\r\n\r\nSteps to Reproduce:\r\nPaste the following into an OS X Swift Playground:\r\n\r\nimport Cocoa\r\nimport XCPlayground\r\n\r\nXCPlaygroundPage.currentPage.needsIndefiniteExecution = true\r\n\r\n// This should be \"let config = NSURLSessionConfiguration.defaultSessionConfiguration()\"\r\nlet config = NSURLSessionConfiguration()\r\n\r\nlet url = NSURL(string: \"http://www.apple.com\")!\r\nlet session = NSURLSession(configuration: config, delegate: nil, delegateQueue: nil)\r\nlet dataTask = session.dataTaskWithURL(url) { (data, response, error) in\r\n    if let error = error {\r\n        print(\"error: \\(error.localizedDescription)\")\r\n    }\r\n    else {\r\n        print(\"Received response\")\r\n    }\r\n}\r\ndataTask.resume()\r\n\r\n\r\nExpected Results:\r\nShould see \"Received response\" printed.\r\n\r\nActual Results:\r\nPlayground displays \"Execution was interrupted, reason signal SIGABRT\", with this in the debug output:\r\n\r\n2016-03-03 12:49:34.919 URLSessionPlayground[17149:566179] -[NSURLSessionConfiguration disposition]: unrecognized selector sent to instance 0x7f8900426750\r\n\r\n\r\nThis can be fixed by changing \"NSURLSessionConfiguration()\" to \"NSURLSessionConfiguration.defaultSessionConfiguration()\"\r\n\r\nVersion:\r\nXcode 7.2.1 (7C1002) and OS X 10.11.3 (15D21)\r\n\r\nNotes:\r\nThis issue is described for the OS X SDK, where I have tested it, but I believe this also applies to the iOS and tvOS SDKs."
+    email: kristopherdjohnson@gmail.com
+    modified: "2016-03-03T17:58:12.90812Z"
+    number: "24955482"
+    number_intvalue: 24955482
+    originated: 03-Mar-2016 12:56 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: Xcode 7.2.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSURLSessionConfiguration default constructor has surprising behavior

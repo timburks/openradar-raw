@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8934759"
+    labels:
+        datastore_id: "1062402"
+data:
+    classification: ""
+    created: "2011-01-29T22:05:06.653742Z"
+    description: "29-Jan-2011 02:00 PM David Wheeler:\r\nSummary:\r\n\r\nWhen using -presentModalViewController to present a modal view controller whose view has its background set to [UIColor clearColor], said transparency is ignored.\r\n\r\nSteps to Reproduce:\r\n\r\n• Run the attached sample code in the simulator.\r\n• Rotate the simulator to Landscape orientation\r\n• Tap the \"Present Modal View Controller\" button\r\n\r\nExpected Results:\r\n\r\nThe modal view should be presented but the root view's background should still be visible, though dimmed. This is because the modal view has its background set to [UIColor clearColor] and the presentation style is UIModalPresentationPageSheet.\r\n\r\nActual Results:\r\n\r\nThe root view's background is present and dimmed on either side of the the modal view, but not under the modal view. Instead, the modal view is opaque, a light grey color.\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\nI suppose that it could be argued that the modal view should not have any transparency. However, I ran into this when I aadded a UIPanGestureRecognizer to the toolbar in the modal view, so that I could add a gesture to drag the modal view a bit and it would close.\r\n\r\nSteps to Reproduce:\r\n\r\n• Back in the app, Tap the \"Present Modal View Controller\" button again\r\n• Tap the \"Change Color\" button to change the modal view's background color to blue.\r\n• Tap on the toolbar and drag it down a bit.\r\n• Observe the grey that appears\r\n• Drag the toolbar 100+ pixels down and let go to trigger the dismissal of the modal view.\r\n\r\nExpected Results:\r\n\r\nThe background of the root view should appear (dimmed) above the modal view as the modal view is dragged down, as if it was behind it all along. It should continue to be revealed as the modal view is dismissed.\r\n\r\nActual Results:\r\n\r\nThe same opaque grey color is revealed behind the modal view. When the view is dragged far enough to trigger the dimsissal, it slides down and the grey does, too, at the same rate.\r\n\r\nNotes:\r\n\r\nI assume that when a modal view is created, a snapshot is taken of the parent view and it is drawn in on either side of the modal view in landscape mode. Behind the modal view, there is no image drawn, or perhaps it is just drawn in in the opaque grey. I like that the parent view is replaced by an image, so that it can be unloaded in the event of a memory warning. However, I think that a complete snapshot of the parent view should be taken and placed below the modal view, so that if the modal view has any transparent parts, or is dragged aside by a gesture, the parent view *appears* to still be in place below it.\r\n\r\nAs a workaround I will be presenting the view myself, as discussed in these forums:\r\n\r\n  http://stackoverflow.com/questions/2578614/\r\n  http://discussions.apple.com/thread.jspa?messageID=7950010\r\n\r\nBut I'm sorry to lose the ability to have the parent view removed in the event of a memory warning.\r\n\r\n \r\nFor Open Radar, the sample code is here: http://www.kineticode.com/code/DragModalDialog.zip"
+    email: justatheory@gmail.com
+    modified: "2014-01-03T18:51:26.178741Z"
+    number: "8934759"
+    number_intvalue: 8934759
+    originated: "2011-01-28"
+    parent_number: '&{NULL_VALUE}'
+    product: iPad SDK
+    product_version: 4.2.1 (8C148)
+    reproducible: Always
+    resolved: Closed
+    status: Behaves correctly
+    title: -presentModalViewController Does not Respect the View's transparency

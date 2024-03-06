@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22008452"
+    labels:
+        datastore_id: "5105554259181568"
+data:
+    classification: UI/Usability
+    created: "2015-07-27T12:06:26.00001Z"
+    description: "Summary:\r\nLaunching an app that displays a UITableView with static cells (managed by a UITableViewController inside a storyboard) with non-custom styles (UITableViewCellStyleDefault, UITableViewCellStyleValue1, etc.), then changing Dynamic Type font size while that app is running, makes these static cells completely lose their content.\r\n\r\nThis issue is related to the \"automatic Dynamic Type support\" added into UITableViewCell in iOS 8. UITableViewCell with one of the standard styles internally observes the Dynamic Type font size change notification, and when it is posted, *removes* its textLabel and detailTextLabel from itself. This usually doesn't cause issues, since UITableView with dynamic content usually causes a data reload to be performed afterwards, which makes the table data source to re-set content on cell labels – recreating these labels on demand. However, this does not happen with static tables since static cells are created all at once and do not change. As a result, labels are removed but are not recreated.\r\n\r\nSteps to Reproduce:\r\n1. Create an app containing a storyboard with UITableViewController managing a static table.\r\n2. Add a few cells into the static table, setting the style of those cells to one of standard ones (UITableViewCellStyleDefault, UITableViewCellStyleValue1, etc.)\r\n3. Launch the app and display the static table.\r\n4. Switch to the Settings app.\r\n5. Go to Dynamic Type settings and change the font size.\r\n6. Switch back into the app.\r\n\r\nExpected Results:\r\nStatic table keeps its content; cells adjust the font size of their labels according to the changed Dynamic Type setting.\r\n\r\nActual Results:\r\nStatic table becomes empty, all labels from the cells are completely gone.\r\n\r\nVersion:\r\niOS 8.0 and newer, including iOS 9 beta 4\r\n\r\nNotes:\r\nA workaround for this issue is to use a subclass of UITableViewCell for static cells, which manually removes the base implementation from observing Dynamic Type notifications and adds custom handling of these.\r\n\r\nAttached project demonstrates the issue using a simple storyboard.\r\n\r\nThis issue can also occasionally manifest itself in dynamic cells, but exact steps to reproduce that were not found. Theoretically, that's caused by table reload not being performed.\r\n\r\nConfiguration:\r\nAny hardware or simulator\r\n\r\nAttachments:\r\n'DynamicTypeTableCells.zip' was successfully uploaded."
+    email: argentumko@gmail.com
+    modified: "2016-03-05T06:09:20.17683Z"
+    number: "22008452"
+    number_intvalue: 22008452
+    originated: 27-Jul-2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 8.0+
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 17963356 (Open)
+    title: UITableView showing static cells with standard styles loses content when Dynamic Type font size is changed

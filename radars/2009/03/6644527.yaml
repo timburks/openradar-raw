@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6644527"
+    labels:
+        datastore_id: "12402"
+data:
+    classification: Security
+    created: "2009-03-04T10:38:49.156536Z"
+    description: "04-Mar-2009 02:34 AM Michael Lowry:\r\nSummary:\r\nBoth Safari 3 and the public beta of Safari 4 can do SPNEGO authentication, and can use the user's Kerberos credentials to authenticate with a web server, provided that the user has already been granted a Kerberos ticket.\r\n\r\nHowever, Safari does not appear to be able to forward forwardable Kerberos tickets to a worker program running on the web server. This prevents some web applications that rely on such tickets for authentication from working.\r\n\r\nSteps to reproduce:\r\n1. Obtain a forwardable Kerberos ticket. This can be done at login if the user is a Mobile (Active Directory) user and the proper settings for obtaining a forwardable ticket have been entered into /Library/Preferences/edu.mit.Kerberos. Otherwise, it can be done by running 'kinit -f username' from the command line.\r\n2. Verify that a forwardable ticket-granting ticket has been received. Do this by running 'klist -f' from the command line. Sample output from my machine:\r\n$ klist -f\r\nKerberos 5 ticket cache: 'API:Initial default ccache'\r\nDefault principal: mlo@ZURICH.IBM.COM\r\n\r\nValid Starting     Expires            Service Principal\r\n03/04/09 11:18:21  03/04/09 21:18:21  krbtgt/ZURICH.IBM.COM@ZURICH.IBM.COM\r\n        renew until 03/11/09 11:18:21, FPRIA\r\n\r\nThe F in the flags (FPRIA) means that the ticket is forwardable.\r\n3. Run Safrai and navigate to a web page that uses Kerberos for authentication. This much will work.\r\n4. Navigate to a part of the page that forwards the user's credentials to a worker program on the web server.\r\n\r\nExpected Results:\r\nThe web server will be able to pass the user's kerberos ticket to the worker program. This program will be able to authenticate the user. It will do its work and the web server will be able to serve the page the user requested.\r\n\r\nActual Results:\r\nSafari does not provide a forwardable Kerberos ticket to the web server. When the web server spawns the worker program, the worker program does not receive the user's credentials. It fails to authenticate the user, and is unable to proceed. The web page fails to load.\r\n\r\nRegression:\r\nFirefox properly handles forwardable Kerberos tickets."
+    email: michael.lowry@gmail.com
+    modified: "2011-08-28T05:47:45.543676Z"
+    number: "6644527"
+    number_intvalue: 6644527
+    originated: 2009/03/04
+    parent_number: '&{NULL_VALUE}'
+    product: Safari
+    product_version: 3, 4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Kerberos ticket forwarding doesn't work in Safari

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10925941"
+    labels:
+        datastore_id: "1531404"
+data:
+    classification: Serious Bug
+    created: "2012-02-24T11:17:44.031725Z"
+    description: "Summary:\r\n\r\nA simple application using the same NSTableViewDataSource methods as the basic table view in \r\n\r\nSteps to Reproduce:\r\n\r\n1. Create new Cocoa application in Xcode with default settings (non-document, no ARC etc)\r\n2. Drag NSTableView to window in MainMenu.xib\r\n3. Set table view's content mode to View Based\r\n4. Connect table view's datasource and delegate to app delegate in MainMenu.xib\r\n5. Add tableView property to app delegate\r\n6. Add simple numberOfRowsInTableView: and tableView:viewForTableColumn:row: methods as shown in attached sample project\r\n7. Set table view NSTableCellView identifier to 'MainCell'\r\n\r\nThe table view works fine up to this point.  When run, the datasource contents are shown\r\n\r\n8. Connect tableView property from app delegate to table view in MainMenu.xib\r\n\r\nProgram now crashes with assertion failure.  Crash can be reversed by removing connection from app delegate to tableView\r\n\r\nExpected Results:\r\ndata from content array displayed in table\r\n\r\nActual Results:\r\n\r\n*** Assertion failure in -[NSTableRowData _addRowViewForVisibleRow:withPriorView:], /SourceCache/AppKit/AppKit-1138.32/TableView.subproj/NSTableRowData.m:2484\r\n2012-02-24 21:52:47.722 BrokenVBTV[87289:403] An uncaught exception was raised\r\n2012-02-24 21:52:47.723 BrokenVBTV[87289:403] Row 1 should be in the valid visible section\r\n2012-02-24 21:52:47.737 BrokenVBTV[87289:403] (\r\n\t0   CoreFoundation                      0x00007fff94e8dfc6 __exceptionPreprocess + 198\r\n\t1   libobjc.A.dylib                     0x00007fff8ffe9d5e objc_exception_throw + 43\r\n\t2   CoreFoundation                      0x00007fff94e8ddfa +[NSException raise:format:arguments:] + 106\r\n\t3   Foundation                          0x00007fff966c4743 -[NSAssertionHandler handleFailureInMethod:object:file:lineNumber:description:] + 169\r\n\t4   AppKit                              0x00007fff9522b0f7 -[NSTableRowData _addRowViewForVisibleRow:withPriorView:] + 164\r\n\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\n\r\n--------\r\nHeader file\r\n\r\n#import <Cocoa/Cocoa.h>\r\n\r\n@interface TLAAppDelegate : NSObject <NSApplicationDelegate, NSTableViewDataSource, NSTableViewDelegate>\r\n{\r\n\tNSMutableArray *contentArray;\r\n}\r\n\r\n@property (assign) IBOutlet NSWindow *window;\r\n@property (assign) IBOutlet NSTableView *tableView;\r\n\r\n- (UInt) numberOfRowsInTableView: (NSTableView *) tableView;\r\n- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row;\r\n\r\n\r\n0-----\r\n\r\nImplementation file\r\n\r\n#import \"TLAAppDelegate.h\"\r\n\r\n@implementation TLAAppDelegate\r\n\r\n@synthesize window = _window;\r\n@synthesize tableView = _tableView;\r\n\r\n- (void)dealloc\r\n{\r\n\t[contentArray release];\r\n\t\r\n    [super dealloc];\r\n}\r\n\r\n- (void) awakeFromNib;\r\n{\r\n\tcontentArray = [[NSArray arrayWithObjects: @\"First Thing\", @\"Second Thing\", @\"Third Thing\", nil] retain];\r\n\t[_tableView reloadData];\r\n}\r\n\r\n- (UInt) numberOfRowsInTableView: (NSTableView *) tableView;\r\n{\r\n\tNSLog (@\"Count: %li\", [contentArray count]);\r\n\treturn [contentArray count];\r\n}\r\n\r\n- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {\r\n\t\r\n\tNSLog (@\"row %li %@\", row, [contentArray objectAtIndex: row]);\r\n\t\r\n\tNSTableCellView *cellView = [tableView makeViewWithIdentifier: @\"MainCell\" owner:self];\r\n\tcellView.textField.stringValue = [contentArray objectAtIndex: row];\r\n\treturn cellView;\r\n}"
+    email: brettper@thelonelyant.com
+    modified: "2012-03-03T02:56:20.99198Z"
+    number: "10925941"
+    number_intvalue: 10925941
+    originated: 24/2/2012
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS SDK
+    product_version: 10.7.3
+    reproducible: Always
+    resolved: Duplicate (10925830)
+    status: Closed
+    title: NSAssertionFailure upon launch with view based table

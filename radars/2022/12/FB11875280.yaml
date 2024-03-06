@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB11875280
+    labels:
+        datastore_id: "5537123767681024"
+data:
+    classification: ""
+    created: "2022-12-15T09:17:18.18245Z"
+    description: "Xcode 14.2 fails to compile tests (Missing required module 'xyz') if an app depends on a package with transitive Objective-C target.\r\nIt happens all the time when trying to compile unit tests.\r\n\r\nThe default `TEST_HOST` build setting set in Xcode 14.2 seems to be wrong and makes the test target fail to compile (\"Missing required module 'xyz'\") if the app target depends on SPM package that transitively links Objective-C target. This corresponds o typical vendor setup of offering Swift lib with Obj-c utility target.\r\n\r\nAccording to our observation, the problem disappears when `/$(BUNDLE_EXECUTABLE_FOLDER_PATH)` is removed from the default `TEST_HOST` path set by Xcode 14.2:\r\n```\r\n$(BUILT_PRODUCTS_DIR)/X14App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/X14App\r\n```\r\nOtherwise, the default TEST_HOST path resolves to include `../X14App.app//X14App` which makes the build process fail on `modulemap` lookup (as `-Xcc -fmodule-map-file=(...).modulemap\"` is not added in `SwiftEmitModule` build step).\r\n\r\n### Steps to reproduce manually:\r\n1. Create SPM package that provides Swift library with internal Objective-C target (see sample structure + content in appendix).\r\n2. Create new iOS app project with unit tests using Xcode 14.2.\r\n3. Link SPM package to the app target (either locally or through git remote).\r\n4. Build app target - it works.\r\n5. Build unit tests target - it fails due to \"<unknown>:0: error: missing required module 'objc_target'\"\r\n\r\n### Alternatively: \r\n1. Open the attached project (XC14App.xcworkspace)\r\n2. Build unit tests target - it fails due to \"<unknown>:0: error: missing required module 'objc_target'\"\r\n\r\n### Appendix\r\n\r\nThe structure of sample SPM package with minimal code examples sufficient to reproduce the problem manually:\r\n```\r\nspm-lib/\r\n  Package.swift\r\n  Sources/\r\n    spm-lib/\r\n       SwiftLib.swift\r\n    objc-target/\r\n       include/ObjcFoo.h\r\n       ObjcFoo.m\r\n```\r\n\r\n```\r\n// Package.swift\r\n// swift-tools-version: 5.7\r\n\r\nimport PackageDescription\r\n\r\nlet package = Package(\r\n    name: \"spm-lib\",\r\n    products: [\r\n        .library(name: \"spm-lib\", targets: [\"spm-lib\"]),\r\n    ],\r\n    dependencies: [],\r\n    targets: [\r\n        .target(name: \"spm-lib\", dependencies: [\"objc-target\"]),\r\n        .target(name: \"objc-target\"),\r\n    ]\r\n)\r\n```\r\n\r\n```\r\n// ObjcFoo.h\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\n@interface ObjcFoo : NSObject\r\n-(NSString *)foo;\r\n@end\r\n```\r\n\r\n```\r\n// ObjcFoo.m\r\n\r\n#import \"ObjcFoo.h\"\r\n\r\n@implementation ObjcFoo\r\n- (NSString*)foo {\r\n    return @\"objc foo\";\r\n}\r\n@end\r\n```\r\n\r\n```\r\n// SwiftLib.swift\r\n\r\nimport objc_target\r\n\r\npublic struct SwiftLib {\r\n    public var text: String { ObjcFoo().foo() }\r\n    public init() {}\r\n}\r\n```"
+    email: ncreated@gmail.com
+    modified: "2022-12-15T09:17:18.182589Z"
+    number: FB11875280
+    number_intvalue: 11875280
+    originated: 15th December 2022
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: "14.2"
+    reproducible: always
+    resolved: ""
+    status: open
+    title: Xcode 14.2 fails to compile tests if an app depends on a package with transitive Objective-C target (Missing required module 'xyz')

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27822963"
+    labels:
+        datastore_id: "4931972166057984"
+data:
+    classification: ""
+    created: "2016-08-12T14:31:34.03911Z"
+    description: "Summary:\r\nOur push notification SDK is being enhanced to support iOS 10's UserNotification.framework. We are confident in the solution you've provided and look forward to its simplicity.\r\n\r\nHowever, we also must design our library for backwards compatibility, in two ways:\r\n- allow library to be included in an application built with Xcode 7, with a minimum deployment target of iOS 8 (until Apple prevents submissions from Xcode 7)\r\n- allow library to be included in an application build with Xcode 8, but with deprecated (old style UIApplication) notification registration.\r\n\r\nWe believe we have identified an issue with the second case, with the application running on iOS 10 b4 on an iPod touch.\r\n\r\nIf \r\n\r\n- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))handler\r\n\r\nis implemented, but NOT \r\n\r\n-(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo\r\n\r\n-application:didReceiveRemoteNotification:fetchCompletionHandler: will NOT be called when a notification is received while the app is in the background.\r\n\r\nThis is contrary to documentation, and contrary to the *same* project (Xcode 8 b5, etc.) running on an iOS 9.3 device.\r\n\r\nBecause of this, behavior of a \"legacy\" app (albeit using deprecated methods) will find an issue in handling push notification payloads properly, as the delegate expected to be called in the background never is.\r\n\r\nFurthermore, tapping on the notification (and bringing the app to the foreground) does NOT trigger the delegate method either, meaning that the notification is essentially unhanded.\r\n\r\nA sample project has been attached; while this implements the entirety of our SDK please focus on the code in AppDelegate+ETPush.m.\r\n\r\nTo test this, we've used Pusher to send payloads directly to the device, as well as via the larger system having generated payloads via Salesforce Marketing Cloud's push interface.\r\n\r\nSteps to Reproduce:\r\n-Using Xcode 8 b5:\r\n-Using device with iOS 10 b5\r\n\r\n1. Open the \"MarketingCloud.xcodeproj\" in the attached directory\r\n2. Configure signing for push notifications for your specific configuration\r\n3. Run the MarketingCloud target on your device\r\n4. Look for log messages which say \"******** Device Token registered:\" and extract your device token\r\n5. Place a breakpoint in -application:didReceiveRemoteNotification:fetchCompletionHandler:\r\n6. With app in foreground, send a push notification. Confirm breakpoint is hit.\r\n7. Switch app to background, send a push notification. Confirm breakpoint is hit.\r\n\r\n\r\nExpected Results:\r\nBoth breakpoints will be hit.\r\n\r\nActual Results:\r\nWith app in background, breakpoint is not hit - meaning that -application:didReceiveRemoteNotification:fetchCompletionHandler: is never called.\r\n\r\nVersion:\r\niOS 10 beta 5 (14A5335b)\r\n\r\nNotes:\r\nSeems similar, in a strange way (delegate confusion?) to rdar://27194349 (http://www.openradar.me/radar?id=5587160786796544).\r\n\r\nPlease let me know how I can help on this.\r\n\r\nConfiguration:\r\niPod touch 6th generation, WiFi\r\n\r\nAttachments:"
+    email: bcriscuolo@warmwindssoftware.com
+    modified: "2016-08-12T14:31:34.03931Z"
+    number: "27822963"
+    number_intvalue: 27822963
+    originated: 08/12/16
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 10 beta 5 (14A5335b)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'iOS 10: push notifications don''t call delegate method consistently'

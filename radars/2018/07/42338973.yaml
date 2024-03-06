@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "42338973"
+    labels:
+        datastore_id: "5587539993821184"
+data:
+    classification: Serious Bug
+    created: "2018-07-18T16:59:37.2883Z"
+    description: "I ran into an odd compiler error when I was trying to return the results of a map() in a function that used a generic type from a class. The error message was:\r\n  error: 'map' produces '[T]', not the expected contextual result type '[Person]'\r\n        return data.map({ Person(firstName: $0) })\r\n\r\nThe code causing this error is:\r\nclass MyPersonClass : MyGenericSuperclass<[(String, String)]> {\r\n    override func mapPeople(from data: [(String, String)]) -> [Person] {\r\n==>     return data.map({ Person(firstName: $0) })\r\n    }\r\n}\r\n\r\nPerson is defined as\r\nstruct Person {\r\n    public var firstName : String\r\n    public var lastName : String?\r\n}\r\n\r\nI incorrectly assumed that since lastName was optional I didn't need to pass it in the initializer for Person, but I got sent down a weird path because this error message has nothing to do with the initializer for Person. I assumed I was doing something wrong with map() or with the arguments or return type of that function.\r\n\r\nI would expect that Swift would have the same error for this bad initializer inside of a map as it would when I try to do this outside of a map call:\r\n\r\nerror: missing argument for parameter 'lastName' in call\r\nPerson(firstName: \"Jacob\") \r\n                         ^\r\n                         , lastName: <#String?#>"
+    email: pharkas@gmail.com
+    modified: "2018-07-18T16:59:37.2886Z"
+    number: "42338973"
+    number_intvalue: 42338973
+    originated: 7/18/2018
+    parent_number: '&{NULL_VALUE}'
+    product: Swift Compiler
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: Bad error message when struct initializer inside a map is missing an argument

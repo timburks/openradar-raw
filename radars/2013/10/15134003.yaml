@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15134003"
+    labels:
+        datastore_id: "5770331511848960"
+data:
+    classification: Crash
+    created: "2013-10-02T19:16:09.492557Z"
+    description: "Summary:\r\nA crash can occur when using AVFoundation's AVAssetReader and attempting to cancel reading. This seems to occur most often when the cancelReading call occurs soon after startReading is called. The crash does not occur every time, and appears to expose a race condition. The crash always occurs on an AQClient thread, while another thread is calling cancelReading.\r\n\r\nSteps to Reproduce:\r\n1. Create an AVURLAsset for a media file. It's possible that the bug occurs more frequently when the file is on a slower drive, but I've seen it occur when on a fast SSD as well.\r\n2. Create and AVAssetReader with the file.\r\n3. Create an AVAssetReaderTrackOutput with one of the audio tracks from the asset (e.g. the first track).\r\n4. Add that as an output to the asset reader.\r\n5. Call startReading on the asset reader.\r\n6. Call cancelReading on the asset reader.\r\n\r\nPerform the above steps repeatedly until the crash is triggered. I find that if I run 4 threads in tight loops doing this, the crash will always present itself. It may take a few seconds or a few hours, but it will present.\r\n\r\n\r\n\r\nExpected Results:\r\nNo crash\r\n\r\nActual Results:\r\nCrash\r\n\r\nVersion:\r\nXcode 4 and 5\r\nOS X 10.8 at various point releases (most recently 10.8.5/12F37)\r\n\r\nNotes:\r\nI've found I can workaround this by introducing a .2 second delay before calling cancelReading. This seems to generally be enough time for the reader to finish spinning up to avoid the race."
+    email: chad515@gmail.com
+    modified: "2013-10-03T17:07:52.884275Z"
+    number: "15134003"
+    number_intvalue: 15134003
+    originated: 10/02/2013
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.8.5
+    reproducible: Sometimes
+    resolved: No
+    status: Duplicate
+    title: Crash in AQClient when calling -[AVAssetReader cancelReading]

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20119848"
+    labels:
+        datastore_id: "6451017054945280"
+data:
+    classification: ""
+    created: "2015-03-11T12:38:23.998696Z"
+    description: "Hi,\r\n\r\nSwift 1.1 and 1.2 won't let the programmer call a class method defined in a protocol.\r\n\r\nThe use case is the following:\r\n\r\nI'm developping a Swift implementation (https://github.com/groue/GRMustache.swift) of the Mustache template engine (https://mustache.github.io).\r\n\r\nMustache is a template engine which turns \"Hello {{name}}!\" into \"Hello Tom Selleck!\" when given [\"name\": \"Tom Selleck\"]. It replaces Mustache tags with the values it extracts from its input.\r\n\r\nGRMustache.swift performs key extraction from NSObject values with the valueForKey: method. The \"problem\" with valueForKey: is that it can execute any method that does not take any argument, including methods that have side effects. When one renders an untrusted template, this is a security issue. To alleviate this problem, GRMustache.swift will only execute valueForKey: for \"safe\" keys. Those safe keys are, by default, the names of properties. However, there is a protocol, named \"SafeKeyAccess\", which lets a developper expose its own custom list of safe keys:\r\n\r\n@objc protocol SafeKeyAccess {\r\n    static func safeKeys() -> Set<String>\r\n}\r\n\r\nThe problem is that it is impossible, in Swift, to call this method, given an input of type AnyObject:\r\n\r\nfunc safeValueForKey(key: String, inObject object: AnyObject) -> AnyObject? {\r\n    if let safe = object as? SafeKeyAccess {\r\n        // error: accessing members of protocol type value 'SafeKeyAccess.Type' is unimplemented\r\n        let safeKeys = safe.dynamicType.safeKeys()\r\n        if find(safeKeys, key) != nil {\r\n            return object.valueForKey?(key)\r\n        }\r\n    }\r\n    return nil\r\n}\r\n\r\nSince Swift won't help, the GRMustache library has to escape to Objective-C in order to implement this \"safe key-value coding\".\r\n\r\nIn the following lines of code, the GRMustacheKeyAccess.isSafeMustacheKey  method is written in Objective-C: https://github.com/groue/GRMustache.swift/blob/ddabbcd9f0cf9e49d685141133753cdb6241e57e/Mustache/Rendering/MustacheBox.swift#L1447-L1462\r\n\r\nSince there is an Objective-C workaround, the problem is not so big. But you know how things go: now that the library contains a mix of Swift and Objective-C, it can not be shipped as a CocoaPod (the dependency manager), because CocoaPod does not support this kind of project yet, etc. etc. So this limitation is not so nice in the end.\r\n\r\nThanks for reading!\r\n\r\nSteps to Reproduce:\r\nCompile this Swift code:\r\n\r\n@objc protocol SafeKeyAccess {\r\n    static func safeKeys() -> Set<String>\r\n}\r\n\r\nfunc safeValueForKey(key: String, inObject object: AnyObject) -> AnyObject? {\r\n    if let safe = object as? SafeKeyAccess {\r\n        // error: accessing members of protocol type value 'SafeKeyAccess.Type' is unimplemented\r\n        let safeKeys = safe.dynamicType.safeKeys()\r\n        if find(safeKeys, key) != nil {\r\n            return object.valueForKey?(key)\r\n        }\r\n    }\r\n    return nil\r\n}\r\n\r\n\r\nExpected Results:\r\nThe above code compiles.\r\n\r\nActual Results:\r\nThe compiler fails with error \"accessing members of protocol type value 'SafeKeyAccess.Type' is unimplemented\".\r\n\r\nVersion:\r\nXcode Version 6.3 (6D532l)"
+    email: gwendal.roue@gmail.com
+    modified: "2015-03-11T12:38:23.998915Z"
+    number: "20119848"
+    number_intvalue: 20119848
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.3b2
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: 'Swift 1.1 and 1.2: accessing members of protocol type value XXX.Type'' is unimplemented'

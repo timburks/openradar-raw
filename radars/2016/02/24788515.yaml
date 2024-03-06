@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24788515"
+    labels:
+        datastore_id: "4984444200943616"
+data:
+    classification: ""
+    created: "2016-02-23T10:27:28.73349Z"
+    description: "Summary:\r\nI'm using the built-in preprocessor define __ARM_FEATURE_CRC32 to check if the CPU supports the crc32 instructions. If so, I use the __crc32* intrinsics. However, when running on an iPhone6S, I get an EXC_BAD_INSTRUCTION.\r\n\r\nSteps to Reproduce:\r\n1. create an iOS UI application\r\n2. open main.m\r\n3. add: #include <arm_acle.h>\r\n4. replace main with the code below\r\n5. build&run on an iPhone6S (or probably any arm64 device)\r\n\r\nReplacement main:\r\n\r\nint main(int argc, char * argv[]) {\r\n#if __ARM_FEATURE_CRC32\r\n    NSLog(@\"crc32 feature is there!\");\r\n    int result = __crc32b(argc, 1);\r\n    NSLog(@\"result: %d\", result);\r\n#else\r\n    NSLog(@\"no crc32 feature\");\r\n#endif\r\n    @autoreleasepool {\r\n        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));\r\n    }\r\n}\r\n\r\n\r\nExpected Results:\r\nWhen the CPU does support the crc32 instruction, I expect no crash. If the CPU does NOT support it, I expect __ARM_FEATURE_CRC32 to either be defined as 0 (zero), or not defined at all.\r\n\r\nSo, for the example above, I would expect it to either show \"no crc32 feature\", or to show \"crc32 feature is there!\" followed by a line starting with \"result:\".\r\n\r\nActual Results:\r\nThis will show \"crc32 feature is there!\", but crash on the next line where the __crc32b intrinsic is called.\r\n\r\nVersion:\r\nOSX 10.11.3\r\nXcode version: 7.2.1 (7C1002)\r\niOS version: 9.2.1 (13D15)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nOccurs always on an iPhone6S with iOS 9.2\r\n\r\nAttachments:"
+    email: verbruggen.erik@googlemail.com
+    modified: "2018-08-10T09:01:52.04378Z"
+    number: "24788515"
+    number_intvalue: 24788515
+    originated: Feb. 23, 2016
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 7.2.1
+    reproducible: Yes
+    resolved: Wed Feb 24 09:57:49 PST 2016
+    status: Closed
+    title: clang defines __ARM_FEATURE_CRC32 but crc32 instruction is not available

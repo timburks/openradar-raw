@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29206399"
+    labels:
+        datastore_id: "6132224533463040"
+data:
+    classification: Enhancement
+    created: "2016-11-10T21:49:51.43058Z"
+    description: "Summary:\r\nThis goes for all C-based APIs at Apple, but AudioConverter just wasted two work days for me, so this is now an AudioConverter-specific radar.\r\n\r\nAudioConverter's APIs use integer error codes, and has no way of introspecting what that error actually means. kAudioFormatUnsupportedDataFormatError can mean that any field of any of the input or output formats is wrong, or a combination. Internally in the implementation, there was a specific reason for this error to be returned, so a CFErrorRef would be able to have a localized description explaining exactly (or at least roughly) what was wrong with the formats.\r\n\r\nThe same goes for kAudioFormatUnspecifiedError, kAudioFormatUnsupportedPropertyError, kAudioFormatBadPropertySizeError, and other errors that are basically saying \"one of the parameters was wrong somehow\", which is almost impossible to decipher without very deep understanding of the class.\r\n\r\nIn this specific case, I was getting kAudioFormatUnsupportedDataFormatError because my input format said it was a 16-bit unsigned integer PCM format. AudioConverter does not support 16-bit unsigned, but this information is not available in any headers, documentation or even error messages. Instead, I had to trial-and-error for two days to find it.\r\n\r\nFor every if statement returning -50 in your code base replaced with a proper CFErrorRef or NSError, you will be saving your platform developers hundreds of hours of debugging and development time (and I don't even think that's an exaggeration). Please, spend time on this, for our sake.\r\n\r\nSteps to Reproduce:\r\n1. Create an AudioStreamBasicDescription with mFormatFlags set to 0\r\n2. Call AudioConverterCreate with this ASBD as the input format\r\n\r\nExpected Results:\r\n1. Get a CFErrorRef with AudioToolbox as the domain and kAudioFormatUnsupportedDataFormatError as the code, and a localized description (or some other text field) in userinfo explaining which parameter is at fault and why (in this case, \"AudioConverter only supports signed 16-bit PCM, not unsigned. See kAudioFormatFlagIsSignedInteger\").\r\n\r\nActual Results:\r\n1. Get an OSStatus return with kAudioFormatUnsupportedDataFormatError, with a side of tears and frustration.\r\n\r\nVersion:\r\nAll versions of iOS and macOS ever\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nAny\r\n\r\nAttachments:"
+    email: joachimb@gmail.com
+    modified: "2016-11-10T21:49:51.4308Z"
+    number: "29206399"
+    number_intvalue: 29206399
+    originated: 10-Nov-2016 01:48 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: Any
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AudioConverter APIs should use CFErrorRef instead of integer error codes

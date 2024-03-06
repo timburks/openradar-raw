@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7140246"
+    labels:
+        datastore_id: "66407"
+data:
+    classification: Serious bug
+    created: "2009-08-13T17:09:08.719317Z"
+    description: "13-Aug-2009 07:05 PM Fabrice Truillot de Chambrier:\r\nSummary:\r\n\r\nOur driver makes use of the HID decoding library to retrieve usage values from standard HID reports. The driver uses HIDMaxUsageListLength, HIDGetButtonsOnPage, HIDGetUsageValue, etc.\r\n\r\nWhen running is 64-bit, HIDGetButtonsOnPage fails to return the buttons actually pressed. It returns every single button. The 32-bit driver s built from the very same source code, and works.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nIn handleReport, the driver calls the HID decoding library to retrieve the information it needs. The reports are basic HID mouse reports, 8 bit buttons, 12 bit cursor coordinates, 8 bit wheel.\r\n\r\nHere is the source code:\r\n\r\n\t[...]\r\n\tconst UInt32 kMaxButtonCount = HIDMaxUsageListLength (kHIDInputReport, kHIDPage_Button, this->getReportDescriptor ());\r\n\tUInt32 hidButtonCount = kMaxButtonCount;\r\n\tUInt32 hidButtonArrayByteCount = kMaxButtonCount * sizeof (HIDUsage);\r\n\tHIDUsage* hidButtonsArray = (HIDUsage*) IOMalloc (hidButtonArrayByteCount);\r\n\tbzero (hidButtonsArray, hidButtonArrayByteCount);\r\n\r\n\tOSStatus status = HIDGetButtonsOnPage (\r\n\t\tkHIDInputReport, kHIDPage_Button, kHIDUsage_Undefined,\r\n\t\thidButtonsArray, &hidButtonCount,\r\n\t\tthis->getReportDescriptor (), report, reportLength);\r\n\r\n\tif (hidButtonCount > kMaxButtonCount) hidButtonCount = kMaxButtonCount;\r\n\t\r\n\tUInt32 hidButtons = 0;\r\n\r\n\tif (status == kHIDSuccess)\r\n\t{\r\n\t\tfor (UInt32 loop = 0; loop < hidButtonCount; ++ loop)\r\n\t\t{\r\n\t\t\tif (hidButtonsArray[loop] <= 32)\r\n\t\t\t{\r\n\t\t\t\thidButtons |= 0x01 << (hidButtonsArray[loop] - 1);\r\n\t\t\t}\r\n\t\t}\r\n\t}\r\n\r\n\tIOFree (hidButtonsArray, hidButtonArrayByteCount); hidButtonsArray = NULL;\r\n\r\n\t// X decoding\r\n\r\n\tSInt32 hidX = 0;\r\n\tstatus = HIDGetUsageValue (\r\n\t\tkHIDInputReport, kHIDPage_GenericDesktop, 0, kHIDUsage_GD_X,\r\n\t\t&hidX,\r\n\t\tthis->getReportDescriptor (), report, reportLength);\r\n\r\n\tif (status != kIOReturnSuccess) hidX = 0;\r\n\r\n\t// Y decoding\r\n\r\n\tSInt32 hidY = 0;\r\n\tstatus = HIDGetUsageValue (\r\n\t\tkHIDInputReport, kHIDPage_GenericDesktop, 0, kHIDUsage_GD_Y,\r\n\t\t&hidY,\r\n\t\tthis->getReportDescriptor (), report, reportLength);\r\n\r\n\tif (status != kIOReturnSuccess) hidY = 0;\r\n\r\n\t// Wheel decoding\r\n\r\n\tSInt32 hidWheel = 0;\r\n\tstatus = HIDGetUsageValue (\r\n\t\tkHIDInputReport, kHIDPage_GenericDesktop, 0, kHIDUsage_GD_Wheel,\r\n\t\t&hidWheel,\r\n\t\tthis->getReportDescriptor (), report, reportLength);\r\n\r\n\tif (status != kIOReturnSuccess) hidWheel = 0;\r\n\r\n\t[...]\r\n\r\n\r\nExpected Results:\r\n\r\nThat code should properly retrieve which buttons are actually pressed, the correct x and y values, and the wheel steps, sent by the mouse. It should work in 32-bit (it does) and in 64-bit (it doesn't).\r\n\r\nActual Results:\r\n\r\nx, y and wheel values are decoded properly. In 32-bit and 64-bit mode.\r\nThe buttons are all returned by HIDGetButtonsOnPage, so the driver believes all the buttons are pressed. In 64-bit only. It works properly in 32-bit.\r\n\r\nRegression:\r\nIt happens on every machine we tried, when started in 64-bit mode with Snow Leopard 10A432.\r\n\r\nNotes:\r\n\r\nWe implemented the following workaround (hard coded decoding).\r\n\r\n\tif (this->hasTaggedReports ())\r\n\t{\r\n\t\tif (hidButtonCount > 8) hidButtons = report[1] + (report[2] << 8);\r\n\t\telse hidButtons = report[1];\r\n\t}\r\n\telse\r\n\t{\r\n\t\tif (hidButtonCount > 8) hidButtons = report[0] + (report[1] << 8);\r\n\t\telse hidButtons = report[0];\r\n\t}\r\n\r\nWith that addition, our driver works properly in 64-bit."
+    email: fabrice.truillot@gmail.com
+    modified: "2011-08-28T05:45:23.421255Z"
+    number: "7140246"
+    number_intvalue: 7140246
+    originated: 13-Aug-2009 07:05 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Snow Leopard
+    product_version: 10A432
+    reproducible: 100%
+    resolved: ""
+    status: Open
+    title: HIDGetButtonsOnPage is broken in 64-bit mode

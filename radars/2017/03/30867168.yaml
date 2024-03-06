@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30867168"
+    labels:
+        datastore_id: "5035008297271296"
+data:
+    classification: Security
+    created: "2017-03-07T12:42:24.94984Z"
+    description: "Area:\r\nSecurity Framework\r\n\r\nSummary:\r\nWe are using SecTrustEvaluate to check the validity of a certificate. We want to do this as we want to check if the certificate can be trusted. We are not planning to do any CRL checks etc, just the trust.\r\n\r\nThe issue we have is that we need to pass the entire certificate chain and not just the leaf certificate if we want to get a return value of kSecTrustResultUnspecified or kSecTrustResultProceed. \r\nThis issue is 100% reproducible for any of the certificates created from non public certificate authority. \r\nIf we don't pass the entire cert chain in the SecTrustRef structure then we get a kSecTrustResultRecoverableTrustFailure error from the SecTrustEvaluate call.\r\n\r\nSteps to Reproduce:\r\nWe are using SecTrustEvaluate to check the validity of a certificate. We want to do this as we want to check if the certificate can be trusted. We are not planning to do any CRL checks etc, just the trust.\r\nPrecondition:- Leaf certificate should have one intermediate CA which is issued by a CA.\r\nSteps:- First install the intermediate CA public cert and root CA public certificate via MDM push.\r\nThem get the leaf certificate issued from intermediate CA and populate SecTrustRef object using that.\r\nCall SecTrustEvaluate with the SecTrustRef object obtained in above step.\r\n\r\n\r\n\r\n\r\nExpected Results:\r\nSecTrustEvaluate call returns either a kSecTrustResultUnspecified or kSecTrustResultProceed and the secTrustRef to contain the chain built with leaf cert->IntermediateCA->RootCA\r\n\r\n\r\nActual Results:\r\nSecTrustEvaluate call returns kSecTrustResultRecoverableTrustFailure and the secTrustRef doesn't contain the certificate chain.\r\n\r\n\r\n\r\nVersion:\r\n9.3.5 and above\r\n\r\nNotes:\r\nnote:- the actual result is same as expected result if I build the SecTrustRef object with the leaf certificate and the certificate chain.\r\nFrom Apple documentation for secTrustEvaluate method about the input SecTrustRef structure, \". A trust management object includes the certificate to be verified plus the policy or policies to be used in evaluating trust.\r\n It can optionally also include other certificates to be used in verifying the first certificate.\"\r\n I never mentions that its mandatory to pass the intermediate and root certificates for the trust to be established.\r\nThis issue is 100% reproducible for any of the certificates created from non public certificate authority. \r\n\r\nConfiguration:\r\niPhone or iPad"
+    email: uday.kiran.citrix@gmail.com
+    modified: "2017-03-07T12:42:24.95018Z"
+    number: "30867168"
+    number_intvalue: 30867168
+    originated: 06-Mar-2017 06:04 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Need to pass the entire certificate chain in SecTrustRef structure for SecTrustEvaluate to return a success.

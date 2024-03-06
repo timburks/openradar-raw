@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9985546
+    labels:
+        datastore_id: "5599876997971968"
+data:
+    classification: Suggestion
+    created: "2022-04-17T12:10:24.47683Z"
+    description: "I'm making an app (iClip) that provides a narrow window at the screen edge (choosable by the user), similarly to the Dock's window.\r\n\r\nThe problem is that if users open document windows in any reguar app, their windows cover the space my app' window occupies. I have to come up with semi-smart methods to hide and unhide the window just to get out of the way. or users have to shuffle their windows around to make room for my app's window.\r\n\r\nApple has realized that this is not good, and therefore the NSScreen's visibleFrame function explicitly checks for the Dock's window and excludes that from the area available for windows, thereby preventing windows to cover the Dock's area. But 3rd party apps like mine are not considered, and that's leading to an unpleasant user experience.\r\n\r\nAnd there are many other types of apps that could benefit from this, such as alternative Docks (the very popular DragThing of old times comes to mind) and other assistive tools (e.g. an app that would display a permanently visible keyboard at the bottom).\r\n\r\nTherefore, I ask that NSScreen provides an API that allows any app to reserve a space at any edge, ideally including the area below the menu bar(s). And the Dock should then, for proper testing of it working properly, use the same API, instead of the visibleFrame method special handling it.\r\n\r\nI realize that this may be a bit more complex if more than one reserved rect shall be managed. I see the following challenges:\r\n\r\n1. Shall it be possible to that two apps reserve space at the same edge (e.g. both the Dock and another app's window at the bottom edge of the main sceeen)? If so, how are the rects managed, i.e. who defines which one goes where? Would the API decide the placement?\r\n2. Ideally, these rects are reserved per screen, i.e. even if I have two same-sized monitors adjacent to each other, I can reserve a space at the bottom of each screen. I should also be able to reserve a space at the left edge of the right screen.\r\n3. What happens to the reserved space if a screen vanishes or gets resized (resolution change)?\r\n\r\nConsidering these challanges, I wonder if it's even better if the window manager gets involved here, in the way that one can specify that a NSWindow shall be attached to an edge. The Dock would use this setting, and other apps could request the same. That would take care of all above challenges, by letting the window mgr arrange and resize or move these windows as necessary.\r\n\r\nIf that all sounds too complex for the benefit of a small amount of apps such as mine, then please at least provide a minimal API that has more restrictions, such as:\r\n\r\n- Only allows one reserved rect per edge of a screen, with the Dock always having priority (everyone else has to get out of the Dock's way).\r\n- Instead of specifying a rect, one specifies the edge and a size, so that the entire available edge is reduced by that amount (i.e. it's assumed that the window may occupy the entire edge by the given size). Where the app actually places its window is independent of it.\r\n- If the screen disappears, then the window's reserved edge disappears with it. The app will have to re-reserve its space on a new screen on its own (by subscribing to screen changes).\r\n- One may only reserve up to 1/3 of the currently visible frame's area, in order to prevent a rogue app from taking away all space (I'd not make it too limited for the case of a keyboard for people with bad eyesight who need large letters, for instance).\r\n\r\nThank you for your consideration."
+    email: tempelmann@gmail.com
+    modified: "2022-04-17T12:13:42.566895Z"
+    number: FB9985546
+    number_intvalue: 9985546
+    originated: 17 Apr 2022
+    parent_number: '&{NULL_VALUE}'
+    product: macOS AppKit
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Provide an API to let UIElement apps limit [NSScreen visibleFrame], similar to the Dock

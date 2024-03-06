@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25548393"
+    labels:
+        datastore_id: "6190906419970048"
+data:
+    classification: Serious bug
+    created: "2016-04-05T09:16:59.8927Z"
+    description: "Summary:\r\nUI tests often fail on iOS Simulator because XCUIApplication sometimes fails to terminate between test cases or if -terminate method is called in testcase code, setUp or tearDown. Also quite often tests fail to take snapshot or load accessibility.\r\n\r\nThe more tests are run in sequence, the greater is probability of false negatives.\r\n\r\nPlease see log files attached with 2 different reasons of failures.\r\n\r\nSteps to Reproduce:\r\n1. Install Xcode 7.3, iOS Simulator 9.2.\r\n2. Create new iOS project with \"Hello World\" iOS app (single view app is enough) with UI tests enabled.\r\n3. Add sample test code:\r\n\r\n- (void)testExample {\r\n    for (int i = 0; i < 500; i++)\r\n    {\r\n        NSLog(@\"%@\", @(i));\r\n        XCUIApplication* app = [XCUIApplication new];\r\n\r\n        [app launch];\r\n        XCTAssertTrue(app.exists);\r\n\r\n        [app terminate];\r\n        XCTAssertFalse(app.exists);\r\n    }\r\n}\r\n\r\n4. Run tests.\r\n5. Wait until tests fail and observe the result (usually it doesn't take more than 2-3 minutes, sometimes up to 5-15 minutes).\r\n\r\nExpected Results:\r\nTests should not fail.\r\nThe app should always be terminated and launched correctly.\r\n\r\nActual Results:\r\nTests randomly fail because the XCUIApplication state is reported to be incorrect.\r\n\r\nSample log:\r\n\r\n2016-04-05 11:16:26.893 XCTRunner[2361:104360] 32\r\n    t =   117.44s     Launch com.company.ttt\r\n    t =   119.13s         Waiting for accessibility to load\r\n    t =   120.79s         Wait for app to idle\r\n    t =   120.94s     Snapshot accessibility hierarchy for com.company.ttt\r\n    t =   120.96s     Terminate <XCUIApplicationProcess: 0x7fb4dd8130f0 com.company.ttt (2487)>\r\n2016-04-05 11:16:30.566 XCTRunner[2361:104360] 33\r\n    t =   121.11s     Launch com.company.ttt\r\n    t =   122.80s         Waiting for accessibility to load\r\n    t =   124.43s         Wait for app to idle\r\n    t =   124.57s     Snapshot accessibility hierarchy for com.company.ttt\r\n    t =   124.60s     Terminate <XCUIApplicationProcess: 0x7fb4dd910ea0 com.company.ttt (2501)>\r\n    t =   184.70s         Assertion Failure: UI Testing Failure - App state for <XCUIApplicationProcess: 0x7fb4dd910ea0 com.company.ttt (2501)> is XCApplicationStateRunningActive (3), still not XCApplicationStateNotRunning (1)\r\n/Users/sdunets/dev/galaxy-ios-app-copy/tttUITests/tttUITests.m:37: error: -[tttUITests testExample] : UI Testing Failure - App state for <XCUIApplicationProcess: 0x7fb4dd910ea0 com.company.ttt (2501)> is XCApplicationStateRunningActive (3), still not XCApplicationStateNotRunning (1)\r\n    t =   184.70s     Tear Down\r\nTest Case '-[tttUITests testExample]' failed (184.705 seconds).\r\nTest Suite 'tttUITests' failed at 2016-04-05 11:17:34.164.\r\n\t Executed 1 test, with 1 failure (0 unexpected) in 184.705 (184.709) seconds\r\n\r\n\r\nTest session log:\r\n\t/Users/sdunets/Library/Developer/Xcode/DerivedData/ttt-haconrdeuzthclatsvllzbadkwlu/Logs/Test/D7810813-9A4E-4042-B417-185C35220B03/Session-2016-04-05_11:14:15-BONZJR.log\r\n\r\nTest Suite 'tttUITests.xctest' failed at 2016-04-05 11:17:34.165.\r\n\t Executed 1 test, with 1 failure (0 unexpected) in 184.705 (184.711) seconds\r\nTest Suite 'All tests' failed at 2016-04-05 11:17:34.165.\r\n\t Executed 1 test, with 1 failure (0 unexpected) in 184.705 (184.713) seconds\r\n\r\n\r\n\r\n\r\n\r\nVersion:\r\nVersion 7.3 (7D175), OS X 10.11.3 (15D21)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nXcode 7.3, any iOS Simulator with iOS 9.2, 9.3"
+    email: dunets.devel@gmail.com
+    modified: "2016-04-05T09:16:59.89291Z"
+    number: "25548393"
+    number_intvalue: 25548393
+    originated: 05-Apr-2016
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Version 7.3 (7D175), OS X 10.11.3 (15D21)
+    reproducible: Often
+    resolved: NO
+    status: Open
+    title: UI tests are unstable because XCUIApplication often fails to terminate (Xcode 7.3, any iOS simulator with iOS 9.2, 9.3)

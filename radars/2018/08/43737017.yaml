@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "43737017"
+    labels:
+        datastore_id: "5004876945817600"
+data:
+    classification: Performance Issue
+    created: "2018-08-29T12:13:41.53185Z"
+    description: "Summary:I have a new MacBook Pro 2018 release, i9 2.9GHz, 32 GB RAM, 1TB drive. I am noticing within any of my pro audio applications, (Logic Pro, Cubase Pro 9.5.3, and Ableton 10), that my CoreAudio will overload every 60 seconds if I am playing a cpu intensive track. Looking at the OSX Console, I see timestamped exactly at the same time, the AppleSmartBatteryManager.kext kernel process running a work poll to ping the battery for its health status. \r\n\r\nI do see it initially states, \"Starting Poll type 2 or 4\", and then immediately after states, \"Restarting poll\" with the same type. This process runs every 60 seconds, regardless of having the power adapter plugged in or not. Within the same processing second on the console, I will receive several repeated CoreAudio messages following the AppleSmartBatteryManager messages: HALC_ProxyIOContext::IOWorkLoop: skipping cycle due to overload, HALS_OverloadMessage.cpp:165:perform:  Audio IO Overload inputs: '' outputs: 'BuiltInSpeakerDevice' cause: 'Unknown' prewarming: no recovering: no.\r\n\r\nBelow are the steps I took to reproduce the CoreAudio overload event occurring when the AppleSmartBatteryManager.kext polling process started.  The AppleSmartBatteryManager polling on my current system session was running every minute at the :06 second mark. Each time it will start its poll process, and immediately restart it. This can be reproduced in High Sierra on same hardware, and in High Sierra on a 2011 MBP, and late 2013 MBP. \r\n\r\nSteps followed:  - Opened Logic Pro X. - Added Alchemy Instrument Track. - Selected Bowed Metal Space Preset. - Added Chromaverb Default patch to Audio FX for Instrument Track. - Opened Musical Typing (Cmd K). - Opened OSX Console, searched for 'Battery'.  - Noted time for 'kernel (AppleSmartBatteryManager) Starting Poll' event start, every minute at :06. - Returned to Logic Pro and activated Custom Control Bar Display. - Doubled Clicked CPU meter to open separate window showing each cpu core. - Opened Apple System Preferences: Time & Date. - At 15-20 seconds before the AppleSmartBatteryManager polling start time of 7:08:06 I played several sustained notes using the Musical Typing on MBP keyboard. Held notes through the polling start time. - At 7:08:06 received an CPU spike showing first cpu core maxed out on Logic Pro meter and experienced a CoreAudio overload event resulting in an audio glitch/dropout. -Ran sysdiagnose with key commands."
+    email: ewtrevino@gmail.com
+    modified: "2018-08-29T12:13:41.53208Z"
+    number: "43737017"
+    number_intvalue: 43737017
+    originated: 08/26/2018
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK | Battery
+    product_version: "10.14"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Mojave 10.14 - AppleSmartBatteryManager.kext driver process poll overloading CoreAudio on MBP 2018

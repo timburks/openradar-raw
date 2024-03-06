@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12519234"
+    labels:
+        datastore_id: "2167402"
+data:
+    classification: Crash
+    created: "2012-10-17T18:49:21.995167Z"
+    description: "When using a UITableViewCell which has a backgroundView set, it crashes when trying to use auto layout in iOS 6.  It crashes on both iPhone and iPad simulators.\r\n\r\n\r\n2012-10-17 13:27:32.387 TestAutoLayout[70680:c07] *** Assertion failure in -[UITableViewCell layoutSublayersOfLayer:], /SourceCache/UIKit_Sim/UIKit-2372/UIView.m:5776\r\n2012-10-17 13:27:32.389 TestAutoLayout[70680:c07] *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'Auto Layout still required after executing -layoutSubviews. UITableViewCell's implementation of -layoutSubviews needs to call super.'\r\n\r\n\r\nIt appears that UITableViewCell's -layoutSubviews method does not call super.  The following category (which can be enabled by changing the \"#if 0\" to \"#if 1\" in AppDelegate.m) appears to fix the problem.\r\n\r\n\r\n@implementation UITableViewCell (FixUITableViewCellAutolayoutIHope)\r\n\r\n+ (void)load\r\n{\r\n    Method existing = class_getInstanceMethod(self, @selector(layoutSubviews));\r\n    Method new = class_getInstanceMethod(self, @selector(_autolayout_replacementLayoutSubviews));\r\n    \r\n    method_exchangeImplementations(existing, new);\r\n}\r\n\r\n- (void)_autolayout_replacementLayoutSubviews\r\n{\r\n    [super layoutSubviews];\r\n    [self _autolayout_replacementLayoutSubviews]; // not recursive due to method swizzling\r\n    [super layoutSubviews];\r\n}\r\n\r\n@end"
+    email: lindberg+openradar@clindberg.org
+    modified: "2013-10-18T00:46:11.124356Z"
+    number: "12519234"
+    number_intvalue: 12519234
+    originated: 10/17/2012
+    parent_number: "11690549"
+    product: iPad/iPhone SDK
+    product_version: "6.0"
+    reproducible: Yes
+    resolved: iOS7
+    status: Duplicate/11690549
+    title: Crash when using auto layout on UITableViewCell with backgroundView

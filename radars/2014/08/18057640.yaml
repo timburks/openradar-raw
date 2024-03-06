@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18057640"
+    labels:
+        datastore_id: "5243533774553088"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2014-08-19T01:26:23.131612Z"
+    description: "Summary:\r\nIn Xcode 6 beta 6, the Swift interface for NSRegularExpression firstMatchInString:options:range: is declared like this:\r\n\r\n    func firstMatchInString(string: String, options: NSMatchingOptions, range: NSRange) -> NSTextCheckingResult\r\n\r\nHowever, it is possible for this method to return nil if no match is found. Therefore, the result should be NSTextCheckingResult? or NSTextCheckingResult!, so that the caller can check for nil.\r\n\r\nSteps to Reproduce:\r\nPaste this into a playground:\r\n\r\nimport Foundation\r\n\r\nvar error: NSError?\r\nlet re = NSRegularExpression.regularExpressionWithPattern(\"hello\", options: NSRegularExpressionOptions(0), error: &error)!\r\nlet str: NSString = \"hello, world\"\r\nlet range = NSMakeRange(0, str.length)\r\nlet firstMatch = re.firstMatchInString(str, options: NSMatchingOptions(0), range: range)\r\n\r\nlet str2: NSString = \"foo\"\r\nlet range2 = NSMakeRange(0, str2.length)\r\nlet secondMatch = re.firstMatchInString(str2, options: NSMatchingOptions(0), range: range)\r\n\r\n\r\nExpected Results:\r\nfirstMatch should return a valid match, and secondMatch should return nil (because there is no match)\r\n\r\nActual Results:\r\nfirstMatch is evaluated properly, but the evaluation of secondMatch causes SIGABRT, presumably due to the attempt to use the nil result\r\n\r\nVersion:\r\nXcode 6 beta 6 (6A280e)\r\n\r\nNotes:\r\nThis worked in Xcode 6 beta 5, where the result type was declared to be Optional\r\n\r\nConfiguration:\r\nOS X 10.9.4\r\n\r\nAttachments:"
+    email: kristopherdjohnson@gmail.com
+    modified: "2014-10-13T16:22:50.404733Z"
+    number: "18057640"
+    number_intvalue: 18057640
+    originated: 18-Aug-2014 09:24 PM
+    parent_number: "18058760"
+    product: Developer Tools
+    product_version: Xcode 6 Beta 6
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/18058760
+    title: '#IUO Swift declares result of NSRegularExpression firstMatchInString:options:range: to be non-Optional'

@@ -1,0 +1,45 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25531348"
+    labels:
+        datastore_id: "5018627778543616"
+data:
+    classification: Serious Bug
+    created: "2016-04-04T17:51:31.39408Z"
+    description: |-
+        Summary:
+        Peek/Pop gesture can lead to application UI to get stuck, not responding to any touches.
+
+        Steps to Reproduce:
+        - Make an app that uses the peek/pop 3D touch API in UITableView cells, following the sample code provided in the Apple docs.
+        - From a view controller inside a UINavigationController, peek into a cell that shows another view controller.
+
+        Expected Results:
+        - Device performs a slight vibration, and the “peek popup” appears.
+
+        Actual Results:
+        - Through various combinations of timing and touch-pressure (it seemed easier to reproduce if the peek gesture was ended very quickly after it started, almost like an instant hard touch), one can feel the slight vibration, but not see the peek popup (at this point no finger is touching the screen)
+        - After this, the app doesn’t respond to any touches. Force-touching the screen (to attempt a pop gesture) also does nothing.
+        - If one looks at the app logs, it can be seen that *both* viewWillAppear: and viewWill/DidDisappear: have been called on the presented VC.
+        - If the app is backgrounded and re-foregrounded, the app is still stuck.
+        - After this, a pop-gesture works (the presented controller is pushed onto the navigation stack), and the app becomes unstuck.
+
+        Regression:
+        3D Touch was introduced in iOS 9, and this issue has been reproducible all the way through 9.3.
+
+        Notes:
+        - The Fabric app (bundle ID io.fabric.ios) on the AppStore, version 1.0.0 (298) had 3D touch enabled and can be used to reproduce this issue. The next releases disabled peek/pop in all view controllers to prevent this issue, since it was a major UX disruption (and unless the bg/fg workaround is known, the user must kill the app)
+        - I haven’t been able to narrow down what could be related to this. Initially I thought that it could be related to the peeked VC doing animations starting in viewWillAppear, but I have reproduced this peeking a VC with a static UI. The only other detail I can share that may be relevant is that every VC uses AutoLayout in Interface Builder (separate .xibs per VC), and the app uses UIViewControllerBasedStatusBarAppearance. My device also has 3D touch in the most sensitive setting.
+    email: javier.api@gmail.com
+    modified: "2016-04-04T17:51:31.39432Z"
+    number: "25531348"
+    number_intvalue: 25531348
+    originated: 04-Apr-2016 10:51 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "9.3"
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: '3D Touch: peek gesture can often lead to stuck application'

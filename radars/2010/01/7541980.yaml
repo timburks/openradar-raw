@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7541980"
+    labels:
+        datastore_id: "140401"
+data:
+    classification: UI
+    created: "2010-01-14T17:43:20.794915Z"
+    description: "Summary:\r\nA menu item I've created should switch from disabled to enabled depending on a status flag in its target. While it does become unclickable when it's told to, it isn't being greyed out.\r\n\r\nSteps to Reproduce:\r\nI've created a menu in IB and hooked it up to an outlet in my delegate class. I create an NSStatusItem and set its outlet to the menu. I've implemented a validate method as follows:\r\n\r\n-(BOOL)validateMenuItem:(NSMenuItem *)menuItem {\r\n   if([menuItem action] == @selector(relaunchUpdateFCPMedia:)) {\r\n      if(!self.canLaunchUpdateFCP) {\r\n         return NO;\r\n      } \r\n   }\r\n   return YES;\r\n}\r\n\r\nExpected Results:\r\nDepending on  the state of self.canLaunchUpdateFCP, the menu should appear grey or black.\r\n\r\nActual Results:\r\nThe menu keeps the color it has when the validate method is first called. Moving the menu selection over the menu item changes the color from gray to black if the menu should really be enabled, but doesn't change the color from black to gray if it should really be disabled.\r\n\r\nRegression:\r\nNo idea.\r\n\r\nNotes:\r\nForcing the menu to redraw from within the validate method removes the problem. i.e. the following works:\r\n-(BOOL)validateMenuItem:(NSMenuItem *)menuItem {\r\n   if([menuItem action] == @selector(relaunchUpdateFCPMedia:)) {\r\n      id title= menuItem.title;\r\n      [menuItem setTitle:@\"HACK\"];\r\n      if(!self.canLaunchUpdateFCP) {\r\n         [menuItem setTitle:title];\r\n         return NO;\r\n      } else {\r\n         [menuItem setTitle:title];\r\n      }\r\n   }\r\n   return YES;\r\n}"
+    email: johannes.fortmann@googlemail.com
+    modified: "2011-08-28T05:42:59.530151Z"
+    number: "7541980"
+    number_intvalue: 7541980
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.2
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: NSMenuItem doesn't update according to enable status

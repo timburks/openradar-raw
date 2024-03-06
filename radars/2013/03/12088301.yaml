@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12088301"
+    labels:
+        datastore_id: "2841402"
+data:
+    classification: Enhancement
+    created: "2013-03-11T03:00:05.885139Z"
+    description: "13-Aug-2012 03:46 PM Kevin Doughty:\r\nSummary:\r\nRotations in the y-axis, when running concurrent additive animations, have discrete jumps when they are not present in the x and z axes.\r\n\r\nSteps to Reproduce:\r\nBuild and launch AdditiveRotationY. Note that this is the same workspace from a previous bug report with the additional project added.\r\n\r\nExpected Results:\r\nThe absence of discrete jumps.\r\n\r\nActual Results:\r\nDiscrete jumps.\r\n\r\nRegression:\r\nX and Z axes work fine.\r\n\r\nNotes:\r\nWouldn't it be nice if iOS transitionFromView:toView:duration:options:completion: was not only non-blocking, but also produced beautiful, seamless animations? \r\n\r\n13-Aug-2012 03:46 PM Kevin Doughty:\r\n'AdditiveAnimationTests.zip' was successfully uploaded\r\n\r\n13-Aug-2012 03:57 PM Kevin Doughty:\r\nPlease modify the BOOL verbose to equal YES in the function flipKeyPath: to see that y reports -0.0 and -0.0 when x and z report 0.0 and 3.141593. Also, please disregard the unused function updateGauge:\r\n\r\n12-Oct-2012 05:58 PM Apple Developer Bug Reporting Team :\r\nEngineering has determined that this issue behaves as intended based on the following information: \r\n\r\nThis is an expected issue with the euler angle rotations. The recommended solution is to use CAValueFunction to create single-axis rotation animations, i.e.:\r\n\r\nanim = [CABasicAnimation animationWithKeyPath:@\"transform\"];\r\nanim.fromValue = [NSNumber numberWithFloat:0];\r\nanim.toValue = [NSNumber numberWithFloat:M_PI];\r\nanim.valueFunction = [CAValueFunction functionWithName:kCAValueFunctionRotateY];\r\nanim.additive = YES;  // if necessary\r\netc…\r\n\r\n03-Jan-2013 06:49 PM Kevin Doughty:\r\nIf this is the result of using Euler angles, then why does the error not happen when not using additive animation? You can add, starting at different times but eventually all running simultaneously, an x, then a y, then a z-axis animation without discrepancy. It is only when you try to run two simultaneous y-axis animations that this occurs. I imagine there is plenty of voodoo in accomplishing what CA does with transforms, but if you guys understood the importance of additive animation you would try to eek out just a little more voodoo.\r\n\r\n03-Jan-2013 06:52 PM Kevin Doughty:\r\nP.S. CAValueFunction does not work with additive animation at all."
+    email: SoCalledNonFlipped@gmail.com
+    modified: "2013-03-11T03:00:05.885288Z"
+    number: "12088301"
+    number_intvalue: 12088301
+    originated: 13-Aug-2012 03:46 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: "10.8"
+    reproducible: Always
+    resolved: ""
+    status: Behaves correctly
+    title: Explicit Additive Animation - transform.rotation.y

@@ -1,0 +1,86 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20000110"
+    labels:
+        datastore_id: "5304476609019904"
+data:
+    classification: Serious Bug
+    created: "2015-03-01T18:31:19.735271Z"
+    description: |-
+        Summary:
+        Swift can’t type Functor accurately as a protocol, so I’m trying to define a Functor struct that can be returned by other types. My first stab at this results in broken codegen.
+
+
+        Steps to Reproduce:
+        1. Compile this:
+        infix operator >>> { associativity right precedence 170 }
+        public protocol Relatable {
+        	typealias To
+        }
+
+        public struct Functor<F: Relatable, G: Relatable> {
+        	public init(_ out: F, _ map: F -> (F.To -> G.To) -> G) {
+        		self.out = out
+        		self.map = map
+        	}
+
+        	public func map(transform: F.To -> G.To) -> G {
+        		return map(out)(transform)
+        	}
+
+        	private let out: F
+        	private let map: F -> (F.To -> G.To) -> G
+        }
+
+        public protocol FixpointType {
+        	typealias F
+        	init(F)
+        	static func out(Self) -> F
+        }
+
+        func flip<A, B, C>(f: A -> B -> C) -> B -> A -> C {
+        	return { b in { a in f(a)(b) } }
+        }
+
+        func >>> <A, B, C> (left: A -> B, right: B -> C) -> A -> C {
+        	return { right(left($0)) }
+        }
+
+        public func cata<T, Fix: FixpointType, F: Relatable, G: Relatable where Fix.F == Functor<F, G>, F.To == Fix, G.To == T>(f: G -> T)(_ term: Fix) -> T {
+        	return (Fix.out >>> (flip(Functor.map)(cata(f))) >>> f)(term)
+        }
+
+
+        Expected Results:
+        I expected it to compile.
+
+
+        Actual Results:
+        The compiler bails early:
+        Call parameter type does not match function signature!
+          %2 = bitcast %V7functor7Functor.16* %0 to %V7functor7Functor.18*
+         %V7functor7Functor.17*  %20 = tail call { i8*, %swift.refcounted* } @_TTRG3_RPq0_P7functor12FixpointType_Pq1_PS_9Relatable_Pq2_PS1__Eqq0_1FGVS_7Functorq1_q2__Eqq1_2Toq0_Eqq2_2Toq__XFo_iGS2_q1_q2___oXFo_oXFo_iq0__iq___iq2___XFo_iGS2_q1_q2___oXFo_iXFo_iq0__iq___iq2___(%V7functor7Functor.18* noalias %2, i8* %.fn.load, %swift.refcounted* %19, %swift.type* %T, %swift.type* %Fix, i8** %9, %swift.type* %F, i8** %13, %swift.type* %G, i8** %17)
+        LLVM ERROR: Broken function found, compilation aborted!
+
+        Note that this error is nowhere to be found in Xcode, it’s only visible from the CLI.
+
+
+        Regression:
+        One workaround is to rewrite the function without using function composition. Bleah.
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2015-03-01T18:31:19.735507Z"
+    number: "20000110"
+    number_intvalue: 20000110
+    originated: 01-Mar-2015 01:31 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (6D532l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2b2: Broken codegen for combination of composed functions, protocols, type constraints, and currying'

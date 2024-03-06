@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17754431"
+    labels:
+        datastore_id: "5177438791270400"
+data:
+    classification: Serious Bug
+    created: "2014-07-21T22:41:54.722518Z"
+    description: "Summary:\r\nA Dictionary extension with a where clause to restrict the input parameter to be a Sequence of tuples of the same (KeyType, ValueType) as that Dictionary itself.\r\n\r\nThe compiler matches against any sequence. The code produced for the extension correctly matches against KeyType only.\r\n\r\nSteps to Reproduce:\r\nCopy & paste this into Swift (xcrun swift or Xcode):\r\n\r\nextension Dictionary {\r\n\tmutating func merge <E: Element, S: Sequence where S.GeneratorType.Element == Element> (seq: S) {\r\n\t\tvar gen = seq.generate()\r\n\t\twhile let n: E = gen.next() {\r\n\t\t\tself[n.0] = n.1\r\n\t\t}\r\n\t}\r\n}\r\n \r\nvar dict = [0:0]\r\nlet array = [1.0,2.0,3.0]\r\ndict.merge(array)\r\nprintln(dict)\r\nlet more = [1,2,3]\r\ndict.merge(more)\r\nprintln(dict)\r\ndict.merge(again)\r\nprintln(dict)\r\n\r\nExpected Results:\r\nShould give a compiler error on both dict.merge() lines, since the Sequences GeneratorType.Elements are Int or Double, not Dictionary.Element (aka (KeyType,ValueType)).\r\n\r\nActual Results:\r\nRuns with no error, prints out [0: 0, 1: 140735543552768, 2: 140735543552768, 3: 140735543552768]\r\n\r\nNote that the first dict.merge() call does nothing.\r\nNote garbage values for the second call."
+    email: rainerbrockerhoff@gmail.com
+    modified: "2014-07-21T22:41:54.722649Z"
+    number: "17754431"
+    number_intvalue: 17754431
+    originated: 21/7/2014
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode 6
+    product_version: beta 4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift compiler mismatches generics in extension

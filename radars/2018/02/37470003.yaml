@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "37470003"
+    labels:
+        datastore_id: "4964971305762816"
+data:
+    classification: Serious Bug
+    created: "2018-02-12T21:18:55.48962Z"
+    description: "Summary:\r\n\r\nWe've been encountering a mass amount of heap corruption crashes from certain device types, dating back to November 2017. Unfortunately we haven't payed much attention until it became so frequent recently (more users coming in, more people adopting iOS 11 maybe?).\r\n\r\nThe crash reports were not meaningful in a way that the crash was coming from all around the code. We started looking at all our concurrent code, or unsafe code, but everything seemed fine.\r\n\r\nWe are using simd types for vector and matrix operations, especially to make it work with SceneKit without having to think about the types. Types mostly being double3 and double3x3. While investigating the issue, isolating it more and more, we've found out that the problem is always related to reading, or writing double3 typed vectors to, or from a Dictionary.\r\n\r\nThe crash in our app only happens on iOS 11 only on one of these devices: iPhone 5S, iPhone 6, iPhone 6 Plus, iPhone SE, iPad mini, and iPod touch 6 gen. At least these are the devices involved in the heap corruption incident according to our crash reporting system in place. Does not crash the Simulator (same OS, same device type).\r\n\r\nPlease note, all the code that is crashing now has been there in our app for a while (long before iOS 11 arrived). We are not in possession of such iOS & device type combo to try to eliminate the possibility that this issue was already present on iOS 10, but as per our crash reports, it never happened on iOS 10, although we still have and support iOS 10 users.\r\n\r\nSteps to Reproduce:\r\n\r\nAfter all we managed to isolate the issue to a very simple case:\r\n\r\n```\r\nvar x: Int = 0\r\nwhile x < 100 {\r\n   var dict: [String: double3] = [:]\r\n   dict[\"vector \\(x)\"] = double3(Double(1.23456), Double(44.455488), Double(x))\r\n   x += 1\r\n   print(dict)\r\n}\r\n```\r\n\r\nThe loop above has a 100 iterations, although most of the times it only takes it about 3-10 rounds to crash. Sometimes it's more. If it does not crash, increase the number of iterations. If you remove the print(), meaning there's no access to the item after it's initialized, it will only crash at a later iteration. Probably the more access to such item in the Dictionary the earlier the crash comes. It barely happened to me that it survived more than 100.\r\n\r\nExpected Results:\r\n\r\nA 100 Dictionaries, each having one item, a String key and a double3 value printed on the debug console.\r\n\r\nActual Results:\r\n\r\nThe program crashes after the first few iterations indicating heap corruption with producing a log message like:\r\n\r\nmalloc: *** error for object {address}: incorrect checksum for freed object - object was probably modified after being freed.\r\n\r\nVersion/Build:\r\nXcode Version 9.2 (9C40b), Swift 4.0.\r\n\r\nConfiguration:"
+    email: agnes@topologyeyewear.com
+    modified: "2018-03-30T17:15:25.06439Z"
+    number: "37470003"
+    number_intvalue: 37470003
+    originated: 2/12/2018
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 9.2 (9C40b), Swift 4.0
+    reproducible: Always
+    resolved: 3/29/2018
+    status: Resolved
+    title: Heap corruption occurs when creating Dictionary with double3 value (simd)

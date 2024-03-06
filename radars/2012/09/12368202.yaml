@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12368202"
+    labels:
+        datastore_id: "2046401"
+data:
+    classification: Crash/Hang/Data loss
+    created: "2012-09-25T16:54:19.568598Z"
+    description: "25-Sep-2012 11:52 AM Kevin Mitchell:\r\nSummary: When closing a tmux integration window in iTerm 2 while other windows using that integration are open, a kernel panic occurs.\r\n\r\nSteps to Reproduce: Get iTerm2. Create a tmux integration session targeting another machine. Open a few session windows. Now rapidly close all the windows or exit the app.\r\n\r\nMore information on tmux integration: http://code.google.com/p/iterm2/wiki/TmuxIntegration\r\n\r\nYou need tmux with patches. I believe this is the branch of tmux to compile on the remote machine. https://github.com/gnachman/tmux2/tree/command_mode\r\n\r\nExpected Results: Windows close.\r\n\r\nActual Results: Kernel panic.\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\nSee also iTerm2 bug report: http://code.google.com/p/iterm2/issues/detail?id=1765&q=kernel\r\n\r\n\r\nThe code looks like this, and I've marked where I suspect the bug is. Accessing vcount(vp) without a lock on the device, probably a race condition on multiprocessor machines. The major number in the crash dumps corresponds to /dev/ttys000 and following.\r\n\r\n(spec_vnops.c)\r\n\r\n\tcase VCHR:\r\n\t\t/*\r\n\t\t * Hack: a tty device that is a controlling terminal\r\n\t\t * has a reference from the session structure.\r\n\t\t * We cannot easily tell that a character device is\r\n\t\t * a controlling terminal, unless it is the closing\r\n\t\t * process' controlling terminal.  In that case,\r\n\t\t * if the reference count is 1 (this is the very\r\n\t\t * last close)\r\n\t\t */\r\n\t\tsessp = proc_session(p);\r\n\t\tif (sessp != SESSION_NULL) {\r\n\r\n/* KAM - I think this is the bug: accessing vcount(vp) without devsw_lock(dev, S_IFCHR)\r\n   See the code later on, and also  for VBLK. */\r\n\r\n\t\t\tif (vp == sessp->s_ttyvp && vcount(vp) == 1) {\r\n\t\t\t\tstruct tty *tp;\r\n\r\n\t\t\t\tsession_lock(sessp);\r\n\t\t\t\tif (vp == sessp->s_ttyvp) {\r\n\t\t\t\t\ttp = SESSION_TP(sessp);\r\n\t\t\t\t\tsessp->s_ttyvp = NULL;\r\n\t\t\t\t\tsessp->s_ttyvid = 0;\r\n\t\t\t\t\tsessp->s_ttyp = TTY_NULL;\r\n\t\t\t\t\tsessp->s_ttypgrpid = NO_PID;\r\n\t\t\t\t\tdo_rele = 1;\r\n\t\t\t\t} \r\n\t\t\t\tsession_unlock(sessp);\r\n\r\n\t\t\t\tif (do_rele) {\r\n\t\t\t\t\tvnode_rele(vp);\r\n\t\t\t\t\tif (NULL != tp)\r\n\t\t\t\t\t\tttyfree(tp);\r\n\t\t\t\t}\r\n\t\t\t}\r\n\t\t\tsession_rele(sessp);\r\n\t\t}\r\n\r\n\t\tdevsw_lock(dev, S_IFCHR);\r\n\r\n\t\tif (--vp->v_specinfo->si_opencount < 0)\r\n\t\t\tpanic(\"negative open count (c, %u, %u)\", major(dev), minor(dev));\r\n\r\n\t\t/*\r\n\t\t * close always, or close on last reference, or close on revoke\r\n\t\t */\r\n\t\tif ((D_TRACKCLOSE & cdevsw[major(dev)].d_type) != 0 ||\r\n\t\t    vcount(vp) == 0 || (flags & IO_REVOKE) != 0)\r\n\t\t\terror = cdevsw[major(dev)].d_close(dev, flags, S_IFCHR, p);\r\n\r\n\t\tdevsw_unlock(dev, S_IFCHR);\r\n\t\tbreak;\r\n\r\n\r\n\tcase VBLK:\r\n\t\t/*\r\n\t\t * If there is more than one outstanding open, don't\r\n\t\t * send the close to the device.\r\n\t\t */\r\n\t\tdevsw_lock(dev, S_IFBLK); /* KAM - note the lock here! */\r\n\t\tif (vcount(vp) > 1) {\r\n\t\t\tvp->v_specinfo->si_opencount--;\r\n\t\t\tdevsw_unlock(dev, S_IFBLK);\r\n\t\t\treturn (0);\r\n\t\t}\r\n\t\tdevsw_unlock(dev, S_IFBLK);\r\n\r\n\r\n25-Sep-2012 11:52 AM Kevin Mitchell:\r\n'Kernel_2012-09-25-114117_Xoots.panic' was successfully uploaded"
+    email: kam@datalogics.com
+    modified: "2012-09-25T16:54:48.220123Z"
+    number: "12368202"
+    number_intvalue: 12368202
+    originated: 9/25/2012
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.7.5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Kernel panic when closing iTerm2 tmux integration session

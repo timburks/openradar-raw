@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16645887"
+    labels:
+        datastore_id: "5888315068776448"
+data:
+    classification: ""
+    created: "2014-04-17T14:25:06.496859Z"
+    description: "Summary:\r\nSelecting a collection view cell will highlight table view cells in a table view that's inside the collection view cell.\r\n\r\nSteps to Reproduce:\r\nClick on the colored bar in the collection view cell to select the collection view cell.\r\n\r\nExpected Results:\r\nThe collection view cell is selected, but the table view cells remain unselected and unhighlighted.\r\n\r\nActual Results:\r\nThe collection view cell is selected, and the table view cells become highlighted, but not selected.\r\n\r\nThe table view cells are not actually selected. setSelected: is never called on the table view cell, and indexPathsForSelectedRows on the table view itself returns an empty array. The cells are only highlighted, and indeed, setHighlighted: is called on the table view cells.\r\n\r\nVersion:\r\n7.1 (11D167)\r\n\r\nNotes:\r\nUltimately, the `setSelected:` method on the UICollectionViewCell seems to be the problem. If the cell subclass in use does NOT call that method on the superclass, this problem does not manifest itself. As such, I'm inclined to believe that the UICollectionViewCell implementation of `setSelected:` does something like a recursive walk through its subviews to set them selected and/or highlighted.\r\n\r\nWorkaround: set the table cells to use no selection style:\r\ncell.selectionStyle = UITableViewCellSelectionStyleNone;\r\nThis only masks the problem, and prevents selections from being used normally on the table view.\r\n\r\nFaulty workaround: use collectionView:shouldHighlightItemAtIndexPath: on the UICollectionViewDelegate to return NO. This will prevent the collection view cell and table view cell from being highlighted, BUT it also prevents the collection view cell from being properly selected. When that method returns NO, collectionView:didSelectItemAtIndexPath: is never called. Separate bug.\r\n\r\nConfiguration:\r\nAble to replicate this in iOS 7.1 in both the iOS Simulator and on an iPhone 5.\r\n\r\nSample project: https://github.com/brockboland/ExtraCellSelection"
+    email: brock@brockboland.com
+    modified: "2014-04-29T14:54:21.343076Z"
+    number: "16645887"
+    number_intvalue: 16645887
+    originated: 2014.04.17
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "7.1"
+    reproducible: Always
+    resolved: ""
+    status: Behaves correctly
+    title: Selecting a UICollectionViewCell will highlight UITableViewCells within it

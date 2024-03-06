@@ -1,0 +1,61 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28281569"
+    labels:
+        datastore_id: "5615442659901440"
+data:
+    classification: Serious Bug
+    created: "2016-09-13T17:12:34.2842Z"
+    description: |-
+        Summary:
+        More often than not, apps are wrongfully rejected for using “Private API”. To be clear, I am not arguing that the private API check should be removed from the review process completely: there are tons of internal API that shouldn’t be messed with for reasons of security, privacy, etc.
+
+        What I _am_ arguing here, is that the process around the cases where a tool flags use of “Private API” is thoroughly revised:
+        The current process generates much more heat than light, and produces unjust rejections because — for example — a magazine reader app uses the property name "pageRange" in its own classes, or — as another example — an app has a helper method called "titleForSection:" in one of its "UITableViewDatasource" implementations.
+        I could list more examples of actual apps getting rejected for the incorrect accusation of using private API, but I think you get the idea.
+
+        Naming things is hard, and always strongly influenced — if not dictated — by the problem domain. Therefore, suggesting to “Please revise your app to remove any non-public APIs. If you have defined methods in your source code with the same names as the above-mentioned APIs, we suggest altering your method names so that they no longer collide with Apple's private APIs to avoid your application being flagged in future submissions.” can essentially be translated into flipping the bird to the developer who submitted the app.
+
+        That suggestion is frustrating, dishonest, and just plain lazy:
+        it is not the external developer’s fault that an Apple–internal tool generates false positives. And I hold Apple to a higher standard than this.
+
+        What makes this kind of rejection additionally annoying is that a programmer would most likely not have flagged these as private API use. They would have recognized that these names are so obvious, that they are highly unlikely to be _actual_ use of private API — without any additional tool support.
+
+        So here’s a proposal how this kind of rejection can largely be avoided:
+
+        1. Reviewers are trained that the tool which flags private API usage can — and will! — produce false positives.
+        2. Every result of this tool is treated as a candidate; that is: an app is not rejected automatically.
+        3. If the candidate is an accidental override of an undocumented private method of a derived class, say so in the review feedback. This part _can_ be automated, so the tool really should do that! (BTW: please make your framework developers prefix their private methods on public classes with an underscore to prevent this from happening in the first place!)
+        4. Each candidate that does fall into the category detailed in step 3 is reviewed by someone who  is sufficiently versed in programming to weed out the obvious, and maybe not so immediately obvious false positives.
+        5. Because it is probably not realistic to require **all** reviewers to become and remain proficient enough in Objective–C and Swift for this, these decisions are escalated to people who do have the necessary skill–set.
+        6. Once a candidate use of private API has been hand–selected as “likely”, the developer is contacted to clarify the situation. Note that this is hugely different from appealing to a rejection: at this point the app should not yet be rejected.
+
+        Because the developers now have to explain themselves before the app will be approved, apps that use private API are prevented from entering the AppStore just as well as before. The situation for us developers, however, and the general tone improves:
+        The likelihood of having to explain why this is not usage of private API will be reduced significantly. Also, it becomes much more of an innocent–until–proven–guilty scenario than the current one, which is completely the other way around.
+
+        Steps to Reproduce:
+        not applicable
+
+        Expected Results:
+        Developers are no longer required to rename their API “because we say so”. In particular, apps no longer get rejected when they implement a property like `pageRange` or a helper method like `titleForSection:` on their own classes.
+
+        Actual Results:
+        Sometimes apps are rejected if they implement “colliding” API, sometimes they are not. It depends on any number of unknowns, but a correlation to the reviewer knowing a thing or two about programming in general, and how Objective–C works/what a selector is in particular, is extremely likely.
+
+        Regression:
+        This happens since the dawn of time…err, the AppStore, I mean.
+
+        Notes:
+    email: daniel@puppiesonacid.de
+    modified: "2016-09-13T17:12:34.28443Z"
+    number: "28281569"
+    number_intvalue: 28281569
+    originated: 13-Sep-2016 07:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: App Store
+    product_version: n/a
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: Revise Review Process Around "Private API" usage

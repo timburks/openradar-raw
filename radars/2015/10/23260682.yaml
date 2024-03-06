@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23260682"
+    labels:
+        datastore_id: "6032620634767360"
+data:
+    classification: ""
+    created: "2015-10-27T12:08:00.67104Z"
+    description: "Summary:\r\nThere is no way to implement \r\nadaptivePresentationStyleForPresentationController:traitCollection: in UIAdaptivePresentationControllerDelegate that results in the same behaviour as if this method was not implemented. We want to make a configurable object that sometimes returns UIModalPresentationNone and sometimes does not interfere with the presentation.\r\n\r\nSteps to Reproduce:\r\n1. Set a view controller’s presentationController’s delegate to something\r\n2. Present the view controller\r\n3. In the delegate, implement adaptivePresentationStyleForPresentationController:traitCollection: but try not to change the presentation style (assume the object is reusable and you don’t know what the presentation style should be).\r\n\r\nExpected Results:\r\nIt would be nice if it was possible to implement this method without losing access to the default adaptivity behaviour.\r\n\r\nActual Results:\r\nThere is no simple way to make the presentation behave as if this delegate method was not implemented.\r\n\r\nVersion:\r\niOS 9.1, Xcode 7.1 (7B91b)\r\n\r\nNotes:\r\nI can think of two workarounds, which both make some assumptions about the implementation of UIKit.\r\n\r\n1. Loop back to the presentation controller, temporarily unsetting the delegate to avoid infinite recursion.\r\n\r\npresentationController.delegate = nil;\r\nUIModalPresentationStyle const style = [presentationController adaptivePresentationStyleForTraitCollection:traitCollection];\r\npresentationController.delegate = self;\r\nreturn style;\r\n\r\n2. Conditionally implement respondsToSelector:. Assumes the check is made every time rather than just when the delegate is set.\r\n\r\n- (BOOL)respondsToSelector:(SEL)selector {\r\n    if (selector == @selector(adaptivePresentationStyleForPresentationController:traitCollection:)) {\r\n        return <Should we interfere with the presentation?>\r\n    }\r\n\r\n    return [super respondsToSelector:selector];\r\n}\r\n\r\nIf either of these approaches is recommended, please could this be documented?\r\n\r\nConfiguration:\r\nN/A\r\n\r\nAttachments:"
+    email: douglashill@douglashill.co
+    modified: "2015-10-27T12:08:00.67133Z"
+    number: "23260682"
+    number_intvalue: 23260682
+    originated: 26-Oct-2015 06:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Not interfering with adaptive presentation

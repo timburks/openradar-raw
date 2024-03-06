@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6417849"
+    labels:
+        datastore_id: "323"
+data:
+    classification: Other Bug
+    created: "2008-12-04T08:55:52.36815Z"
+    description: "04-Dec-2008 12:52 AM Tim Burks:\r\n\r\nSummary: \r\n\r\nThe Foundation.dylib BridgeSupport file appears to not be compiled to support garbage collection.\r\n\r\nSteps to Reproduce:\r\n\r\nUse this test program:\r\n---------------------------------------------------\r\n#import <dlfcn.h>\r\n\r\nint main() {\r\n  dlopen(\"/System/Library/Frameworks/Foundation.framework/Resources/BridgeSupport/Foundation.dylib\", RTLD_LAZY | RTLD_GLOBAL);\r\n  void *function = dlsym(RTLD_DEFAULT, \"NSMinY\");\r\n\r\n  printf(\"hello %x\\n\", function);\r\n  return 0;\r\n}\r\n---------------------------------------------------\r\n\r\nCompile and run with and without -fobjc-gc. If you have Nu-0.3.3 installed, you can use this Nukefile to build:\r\n\r\n---------------------------------------------------\r\n(set @tool \"bridgetest\")\r\n(set @m_files (array \"bridgetest.m\"))\r\n\r\n;; comment this out, and the test passes\r\n;;(set @cflags \"-fobjc-gc\")\r\n\r\n(compilation-tasks)\r\n(tool-tasks)\r\n\r\n(task \"default\" => \"tool\")\r\n---------------------------------------------------\r\n\r\nWith garbage collection off, I get this result:\r\n[Oxygen:~/bridgetest] tim% nuke run\r\nUsing Nukefile with target run.\r\nnuke: running in /Users/tim/foo\r\nnuke: bridgetest\r\nhello 9c80\r\n\r\nWith garbage collection on, I get this:\r\n[Oxygen:~/bridgetest] tim% nuke clobber\r\nUsing Nukefile with target clobber.\r\nnuke: running in /Users/tim/foo\r\n[Oxygen:~/bridgetest] tim% nuke run\r\nUsing Nukefile with target run.\r\nnuke: running in /Users/tim/foo\r\nnuke: gcc -fobjc-gc -fobjc-exceptions -arch i386  -c -o build/i386/bridgetest.o bridgetest.m\r\nbridgetest.m: In function ‘main’:\r\nbridgetest.m:8: warning: incompatible implicit declaration of built-in function ‘printf’\r\nnuke: gcc  build/i386/bridgetest.o   -o 'build/i386/bridgetest'\r\nnuke: cp 'build/i386/bridgetest' 'bridgetest'\r\nnuke: bridgetest\r\nobjc[55517]: '/System/Library/Frameworks/Foundation.framework/Resources/BridgeSupport/Foundation.dylib' was not compiled with -fobjc-gc or -fobjc-gc-only, but the application requires GC\r\nobjc[55517]: *** GC capability of application and some libraries did not match\r\n\r\nExpected Results:\r\n\r\nI expect something similar to the first result in both cases.\r\n\r\nActual Results:\r\n\r\nSee above. \r\n\r\nRegression:\r\n\r\nSee above."
+    email: timburks@gmail.com
+    modified: "2011-08-28T05:48:59.833608Z"
+    number: "6417849"
+    number_intvalue: 6417849
+    originated: 04-Dec-2008 12:52 AM
+    parent_number: "6417067"
+    product: Mac OS X
+    product_version: 10.5.5
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/6417067
+    title: Foundation BridgeSupport file is not built to support garbage collection

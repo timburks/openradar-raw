@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "36321050"
+    labels:
+        datastore_id: "4990974983929856"
+data:
+    classification: Bug
+    created: "2018-01-05T18:19:17.87253Z"
+    description: "Area:\r\nFoundation\r\n\r\nSummary:\r\nIf /Library/Preferences/com.apple.HIToolbox.plist exists, it becomes impossible to login. If the file is created after login it causes crashes in many binaries.\r\n\r\nSteps to Reproduce:\r\n1) Create /Library/Preferences/com.apple.HIToolbox.plist. The content is irrelevant.\r\n2) Reboot, attempt to login.\r\n\r\nExpected Results:\r\nEverything works normally.\r\n\r\nActual Results:\r\nAny process that uses HIToolbox.framework (which seems to be a lot of processes, I noticed crashes in loginwindow, efilogin-helper, mds, NotificationCenter and others) will crash with:\r\n\r\nabort() called\r\n*** error for object 0x7fff482587bb: Non-aligned pointer being freed\r\n\r\nAs this causes loginwindow to crash, it becomes impossible to login.\r\n\r\nVersion/Build:\r\n10.13.2 17C88\r\n\r\nConfiguration:\r\nI've reproduced on multiple machines running 10.13.2. I haven't tested prior OS versions though I have reason to believe they aren't affected.\r\n\r\nNotes:\r\nI can't attach a sysdiagnose as I have confidential software on this machine that I can't share and I don't have time to filter out the data. I /have/ attached crash logs for several system binaries to show the problem.\r\n\r\nAs the backtraces in each of these has a similar pattern I disassembled the HIToolbox binary and found the problem is caused by the GetInputSourceEnabledPrefs() and CreateReadableDataFromPlist() functions. The former calls the latter in two places, one with an allocated string from expanding a path with a tilde and the other with a hard-coded string (/Library/Preferences/com.apple.HIToolbox.plist), in the latter case when CreateReadableDataFromPlist() is called it creates a CFString using CFStringCreateWithCStringNoCopy passing NULL as the final argument. When this CFString is released at the end of the function it tries to dealloc() the original c-string. \r\n\r\nI imagine this could be easily fixed by passing kCFAllocatorNull as the final argument to CFStringCreateWithCStringNoCopy in CreateReadableDataFromPlist() and in the case where the path was created (using CreatePathByExpandingTidlePath) manually deallocing the string once it's no longer needed."
+    email: russell@hancox.us
+    modified: "2018-01-19T15:39:09.70179Z"
+    number: "36321050"
+    number_intvalue: 36321050
+    originated: "2018-01-05"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13.2
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 35364639 (Closed)
+    title: com.apple.HIToolbox causes loginwindow crashes

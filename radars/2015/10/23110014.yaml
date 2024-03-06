@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23110014"
+    labels:
+        datastore_id: "6065223194640384"
+data:
+    classification: Enhancement
+    created: "2015-10-14T17:26:22.49579Z"
+    description: "[Want to discuss? Get in touch with me @jamesreggio.]\r\n\r\nUniversal Links have provided a significant improvement to cross-app navigation in iOS 9; however, I encountered one significant pain-point during implementation: it is not possible to remove paths from the `applinks.details.paths` array within the `apple-app-site-association` JSON manifest.\r\n\r\nThe system permits the use of wildcards, which is convenient for apps that wish to map most URLs into the app; however, the inability to subtract/exclude a path after the wildcard is applied makes this quite difficult for certain URL structures.\r\n\r\nI've included an example in the 'Steps to Reproduce' section. My recommendation would be to:\r\n\r\n1) Make the ordering of the `paths` array significant.\r\n2) Introduce an prefix operator (ideally `!`) to exclude paths from the manifest.\r\n\r\nFor inspiration, the `gitignore` pattern format is a good place to start. (The path format in a `gitignore` file is quite simple, and I've never found it impossible to express my needs.) https://git-scm.com/docs/gitignore\r\n\r\nAnother good example would be the `minimatch` library, though this is less compatible with your existing specification (due to the `**` glob operator). I suggest this because the choice of JSON implies an affinity for JavaScript technologies, of which `minimatch` is the canon for path matching. https://github.com/isaacs/minimatch\r\n\r\nFinally, may I kindly recommend that you improve the documentation around the existing wildcard facilities, particularly as they concern leading and trailing slashes. It's not clear whether a leading slash is required (or what happens if it's not and it's omitted), and it's not clear whether an `*` wildcard will match only one or more than one path part.\r\n\r\nSteps to Reproduce:\r\nImagine a website like Twitter, where a user's handle is specified as the first part of a path and there are nested sub-resources under the user's handle. For example:\r\n\r\nhttps://twitter.com/jamesreggio\r\nhttps://twitter.com/jamesreggio/status/123456\r\n\r\nI would like for all of these URLs to launch the Twitter app, but there are a couple of URLs that *should not* load the Twitter app—the OAuth login flow, for instance, which lives at:\r\n\r\nhttps://twitter.com/oauth/new\r\n\r\nNow, if I set the `paths` array to the following, I'll capture all of the URLs on the domain, including the `/oauth/new` path:\r\n\r\n['/*']\r\n\r\nThere is no way to include all user profiles, but exclude the `/oauth/new` path.\r\n\r\nThe ideal facility would allow me to begin with the wildcard, and then subtract paths that should not load the app. For instance:\r\n\r\n[\r\n  '*',\r\n  '!/oauth/*'\r\n]\r\n\r\nVersion:\r\niOS 9\r\n\r\nConfiguration:\r\niPhone"
+    email: james.reggio@gmail.com
+    modified: "2015-12-03T15:31:35.92365Z"
+    number: "23110014"
+    number_intvalue: 23110014
+    originated: 10/14/2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9
+    reproducible: Always
+    resolved: Fixed in iOS 9.2 / Duplicate of 21938110
+    status: Fixed/Duplicate
+    title: Provide means to exclude paths from Universal Links (applinks) JSON manifest

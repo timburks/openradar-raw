@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19073954"
+    labels:
+        datastore_id: "5223198379474944"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2014-11-24T16:49:31.460017Z"
+    description: "Summary:\r\nRendering pages on multiple threads with one CGPDFDocumentRef can lead to a double free/crash.\r\n\r\nSteps to Reproduce:\r\nOpen sample, run it. Observe that is crashes almost instantly. Since this is a timing dependent bug, it might take a bit for you to get it to crash.\r\n\r\nExpected Results:\r\nCGPDF promises thread safe usage. Should not crash when accessing on multiple threads.\r\n\r\nActual Results:\r\nCrash. Looks like a double free in the CMap parser.\r\n\r\nA common output is this:\r\n\r\n2014-11-24 17:21:25.021 ThreadRenderingSample[85940:3983383] Creating document\r\n2014-11-24 17:21:25.030 ThreadRenderingSample[85940:3983590] Spawning block …\r\nThreadRenderingSample(85940,0x1104ec000) malloc: *** error for object 0x7f9281e199b0: pointer being freed was not allocated\r\n*** set a breakpoint in malloc_error_break to debug\r\nThreadRenderingSample(85940,0x1105f2000) malloc: *** error for object 0xdfffffffc: pointer being freed was not allocated\r\n*** set a breakpoint in malloc_error_break to debug\r\n\r\nWith a crash in:\r\n* thread #4: tid = 0x3cc8e5, 0x0000000104c10282 libsystem_kernel.dylib`__pthread_kill + 10, queue = 'render-queue', stop reason = signal SIGABRT\r\n    frame #2: 0x00000001049a019a libsystem_sim_c.dylib`abort + 129\r\n    frame #3: 0x0000000104ae5553 libsystem_malloc.dylib`free + 428\r\n    frame #4: 0x00000001025b24f5 CoreGraphics`load_font + 138\r\n    frame #5: 0x00000001025b26b7 CoreGraphics`CGPDFFontGetMutator + 33\r\n    frame #6: 0x00000001025b56df CoreGraphics`draw_glyphs + 557\r\n    frame #7: 0x000000010256bc44 CoreGraphics`cid_draw + 465\r\n    frame #8: 0x000000010256ba3c CoreGraphics`CGPDFTextLayoutDrawGlyphs + 81\r\n    frame #9: 0x0000000102593078 CoreGraphics`op_TJ + 68\r\nhttps://gist.github.com/steipete/fa785aac824b9d8ba548\r\n\r\nRegression:\r\nThis example runs fine in iOS 7.1.2. The crash first appeared in iOS 8.0.\r\n\r\nNotes:\r\nWe’re using the PDF renderer heavily in PSPDFKit and had to disable multi-threaded rendering in iOS 8 because of this issue.\r\nThis of course led to reduced performance so we’re very interested in a fix."
+    email: steipete@gmail.com
+    modified: "2016-09-16T13:53:46.64466Z"
+    number: "19073954"
+    number_intvalue: 19073954
+    originated: 24-Nov-2014 05:44 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 8.1.1
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: Rendering pages on multiple threads with one CGPDFDocumentRef can lead to a double free/crash.

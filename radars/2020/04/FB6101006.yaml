@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB6101006
+    labels:
+        datastore_id: "4965361413783552"
+data:
+    classification: Bug
+    created: "2020-04-10T18:26:51.569587Z"
+    description: "Summary:\r\nWhen trying to load a kernel extension after replacing it in /Library/Extensions, the system requires between 20 to 40 seconds to actually load that extension. Looking at the log files, it seem as if kextd first has to verify all installed kernel extension (even those that have never been touched) and it seems that a network call is performed for each of these vitrifaction (see attached logs). This behavior looks buggy and is not seen on older system versions. The logs show the output of kextd/trustd during the kextload operation (log1 is only standard log, log2 is info+debug log enabled and it's huge!)\r\n\r\nSteps to Reproduce:\r\n1. Have a KEXT installed in /Library/Extension\r\n2. Load the KEXT.\r\n3. Delete the KEXT without unloading it first  (rm -rf)\r\n4. Add an identical copy of the KEXT to /Library/Extension\r\n5. Unload the KEXT by bundle identifier (kextunload -b)\r\n6. Load the replaced KEXT again.\r\n\r\nExpected Results:\r\nKEXT loads within a few seconds. The KEXT was replaced with an identical copy, so the system could see that it matches 1-to-1 with the KEXT in the staged folder and if the system has to verify anything at all, it would only be this one KEXT.\r\n\r\nActual Results:\r\nKEXT requires 20 to 40, usually around 30 seconds to load, as the system seems to re-tests all installed KEXTs, including those in /System (see attached logs)"
+    email: m.hanauska@gmail.com
+    modified: "2020-04-10T18:26:51.569745Z"
+    number: FB6101006
+    number_intvalue: 6101006
+    originated: May 21, 2019
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.14 and later
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: kextd verifies all kernel extensions for 20-40 sec when loading a new

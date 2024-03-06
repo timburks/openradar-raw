@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28956261"
+    labels:
+        datastore_id: "5570386037047296"
+data:
+    classification: ""
+    created: "2016-10-26T09:00:03.06969Z"
+    description: "Summary:\r\nSwift 3 does not allow NULL pointers (https://github.com/apple/swift-evolution/blob/master/proposals/0055-optional-unsafe-pointers.md). User programmers are expected to pass in nil for function arguments that are optional. The AudioUnitGetProperty() function expects a NULL pointer, but lacks the optional argument.\r\n \r\npublic func AudioUnitGetProperty(_ inUnit: AudioUnit, _ inID: AudioUnitPropertyID, _ inScope: AudioUnitScope, _ inElement: AudioUnitElement, _ outData: UnsafeMutableRawPointer, _ ioDataSize: UnsafeMutablePointer<UInt32>) -> OSStatus\r\n\r\n\"outData: … Set this parameter to NULL when calling this function if you only want to determine how much memory to allocate for a variable size property.\"\r\n\r\nThe following also came up on the Core Audio mailing list:\r\n\r\npublic func MusicTrackGetProperty(_ inTrack: MusicTrack, _ inPropertyID: UInt32, _ outData: UnsafeMutableRawPointer, _ ioLength: UnsafeMutablePointer<UInt32>) -> OSStatus\r\n\r\n\"If outData is NULL, then the size of the data will be passed back in ioLength\"\r\n\r\nAudioUnitConnection\r\n\r\n\"We used to be able to pass nill to sourceAudioUnit to disconnect. AudioUnitConnection.sourceAudioUnit needs to become optional.\"\r\n\r\nSteps to Reproduce:\r\nvar outputChannelSize : UInt32 = 0\r\nvar error : OSStatus = AudioUnitGetProperty(outputUnit, kAudioOutputUnitProperty_ChannelMap, kAudioUnitScope_Output, 0, nil, &outputChannelSize)\r\n\r\nExpected Results:\r\noutputChannelSize should be filled in with the property size.\r\n\r\nActual Results:\r\nThe above code will not compile with Xcode 8.\r\n\r\nVersion:\r\niOS 10.1, macOS 10.12.1, Xcode 8\r\n\r\nNotes:\r\nThe respective thread on the Core Audio mailing list starts here: http://lists.apple.com/archives/coreaudio-api/2016/Oct/msg00008.html\r\n\r\nConfiguration:\r\nany device\r\n\r\nAttachments:"
+    email: benjamin@boinx.com
+    modified: "2016-10-26T09:10:54.06573Z"
+    number: "28956261"
+    number_intvalue: 28956261
+    originated: 26-Oct-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "10.1"
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Core Audio SDK is broken since Swift 3

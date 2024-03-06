@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22855188"
+    labels:
+        datastore_id: "5054484413677568"
+data:
+    classification: Serious Bug
+    created: "2015-09-25T12:04:59.72523Z"
+    description: "Summary:\n\nI have a WKWebView which loads its contents offscreen. Once it loads, it is added to the view hierarchy.\n\nHowever, I have found that if the WKWebView’s frame is set after the contents load (but while offscreen), once you add it to the view hierarchy it will adjust its contentOffset in an undesired way that makes it scroll 1.5 screens down the page. Setting the contentOffset in  the webView:didFinishNavigation: callback doesn’t help, as the undesired action happens some time after that.\n\nPaste the following code in to a Playground (tested Xcode 7.0) to reproduce. \n==================\n\nimport UIKit\nimport WebKit\nimport XCPlayground\n\nclass WKViewController : UIViewController, WKNavigationDelegate\n{\n\tvar web            : WKWebView? = nil\n\tvar loadNavigation : WKNavigation? = nil\n\n\toverride func loadView()\n\t{\n\t\tsuper.loadView()\n\n\t\tview.backgroundColor = UIColor.orangeColor()\n\n\t\tweb = WKWebView()\n\t\tweb!.navigationDelegate = self\n\t}\n\n\toverride func viewDidLoad()\n\t{\n\t\tlet url     = \"http://nshipster.com/mirrortype/\"\n\t\tlet nsURL   = NSURL(string:url)!\n\t\tlet request = NSURLRequest(URL:nsURL)\n\t\tloadNavigation = web!.loadRequest(request)\n\n\t\t// NOTE: Uncomment this line to work-around\n//\t\tweb!.frame = view.bounds\n\t}\n\n\tfunc webView(webView: WKWebView, didFinishNavigation navigation: WKNavigation!)\n\t{\n\t\tprint(\"finished\")\n\n\t\tif navigation == loadNavigation\n\t\t{\n\t\t\tview.addSubview( webView )\n\t\t\twebView.frame = view.bounds\n\t\t\t// This line doesn't have any effect; CO gets set after this in some WKWebView magic.\n\t\t\twebView.scrollView.contentOffset = CGPoint.zero\n\t\t}\n\t}\n\n\tfunc webView(webView: WKWebView, didFailNavigation navigation: WKNavigation!, withError error: NSError)\n\t{\n\t\tprint(\"failed\")\n\t}\n}\n\nlet vc = WKViewController()\nXCPShowView( \"\", view: vc.view )"
+    email: wagner@mogic.com
+    modified: "2015-09-25T12:04:59.72564Z"
+    number: "22855188"
+    number_intvalue: 22855188
+    originated: 25-Sep-2015 02:04 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "9.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: WKWebView appears halfway down the page if frame not set before load completes

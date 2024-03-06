@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23262331"
+    labels:
+        datastore_id: "6755060843282432"
+data:
+    classification: Serious Bug
+    created: "2015-10-26T19:34:32.75316Z"
+    description: "This is from the forums (https://forums.developer.apple.com/thread/23190), and it’s not my original discovery, but I wanted to be sure it didn’t get dropped:\n\nWhen an instance calls the setter of another object of the same class from the property observer of its setter, the property observer of the second class is not called. Here's an example to make it clear:\n \nimport Foundation  \nclass TestObject {  \n  \n    init(name: String) {  \n        self.name = name  \n    }  \n    let name: String  \n  \n    var otherObject: TestObject?  \n  \n    var property: String? {  \n        didSet {  \n            print(\"Set property of \\(name) to \\(property)\")  \n            otherObject?.property = property  \n        }  \n    }  \n}  \nlet instance1 = TestObject(name: \"Instance 1\")  \nlet instance2 = TestObject(name: \"Instance 2\")  \ninstance1.otherObject = instance2  \ninstance1.property = \"Test\"  \n \nThe output on the console is\nSet property of Instance 1 to Optional(\"Test\")  \n \nThough I would expect it to be\nSet property of Instance 1 to Optional(\"Test\")  \nSet property of Instance 2 to Optional(\"Test\")  \n \nBoth values are actually set to \"Test\", but the second time the didSet method is not called."
+    email: garth@garthsnyder.com
+    modified: "2015-10-26T19:34:32.75336Z"
+    number: "23262331"
+    number_intvalue: 23262331
+    originated: 26-Oct-2015 12:34 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Property observers are not called when used recursively on different objects

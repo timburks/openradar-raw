@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "48860805"
+    labels:
+        datastore_id: "4931354433159168"
+data:
+    classification: Serious Bug
+    created: "2019-03-13T20:37:52.852444Z"
+    description: "Area:\r\nStoreKit\r\n\r\nSummary:\r\n\r\nMy app offers an auto-renewing subscription for premium features.  Recently a user wrote in to say he had purchased a subscription (providing screenshots of his receipt and the subscription page on his phone as evidence) but hadn't been granted premium features.  \r\n\r\nBased on my investigation, unless the user fabricated the screenshots he sent to confirm his purchase, despite the fact that in the Settings App he can see an active subscription to my app, I am confident that he is now in a state where StoreKit is reporting no incomplete transactions, and also reports no completed transactions when he tries to restore them.\r\n\r\nSteps to Reproduce:\r\n\r\nI am unable to reproduce the error, however I received logs from this user that made it clear that the following had happened:\r\n\r\n1. SKPaymentQueue.default().add(_:) was called with a subscription SKProduct\r\n2. The transaction queue was updated with a single transaction in the purchasing state\r\n3. The transaction queue was updated with a single transaction in the failed state (error message \"Cannot connect to iTunes Store\" so probably network issues).  FinishTransaction was called with this transaction.\r\n4. The App Store started a subscription for this user and charged the user's account (we've received screenshots from the user as confirmation)\r\n5. Some time later, the app exited and was launched again\r\n6. Several hours after the app was launched, the user requested to restore purchases.  The first result of this request was that a transactionObserver was installed.  Because this was the first call to addTransactionObserver since the app was launched, any unfinished transactions would at this point be passed to the updatedTransactions function, but none were passed.\r\n7. Immediately after installing the transactionObserver, SKPaymentQueue.default().restoreCompletedTransactions() was called.  Any finished transactions would at this point be passed to the updatedTransactions function, but none were passed.\r\n\r\nExpected Results:\r\nSince the App Store did process this user's subscription payment, I would expect one of the following to happen: \r\n- The transaction didn't complete on the client, so it would be passed to the updatedTransactions function when a transactionObserver was first installed after the app started.\r\n- The transaction did complete on the client, so it would be passed to the updatedTransactions function when restoreCompletedTransactions was called\r\n\r\nActual Results:\r\nNo transactions were passed to updatedTransactions when the transactionObserver was installed for the first time after the app started, or when restoreCompletedTransactions was called.\r\n\r\nVersion/Build:\r\niOS 12.1.4\r\n\r\nConfiguration:"
+    email: JAltreuter@gmail.com
+    modified: "2019-04-04T18:33:15.576519Z"
+    number: "48860805"
+    number_intvalue: 48860805
+    originated: March 13 2019
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 12.0.4
+    reproducible: Unable
+    resolved: April 1 2019
+    status: Closed
+    title: User has a subscription, but StoreKit reports no completed or incomplete transactions

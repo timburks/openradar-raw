@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "47351642"
+    labels:
+        datastore_id: "5046477395066880"
+data:
+    classification: Enhancement
+    created: "2019-01-17T16:34:37.256158Z"
+    description: "When a user taps on a universal link my app supports I noticed that iOS will first open my app, bring it to the foreground AND THEN call `application(_:willContinueActivityWithType:) -> Bool` and `application(_:continueUserActivity:restorationHandler:) -> Bool` methods. \r\n\r\nIn a perfect world this is fine. But there are times where the apple-app-site-association (AASA) file and the app can get out of sync causing the app to open but no action taking place (reminds me of the stringly typed API's left over from Objective-C). We've seen these two cases in the field:\r\n\r\n1. The application on the user's phone is out of date. The AASA file has new URLs in it that a newer version of the app supports but the old version(s) do not.\r\n2. (Rare) The AASA file gets updated on the live site before a new version of the app has been deployed or approved to be on the App Store.\r\n\r\nWe've solved this problem by implementing a \"redirect\" UX that informs the user their app is out of date and redirects them back to Safari using the link they originally tapped on, but I feel like we could avoid this all together with a simple solution.\r\n\r\nWhat if instead of bringing the app into the foreground it is instead pinged in the background via AppDelegate method asking the app if the URL provided is supported by the application and returns a BOOL? Perhaps calling `application(_:willContinueActivityWithType:) -> Bool` or a new method is introduced such as `application(_: canContinueWithURL:) -> Bool`.\r\n\r\nIf it FALSE false the user is kept in Safari and navigated to the link they tapped on. \r\n\r\nIf it returns TRUE then the app is brought to the forground and `application(_:continueUserActivity:restorationHandler:) -> Bool` is called.\r\n\r\nTo me, this avoids a bad user experience with iOS and my application in opening an app that then does nothing in response to something they tapped on instead of just navigating to the correct URL in Safari.\r\n\r\nI know we try to avoid this situations by being aggressive with keeping the app and operating system updated and keeping our backend servers correctly up to date but, I think a simple solution would lead to a better user experience for everyone. It may not get 100% of the cases, but quality apps would do the right thing.\r\n\r\nThank you for your consideration."
+    email: bill.dunay@robotsandpencils.com
+    modified: "2019-01-17T16:34:37.256362Z"
+    number: "47351642"
+    number_intvalue: 47351642
+    originated: January 17 2019
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: 12.x
+    reproducible: yes
+    resolved: ""
+    status: Open
+    title: Tapping a universal link shouldn't bring app to the foreground without checking for support first

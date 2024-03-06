@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15303626"
+    labels:
+        datastore_id: "5254475874828288"
+data:
+    classification: ""
+    created: "2013-10-23T22:28:07.182985Z"
+    description: "Summary:\r\n/usr/include/tk.h does #include<X11/Xlib.h> but there is no /usr/include/X11/\r\n\r\nSteps to Reproduce:\r\n1. xcode-select --install (creates /usr/include/)\r\n2. echo '#include <tk.h>' > foo.c\r\n3. cc -c foo.c\r\n\r\nExpected Results:\r\nSuccessful compilation.\r\n\r\nActual Results:\r\nIn file included from foo.c:1:\r\n/usr/include/tk.h:78:11: fatal error: 'X11/Xlib.h' file not found\r\n#       include <X11/Xlib.h>\r\n                ^\r\n1 error generated.\r\n\r\n\r\nVersion:\r\nOS X 10.9 (13A603), XCode 5.0.1 (5A2053)\r\n\r\nNotes:\r\nThe problem is that /usr/include/tk.h is symbolic link to /System/Library/Frameworks/Tk.framework/Versions/8.5/Headers/tk.h, and there is a /System/Library/Frameworks/Tk.framework/Versions/8.5/Headers/X11/ directory but no symbolic link from /usr/include/X11 to /System/Library/Frameworks/Tk.framework/Versions/8.5/Headers/X11/.\r\n\r\nThe following works:\r\ncc -I /System/Library/Frameworks/Tk.framework/Versions/8.5/Headers -c foo.c\r\n\r\n(alternatively tk.h could be removed from /usr/include/ since the presence of a broken file is much worse then complete absence)\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: Per.Mildner.usenet@gmail.com
+    modified: "2013-10-23T22:28:07.183193Z"
+    number: "15303626"
+    number_intvalue: 15303626
+    originated: 24-Oct-2013 00:26 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: always
+    resolved: ""
+    status: Open
+    title: /usr/include/tk.h is broken because /usr/include/X11/ does not exist

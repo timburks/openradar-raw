@@ -1,0 +1,56 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23410378"
+    labels:
+        datastore_id: "5527392625885184"
+data:
+    classification: Enhancement
+    created: "2015-11-05T12:24:26.44221Z"
+    description: |-
+        Summary:
+        To avoid reference cycles sometimes you have to capture a weak reference in the capture list of a closure:
+        e.g.
+        { [weak ref] in }
+
+        It is often the case that you want to reuse that same reference inside the closure multiple times, so one way is just to work with the `Optional` you will get:
+        e.g.
+        { [weak ref] in
+          ref?.foo()
+          ref?.bar()
+        }
+
+        But you might want to ensure that once you start operating on it you do all the operations declared in the closure, so you do another strong reference before doing anything:
+        e.g.
+        { [weak ref] in
+          guard let sref = ref else { return }
+          sref.foo()
+          sref.bar()
+        }
+
+        Since this pattern is quite common I would like some kind of system way to do it, like a new capturing type:
+        e.g.
+        { [weakstrong ref] in
+          ref.foo()
+          ref.bar()
+        }
+
+        I can see the issue in determining what to do when the reference is actually lost, the cleanest (and easiest to manage) way to do it is maybe to force the closure to be optional and nil it when "weakstrong" captured values go nil. Other approaches are welcome as long as some boilerplate can be removed from this pattern
+
+        Expected Results:
+        Reduce the boilerplate in defining closures that don't strongly reference a property that they use but they will again once called
+
+        Actual Results:
+        Need to write another line every time (and declare a new variable in the case of self)
+    email: DeFrenZ@gmail.com
+    modified: "2015-11-05T12:24:26.44243Z"
+    number: "23410378"
+    number_intvalue: 23410378
+    originated: 05-Nov-2015 12:24 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Swift 2.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Add a new capture type for strong-weak-strong ownership

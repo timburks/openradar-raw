@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "42974387"
+    labels:
+        datastore_id: "5057595630944256"
+data:
+    classification: ""
+    created: "2018-08-06T18:04:25.0491Z"
+    description: "Area:\r\nWebKit\r\n\r\nSummary:\r\n\r\nCalling urlSchemeTask.didFailWithError() prior to sending data crashes.\r\n\r\nSee example Playground attachment.\r\n\r\nExpected Results:\r\n\r\nWebView should receive an error while loading\r\n\r\nActual Results:\r\n\r\nCrash at urlSchemeTask.didFailWithError(error):\r\n\r\nerror: Execution was interrupted, reason: EXC_BAD_INSTRUCTION (code=EXC_I386_INVOP, subcode=0x0).\r\nThe process has been left at the point where it was interrupted, use \"thread return -x\" to return to the state before expression evaluation.\r\n\r\n* thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_INSTRUCTION (code=EXC_I386_INVOP, subcode=0x0)\r\n  * frame #0: 0x00000001223e5431 libswiftCore.dylib`function signature specialization <Arg[2] = Dead, Arg[3] = Dead> of Swift._fatalErrorMessage(_: Swift.StaticString, _: Swift.StaticString, file: Swift.StaticString, line: Swift.UInt, flags: Swift.UInt32) -> Swift.Never + 113\r\n    frame #1: 0x000000012221ad63 libswiftCore.dylib`Swift._fatalErrorMessage(_: Swift.StaticString, _: Swift.StaticString, file: Swift.StaticString, line: Swift.UInt, flags: Swift.UInt32) -> Swift.Never + 19\r\n    frame #2: 0x000000012679acfe $__lldb_expr18`main at Untitled Page.xcplaygroundpage:49\r\n    frame #3: 0x000000010c89a600 MyPlayground`linkResources + 304\r\n    frame #4: 0x000000010e03b76c CoreFoundation`__CFRUNLOOP_IS_CALLING_OUT_TO_A_BLOCK__ + 12\r\n    frame #5: 0x000000010e03af20 CoreFoundation`__CFRunLoopDoBlocks + 336\r\n    frame #6: 0x000000010e035784 CoreFoundation`__CFRunLoopRun + 1284\r\n    frame #7: 0x000000010e034f41 CoreFoundation`CFRunLoopRunSpecific + 625\r\n    frame #8: 0x000000011560e1b5 GraphicsServices`GSEventRunModal + 62\r\n    frame #9: 0x0000000111d23df4 UIKitCore`UIApplicationMain + 140\r\n    frame #10: 0x000000010c89a6cd MyPlayground`main + 205\r\n    frame #11: 0x000000010fa4b9ed libdyld.dylib`start + 1\r\n\r\nVersion/Build:\r\n\r\niOS 12, Xcode 10b5\r\n\r\nNotes:\r\n\r\nCrash appears to be due to WebURLSchemeTask::didComplete, specifically this line (https://github.com/WebKit/webkit/blob/master/Source/WebKit/UIProcess/WebURLSchemeTask.cpp#L136):\r\n\r\nm_syncCompletionHandler(m_syncResponse, error, IPC::DataReference { (const uint8_t*)m_syncData->data(), m_syncData->size() });\r\n\r\nIf didReceiveData has not been called yet, m_syncData will be nullptr, and crash.\r\n\r\ndidComplete explicitly permits no response to have been sent, if there is an error (note that the docs for Cocoa's didReceiveResponse are misleading about this; even if a response is sent, it doesn't address the issue, however).\r\n\r\n    if (!m_responseSent && error.isNull())\r\n        return ExceptionType::NoResponseSent;"
+    email: robnapier@gmail.com
+    modified: "2018-08-06T18:04:25.04938Z"
+    number: "42974387"
+    number_intvalue: 42974387
+    originated: "2018-08-06"
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: iOS 12
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: WKURLSchemeHandler crashes when sent errors

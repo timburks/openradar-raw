@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24150970"
+    labels:
+        datastore_id: "4957200418078720"
+data:
+    classification: ""
+    created: "2016-01-22T09:35:32.2034Z"
+    description: "Boris Sotillos\r\n12-Jan-2016 06:56 PM\r\n\r\nSummary:\r\nAfter calling the NSBundleResourceRequest::endAccessingResources (and/or NSBundleResourceRequest::release), the finished block(s) of NSBundleResourceRequest::beginAccessingResourcesWithCompletionHandler and NSBundleResourceRequest::conditionallyBeginAccessingResourcesWithCompletionHandler are still being called.\r\n\r\nI would expect that after indicating that I'm no longer interested (endAccessingResources), I would get no further notifications.\r\n\r\nAfter running the demo application we get the log:\r\n2016-01-12 16:50:40.397 crappy[1024:2661604] 1\r\n2016-01-12 16:50:40.401 crappy[1024:2661604] 2\r\n2016-01-12 16:50:40.412 crappy[1024:2661630] conditionallyBeginAccessingResourcesWithCompletionHandler downloadRequired = 1\r\n2016-01-12 16:50:41.402 crappy[1024:2661604] 3\r\n2016-01-12 16:50:41.402 crappy[1024:2661604] 4 downloadRequired = 1 \r\n2016-01-12 16:50:41.404 crappy[1024:2661604] 6\r\n2016-01-12 16:50:41.404 crappy[1024:2661604] 8\r\n2016-01-12 16:50:41.405 crappy[1024:2661604] 9\r\n2016-01-12 16:51:16.180 crappy[1024:2661630] beginAccessingResourcesWithCompletionHandler\r\n2016-01-12 16:51:21.406 crappy[1024:2661604] 10\r\n\r\nNote how \"beginAccessingResourcesWithCompletionHandler\" is logged after \"9\" (which is after endAccessingResources and off the release pool).\r\n\r\nSteps to Reproduce:\r\nI have attached am xcode project\r\n\r\nExpected Results:\r\nI would expect that after indicating that I'm no longer interested (endAccessingResources), I would get no further notifications.\r\n\r\n\r\nActual Results:\r\ncompletion handler is called after endAccessingResources or release\r\n\r\nVersion:\r\n9.1 (13U95)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\napple tv using LAN\r\n\r\nAttachments:\r\n'crappy_offScope.zip' was successfully uploaded.\r\n\r\n=====================================================================================================================================\r\n\r\nApple Developer Relations\r\n21-Jan-2016 10:37 PM\r\n\r\nThere are no plans to address this based on the following:\r\n\r\nFrom the documentation, calling endAccessingResources before you’ve gotten a callback from the begin does not work.\r\n\r\n*\r\n Informs the system that you are finished with the resources that were part of the tag set in this request. Call this after you no longer need the resources to be available on disk. It is important to invoke this method to make room for newly requested resources. This method may only be invoked if you have received a callback from -beginAccessingResourcesWithCompletionHandler:. To cancel an in-progress request, invoke cancel on the -progress property.\r\n */\r\n- (void)endAccessingResources;\r\n\r\nWe are now closing this report.\r\n\r\nIf you have questions about the resolution, or if this is still a critical issue for you, then please update your bug report with that information.\r\n\r\n=====================================================================================================================================\r\n\r\nBoris Sotillos\r\n22-Jan-2016 09:33 AM\r\n\r\n(For completeness on the explanation)\r\nThe documentation paragraph quoted regarding endAccessingResources is not in the online Framework Reference, but from the framework's header file NSBundle.h\r\n\r\n=====================================================================================================================================\r\n\r\nBoris Sotillos\r\n28-Jan-2016 04:27 PM\r\n\r\nRetested with tvOS 9.2 beta 2 (12Y5189e), compiled on Xcode 7.3 beta (7D129n)\r\n\r\nSame behaviour."
+    email: borissotillos@gmail.com
+    modified: "2016-02-01T08:21:13.42636Z"
+    number: "24150970"
+    number_intvalue: 24150970
+    originated: 12-Jan-2016
+    parent_number: '&{NULL_VALUE}'
+    product: tvOS SDK
+    product_version: 9.1 (13U95)
+    reproducible: 100%
+    resolved: ""
+    status: will not fix
+    title: completion handler called after release/end

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "41492798"
+    labels:
+        datastore_id: "4929660190195712"
+data:
+    classification: Bug
+    created: "2018-10-22T19:24:51.933903Z"
+    description: "Summary:\r\nOnce rdar://41101885 (https://openradar.appspot.com/radar?id=5006149438930944) is fixed (`UICollectionView` providing preferred attributes for old index paths during a delete batch update, which results in an index OOB crash on iOS 11 and iOS 12 b1 and b2), there will still be an animation issue:\r\n\r\nWhen an unsized, offscreen item slides up into view due to an item delete above it, the item will animate with its estimated height, rather than its final height, despite layout attributes with the correct, final height being returned from `initialLayoutAttributesForAppearingItem` and `finalLayoutAttributesForDisappearingItem` throughout the animation.\r\n\r\nNote that I'm assuming the correct attributes are being returned from those functions once rdar://41101885 is fixed. I can confirm on my own self sizing layout that I return the correct attributes here, but the animation is still wrong.\r\n\r\nIt appears that even after all items in the collection view have received their final sizes, the cell that's sliding up onto screen will receive old, stale layout attributes (with an estimated height) several times via `apply(_ layoutAttributes: UICollectionViewLayoutAttributes)`. Basically, it never has the chance to update to its final height before collection view calls `snapshotView(afterScreenUpdates afterUpdates: Bool) -> UIView? ` for the animation.\r\n\r\n\r\nSteps to Reproduce:\r\n1. Open attached sample project. \r\n2. Click \"Append\" 3 times to add 3 items, one of which will be offscreen below the fold.\r\n3. Click \"Remove at 0\" to do a batch update delete for the first item\r\n\r\nObserve that the offscreen item that moved from {0, 2} -> {0, 1} will animate in with an estimated height, then snap to its final height as soon as the animation ends.\r\n\r\nExpected Results:\r\nThe cell should be snapshotted after updating to its preferred height.\r\n\r\nActual Results:\r\nThe cell is snapshotted when it only has its estimated height.\r\n\r\nVersion/Build:\r\niOS 12 b3, assuming rdar://41101885 (https://openradar.appspot.com/radar?id=5006149438930944) is fixed. On iOS 11 and iOS 12 b1 and b2, it'll just crash so you won't even get to see the animation.\r\n\r\n\r\nSample project: https://drive.google.com/file/d/1hUzkqaNU5ii9QAZiEfTA1fliAy40HdQT/view?usp=sharing"
+    email: kellerbryan19@gmail.com
+    modified: "2018-10-22T19:24:51.934173Z"
+    number: "41492798"
+    number_intvalue: 41492798
+    originated: 06/26/2018
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: iOS 12
+    reproducible: Yes
+    resolved: Yes
+    status: Closed
+    title: UICollectionViewFlowLayout incorrect delete animation

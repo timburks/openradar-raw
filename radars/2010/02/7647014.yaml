@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7647014"
+    labels:
+        datastore_id: "153403"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2010-02-13T22:24:15.4033Z"
+    description: "Summary:\r\nFrom the Snow Leopard Foundation release notes:\r\n\r\n===\r\nUsing NSNotificationQueue Warning (New since WWDC 2009)\r\nNSNotificationQueue is an API and mechanism related to run loops (NSRunLoop), and the running of run loops.  In particular, posting of notifications via the notification queue is driven by the running of its associated run loop.  However, there is no definition for what run loop a notification queue uses, and there is no way for a client to configure that.  In fact, any given notification queue might be \"tickled\" into posting by nearly any run loop and different ones at different times (and given that enqueued notifications are also mode-specific, what mode(s) the run loop(s) are running in any any given time also come into play).  Further, although each notification queue is \"thread-specific\" (see the +defaultQueue documentation), there has never been any relationship between that thread and the run loop used by a notification queue.  This is all more and more problematic as more and more things move to happening on different and new threads.\r\n\r\nThe practical upshot is:\r\n- Notifications posted through a queue might not be posted in any particular \"timely\" fashion;\r\n- Notifications posted through a queue might not ever be posted (the run loop of the thread that the queue chose to ask to poke it might not be run again; for example, the thread of that run loop might exit and the notification queue discarded);\r\n- Notifications can be posted by any given queue on a different thread than the thread the queue is the default queue for (when a queue is a default queue for some thread);\r\n- Notifications can be posted by any given queue on different threads over time;\r\n- There is no necessary/guaranteed relationship between the thread(s) on which notifications are enqueued and those on which the notifications eventually get posted (delivered) for any notification queue\r\n\r\nThis is true for all releases of Mac OS X.  Foundation and AppKit do not use NSNotificationQueue themselves, partly for these reasons.\r\n===\r\n\r\nIn short, NSNotificationQueue is completely broken, but the only way you can find out is by reading release notes.\r\n\r\nSteps to Reproduce:\r\nUse NSNotificationQueue.\r\n\r\nExpected Results:\r\nA useful class.\r\n\r\nActual Results:\r\nA subtle but completely broken class.\r\n\r\nRegression:\r\nAccording to the release notes, this problem has existed from the start.\r\n\r\nNotes:\r\nApple needs to either deprecate NSNotificationQueue or fix it. The described behavior is completely wrong and could not ever be useful. (Losing notifications at random, posting them at random to different threads when the documentation says NOTHING about this, this will all lead programmers to write code which does not behave correctly.) This would be a useful class if it worked right, so I hope Apple fixes it. If not, Apple needs to put all of these limitations large, up front and center in the documentation and officially deprecate use of this class."
+    email: michael.ash@gmail.com
+    modified: "2011-08-28T05:42:40.710679Z"
+    number: "7647014"
+    number_intvalue: 7647014
+    originated: 13-Feb-2010 05:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSNotificationQueue is useless

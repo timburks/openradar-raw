@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21484589"
+    labels:
+        datastore_id: "5865053727227904"
+data:
+    classification: Serious Bug
+    created: "2015-06-22T15:37:52.35034Z"
+    description: "Summary:\r\nThe CustomHTTPProtocol example code contains a race condition between the CustomHTTPProtocol.clientThread and QNSURLSessionDemux.sessionDelegateQueue. The following sequence of method calls is possible:\r\n\r\n1. URLSession:dataTask:didReceiveData: on QNSURLSessionDemux.sessionDelegateQueue\r\n2. stopLoading on CustomHTTPProtocol.clientThread\r\n3. URLSession:dataTask:didReceiveData: on CustomHTTPProtocol.clientThread\r\n\r\nThis causes an assertion failure because stopLoading nils CustomHTTPProtocol.task, and all of the URLSessionDataDelegate callback methods `assert(self.task == dataTask)`.\r\n\r\nSteps to Reproduce:\r\nI was able to reproduce this by loading a page in UIWebView while CustomHTTPProtocol was active. Unfortunately, the page is internal, and I can't expose it to you. However, if should be easy to see in code that the above race condition is at least theoretically possible.\r\n\r\nExpected Results:\r\nCustomHTTPProtocol should expect this race condition and handle it.\r\n\r\nActual Results:\r\nCustomHTTPProtocol traps when `assert(self.task == dataTask)` fails."
+    email: heath.borders@gmail.com
+    modified: "2015-06-22T15:37:52.35056Z"
+    number: "21484589"
+    number_intvalue: 21484589
+    originated: 22-Jun-2015 10:35 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Sample Code
+    product_version: ""
+    reproducible: Rarely
+    resolved: ""
+    status: Open
+    title: Race Condition in CustomHTTPProtocol between -stopLoading and URLSessionDataDelegate callbacks

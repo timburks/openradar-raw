@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32885384"
+    labels:
+        datastore_id: "4934502774210560"
+data:
+    classification: Bug
+    created: "2017-06-20T23:00:46.96315Z"
+    description: "Summary:\r\nXcode 9 beta 1 is unable to build a workspace, where the app module's Swift code contains a subclass of an open class from a dependency module. The linker error only occurs if the said base open class is:\r\n\r\n1. a nested type (e.g. is defined inside an empty struct), AND\r\n2. contains a `private(set) public var` property\r\n\r\nXcode 8.x is able to build a workspace with such as setup fine and doesn't produce linker errors.\r\n\r\nSteps to Reproduce:\r\n1. Create an Xcode workspace with two Swift modules: an app and a framework dependency.\r\n2. In the framework module, create a *nested* open class with a `private(set) public var` property.\r\n3. In the app module, import the framework and create a subclass of the said base class and attempt to use it.\r\n4. Build the workspace.\r\n\r\nSee attached sample project.\r\n\r\nExpected Results:\r\nThe workspace builds and the app runs.\r\n\r\nObserved Results:\r\nThe workspace fails to build with a linker error.\r\n\r\nVersion:\r\nXcode 9 beta 1 (9M136h), iOS 11 beta 1 SDK, running on macOS Sierra 10.12.5 (16F73).\r\n\r\nNotes:\r\nWorkarounds that can be implemented to get such a workspace to build in Xcode 9 are:\r\n\r\n* Un-nesting the base class (turning into a top level open class in the framework module), OR\r\n* Changing the base class's `private(set)` property access level to `public`, OR\r\n* Not subclassing the base class in the app module and simply using the base class directly all \"resolve\" the linker error."
+    email: arnold.sakhnov@xero.com
+    modified: "2017-06-20T23:00:46.96343Z"
+    number: "32885384"
+    number_intvalue: 32885384
+    originated: 2017/06/21
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode 9
+    product_version: Version 9.0 beta (9M136h)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Linker error in Xcode 9 in a project with a cross-module Swift subclass of a nested type

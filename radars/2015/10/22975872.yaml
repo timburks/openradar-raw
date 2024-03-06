@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22975872"
+    labels:
+        datastore_id: "4688840157560832"
+data:
+    classification: Serious Bug
+    created: "2015-10-05T18:41:03.98468Z"
+    description: "Summary:\r\nWhen calculating directions to an end location that was acquired from a CLGeocoder forward geocode, the request often fails with the error \"Cannot locate the end location.\"\r\n\r\nRemoving the postal code from the geocoded address appears to solve the issue, but this is unfortunately not a viable workaround since many cities have duplicate street names, and require the postal code to differentiate the location.\r\n\r\nThe issue appears to be limited to iOS 9 (the provided demo code works fine in iOS 8).\r\n\r\nSteps to Reproduce:\r\nRun the code below:\r\n\r\n    CLGeocoder *geocoder = [[CLGeocoder alloc] init];\r\n    [geocoder geocodeAddressString:@\"170 Stevenson St, San Francisco, CA 94103, USA\" completionHandler:^(NSArray *placemarks, NSError *error) {\r\n        MKPlacemark *sourcePlacemark = [[MKPlacemark alloc] initWithCoordinate:CLLocationCoordinate2DMake(37.769174, -122.423236) addressDictionary:nil];\r\n        \r\n        MKDirectionsRequest *request = [[MKDirectionsRequest alloc] init];\r\n        request.source = [[MKMapItem alloc] initWithPlacemark:sourcePlacemark];\r\n        request.destination = [[MKMapItem alloc] initWithPlacemark:[placemarks firstObject]];\r\n        \r\n        MKDirections *directions = [[MKDirections alloc] initWithRequest:request];\r\n        [directions calculateDirectionsWithCompletionHandler:^(MKDirectionsResponse *response, NSError *error) {\r\n            NSLog(@\"response: %@, error: %@\", response, error);\r\n        }];\r\n    }];\r\n\r\nExpected Results:\r\nThe log output contains an MKDirectionsResponse object, e.g.:\r\n\r\n2015-10-05 11:34:39.936 MapDirectionsDemo[468:361652] response: <MKDirectionsResponse: 0x17046d800>, error: (null)\r\n\r\nActual Results:\r\nThe log output contains an NSError object, e.g.:\r\n\r\n2015-10-05 11:23:50.969 MapDirectionsDemo[2681:939786] response: (null), error: Error Domain=MKErrorDomain Code=5 \"Directions Not Available\" UserInfo={NSLocalizedFailureReason=Cannot locate the end location., MKErrorGEOError=-403, MKDirectionsErrorCode=4, NSLocalizedDescription=Directions Not Available}\r\n\r\nVersion:\r\niOS 9.0.2 [13A452]\r\n\r\nConfiguration:\r\niPhone 6 64GB Verizon, iOS 9.0.2"
+    email: haugli@gmail.com
+    modified: "2015-10-05T18:41:03.98487Z"
+    number: "22975872"
+    number_intvalue: 22975872
+    originated: 5 Oct 2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 9.0.2
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: MKDirections often fails in iOS 9 when using geocoded end location

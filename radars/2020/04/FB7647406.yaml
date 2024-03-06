@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7647406
+    labels:
+        datastore_id: "5000003177152512"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2020-04-01T08:10:38.290484Z"
+    description: "Please describe the issue:\r\nThe newly added weak import of `__darwin_check_fd_set_overflow` in `usr/include/sys/_types/_fd_def.h` breaks the `-no_weak_imports` linker option.\r\n\r\n\r\nPlease list the steps you took to reproduce the issue:\r\nsee https://gist.github.com/lewurm/210b320cb6037ca8ad4a370adf1bde11\r\n\r\nCopy/paste here:\r\n\r\n\r\n$ make set_xcode11.3\r\nsudo xcode-select -s /Applications/Xcode113.app/Contents/Developer\r\n$ xcodebuild -version\r\nXcode 11.3\r\nBuild version 11C29\r\n\r\n$ cat c.c\r\n#include <sys/select.h>\r\n\r\nint foo (void) {\r\n        fd_set s;\r\n        FD_SET (0, &s);\r\n        return FD_ISSET (0, &s);\r\n}\r\n\r\n$ make c.dylib\r\nclang -c -mmacosx-version-min=10.9 -o c.o c.c\r\nclang -dynamiclib -mmacosx-version-min=10.9 -Wl,-no_weak_imports -o c.dylib c.o\r\n$ nm c.o\r\n0000000000000060 t ___darwin_fd_isset\r\n0000000000000000 T _foo\r\n$ make clean\r\nrm -f c.dylib c.o\r\n\r\n$ make set_xcode11.4\r\nsudo xcode-select -s /Applications/Xcode114.app/Contents/Developer\r\n$ xcodebuild -version\r\nXcode 11.4\r\nBuild version 11E146\r\n\r\n$ make c.dylib\r\nclang -c -mmacosx-version-min=10.9 -o c.o c.c\r\nclang -dynamiclib -mmacosx-version-min=10.9 -Wl,-no_weak_imports -o c.dylib c.o\r\nld: weak import of symbol '___darwin_check_fd_set_overflow' not supported because of option: -no_weak_imports for architecture x86_64\r\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\r\nmake: *** [c.dylib] Error 1\r\n$ nm c.o\r\n                 U ___darwin_check_fd_set_overflow\r\n0000000000000000 T _foo\r\n\r\n\r\nWhat did you expect to happen?\r\nBehave as Xcode 11.3 and successfully link.\r\n\r\n\r\nWhat actually happened?\r\nLinking fails due to weak import of `__darwin_check_fd_set_overflow`."
+    email: lewurm@gmail.com
+    modified: "2020-04-01T08:10:38.290669Z"
+    number: FB7647406
+    number_intvalue: 7647406
+    originated: 04/01/2020
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: Xcode 11.4 (11E146)
+    reproducible: yes
+    resolved: ""
+    status: Open
+    title: weak import __darwin_check_fd_set_overflow breaks -no_weak_imports linker option

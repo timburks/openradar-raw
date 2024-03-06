@@ -1,0 +1,55 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18380076"
+    labels:
+        datastore_id: "4957984484491264"
+data:
+    classification: Serious Bug
+    created: "2014-09-18T14:21:53.23681Z"
+    description: |-
+        Summary:
+        I constraint a type parameter to conform to a protocol, T. That protocol conforms to Equatable as well as adding its own constraints. I then extend Character correctly to conform to T. Now I can’t link, because of duplicate symbols declaring Equatable conformance.
+
+
+        Steps to Reproduce:
+        1. Compile this code (NB: you can’t just run it in a script, it has to actually compile & [fail to] link):
+
+        protocol T : Equatable {}
+        extension Character : T {}
+
+
+        Expected Results:
+        I expected this would compile and link just fine.
+
+
+        Actual Results:
+        It compiles but fails to link:
+
+        duplicate symbol __TTWOSs9CharacterSs9EquatableFS0_oi2eeUS0___fMQPS0_FTS1_S1__Sb in:
+            /Users/rob/Library/Developer/Xcode/DerivedData/boom-aaolihuubdazajalrhptcajlaiaf/Build/Intermediates/boom.build/Debug/boom.build/Objects-normal/x86_64/main.o
+            /Applications/Xcode-Beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift_static/macosx/libswiftCore.a(Swift.o)
+        duplicate symbol __TWPOSs9CharacterSs9Equatable in:
+            /Users/rob/Library/Developer/Xcode/DerivedData/boom-aaolihuubdazajalrhptcajlaiaf/Build/Intermediates/boom.build/Debug/boom.build/Objects-normal/x86_64/main.o
+            /Applications/Xcode-Beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift_static/macosx/libswiftCore.a(Swift.o)
+        ld: 2 duplicate symbols for architecture x86_64
+
+
+        Regression:
+        Doesn’t happen if you just run this as a script, presumably because it’s not generating linker symbols quite the same way.
+
+
+        Notes:
+        This also applies when the protocol conformance is declared elsewhere in your own project, e.g. if I make a struct S and conform it to Equatable explicitly and then also conform it to my protocol T : Equatable.
+    email: rix.rob@gmail.com
+    modified: "2014-09-18T14:21:53.236992Z"
+    number: "18380076"
+    number_intvalue: 18380076
+    originated: 18-Sep-2014 10:21 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-Beta (6A1030)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Extending a type with a protocol conforming to one it implements fails with duplicate symbols'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "46395110"
+    labels:
+        datastore_id: "6147991014473728"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2018-12-01T10:46:22.63517Z"
+    description: "Summary:\r\nPlease see attached test case. When removeAllActions is called inside an undo handler and a group is open, NSUndoManager throws \"NSInternalInconsistencyException\", \"_endUndoGroupRemovingIfEmpty:: NSUndoManager 0x600001026620 is in invalid state, endUndoGrouping called with no matching begin\n\n_endUndoGroupRemovingIfEmpty checks if a group needs to be closed, but does that before invoking the undoHandler, and then not checking again.\n\nThis is an example where you might quickly say \"API misuse\". In a real-world application with 20 layers and user-facing API, it is MUCH harder to prevent calls from various model change callbacks that don't affect the undo manager or might trigger a call to removeAllActions. It's an extremely hard to reproduce case, we took weeks with a customer to track it down to exactly this trivial case.\n\nNSUndoManager could add an additional check for the groupingCount before trying to close a group after invoking the undo handler to fix this.\r\n\r\nSteps to Reproduce:\r\nRun test case, observe exception.\r\n\r\nExpected Results:\r\nNo exception. NSUndoManager should be robust enough to deal with the call order we throw at it.\r\n\r\nActual Results:\r\nNSUndoManager’s redo logic gets confused and subsequently throws.\r\n\r\nVersion:\r\n12.1\r\n\r\nNotes:\r\nWe currently work around it with a custom NSUndoManager subclass that includes additional checks in endUndoGrouping, however this seems suboptimal."
+    email: steipete@gmail.com
+    modified: "2018-12-01T10:46:22.635322Z"
+    number: "46395110"
+    number_intvalue: 46395110
+    originated: 01-Dec-2018 11:46 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "12.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSUndoManager throws NSInternalInconsistencyException in endUndoGroupRemovingIfEmpty if removeAllActions is called inside handler

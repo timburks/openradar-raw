@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "50830331"
+    labels:
+        datastore_id: "5033038689861632"
+data:
+    classification: Bug
+    created: "2019-05-15T22:51:09.258714Z"
+    description: "Summary:\r\nThe C data type Union is not key value coding compliant.  Attempting to call setValue:ForKey: will crash and give the error \"failed: caught \"NSUnknownKeyException\", \"[<DUXOSBindClass 0x6000008258c0> setValue:forUndefinedKey:]: this class is not key value coding-compliant for the key testUnion.\"\"\r\n\r\nSteps to Reproduce:\r\nThe steps to reproduce just require attempting to call setValue:ForKey:  with a Union encoded into an NSValue.\r\n\r\ntypedef struct {\r\n    CGFloat testFloat;\r\n} DUXOSTestStruct;\r\n\r\ntypedef union {\r\n    CGFloat testFloat;\r\n} DUXOSTestUnion;\r\n\r\n\r\n@interface DUXOSBindClass : NSObject\r\n\r\n@property (assign, nonatomic) DUXOSTestStruct testStruct;\r\n@property (assign, nonatomic) DUXOSTestUnion testUnion;\r\n\r\n@end\r\n\r\n@implementation DUXOSBindClass\r\n\r\n- (instancetype)init {\r\n    self = [super init];\r\n    if (self) {\r\n        DUXOSTestStruct exampleStruct = {0.0};\r\n        self.testStruct = exampleStruct;\r\n        \r\n        DUXOSTestUnion exampleUnion = {0.0};\r\n        self.testUnion = exampleUnion;\r\n    }\r\n    return self;\r\n}\r\n\r\n@end\r\n\r\n@interface DUXOSRuntimeMappingCTests : XCTestCase\r\n\r\n@property (strong, nonatomic) DUXOSBindClass *bindClass;\r\n\r\n@end\r\n\r\n@implementation DUXOSRuntimeMappingCTests\r\n\r\n- (void)setUp {\r\n    // Put setup code here. This method is called before the invocation of each test method in the class.\r\n    self.bindClass = [DUXOSBindClass new];\r\n}\r\n\r\n- (void)tearDown {\r\n    // Put teardown code here. This method is called after the invocation of each test method in the class.\r\n    self.bindClass = nil;\r\n}\r\n\r\n- (void)testStruct {\r\n    DUXOSTestStruct testStruct = {1.0};\r\n    [self.bindClass setValue:[NSValue value:&testStruct withObjCType:@encode(DUXOSTestStruct)] forKey:@\"testStruct\"];\r\n    XCTAssert(self.bindClass.testStruct.testFloat == 1.0);\r\n}\r\n\r\n- (void)testUnion {\r\n    DUXOSTestUnion testUnion = {1.0};\r\n    [self.bindClass setValue:[NSValue value:&testUnion withObjCType:@encode(DUXOSTestUnion)] forKey:@\"testUnion\"];\r\n    XCTAssert(self.bindClass.testUnion.testFloat == 1.0);\r\n}\r\n\r\n@end\r\n\r\n\r\nExpected Results:\r\n\r\nThe test for both the struct and the union should pass.\r\n\r\nActual Results:\r\nThe test for the struct passes but the test for the union crashes with error \"failed: caught \"NSUnknownKeyException\", \"[<DUXOSBindClass 0x6000008258c0> setValue:forUndefinedKey:]: this class is not key value coding-compliant for the key testUnion.\"\"\r\n\r\nVersion/Build:\r\nXcode 10.2.1 /12.3\r\n\r\nConfiguration:\r\niOS 12.3 iPad Pro 12.9-inch 3rd generation simulator"
+    email: russfenenga@gmail.com
+    modified: "2019-05-15T22:51:09.258843Z"
+    number: "50830331"
+    number_intvalue: 50830331
+    originated: 5/15/19
+    parent_number: '&{NULL_VALUE}'
+    product: Foundation
+    product_version: "12.3"
+    reproducible: Every time
+    resolved: ""
+    status: Open
+    title: Key Value Coding Compliance For C Unions

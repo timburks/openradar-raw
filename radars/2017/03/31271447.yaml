@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31271447"
+    labels:
+        datastore_id: "5040988435251200"
+data:
+    classification: ""
+    created: "2017-03-27T12:39:08.71397Z"
+    description: "Area:\r\nAV Playback\r\n\r\nSummary:\r\nWhen scrubbing to the very beginning of a live event stream, AVPlayerViewController tries to seek a non seekable position.\r\n\r\nSteps to Reproduce:\r\n\r\nA project reproducing the problem can be found here https://github.com/dcordero/Radar-31271447\r\n\r\nScrubbing to the very begining fails. The result is seeking back to live or in case of waiting for a longer time getting a frozen player.\r\n\r\nYou will get a trace \"Seeking a not longer seekable position\" in the console coming from the following code in ViewController.swift which probes that the targetTime is lower than the first seekable time.\r\n\r\n    func playerViewController(_ playerViewController: AVPlayerViewController, timeToSeekAfterUserNavigatedFrom oldTime: CMTime, to targetTime: CMTime) -> CMTime {\r\n\r\n        if let firstSeekableRange = playerViewController.player?.currentItem?.seekableTimeRanges.first?.timeRangeValue {\r\n\r\n            if targetTime < firstSeekableRange.start {\r\n                print(\"Seeking a not longer seekable position\")\r\n            }\r\n        }\r\n\r\n        return targetTime\r\n    }\r\n\r\nExpected Results:\r\nScrubbing to the very beginning plays the content from the begining of the available window\r\n\r\n\r\nActual Results:\r\n The result is seeking back to live or in case of waiting for a longer time getting a frozen player.\r\n\r\n\r\nVersion:\r\ntvOS 10.2\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nAppleTv 4th Generation"
+    email: dcorderoramirez@gmail.com
+    modified: "2017-03-27T12:39:08.71414Z"
+    number: "31271447"
+    number_intvalue: 31271447
+    originated: 27-Mar-2017 02:36 PM
+    parent_number: '&{NULL_VALUE}'
+    product: tvOS + SDK
+    product_version: tvOS 10.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'AVPlayerViewController: Scrubbing to the very beginning of a live event stream seeks a not longer seekable position'

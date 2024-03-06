@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23283570"
+    labels:
+        datastore_id: "6150893028245504"
+data:
+    classification: Other Bug
+    created: "2015-10-27T21:33:20.84294Z"
+    description: "Summary:\r\nThe SCNMaterialProperty.contents documentation simply states that the contents is animatable and lists UIImage/NSImage/CGImageRef as possible value types, however trying to do so does not work as expected.\r\n\r\nSteps to Reproduce:\r\nI’ve tried an implicit animation, in which case it immediately shows the ‘after’ image:\r\n\r\n    node.geometry.firstMaterial.diffuse.contents = [UIImage imageNamed:@\"before\"];\r\n    [SCNTransaction begin];\r\n    [SCNTransaction setAnimationDuration:5];\r\n    node.geometry.firstMaterial.diffuse.contents = [UIImage imageNamed:@\"after\"];\r\n    [SCNTransaction commit];\r\n\r\nAn explicit animation, which does nothing:\r\n\r\n    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@\"contents\"];\r\n    animation.fromValue = (__bridge id)[UIImage imageNamed:@\"before\"].CGImage;\r\n    animation.toValue = (__bridge id)[UIImage imageNamed:@\"after\"].CGImage;\r\n    animation.duration = 5;\r\n    [node.geometry.firstMaterial.diffuse addAnimation:animation forKey:nil];\r\n\r\nAs well as through a `CALayer`, which does nothing:\r\n\r\n    CALayer *textureLayer = [CALayer layer];\r\n    textureLayer.frame = CGRectMake(0, 0, 793, 1006);\r\n    textureLayer.contents = (__bridge id)[UIImage imageNamed:@\"before\"].CGImage;\r\n    node.geometry.firstMaterial.diffuse.contents = textureLayer;\r\n    \r\n    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@\"contents\"];\r\n    animation.fromValue = (__bridge id)[UIImage imageNamed:@\"before\"].CGImage;\r\n    animation.toValue = (__bridge id)[UIImage imageNamed:@\"after\"].CGImage;\r\n    animation.duration = 5;\r\n    [textureLayer addAnimation:animation forKey:nil];\r\n\r\nExpected Results:\r\nA crossfade animation between the two images.\r\n\r\nActual Results:\r\nIt either shows just the first or the second texture.\r\n\r\nDocumentation:\r\nhttps://developer.apple.com/library/prerelease/ios/documentation/SceneKit/Reference/SCNMaterialProperty_Class/index.html#//apple_ref/occ/instp/SCNMaterialProperty/contents"
+    email: eloy.de.enige@gmail.com
+    modified: "2015-10-27T21:33:20.84326Z"
+    number: "23283570"
+    number_intvalue: 23283570
+    originated: 27-Oct-2015 10:31 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Documentation
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SceneKit material content is not animatable with an image.

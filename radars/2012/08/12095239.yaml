@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12095239"
+    labels:
+        datastore_id: "1854410"
+data:
+    classification: Serious Bug
+    created: "2012-08-14T15:33:58.995596Z"
+    description: "Summary:\r\nIf you try to instantiate a C++ object as an instance variable in your ObjC class, the error that would normally tell you that a pure virtual method is unimplemented is missing, and the application compiles anyway. This will crash at runtime instead.\r\n\r\nSteps to Reproduce:\r\n1. Implement an abstract base class in C++\r\n2. Implement a concrete sub class in C++\r\n3. Accidentally mistype or miss to override one or more of the pure abstract virtual method from super\r\n4. Compile\r\n\r\nExpected Results:\r\n5. Build error, refusing to build since you have a method missing\r\n\r\nActual Results:\r\n5. Application compiles without errors, but crashes at runtime when the missing method is called.\r\n\r\nRegression:\r\nThe error works fine for C++ ivars, as well as for stack and heap allocations of the C++ object.\r\n\r\nNotes:\r\nThis is a very easy mistake to make in C++, only slightly mitigated by 'override' since there is so much old code that doesn't use override yet. A single type change in super's signature will break the overloading of that method. This has caused several very serious crashers in our iOS app.\r\n\r\nSample code, also attached:\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\nclass CppAbstractBase {\r\npublic:\r\n    virtual void testA() = 0;\r\n    virtual void testB() = 0;\r\n    int a;\r\n};\r\n\r\nclass CppConcreteSub : public CppAbstractBase {\r\n    virtual void testA() { }\r\n};\r\n\r\n@interface Objc : NSObject {\r\n    CppConcreteSub _concrete; // <-- SHOULD ERROR\r\n}\r\n- (CppAbstractBase*)abstract;\r\n@end\r\n@implementation Objc\r\n- (CppAbstractBase*)abstract {\r\n    return &_concrete;\r\n}\r\n@end\r\n\r\nclass Cpp {\r\npublic:\r\n    CppConcreteSub sub; // <-- ERRORS CORRECTLY\r\n    // Field type 'CppConcreteSub' is an abstract class\r\n};\r\n\r\nint main(int argc, const char * argv[])\r\n{\r\n\r\n    @autoreleasepool {\r\n        CppConcreteSub sub; // <-- ERRORS CORRECTLY\r\n        // Variable type 'CppConcreteSub' is an abstract class, Unimplemented pure virtual method 'testB' in CppConcreteSub\r\n        \r\n        Objc *objc = [Objc new];\r\n        [objc abstract]->testB(); // <-- CRASHES HORRIBLY\r\n        \r\n        // insert code here...\r\n        NSLog(@\"Hello, World!\");\r\n        \r\n    }\r\n    return 0;\r\n}"
+    email: joachimb@gmail.com
+    modified: "2012-08-14T15:33:58.996302Z"
+    number: "12095239"
+    number_intvalue: 12095239
+    originated: 14-Aug-2012 05:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 4.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: C++ ivars in Objc classes don't error about unimpl virtual methods

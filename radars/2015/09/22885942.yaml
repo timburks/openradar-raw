@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22885942"
+    labels:
+        datastore_id: "6162399514066944"
+data:
+    classification: Serious Bug
+    created: "2015-09-28T21:28:47.44407Z"
+    description: "Summary:\nWhen creating a new Objective-C subclass it’s often useful to replace the previous designated initializer (-init) with a new one. Example:\n\nNS_ASSUME_NONNULL_BEGIN\n\n@interface NewClass: NSObject\n\n- (instancetype)initWithString:(NSString *)string NS_DESIGNATED_INITIALIZER;\n\n@end\n\nNS_ASSUME_NONNULL_END\n\n@implementation NewClass\n\n- (instancetype)initWithString:(NSString *)string {\n    if ((self = [super init]]) { // correctly delegating to parent’s designated initializer\n        // etc  \n    }\n\n   return self;\n}\n\nHowever, this does not compile.\n\nSteps to Reproduce:\n- Create an empty OS X or iOS project.\n- Compile that code.\n\nExpected Results:\n- Code compiles, and NewClass only has one initializer: -initWithString:\n\nActual Results:\n- Code fails to compile with the error: “Method override for the designated initializer of the superclass '-init' not found”\n\nRegression:\n1. This is inconsistent with Swift, where the behavior makes more sense: it’s not necessary to override the parent designated initializer if you’re replacing it with something else. You do, of course, have to call it in your new designated initializer like I’m doing here.\n2. I’ve previously dealt with this issue (since in Objective-C you can’t guarantee that - [NewClass init] will never be called at runtime) by overriding it this way:\n\n- (instancetype)init {\n    return [self initWithString:nil];\n}\n\n- (instancetype)initWithString:(NSString *)string {\n    NSParameterAssert(string);\n}\n\nEffectively catching this incorrect usage of the API at runtime. However, this is now impossible due to the explicit nullability annotations (NS_ASSUME_NONNULL_BEGIN): there is no way to follow the compilation error and actually implement -init in a way that it delegates to the new designated initializer (which is mandatory). Yes, I could do [self initWithString:@“”], but with more complex initializers it doesn’t make sense to create “dummy” objects just to please the compiler."
+    email: info@nachosoto.com
+    modified: "2015-09-28T21:28:47.44424Z"
+    number: "22885942"
+    number_intvalue: 22885942
+    originated: 28-Sep-2015 02:28 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSObject subclasses don't allow changing the designated initializer in Obj-C with NS_DESIGNATED_INITIALIZER

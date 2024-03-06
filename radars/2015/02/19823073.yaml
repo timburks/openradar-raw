@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19823073"
+    labels:
+        datastore_id: "6426818135457792"
+data:
+    classification: ""
+    created: "2015-02-19T14:36:07.431825Z"
+    description: "Summary:\r\nNote: this bug is the culmination of my exposition on the Apple Developer Forums about the subject:\r\n\r\nhttps://devforums.apple.com/message/1102838#1102838\r\n\r\nSummary: some circumstances cause clang to generate multiple ModuleCache entries for the same framework. In the worst case, two of those entries might have the same timestamp, leaving to a situation where the compiler fails with an error like:\r\n\r\n/Volumes/Data/daniel/Sources-Modern/Diversions/Bug Reports/ClangModuleCacheBug 2/main.m:12:2: error: module 'RSFoundation' found in both '/Volumes/Data/daniel/Library/Developer/Xcode/DerivedData/ModuleCache/3DC9DUT70WHU/RSFoundation-1YTD46C9XJMOW.pcm' and '/Volumes/Data/daniel/Library/Developer/Xcode/DerivedData/ModuleCache/3DC9DUT70WHU/RSFoundation-2OA51XV5KS79U.pcm'\r\n\r\nIn the best case, I guess the ModuleCache folder is littered with older, outdated pcm files that are ignored in favor of newer pcm files for the same module. I have witnessed as many as 6 .pcm files in a given ModuleCache subfolder, all for the same RSFoundation library above.\r\n\r\nIn the course of investigating this bug I came to discover that at least one cause for the problem seems to be in interpreting library arguments to Ld differently, such that for a given .framework, a ModuleCache entry might be generated both for the hash of path [Framework]/Versions/A/Modules/Module.modulemap and for [Framework]/Modules/Module.modulemap.\r\n\r\nThe attached Xcode project demonstrates this particular case, though I'm pretty sure you could contrive the case even more simply by setting up a command-line best test case.\r\n\r\nSteps to Reproduce:\r\n1. Open attached ClangModuleCacheBug.zip\r\n2. Open RSWebPublishing.xcodeproj within.\r\n3. Build the solitary scheme \"RSWebPublishing\"\r\n\r\nExpected Results:\r\nThe framework should build without error.\r\n\r\n\r\nActual Results:\r\nThe framework fails to load with error as cited above.\r\n\r\nTake a look in the BuildSettings.xcconfig for a note about my observation that, for some reason, the bug does not occur when compiler optimizations are turned on.\r\n\r\nAlso observe that the recipe of using Xcode to contrive the problematic scenario seems to be rooted somehow in the way that I'm nesting .xcodeproj dependencies within this project. I am fairly convinced this cyclic nesting (RSCommonLib.xcodeproj depends on RSWebClientCore.xcodeproj, which depends back on RSCommonLib.xcodeproj) is not a great idea, but it does do a good job of demonstrating this bug ;)\r\n\r\n\r\nVersion:\r\nVersion 6.3 (6D520o) but also occurs on earlier 6.2 releases.\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'ClangModuleCacheBug.zip' was successfully uploaded."
+    email: jalkut@gmail.com
+    modified: "2015-02-19T14:36:07.432058Z"
+    number: "19823073"
+    number_intvalue: 19823073
+    originated: 12-Feb-2015 11:05 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'Xcode/Clang: Single framework produces conflicting ModuleCache entries'

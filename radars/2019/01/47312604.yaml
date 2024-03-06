@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "47312604"
+    labels:
+        datastore_id: "5022322029232128"
+data:
+    classification: Security
+    created: "2019-01-16T11:10:53.284771Z"
+    description: "Summary:\r\nOnce you have called `loadFileURL(_, allowingReadAccessTo:)` and passed a particular URL into `allowingReadAccessTo`, that same instance of `WKWebView` cannot read any other URLs.\n\nIf you pass in the URL of a single file, trying to load any other single file from anywhere on your filesystem will fail with a security error. You have to create a new instance of `WKWebView` to read any other file. \nYou **can** pass the URL of a directory into `allowingReadAccessTo`, but while you can read other items from that directory, you are not able to access other directories without creating a new instance of `WKWebView`.\n\nFor example, if you have items in the Caches folder and in the Documents folder depending on whether the user has decided to permanently download these items, you can only show things from one of these directories at a time. \n\nThere is no way to reset the folder the `WKWebView` has access to. Subsequent calls to `loadFileURL(_, allowingReadAccessTo:)` ignore the second parameter, and there is no separate variable to allow the read access directory to change.\r\n\r\nSteps to Reproduce:\r\n1. Build app for iPad that involves loading various documents from either Caches, if the user has not indicated they want something permanently downloaded, or Documents, if they indicate they have. \n2. Attempt to set up `loadFileURL` per document, realize once the URL is set it can’t be reset.\n3. Attempt to pass in one folder, then realize documents are in different folders based on user preferences. \n4. Attempt to pass in the common parent/grandparent of both folders, but this is the Application’s sandbox directory and doesn’t work at all.\n5.  Realize I can’t keep the same web view and wind up just recreating the VC every time on iPad, which seems like a giant waste of processor cycles and memory\n6. Have sad\r\n\r\nExpected Results:\r\nExplicitly granting read access to a different file or folder actually grants read access to that file or folder, not just for the file or folder passed in when the method is first called.\r\n\r\nActual Results:\r\nSadness, failure to load, errors, excessive use of expletives. \r\n\r\nVersion:\r\n12.1\r\n\r\nNotes:\r\niOS 12.1, Xcode 10.1\n\nProject attached that shows this behavior (and some other stuff related to rdar://47312413). Note that because of the issue noted in the other rdar, this *must* be run on a physical device, or you will not be able to see the behavior change. Recommend comparing behavior on iPhone vs iPad - there’s notes in the app about what expected behavior is for each in each situation. \n\nAs mentioned in step 4: Attempting to pass your application's sandbox directory (which is the direct parent of the user's Documents directory and the grandparent of the Caches directory) doesn't do anything. Even though this is a shared parent of both Documents and Caches, you still receive security errors attempting to load any local file when this is passed in."
+    email: designatednerd@gmail.com
+    modified: "2019-01-16T11:10:53.2849Z"
+    number: "47312604"
+    number_intvalue: 47312604
+    originated: 16-Jan-2019 12:10 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "12.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: It is not possible to load local files from both Caches and Documents directories in the same instance of WKWebView

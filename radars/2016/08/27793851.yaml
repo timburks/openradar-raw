@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27793851"
+    labels:
+        datastore_id: "6176778192158720"
+data:
+    classification: Serious Bug
+    created: "2016-08-11T10:43:36.25389Z"
+    description: "Summary:\r\nThe AffineTransform() and NSAffineTransform() initializers do not produce the same backing transformation matrices. This breaks automatic migration of NSAffineTransform to AffineTransform, as behavior differs. \r\n\r\nAffineTransform() => {m11:0.0, m12:0.0, m21:0.0, m22:0.0, tX:0.0, tY:0.0}\r\nNSAffineTransform() => {m11:1.0, m12:0.0, m21:0.0, m22:1.0, tX:0.0, tY:0.0}\r\n\r\nSteps to Reproduce:\r\n1. Create an NSAffineTransform using NSAffineTransform()\r\n2. Create an AffineTransform using AffineTransform()\r\n3. Check if the AffineTransform is equal to the NSAffineTransform’s transformStruct.\r\n\r\nExpected Results:\r\nThe equality check should return true.\r\n\r\nActual Results:\r\nThe equality check returns false.\r\n\r\nVersion:\r\nXcode 8.0 beta 5 (8S193k)\r\nOS X 10.11.6 (15G31)\r\n\r\nNotes:\r\nA workaround is to use AffineTransform.identity instead of AffineTransform(). Still, this is unexpected.\r\n\r\nSee attached playground.\r\n\r\nimport Cocoa\r\n\r\nfunc compare(transformStruct: AffineTransform, transformObject: NSAffineTransform) -> Bool {\r\n    if transformStruct == transformObject.transformStruct {\r\n        print(\"Equal!\")\r\n        return true\r\n    } else {\r\n        print(\"Not equal!\")\r\n        print(\"AffineTransform = \\(transformStruct)\")\r\n        print(\"NSAffineTransform = \\(transformObject.transformStruct)\")\r\n        return false\r\n    }\r\n}\r\n\r\n// Returns false\r\ncompare(transformStruct: AffineTransform(), transformObject: NSAffineTransform())\r\n\r\n// Returns true\r\ncompare(transformStruct: AffineTransform.identity, transformObject: NSAffineTransform())"
+    email: prachi@quantumlenscap.com
+    modified: "2016-08-11T10:43:36.25413Z"
+    number: "27793851"
+    number_intvalue: 27793851
+    originated: 10-Aug-2016
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: Xcode 8.0 beta 5 (8S193k), OS X 10.11.6 (15G31)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AffineTransform() and NSAffineTransform() initializers are not semantically equivalent

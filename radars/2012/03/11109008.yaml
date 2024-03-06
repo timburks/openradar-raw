@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11109008"
+    labels:
+        datastore_id: "1613412"
+data:
+    classification: ""
+    created: "2012-03-23T17:45:54.665753Z"
+    description: "Summary: backtrace_symbols_fd() writes a NUL byte \"\\0\" at the end of each line\r\n\r\nSteps to Reproduce: See attached reproduction case.\r\n\r\nThe core issue is that _backtrace_snprintf() from the Libc project incorrectly adds 1 to its return value. This includes the trailing NUL byte \"\\0\", which backtrace_symbols_fd() writes to the file. (backtrace_symbols() is unaffected, since it returns NUL-terminated strings).\r\n\r\nSee source: http://www.opensource.apple.com/source/Libc/Libc-763.12/gen/backtrace.c\r\n\r\nExpected Results: backtrace_symbols_fd() does not write a \"\\0\" at the end of each line\r\n\r\nActual Results:backtrace_symbols_fd() writes a \"\\0\" at the end of each line\r\n\r\nRegression: 100% reproducible on iOS 5.1 and Mac OS X 10.7\r\n\r\n% cat ./backtrace_repro.c \r\n#include <execinfo.h>\r\n#include <fcntl.h>\r\n#include <stdio.h>\r\n#include <string.h>\r\n#include <sys/types.h>\r\n#include <sys/uio.h>\r\n#include <unistd.h>\r\n\r\nint main(int argc, char** argv) {\r\n  void* frames[32];\r\n  int num_frames = backtrace(frames, sizeof frames);\r\n\r\n  int fd = open(\"/tmp/backtrace\", O_RDWR | O_CREAT | O_TRUNC, 0644);\r\n  if (fd == -1) {\r\n    perror(\"Couldn't open /tmp/backtrace\");\r\n    return 1;\r\n  }\r\n\r\n  backtrace_symbols_fd(frames, num_frames, fd);\r\n\r\n  char buf[4096];\r\n  ssize_t offset = 0;\r\n  ssize_t num_bytes = pread(fd, buf, sizeof buf, offset);\r\n  while (num_bytes > 0) {\r\n    char* nul_location = (char*)memchr(buf, '\\0', num_bytes);\r\n    if (nul_location) {\r\n      printf(\"*** FOUND NUL BYTE (offset %zd) ***\\n\", offset + (nul_location - buf));\r\n    }\r\n    offset += num_bytes;\r\n    num_bytes = pread(fd, buf, sizeof buf, offset);\r\n  }\r\n\r\n  close(fd);\r\n}\r\n\r\n% gcc -o backtrace_repro backtrace_repro.c \r\n\r\n% ./backtrace_repro\r\n*** FOUND NUL BYTE (offset 68) ***"
+    email: bgertzfield@gmail.com
+    modified: "2012-03-23T17:45:54.665997Z"
+    number: "11109008"
+    number_intvalue: 11109008
+    originated: "2012-03-23"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "5.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: backtrace_symbols_fd() writes a NUL byte "\0" at the end of each line

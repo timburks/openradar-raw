@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21648907"
+    labels:
+        datastore_id: "5693366704537600"
+data:
+    classification: ""
+    created: "2015-07-02T08:44:06.65789Z"
+    description: "Summary:\r\nObjective C classes allow subclasses to automatically inherit superclass initialisers, even if they do not implement them, which means that an Objective C class initialiser can call an initialiser on self, even though the actual implementation is in the superclass.\r\nIn Swift this does not seem to be the case, leading to incompatibilities between Objective C classes and their Swift subclasses where calling the Objective C superclass initialiser from a custom Swift initialiser results in the Objective C initialiser attempting to call an initialiser on self which is no longer available in the Swift subclass.\r\n\r\nSteps to Reproduce:\r\n* Create a vanilla project (I use iOS but the problem should be exactly the same for OSX) using both Objective C and Swift;\r\n* create an Objective C sub-class of an existing class with multiple designated initialisers (for example UIView);\r\n* implement a custom initialiser on this subclass, which calls a parent-inherited initialiser through self (for example custom initWithIdentifier: calls [self initWithFrame:CGRectZero]);\r\n* create a Swift subclass of the Objective C class that you created;\r\n* implement a custom initialiser on the Swift class that you created which calls the custom initialiser that you created in its Objective C superclass (for example custom Swift initialiser init(name:) calls super.init(identifier:));\r\n* attempt to instantiate your custom Swift subclass anywhere in your project.\r\n\r\nExpected Results:\r\nSuccessful creation of an instance of the Swift subclass.\r\n\r\nActual Results:\r\nA fatal error is thrown concerning the \"use of unimplemented initializer\" [name of initialiser that the Objective C subclass calls with self] \"for class\" [name of Swift subclass]\r\n\r\nVersion:\r\nVersion 6.4 (6E35b), OSX 10.10.4 (14E46)\r\n\r\nNotes:\r\nThis is concerning because it basically makes it impossible to subclass UIKit classes such as UITableViewController and MKAnnotationView by adding immutable properties which need to be injected on instantiation.\r\n\r\nConfiguration:\r\nAlways occurs in iOS simulator iOS 8.4 on MacBook Pro (Retina, 13-inch, Late 2013)\r\nAlways occurs on iPhone 4S on iOS 8.4"
+    email: rupert@pearlshare.com
+    modified: "2015-07-02T08:44:06.65825Z"
+    number: "21648907"
+    number_intvalue: 21648907
+    originated: 02-Jul-2015 09:39 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.4 (6E35b)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Non-designated initialiser inheritance from Objective C classes problem where initialiser calls another initialiser on self

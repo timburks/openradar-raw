@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28644745"
+    labels:
+        datastore_id: "5046340702699520"
+data:
+    classification: Bug
+    created: "2016-10-06T02:45:36.42547Z"
+    description: "Summary:\r\nWhen attempting to register a WLD with the new iPhone 7 I am unable to successfully pair with the WLD. During the pairing step the app will get stuck on Pairing with WLD screen and the WLD goes into a solid blue state but it never progresses forward and eventually disconnects with a Detector Connection Lost prompt.\r\nNote this is successful on an iPhone 6+ (10.0.1)\r\n\r\nSteps to Reproduce:\r\n1. Login to the Lyric App\r\na. New Users Skip to step 3\r\n2. Existing Users: Tap the top left menu icon then tap on \"+ Add New Device\"\r\n3. Tap \"Lyric Water Leak & Freeze Detector\"\r\n4. Create a Location or select and existing Location if available\r\n5. Insert Batteries into the Water Leak Detector (WLD) and wait for the Blue LED to Blink\r\na. If the LED Blinks Green tap and hold the reset button, under the Battery Cover, for 5 seconds until you hear a beep then the WLD should start to blink blue\r\n6. Tap \"Next\"\r\na. Looking for Water Leak Detectors is displayed\r\nb. After the app finds the WLD it pairs with it and displays Paring with Detector while the WLD LED will turn Solid Blue\r\nc. After 45 seconds the Pairing is lost, the App navigates back to Power up your detector with a Detector Connection Lost prompt\r\n\r\nExpected Results:\r\nBluetooth enabled device should be paired with iPhone 7 and 7+\r\n\r\nActual Results:\r\nOn iPhone 7 and iPhone 7+ bluetooth device does not get paired. Never receive delegate callback\r\n\r\n- (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error \r\n\r\nVersion:\r\niOS 10.0.2 (14A456)\r\n\r\nNotes:\r\nDevice chipset: Broadcom BCM 43438 which supports BLE 4.1+. Device SDK BTEWICED_00.16.00-AMPAK-2.0.0 which supports BLE 4.1+.\r\n\r\n\r\nMore details attached in BLE_Issue.txt\r\n\r\nConfiguration:\r\niPhone 7 (MNAY2LL/A)\r\n\r\nAttachments:\r\n\r\nDetails about the accessory’s BLE chipset:\r\nDevice chipset is Broadcom BCM 43438 which supports BLE 4.1+\r\nDevice SDK is BTEWICED_00.16.00-AMPAK-2.0.0 which supports BLE 4.1+.\r\n\r\n\r\nThe app is expecting a call back from the OS but never receives it for service discovery. We cannot capture Airtrace from the app as mentioned earlier and logs will yield nothing significant since we never hit any of the breakpoints to log anything. More details:\r\n\r\nThere is nothing to log except one line:\r\n\r\n2016-10-05 16:14:08.743054 App[602:210453] startDiscoveringUnsecureServices\r\n\r\n\r\nThen nothing happens after that when we would expect the delegate to be called with either an error or the discovered services.\r\n\r\nExact call is:\r\n\r\n[self.peripheral discoverServices:self.device.BLEPrimaryServiceUnsecureUUIDs];\r\n\r\nValues in self.device.BLEPrimaryServiceUnsecureUUIDs\r\n\r\n\r\n2016-10-05 16:23:47.056511 App[617:213455] 0000B300-0000-1000-8000-00XXXXXXXXXX (CBUUID)\r\n2016-10-05 16:23:47.056653 App[617:213455] 0000B301-0000-1000-8000-00XXXXXXXXXX (CBUUID)\r\n\r\n\r\nAlthough the contents are not strings, they are CBUUID objects and I have verified that (as shown in log above).\r\n\r\n\r\nExpected delegate callback method:\r\n\r\n- (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error\r\n\r\n\r\nBut breakpointing on that, got nothing. I also put a breakpoint on every delegate method, none of them ever get called.\r\n\r\n\r\nSo, it can discover the detector just fine. It fails trying to discover the services, although that works fine on a non iPhone 7 device, running the same iOS version, connecting to the same WLD."
+    email: saumitra.vaidya@gmail.com
+    modified: "2017-06-16T03:01:48.68161Z"
+    number: "28644745"
+    number_intvalue: 28644745
+    originated: 10/05/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: MNAY2LL/A
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: Unable to Pair WLD with iPhone7/7+

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "42068699"
+    labels:
+        datastore_id: "5019264926875648"
+data:
+    classification: Enhancement
+    created: "2018-07-11T13:20:29.63793Z"
+    description: "Summary:\r\nThis radar is in the context of UICollectionView.\n\nWhen dealing with Drag & Drop on iOS 11 and above, you can respond to a drop session by returning a drop proposal. You can customize the recipient behavior assigning a drop operation to the drop proposal returned.\n\nIf you instantiate, for instance, a drop proposal with UIDropOperationMove as its drop operation and UICollectionViewDropIntentInsertAtDestinationIndexPath as its intent, you can expect the collection view to completely lift the dragging view (removing its original tile from the collection view) and open a gap where item could be dropped.\n\nThis is expected behavior. However, this does not happen when there are multiple items in the session. \n\nConfiguring another drop proposal with the same values as stated before, but for a drop session that has multiple items in it, the drop interaction actually behaves as if the drop proposal was configured with UIDropOperationCopy as its operation, lifting only previews for the items to drag (but leaving the \"blueprint\" in place), and not opening gaps in the collection view for items to be dropped.\n\nAs far as I've been able to test, a drop session with multiple items only lets you perform the drop _outside_ the source application.\n\nI verified and an implementation of `- collectionView:dragSessionAllowsMoveOperation` returning `YES` _is_ called but the resulting behavior is still that of a UIDropOperationCopy-assigned drop proposal.\r\n\r\nSteps to Reproduce:\r\n- Download the attached sample project, and run.\n- Tap and hold one item on the collection view to initiate a dragging session\n- Once the item has lifted, move that item around and place at another spot in the collection view.\n\n- Lift another item, but this time add more items to it by tapping them.\n- Once you have 2 or more items in the session, try to reorder them.\r\n\r\nExpected Results:\r\nA drop proposal configured with UIDropOperationMove behaves the same way when the drop session has one or multiple items.\r\n\r\nActual Results:\r\nA drop proposal configured with UIDropOperationMove behaves correctly when the session has only one item, but as UIDropOperationCopy when the drop session has multiple items in it.\r\n\r\nVersion:\r\n11.4\r\n\r\nNotes:\r\nAttached to this radar you can find a sample project with the minimal configuration required to expose the behavior, as well as a video demonstrating the code running on an iPad Pro (9.7) running iOS 12b3.\n\nRelated: rdar://42031700"
+    email: oscar@swanros.com
+    modified: "2018-07-11T13:20:29.63811Z"
+    number: "42068699"
+    number_intvalue: 42068699
+    originated: 11-Jul-2018 08:20 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "11.4"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIDropOperationMove behavior is ignored when there are multiple items in the dragging session

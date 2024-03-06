@@ -1,0 +1,38 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21941243"
+    labels:
+        datastore_id: "4948081531420672"
+data:
+    classification: Other Bug
+    created: "2015-07-22T15:04:58.72667Z"
+    description: |-
+        According to the CollectionType documentation:
+
+            /// - Note: this associated type appears as a requirement in
+            ///   `SequenceType`, but is restated here with stricter
+            ///   constraints: in a `CollectionType`, the `SubSequence` should
+            ///   also be a `CollectionType`.
+            typealias SubSequence : Indexable, SequenceType = Slice<Self>
+
+        However, CollectionType.SubSequence is not a CollectionType. It is only an Indexable SequenceType. Moreover, SubSequence is not a requirement in SequenceType.
+
+        This means the following code, which I would expect to compile, fails because Seq.SubSequence is not guaranteed to be a CollectionType:
+
+        func count<Seq: CollectionType>(xs: Seq) -> Int {
+            guard !xs.isEmpty else { return 0 }
+            return 1 + count(dropFirst(xs)) // Cannot find an overload for ‘count’ that accepts an argument list of type ‘(Seq.SubSequence)’
+        }
+    email: robnapier@gmail.com
+    modified: "2015-07-22T15:04:58.72696Z"
+    number: "21941243"
+    number_intvalue: 21941243
+    originated: 22-Jul-2015 11:04 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Swift 2b4
+    reproducible: Not Applicable
+    resolved: ""
+    status: Open
+    title: CollectionType.SubSequence is not a CollectionType

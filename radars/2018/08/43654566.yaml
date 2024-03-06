@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "43654566"
+    labels:
+        datastore_id: "4949326484733952"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2018-08-23T19:58:22.04927Z"
+    description: "Summary:\r\nWe just released an update of the Twitch app (https://itunes.apple.com/us/app/twitch-live-game-streaming/id460177396?mt=8) that uses this API, and very quickly this has become our #1 crash.\r\nFabric/Crashlytics indicates this happens on iOS 9.3.5 through 12.0.0 (various dot-releases of 10 and 11 included)\r\n\r\nSteps to Reproduce:\r\n- Use -[AVPlayerItem addMediaDataCollector:]\r\n- Use -[AVPlayerItem removeMediaDataCollector:] (with a non-nil metadata collector)\r\n\r\nExpected Results:\r\nApplication doesn’t crash.\r\n\r\nActual Results:\r\nAbout 0.3% of our production users on v6.7 of the app hit this crash today.\r\n\r\nVersion:\r\n9-11\r\n\r\nNotes:\r\nWe haven’t been able to reproduce this locally.\r\nThrough disassembly, the implementation of -[AVPlayerItem removeMediaDataCollector:] seems to look like:\r\n\r\nint ___74-[AVPlayerItem(AVPlayerItemMediaDataCollectors) _removeMetadataCollector:]_block_invoke(int arg0) {\r\n    rax = *ivar_offset(_playerItem);\r\n    rax = [*(*(*(arg0 + 0x20) + rax) + *ivar_offset(itemMetadataCollectors)) removeObject:*(arg0 + 0x28)];\r\n    return rax;\r\n}\r\n\r\nThe crash seems to indicate that the internal _playerItem (an instance of `AVPlayerItemInternal`) is nil, and that ivar is de-referenced directly without checking for NULL."
+    email: javier.api@gmail.com
+    modified: "2018-08-23T19:58:51.05055Z"
+    number: "43654566"
+    number_intvalue: 43654566
+    originated: 23-Aug-2018 12:58 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 9-11
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: Crash caused by dereferencing of internal nil object in -[AVPlayerItem removeMediaDataCollector:]

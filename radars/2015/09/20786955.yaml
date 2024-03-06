@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20786955"
+    labels:
+        datastore_id: "6091575503355904"
+data:
+    classification: Serious Bug
+    created: "2015-09-17T16:35:35.01425Z"
+    description: "Summary:\r\nIf you have a workspace with an app and some frameworks, and you try to link the app with the frameworks, you end up with stuff like this in the project file:\r\n\r\n/* Begin PBXFileReference section */\r\n...\r\n                CCBD938C1AF286C600711ECA /* Box.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Box.framework; path = \"../../Library/Developer/Xcode/DerivedData/FTest-cnhklbjpgbtngkbwulkbpzxzdrqn/Build/Products/Debug-iphoneos/Box.framework\"; sourceTree = \"<group>\"; };\r\n                CCBD938E1AF286D200711ECA /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = \"../../Library/Developer/Xcode/DerivedData/FTest-cnhklbjpgbtngkbwulkbpzxzdrqn/Build/Products/Debug-iphoneos/Result.framework\"; sourceTree = \"<group>\"; };\r\n/* End PBXFileReference section */\r\n\r\nObserve that those paths won't work once a co-worker tries to build the project, because the derived data path will be different. \r\n\r\nYou can fix it by editing the project file with a text editor:\r\n                CCBD938C1AF286C600711ECA /* Box.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Box.framework; path = Box.framework; sourceTree = BUILT_PRODUCTS_DIR; };\r\n                CCBD938E1AF286D200711ECA /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = Result.framework; sourceTree = BUILT_PRODUCTS_DIR; };\r\n/* End PBXFileReference section */\r\n\r\nNote that both \"path\" and \"sourceTree\" were changed.\r\n\r\nSteps to Reproduce:\r\n1. Create a new ios app project. \r\n2. Create a workspace. \r\n3. Add the project to the workspace. \r\n4. Add a dynamic framework project to the workspace. \r\n5. Add the framework to the app target's Linked Frameworks and Libraries. \r\n6. Push changes. \r\n7. Have your teammate try to build. \r\n8. Look at the project file and see the problem. \r\n\r\nExpected Results:\r\nProject file should have paths that resolve for anyone who clones the project. \r\n\r\nActual Results:\r\nProject file has user-specific paths. \r\n\r\nVersion:\r\nXcode 6.3.1 and Xcode 6.4 beta\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nXcode 6.3.1 and Xcode 6.4 beta"
+    email: bwhiteley@gmail.com
+    modified: "2015-09-17T16:35:35.01459Z"
+    number: "20786955"
+    number_intvalue: 20786955
+    originated: 07-May-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 10292666
+    title: Workspace frameworks added to a project reference user-specific paths

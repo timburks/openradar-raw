@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7559755"
+    labels:
+        datastore_id: "141407"
+data:
+    classification: Other Bug
+    created: "2010-01-20T07:21:56.58831Z"
+    description: "Summary:\r\nThe nib loader does not release its retentions (one plausibly intentional; the others surely bugs) of a top-level object in a nib.\r\n\r\nSteps to Reproduce:\r\n1. Have a top-level object in a nib (I tested with MainMenu.nib).\r\n2. Load the nib.\r\n\r\nExpected Results:\r\nThe object deallocks shortly thereafter, unless retained by another object (most probably, the File's Owner).\r\n\r\nActual Results:\r\nThe object remains alive, even after being retained and released by its owner.\r\nFurthermore, even if the owner extraneously releases the object, it will still be alive because the nib loader leaked two or more retentions, not just one.\r\n\r\nRegression:\r\nI believe so. At any rate, I can reproduce the problem in both 10.5.8/9L31a and 10.6.1. I was unable to test it on Tiger (“RegisterProcess failed (error = -50)”).\r\n\r\nNotes:\r\nThe Resource Programming Guide says (http://developer.apple.com/mac/library/documentation/Cocoa/Conceptual/LoadingResources/CocoaNibs/CocoaNibs.html):\r\n\r\n> Each time you ask the NSBundle or NSNib class to load a nib file, the underlying code creates a new copy of the objects in that file and returns them to you. … [Y]our code is responsible for releasing those objects when it is done with them.\r\n\r\n> For both Mac OS X and UIKit, the recommended way to manage the top-level objects in a nib file is to create outlets for them in the File’s Owner object and then define setter methods to retain and release those objects as needed.\r\n\r\nWhether I retain and release the top-level objects or not, they always stay alive indefinitely afterwards.\r\n\r\nI've created a test app: https://bitbucket.org/boredzo/nibownershiptest/\r\nThe app has instances of both a direct subclass of NSObject and a subclass of NSWindow as top-level objects in MainMenu.xib. Both subclasses override the memory-management methods to log calls to them.\r\n\r\nAt the end of a run of the test app, after I've released all of my retentions, the plain object has two retentions and the window has 44(!).\r\n\r\nThis bug is two in one:\r\n\r\n1. If the nib loader really is supposed to hand me an implicit retention that I must always release (separately from my own retaining property), then the documentation should be updated to account for that.\r\n2. Whether it should hand me an implicit retention or not, it should not hand me two, nor should it hand me 44. It should only ever hand me *one*.\r\n\r\nUpdated 2010-01-20T04:40-0800:\r\n\r\nI've since found out that the retain counts of 2 and 44 were caused by a bug in my test app. I thought that was crazy—glad to know it was a simple bug on my end, and not something deep in AppKit.\r\n\r\nEven so, the nib loader is still handing me one retention. This is either a bug in the documentation (I should not retain the top-level objects if I already have through the nib loader) or a bug in the nib loader (it should not be handing me an implicit retention).\r\n\r\nThe test app currently available is up-to-date with the fix."
+    email: boredzo@gmail.com
+    modified: "2011-08-28T05:42:55.176587Z"
+    number: "7559755"
+    number_intvalue: 7559755
+    originated: 2010-01-19T23:21-0800
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.1/10B504
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AppKit nib loader leaks retentions of top-level objects

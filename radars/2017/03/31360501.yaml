@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31360501"
+    labels:
+        datastore_id: "6057657391644672"
+data:
+    classification: Enhancement
+    created: "2017-03-31T00:27:17.56062Z"
+    description: "Summary:\r\nThe iOS simulator does not do 1:1 emulation of the file system. Namely, it does not mimic the case-sensitive nature of iOS up to version 10.2.x, and it does not mimic the lack of file name normalization exhibited by APFS.\r\n\r\nSteps to Reproduce:\r\n1. Write an app that makes ill-informed assumptions about how the iOS file system behaves. Perhaps it assumes that the file system is case-insensitive. Perhaps it assumes that the file system will normalize Unicode character sequences when reading and writing files.\r\n2. Test the app on an iOS device.\r\n\r\nExpected Results:\r\nYour assumptions were challenged by the iOS simulator, because it was emulating the file system on iOS. You caught file system-related bugs in the simulator before you even tried testing on device.\r\n\r\nActual Results:\r\nThe iOS simulator uses the same file system as your Mac, which is typically HFS+ (case insensitive). Since HFS+ is case insensitive, you might have written a file called FILE.TXT and read it back in as file.txt, and it would have worked. But it would have failed on any iOS device, because iOS has a case-sensitive file system. And since HFS+ normalizes Unicode character sequences, you might have written a file called café.txt with a U+00E9 “é” character, and read it back with a U+0065 U+0301 “e” followed by “combining ´ acute”, and it would have worked, but it would have failed on a 64-bit device running iOS 10.3+, because APFS does no normalization of file names.\r\n\r\nRegression:\r\nThe iOS simulator has never been a perfect simulator of file name restrictions, because HFS+ is typically case insensitive, and iOS has always been case sensitive. But it got worse with iOS 10.3 (and, by extension, Xcode 8.3), because iOS switched to APFS, which diverges even farther from HFS+ (case insensitive).\r\n\r\nNotes:\r\nIt seems like this could be solved by storing all of the files in the iOS simulator in a disk image with the right file system characteristics based on the iOS device and version being simulated. I believe the disk image could then be invisibly mounted, similar to how some software updates are installed via invisibly mounted disk images."
+    email: igeek1@gmail.com
+    modified: "2017-06-11T22:39:59.69823Z"
+    number: "31360501"
+    number_intvalue: 31360501
+    originated: 30-Mar-2017 08:27 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.3 (8E162)
+    reproducible: Not Applicable
+    resolved: June 11 2017, 6:39 PM
+    status: Resolved
+    title: iOS Simulator should simulate file system-based file naming restrictions

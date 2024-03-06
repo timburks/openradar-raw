@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9611969"
+    labels:
+        datastore_id: "1214405"
+data:
+    classification: Serious Bug
+    created: "2011-06-15T04:22:32.885654Z"
+    description: "Summary:\r\nPlaying MP4 or m3u8 files in a UIWebView or MobileSafari leads to intermittent uncatchable, unsilenceable errors.\r\n\r\n\r\nSteps to Reproduce:\r\nHardware: iPad 2.\r\n\r\nIn a UIWebView, embed a HTML page that embeds a MP4 video via a <video> tag. Intermittently, an error dialog will appear stating \"This movie format is not supported.\"\r\n\r\nIf you embed a m3u8 Live Streaming url, the same intermittent problem occurs, but the error dialog reads \"The file is not available.\"\r\n\r\nIf you access the mp4 file directly in MobileSafari, you will sometimes see a \"crossed-out play icon\", and sometimes you will receive an error dialog saying \"This movie could not be played.\"\r\n\r\nIf you access the m3u8 file directly in MobileSafari, you will sometimes see a \"crossed-out play icon\", and sometimes you will receive an error dialog saying \"The file is not available.\"\r\n\r\n\r\nActual Results:\r\nIf you attach to the \"onerror\" event of the video tag, a MEDIA_ERR_DECODE error fires when the error message appears. This seems to indicate the reason for the prompt.\r\n\r\nHowever, the file is correctly encoded for iPad. (H.264 baseline, max framerate/kbps, etc.) In addition it plays correct 90% of the time. See it here:\r\nwww.itrans.info/khan.mp4\r\nwww.itrans.info/variant/variant.m3u8\r\n\r\nReading through the open source WebCore source file platform/graphics/mac/MediaPlayerPrivateQTKit.mm seems to indicate that DecodeError can indicate either a load/network error or a decode error. I suspect that in this case, intermittent network errors are causing DecodeErrors to fire, which bubble up to become MEDIA_ERR_DECODE. WebKit assumes that MEDIA_ERR_DECODE is an unrecoverable source error and so the user should be alerted, when in fact it is a recoverable network error triggering the issue.\r\n\r\nHowever this hypothesis may be incorrect.\r\n\r\n\r\nExpected Results:\r\nThe movie should play without errors. If an actual error is occurring, the error message should *not* be displayed in an alert view when embedded in a UIWebView. The client may wish to catch the error in Javascript and handle it silently.\r\n\r\n\r\nNotes:\r\nhttp://stackoverflow.com/questions/4315609/movie-format-not-supported-on-iphone-with-youtube-player-in-a-webview\r\nhttps://devforums.apple.com/message/457732\r\nhttps://devforums.apple.com/message/457731"
+    email: adamjernst@gmail.com
+    modified: "2011-08-28T05:36:15.569058Z"
+    number: "9611969"
+    number_intvalue: 9611969
+    originated: 6/15/2011
+    parent_number: '&{NULL_VALUE}'
+    product: iPad SDK
+    product_version: "4.3"
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: Intermittent "This movie format is not supported" error

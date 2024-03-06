@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19510408"
+    labels:
+        datastore_id: "5612745202335744"
+data:
+    classification: ""
+    created: "2015-01-18T02:18:19.012127Z"
+    description: "Description:\r\nThe attached code contains a List<T> wrapper for std::vector<T> and two constructors, one default constructor and one that takes a std::initializer_list<T>.\r\n\r\nSteps:\r\n1. Compile attached file using \"clang++ -std=c++11 main.cpp\"\r\n2. Run the attached file using \"MallocScribble=1 ./a.out\"\r\n\r\nExpected:\r\nI expect that \"auto keys = new List<std::string>({});\" and \"auto keys = new List<std::string>();\" both create an empty list and both do not crash. Each one can be tested by commenting that one in and commenting the other one out.\r\n\r\nActual:\r\nThe code for the default constructor runs fine but the code for the initializer list constructor crashes at runtime. It appears the compiler is generating incorrect code for the initializer list constructor. Poking around the Xcode debugger reveals that the __begin_ std::vector member is 0 but the __end_ std::vector member is 24, which is sizeof(std::string). The size() method returns 1 but get(0) crashes.\r\n\r\nThis code is a reduced test case from a real app. The real app crashes without any debug options but the reduced code needs MallocScribble=1 to trigger the crash.\r\n\r\nConfiguration:\r\nclang++ --version:\r\nApple LLVM version 6.0 (clang-600.0.56) (based on LLVM 3.5svn)\r\nTarget: x86_64-apple-darwin13.4.0\r\nThread model: posix\r\n\r\nVersion:\r\nXcode Version/Build: Version 6.1.1 (6A2008a)\r\nOS X Version/Build: 10.9.5 (13F34)\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nAttachment: main.cpp\r\n\r\n#include <cassert>\r\n#include <initializer_list>\r\n#include <string>\r\n#include <unordered_map>\r\n#include <vector>\r\n\r\ntemplate <typename T>\r\nstruct List {\r\n  List() {}\r\n  List(std::initializer_list<T> list) : _data(list) {}\r\n\r\n  int size() {\r\n    return _data.size();\r\n  }\r\n\r\n  void push(T value) {\r\n    _data.push_back(value);\r\n  }\r\n\r\n  T get(int index) {\r\n    assert(index >= 0 && index < size());\r\n    return _data[index];\r\n  }\r\n\r\n  std::vector<T> _data;\r\n};\r\n\r\ntemplate <typename T>\r\nstruct StringMap {\r\n  void set(std::string key, T value) {\r\n    _table[key] = value;\r\n  }\r\n\r\n  List<std::string> *keys() {\r\n    auto keys = new List<std::string>({});\r\n    // auto keys = new List<std::string>();\r\n    for (auto &it : _table) {\r\n      keys->push(it.first);\r\n    }\r\n    return keys;\r\n  }\r\n\r\n  std::unordered_map<std::string, T> _table;\r\n};\r\n\r\nint main() {\r\n  auto map = new StringMap<bool>();\r\n  map->set(\"foo\", false);\r\n\r\n  auto keys = map->keys();\r\n  assert(keys->size() == 1);\r\n  assert(keys->get(0) == \"foo\");\r\n}"
+    email: evan@figma.com
+    modified: "2015-01-18T02:18:19.012348Z"
+    number: "19510408"
+    number_intvalue: 19510408
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: clang++ generates code that crashes at runtime for constructor with empty initializer list

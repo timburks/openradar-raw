@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26831264"
+    labels:
+        datastore_id: "6665665192656896"
+data:
+    classification: ""
+    created: "2016-06-16T05:46:59.07373Z"
+    description: "Summary:\r\nWhen using [AVVideoComposition videoCompositionWithAsset:applyingCIFiltersWithHandler:] to play a video, the time stamps passed in request.compositionTime do not correspond to presentation timestamps of the source video asset when playing the video with AVPlayerView.\r\n\r\nHowever, when you single step with AVPlayerView, the time stamps *do* correspond to presentation timestamps of the source video asset.  The timebase of the time stamps is different in these two cases.\r\n\r\nThe inconsistency of the compositionTime time stamps make it difficult to build video filters that require high time accuracy.\r\n\r\nSteps to Reproduce:\r\nI have attached a sample program that reproduces the problem.  Here is a high-level summary of the sample program:\r\n\r\n1) Load an MPEG-4 video (from a GoPro) into an AVAsset.\r\n    - Note that the nominalFrameRate = 59.84, which is wrong (ffprobe reports 59.94).\r\n    - Note that (1.0 / minFrameDuration) = 59.94, which is correct.\r\n2) Read the first few frames of the video using AVAssetReader.\r\n    - The PTS values are multiples of 0.016683 (1001/60000), which corresponds to 59.94 fps.\r\n3) Create a video composition that just returns the source frames unmodified.\r\n4) Play the composition with an AVPlayer.\r\n    - The composition times are multiples of 0.016711 (1504/90000), which corresponds to 59.84 fps.\r\n    - If you pause the video and use the stepping controls, now the composition times are multiples of 0.016683 (1001/60000), which corresponds to 59.94 fps.\r\n\r\nExpected Results:\r\nThere are three \r\n1) The frame rate reported by nominalFrameRate should be 59.94 for this video rather than 59.84.\r\n2) The values returned by request.compositionTime should correspond to the presentation times of the source video (the same ones returned by CMSampleBufferGetPresentationTimeStamp when using AVAssetReader).\r\n3) The composition times should behave consistently whether AVPlayer is in playing mode or stepping mode.\r\n\r\nActual Results:\r\nThe actual results are included in the \"Steps to Reproduce\" section.\r\n\r\nThis issue is a problem for me because I am building a CIFilter that requires high time accuracy.  I process the video in a first pass (while recording info about each frame), and then I play the video back with a CIFilter that needs to look up the values from the first pass.  This is not possible if the time stamps from request.compositionTime are not correct or inconsistent.\r\n\r\nVersion:\r\nXcode Version 7.3 (7D175)\r\nOS X 10.11.5\r\n\r\n\r\nNotes:\r\nPossibly related to rdar://15376688 (\"AVFoundation lacking access to accurate timing of input frames when using custom video compositor\")\r\n\r\nConfiguration:\r\niMac (27-inch, Late 2013)\r\n\r\nAttachments:\r\n'ViewController.h', 'AVAssetDemo.app.zip', 'ViewController.m' and 'log.txt' were successfully uploaded."
+    email: mself.com@gmail.com
+    modified: "2016-06-16T05:46:59.0739Z"
+    number: "26831264"
+    number_intvalue: 26831264
+    originated: 15-Jun-2016 10:42 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: OS X 10.11.5
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: AVVideoComposition sends wrong/inconsistent compositionTime

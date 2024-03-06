@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB11764272
+    labels:
+        datastore_id: "5625679777366016"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2022-11-07T20:10:41.528092Z"
+    description: "## Summary\r\nI have filed feedback for this item, but I am curious whether this is an intended change or if there's a better way to address the behavior change - `FB11764272`.\r\n\r\nUITests' XCTest behavior has changed with Xcode 14+ when looking for off-screen elements in a `List` component. \r\n\r\n## The Change\r\nBelow is how the behavior worked on the last two major versions of Xcode:\r\n- **Xcode 13:** Off-screen elements are visible to the UITest process and will scroll to those elements for interaction. e.g. calling `tap()` on an off-screen element.\r\n  - This is how UIKit TableViews work, even for cells that haven't been dequeued yet.\r\n- **Xcode 14:** Off-screen elements are NOT visible to the UITest process by default and will cause a test failure if an interaction is attempted. e.g. calling `tap()` on an off-screen element.\r\n  - This change is more in line with how Lazy Stacks worked in SwiftUI for Xcode 13.\r\n\r\nThe documentation for `XCTUIElement`'s `tap()` method says the following:\r\nhttps://developer.apple.com/documentation/xctest/xcuielement/1618666-tap\r\n> If the element exists within a scrollable view but is offscreen, XCTest will attempt to scroll the element onscreen before performing the tap.\r\n\r\nAlso, while an old post (7 years ago), this Developer Forums Post thread #16810 has the following response from an Apple Frameworks Engineer:\r\nhttps://developer.apple.com/forums/thread/16810\r\n> You are not supposed to have to scroll manually. Interacting with an element not currently visible in the scroll view is expected to implicitly first scroll the element to be visible without requiring effort. If that's not working for you, please file a bug report (using the Report Bugs link at the bottom of this page). Thanks!\r\n\r\nThis was true for SwitUI Lists in Xcode 13 but isn't the case with Xcode 14+ (and it appears to continue to not work for Lazy Stacks within ScrollViews in SwiftUI).\r\n\r\n## Current Workaround\r\nAs my team's entire app is written in SwiftUI and we have an extensive UITest suite, we'll need to find every usage of an interaction API, like `tap()`, and wrap that with a custom method that first scrolls the entire length of the scroll view (at worst) waiting for the intended element to exist.\r\n\r\nThis involves a lot of work from a development perspective but also adds a lot of time to run through our extensive UITest suite for an already long-running suite.\r\n\r\n## Wrap Up\r\nWas this change intentional? If so, what's the suggested way of scrolling to off-screen elements when UI testing a SwiftUI application or is the workaround described above the expected path forward?"
+    email: joshua.shroyer@toasttab.com
+    modified: "2022-11-07T20:10:41.528255Z"
+    number: FB11764272
+    number_intvalue: 11764272
+    originated: November 7th, 2022
+    parent_number: '&{NULL_VALUE}'
+    product: XCTest
+    product_version: Xcode 14+
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UITests with SwiftUI Lists Failing to Find Off-Screen Elements in Xcode 14+

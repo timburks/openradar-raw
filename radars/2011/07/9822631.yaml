@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9822631"
+    labels:
+        datastore_id: "1275404"
+data:
+    classification: Security
+    created: "2011-07-22T17:24:03.944684Z"
+    description: "22-Jul-2011 11:05 AM Anne McCreery:\r\nSummary:  The audit system does not seem to be able to parse more than 8 arguments to the 'naflags:' field in the audit_control(5) file (/etc/security/audit_control).  It produces an error message in /var/log/system.log:\r\n\r\nauditd_set_namask() could not parse audit_control(5) file: Invalid argument\r\n\r\nSteps to Reproduce:\r\n\r\n1.  Make a backup of audit_control(5) (in /etc/security).\r\n\r\n2.  Open the audit_control file and include a 'host:' field after 'flags:' to avoid bug 9817001.\r\n\r\n3.  Edit 'naflags:' to include 9 arguments.  See audit_class in the same directory for a list of arguments.\r\n\r\n4.  Do 'sudo audit -s' to reread the configuration files.  Check /var/log/system.log and look for an error\r\n\r\nauditd_set_namask() could not parse audit_control(5) file: Invalid argument\r\n\r\n5.  Take any one of the arguments to 'naflags:' out.  Save the file.\r\n\r\n6.  Do 'sudo audit -s' to reread the configuration file again.  Again look for the same error; we found it wasn't with only 8 arguments.\r\n\r\nExpected Results:  The audit system should read the configuration file and audit appropriately.\r\n\r\nActual Results:  The audit system gives an error and does not read the configuration file past where it encounters the error.\r\n\r\nRegression:  We reproduced this error regardless of which arguments we chose, so it seems to be a number-of-arguments problem rather than any specific malformed arguments.\r\n\r\nNotes:  We think the problem is located in /source/OpenBSM/OpenBSM-21/openbsm/libauditd/auditd_lib.c.  The constant NA_EVENT_STR_SIZE is 25, which is only enough room for 8 arguments to be passed between auditd_set_namask() and getacna(), located in openbsm/libbsm/bsm_control.c.   We were looking at source from opensource.apple.com/source, though unsure how old this content is.\r\n\r\nThis bug was found while attempting to configure the OS X audit system for performance benchmarking, as part of a survey of auditing systems on several platforms.  This research is being done by Benjamin Kuperman (advisor), Luke Lovett (student), and Isaac McCreery (student) at Oberlin College Computer Science as part of the Oberlin Summer Research Institute."
+    email: ihmccreery@gmail.com
+    modified: "2011-08-28T05:35:29.304859Z"
+    number: "9822631"
+    number_intvalue: 9822631
+    originated: 22-Jul-2011 11:05 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10K540
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Audit system does not parse 'naflags' properly

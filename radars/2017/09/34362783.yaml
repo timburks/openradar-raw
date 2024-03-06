@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34362783"
+    labels:
+        datastore_id: "4935248991223808"
+data:
+    classification: bug
+    created: "2017-09-11T09:42:07.38586Z"
+    description: "Summary:\r\nA finder extension (FinderSync) primary method (-beginObservingDirectoryAtURL:)  is not called only on /Volumes if registered to monitor root \"/\" folder.\r\n\r\nSteps to Reproduce:\r\n1. Created a sample FinderSync (\"Finder Sync\") application.\r\n2. It is sandboxed\r\n3. It is signed and embedded in our .app with signing.\r\n4. @interface FinderSync : FIFinderSync\r\n5. in my init, in the implementation I have:\r\nself.myFolderURL = [NSURL fileURLWithPath:@\"/\"];\r\n[FIFinderSyncController defaultController].directoryURLs = [NSSet setWithObject:self.myFolderURL]; \r\nnote: So basically I'm watching the root folder including /Volumes;\r\n6. I implement the protocol \r\n- (void)beginObservingDirectoryAtURL:(NSURL *)url {\r\n    // The user is now seeing the container's contents.\r\n    // If they see it in more than one view at a time, we're only told once.\r\n    NSLog(@\"beginObservingDirectoryAtURL:%@\", url.filePathURL);\r\n    self.beginObserving = [url copy];\r\n}\r\n\r\nExpected Results:\r\n- (void)beginObservingDirectoryAtURL:(NSURL *)url \r\nshould be called upon clicking on a folder on a mounted drive under /Volumes\r\n\r\nActual Results:\r\nIt is not called. Neither - (void)endObservingDirectoryAtURL:(NSURL *)url\r\nBut only on /Volumes, it works on any other folder on my tested systems.\r\nAlso the selected files are properly loaded under /Volumes, but not the folders.\r\n\r\nVersion/Build:\r\nmacOS 10.10.5, 10.12.3, 10.12.6, 10.13 developer beta 9 (17A360a)"
+    email: stefan.szekeres@gmail.com
+    modified: "2017-09-11T09:43:52.95387Z"
+    number: "34362783"
+    number_intvalue: 34362783
+    originated: 09.11.2017
+    parent_number: '&{NULL_VALUE}'
+    product: macOS FinderSync (Finder plugin extension)
+    product_version: ""
+    reproducible: 100%
+    resolved: ""
+    status: open
+    title: FinderSync - finder extension doesn't register folder updates on /Volumes/ (mounted drives)

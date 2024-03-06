@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39446389"
+    labels:
+        datastore_id: "4944822540435456"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2018-04-16T02:32:56.51077Z"
+    description: "Summary:\r\nIn Xcode 9.2, if you have an app that references UIFont.Weight, and on the first line of your app you set an `Any` value to NSUserDefaults, the app deadlocks. This seems to be because the bridging to `Any` loads any Objective-C types, which includes loading UIFont.Weight, which reads from defaults, acquiring a lock, as you're trying to write, which also attempts to acquire the same lock.\r\n\r\nSteps to Reproduce:\r\n1. In Xcode 9.2 create a new iOS project\n2. Add `UserDefaults.standard.set([UIFont.Weight.bold.rawValue], forKey: \"foo\")` as the first line of `application:didFinishLaunchingWithOptions:`\n3. Add a breakpoint on `return true` at the bottom of that function\n4. Run the app\r\n\r\nExpected Results:\r\nThe app runs fine\r\n\r\nActual Results:\r\nThe app deadlocks and you never reach your breakpoint.\r\n\r\nVersion:\r\niOS 11.2 / Xcode 9.2 (9C40b) / Swift 4.1\r\n\r\nNotes:\r\nWe haven't been able to reproduce this in Xcode 9.3 / Swift 4.1 / iOS 11.3. We can't tell if this is fixed in Swift, since it seems like the metadata for UIFont.Weight doesn't get loaded immediately when this bridge happens anymore, or if it's fixed in iOS because the call `CGFontDBGetLocal` that ends up causing the deadlock gets called way earlier because some status bar related API end up calling it before application:didFinishLaunchingWithOptions:.\n\nRun the attached project for an example."
+    email: keithbsmiley@gmail.com
+    modified: "2018-04-16T02:32:56.511Z"
+    number: "39446389"
+    number_intvalue: 39446389
+    originated: 15-Apr-2018 19:32
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 11.2 / Xcode 9.2 (9C40b) / Swift 4.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift app deadlocks when calling NSUserDefaults and referencing UIFont.Weight

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8270243"
+    labels:
+        datastore_id: "554403"
+data:
+    classification: Serious Bug
+    created: "2010-08-04T03:29:45.740989Z"
+    description: "Summary:\r\nWhen using Key-Value Observing on self, removing the KVO in -dealloc causes any associated objects on self to not get cleaned up. Conversely, not removing KVO on self causes the observation info to persist and potentially latch on to other instances that get created using the same address.\r\n\r\nSteps to Reproduce:\r\n1. Run the attached project.\r\n2. Open up main.m and change the #define to NO\r\n3. Run the attached project again.\r\n\r\nExpected Results:\r\nThe first time you run it the console should output\r\n\r\n    finalizer ran\r\n    observed string\r\n\r\nThe second time it should output\r\n\r\n    finalizer ran\r\n    observed string\r\n    observed string\r\n\r\nThe first output is the correct behavior, the second output is demonstrating that the leaked KVO observation info is latching on to the second instance on the same pointer.\r\n\r\nActual Results:\r\n\r\nThe first time you run it the console outputs\r\n\r\n    observed string\r\n\r\nThe second time you run it the console outputs\r\n\r\n    finalizer ran\r\n    observed string\r\n    observed string\r\n\r\nNotes:\r\nThe correct thing to do is to clean up the observation in -dealloc. However, doing so causes the associated objects to never get released. This is a serious bug. As you can see, not cleaning up the observation in -dealloc causes a separate issue, which is to be expected.\r\n\r\nThis bug can be reproduced in 4.0 as well as 3.2, the only difference is in 4.0 the console will also contain warnings about the leaked KVO observation info.\r\n\r\nOpenRadar Note:\r\nThe project attached to the radar uses a class that logs \"finalizer ran\" in -dealloc. An instance of this class is attached to another class using associated objects. The second class observes self, and the #define controls whether or not it removes the observation on self in -dealloc. This demonstrates how when -removeObserver:forKeyPath: is called on self in -dealloc, the associated object is leaked."
+    email: kballard@gmail.com
+    modified: "2011-08-28T05:40:22.799542Z"
+    number: "8270243"
+    number_intvalue: 8270243
+    originated: 03-Aug-2010 08:27 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPad SDK
+    product_version: "3.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Removing KVO on self in -dealloc causes associated objects to not get cleaned up

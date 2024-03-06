@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB13291861
+    labels:
+        datastore_id: "5542242160738304"
+data:
+    classification: ""
+    created: "2023-10-20T20:24:57.789852Z"
+    description: "When an NSWindow is closed immediately after allocation, a crash occurs during objc_autoreleasePoolPop when the surrounding autorelease pool is flushed. \r\n\r\nEither of the following will avoid the crash:\r\n1. Set window.releasedWhenClosed = NO;\r\n2. Do not call close.\r\n\r\nThe following is a full repro: \r\n@autoreleasepool {\r\n  NSWindow* window = [[NSWindow alloc] init];\r\n  [window close];\r\n}\r\n\r\nFor convenience, I've posted a project here: https://github.com/cbracken/NSWindowCrash that demonstrates the issue. \r\n\r\n\r\n## Expected behaviour\r\nClosing an NSWindow immediately after allocation should succeed.\r\n\r\n\r\n## Actual behaviour\r\nClosing an NSWindow immediately after allocation, followed by being flushed from the autorelease pool causes a crash with the following stack trace.\r\nThread 0 Crashed::  Dispatch queue: com.apple.main-thread\r\n0   libobjc.A.dylib               \t       0x18d8f7ed8 objc_release + 16\r\n1   libobjc.A.dylib               \t       0x18d8ff418 AutoreleasePoolPage::releaseUntil(objc_object**) + 196\r\n2   libobjc.A.dylib               \t       0x18d8fbaf0 objc_autoreleasePoolPop + 260\r\n3   NSWindowCrash                 \t       0x102213f40 main + 96 (main.m:12)\r\n4   dyld                          \t       0x18d945058 start + 2224\r\n\r\n\r\n## Discussion\r\nWhile a developer is unlikely to ever intentionally write such code, it may occur in the context of a more complicated app where a window is both allocated and hits some condition that results in immediate close, or in minimal unit tests where a developer allocates a window in order to perform a test (in my case, related to accessibility notifications), and then clean up after itself.\r\n\r\nEither way, this probably shouldn't crash, or should be documented in NSWindow close."
+    email: chris.bracken@gmail.com
+    modified: "2023-10-20T20:24:57.790009Z"
+    number: FB13291861
+    number_intvalue: 13291861
+    originated: "2023-10-20"
+    parent_number: '&{NULL_VALUE}'
+    product: AppKit
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Crash in autorelease pool flush when NSWindow closed immediate after allocation

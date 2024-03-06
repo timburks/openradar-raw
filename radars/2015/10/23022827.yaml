@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23022827"
+    labels:
+        datastore_id: "6708041554591744"
+data:
+    classification: Other Bug
+    created: "2015-10-08T00:57:17.57195Z"
+    description: "Summary\r\n\r\nIn OS X 10.11 there appears to be a regression in the functionality of pkgutil regarding deleting certain receipt database entries.\r\n\r\n\r\nSteps to Reproduce\r\n\r\n1. Determine that the package receipt exists in the database:\r\n\t> pkgutil --pkgs=\"com.apple.pkg.JavaSecurity\"\r\n\tcom.apple.pkg.JavaSecurity\r\n\r\n2. With root privileges run pkgutil to remove the package receipt database entry:\r\n\t> sudo pkgutil --forget com.apple.pkg.JavaSecurity\r\n\r\n\r\nExpected Results\r\n\r\nThe command should succeed and report that the package receipt entry was removed:\r\n\r\n> sudo pkgutil --forget com.apple.pkg.JavaSecurity\r\nForgot package 'com.apple.pkg.JavaSecurity' on /'.\r\n\r\n\r\nActual Results\r\n\r\nThe command generates an error (Code%3D2 \"No such file or directory\"} and an incorrect message that the package receipt entry was removed:\r\n\r\n> sudo pkgutil --forget com.apple.pkg.JavaSecurity\r\nUnknown error Error Domain%3DNSCocoaErrorDomain Code%3D4 \"“com.apple.pkg.JavaSecurity.bom” couldn’t be removed.\" UserInfo%3D{NSFilePath%3D%2Fvar%2Fdb%2Freceipts%2Fcom.apple.pkg.JavaSecurity.bom%2C NSUserStringVariant%3D(\r\n    Remove\r\n)%2C NSUnderlyingError%3D0x7fc989c620b0 {Error Domain%3DNSPOSIXErrorDomain Code%3D2 \"No such file or directory\"}}.\r\nForgot package 'com.apple.pkg.JavaSecurity' on '%2F'.\r\n\r\nDespite the message that the entry was removed it is still listed when searching for its entry after supposed removal:\r\n\r\n> pkgutil --pkgs%3D\"com.apple.pkg.JavaSecurity\"\r\ncom.apple.pkg.JavaSecurity\r\n\r\n\r\nRegression\r\n\r\nThis is the current behavior for OS X 10.11 15A284 - it did not occur prior.\r\n\r\n\r\nNotes\r\n\r\nImportant to note is that pkgutil seems to be looking at the wrong file system location for BOM and plist files related to the package receipts. Investigation shows that the location for Apple-provided package receipts appears to have changed in 10.11 as they are now all found in /System/Library/Receipts - a location protect by SIP - ostensibly by design. The error message shown by pkgutil should reflect the fact that receipts for Apple packages cannot be removed or it should be pointed at the correct filesystem location for them if it in fact the intended behavior is that it should be able to remove them under SIP protection."
+    email: bruienne@gmail.com
+    modified: "2015-10-08T00:57:17.57213Z"
+    number: "23022827"
+    number_intvalue: 23022827
+    originated: 10/07/2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 15A284
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Using pkgutil --forget in 10.11 does not work with Apple package receipts

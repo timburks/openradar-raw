@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22358759"
+    labels:
+        datastore_id: "6069884475670528"
+data:
+    classification: Serious Bug
+    created: "2015-08-20T09:41:24.35293Z"
+    description: "This is the OS X version of rdar://22358749\n\nSummary:\nWhen NSXMLParser encounters an element declaration it calls parser:foundElementDeclarationWithName:model:.\nThe final parameter is supposed to carry the element model information, however it is always an empty string.\n\nFor example, the follow XML file:\n\n<?xml version=\"1.0\" standalone=\"yes\" ?>\" \n<!DOCTYPE blog [\n      <!ELEMENT title (#PCDATA)>\n      <!ELEMENT body (#PCDATA)>\n      <!ELEMENT post (title, body)>\n]>\n<blog>\n</blog>\n\nwhen parsed with NSXMLParser results in the following delegate calls (ellipses mark where parameters have been deleted for clarity): \n-[… parserDidStartDocument:…]\n-[… foundElementDeclarationWithName:@\"title\" model:@\"\"]\n-[… foundElementDeclarationWithName:@\"body\" model:@\"\"]\n-[… foundElementDeclarationWithName:@\"post\" model:@\"\"]\n-[… didStartElement:@\"blog\" namespaceURI:nil qualifiedName:nil attributes:{\n}]\n-[… didEndElement:@\"blog\" namespaceURI:nil qualifiedName:nil]\n-[… parserDidEndDocument:<NSXMLParser: 0x7f82e2844f50>]\n\nSteps to Reproduce:\nRun the above XML or a similar file through NSXMLParser and log the delegate calls.\n\nAlternatively, run the test testElementDeclarationModel in the attached Xcode workspace and note the contents of the log and that the test fails. \n\nExpected Results:\nThe model string should contain the model information.\n\nRevisiting the example above and ignoring irrelevant calls, it would be reasonable to assume the following calls to the delegate:\n…\n-[… foundElementDeclarationWithName:@\"title\" model:@\"(#PCDATA)\"]\n-[…  foundElementDeclarationWithName:@\"body\" model:@\"(#PCDATA)\"]\n-[… foundElementDeclarationWithName:@\"post\" model:@\"(title, body)\"]\n…\n\nActual Results:\nSee summary above.\n\nRegression:\nI could not find a version of NSXMLParser that behaved correctly.\nBoth libxml2 and expat handle this correctly."
+    email: iosdeveloperzone@gmail.com
+    modified: "2015-08-20T09:41:24.35326Z"
+    number: "22358759"
+    number_intvalue: 22358759
+    originated: 20-Aug-2015 02:41 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: Mac OS X 10.10.4 (14E46)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'NSXMLParser always passes empty element model strings to NSXMLParserDelegate parser:foundElementDeclarationWithName:model: (OSX)'

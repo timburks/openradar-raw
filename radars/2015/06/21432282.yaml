@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21432282"
+    labels:
+        datastore_id: "5198368234012672"
+data:
+    classification: Enhancement
+    created: "2015-06-17T23:43:05.50725Z"
+    description: "Summary:\n\nAttempting to specialize a generic type where a parameter T is constrained to protocol MyProtocol fails when passing in MyProtocol as the Type satisfying the constraint.\n\nSteps to Reproduce:\nprotocol  MyType {\n \n}\n \nstruct Thing : MyType {\n}\n \n \nstruct Foo<T, U : MyType> {\n    let one:T\n    let two:U\n}\n \nstruct Bar<T> {\n    let one:T\n    let two:MyType\n}\n \nlet theThing = Thing()\n \nlet expected: Foo<Int, Thing> = Foo(one: 0, two: theThing)\nlet nice:Bar<Int> = Bar(one: 1, two: theThing)\n// I think it could be great if the following line were basically equivalent to the line immediately above.\nlet potentiallyGreat: Foo<Int, MyType> = Foo(one: 2, two: theThing)\n\nExpected Results:\nThe last line, `let potentiallyGreat: Foo<Int, MyType> = Foo(one: 2, two: theThing)`, should compile and be equivalent to `let nice:Bar<Int> = Bar(one: 1, two: theThing)`\n\nActual Results:\nCompilation fails “Generic parameter ‘U’ cannot be bound to non-@objc protocol type ‘MyType’”"
+    email: GriotSpeak@gmail.com
+    modified: "2015-06-17T23:43:05.50749Z"
+    number: "21432282"
+    number_intvalue: 21432282
+    originated: 17-Jun-2015 04:42 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A120f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Protocol Type does not conform to Protocol

@@ -1,0 +1,55 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24504260"
+    labels:
+        datastore_id: "5020294292963328"
+data:
+    classification: Serious Bug
+    created: "2016-02-04T16:44:14.95922Z"
+    description: |-
+        Summary:
+
+        libdispatch's dispatch_io_write sometimes calls its handler block with (true, 0x7fff72149b50, 89) which as of the documentation means "unrecoverable error, ECANCELED". This can even happen if it was successful, ie the bytes were already read at the other end.
+
+        Steps to Reproduce:
+
+        1. Compile the attached program with 'clang -o test test.c'
+        2. Run it in a loop with 'while true; do ./test 2>&1 | grep -C5 ERROR; done'
+
+        Expected Results:
+
+        should produce no output as there should be no failures.
+
+
+        Actual Results:
+
+        Sometimes outputs the following:
+        --- SNIP ---
+        === BEGIN ===
+        buf='hallo
+        '
+        on it
+        ERROR: 1, 0x7fff72149b50, 89
+        ===  END  ===
+        --- SNAP ---
+
+        from buf='hallo\n' we see that the data was successfully written (and read on the other side). However from 'ERROR: 1, 0x7fff72149b50, 89' we learn that the dispatch_io_write failed even though it succeeded :).
+
+        Regression:
+        don't know but probably not
+
+        Notes:
+        n/a
+    email: weissismail@gmail.com
+    modified: "2016-02-04T16:44:14.95939Z"
+    number: "24504260"
+    number_intvalue: 24504260
+    originated: 04-Feb-2016 04:43 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: Mac OS X 10.11.3 (15D21)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Mac OS X 10.11.3: libdispatch''s dispatch_io_write can succeed and signal an ECANCELED error'

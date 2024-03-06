@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "5953351"
+    labels:
+        datastore_id: "29402"
+data:
+    classification: Enhancement
+    created: "2009-04-16T04:38:33.231438Z"
+    description: "21-May-2008 03:40 PM Dave Dribin:\r\nSummary: \r\nProperly freeing external (non-memory) resources in a garbage control environment is kind of a pain:\r\n\r\n  <http://developer.apple.com/documentation/Cocoa/Conceptual/GarbageCollection/Articles/gcFinalize.html#//apple_ref/doc/uid/TP40002453-SW6>\r\n  \r\nIdeally, you free external resources before calling finalize, by using a method like -close to close file descriptors or network sockets.  This can complicate code because you have to use @try/@finally to ensure you always call -close when done:\r\n\r\n    File * file = nil;\r\n    @try\r\n    {\r\n        file = [[File alloc] int];\r\n        // Use file...\r\n    }\r\n    @finally\r\n    {\r\n        if (file != nil)\r\n        {\r\n            [file close];\r\n            file = nil;\r\n        }\r\n    }\r\n\r\nThis ensures the file gets closed no matter what happens, even in the face of an exception.  Using @try/@finally is quite verbose.  Also, there's no de facto standard on the \"close\" method.  It could be called -cleanup or -reset on other objects, making it hard to remember the cleanup method.\r\n\r\nC# has the similar issue and uses a special \"using\" keyword with the IDisposable interface.  The IDisposable interface provides a common method name to use for cleaning up external resources.  The \"using\" keyword and block ensures the dispose method gets called, no matter what.\r\n\r\n  <http://msdn.microsoft.com/en-us/library/yh598w02.aspx>\r\n\r\nI propose a similar extension to Objective-C.  First, add a Disposable protocol:\r\n\r\n@protocol Disposable\r\n\r\n- (void)dispose\r\n\r\n@end\r\n\r\nThen, add a @using keyword and block, which would be used as such:\r\n\r\n    @using(File file = [[File alloc] init])\r\n    {\r\n        file = [[File alloc] int];\r\n        // Use file...\r\n    }\r\n    // [file dispose] is guaranteed to be called before exiting this block\r\n\r\nThis has the side benefit of the dispose method being called in a deterministic fashion instead of finalize being called \"at some point in the future\" when the collector picks up trash.\r\n\r\nWhile this is more necessary in a garbage collection environment, it can also be handy in a non-GC environment.  Currently, autorelease + dealloc is often used to ensure that external resources are cleaned up, even in the face of exceptions.  But this is also non-deterministic as dealloc gets called \"at some point in the future\" when the autorelease pool is popped.\r\n\r\nSteps to Reproduce:\r\nN/A\r\n\r\nExpected Results:\r\nN/A\r\n\r\nActual Results:\r\nN/A\r\n\r\nRegression:\r\nN/A\r\n\r\nNotes:\r\nN/A\r\n\r\n\r\n\r\n21-May-2008 05:45 PM Dave Dribin:\r\nSee also Python's PEP 343, The \"with\" Statement:\r\n\r\n  <http://www.python.org/dev/peps/pep-0343/>\r\n\r\nAlso, it may be nice for @using to set the variables to nil on block exit, that way there's no chance of them being used outside of the @using block after -dispose is called.  Not sure why C# doesn't do that, so there may be a good reason for not setting to nil (I can't think of one offhand, though)."
+    email: ddribin@gmail.com
+    modified: "2011-08-28T05:50:14.061694Z"
+    number: "5953351"
+    number_intvalue: 5953351
+    originated: 21-May-2008 03:40 PM
+    parent_number: "5775794"
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Duplicate/5775794
+    title: Add @using and a Disposable protocol to help free external resources w/ GC

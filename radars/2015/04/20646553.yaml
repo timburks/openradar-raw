@@ -1,0 +1,61 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20646553"
+    labels:
+        datastore_id: "6065709230587904"
+data:
+    classification: Serious Bug
+    created: "2015-04-22T04:44:47.58104Z"
+    description: |-
+        Summary:
+        A whole-module-optimization enabled build calls a base-class var instead of the subclassed one
+
+        Steps to Reproduce:
+        In happens in a specific large project and I wasn’t able to reproduce it in a test project, unfortunately.
+        I’ll give some code sample to explain the set up.
+
+        I have a class which includes the following code:
+        class BaseTransactionEditor: NSViewController, NSTextFieldDelegate {
+            var commonViewModel: BaseTransactionEditorViewModel { fatalError("override!") }
+
+        override func viewDidAppear() {
+        // other code
+                commonViewModel.newTransaction()
+        // other code
+        }
+
+        and a subclass like this:
+        final class PlanTransactionEditor: BaseTransactionEditor, PopoverViewController {
+            let viewModel: PlanTransactionViewModel
+            override var commonViewModel: BaseTransactionEditorViewModel { return viewModel }
+
+        override func viewDidLoad() {
+                super.viewDidLoad()
+        // more code
+        }
+
+        When I launch a build with WMO enabled, Release configuration, upon calling viewDidLoad on the subclass, the application crashes because “fatalError("override!”) executed. I’m attaching the crash log.
+
+        Debug build or Release without WMO do not crash.
+
+        Expected Results:
+        Base class should access the subclassed “commonViewModel”
+
+        Actual Results:
+        Base class accesses its own “commonViewModel”
+
+        Regression:
+        Haven’t checked
+    email: jacob@apparentsoft.com
+    modified: "2015-04-22T04:44:47.58132Z"
+    number: "20646553"
+    number_intvalue: 20646553
+    originated: 21-Apr-2015 11:44 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.3.1 (6D1002)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 1.2: A base-class method is called instead of subclass in release build with whole-module-optimization'

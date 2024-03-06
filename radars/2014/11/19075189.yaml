@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19075189"
+    labels:
+        datastore_id: "6358822092275712"
+data:
+    classification: Bug
+    created: "2014-11-24T21:41:15.556286Z"
+    description: "Summary:\r\nWhen creating a paged UIScrollView (using the pagingEnabled flag), it seems logical that by applying content insets – which effectively affect the size of the viewport in much the same way as adjusting the rect with clipsToBounds disabled – should also affect the size of the page as handled by the scrolling mechanism.\r\n\r\nInstead, this is not true: page size is equivalent to the bounds of the scrollview itself, the result of which is that when paging with insets set that should affect it, it will cause content areas to be completely skipped.\r\n\r\nSteps to Reproduce:\r\n1. Download the sample project I've provided.\r\n2. Run as-is in the simulator. This will give you the *expected* results. Note that peeks of the next and previous page appear at each side.\r\n3. Open Main.storyboard and switch on paging for the collection view.\r\n4. Run again in the simulator. Note that now, with the default paging implementation activated, the content scrolls to what feel like arbitrary points within the content.\r\n\r\nExpected Results:\r\nThe expected results are as per the implementation that I've provided: swiping between pages should cause the content to scroll to page offsets as adjusted by the content insets.\r\n\r\nThe solution I've determined is to create a page size based on the frame of the scroll view/collection view, adjusted for the content insets. This is done (in a somewhat clumsy but effective way) within the scrollViewWillEndDragging:withVelocity:targetContentOffset: method implemented in CollectionViewController.m.\r\n\r\nActual Results:\r\nThe scroll view disregards content insets and will scroll as per the frame width of the scroll view itself. The effect of which feels like the scroll view is broken and is simply scrolling to an arbitrary point within the content.\r\n\r\nVersion:\r\niOS 8.1\r\n\r\nNotes:\r\nIt is possible that this is expected behaviour, and I am fully prepared for that to be your response. However, I believe that the current default behaviour is illogical and actually detrimental. I don't believe there is any use case where the existing behaviour would be useful, and it doesn't make sense for developers to have to hack around it to accomplish something that could easily be implemented.\r\n\r\nI should also note that the attached sample project is also available on Github at https://github.com/jellybeansoup/ios-pagedcollectionview."
+    email: jelly@jellystyle.com
+    modified: "2014-11-24T21:41:15.55655Z"
+    number: "19075189"
+    number_intvalue: 19075189
+    originated: 25/11/2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "8.1"
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: Paging UIScrollView page size does not respond to content insets.

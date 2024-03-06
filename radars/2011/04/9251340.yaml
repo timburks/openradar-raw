@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9251340"
+    labels:
+        datastore_id: "1156410"
+data:
+    classification: Serious Bug
+    created: "2011-04-07T20:03:22.967378Z"
+    description: "07-Apr-2011 01:02 PM Nico Weber:\r\n'Mac Pro.spx' was successfully uploaded\r\n\r\n07-Apr-2011 01:02 PM Nico Weber:\r\nSummary: SyncHandwritingHotKey() disables the Chinese Handwriting hotkey if any UI process is sandboxed.\r\n\r\nSteps to Reproduce:\r\n1. Run a UI program in a sandbox that denies at least these 2 things:\r\n\r\n(deny file-read-data\r\n       (subpath \"/System/Library/Caches\")  ; required\r\n       )\r\n\r\n(deny mach-lookup\r\n       (global-name \"com.apple.pasteboard.1\")  ;required\r\n       )\r\n\r\nRunning Google Chrome 11 or older works for example.\r\n\r\n2. Enable the Chinese Handwriting IME by adding Chinese to the enabled input methods in sysprefs\r\n\r\n3. Try to toggle the IME with ctrl-shift-space\r\n\r\nExpected Results:\r\nShould work.\r\n\r\nActual Results:\r\nDoes not work. The reason for this is that HIToolbox's SyncHandwritingHotKey() does something along these lines:\r\n\r\n  CFTypeRef[] keys = { kTISPropertyBundleID };\r\n  CFTypeRef[] values = { CFSTR(\"com.apple.inputmethod.ChineseHandwriting\") };\r\n  CFDictionaryRef dict\r\n    = CFDictionaryCreate(kCFAllocatorDefault, keys, values, 1,\r\n                         &kCFTypeDictionaryKeyCallBacks,\r\n                         &kCFTypeDictionaryValueCallBacks);\r\n\r\n  CFArrayRef arr = TISCreateInputSourceList(dict, /*ignorefilter=*/false);\r\n  int count = CFArrayGetCount(arr);\r\n  CFRelease(dict);\r\n  CFRelease(arr);\r\n  if (!count)\r\n    CGSRemoveHotKey(...)\r\n\r\nIn a sandboxed process, TISCreateInputSourceList() will fail to load the IME bundle due to lack of file access, and then the function will globally uninstall the hotkey. A possible fix would be to only uninstall the hotkey if stat()ing /System/Library does _not_ fail (to check for being sandboxed), or to just never remove this hotkey once it's been installed.\r\n\r\nRegression:\r\nNo.\r\nNotes:\r\n\r\n\r\nSee http://crbug.com/31225 for more analysis."
+    email: thakis@chromium.org
+    modified: "2011-08-28T05:37:11.959787Z"
+    number: "9251340"
+    number_intvalue: 9251340
+    originated: Apr 7 2011
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.6.6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SyncHandwritingHotKey() disables the Chinese Handwriting hotkey if any UI proces

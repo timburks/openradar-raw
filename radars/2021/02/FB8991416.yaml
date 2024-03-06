@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8991416
+    labels:
+        datastore_id: "4977927447904256"
+data:
+    classification: Bug
+    created: "2021-02-05T11:23:55.693307Z"
+    description: "Hi I noticed a glitch in the UITableView backed SwiftUI List on iOS - if there is an add button to add a new row animated, if quickly tapping the button then the list only shows 1 row and not the expected 2. Perhaps the UITableView cell animations are tripping over themselves. I have attached a sample app demonstrating the problem, please follow these steps to recreate it or watch the attached screencast.\r\n\r\n1. Open Project.\r\n2. Launch in iPhone 12 mini simulator.\r\n3. Click the + button twice quickly.\r\n\r\nWhat expected:\r\n2 rows should appear in list.\r\n\r\nWhat happens:\r\nOnly 1 row appears.\r\n\r\nBonus:\r\nDo a swipe gesture on the row, then the table updates and the missing second row appears!\r\n\r\nTested on:\r\nXcode 12.5 beta 1\r\niOS Simulator iOS 14.5 (18E5140i) Model: iPhone 12 mini\r\n\r\nBut also present on earlier versions.\r\n\r\n\r\n\r\n\r\nimport SwiftUI\r\n\r\nstruct Item: Identifiable {\r\n    let id = UUID()\r\n    let timestamp = Date()\r\n}\r\n\r\nstruct ContentView: View {\r\n    @State var items = [Item]()\r\n    \r\n    var body: some View {\r\n        NavigationView {\r\n            List {\r\n                ForEach(items) { item in\r\n                    Text(\"Item at \\(item.timestamp, formatter: itemFormatter)\")\r\n                }\r\n                .onDelete(perform: deleteItems)\r\n            }\r\n            .toolbar {\r\n                ToolbarItem(placement: .navigation) {\r\n                    EditButton()\r\n                }\r\n                ToolbarItem(placement: .primaryAction) {\r\n                    Button(action: addItem) {\r\n                        Label(\"Add Item\", systemImage: \"plus\")\r\n                    }\r\n                }\r\n                ToolbarItem(placement: .principal) {\r\n                    Button(action: deleteAllItems) {\r\n                        Text(\"Delete All\")\r\n                    }\r\n                }\r\n            }\r\n        }\r\n    }\r\n    \r\n    private func addItem() {\r\n        withAnimation {\r\n            items.append(Item())\r\n        }\r\n    }\r\n    \r\n    private func deleteItems(offsets: IndexSet) {\r\n        withAnimation {\r\n            items.remove(atOffsets: offsets)\r\n        }\r\n    }\r\n    \r\n    private func deleteAllItems() {\r\n        withAnimation {\r\n            items.removeAll()\r\n        }\r\n    }\r\n}\r\n\r\nstruct ContentView_Previews: PreviewProvider {\r\n    static var previews: some View {\r\n        ContentView()\r\n    }\r\n}\r\n\r\nprivate let itemFormatter: DateFormatter = {\r\n    let formatter = DateFormatter()\r\n    formatter.dateStyle = .short\r\n    formatter.timeStyle = .medium\r\n    return formatter\r\n}()"
+    email: indiekiduk@gmail.com
+    modified: "2021-07-28T09:34:10.518668Z"
+    number: FB8991416
+    number_intvalue: 8991416
+    originated: "2021-02-05"
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: iOS 14.5b1
+    reproducible: Always
+    resolved: Yes
+    status: Closed
+    title: 'SwiftUI List: One row appears instead of two when quickly tapping add row button twice'

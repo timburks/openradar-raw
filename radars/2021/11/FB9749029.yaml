@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9749029
+    labels:
+        datastore_id: "4951221609693184"
+data:
+    classification: ""
+    created: "2021-11-09T19:30:18.792796Z"
+    description: "Both the UIAccessibilityTraits.tabBar and UIAccessibilityContainerType.dataTable APIs on UICollectionViews cause the wrong number of elements to be read by VoiceOver. This likely has something to do with UICollectionView's reused cells such that the view hierarchy is never the full number of elements. This is an issue at least as early as iOS 13.3 and at least as late as iOS 15.0.2.\r\n\r\nFor UIAccessibilityTraits.tabBar:\r\n1. Create a collection view where the number of cells exceeds the width of the screen. Start with roughly double width.\r\n2. Assign `collectionView.accessibilityTraits = [.tabBar]`\r\n3. Open the app, then use the VO shortcut to turn it on while on the app is already opened and has rendered the collection view.\r\n4. Go through each element on the screen. It should read \"{Accessibility Label}, Tab, {x} of {y}\" where y is the number of visible cells. When reaching the end of the visible cells and the collection view scrolls to accommodate, it changes its value of y. With long lists it sometimes changes the value of x as y also changes.\r\n\r\nExpected: UICollectionView should automatically return the correct number of elements based on its data source.\r\nActual: UICollectionView appears to return the current number of subviews which can change when scrolling.\r\n\r\nFor UIAccessibilityContainerType.dataTable:\r\n1. Create a collection view where the number of cells exceeds the width of the screen. Start with roughly double width.\r\n2. Assign `collectionView.accessibilityContainerType = .dataTable` and also `collectionView.accessibilityTraits = [.tabBar]` to confirm behavior later.\r\n3. Extend UICollectionView to implement the `UIAccessibilityContainerDataTable` protocol. On `accessibilityColumnCount()` and `accessibilityRowCount()` return the same number of sections and rows as the collection view data source would.\r\n4. Open the app, then use the VO shortcut to turn it on while on the app is already opened and has rendered the collection view. Confirm that `accessibilityRowCount()` and `accessibilityColumnCount()` are being called.\r\n5. Go through each element on the screen with VoiceOver. It should read \"{Accessibility Label}, Spans {y} rows, Row {x}, Tab, {x} of {y}\" where y is the number of visible cells. When reaching the end of the visible cells and the collection view scrolls to accommodate, it changes its value of y. With long lists it sometimes changes the value of x as y also changes. Note that the span and row counts correspond to the tab count.\r\n\r\nExpected: The \"Spans {y}, Row {x}\" and \"{x} of {y}\" should use the values returned by the `UIAccessibilityContainerDataTable` protocol.\r\nActual: `UIAccessibilityContainerDataTable` protocol methods are being called but ignored when deriving the span/row/tab counts.\r\n\r\nNotes:\r\n - These are not issues if we use, say, UIStackView within a UIScrollView.\r\n - Although sometimes having VO on before the launching the app fresh may cause the correct number of items to be read, as opposed to turning on VO after the views have rendered, this is not always the case."
+    email: christopher_hale@discovery.com
+    modified: "2021-11-09T19:30:18.792946Z"
+    number: FB9749029
+    number_intvalue: 9749029
+    originated: 9 Nov 2021
+    parent_number: '&{NULL_VALUE}'
+    product: Accessibility
+    product_version: iOS 13-15
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Tab Bar A11y trait and dataTable container type reads wrong number of tabs for collection views

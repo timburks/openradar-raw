@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8701707"
+    labels:
+        datastore_id: "900402"
+data:
+    classification: Other Bug
+    created: "2010-11-25T19:55:56.359921Z"
+    description: "Summary:\r\nWhen building with the “-Xclang -fobjc-nonfragile-abi2” build setting, “Local declaration hides instance variable” warnings are generated for local declarations which do not hide an instance variable, but do have the same name as a property.\r\n\r\nAdditionally, the warning is generated repeatedly for the same expression until clang crashes.\r\n\r\nIn the attached project, four variations of this issue are presented. In all cases, the property fooN is implemented using an ivar of a different name, either through synthesis or (in test 5) explicitly. I submit that in tests 2 and 4, where the ivar is not explicitly declared, the compiler should not be generating such a warning even if the implicit ivar is shadowed.\r\n\r\n\r\nSteps to Reproduce:\r\n* Build attached project.\r\n\r\nExpected Results:\r\n* Successful compilation.\r\n\r\nActual Results:\r\n* The warning “local declaration of 'foo1' hides instance variable” is generated approximately 7262 times (with slight variation) for line 22, column 9. Clang then crashes.\r\n* #ifing out the class Test1 results in the same issue on line 43, and so on for all five test cases.\r\n\r\nRegression:\r\nCode similar to Test 4 would cause a warning (but not a crash) in version 1.5.\r\n\r\nNotes:\r\nIf -fobjc-nonfragile-abi2 is not used, the warning is not generated. However, “error: ivars may not be placed in class extension” is generated for test 3 (which is expected).\r\n\r\n[Attachment: http://jens.ayton.se/code/spurious-ivar-shadowing-test-case.zip ]"
+    email: jens.ayton@gmail.com
+    modified: "2011-11-27T19:28:55.87052Z"
+    number: "8701707"
+    number_intvalue: 8701707
+    originated: "2010-11-25"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 3.2.5/LLVM Compiler 1.6
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: 'LLVM Compiler 1.6: spurious “local declaration hides ivar” with nonfragile-abi2'

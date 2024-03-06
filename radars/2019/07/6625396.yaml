@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6625396"
+    labels:
+        datastore_id: "5053325196132352"
+data:
+    classification: Bug
+    created: "2019-07-15T13:30:29.217775Z"
+    description: "When we make a query of iCloud documents using NSMetadataQuery in the NSMetadataQueryUbiquitousDocumentsScope, we're unexpectedly getting the Documents directory itself back on iPadOS13.  This isn't seen on iOS 13 Beta on iPhone, nor on iOS 12 on either iPhone or iPad.\r\n\r\n\r\nHere's some example code:\r\n\r\nSetup a NSMetadataQuery:\r\n```\r\nfunc go() {\r\n\r\n\t\tlet isFolderPredicate = NSPredicate(format: \"%K = %@\", NSMetadataItemContentTypeKey, kUTTypeFolder as String)\r\n\t\tlet noDotLineaPredicate = NSPredicate(format: \"NOT %K CONTAINS %@\", NSMetadataItemFSNameKey, \".linea\")\r\n\r\n\t\tlet predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [isFolderPredicate, noDotLineaPredicate ])\r\n\r\n\t\tmetadataQuery = NSMetadataQuery()\r\n\t\t\r\n\t\tmetadataQuery.predicate = predicate\r\n\t\tmetadataQuery.searchScopes = searchScopes ?? [\r\n\t\t\tNSMetadataQueryUbiquitousDocumentsScope,\r\n\t\t\tNSMetadataQueryAccessibleUbiquitousExternalDocumentsScope\r\n\t\t]\r\n\r\n\t\t\r\n\t\t// We supply our own serializing queue to the `NSMetadataQuery` so that we\r\n\t\t// can perform our own background work in sync with item discovery.\r\n\t\t// Note that the operationQueue of the `NSMetadataQuery` must be serial.\r\n\t\tmetadataQuery.operationQueue = workerQueue\r\n\t\t\r\n\t\tsuper.init()\r\n\t\t\r\n\t\tlet nc = NotificationCenter.default\r\n\t\t\r\n\t\tnc.addObserver(self, selector: #selector(finishGathering),\r\n\t\t               name: .NSMetadataQueryDidFinishGathering, object: metadataQuery)\r\n\t\t\r\n\t\tnc.addObserver(self, selector: #selector(queryUpdated),\r\n\t\t               name: .NSMetadataQueryDidUpdate, object: metadataQuery)\r\n\t\t\r\n\t\tmetadataQuery.start()\r\n}\r\n```\r\n\r\nAdd the callbacks:\r\n\r\n```\r\n\t@objc func queryUpdated(_ notification: Notification) {\r\n\t\tlet changedMetadataItems = notification.userInfo?[NSMetadataQueryUpdateChangedItemsKey] as? [NSMetadataItem] ?? []\r\n\t\t\r\n\t\tlet changedResults = buildModelObjectSet(changedMetadataItems)\r\n\t\t\r\n\t\t// do something with the result...\r\n\t}\r\n\t\r\n\t@objc func finishGathering(_ notification: Notification) {\r\n\t\tmetadataQuery.disableUpdates()\r\n\t\t\r\n\t\tlet metadataQueryResults = metadataQuery.results as! [NSMetadataItem]\r\n\t\t\r\n\t\tlet results = buildModelObjectSet(metadataQueryResults)\r\n\t\t\r\n\t\tmetadataQuery.enableUpdates()\r\n\t\t\r\n\t\t// do something with the result...\r\n\t}\r\n```\r\n\r\nThis helper function demonstrates the problem:\r\n```\r\n\toverride func buildModelObjectSet(_ objects: [NSMetadataItem]) -> NSOrderedSet {\r\n\t\t// Create an ordered set of model objects.\r\n\t\t\r\n\t\tvar array = objects\r\n\t\t\t.map { ProjectItem(item: $0) }\r\n\t\t\t.filter { print($0.url.path); return $0.url.path.hasMatches(regex: \"/Documents/\") }\r\n// My work around for iPadOS 13 Beta -- it's returning the documents directory itself whereas it didn't used to.\r\n// It has this path /private/var/mobile/Library/Mobile Documents/iCloud~com~iconfactory~linea/Documents\r\n// And all the other folders in there are a subdir and thus contain /Documents/\r\n\r\n\t\t// SPAM: need to sort by custom order\r\n\t\tarray.sort { $0.displayName < $1.displayName }\r\n\t\t\r\n\t\treturn NSMutableOrderedSet(array: array)\r\n\t}\r\n```"
+    email: andy@modernlogic.io
+    modified: "2019-07-15T13:30:29.217921Z"
+    number: "6625396"
+    number_intvalue: 6625396
+    originated: 11 July, 2019
+    parent_number: '&{NULL_VALUE}'
+    product: CloudKit
+    product_version: "13"
+    reproducible: YES
+    resolved: ""
+    status: ""
+    title: NSMetadataQuery in NSMetadataQueryUbiquitousDocumentsScope returns the /Documents/ directory itself

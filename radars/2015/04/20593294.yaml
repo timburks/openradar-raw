@@ -1,0 +1,80 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20593294"
+    labels:
+        datastore_id: "5622248757002240"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-04-17T21:30:42.41182Z"
+    description: |-
+        Summary:
+        The swift compiler crashes type checking the following program.
+
+        Steps to Reproduce:
+        Attempt to compile and run the following code:
+        import Foundation
+
+        class OptCls: NSObject {
+          dynamic var s: String?
+          dynamic var nos: String = ""
+          dynamic var nss: NSString?
+          dynamic var ius: String!
+          dynamic var i: Int = 0
+          dynamic var o = NSObject()
+          dynamic var oo: OptCls?
+        }
+
+        extension Optional {
+          var getT: Any.Type {
+            println("\(T.self)")
+            return T.self
+          }
+        }
+
+        func getOptionalPropertyNames(object: AnyObject) -> NSDictionary {
+            let reflection = reflect(object)
+
+            var properties = [String:String]()
+
+            // Skip the first property (super):
+            // super is an implicit property on Swift objects
+            for i in 1..<reflection.count {
+                println("reflection: \(reflection[i])")
+                // let prop = class_getProperty(object.dynamicType, reflection[i].0)
+                // println(String.fromCString(property_getAttributes(prop)))
+                let mirror = reflection[i].1
+                let valueType = mirror.valueType
+                println("value type: \(valueType)")
+                if let v = mirror.value as? _ObjectiveCBridgeable {
+                  println(v.dynamicType._getObjectiveCType())
+                }
+                if mirror.disposition == .Optional {
+                    properties[reflection[i].0] = toString(valueType)
+                }
+                println()
+            }
+
+            return properties
+        }
+
+        let props = getOptionalPropertyNames(OptCls())
+        println(props)
+
+        Expected Results:
+        either the code compilers, or a number of compiler errors are returned.
+
+        Actual Results:
+        A compiler error is printed, and then the compiler segfaults.
+    email: segiddins@gmail.com
+    modified: "2015-04-17T21:30:42.41202Z"
+    number: "20593294"
+    number_intvalue: 20593294
+    originated: 17-Apr-2015 02:30 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-6.3 (6D570)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode-6.3 (6D570): Swift Compiler Crash'

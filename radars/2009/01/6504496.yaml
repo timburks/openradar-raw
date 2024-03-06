@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6504496"
+    labels:
+        datastore_id: "2443"
+data:
+    classification: Other Bug
+    created: "2009-01-17T01:00:01.907723Z"
+    description: "Summary: \r\nWhen extracting the Return ID from an AppleEvent using AEGetAttributePtr(), the type needs to be set to typeSInt32 to get the proper value.  However, the type AEReturnID is typedef'd to an SInt16, thus I would expect to extract it using typeSInt16.  In fact, using an SInt16 will often result in a coercion error (errAECoercionFail) when using auto-generated Return IDs.\r\n\r\nSteps to Reproduce:\r\n1) Create an AppleEvent using AEBuildAppleEvent()\r\n2) Get the Return ID using similar code to this:\r\n\r\nOSStatus GetReturnID(const AppleEvent * event, AEReturnID * returnID)\r\n{\r\n    *returnID = -1;\r\n    DescType returnIDType = typeSInt16;\r\n\r\n    DescType actualType = typeNull;\r\n    Size actualSize = 0;\r\n    OSStatus err;\r\n    err = AEGetAttributePtr(event, keyReturnIDAttr, returnIDType, &actualType,\r\n                            returnID, sizeof(*returnID), &actualSize);\r\n    return err;\r\n}\r\n\r\nExpected Results:\r\nIf using kAutoGenerateReturnID, GetReturnID() should not return an error and the returnID output parameter should be the generated return ID (0, 1, 2, etc..).\r\n\r\nIf using a custom return ID, e.g. 42, GetReturnID() should not return an error and the returnID output parameter should be equal to 42.\r\n\r\nActual Results:\r\nWhen using kAutoGenerateReturnID, GetReturnID() returns errAECoercionFail.\r\n\r\nWhen using a custom return ID, GetReturnID() works properly.\r\n\r\nRegression:\r\nI have only tested on 10.5.6/Intel.\r\n\r\nNotes:\r\nI'm attaching a project that reproduces the error.  The output when EXTRACT_RETURNID_AS_SINT32 = 0, USE_WILD_CARD = 0 is:\r\n\r\nEvent type: 'long', size: 4 bytes\r\nRequested type: 'shor', actualType: 'null'\r\nAEGetAttributePtr failed: errAECoercionFail: bad parameter data or unable to coerce the data supplied \r\nActual returnID: -1 (0xffff)\r\n-----\r\nEvent type: 'long', size: 4 bytes\r\nRequested type: 'shor', actualType: 'shor'\r\nActual returnID: 42 (0x2a)\r\n\r\nAs you can see the type of keyReturnIDAttr is 'long', thus you get failures when trying to extract it as an typeSInt16.\r\n\r\nThe output when EXTRACT_RETURNID_AS_SINT32 = 1, USE_WILD_CARD = X is, we get the correct behavior:\r\n\r\nEvent type: 'long', size: 4 bytes\r\nRequested type: 'long', actualType: 'long'\r\nActual returnID: 0 (0x0)\r\n-----\r\nEvent type: 'long', size: 4 bytes\r\nRequested type: 'long', actualType: 'long'\r\nActual returnID: 42 (0x2a)\r\n\r\nFor bonus points, when EXTRACT_RETURNID_AS_SINT32 = 0, USE_WILD_CARD = 1, the output matches then incorrect value of -[NSAppleEventDescriptor returnID] (See rdar://problem/6503741 for this bug).  Thus on i386, the output is:\r\n\r\nEvent type: 'long', size: 4 bytes\r\nRequested type: '****', actualType: 'long'\r\nActual returnID: 0 (0x0)\r\n-----\r\nEvent type: 'long', size: 4 bytes\r\nRequested type: '****', actualType: 'long'\r\nActual returnID: 42 (0x2a)\r\n\r\nAnd on PowerPC, the output is:\r\n\r\nEvent type: 'long', size: 4 bytes\r\nRequested type: '****', actualType: 'long'\r\nActual returnID: -22737 (0xa72f)\r\n-----\r\nEvent type: 'long', size: 4 bytes\r\nRequested type: '****', actualType: 'long'\r\nActual returnID: 0 (0x0)"
+    email: ddribin@gmail.com
+    modified: "2011-08-28T05:48:26.042954Z"
+    number: "6504496"
+    number_intvalue: 6504496
+    originated: 16-Jan-2009 04:59 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.6/9G55
+    reproducible: Always
+    resolved: Fixed in 10.6
+    status: Closed
+    title: Return ID of an AppleEvent needs to be extracted as SInt32, not SInt16

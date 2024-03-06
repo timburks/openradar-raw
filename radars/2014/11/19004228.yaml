@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19004228"
+    labels:
+        datastore_id: "5890367861817344"
+data:
+    classification: Performance
+    created: "2014-11-17T19:37:54.521338Z"
+    description: "Summary:\r\nThe SecCodeCheckValidity and SecStaticCodeCheckValidity functions in Security.framework will leak when checking the signature of a binary signed with a timestamp.\r\n\r\nSteps to Reproduce:\r\nTest 1\r\n=====\r\n1. Download the attached source file\r\n2. Compile:  clang -o leaktest{,.m} -framework Security -framework Foundation\r\n3. Sign the resulting binary:  codesign -s 'Mac Developer: xxx' leaktest\r\n4. Run the binary:  ./leaktest\r\n5. Run leaks:  leaks leaktest\r\n\r\nTest 2\r\n=====\r\nRe-run steps 3-5 but add the --timestamp flag to the codesign options.\r\n\r\nExpected Results:\r\nBoth tests show no memory leaks.\r\n\r\nActual Results:\r\nTest 2 shows around 14-24 leaks for 5k-10k bytes.\r\n\r\nVersion:\r\nXcode: Version 6.1 (6A1052c)\r\nOS:  Version 10.10 (14A389)\r\n\r\nI've also tried with Xcode 5.1.1 on 10.9.5 and the bug appears to be present on 10.8 too.\r\n\r\nNotes:\r\ntaskgated appears to be affected by this memory leak.\r\n\r\nConfiguration:\r\nThe leak only occurs when the --timestamp flag is used with signing the binary (as is the default for binaries signed by Xcode but apparently not for almost all Apple-signed binaries which do not seem to have a timestamp)."
+    email: russell@hancox.us
+    modified: "2018-01-05T18:20:03.09323Z"
+    number: "19004228"
+    number_intvalue: 19004228
+    originated: 17-Nov-2014 02:35 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: "10.10"
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 18207010
+    title: SecCodeCheckValidity and SecStaticCodeCheckValidity leak

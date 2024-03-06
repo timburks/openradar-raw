@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17308103"
+    labels:
+        datastore_id: "5788711421739008"
+data:
+    classification: Other Bug
+    created: "2014-07-18T22:00:39.254729Z"
+    description: "Summary:\r\nMKCoordinateRegionMakeWithDistance, when passed a coordinate of the south pole (-90, 0), gives a nonsense region.\r\n\r\nSteps to Reproduce:\r\nCLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(-90.0, 0.0);\r\nCLLocationDistance span = 40000.0;\r\nMKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(coordinate, region, region);\r\nNSLog\r\n[self.mapView setRegion:region animated:NO];\r\n\r\n...crash.\r\n\r\nInspecting in LLDB:\r\n\r\n(lldb) p (MKCoordinateRegion)MKCoordinateRegionMakeWithDistance((CLLocationCoordinate2D)CLLocationCoordinate2DMake(-90.0, 0.0), 40000.0, 40000.0)\r\n(MKCoordinateRegion) $5 = {\r\n  center = (latitude = -90, longitude = 0)\r\n  span = (latitudeDelta = 0.35812156084170216, longitudeDelta = 5848568262642516)\r\n}\r\n\r\nExpected Results:\r\nLongitudeDelta should be zero...or at least not 5848568262642516.\r\n\r\nActual Results:\r\nlongitudeDelta = 5848568262642516\r\n\r\n...wat\r\n\r\n\r\nVersion:\r\niOS 7.1 simulator, iOS 7.1.1 (11D201)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\nAttachments:"
+    email: tangphillip@gmail.com
+    modified: "2014-07-18T22:00:39.254851Z"
+    number: "17308103"
+    number_intvalue: 17308103
+    originated: 13-Jun-2014 05:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 7.1.1 (11D201)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: MKCoordinateRegionMakeWithDistance() returns nonsense at the poles

@@ -1,0 +1,41 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30460923"
+    labels:
+        datastore_id: "4992072314519552"
+data:
+    classification: Other Bug
+    created: "2017-02-10T08:22:34.45881Z"
+    description: |-
+        When working on code to draw an image in a tiled style to safe memory, I noticed that drawing a `UIImage` through its `drawInRect:` method onto a graphics context with a clipping mask set, it seems that `UIImage` only decodes the part of the image that it actually needs to draw inside the visible area. This also seems to be the case when using the CoreGraphics API and a `CGImageRef`.
+
+        UIKit / CoreGraphics also seem to be very smart about purging that memory when you are drawing different parts of a very large image in a very short time.
+
+        This is a very awesome feature as it basically reduces the code to draw an image into a `CATiledLayer` to something like this (inside a `UIView` backed by a `CATiledLayer`):
+
+        - (void)drawRect:(CGRect)rect {
+            CGContextRef context = UIGraphicsGetCurrentContext();
+            CGContextSaveGState(context);
+            CGRect scaleToFitRect = AVMakeRectWithAspectRatioInsideRect(self.image.size, self.bounds);
+            [self.image drawInRect:scaleToFitRect];
+            CGContextRestoreGState(context);
+        }
+
+        As the tiled layer already provides the correct clipping mask, this seems to make the image decode only the region that is necessary.
+
+        This seems to work fine, however I don’t think this behavior is documented anywhere in the UIKit or CoreGraphics documentations. That makes it hard to build up on this behavior as there is no public knowledge about whether this behavior is only true for certain formats (if so, which ones?) or if there are any other side conditions that need to be met.
+
+        In either way, there seems to be a smart logic controlling the memory use of an image and this should be documented one way or the other.
+    email: michaelhochs@googlemail.com
+    modified: "2017-02-10T08:22:34.4592Z"
+    number: "30460923"
+    number_intvalue: 30460923
+    originated: 10-Feb-2017 09:22 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Documentation
+    product_version: iOS 10.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIImage seem to only decode data it needs for drawing, but that is not documented anywhere

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31077141"
+    labels:
+        datastore_id: "4949205789442048"
+data:
+    classification: Serious Bug
+    created: "2017-03-15T23:23:27.84769Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\nHiding the shortcuts bar of a UITextField by doing:\r\n        inputAssistantItem.leadingBarButtonGroups = []\r\n        inputAssistantItem.trailingBarButtonGroups = []\r\n\r\ncauses instances of UIBarButtonItem (and their associated resources) to leak.\r\n\r\nSteps to Reproduce:\r\n1. Open attached minimal demonstration project\r\n2. Build and run on an iPad\r\n3. Tap the \"Reload Detail View Controller\" button 20 times\r\n4. Open the memory graph debugger in Xcode\r\n5. Open the UIKit section if it isn't already open and you should see that there are 119 instances of UIBarButtonItem live\r\n6. Continue program execution in Xcode\r\n7. Tap \"Reload Detail View Controller\" once more\r\n8. Open memory graph debugger again\r\n9. You should see that there are 124 instances of UIBarButtonItem live, so each time the view controller is loaded 5 additional instances leak\r\n10. Open TextFieldThatHidesShortcutsBar.swift and comment out the lines that hide the shortcuts bar\r\n11. Build and run the project again\r\n12. Tap the \"Reload Detail View Controller\" button 20 times\r\n13. Open the memory graph debugger in Xcode\r\n14. You should see that there are no leaked instances of UIBarButtonItem\r\n\r\nExpected Results:\r\nNo memory should leak\r\n\r\nActual Results:\r\nEach time a UITextField is loaded which hides its shortcut bar 5 instances of UIBarButtonItem are leaked\r\n\r\nVersion:\r\niOS 10.2.1 (14D27)\r\n\r\nNotes:\r\nThe documented way of hiding the shortcuts bar is to set those arrays to nil, but that isn't possible in Swift, because they're non-optional, and according to this Stack Overflow post leaks still happen even if they are set to nil in an Objective-C project:\r\nhttp://stackoverflow.com/questions/40924884/uitextfield-uitextinputassistantitem-hide-and-with-leaks-in-ios\r\n\r\nConfiguration:\r\niPad mini 2 16GB Wi-Fi (ME276B/A)\r\n\r\nAttachments:\r\n'Shortcuts Bar Hiding Memory Leak.zip' was successfully uploaded."
+    email: jjc1138@gmail.com
+    modified: "2017-03-15T23:23:27.8479Z"
+    number: "31077141"
+    number_intvalue: 31077141
+    originated: "20170315"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: 10.2.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Memory leaks when hiding UITextField shortcuts bar (by setting leadingBarButtonGroups/trailingBarButtonGroups to empty arrays)

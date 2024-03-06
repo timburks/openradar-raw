@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "37226861"
+    labels:
+        datastore_id: "6110572496027648"
+data:
+    classification: Bug
+    created: "2018-03-14T13:51:42.62118Z"
+    description: "When random (more or less concurrent) reads are performed from a WebDAV filesystem, file contents sometimes appear to be corrupted. We initially encountered the problem with our proprietary WebDAV server together with InDesign which made scattered reads in an Adobe Illustrator file. To make sure our server isn’t part of the problem we reproduced it with the macOS-bundled Apache httpd configured as a WebDAV server.\r\n\r\nA prerequisite for triggering the problem is that the file isn’t in the cache already when performing the reads.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Configure an Apache WebDAV server. We used the one provided with macOS, in /usr/sbin/httpd:\r\n$ httpd -v\r\nServer version: Apache/2.4.28 (Unix)\r\nServer built:   Oct  9 2017 19:54:20\r\n\r\n2. Create a file of reasonable size in the directory exported by the WebDAV server (not over the WebDAV filesystem itself). Make sure not to access it over the WebDAV filesystem.\r\n$ pwd\r\n/Library/WebServer/Documents/dav/subfolder\r\n$ sudo dd if=/dev/zero of=test.bin bs=1024 count=200000\r\nPassword:\r\n200000+0 records in\r\n200000+0 records out\r\n204800000 bytes transferred in 1.957262 secs (104635964 bytes/sec)\r\n\r\n3. Make two subsequent reads of the file over the WebDAV fs at different offsets:\r\n$ dd bs=1024 count=200 if=/Volumes/dav/subfolder/test.bin of=/dev/null && dd bs=1024 skip=190000 if=/Volumes/dav/subfolder/test.bin of=/dev/null\r\n200+0 records in\r\n200+0 records out\r\n204800 bytes transferred in 0.001184 secs (172974921 bytes/sec)\r\n207615+1 records in\r\n207615+1 records out\r\n212598171 bytes transferred in 1.462236 secs (145392523 bytes/sec)\r\n\r\nNote that the second dd transferred more bytes than the source file size (although it should have skipped about 190 MB).\r\n\r\n4. When reading the cached file in its entirety we now get more than double the amount of data:\r\n$ dd if=/Volumes/dav/subfolder/test.bin of=/tmp/output.bin\r\n795230+1 records in\r\n795230+1 records out\r\n407158171 bytes transferred in 8.057172 secs (50533632 bytes/sec)\r\n\r\n\r\nIf the first read consumes about half the file, we only get half the amount of overflowing bytes.\r\n$ dd bs=1024 count=100000 if=/Volumes/dav/subfolder/test2.bin of=/dev/null && dd bs=1024 skip=190000 if=/Volumes/dav/subfolder/test2.bin of=/dev/null\r\n100000+0 records in\r\n100000+0 records out\r\n102400000 bytes transferred in 0.451867 secs (226615302 bytes/sec)\r\n103444+1 records in\r\n103444+1 records out\r\n105926760 bytes transferred in 0.792736 secs (133621726 bytes/sec)\r\n\r\n$ dd if=/Volumes/dav/subfolder/test2.bin of=/tmp/output.bin\r\n586888+1 records in\r\n586888+1 records out\r\n300486760 bytes transferred in 5.408653 secs (55556672 bytes/sec)\r\n\r\nVersion/Build:\r\nReproduced on MacBook Pro 15-inch 2016 model running macOS 10.13.3, but also observed on other hardware and macOS versions (including 10.12)."
+    email: marty@roxen.com
+    modified: "2018-03-14T13:51:42.62141Z"
+    number: "37226861"
+    number_intvalue: 37226861
+    originated: "2018-02-05"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.13.3
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: WebDAV Mount File Corruption

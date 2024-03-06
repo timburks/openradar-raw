@@ -1,0 +1,58 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21514477"
+    labels:
+        datastore_id: "6112565176303616"
+data:
+    classification: Serious Bug
+    created: "2015-06-23T23:35:57.01132Z"
+    description: |-
+        Summary:
+        An `init` function that `throws` should be required to initialize all properties before throwing.
+
+        Steps to Reproduce:
+        put this code in a playground:
+
+        enum TestError : ErrorType {
+          case TestErr
+        }
+
+        class Test {
+          let property1: String
+          let property2: String?
+
+          init(shouldThrow: Boolean) throws {
+             guard shouldThrow == false else {
+                throw TestError.TestErr
+              }
+
+          self.property1 = "bleh"
+          self.property2 = nil
+        }
+
+        Expected Results:
+        Code compiles
+
+        Actual Results:
+        The compiler throws an error stating that all stored properties must of a class instance must be initialized before throwing from an initializer.
+
+        Regression:
+        Describe circumstances where the problem occurs or does not occur, such as software versions and/or hardware configurations.
+
+        Notes:
+        There’s no point in requiring that properties must be initialized before throwing since the whole point of a «throwable» initializer is to «fail» when certain criteria is not met and thus provide a clean path to the failure.
+
+        If anything at least accept `defer` inside init functions with let
+    email: me@estebantorr.es
+    modified: "2015-06-23T23:35:57.0115Z"
+    number: "21514477"
+    number_intvalue: 21514477
+    originated: 23-Jun-2015 05:35 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-7 (7A121l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode-7 (7A121l): «throwable» init functions shouldn''t required initialization of properties before throwing'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33761055"
+    labels:
+        datastore_id: "4964232772714496"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2017-08-07T21:05:03.80397Z"
+    description: "Area:\r\nNetworking\r\n\r\nSummary:\r\nI previously reported radar 32925139. I initially believed that it was fixed in 10.11db4 17A315i, but I’ve continued to experience this problem. I now see it in 10.11db5 17A330h as well.\r\n\r\nThe Google Chrome team has a distributed compilation environment. It’s internal-only, but it’s conceptually similar to distcc.\r\n\r\nOn the macOS 10.13 betas (betas 1 through 5 so far), when I attempt to use this service to build Chrome, all networking stops about 2/3 of the way into the build.\r\n\r\nThe immediately apparent symptom is that the build stops progressing. I can stop the build, but by then, the damage is done in that networking remains unusable. I can’t pass any traffic over the network when this happens. If I run “ifconfig”, it hangs partway through dumping the “p2p0” interface. If I click on the AirPort menu extra, nothing happens and a beach ball eventually appears over the menu extra. If I try to open the Network preference pane in System Preferences, nothing populates.\r\n\r\nRunning “top -ocpu”, I see kernel_task at 100%, indicating that something’s spinning in a tight look in the kernel.\r\n\r\n^C and SIGKILL do not recover the hung ifconfigs. It is impossible to shut the system down cleanly either via the Apple menu:Restart or via “sudo shutdown -r now”.\r\n\r\nSteps to Reproduce:\r\nI can’t provide solid reproduction steps because I’ve only been able to reproduce the problem using our internal distributed build service. This service functions similarly to distcc and does not run anything at elevated privileges.\r\n\r\nEssentially, it’s:\r\n\r\n% git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git\r\n[also get goma, our distributed compilation tool, and start it]\r\n% PATH=\"${PATH}:$(pwd)/depot_tools:$(pwd)/goma_mac\"\r\n% mkdir chrome\r\n% cd chrome\r\n% fetch chrome\r\n[wait]\r\n% cd chrome\r\n% gn gen out/debug --args=\"use_goma=true goma_dir=\\\"$(pwd)/goma_mac\\\"\"\r\n% ninja -C out/debug chrome -j250 -k0\r\n\r\nExpected Results:\r\nThe build should complete successfully. Networking capability should not be lost.\r\n\r\nObserved Results:\r\nAfter building 21,000 or so files out of 30,000 or so, the build stops progressing. You’ll notice that networking is not working. Browsers can’t browse, ping shows no connectivity, etc. The AirPort menu extra and Networking preference pane don’t work. kernel_task is using 100% CPU. Run “ifconfig” and it’ll hang irrecoverably part of the way through dumping the p2p0 interface.\r\n\r\nVersion:\r\n10.13db5 17A330h with Xcode 9b5 9M202q.\r\n\r\nI experienced this with all previous 10.13 and Xcode 9 developer betas too.\r\n\r\nNotes:\r\nSome tasks run by sysdiagnose, notably those involved in networking, hang and are killed while collecting data after this bug is triggered. Because the data collected by sysdiagnose may be incomplete, I’m also attaching another sysdiagnose, run after rebooting the system.\r\n\r\nsysdiagnose_yyyy.mm.dd_hh-00-ss-zzzz_Mac_OS_X_MacBookPro13,3_17A330h.tar.gz was collected while the build was running, immediately after the problem was detected.\r\nsysdiagnose_yyyy.mm.dd_hh-15-ss-zzzz_Mac_OS_X_MacBookPro13,3_17A330h.tar.gz was collected after rebooting.\r\n\r\nConfiguration:\r\nThe system is a MacBook Pro (15-inch, 2016) (MacBookPro13,3). A colleague has experienced this with a Mac Pro (Late 2013) (MacPro6,1) as well.\r\n\r\nThis bug is easy to reproduce at -j250 (250 parallel build tasks), but does not occur at -j100."
+    email: mark@chromium.org
+    modified: "2017-11-02T18:28:38.89054Z"
+    number: "33761055"
+    number_intvalue: 33761055
+    originated: "2017-08-07"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13db5 17A330h
+    reproducible: Always
+    resolved: "2017-11-02"
+    status: Closed
+    title: After much heavy network activity, all networking stops, kernel_task spins at 100%, ifconfig and AirPort menu extra hang (refiled from 32925139)

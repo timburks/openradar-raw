@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27223014"
+    labels:
+        datastore_id: "4995500319178752"
+data:
+    classification: ""
+    created: "2016-07-07T16:34:22.95537Z"
+    description: "Area:\r\nXcode\r\n\r\nSummary:\r\nThis is a duplicate of rdar://24848965 - http://www.openradar.me/24848965\r\n\r\nWhen switching from HTTP/1.1 to HTTP2 we saw a decrease on our success rate, the culprit seems to be request cancelations. When using an HTTP2 endpoint with iOS9, there seems to be a race condition where a request cancelation ends up closing the socket instead of the individual stream. This has a side effect: while multiplexing requests on specific conditions, other requests might fail throwing:\r\n\r\n```\r\nError Domain=NSURLErrorDomain Code=-1017 \"cannot parse response\" UserInfo={NSUnderlyingError=0x1556098f0 {Error Domain=kCFErrorDomainCFNetwork Code=-1017 \"(null)\" UserInfo={NSErrorPeerAddressKey=<CFData 0x1556a3bd0 [0x1a1778b68]>{length = 16, capacity = 16, bytes = 0x100201bb3400a2ec0000000000000000}, _kCFStreamErrorCodeKey=-1, _kCFStreamErrorDomainKey=4}}, NSErrorFailingURLStringKey=https://api-http2.lyft.com/users/65073180/location, NSErrorFailingURLKey=https://api-http2.lyft.com/users/65073180/location, _kCFStreamErrorDomainKey=4, _kCFStreamErrorCodeKey=-1, NSLocalizedDescription=cannot parse response}\r\n```\r\n\r\nThe code path that gets hit when the necessary conditions are met for the race to happen is:\r\n\r\nWe call `cancel` on a `NSURLSessionTask` which:\r\n - ends up calling `-[__NSCFLocalSessionTask _onqueue_cancel_with_error:]`\r\n - which checks for self->_connKey to be `nil` otherwise:\r\n     - calls `[self invalidateUnpurgeableConnectionsForConnectionCacheKey:]`\r\n     - which ends up closing not only the stream but the entire connection.\r\n\r\nin this particular case, when the race occurs _connKey is not `nil` (my guess: because there are multiple streams) and then the connection gets terminated.\r\n\r\nYou can find:\r\n - Full CFNetwork diagnostic here: https://gist.github.com/Reflejo/b4ea68e73be3059326ec#file-cfnetwork_http2_break-log\r\n - The TCP dump for this condition here: https://gist.github.com/Reflejo/2e3f352308d9861955ff\r\n - The code that reproduces this condition. Note that we are trying it on a throttled(3G) iPhone but the problem exists even running it as a swift script. here: https://gist.github.com/Reflejo/56d280acf78425d79408\r\n\r\n\r\n\r\n** Important **\r\n\r\nThis blocks our adoption of HTTP/2\r\n\r\nSteps to Reproduce:\r\nRun https://gist.github.com/Reflejo/56d280acf78425d79408 on a throttled device pointing to an http2 server\r\n\r\n\r\nExpected Results:\r\nCancelations should send a STREAM_RST and not close the stream; not the connection. Also other requests should not be affected by one cancelation\r\n\r\n\r\nActual Results:\r\nThe connection is terminated and multiplexed requests sometime fail (even the ones that are not being canceled)\r\n\r\n\r\nVersion:\r\niOS 9.3.2\r\n\r\nConfiguration:\r\niPhone/iPad"
+    email: kenny@tumblr.com
+    modified: "2016-07-07T16:34:22.95566Z"
+    number: "27223014"
+    number_intvalue: 27223014
+    originated: July 6, 2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 9.3.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Task cancelations while using HTTP2 sometimes terminate the connection

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8207541"
+    labels:
+        datastore_id: "494402"
+data:
+    classification: Enhancement
+    created: "2010-07-19T20:20:48.679924Z"
+    description: "Summary:\r\niOS 4 allows third-party apps limited access to the actual audio from songs, podcasts, and audio books in the user's music library.  This is implemented in the form of a new MPMediaItem property, MPMediaItemPropertyAssetURL.  The URL is of a special form, ipod-library://item/item.m4a?id=12345, and is documented as only being supported by AV Foundation.  And indeed, if you try to open such a URL with an Core Audio / Audio Toolbox API, it doesn't work.\r\n\r\nI think it should. The idea of allowing Core Audio to access the media library has many interesting uses.  CA apps could provide visualizations of song data, perform various forms of analysis, mix the audio with other sources (such as mic input), etc.  However, since CA cannot open these URLs directly, an app would instead need to use AV Foundation to export the audio into a file that Core Audio could read (an expensive operation if the source file is not encoded in AAC).  To get at raw samples, it would then need to use Audio Converter Services or Extended Audio File Services to convert the .m4a file to PCM (in a .caf, .aif, or .wav).  I've written a blog about this process here <http://www.subfurther.com/blog/?p=1103>, with sample code <http://www.subfurther.com/blog/wp-content/uploads/2010/07/MediaLibraryExportThrowaway1.zip>\r\n\r\nSteps to Reproduce:\r\n1. Get an MPMediaItem from the MediaLibrary.framework\r\n2. Get its library URL with the MPMediaItemPropertyAssetURL:\r\n        \tNSURL *assetURL = [song valueForProperty:MPMediaItemPropertyAssetURL];\r\n3. Attempt to use this URL with a Core Audio URL-based API, such as AudioFileOpenURL():\r\n\tAudioFileID audioFile = NULL;\r\n\topenErr = AudioFileOpenURL((CFURLRef) assetURL,\r\n\t\t\t\t\t\t\t   kAudioFileReadPermission ,\r\n\t\t\t\t\t\t\t   0,\r\n\t\t\t\t\t\t\t   &audioFile);\r\n\r\nExpected Results:\r\nIn a perfect world, this call to AudioFileOpenURL() would succeed, at least for file types and formats that Core Audio supports (AAC, MP3, ALAC, etc.)\r\n\r\nActual Results:\r\nThe above call to AudioFileOpenURL() returns -43 (\"fnfErr\" in MacErrors.h)\r\n\r\nRegression:\r\n\r\nNotes:"
+    email: invalidname@gmail.com
+    modified: "2011-08-28T05:40:35.284953Z"
+    number: "8207541"
+    number_intvalue: 8207541
+    originated: 7/19/10
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: 4.0.1
+    reproducible: N/A
+    resolved: 20-Jul-2010 12:22 PM
+    status: Duplicate
+    title: Audio Toolbox should support ipod-library:// style URLs

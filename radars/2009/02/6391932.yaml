@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6391932"
+    labels:
+        datastore_id: "5401"
+data:
+    classification: ""
+    created: "2009-02-06T15:11:26.75712Z"
+    description: "0-Nov-2008 04:04 PM Johannes Fahrenkrug:\r\nSummary: \r\nWhen using NSURLConnection to connect to site that requires HTTP Basic Authentication, providing NSURLCredentialPersistenceNone persists the credentials anyway (connection:didReceiveAuthenticationChallenge: is not called on following requests). Same goes for NSURLCredentialPersistenceForSession when the credentials are removed from the NSURLCredentialStorage.\r\n\r\nSteps to Reproduce:\r\n1. make a request: NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@\"http://localhost:3000/reports.json\"]];\r\n2. start the connection: NSURLConnection *theConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];\r\n3. implement the delegate:\r\n- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {\r\n\tNSLog(@\"got auth challange\");\r\n\r\n\tif ([challenge previousFailureCount] == 0) {\r\n\t\t[[challenge sender]  useCredential:[NSURLCredential credentialWithUser:@\"user\" password:@\"pass\" persistence:NSURLCredentialPersistenceNone] forAuthenticationChallenge:challenge];\r\n\t} else {\r\n          [[challenge sender] cancelAuthenticationChallenge:challenge];        \r\n    }\r\n}\r\n4. start over from step one.\r\n\r\nExpected Results:\r\nI expect didReceiveAuthenticationChallenge to be hit on each request.\r\n\r\nActual Results:\r\ndidReceiveAuthenticationChallenge only gets hit at the first request.\r\n\r\nNotes:\r\nAdding a hash (#) to the end of the url string fixes this. See my blog post:\r\nhttp://blog.springenwerk.com/2008/11/i-am-currently-building-iphone.html\r\n\r\n\r\n26-Nov-2008 09:12 AM Johannes Fahrenkrug:\r\nHey Stoney!\r\n\r\nI've created a project that demonstrates the issue.\r\nStart the app and login with \"test/test\". That should succeed (watch the log).\r\nNow change the user/pass to some bogus (wrong/blabla or something). Login again: It succeeds again! The authchallenge is never received!\r\n\r\nNOW: CLOSE the app and restart it.\r\nCheck the checkbox.\r\nLogin with \"test/test\" again. it should work. NOW login with bogus: it should fail (watch the logs): authchallenge is received when the first and subsequent calls have a hash (#) at the end. Weird, huh?\r\n\r\nI got valuable support from Jerry Krinock: he sent me a sample app to demonstrate this as well, but I built a new one that shows the issue more clearly.\r\n\r\nHe asked to be informed when you guys close this issue.\r\n\r\nThanks!\r\n\r\n\r\n'FahrenkrugsHash.zip' was successfully uploaded --> you can find this sample program on github: http://github.com/jfahrenkrug/fahrenkrug-s-hash/tree/master"
+    email: jfahrenkrug@gmail.com
+    modified: "2011-08-28T05:49:19.838133Z"
+    number: "6391932"
+    number_intvalue: 6391932
+    originated: 21-Nov-2008 04:04 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS / iPhone
+    product_version: 10.5 and 2.2
+    reproducible: Always
+    resolved: 15-Apr-2009
+    status: Closed
+    title: Wrong NSURLCredential caching behavior

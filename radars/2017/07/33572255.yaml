@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33572255"
+    labels:
+        datastore_id: "4968724939407360"
+data:
+    classification: Serious Bug
+    created: "2017-07-27T18:30:48.89758Z"
+    description: "Summary:\r\nThis is a duplicate of radar #27761568\n\nThe  `startosinstall` tool included in OS X Upgrade apps (as of 10.11) hangs indefinitely when invoked non-interactively (e.g. from launchd)\r\n\r\nThe `startosinstall` utility is a welcome addition to macOS! Unfortunately it only works when invoked from an interactive, GUI based shell (e.g. from Terminal.app). When invoked non-interactively (e.g. from a launchd plist), the expected reboot/install never occurs. Instead, a cryptic error is displayed. This is deeply problematic, since the most popular use-case for `startosinstall` is to use it for automating macOS upgrades across large fleets of Mac computers. Automating fleet-wide upgrades requires non-interactive/scripted use of `startosinstall.`\n\r\n\r\nSteps to Reproduce:\r\n1. Download the \"Upgrade to macOS Sierra Developer Beta\" app (macOS 10.12 beta 4 - Build 16A239m) into /Applications\r\n2. As a non-GUI user, Invoke /Applications/\"Upgrade to macOS Sierra Developer Beta\"/Contents/Resources/startosinstall with the following arguments:\r\n/Applications/Install macOS Sierra Developer Beta.app/Contents/Resources/startosinstall --applicationpath=/Applications/Install macOS Sierra Developer Beta.app/ --volume=/ --agreetolicense\r\n\r\nFor an example as a non-GUI user, invoke the above as a LaunchDaemon with the attached plist (com.osx.sierra-upgrade.plist), like so:\r\nsudo launchctl load /Library/LaunchDaemons/com.osx.sierra-upgrade.plist\r\n\r\nExpected Results:\r\n1.  `startosinstall` waits the default amount of time after displaying the message corresponding with \"--agreetolicense\"\r\n2.  `startosinstall` prepares the upgrade and reboots the machine.\r\n3. The machine installs macOS Sierra Developer Beta.\r\n\r\nActual Results:\r\n`startosinstall` hangs indefinitely and logs the following error messages:\r\n\r\n/var/log/system.log\r\n8/8/16 11:55:31.174 PM com.apple.xpc.launchd[1]: (com.apple.xpc.launchd.domain.system) Could not import service from caller: caller = startosinstall.96365, service = com.apple.install.osinstallersetupd, error = 134: Service cannot load in requested session\r\n\r\n/var/log/install.log\r\nAug  8 23:55:31 MacBook-Pro startosinstall[96365]: Could not schedule setup agent. Error: Error Domain=CFErrorDomainLaunchd Code=2 \"(null)\"\r\n\r\n\r\nAttachments:\r\n\r\n1. com.osx.sierra-upgrade.plist:\r\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\r\n<plist version=\"1.0\">\r\n  <dict>\r\n    <key>Label</key>\r\n    <string>com.osx.sierra-upgrade</string>\r\n    <key>ProgramArguments</key>\r\n    <array>\r\n      <string>/Applications/Install macOS Sierra Developer Beta.app/Contents/Resources/startosinstall</string>\r\n      <string>--applicationpath=/Applications/Install macOS Sierra Developer Beta.app/</string>\r\n      <string>--volume=/</string>\r\n      <string>--agreetolicense</string>\r\n    </array>\r\n    <key>RunAtLoad</key>\r\n    <true/>\r\n  </dict>\r\n</plist>\r\n\r\nVersion:\r\n10.11.6 (15G31)\r\n\r\nNotes:\r\nThis error is also triggered when the startosinstall is kicked off by a JAMF recurring check-in."
+    email: eric@sneakypockets.com
+    modified: "2017-07-27T18:30:48.89784Z"
+    number: "33572255"
+    number_intvalue: 33572255
+    originated: 27-Jul-2017 01:30 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.11.6 (15G31)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: startosinstall hangs indefinitely when invoked non-interactively

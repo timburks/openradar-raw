@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7683976
+    labels:
+        datastore_id: "5045537749336064"
+data:
+    classification: Bug
+    created: "2020-05-01T16:16:19.029044Z"
+    description: "I noticed that UIPageViewController dataSource and delegate properties have handy deallocation detection so that if these weak properties get zeroed then the UI updates to the new behaviour, e.g. without a datasource you are prevented from scrolling pages. This is achieved by setDataSource/setDelegate called with nil when these objects are dealloced. In my experiments I noticed a possible bug: The deallocation detection calling nil on these setters only works for one of datasource or delegate but not both.\r\n\r\nAfter deeper investigation it look like there is a possible copy/paste bug within setDataSource and setDelegate custom setters. My theory is that in both setters the  _UIWeakHelper object that is created and associated to the delegate and dataSource objects using objc_setAssociatedObject is being set to the same key. This would mean the object doing the deallocation detection is being overwritten and the result is only one of the setters is set to nil, which matches the behaviour I'm seeing hence why I am submitting this bug report.\r\n\r\nI'm attaching a sample project to demonstrate the problem.\r\n\r\nLaunch it on iPhone 8 Simulator in Landscape.\r\nTap the \"Item\" bar button item to push on a Master table.\r\nTap + to add a few records.\r\nTap a cell to select it.\r\nDrag up or down on the detail label to notice the pages moving.\r\nTap back on the Master nav.\r\n\r\nWhat I expect:\r\nDrag up/down on detail should be disabled.\r\n\r\nWhat happens:\r\nDragging is still possible. The dataSource was not set to nil when the Master deallocated. Debug by enabling a break points in PageViewController.m setDelegate and setDatasource. You'll notice when tapping back only setDelegate:nil is called, setDataSource:nil isn't called.\r\n\r\nXcode 11.4.1 \r\niOS Simulator 13.4.1\r\nUIKit 3920.26.113"
+    email: indiekiduk@gmail.com
+    modified: "2020-05-01T16:16:19.029205Z"
+    number: FB7683976
+    number_intvalue: 7683976
+    originated: 1/5/2020
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: iOS 13.4.1
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: 'UIPageViewController: possible bug in dataSource/delegate deallocation detection'

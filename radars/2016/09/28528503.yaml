@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28528503"
+    labels:
+        datastore_id: "5015544713445376"
+data:
+    classification: Other Bug
+    created: "2016-09-28T22:23:27.78289Z"
+    description: "Summary:\r\nWhen using a UISplitViewController on a standard iPhone (not iPhone Plus or iPad), `willTransitionToTraitCollection:withTransitionCoordinator` in the detail view controller is not called on the first orientation change of `preferredDisplayMode` is set to `UISplitViewControllerDisplayModePrimaryOverlay`\r\n\r\nSteps to Reproduce:\r\nUse the included example program, or perform the following steps:\r\n\r\n1. Create a new Xcode project using the \"Master-Detail Application\" template.\r\n2. In `[AppDelegate application:didFinishLaunchingWithOptions]`, after the reference to the `UISplitViewController` is obtained from `self.window.rootViewController`, set the `preferredDisplayMode` to UISplitViewControllerDisplayModePrimaryOverlay`:\r\n\r\n- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {\r\n    // Override point for customization after application launch.\r\n    UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;\r\n\r\n    // ******** Add this ********\r\n    [splitViewController setPreferredDisplayMode:UISplitViewControllerDisplayModePrimaryOverlay];\r\n\r\n    UINavigationController *navigationController = [splitViewController.viewControllers lastObject];\r\n    navigationController.topViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem;\r\n    splitViewController.delegate = self;\r\n    return YES;\r\n}\r\n\r\n3. In `DetailViewController`, implement both `willTransitionToTraitCollection:withTransitionCoordinator` and `viewWillTransitionToSize:withTransitionCoordinator` and add NSLog statements to track how many times they are called:\r\n\r\n- (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator\r\n{\r\n    [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];\r\n    static int called = 0;\r\n    called++;\r\n    NSLog(@\"willTransitionToTraitCollection call count: %d\", called);\r\n}\r\n\r\n\r\n- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator\r\n{\r\n    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];\r\n    static int called = 0;\r\n    called++;\r\n    NSLog(@\"viewWillTransitionToSize call count: %d\", called);\r\n}\r\n\r\n4. Build & run the application - Do not change the device orientation\r\n5. Add a new item to the Master\r\n6. Select the newly created item to presen the detail view for it.\r\n7. Once the detail view is visible, change the device orientation\r\n8. Notice that `viewWillTransitionToSize` displays a call count of 1, while `willTransitionToTraitCollection` does not print a log message.\r\n9. Rotate the device again\r\n10. Notice that `viewWillTransitionToSize` displays a call count of 2, while `willTransitionToTraitCollection` displays a call count of only 1.\r\n\r\nExpected Results:\r\nwillTransitionToTraitCollection:withTransitionCoordinator should be called on every orientation change.\r\n\r\nActual Results:\r\nwillTransitionToTraitCollection:withTransitionCoordinator is NOT called on the first orientation change. It IS called on all subsequent orientation changes.\r\n\r\nVersion:\r\nXcode 7.1\r\nXcode 8.0\r\nmacOS 10.11.6\r\nmacOS 10.12\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nThis occurs on all 3.5\", 4\", and 4.7\" 32 and 64-bit iPhone devices and simulators running all versions of iOS from 8.1 - 10.0.\r\n\r\nIt does NOT occur on iPad or iPhone Plus.\r\n\r\nAttachments:\r\n'DisplayModePrimaryOverlayBug.zip' was successfully uploaded."
+    email: jordanbondo@icloud.com
+    modified: "2016-09-28T22:36:12.91184Z"
+    number: "28528503"
+    number_intvalue: 28528503
+    originated: 28-Sept-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: willTransitionToTraitCollection not called on first change when UISplitViewController preferredDisplayMode is Overlay

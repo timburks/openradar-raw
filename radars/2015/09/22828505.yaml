@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22828505"
+    labels:
+        datastore_id: "5060788184154112"
+data:
+    classification: ""
+    created: "2015-09-23T22:18:41.01727Z"
+    description: "Summary:\r\nAn NSTaggedPointerString of an empty value can be created in some circumstances. When setting the title property of a UIBarButtonItem to it, it interprets it as nil. However, for other types of strings it behaves properly\r\n\r\nSteps to Reproduce:\r\nCreate an XCTestCase that looks like this.\r\n\r\nOne test will fail. One won't.\r\n\r\n//\r\n//  TitleExampleTests.m\r\n//  TitleExampleTests\r\n//\r\n//  Created by Mike Lewis on 9/23/15.\r\n//  Copyright © 2015 Square, Inc. All rights reserved.\r\n//\r\n\r\n#import <XCTest/XCTest.h>\r\n#import <objc/runtime.h>\r\n\r\nstatic NSString *const EmptyString = @\"\";\r\n\r\n@interface TitleExampleTests : XCTestCase\r\n\r\n@property (nonatomic) UIViewController *viewController;\r\n\r\n@end\r\n\r\n\r\n@implementation TitleExampleTests\r\n\r\n- (void)setUp {\r\n    [super setUp];\r\n    self.viewController = [[UIViewController alloc] init];\r\n    self.viewController.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] init];\r\n}\r\n\r\n// This case will fail.\r\n- (void)testTaggedPointer {\r\n    // It's a bit tricky to make a tagged pointer of an empty string, but this will do it.\r\n    NSString *empty = [[[@\"\\\"\\\"\" mutableCopy] copy] substringWithRange:NSMakeRange(1, 0)];\r\n    \r\n    NSAssert([@\"NSTaggedPointerString\" isEqualToString:NSStringFromClass([empty class])], @\"Expecting this to equal a tagged pointer string\");\r\n    XCTAssertEqualObjects(empty, @\"\");\r\n    \r\n    self.viewController.navigationItem.backBarButtonItem.title = empty;\r\n    \r\n    // This will fail in iOS 9\r\n    XCTAssertNotNil(self.viewController.navigationItem.backBarButtonItem.title);\r\n}\r\n\r\n// This case will pass\r\n- (void)testConstant {\r\n    NSAssert(![@\"NSTaggedPointerString\" isEqualToString:NSStringFromClass(EmptyString.class)], @\"Expecting this to not be a tagged pointer string\");\r\n    self.viewController.navigationItem.backBarButtonItem.title = EmptyString;\r\n    XCTAssertNotNil(self.viewController.navigationItem.backBarButtonItem.title);\r\n}\r\n\r\n@end\r\n\r\n\r\nExpected Results:\r\nIt should be empty string in both cases\r\n\r\nActual Results:\r\nIt isn't an empty string, but rather nil in the case of a tagged pointer.\r\n\r\nVersion:\r\nxcode 7, iOS 9.0 simulator/device\r\n\r\nNotes:\r\nNot sure if the substringWithRange should ever return a tagged pointer of an empty string. It was actually very difficult reproducing a tagged empty string to be created.\r\n\r\nConfiguration:\r\nWhen running tests, when in the playground. Whenever\r\n\r\nAttachments:"
+    email: lewis@squareup.com
+    modified: "2015-09-23T22:24:41.6294Z"
+    number: "22828505"
+    number_intvalue: 22828505
+    originated: 23-Sep-2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "9.0"
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: When setting UIBarButtonItem.title to an empty string that is a tagged pointer, it interprets it as nil instead of empty string

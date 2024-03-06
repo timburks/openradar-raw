@@ -1,0 +1,53 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17435110"
+    labels:
+        datastore_id: "5540640016302080"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2014-06-24T14:48:52.188295Z"
+    description: |-
+        Summary:
+        On iOS SDK 8 beta 2, NSDateComponentsFormatter returns nil when given a negative time interval or date components with negative content, but the the Swift return type is String! which causes a fatal error when trying to use as String.
+
+        Steps to Reproduce:
+        Following code:
+
+        func testComps() -> String {
+            let fmt = NSDateComponentsFormatter()
+            fmt.unitsStyle = NSDateComponentsFormatterUnitsStyle.Positional;
+            fmt.allowedUnits = NSCalendarUnit.CalendarUnitHour | NSCalendarUnit.CalendarUnitMinute | NSCalendarUnit.CalendarUnitSecond;
+
+            let comps = NSDateComponents()
+            comps.second = -2
+            let s = fmt.stringFromDateComponents(comps)
+            println("fmt: \(fmt), s: \(s)")
+            return s
+        }
+
+        or
+
+        func testInterval() -> String {
+            let fmt = NSDateComponentsFormatter()
+            fmt.unitsStyle = NSDateComponentsFormatterUnitsStyle.Positional;
+            fmt.allowedUnits = NSCalendarUnit.CalendarUnitHour | NSCalendarUnit.CalendarUnitMinute | NSCalendarUnit.CalendarUnitSecond;
+
+            let s = fmt.stringFromTimeInterval(-2)
+            println("fmt: \(fmt), s: \(s)")
+            return s
+        }
+
+        Causes “fatal error: Can't unwrap Optional.None”. NSDateComponentsFormatter’s formatting has an undocumented restriction on that it doesn’t support negative times, and if the parameter is negative, it returns nil. The return value is typed String!, however, which implies it should always be non-nil. It should be String?, and that restriction should be documented.
+    email: juri.pakaste@gmail.com
+    modified: "2014-06-24T14:48:52.18846Z"
+    number: "17435110"
+    number_intvalue: 17435110
+    originated: 24-Jun-2014 05:48 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta2 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSDateComponentsFormatter claims to return String! with Swift, but returns nil causing fatal error with negative input

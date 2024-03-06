@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11062139"
+    labels:
+        datastore_id: "1598410"
+data:
+    classification: UI/Usability
+    created: "2012-03-16T10:34:43.259181Z"
+    description: "Summary:\r\n\r\nWhen you dismiss a QLPreviewController after viewing a PDF document execution is halted when the debugger is attached. This is a duplicate of rdar://10431759\r\n\r\nSteps to Reproduce:\r\n\r\nView a PDF with QLPreviewController in Simulator while debugging it. Dismiss the view controller.\r\n\r\nExpected Results:\r\n\r\nExecution should continue, even with an attached debugger.\r\n\r\nActual Results:\r\n\r\nExecution is halted in main.m with the following stack trace.\r\n\r\n#0  0x0154acf0 in objc_exception_throw ()\r\n#1  0x01361a78 in +[NSException raise:format:arguments:] ()\r\n#2  0x013619e9 in +[NSException raise:format:] ()\r\n#3  0x00922c94 in -[NSObject(NSKeyValueObserverRegistration) _removeObserver:forProperty:] ()\r\n#4  0x00922911 in -[NSObject(NSKeyValueObserverRegistration) removeObserver:forKeyPath:] ()\r\n#5  0x0046a8b0 in -[UIWebPDFView _removeBackgroundImageObserverIfNeeded:] ()\r\n\r\nRegression:\r\n\r\nWe have not tested if this is the same on iOS 4, but it occurs on iOS 5.0 and 5.1\r\n\r\nNotes:\r\n\r\nIf you remove all breakpoints in Xcode then execution is not halted. Simply disabling all does not work. This is an acceptable workaround.\r\n\r\nWe suspect that UIWebPDFView is using an internal exception handler and simply removes the background image observer in any case. Then without breakpoints or when not debugging the internal try/catch catches this exception and execution continues. \r\n\r\nWe suggest to change this code such to not use the C++/Java-style methodology of \"try it anyway and catch the exception\". Or to modify the debugger to not trip over such internal try/catch tricks."
+    email: oliver.drobnik@gmail.com
+    modified: "2012-03-20T19:18:46.341522Z"
+    number: "11062139"
+    number_intvalue: 11062139
+    originated: 16-Mar-2012 11:32
+    parent_number: "10237730"
+    product: iPhone SDK
+    product_version: "5.1"
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/10237730
+    title: UIWebPDFView uses exception, causes debugger to quit

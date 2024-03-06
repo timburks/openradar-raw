@@ -1,0 +1,77 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19361425"
+    labels:
+        datastore_id: "5225239562682368"
+data:
+    classification: Performance
+    created: "2014-12-31T04:12:24.362378Z"
+    description: |-
+        Summary:
+        didSet introduces a slight performance hit most of the time, but when you’re assigning a variable of Dictionary type it gets pathologically slow.
+
+
+        Steps to Reproduce:
+        1. Compile and run this code with -O or -Ounchecked:
+
+        struct S {
+        	var v: [Int: ()] = [:] { didSet {} }
+        }
+
+        var s = S()
+
+        for i in 0..<100000 {
+        	s.v[i] = ()
+        }
+
+
+        Expected Results:
+        I expected it to return more or less interactively; n here is relatively small.
+
+
+        Actual Results:
+        Resonance:Desktop $ xcrun swiftc -Ounchecked didSet-performance.swift && time ./didSet-performance
+
+        real	3m3.603s
+        user	3m3.359s
+        sys	0m0.189s
+
+
+        Regression:
+        Contrast without didSet:
+        Resonance:Desktop $ xcrun swiftc -Ounchecked didSet-performance.swift && time ./didSet-performance
+
+        real	0m0.027s
+        user	0m0.022s
+        sys	0m0.004s
+
+        Or with an array and didSet:
+        Resonance:Desktop $ xcrun swiftc -Ounchecked didSet-performance.swift && time ./didSet-performance
+
+        real	0m2.912s
+        user	0m2.879s
+        sys	0m0.030s
+
+        Or with an array but without didSet:
+        Resonance:Desktop $ xcrun swiftc -Ounchecked didSet-performance.swift && time ./didSet-performance
+
+        real	0m0.008s
+        user	0m0.003s
+        sys	0m0.003s
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2014-12-31T04:12:24.362529Z"
+    number: "19361425"
+    number_intvalue: 19361425
+    originated: 30-Dec-2014 11:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: didSet on Dictionary variables is pathologically slow'

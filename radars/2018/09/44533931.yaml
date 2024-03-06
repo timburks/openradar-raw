@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "44533931"
+    labels:
+        datastore_id: "4973080338235392"
+data:
+    classification: ""
+    created: "2018-09-17T21:20:43.122356Z"
+    description: "Summary: The man page for `fgetxattr(2)` reports that errno will be set to `ERANGE` when the caller-provided buffer is not large enough to hold the requested xattr; however, on APFS, a truncated result is returned with no indication that it was truncated.\r\n\r\nSteps to Reproduce: Test program in C on APFS:\r\n```\r\n#include <fcntl.h>\r\n#include <stdio.h>\r\n#include <stdlib.h>\r\n#include <sys/xattr.h>\r\n\r\nint main(int argc, char** argv) {\r\n    if (argc != 2) {\r\n        printf(\"usage: %s <filename>\\n\", argv[0]);\r\n        exit(1);\r\n    }\r\n    int fd = open(argv[1], O_RDWR | O_CREAT);\r\n    if (fd < 0) {\r\n        perror(\"Failed to open file\");\r\n        exit(1);\r\n    }\r\n    const char* xattr_name = \"com.test.xattr\";\r\n    int ret = fsetxattr(fd, xattr_name, \"1234567890\", 10, 0, 0);\r\n    if (ret < 0) {\r\n        perror(\"Failed to set xattr\");\r\n        exit(1);\r\n    }\r\n    char buf[1];\r\n    ret = fgetxattr(fd, xattr_name, &buf, 1, 0, 0);\r\n    if (ret < 0) {\r\n        perror(\"Failed to read xattr\");\r\n        exit(1);\r\n    } else {\r\n        puts(\"Unexpectedly read only 1 byte of xattr without an error\\n\");\r\n    }\r\n}\r\n```\r\n\r\nExpected Results:\r\nExit with \"Failed to read xattr\" and \"Result too large\", indicating that the caller must resize the buffer and try again. \r\n\r\nActual Results:\r\nExit with \"Unexpectedly read only 1 byte of xattr without an error\", indicating that the read was truncated.\r\n\r\nVersion/Build: 10.13.6 (17G65)\r\n\r\n\r\nConfiguration: APFS\r\nThis bug does not reproduce on HFS+."
+    email: gautamg@dropbox.com
+    modified: "2018-09-17T21:20:43.122611Z"
+    number: "44533931"
+    number_intvalue: 44533931
+    originated: 09/17/2018
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13.6
+    reproducible: Always
+    resolved: ""
+    status: ""
+    title: fgetxattr no longer errors with ERANGE on undersized buffer; now truncates response

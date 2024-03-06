@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7746125
+    labels:
+        datastore_id: "4957533567451136"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2020-06-22T20:14:21.482277Z"
+    description: "If you attempt to restore files from the command line using `tmutil restore` and the destination does not have enough space for the files, tmutil exits uncleanly (status=1) but its text output indicates success.\r\n\r\nTo verify:\r\n\r\n1) Create a small temporary Disk Image:\r\n% hdiutil create -attach -fs HFS+ -volname tmrestore -size 5M /tmp/temp.dmg\r\n/dev/disk5          \tGUID_partition_scheme          \t\r\n/dev/disk5s1        \tApple_HFS                      \t/Volumes/tmrestore\r\ncreated: /tmp/temp.dmg\r\n\r\n2) Restore a small file that will definitely fit into the destination:\r\n% tmutil restore -v -p /Volumes/Backup/Backups.backupdb/Elementary/Latest/iMac/Users/rsesek/Desktop/notes.txt /Volumes/tmrestore\r\nCopying file . ...\r\n534 bytes for .\r\nTotal copied: 0.00 MB (534 bytes)\r\nItems copied: 1\r\n\r\n3) Verify the exit status:\r\n% echo $?\r\n0\r\n\r\n4) Verify the restore:\r\n% ls /Volumes/tmrestore\r\ntransfer-notes.txt\r\n\r\n5) Now try and restore a file whose size is larger than 5MB (the max size of the DMG):\r\n% tmutil restore -v -p /Volumes/Backup/Backups.backupdb/Elementary/Latest/iMac/Users/rsesek/Downloads/MKVToolNix-46.0.0.dmg /Volumes/tmrestore\r\nCopying file . ...\r\nTotal copied: 38.27 MB (40132595 bytes)\r\nItems copied: 1\r\n\r\n6) Verify the exit status:\r\n% echo $?\r\n1\r\n\r\n7) Verify the restore:\r\n% ls /Volumes/tmrestore\r\ntransfer-notes.txt\r\n\r\nIn step 5, tmutil does not report any error information and it indicates that it successfully copied 1 file. However, the exit status in step 6 shows that a failure occurred. And step 7 shows that the file was not restored, despite step 5 saying a copy was successful.\r\n\r\ntmutil restore should print an error message if it cannot restore a file, rather than incorrectly reporting that the restore completed successfully."
+    email: rsesek@gmail.com
+    modified: "2020-06-22T20:14:21.482487Z"
+    number: FB7746125
+    number_intvalue: 7746125
+    originated: "2020-06-22"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.14.6 18G5033
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: tmutil restore does not report an error if destination does not have enough space to restore files

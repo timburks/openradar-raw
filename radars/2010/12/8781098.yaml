@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8781098"
+    labels:
+        datastore_id: "974401"
+data:
+    classification: Other Bug
+    created: "2010-12-18T01:12:25.247944Z"
+    description: "17-Dec-2010 04:24 PM Mark Aufflick:\r\nSummary:\r\n\r\nIf you make launchctl fail (eg. by loading a plist that's already loaded, or trying to load from /Library/LaunchDaemons as a non-root user) the exit status is always zero\r\n\r\nSteps to Reproduce:\r\n\r\nas root:\r\n\r\naufflick:~ root# launchctl load -w /Library/LaunchDaemons/com.SomeApp.plist\r\naufflick:~ root# launchctl load -w /Library/LaunchDaemons/com.SomeApp.plist\r\nbind(): Address already in use\r\ncom.SomeApp: Already loaded\r\naufflick:~ root# echo $?\r\n0\r\n\r\nExpected Results:\r\n\r\nnon-zero\r\n\r\nActual Results:\r\n\r\n0\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\nThe same happens if I get a permission error, or try unloading the same plist twice:\r\n\r\nas a non-root user:\r\n\r\nbash-3.2$ launchctl load -w /Library/LaunchDaemons/com.DollyDrive.tunnel.plist\r\nbind(): Address already in use\r\ncom.DollyDrive.tunnel: Already loaded\r\nlaunchctl: CFURLWriteDataAndPropertiesToResource(/var/db/launchd.db/com.apple.launchd.peruser.501/overrides.plist) failed: -10\r\nbash-3.2$ echo $?\r\n0\r\nbash-3.2$ launchctl unload -w /Library/LaunchDaemons/com.DollyDrive.tunnel.plist\r\nlaunchctl: CFURLWriteDataAndPropertiesToResource(/var/db/launchd.db/com.apple.launchd.peruser.501/overrides.plist) failed: -10\r\nbash-3.2$ echo $?\r\n0\r\nbash-3.2$ launchctl unload -w /Library/LaunchDaemons/com.DollyDrive.tunnel.plist\r\nlaunchctl: Error unloading: com.DollyDrive.tunnel\r\nlaunchctl: CFURLWriteDataAndPropertiesToResource(/var/db/launchd.db/com.apple.launchd.peruser.501/overrides.plist) failed: -10\r\nbash-3.2$ echo $?\r\n0"
+    email: aufflick@gmail.com
+    modified: "2011-08-28T05:38:40.655217Z"
+    number: "8781098"
+    number_intvalue: 8781098
+    originated: 17-Dec-2010 04:24 PM
+    parent_number: '&{NULL_VALUE}'
+    product: MacOS X
+    product_version: "10.6"
+    reproducible: YES
+    resolved: ""
+    status: Open
+    title: launchctl returns exit status of 0 even when there is an error

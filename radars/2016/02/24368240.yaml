@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24368240"
+    labels:
+        datastore_id: "4962150099451904"
+data:
+    classification: 2 - Important
+    created: "2016-02-04T15:01:43.88356Z"
+    description: "Summary:\r\nThis only seems to affect older simulated devices (iPhone 5 and earlier) running iOS 9.3 beta 2 (not sure about beta 1 and don't have actual old devices to test on).\r\nNewer devices running 9.3b2 and all simulators running iOS 9.2 behave correctly.\r\nThis code has been in use for a long time with no problems (since iOS 7).\r\nI create a grayscale kCGImageAlphaOnly bitmap graphics context to be used as an image mask and draw an image with transparency into the context using CGContextDrawImage. On newer devices the graphics context correctly contains the opaque pixels of the image. On older devices the graphcs context sometimes remains empty, and sometimes contains a solid rectangle within the rendered image bounds.\r\nIn the following excerpt sample1 is always an empty image and sample2 is sometimes empty and sometimes contains a black rectangle where the image should have been drawn. On newer devices or devices running iOS 9.2, sample2 is always correctly rendered as the alpha channel info of 'image'.\r\n\r\nunsigned char *bitmapImageData = calloc(bytesPerRow * scaledImageSize.height, sizeof(unsigned char));  \r\n  CGContextRef imageCtx = CGBitmapContextCreate(bitmapImageData, scaledImageSize.width, scaledImageSize.height, bitsPerComponent, bytesPerRow, NULL, (CGBitmapInfo)kCGImageAlphaOnly);  \r\n  UIImage *sample1 = [UIImage imageWithCGImage:CGBitmapContextCreateImage(imageCtx)];  \r\n  CGContextDrawImage(imageCtx, CGRectMake(outerStroke, outerStroke, scaledImageSize.width-outerStroke*2, scaledImageSize.height-outerStroke*2), image.CGImage);  \r\n  UIImage *sample2 = [UIImage imageWithCGImage:CGBitmapContextCreateImage(imageCtx)];\r\n\r\nSteps to Reproduce:\r\nCreate a grayscale alpha-only bitmap graphics context on an older device\r\nDraw an image with transparency to the context\r\n\r\nExpected Results:\r\nThe alpha channel should be drawn to the bitmap context\r\n\r\nActual Results:\r\nOn newer devices (iPhone 5S and later) the expected behavior is seen.\r\nOn older devices either an opaque rectangle is drawn or nothing is drawn.\r\n\r\nVersion:\r\niOS 9.3 beta 2\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 5 simulator, iPhone 4S simulator, iPad 2 simulator"
+    email: PicnicBob@gmail.com
+    modified: "2016-02-04T15:02:37.62369Z"
+    number: "24368240"
+    number_intvalue: 24368240
+    originated: 27-Jan-2016 10:56 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 9.3 Beta 2
+    reproducible: Yes
+    resolved: ""
+    status: Duplicate of 24208048 (Closed)
+    title: Image drawn to alpha-only bitmap graphics context rendered incorrectly

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28838317"
+    labels:
+        datastore_id: "4964882084528128"
+data:
+    classification: Bluetooth
+    created: "2016-12-04T15:28:31.50675Z"
+    description: "Area:\r\nBluetooth\r\n\r\nSummary:\r\nI have developed CoreBluetooth App which is composed of iOS (central) and multiple BLE devices (peripheral).\r\nI have debugged it on `iPhone6 plus` and it has worked fine.\r\nBut running on iPad Pro, it hasn’t worked correctly.\r\nAfter Connected and communicated to 3rd peripheral and connected 4th peripheral, called method `CBPeripheral#discoverServices` to communicate to 4th peripheral, but delegate method `peripheral:didDiscoverServices:error` was never called.\r\nAfter waited several minues,  method `centralManager:didDisconnectPeripheral:error` was called with an error `\"Domain=CBErrorDomain Code=0” Unknown error`.\r\nSo, peripheral state turned to disconnected.\r\n\r\nI've been annoyed and didn’t understand why this had occurred, and found a similar bug report:\r\nhttp://openradar.appspot.com/28479978\r\n\r\nIn above case, issue occurred on iPhone 7, but in this case, device is iPad Pro and first three BLE device were connceted and communicated correctly, but regardless of conneting order, delegate method `peripheral:didDiscoverServices`  doesn’t be called.\r\n\r\nIn addition, also tried calling `CBCentralManager#cancelPeripheralConnection` before connecting to peripheral to clear connecting caches of iOS CoreBluetooth, but didn’t work either.\r\nsee also:\r\nhttp://stackoverflow.com/questions/12004623/iphone-does-not-discover-services-on-a-bluetooth-le-tag-on-reconnection\r\n\r\nSteps to Reproduce:\r\nOn iPad Pro (4th connection later) [FAILS]\r\n1) `CBCentralManager -scanForPeripheralsWithServices:nil options:nil`\r\n2) `-centralManager:didDiscoverPeripheral:`  Retain the `peripheral`, Set the delegate, call `-connectPeripheral:options:`\r\n3) Wait for `-didConnectPeripheral:` Observe that this gets called. Call `-discoverServices:`\r\n4) Observe that `didDiscoverServices` is never called\r\n5) Observe that `-didDisconnectPeripheral:error:` is called with an error \"CBErrorDomain Code=0 \"Unknown Error\". \r\n\r\nOn iPad Pro (within 3rd connection) / iOs Other Devices [SUCCESS]\r\n1) `CBCentralManager -scanForPeripheralsWithServices:nil options:nil`\r\n2) `-centralManager:didDiscoverPeripheral:`  Retain the `peripheral`, Set the delegate, call `-connectPeripheral:options:`\r\n3) Wait for `-didConnectPeripheral:` Observe that this gets called. Call `-discoverServices:`\r\n4) Observe that `didDiscoverServices` is called\r\n\r\nExpected Results:\r\n`didDiscoverServices`  will be called on the CBPeripheral delegate after connection.\r\n\r\nActual Results:\r\n`didDiscoverServices` is never called on the CBPeripheral delegate. About serveral minutes after 3rd connection (`didConnectPeripheral`), `didDisconnectPeripheral` is called with \"CBErrorDomain Code=0 \"Unknown Error\"\r\n\r\n\r\nVersion:\r\niOS 9.3.5\r\n\r\nNotes:\r\nBLE peripheral hardware device spec is: Bluetooth® Smart SiP BCM20737（Cypress）\r\n\r\nConfiguration:\r\niPad Pro(9.7 inch)\r\n\r\nAttachments:"
+    email: hironand@gmail.com
+    modified: "2016-12-04T15:28:31.50699Z"
+    number: "28838317"
+    number_intvalue: 28838317
+    originated: 19-Oct-2016 11:58 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 9.3.5
+    reproducible: Always
+    resolved: 05-Dec-2016 00:08 AM
+    status: Closed
+    title: didDiscoverServices never called on iPad Pro(iOS9.x) when connecting 4th peripheral

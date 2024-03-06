@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10267486"
+    labels:
+        datastore_id: "5827149634207744"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2013-10-18T21:17:37.462686Z"
+    description: "Summary:\r\n\r\nAfter using the NSKeyedArchiver class to serialize an object that contains the string \"$null\",\r\nthe NSKeyedUnarchiver is unable to properly deserialize the object. The string \"$null\" gets lost.\r\n\r\nSteps to Reproduce:\r\n\r\n    NSMutableDictionary* dict = [NSMutableDictionary dictionary];\r\n    [dict setObject:@\"this is my string\" forKey:@\"$null\"];\r\n    \r\n    NSData* testData = [NSKeyedArchiver archivedDataWithRootObject:dict];\r\n    NSMutableDictionary* resultDict = [NSKeyedUnarchiver unarchiveObjectWithData:testData];\r\n\r\nExpected Results:\r\n\r\nresultDict would contain the same value as dict.\r\n\r\nActual Results:\r\n\r\nThe call to +[NSKeyedUnarchiver unarchiveObjectWithData:] crashes with the following\r\nexception:\r\n\r\n     *** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '*** -[NSDictionary initWithObjects:forKeys:]: count of objects (1) differs from count of keys (0)' \r\n\r\nRegression:\r\n\r\nOccurs on every version of the iOS SDK tested.\r\n\r\nNotes:\r\n\r\nSomething similar also happens if you try to serialize an array with an element \"$null\". The following\r\ncode will return an empty array:\r\n\r\n\r\n    NSMutableArray* array = [NSMutableArray array];\r\n    [array addObject:@\"$null\"];\r\n    \r\n    NSData* testData2 = [NSKeyedArchiver archivedDataWithRootObject:array];\r\n\r\n    NSMutableArray* resultArray = [NSKeyedUnarchiver unarchiveObjectWithData:testData2];\r\n\r\nWould expect 'resultArray' to contain one item, the string \"$null\". However, it is an empty array."
+    email: emaloney@gilt.com
+    modified: "2013-10-18T21:17:37.462885Z"
+    number: "10267486"
+    number_intvalue: 10267486
+    originated: 10/11/2011
+    parent_number: "3972645"
+    product: iOS SDK
+    product_version: All
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/3972645
+    title: NSKeyedArchiver/NSKeyedUnarchiver not properly handling string value "$null"

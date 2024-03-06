@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27549820"
+    labels:
+        datastore_id: "5563286405775360"
+data:
+    classification: Performance
+    created: "2016-07-26T18:29:29.05696Z"
+    description: "Summary:\r\n(To clarify, 30s means 30 seconds)\r\n\r\nApps with a lot of internal dylibs now take very long to launch at the first time after reboot, or even after waiting a while without rebooting. The same apps start within a few seconds on previous OSX systems.\r\n\r\nSteps to Reproduce:\r\n1. Download any of these OSX apps, they're all zipped plain app bundles:\r\nhttp://apps.tempel.org\r\nI suggest the Prefs Editor, but they all show the same behavior.\r\n\r\n2. After downloading, Safari will probably unzip the app so that it is now in the Downloads folder.\r\n\r\n3. Launch the app. This will take a long time due to it being first verified and then being translocated to a random tmp folder.\r\n\r\n4. Once the app is fully launched, enter this Terminal command to check where the app is running from:\r\n  lsof | grep -m1 \"Prefs Editor\"\r\nThis should list the path at which the app is currently loaded.\r\nThe path will not be the one in the Downloads folder but in a temp random folder. This is due to \"app translocation\" and is expected in 10.12.\r\n\r\n5. Quit and launch the app again. It will probably start quickly this time, but if you issue the same Terminal command, you'll see that it's still running from a temp folder.\r\n\r\n6. Quit the app, move it to the Applications folder and launch it again. Check its location with the Terminal cmd and see that it's not in a randomized tmp folder any more but in the /Applications folder. This is also expected - once a downloaded and unzipped app gets moved from its original folder, it should not get translocated any more.\r\n\r\nHowever, what's unexpected is that the launch took quite long again (nearly 30s in my case, running from an internal hard disk).\r\n\r\n7. Restart the Mac\r\n\r\n8. Relaunch the app from the Applications folder. Again, it will take a long time to launch, I even see the beachball during launch. This should not be the case at this point.\r\n\r\n9. Now, if you, like me, have another system partition, running 10.11.5, boot into that and then launch the same Prefs Editor app again. It should launch within a few seconds (2s for me). This proves that it's not a slow disk causing the slow launch but the 10.12 system software is responsible for it.\r\n\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\n10.12 beta 16A254g\r\n\r\nNotes:\r\nI also noticed that the app (and even all its containing files and folders) had the quarantine flag still set. But removing them did not help make the launch go fast in 10.12. (I'll file a separate report about that.)\r\n\r\nSo, something else besides the quarantining and the translocation is causing the slow launch of these apps. And I'm not alone with this. It's pretty clear that any apps made with Xojo (Realbasic) suffer from this, probably because of their large amount of internal dylibs that get loaded along.\r\n\r\nAlso, if the app was launched (slowly) once, it will launch quickly after that, at least for a while. So it's certainly possible for 10.12 to launch the apps as fast as it was possible on 10.11 - but something goes wrong and makes them launch slowly again later. And that's probably either a bug or a design flaw. It hope it's the former.\r\n\r\nThis needs fixing, 30s launch times are unacceptable when they were 2s in previous OS X versions."
+    email: tempelmann@gmail.com
+    modified: "2016-08-17T22:10:27.89897Z"
+    number: "27549820"
+    number_intvalue: 27549820
+    originated: 26-Jul-2016 08:09 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OSX
+    product_version: 10.12 (16A254g)
+    reproducible: Always
+    resolved: fixed in 10.12 beta 3
+    status: duplicate of 27287483
+    title: '10.12 Sierra: Apps take 30s to launch when they took 2s in 10.11'

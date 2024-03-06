@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15733650"
+    labels:
+        datastore_id: "5298346281402368"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2013-12-31T04:48:35.980886Z"
+    description: "Summary:\nCGDataProviderCreateWithCFData() hangs on iOS 7.1 when called from within application:didFinishLaunchingWithOptions: and there is no Internet connection available. The application becomes completely unresponsive.\n\nSteps to Reproduce:\n0. Enable Airplane mode on your device, then perform the following steps from within application:didFinishLaunchingWithOptions: on the main thread.\n1. Create an CGDataRef/NSData instance using font data from an in-memory resource or from data on disk.\n2. Create a CGDataProviderRef with the font data from step 1.\n3. Attempt to create a font using CGDataProviderCreateWithCFData() and the provider from step 2.\n4. The internal implementation of CGDataProviderCreateWithCFData() waits indefinitely for a semaphore that never arrives.\n5. The app freezes completely and will not finish launching.\n\nExpected Results:\nI expect to get either a valid CGFontRef or an error. Neither occurs because CGDataProviderCreateWithCFData() never returns.\n\nActual Results:\nThe internal implementation of CGDataProviderCreateWithCFData() waits indefinitely for a semaphore that never arrives. The main thread is completely blocked.\n\nRegression:\nThe bug does not occur prior to iOS 7.1, nor does it occur if the Steps to Reproduce are called later on in the app launch sequence (e.g, during the runloop after the runloop in which application:didFinishLaunchingWithOptions: is called). The bug also does not occur if there is an Internet connection available. Repeating the Steps to Reproduce with a good network connection proceeds as expected, successfully creating a CGFontRef.\n\nNotes:\nHere is the code I use in the steps above:\n\n- (BOOL)application:(UIApplication *)application \ndidFinishLaunchingWithOptions:(NSDictionary *)launchOptions {\n\n\tNSData *inData = <FONT_DATA_HERE>\n\tCFErrorRef error;\n        CGDataProviderRef provider = CGDataProviderCreateWithCFData((CFDataRef)inData);\n        CGFontRef font = CGFontCreateWithDataProvider(provider);\n        if (! CTFontManagerRegisterGraphicsFont(font, &error)) {\n            CFStringRef errorDescription = CFErrorCopyDescription(error);\n            NSLog(@\"Failed to load font: %@\", errorDescription);\n            CFRelease(errorDescription);\n        }\n        CFRelease(font);\n        CFRelease(provider);\n\n\treturn YES;\n}"
+    email: jaredsinclair.rn@gmail.com
+    modified: "2013-12-31T04:48:35.981032Z"
+    number: "15733650"
+    number_intvalue: 15733650
+    originated: 30-Dec-2013 11:48 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CGDataProviderCreateWithCFData() hangs on 7.1 when there is no Internet connection available.

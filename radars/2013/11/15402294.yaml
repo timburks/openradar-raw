@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15402294"
+    labels:
+        datastore_id: "5327306709008384"
+data:
+    classification: UI/Usability
+    created: "2013-11-06T10:07:32.718528Z"
+    description: "Summary:\r\nWith Auto Layout enabled topLayoutGuide and bottomLayoutGuide don't have correct horizontal constraints. I don't think it impacts the layout process, but it makes debugging ambiguous layouts harder.\r\n\r\nSteps to Reproduce:\r\n1. Create a new Single View Application project\r\n2. Build and run it\r\n3. Pause the program execution\r\n4. In the lldb type:\r\npo [[UIWindow keyWindow] _autolayoutTrace]\r\nIn my case it prints:\r\n*<UIWindow:0x8e60e00> - AMBIGUOUS LAYOUT\r\n|   *<UIView:0x8e62270>\r\n|   |   *<_UILayoutGuide:0x8e62450> - AMBIGUOUS LAYOUT\r\n|   |   *<_UILayoutGuide:0x8e627f0> - AMBIGUOUS LAYOUT\r\n\r\n5. Now use memory addresses of the layout guides to check their constraints with:\r\npo [0x8e62450 constraintsAffectingLayoutForAxis:0]\r\nIt returns an empty array of horizontal constraints. It's the same for the other layout guide.\r\n\r\n6. It also happens when Storyboards aren't used and everything is laid out in code.\r\n\r\nExpected Results:\r\nTop and bottom layout guides shouldn't be ambiguous.\r\n\r\nActual Results:\r\nTop and bottom layout guides are ambiguous horizontally. They don't have any horizontal constraints set up.\r\n\r\nNotes:\r\nOne workaround that I've found is to add:\r\n\r\n    NSDictionary *viewsDict = @{@\"topLayoutGuide\" : self.topLayoutGuide, @\"bottomLayoutGuide\" : self.bottomLayoutGuide};\r\n    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@\"H:|[topLayoutGuide]|\" options:0 metrics:nil views:viewsDict]];\r\n    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@\"H:|[bottomLayoutGuide]|\" options:0 metrics:nil views:viewsDict]];\r\n\r\nin viewDidLoad/loadView."
+    email: arkadiusz.holko@gmail.com
+    modified: "2014-06-30T15:09:52.071075Z"
+    number: "15402294"
+    number_intvalue: 15402294
+    originated: 06-Nov-2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 7.0.3 (11B511 and 11B508)
+    reproducible: Always
+    resolved: Duplicate of 14622013 (Closed)
+    status: Closed
+    title: Top and bottom layout guides have ambiguous horizontal constraints

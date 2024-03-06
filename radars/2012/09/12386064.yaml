@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12386064"
+    labels:
+        datastore_id: "2056403"
+data:
+    classification: Serious Bug
+    created: "2012-09-27T15:42:34.524863Z"
+    description: "Summary:\r\n\r\nWe used the iOS 5 AVAudioSessionDelegate to handle interruptions like incoming phone calls and pause audio playback in our app.  We handle the endInterruption as well to resume playback once the interruption has ended.\r\n\r\nNow that that is deprecated and no longer functions on iOS 6, we're also now using the AVAudioInterruptionNotification.\r\n\r\nThis doesn't fire on an incoming phone call.  We only receive it after the phone call has ended.\r\n\r\nSteps to Reproduce:\r\n\r\nset up an observer for AVAudioInterruptionNotification, set a breakpoint in the handler method for this.\r\nplay some audio using AVPlayer\r\ncall the phone from another device\r\nnote that the call comes through, the audio stops, but no breakpoint is ever hit\r\nnote that the once the call is ended you hit the breakpoint for the interruption ended\r\n\r\nExpected Results:\r\n\r\nbreakpoint is hit before *and* after the call\r\n\r\nActual Results:\r\n\r\nbreakpoint is only hit after the call\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\n\r\nThis is causing weird behavior in other apps as well, such as Instacast.  However their bug is much more annoying because their audio starts playing as soon as the interruption ends.  This happens constantly when using Siri.  When the siri conversation is over, their audio starts playing podcasts again.\r\n\r\nIn our app we are playing it a bit safer and we don't resume unless playback was paused from an interruption.  But since we don't receive this event, we can't provide this functionality."
+    email: subdigital@gmail.com
+    modified: "2012-09-27T15:42:34.525024Z"
+    number: "12386064"
+    number_intvalue: 12386064
+    originated: 9/27/2012
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "6.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AVAudioInterruptionNotification doesn't fire on incoming phone calls

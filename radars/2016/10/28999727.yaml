@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28999727"
+    labels:
+        datastore_id: "4939521376387072"
+data:
+    classification: ""
+    created: "2016-10-28T11:21:27.09126Z"
+    description: "Peter Steinberger\r\n\r\nArea:\r\nUIKit\r\n\r\nSummary:\r\nA common pattern we use for propagating state changes to our collection view cells is to iterate over the collection view’s visibleCells and re-configure them with the changed data. Cells that are currently not visible wold later be configured in the standard collectionView:cellForItemAtIndexPath: data source method. \r\n\r\nWith iOS 10, this no longer works reliably when cell prefetching is enabled (the default behavior !). With prefetching, certain cells receive collectionView:cellForItemAtIndexPath: well before they are on screen. Those cells are already configured, but not accessible via visibleCells or any other UICollectionView properties. Lacking easy access to those cells, we have no way to easily update the cell data during a state change, unless we result to workarounds. We would thus like to ask for a preparedCells property to be added to the UICollectionView / UITableView APIs. \r\n\r\nSo, next to `visibleCells` there should be a `preparedCells` which is a superset of `visibleCells` and the additional ones in cache not currently visible. There currently is no API to get them, just a trick to invalidate the invisible cache.\r\n\r\nSteps to Reproduce:\r\nCheck out the UICollectionView API. Notice there is no convenient way to get prepared cells that are offscreen. visibleCells does not list those cells. We also can’t use cellForItemAtIndexPath: to obtain references to offscreen cells. \r\n\r\nExpected Results:\r\nThe API would expose a way to get references to prepared cells so they can be updated with new data if needed. indexPathForCell: should also work for those cells, so they can be correctly mapped to corresponding model objects.\r\n\r\nActual Results:\r\nThe API does not expose a way to reference prepared cells.\r\n\r\nThere are a couple of ways to get around the issue with the current API, however those approaches are suboptimal. \r\n\r\nWe can perform cell configuration at a later point, in collectionView:willDisplayCell:. This works, but negates some of the performance benefits that cell preloading is trying to achieve. Instead of configuring the cells at an opportune moment in the collection view lifecycle, we essentially revert back to the old behavior where the cells are configured right before they are displayed. \r\n\r\nAn empty performBatchUpdates:completion: can be trigged to when a state update is requested. This call apparently as a side effect discards prepared offscreen cells, resulting in no stale cell data. As far as I can tell, this is undocumented behavior, which is one obvious down side of this approach. Another one being that we’re essentially throwing away work that has already been done. In our specific use cases where those state changes do not occur frequently (mostly transitioning into an “editing” state in an animated fashion) this is not a big issue, but still not ideal. \r\n\r\nThere might be other approaches as well, including manually tracking loaded cells. I have not tried that, fearing that that might be both inconvenient and unreliable.\r\n\r\nVersion:\r\niOS 10.1\r\n\r\nNotes:\r\nI see that theres some SPI to get `preparedCells` but no public API... I hope this can be changed, as it would be the least code changes required and no API change, just an addition that could even be retroactively declared to have iOS 10.0 compatibility.\r\n\r\nConfiguration:\r\niPhone 7 Plus\r\n\r\nAttachments:"
+    email: steipete@gmail.com
+    modified: "2016-10-28T11:21:27.09144Z"
+    number: "28999727"
+    number_intvalue: 28999727
+    originated: 28-Oct-2016 01:20 PM
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Provide UICollectionView API for accessing prepared cells (visibleCells is no longer sufficient with the new prefetch system to update)

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19373086"
+    labels:
+        datastore_id: "5187931060830208"
+data:
+    classification: Serious Bug
+    created: "2015-02-09T23:26:27.458534Z"
+    description: "Summary:\r\nI have a property that is of type LocationManagerDelegate. LocationManagerDelegate subclasses NSObject and implements the CLLocationManagerDelegate protocol. The class allows me to set blocks for various callbacks that the class implements under the hood, like `locationManager:didChangeAuthorizationStatus:`. I have the following code for my property:\r\n\r\nlazy var locationManagerDelegate: LocationManagerDelegate = {\r\n        let locationManagerDelegate = LocationManagerDelegate()\r\n\r\n          locationManagerDelegate.locationManagerDidChangeAuthorizationStatus = {\r\n            [unowned self] manager, status in\r\n            switch status {\r\n            case .Denied, .Restricted:\r\n                NSLog(\"Location Access Denied\")\r\n                // Handle this scenario\r\n            default:\r\n                self.startMonitoring()\r\n            }\r\n        }\r\n        \r\n        locationManagerDelegate.locationManagerDidFailWithError = {\r\n            manager, error in\r\n            NSLog(\"Location Manager Failure: %@\", error.description)\r\n        }\r\n        \r\n        locationManagerDelegate.locationManagerDidEnterRegion = {\r\n            [unowned self] manager, region in\r\n            let alertController = UIAlertController(title: \"Reminder\", message: \"You are 2 stops away from your requested stop\", preferredStyle: .Alert)\r\n            let okAlertAction = UIAlertAction(title: \"OK\", style: .Default, handler: nil)\r\n            \r\n            alertController.addAction(okAlertAction)\r\n            \r\n            self.presentViewController(alertController, animated: true, completion: nil)\r\n            \r\n            manager.stopMonitoringForRegion(region)\r\n        }\r\n        \r\n        locationManagerDelegate.locationManagerMonitoringDidFailForRegionWithError = {\r\n            manager, region, error in\r\n            NSLog(\"Location Manager Monitoring Failure: %@\", error.description)\r\n        }\r\n        \r\n        return locationManagerDelegate\r\n    }()\r\n\r\nYou'll notice that I use [unowned self] in two of the closures to avoid creating strong reference cycles. (The locationManagerDelegate holds strong references to the closures which would then hold strong references to self). When I include just one [unowned self] (in either closure), everything compiles fine. However, when I include both, I get the attached compiler error.\r\n\r\nSteps to Reproduce:\r\n1. Create a class, A, that has two closure properties\r\n2. In other class, B, create a property of type A, and set initial values for the closure properties.\r\n3. In those initial values, use self to call some other instance methods in B, and use [unowned self] in both closures to avoid creating strong reference cycles\r\n4. The application won't compile\r\n\r\nExpected Results:\r\nThe application should compile with two closure capture lists.\r\n\r\nActual Results:\r\nThe application does not compile with two closure capture lists.\r\n\r\nVersion:\r\nXcode 6.1.1, OS X 10.10.1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'Screen Shot 2015-01-05 at 3.36.29 AM.png' and 'Screen Shot 2015-01-05 at 3.36.37 AM.png' were successfully uploaded."
+    email: sethfri@gmail.com
+    modified: "2015-02-09T23:26:27.458747Z"
+    number: "19373086"
+    number_intvalue: 19373086
+    originated: 01/05/2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: Two Closure Capture Lists Produce Compiler Error

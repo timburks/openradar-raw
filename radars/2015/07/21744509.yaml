@@ -1,0 +1,76 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21744509"
+    labels:
+        datastore_id: "5654077417455616"
+data:
+    classification: Other Bug
+    created: "2015-07-09T13:13:51.79301Z"
+    description: |-
+        If I have a fallible initializer or one which throws on a class with a non-optional property, it is impossible to throw or return nil without setting all the properties first.  Example:
+        —
+
+        func somethingThatThrows() throws { }
+
+        class Example {
+            init() throws
+            {
+                do {
+                    try somethingThatThrows()
+                } catch let error {
+                    throw error
+                }
+            }
+        }
+
+        —
+
+        The above works, but the following two snippets do not:
+        —
+
+        func somethingThatThrows() throws -> String { return "" }
+
+        class Example {
+            let string: String
+            init() throws
+            {
+                do {
+                    string = try somethingThatThrows()
+                } catch let error {
+                    throw error
+                }
+            }
+        }
+
+        —
+
+        func somethingThatThrows() throws -> String { return "" }
+
+        class Example {
+            var string: String
+            init?()
+            {
+                do {
+                    string = try somethingThatThrows()
+                } catch {
+                    return nil
+                }
+            }
+        }
+
+        —
+
+        I believe that this is a major use case as it is sensible to return nil from init if you were unable to correctly set all properties for some reason
+    email: stephen.groom@me.com
+    modified: "2015-07-09T13:13:51.79333Z"
+    number: "21744509"
+    number_intvalue: 21744509
+    originated: 09-Jul-2015 02:13 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Swift 2b3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: instance must be initialized before throwing from an initializer / instance must be initialized before returning nil from an initializer

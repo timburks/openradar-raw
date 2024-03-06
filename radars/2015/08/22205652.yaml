@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22205652"
+    labels:
+        datastore_id: "5023071660408832"
+data:
+    classification: ""
+    created: "2015-08-09T19:16:03.21052Z"
+    description: "Summary:\r\nThe technical note TN2232 mentions in \"Enforcing Stricter Server Trust Evaluation\" that it is possible to \"implement certificate pinning by extracting the public key from the server's certificate\".\r\n\r\nHowever, there is no direct API on iOS to extract the public key data from a certificate (for example to hash it). \r\nThe process is actually fairly complex:\r\n\r\n1. Create a `SecTrustRef` trust object with the certificate, and call `SecTrustEvaluate()` on it.\r\n2. Call `SecTrustCopyPublicKey()` on the trust object to retrieve a `SecKeyRef` of the public key.\r\n3. Add the public key to the device's Keychain using `SecItemAdd()`.\r\n4. Retrieve the public key from the Keychain and set `kSecReturnData` to `YES` in order to specify that the key's data should be returned (instead of a `SecKeyRef`).\r\n\r\nOn OS X, this can be achieved by just calling `SecCertificateCopyValues()` on the certificate with `kSecOIDX509V1SubjectPublicKey` as the list of oids.\r\n\r\nI had to implement both techniques in a tool so you can see the full code here: https://github.com/datatheorem/TrustKit/blob/master/TrustKit/Pinning/public_key_utils.m#L63\r\n\r\nSteps to Reproduce:\r\nTry to extract the public key bits from a certificate.\r\n\r\nExpected Results:\r\nHaving to put data in Keychain just to retrieve the public key bits of a certificate seems really complex, slow and inefficient. It would be nice to have the OS X API available for this. I know there is a private API on iOS that works exactly like SecCertificateCopyValues, but it's private...\r\n\r\nActual Results:\r\nI had to add random certificates to the Keychain just to be able to get the public key bits.\r\n\r\nVersion:\r\niOS 8\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nN/A\r\n\r\nAttachments:"
+    email: nabla.c0d3@gmail.com
+    modified: "2016-06-14T16:09:58.17851Z"
+    number: "22205652"
+    number_intvalue: 22205652
+    originated: 09-Aug-2015 12:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Closed
+    title: No direct API to extract the public key bits from a certificate

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "49726681"
+    labels:
+        datastore_id: "4957999571402752"
+data:
+    classification: Bug
+    created: "2019-04-10T05:53:43.85361Z"
+    description: "To reproduce, Apple's SpeakerBox demo application needs to be modified to simulate CPU load by adding these lines of code into CallViewController viewDidLoad:\r\n\r\n// MARK: simulate CPU load, 15 threads to reliably reproduce the issue\r\nfor _ in 1..<15 {\r\n\tThread.detachNewThread {\r\n\t\twhile true {\r\n\t\t}\r\n\t}\r\n}\r\n\r\nand after performing steps described below, it results in no audio in app. As it has been discovered, after pressing End&Answer button in original SpeakerBox app, AVAudioSessionInterruptionNotification notification (with AVAudioSessionInterruptionTypeBegan) comes first, and provider:didActivateAudioSession: notification comes last, so audio is started. But in modified SpeakerBox app, provider:didActivateAudioSession comes first and AVAudioSessionInterruptionNotification comes last, so audio unit becomes stopped, which results in no audio. And what is important, there is no AVAudioSessionInterruptionNotification with AVAudioSessionInterruptionTypeEnded at all, so audio is not restarted.\r\nThus, one of problem exists in iOS:\r\n- Thread coordination issue. When CPU becomes loaded, provider:didActivateAudioSession and AVAudioSessionInterruptionNotification come into app in wrong order as they sent to main thread queue from different threads\r\n- Missing AVAudioSessionInterruptionNotification with AVAudioSessionInterruptionTypeEnded\r\n\r\nSteps to Reproduce:\r\n1. Compile and install modified SpeakerBox demo app.\r\n2. Simulate incoming call and answer\r\n3. Simulate second incoming call and press End & Answer\r\n\r\nExpected Results:\r\nApp should have audio\r\n\r\nActual Results:\r\nNo audio can be heard\r\n\r\nVersion/Build:\r\nWas able to reproduce the issue with iOS 12.1 and iOS 12.2\r\nWas not able to reproduce on iOS 11"
+    email: artem.bazarkin@gmail.com
+    modified: "2019-04-10T05:53:43.853747Z"
+    number: "49726681"
+    number_intvalue: 49726681
+    originated: 09.04.2019
+    parent_number: '&{NULL_VALUE}'
+    product: iOS+SDK
+    product_version: iOS12
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Pressing End&Answer button on reception of second audio call results in no audio

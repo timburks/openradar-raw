@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23665687"
+    labels:
+        datastore_id: "4948224607518720"
+data:
+    classification: Serious Bug
+    created: "2015-11-25T19:09:05.17553Z"
+    description: "Summary:\r\nSituation: you have multiple NSTextViews linked to a single layout manager. You have a delegate set on the first text view, and are watching for \"textDidChange()\" calls. You do something that causes one of the other text views (NOT the first one) to be removed from the layout manager and deallocated.\r\n\r\nResult: Now the delegate of the first text view is still set, but it no longer receives textDidChange() calls. This happens because in NSTextView's -dealloc method, it calls -[NSNotificationCenter removeObserver:name:object:], but critically, it does so passing the first text view as the \"object\", even if the deallocated text view is not the first text view.\r\n\r\nSteps to Reproduce:\r\n1. Build and run the attached sample project.\r\n2. Type in the text view to verify that textDidChange() is being called.\r\n3. Click \"Trigger Bug\" to remove the 2nd text view.\r\n3. Type again in the text view.\r\n\r\nExpected Results:\r\ntextDidChange() should still be called, as the view controller is still the delegate of the first text view.\r\n\r\nActual Results:\r\nOther delegate methods are called, but textDidChange() is no longer called.\r\n\r\nVersion:\r\nOS X 10.11.1\r\nXcode 7.1.1\r\n\r\nNotes:\r\nI've verified that NSTextViewDelegate.textDidChange() is routed by adding the delegate as an observer of NSTextDidChangeNotification when the delegate is set. Thus, if that notification observation is removed, the delegate method will no longer be called. Set a breakpoint on -[NSNotificationCenter removeObserver:name:object:] right before clicking \"Trigger Bug\" in the sample app to see exactly where the observer is being removed. Note that the \"object\" in the call is not the text view being deallocated.\r\n\r\nConfiguration:\r\nHappens on both 10.10.4 and 10.11.1\r\n\r\n\r\nAttachments:\r\nYou can find a sample project at https://github.com/bjhomer/TextViewDelegateBug_23665687."
+    email: bjhomer@gmail.com
+    modified: "2015-11-25T19:15:47.59205Z"
+    number: "23665687"
+    number_intvalue: 23665687
+    originated: 25-Nov-2015
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: 10.11.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '[10.11.1] Removing NSTextView from layout manager disables `delegate.textDidChange()` calls. [Sample included]'

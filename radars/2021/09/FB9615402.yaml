@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9615402
+    labels:
+        datastore_id: "4972347580743680"
+data:
+    classification: ""
+    created: "2021-09-10T20:45:26.296582Z"
+    description: "When creating multiple nested `NavigationLink`s where the final destination is a `UIViewControllerRepresentable`, the destination will only be shown on the first try. On subsequent tries, it will load a blank screen.\r\n\r\n# System\r\n\r\niPhone 11 Pro Simulator, 14.5, Xcode 12.5 (12E262)\r\nAlso: iPhone 11 Pro running iOS 14.7.1\r\n\r\n# Steps to Reproduce\r\n\r\n* Use the following code in a basic SwiftUI app:\r\n\r\n```swift\r\nclass HelloWorldVC: UIViewController {\r\n    override func loadView() {\r\n        super.loadView()\r\n        let label = UILabel()\r\n        label.text = \"Hello, World\"\r\n        view.addSubview(label)\r\n\r\n        label.translatesAutoresizingMaskIntoConstraints = false\r\n        label.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true\r\n        label.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true\r\n        label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true\r\n        label.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true\r\n    }\r\n}\r\n\r\nstruct ViewControllerContainer: UIViewControllerRepresentable {\r\n    let vc: UIViewController\r\n\r\n    func makeUIViewController(context: Context) -> some UIViewController { vc }\r\n    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {}\r\n}\r\n\r\nstruct ContentView: View {\r\n    var body: some View {\r\n        NavigationView {\r\n\r\n            // Works:\r\n            //NavigationLink(\"View UIKit VC\", destination: ViewControllerContainer(vc: HelloWorldVC()))\r\n\r\n            // Only loads the UIKit view once. It's blank on subsequent tries.\r\n            NavigationLink(\r\n                \"Detail Screen\",\r\n                destination: NavigationLink(\r\n                    \"View UIKit VC\",\r\n                    destination: ViewControllerContainer(vc: HelloWorldVC())\r\n                )\r\n            )\r\n        }\r\n    }\r\n}\r\n```\r\n\r\n* Tap \"Detail Screen\"\r\n* Tap \"View UIKit VC\". You will see the \"Hello, World\" UIViewController.\r\n* Tap Back\r\n* Tap \"View UIKit VC\"\r\n\r\nExpected: \r\n* You should see the \"Hello, World\" UIViewController again\r\n\r\nActual:\r\n* You will see a blank view. This will happen as many times as you try.\r\n\r\nThis is unexpected and will cause accessibility users confusion.\r\n\r\nScreenshot:\r\n\r\n![Video of bug](https://github.com/jgale/NavigationLinkUIVCRBug/blob/main/navigation_link_bug.mov)"
+    email: jeremy.gale@gmail.com
+    modified: "2021-09-10T20:45:26.296793Z"
+    number: FB9615402
+    number_intvalue: 9615402
+    originated: "2021-09-10"
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI Framework
+    product_version: iOS 14.7
+    reproducible: Every time
+    resolved: ""
+    status: Open
+    title: Multiple NavigationLinks leading to a UIViewControllerRepresentable only works first time

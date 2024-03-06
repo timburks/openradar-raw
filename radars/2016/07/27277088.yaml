@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27277088"
+    labels:
+        datastore_id: "6141217473560576"
+data:
+    classification: ""
+    created: "2016-07-11T15:06:36.47267Z"
+    description: "Summary:\r\nWhen creating a JPEG representation of a RAW file using CIContext, the options parameter appears to be ignored.\r\n\r\nSteps to Reproduce:\r\n1. Create a CIImage from a RAW file using the new CIRAWFilter functionality:\r\n\r\nlet image = CIFilter(imageURL: imageURL, options: [:])\r\n\r\n2. Create a CIContext for exporting in the following way: \r\n\r\nlet contextForSaving = CIContext(options: [kCIContextCacheIntermediates : false, kCIContextPriorityRequestLow : true, kCIContextWorkingFormat : NSNumber(int: kCIFormatRGBAh)])\r\n\r\n3. Create an options dictionary in the following way: \r\n\r\nvar outputOptions: [NSObject : AnyObject] = [kCGImageDestinationOptimizeColorForSharing: true,                                                   kCGImageDestinationLossyCompressionQuality : 0.8]\r\n\r\nif image.extent.width.isFinite && image.extent.height.isFinite {\r\n    outputOptions[kCGImageDestinationImageMaxPixelSize] = max(image.extent.width, image.extent.height) / 2.0\r\n}\r\n\r\n4. Generate a JPEG preview image in the following way:\r\n\r\nlet cs = CGColorSpaceCreateWithName(kCGColorSpaceDisplayP3)!\r\nlet imageData = contextForSaving.JPEGRepresentationOfImage(image, colorSpace: cs, options: outputOptions)\r\n\r\n\r\n\r\nExpected Results:\r\nI expect a JPEG image to be generated with the following properties:\r\n\r\n1) The image is compressed according to the passed lossy compression quality.\r\n2) The image is resized to the given size.\r\n\r\nActual Results:\r\n1) The image compression value is ignored. The returned JPEG data is always the same length no matter which compression value is passed.\r\n\r\n2) The image size value is ignored. The returned JPEG data always represents a full-size image.\r\n\r\nVersion:\r\niOS 10.0 (14A5297c)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 6 GSM Unlocked"
+    email: inbox@ikennd.ac
+    modified: "2016-07-11T15:06:36.47297Z"
+    number: "27277088"
+    number_intvalue: 27277088
+    originated: 11-Jul-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 10.0 (14A5297c)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Creating a JPEG image with -[CIContext JPEGRepresentationOfImage:colorSpace:options] ignores options parameter

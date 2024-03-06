@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6488104"
+    labels:
+        datastore_id: "2420"
+data:
+    classification: Serious Bug
+    created: "2009-01-12T00:55:35.638552Z"
+    description: "Summary:\r\nFSFindFolder returns fnfErr for the kPreferencePanesFolderType and kScriptingAdditionsFolderType constants in any domain.\r\n\r\nSteps to Reproduce:\r\n1. Call FSFindFolder with any domain constant (kUserDomain, kLocalDomain, kNetworkDomain, or kSystemDomain) and either kPreferencePanesFolderType or kScriptingAdditionsFolderType.\r\n\r\nExpected Results:\r\nFSFindFolder returns noErr and a valid FSRef if the folder exists, fnfErr if the folder does not exist.\r\n\r\nActual Results:\r\nFSFindFolder returns fnfErr whether the folder exists or not.\r\n\r\nRegression:\r\nFSFindFolder worked correctly in 10.5.5. It's broken since 10.5.6.\r\n\r\nNotes:\r\nCuriously, kDomainLibraryFolderType works fine.\r\n\r\nI tested with two user accounts:\r\n\r\n- My administrator user account has its Home folder in the usual place (/Users).\r\n- My main user account has its Home folder on another volume.\r\n\r\nI reasoned that my unusual Home location on my main account was confusing FSFindFolder, even though the failure happens with Local and System as well as User.\r\n\r\nI think I've disproven that theory. Even when I log in on my other user account, FSFindFolder still fails.\r\n\r\nAs an experiment, I modified the attached test app by commenting out the first else statement, so that it would attempt to print the path of the FSRef regardless of what OSStatus FSFindFolder returned. When FSFindFolder returns fnfErr, the FSRef is either my Home folder (kUserDomain) or the first path component of the domain (e.g., /System for kSystemDomain).\r\n\r\nI've posted the test app on Bitbucket, where you can follow changes:\r\n\r\n\thttps://www.bitbucket.org/boredzo/fsfindfolder-1056-test/\r\n\r\n15-Feb-2009 12:54 AM Peter Hosey:\r\nThis turned out to be the result of my setting __CF_USER_TEXT_ENCODING in my .MacOSX/environment.plist file. Strange that it worked for awhile (which is why I didn't make the connection for a couple weeks), but once it broke, the failures that resulted were many and diverse. Removing the key from the file solved all the problems, including this one.\r\n\r\nI have verified that this issue is resolved, so you can close it."
+    email: boredzo@gmail.com
+    modified: "2011-08-28T05:48:31.181223Z"
+    number: "6488104"
+    number_intvalue: 6488104
+    originated: 2009-01-11T16:54-0800
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.6/9G55
+    reproducible: Always
+    resolved: 2009-02-15T00:54-0800
+    status: Closed
+    title: FSFindFolder returns fnfErr (File not found) for folders that exist

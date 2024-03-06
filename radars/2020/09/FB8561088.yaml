@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB8561088
+    labels:
+        datastore_id: "6106678273507328"
+data:
+    classification: Bug
+    created: "2020-09-20T12:21:12.043732Z"
+    description: "Description of the problem:\r\n\r\nI noticed an issue when running our apps (supporting picture in picture since iOS 9) on an iPhone running iOS 14 beta. If playing video content and closing our custom video player, sound still continues to play in the background. The only option for a user to stop the sound from playing is then to kill the application, which is bad from a user experience point of view. This problem did not exist in iOS 9 to 13.\r\n\r\nI could trace back this issue to picture in picture, probably because of the internal OS changes currently made to support PiP on iPhones. When a picture in picture controller is used, the underlying AVPlayer instance is namely not correctly released anymore, and as a result sound still plays in the background, even after having removed all strong references to AVPlayer or AVPictureInPictureController. \r\n\r\nI could reproduce this issue on all iOS 14 beta versions (1 up to 6). I sadly have no iPad device running iOS 14 beta, but running the app in the simulator yields the same result. As of beta 6, the iPhone simulator is still not compatible with PiP yet, so I could not perform the same check for a simulated iPhone.\r\n\r\nHow to reproduce the problem:\r\n\r\nI created a small iPhone / iPad sample project reproducing this issue. The app is very basic and instantiates an AVPlayer with an HLS video stream URL and displays its content within a view backed up with AVPlayerLayer. Once the player layer is ready, the picture in picture controller is prepared and can then be used to enter or exit PiP. The application itself is properly setup to allow the PiP feature to work (background modes & audio session).\r\n\r\nHere is how you can reproduce the issue described above with this sample app:\r\n\r\n1. Build and run the app on a real device running iOS 14, either an iPhone or iPad.\r\n2. Tap on the \"Play\" button. The video starts playing.\r\n3. Tap on the \"Reset\" button. The sound keeps playing in the background, with no way to stop it (except killing the app).\r\n\r\nIf you perform the same test on a device running iOS 13 (iPad with PiP or iPhone with no such capability), sound correctly stops after you press on \"Reset\". A check with Instruments clearly shows a dangling AVPlayer instance still existing on iOS 14, but not on iOS 13.\r\n\r\nI added a few additional buttons and switches for you to play around and notice that this is actually related to PiP. Between attempts you should kill & restart the app on iOS 14 to avoid dangling AVPlayer references (this is not needed on iOS 13 since everything works fine for this version). Here is what is available:\r\n\r\n1. A picture in picture toggle button, with which you can verify that the picture in picture controller is correctly attached to the layer and actually works. For simplicity I did not implement restoration or a full PiP user experience, of course.\r\n2. A switch to enable or disable PiP entirely. If you toggle it off before starting playback, no PiP controller will be created internally. On iOS 14, you can see that after you pressed \"Reset\" the sound correctly stops, clearly indicating that the PiP controller is responsible of keeping a strong reference it should not.\r\n\r\nExpected result:\r\n\r\nWhen a player layer is attached to a picture in picture controller, the shared AVPlayer instance is correctly released after all other references to the player and to the PiP controller have been released.\r\n\r\nActual result:\r\n\r\nWhen a player layer has been attached to a picture in picture controller, there will always remain a dangling AVPlayer strong reference somewhere, outside of the control of the application. As a result, content will continue to play in the background, forcing users to kill the app to get rid of it."
+    email: defagos@gmail.com
+    modified: "2020-09-20T12:21:12.043899Z"
+    number: FB8561088
+    number_intvalue: 8561088
+    originated: Aug 28, 2020
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "14"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'iOS 14 AVKit regression: AVPlayer is not correctly released when a picture in picture controller is used'

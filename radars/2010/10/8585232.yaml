@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8585232"
+    labels:
+        datastore_id: "779401"
+data:
+    classification: Serious Bug
+    created: "2010-10-22T20:55:38.957132Z"
+    description: "22-Oct-2010 01:44 PM Arshad Tayyeb:\r\n'QT_Apache_Request_headers.txt' was successfully uploaded\r\n\r\n22-Oct-2010 01:44 PM Arshad Tayyeb:\r\nSummary:\r\nQuicktime 10, when opening an HTTP URL (e.g., to an MP3 file), will sometimes be unable to open the URL, and quickly returns an error : \"OSStatus 1238\".\r\n\r\nUsing a packetsniffer (wireshark), we discovered that Quicktime always requests \r\nRange: bytes=0-1; that works for some apache servers, but some do not support partial content ranges; they return full content.\r\nFor those, QT should see that Content-Range is not in the header and accept the full file. \r\n\r\nIt seems to be able to do this for some files, unable for others.\r\n\r\nQuestions: \r\n1. Is there a way to instruct the Quicktime API to not send the Content-Range (and thus not expect content range) header?\r\n2. Is Quicktime intended to fallback gracefully when an HTTP server does not respond with partial content? (looks like it does most of the time, but for many files we get an error : OSStatus 1238.\r\n\r\nSteps to Reproduce:\r\n1. Obtain an apache server that does not support Content-Range headers/partial content\r\n2. Put some mp3 and m4a files on that server  (some will fail, some won't)  Example of one that fails is attached: 07 The Mission.mp3\r\n3. Get the URL that will access that file on the server\r\n4. Open the URL in Quicktime Player 10  (Shortcut: Cmd-U)\r\n5. Result: error 1238\r\n\r\nExpected results: \r\n\r\nfile plays.\r\n\r\nActual Results:\r\nOSStatus 1238 is reported by Quicktime player\r\n(In my own code: The error I see in the QTMovie event handler when I do this is:\r\n handleLoadStateChangesForMovie:]:548: Movie 0x36edd070 loadState is QTMovieLoadStateError error Error Domain=NSOSStatusErrorDomain Code=1238 \"The operation couldn’t be completed. (OSStatus error 1238.)\".)\r\n\r\nRegression:\r\nQuicktime 7 Player can play this fine.\r\n\r\nNote that this works fine if you load the same URL in Firefox (which looks like it's using Quicktime Plugin 7.6.6).  Safari fails the first two attempts (QT 10); Then it works at some point (looks like it at some point falls back to QT7 plugin).\r\n\r\nNotes:\r\nQuicktime seems to request like this:\r\n\r\nGET /fs/get?token=GyqsTQZVer5tKMTGllh8cw&path=Music%2FRadiohead%2FIn%20Rainbows%20%282007%29%2FJigsaw%20Falling%20Into%20Place.mp3 HTTP/1.1\r\nHost: 10.0.2.113:8008\r\nRange: bytes=0-1\r\nConnection: close\r\nUser-Agent: Apple Mac OS X v10.6.4 CoreMedia v1.0.0.10F569\r\nAccept: */*\r\nAccept-Encoding: identity\r\n\r\n\r\nAttachments (use wireshark for full viewing pleasure):\r\n\r\nQT_Apache_Request_headers.txt - the request that quicktime sends\r\n\r\nnormal_server_206_apache_capture.wireshark\t- for reference: a quicktime transaction to a normal Mac OS X apache server that works fine\r\n\r\naccepted_200_response_capture.wireshark - a transaction from Quicktime to our server which returns 200; Quicktime *can* play this one\r\nunaccepted_200_response_capture.wireshark - a transaction from Quicktime to our server which returns 200; Quicktime fails with OSStatus 1238 on this one"
+    email: snarshad@gmail.com
+    modified: "2011-08-28T05:39:26.314372Z"
+    number: "8585232"
+    number_intvalue: 8585232
+    originated: 10/22/2010
+    parent_number: '&{NULL_VALUE}'
+    product: Quicktime
+    product_version: 10.0 (build 114)
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: QT 10 API returns OSStatus 1238 for URLs where Content-Range is unsupported

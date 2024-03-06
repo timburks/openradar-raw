@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7778358
+    labels:
+        datastore_id: "5057919301189632"
+data:
+    classification: Suggestion
+    created: "2020-06-24T23:13:21.960868Z"
+    description: "Hi,\r\n\r\nI would like to be able to unit test my swift UI views. This is something that's possible (though, a bit clunky at times) with UIKit/Appkit views, but it appears the suggested approach to unit testing SwiftUI code is \"don't\".\r\n\r\nAlso attached is a code sample of a simple swift UI view that demonstrates a bit what I have in mind/would like.\r\n\r\nI would love to be able to easily, quickly, and in an automated way, verify interactions between SwiftUI code and their related models. Right now, there's no way to do that. There does exist community/open source libraries that help (https://github.com/nalexn/ViewInspector is the one I found, which uses reflection to retrieve data, and some type-unsafe ways to interact with views. In addition, every time SwiftUI adds more views, the library needs to be updated), but a first-party way would be much preferable because it can provide access to the swift UI view tree in a generic and type-safe way.\r\n\r\nThank you,\r\nRachel\r\n\r\n---\r\n\r\nIncluded file: SettingsTest.swift:\r\n\r\n```swift\r\n// Hi!\r\n// This is a bit of sample code that I was playing with in my most recent attempt at exploring unit testing SwiftUI.\r\n// For simplicity, I inlined and simplified the relevant dependencies \r\n// Quick background, the app is an astrophotography app, and this is turning on/off certain debug settings in the image alignment pipeline.\r\n\r\nimport XCTest\r\nimport SwiftUI\r\n\r\nfinal class Settings: ObservableObject {\r\n    @Published var drawDetectedStars: Bool = false\r\n}\r\n\r\nstruct SettingsView: View {\r\n    @ObservedObject var settings: Settings\r\n\r\n    var body: some View {\r\n        VStack(alignment: .leading) {\r\n            // Show logs\r\n            Text(\"Debug\").font(Font.system(.headline))\r\n            // Draw stars\r\n            Toggle(\"Draw Stars\", isOn: self.$settings.drawDetectedStars)\r\n                .accessibility(identifier: \"drawStars\")\r\n            Spacer()\r\n        }\r\n        .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))\r\n        .navigationBarTitle(\"Settings\")\r\n    }\r\n}\r\n\r\nclass TestSettingsView: XCTestCase {\r\n    func testTogglingDrawStars() throws {\r\n        let settings = Settings()\r\n        let view = SettingsView(settings: settings)\r\n\r\n        let toggle = try XCTUnwrap(view.query(\"#drawStars\") as? Toggle) // In this sample, I'm using XPath/css query syntax.\r\n        \r\n        XCTAssertFalse(toggle.isOn) // Assert that it starts in the off position\r\n\r\n        toggle.toggle()\r\n        XCTAssertTrue(toggle.isOn) // Not necessary, but shows that I'd expect this property to be true now.\r\n\r\n        XCTAssertTrue(settings.drawDetectedStars) // This is the interaction I'm actually trying to verify here.\r\n\r\n        // now, let's turn it off.\r\n        toggle.toggle()\r\n        XCTAssertFalse(settings.drawDetectedStars) // This is the interaction I'm actually trying to verify here.\r\n    }\r\n}\r\n```"
+    email: you@subluminal.net
+    modified: "2020-06-24T23:13:21.961132Z"
+    number: FB7778358
+    number_intvalue: 7778358
+    originated: "2020-06-24"
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI Framework
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Unable to unit test SwiftUI code.

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30868533"
+    labels:
+        datastore_id: "4947016698298368"
+data:
+    classification: ""
+    created: "2017-03-07T10:24:11.35404Z"
+    description: "This issue was encountered in issue 7626 in the Github repo of Scikit-Learn. In short, when trying to perform\r\nlinear dimensionality reduction for data analysis purposes, the script fails abruptly with a memory allocation error.\r\n\r\nAfter some debugging the source of the fault was localized to some call within dgetrf() LAPACK routine.\r\nThe fault is reproducible with the following C++ code, which I attach to this bug report. Please, note that\r\nchanging the number of rows from 46336 to any smaller positive integer works fine.\r\n```\r\n#include <Accelerate/Accelerate.h>\r\n\r\nint main (int argc, char const *argv[])\r\n{\r\n    // Changing 46336 to 46335 (or any lower value) works fine\r\n    int num_rows=46336, num_cols=110;\r\n\r\n    // create data array for our matrix. Will be a vector that is num_rows*num_cols elements\r\n    // to access A(r,c) use A[r+c*num_rows], in major column ordering. {r1c1,r2c1,r3c1...}\r\n    double *A = new double[num_rows*num_cols];\r\n    for(int row=0; row<num_rows; row++) {\r\n        for(int col=0; col<num_cols; col++) {\r\n            A[row+col*num_rows] = 1.0;\r\n        }\r\n    }\r\n\r\n    __CLPK_integer m, n, lda, info;\r\n    m=lda=num_rows;\r\n    n=num_cols;\r\n\r\n    __CLPK_integer * ipiv = new __CLPK_integer[(num_rows>num_cols?num_cols:num_rows)];\r\n\r\n    dgetrf_(&m, &n, A, &lda, ipiv, &info);\r\n\r\n    return 0;\r\n}\r\n```\r\nThis is to be compiled with `g++ file.cpp -o file -framework accelerate`\r\n\r\nThe fault message reads as follows:\r\n```\r\nfile(1490,0x7fff79ad6300) malloc: *** mach_vm_map(size=18446744065123717120) failed (error code=3)\r\n*** error: can't allocate region\r\n*** set a breakpoint in malloc_error_break to debug\r\n```\r\nThe value 18446744065123717120 is FFFF FFFE 003E 9000 in hex looks like a signed extension of an unsigned int.\r\n\r\nUnfortunately I couldn't get a crash report from the C++ example, but I do have a crash report\r\nfrom a python (2.7.13) example, which I attach to this bug report as well.\r\n\r\nSteps to Reproduce:\r\n1. install xcode command line tools;\r\n2. compile the attached `file.cpp` with ` g++ file.cpp -o file -framework accelerate`;\r\n3. execute ` ./file `.\r\n\r\nExpected Results:\r\nI expected a clean termination of the compiled program after completing these steps.\r\n\r\nActual Results:\r\nAfter completing these steps got a message in the terminal, which looked like the one below:\r\n```\r\nfile(1490,0x7fff79ad6300) malloc: *** mach_vm_map(size=18446744065123717120) failed (error code=3)\r\n```\r\n\r\nVersion:\r\nApple LLVM version 7.0.2 (clang-700.1.81)\r\nTarget: x86_64-apple-darwin14.5.0\r\nThread model: posix\r\n\r\nSystem Version: OS X 10.10.5 (14F2109)\r\nKernel Version: Darwin 14.5.0\r\n\r\nUpdate 2017-03-07:\r\nThis fault is reproducible on the following versions of OS X:\r\n```\r\n      System Version: OS X 10.9.5 (13F1911)\r\n      Kernel Version: Darwin 13.4.0\r\n```\r\n\r\n```\r\n      System Version: OS X 10.11.5 (15F34)\r\n      Kernel Version: Darwin 15.5.0\r\n```\r\n\r\n```\r\n      System Version: OS X 10.11.6 (15G1217)\r\n      Kernel Version: Darwin 15.6.0\r\n```"
+    email: ivan.nazarov@skolkovotech.ru
+    modified: "2017-03-07T10:25:55.88019Z"
+    number: "30868533"
+    number_intvalue: 30868533
+    originated: "2017-03-06"
+    parent_number: '&{NULL_VALUE}'
+    product: Accelerate framework
+    product_version: ""
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: Memory Allocation Fault in LU factorization of the Accelerate framework

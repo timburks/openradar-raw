@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20293220"
+    labels:
+        datastore_id: "5224157902012416"
+data:
+    classification: Performance
+    created: "2015-03-25T16:56:33.638364Z"
+    description: "Summary:\r\nAccessing the first element in a Set appears to be extremely slow.\r\n\r\n\r\nTake the following example:\r\nimport Cocoa\r\n\r\nlet size = 100000\r\n\r\nfunc createSet() -> Set<Int> {\r\n    var set = Set<Int>()\r\n    for i in 0..<size {\r\n        set.insert(i)\r\n    }\r\n    return set\r\n}\r\n\r\nlet insertStart = NSDate()\r\nvar set = createSet()\r\nprintln(\"Insert: \\(NSDate().timeIntervalSinceDate(insertStart))\")\r\n\r\n\r\nlet removeFirstStart = NSDate()\r\nwhile !set.isEmpty {\r\n    set.removeFirst()\r\n}\r\nprintln(\"RemoveFirst: \\(NSDate().timeIntervalSinceDate(removeFirstStart))\")\r\n\r\n\r\nset = createSet()\r\nlet firstRemoveStart = NSDate()\r\nwhile !set.isEmpty {\r\n    let first = set.first!\r\n    set.remove(first)\r\n}\r\nprintln(\"FirstRemove: \\(NSDate().timeIntervalSinceDate(firstRemoveStart))\")\r\n\r\n\r\nset = createSet()\r\nlet removeLoopStart = NSDate()\r\nfor element in set {\r\n    set.remove(element)\r\n}\r\nprintln(\"RemoveLoop: \\(NSDate().timeIntervalSinceDate(removeLoopStart))\")\r\n\r\n\r\nset = createSet()\r\nlet removeDirectStart = NSDate()\r\nfor i in 0..<size {\r\n    set.remove(i)\r\n}\r\nprintln(\"RemoveDirect: \\(NSDate().timeIntervalSinceDate(removeDirectStart))\")\r\n\r\nThis produces the following results on my machine (using -O):\r\nInsert: 0.0234929919242859\r\nRemoveFirst: 22.9310619831085\r\nFirstRemove: 22.6014919877052\r\nRemoveLoop: 0.0276380181312561\r\nRemoveDirect: 0.0135889649391174\r\n\r\nI would expect to achieve equal if not better performance using removeFirst() to remove members than using remove() but instead it is orders of magnitude slower...\r\n\r\nSince a naive implementation of removeFirst() using Set.first and Set.remove seems to perform roughly equally bad but using Set.remove itself is fine I would expect Set.first to be the main culprit.\r\n\r\nI have attached the example code as an Xcode project.\r\n\r\nForum thread: https://devforums.apple.com/thread/266229?tstart=0\r\n\r\nSteps to Reproduce:\r\n1. Open the attached project & run the target\r\n2. Observe the resulting output\r\n\r\nExpected Results:\r\nI would expect Set.removeFirst() to perform equal to if not better Set.remove() when used to remove all the sets elements.\r\n\r\nActual Results:\r\nSet.removeFirst() (and Set.remove(Set.first)) perform significantly worse.\r\n\r\nVersion:\r\nVersion 6.3 (6D554n)\r\nApple Swift version 1.2 (swiftlang-602.0.47.4 clang-602.0.48)\r\n10.10.2 (14C1514)"
+    email: janoschhildebrand@gmail.com
+    modified: "2015-03-25T16:56:33.638591Z"
+    number: "20293220"
+    number_intvalue: 20293220
+    originated: 25-Mar-2015
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.3 (6D554n)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 6.3 (6D554n): [Swift] Performance issue with Set.first and Set.removeFirst()'

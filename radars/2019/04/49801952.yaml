@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "49801952"
+    labels:
+        datastore_id: "4938717483499520"
+data:
+    classification: Bug
+    created: "2019-04-11T04:44:10.407544Z"
+    description: "Area:\r\nSecurity Framework\r\n\r\nSummary:\r\nApp Review has rejected my app, Sweet Pea, because of a hang on launch.  I symbolicated the crashlogs by downloading the DSYMs and using atos as described in this technote: \r\n\r\nhttps://developer.apple.com/library/archive/technotes/tn2151/_index.html#//apple_ref/doc/uid/DTS40008184-CH1-SYMBOLICATION-BITCODE\r\n\r\n$ atos -arch arm64 -o d183863e-1907-3788-995b-74b727353969.dSYM/Contents/Resources/DWARF/FBSDKCoreKit -l 0x101614000 0x0000000101650bd8\r\n-[FBSDKKeychainStore setData:forKey:accessibility:] (in FBSDKCoreKit) (FBSDKKeychainStore.m:112)\r\n\r\nThat line reads:\r\n        status = fbsdkdfl_SecItemDelete((__bridge CFDictionaryRef)query);\r\nFacebook SDK does some stuff with macros, but I looked and it is indeed calling the system call SecItemDelete\r\n\r\nThere are also discussions of other products seeing the same issue, e.g.\r\n\r\nhttps://github.com/firebase/firebase-ios-sdk/issues/1399\r\n\r\nThey \"fixed\" this problem for firebase by moving all access to Security FWK onto a background thread\r\n\r\nAnother crashlog shows the hang-on-launch happens in a different place in my code, but also leading to Security FWK:\r\n\r\nThread 0 Crashed:\r\n0   libsystem_kernel.dylib        \t0x000000019d7720f4 0x19d75a000 + 98548\r\n1   libsystem_kernel.dylib        \t0x000000019d7715a0 0x19d75a000 + 95648\r\n2   libdispatch.dylib             \t0x000000019d5d7880 0x19d5c0000 + 96384\r\n3   libdispatch.dylib             \t0x000000019d5d7d10 0x19d5c0000 + 97552\r\n4   libxpc.dylib                  \t0x000000019d836a04 0x19d82c000 + 43524\r\n5   Security                      \t0x000000019e847edc 0x19e81c000 + 179932\r\n6   Security                      \t0x000000019e84845c 0x19e81c000 + 181340\r\n7   Security                      \t0x000000019e89db90 0x19e81c000 + 531344\r\n8   Security                      \t0x000000019e89d2f4 0x19e81c000 + 529140\r\n9   Security                      \t0x000000019e89bc60 0x19e81c000 + 523360\r\n10  Security                      \t0x000000019e89c5f4 0x19e81c000 + 525812\r\n11  Security                      \t0x000000019e89a284 0x19e81c000 + 516740\r\n12  Security                      \t0x000000019e89cbe0 0x19e81c000 + 527328\r\n13  FBSDKCoreKit                  \t0x0000000101058bd8 0x10101c000 + 248792\r\n14  FBSDKCoreKit                  \t0x0000000101058888 0x10101c000 + 247944\r\n\r\n$ atos -arch arm64 -o 69d0c92d-588a-302c-8f96-bd41d0c78a48.dSYM/Contents/Resources/DWARF/AWSCore -l 0x101758000 0x00000001017c16f0\r\n-[AWSUICKeyChainStore dataForKey:error:] (in AWSCore) (AWSUICKeyChainStore.m:457)\r\nThat line reads:\r\n    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &data);\r\n\r\nSteps to Reproduce:\r\nBuild an app that uses Security framework on the main thread on launch\r\nExtensively test it on multiple devices\r\nSubmit to app review\r\n\r\nExpected Results:\r\nApp is approved\r\n\r\nActual Results:\r\nApp is rejected because something about app review test hardware causes security framework to deadlock.\r\n\r\nVersion/Build:\r\niPhone OS 12.2 (16E227)"
+    email: andy@modernlogic.io
+    modified: "2019-04-11T04:44:10.407675Z"
+    number: "49801952"
+    number_intvalue: 49801952
+    originated: 04/10/2019
+    parent_number: '&{NULL_VALUE}'
+    product: Security Framework
+    product_version: "12.2"
+    reproducible: Unable
+    resolved: ""
+    status: ""
+    title: Security Framework hangs for AppReview (including SecItemCopyMatching and SecItemDelete)

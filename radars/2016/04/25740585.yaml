@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25740585"
+    labels:
+        datastore_id: "4937605367988224"
+data:
+    classification: Bug
+    created: "2016-04-15T01:57:06.79755Z"
+    description: "Summary:\r\nThe way that the UI testing code appears to be different to the way a user would use a UIPicker. \r\n\r\nA user typically scrolls the picker to the value they way. The UIPicker only triggers delegate methods when the user stops scrolling and ends the touch. \r\n\r\nUI testing's adjustToPickerWheelValue function on the other hand, behaves differently. It appears (after some testing) that adjustToPickerWheelValue calculates the number of picker values between the current value and the desired value, then issues the correct number of single value scrolls to move the picker to the desired result.\r\n\r\nThe problem with this is that this is effectively the same as the user selecting every single value between the current and desired one, trigger UIPicker delegate methods as it goes.\r\n\r\nIn addition, this causes faults in code when adjusts the picker when a value is selected. For example, in my code I have a picker value of \"---\" which I use to delimit sets of values in a picker. So my picker values might be as follows:\r\n\r\nabc\r\ndef\r\n---\r\nghi\r\njkl\r\n\r\nI have a picker delegate method that looks like this:\r\n\r\nfunc pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {\r\n        var value = pickerValues[row]\r\n        // Skip the delimiter.\r\n        if value == \"---\" {\r\n            pickerView.selectRow(++selectedRow, inComponent: 0, animated: true)\r\n            return;\r\n        }\r\n        pickerValueDidChange()\r\n    }\r\n\r\nWhen the user scrolls to the \"---\" value, the picker automatically selects the next value -> \"ghi\". If they scroll to \"ghi\" directly, \"---\" is never actioned because the picker doesn't stop on that value.\r\n\r\nBut when UI testing does this, it ends up on the \"jkl\" value because  it selects each value on the way to \"ghi\", including the \"---\" value which then adds an extra scroll.\r\n\r\nIt appears that the UI testing picker code is not checking where it is at and therefore is unaware of the change made by the app code.\r\n\r\nSteps to Reproduce:\r\n1. Add a UIPicker with the values described above.\r\n2. Add a picker didSelectRow with the code above.\r\n3. Setup a UI test which tells the picker to goto value \"ghi\".\r\n4. Assert the value is current.\r\n\r\nExpected Results:\r\nThe assert passes with the picker showing \"ghi\" as the current value.\r\n\r\nActual Results:\r\nThe assert fails with the picker showing \"jkl\" as the current value.\r\n\r\nVersion:\r\n7.3\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: d4rkf1br3@gmail.com
+    modified: "2016-04-15T01:57:06.79777Z"
+    number: "25740585"
+    number_intvalue: 25740585
+    originated: 15/04/2016
+    parent_number: '&{NULL_VALUE}'
+    product: Developer tools
+    product_version: "7.3"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Setting a picker view value when UI testing inconsistent with behaviour

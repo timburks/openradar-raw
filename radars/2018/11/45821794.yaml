@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "45821794"
+    labels:
+        datastore_id: "4984099974414336"
+data:
+    classification: Serious Bug
+    created: "2018-11-05T22:52:49.952556Z"
+    description: "Summary:\r\n\r\nIt looks like there's a weakness in the implementation of C++ RTTIs (run-time type information) when compiling a large C++ project, linking many static libraries, with compile-time and link-time optimization.\r\n\r\nIssue happens within `std::type_info::operator==`.\r\nNote that this operator is well defined by the current C++ standard, and should return true for equivalent types.\r\n\r\nThe issue happened in a project in which the operator returned false when comparing `typeid( std::string )`, issued from some compilation unit, with `typeid( std::string )` from another compilation unit.\r\n\r\nI wasn't able to reproduce this in a test project unfortunately.\r\nBut looking at the generated assembly code, I can definitely see a weakness here.\r\n\r\nSteps to Reproduce:\r\n\r\n    const std::type_info & getT1( void )\r\n    {\r\n        return typeid( std::string );\r\n    }\r\n\r\n    const std::type_info & getT2( void )\r\n    {\r\n        return typeid( std::string );\r\n    }\r\n\r\n    int main( void )\r\n    {\r\n        const std::type_info & t1( getT1() );\r\n        const std::type_info & t2( getT2() );\r\n    \r\n        if( t1 == t2 )\r\n        {\r\n            return 0;\r\n        }\r\n    \r\n        return -1;\r\n    }\r\n\r\nExpected Results:\r\n\r\nFunction `main` should obviously return 0.\r\n\r\nActual Results:\r\n\r\nIt turns out `std::type_info::operator==` cannot always be trusted when used in different static libraries.\r\n\r\nGenerated assembly code:\r\n\r\n     1:    push       rbp\r\n     2:    mov        rbp, rsp\r\n     3:    sub        rsp, 0x30\r\n     4:    mov        dword [rbp+var_14], 0x0\r\n     5:    call       __Z5getT1v\r\n     6:    mov        qword [rbp+var_20], rax\r\n     7:    call       __Z5getT2v\r\n     8:    mov        qword [rbp+var_28], rax\r\n     9:    mov        rax, qword [rbp+var_20]\r\n    10:    mov        rcx, qword [rbp+var_28]\r\n    11:    mov        qword [rbp+var_8], rax\r\n    12:    mov        qword [rbp+var_10], rcx\r\n    13:    mov        rax, qword [rbp+var_8]\r\n    14:    mov        rax, qword [rax+8]\r\n    15:    mov        rcx, qword [rbp+var_10]\r\n    16:    cmp        rax, qword [rcx+8]\r\n\r\n`getT1` is called at line 5 and `getT2` at line 7.\r\nAt line 16, we can see a comparison with a member at offset 8 of the two returned objects.\r\n\r\nThis member is actually the mangled name of the C++ type, like:\r\n\r\n    NSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE\r\n\r\nProblem is the comparison uses the addresses, not the value.\r\nIf for any reason, due to optimization or linking, the same type resolves to a different address, comparison will fail.\r\n\r\nSince the implementation is using the mangled name for comparing `std::type_info` objects, it should then compare the values, not the addresses.\r\n\r\nI encountered this issue in a large C++ project.\r\nComparing two `std::type_info` returned false, although the `name` value was identical.\r\n\r\nI found two similar issues:\r\n - https://gcc.gnu.org/bugzilla/show_bug.cgi?id=23628\r\n - https://svn.boost.org/trac10/ticket/754\r\n\r\nBoth seem to occur with GCC, but looks like Clang has the same issue."
+    email: jdgadina@gmail.com
+    modified: "2018-11-05T22:52:49.952707Z"
+    number: "45821794"
+    number_intvalue: 45821794
+    originated: November 5 2018, 11:50 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Weakness in C++ RTTI comparison

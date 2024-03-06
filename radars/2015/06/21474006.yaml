@@ -1,0 +1,63 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21474006"
+    labels:
+        datastore_id: "6587521181941760"
+data:
+    classification: Other Bug
+    created: "2015-06-20T14:02:20.02458Z"
+    description: |-
+        Summary:
+        Code in instance methods attempts to resolve static properties instead of globals by the same name. This is dumb and invalid.
+
+
+        Steps to Reproduce:
+        1. This code:
+        struct S {
+        	static var f: ()
+
+        	func g() {
+        		let h: () -> Int = f
+        	}
+        }
+
+        func f() -> Int {
+        	return 0
+        }
+
+
+        Expected Results:
+        should compile
+
+
+        Actual Results:
+        but gives a spurious dumb error:
+        boom.swift:5:22: error: 'S' does not have a member named 'f'
+                        let h: () -> Int = f
+                                           ^
+
+
+        Regression:
+        Doesn’t happen if S.f doesn’t exist.
+        Doesn’t happen if S.f is a static func.
+        Does happen if S.f is a static property of function type, e.g. static let f: () -> Int = { 1 }
+        Pretty sure this has always happened.
+
+        You can resolve f in the outer scope with ModuleName.f but what a nuisance.
+
+
+        Notes:
+        The error message is particularly dumb; yes, it’s true S does not have a member named 'f'—so don’t try to use it! Argh.
+    email: rix.rob@gmail.com
+    modified: "2015-06-20T14:02:20.02492Z"
+    number: "21474006"
+    number_intvalue: 21474006
+    originated: 20-Jun-2015 10:02 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-7-beta (7A120f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Swift tries to resolve static properties instead of perfectly valid globals when it makes no sense'

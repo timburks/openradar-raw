@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18810914"
+    labels:
+        datastore_id: "6380687233908736"
+data:
+    classification: Serious Bug
+    created: "2014-10-29T15:46:11.226128Z"
+    description: "Summary:\r\nCKSubscription doc says: When a record modification causes a subscription to fire, the server sends push notifications to all devices with that subscription except for the one that made the original change to the record.\r\n\r\nLet assume I have two devices: device 1 and device 2 logged in from different iCloud accounts. Let assume both devices subscribed for record deletion for a certain record type.\r\n\r\nIf  device 1 creates a record and then device 1 deletes it then device 2 get notified - THAT IS ACCORDING TO THE DOC, BUT ..\r\nIf device 1 creates a record and then device 2 deletes it then device 2 get notified - I do NOT think it is ACCORDING TO THE DOC, and IT DOES NOT MAKE ANY SENSE, device 2 deleted it so device 1 should be notified\r\n\r\nSteps to Reproduce:\r\nSET UP SUBSCRIPTION ON DEVICE 1 AND DEVICE 2\r\nfunc application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {\r\n\r\n    application.registerUserNotificationSettings(UIUserNotificationSettings(forTypes: .Alert, categories: nil))\r\n    application.registerForRemoteNotifications()\r\n\r\n    let defaultContainer = CKContainer.defaultContainer()\r\n    let publicDatabase = defaultContainer.publicCloudDatabase\r\n\r\n    publicDatabase.fetchAllSubscriptionsWithCompletionHandler({subscriptions, error in\r\n\r\n        if error == nil {\r\n\r\n            if subscriptions.count == 0 {\r\n\r\n                let subscription = CKSubscription(recordType: \"OU\", predicate: NSPredicate(value: true), options: .FiresOnRecordDeletion)\r\n                subscription.notificationInfo = CKNotificationInfo()\r\n                subscription.notificationInfo.shouldBadge = false\r\n                subscription.notificationInfo.alertBody = \"OU removed or upated\"\r\n                publicDatabase.saveSubscription(subscription, completionHandler: {subscription, error in\r\n                    if error == nil {\r\n                    } else {\r\n                        println(\"\\(error.localizedDescription)\")\r\n                    }\r\n                })\r\n            }\r\n\r\n        } else {\r\n            println(\"\\(error.localizedDescription)\")\r\n        }\r\n    })\r\n\r\n\r\n    return true\r\n}\r\n\r\nCREATE RECORD on DEVICE 1\r\n@IBAction func addOU(sender: AnyObject) {\r\n\r\n    var defaultContainer = CKContainer.defaultContainer()\r\n    var publicDatabase = defaultContainer.publicCloudDatabase\r\n\r\n    let r = CKRecord(recordType: \"OU\", recordID: CKRecordID(recordName: \"aaaa\"))\r\n    publicDatabase.saveRecord(r, completionHandler: { r2, error in\r\n\r\n        if error == nil {\r\n        } else {\r\n            println(\"\\(error.localizedDescription)\")\r\n        }\r\n    })\r\n}\r\n\r\nDELETE RECORD ON DEVICE 2\r\n@IBAction func removeOU(sender: AnyObject) {\r\n\r\n    var defaultContainer = CKContainer.defaultContainer()\r\n    var publicDatabase = defaultContainer.publicCloudDatabase\r\n\r\n    publicDatabase.deleteRecordWithID(CKRecordID(recordName: \"aaaa\"), completionHandler: {recordID, error in\r\n\r\n        if error == nil {\r\n\r\n        } else {\r\n            println(\"\\(error.localizedDescription)\")\r\n        }\r\n    })\r\n}\r\n\r\nExpected Results:\r\ndevice 2 deletes and device 1 should be notified\r\n\r\nActual Results:\r\ndevice 2 deletes and device 2 get notified \r\n\r\nVersion:\r\niOS 8.1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 5"
+    email: kaskaaddnb@gmail.com
+    modified: "2014-10-29T15:46:11.226301Z"
+    number: "18810914"
+    number_intvalue: 18810914
+    originated: Oct 6 at 17:59
+    parent_number: '&{NULL_VALUE}'
+    product: iOS, CloudKit SDK
+    product_version: iOS 8.1
+    reproducible: Always
+    resolved: Not
+    status: Open
+    title: 'CloudKit: subscription for deleting record does not work'

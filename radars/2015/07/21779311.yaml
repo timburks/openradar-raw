@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21779311"
+    labels:
+        datastore_id: "6133991157530624"
+data:
+    classification: Other Bug
+    created: "2015-07-11T03:50:47.89048Z"
+    description: "In a module, I’m able to create global functions that shadow functions from other modules.\n\nSee the following:\n\n    public enum AssertionHandlers {\n        // BUG(http://www.openradar.me/21776390): Cannot use @autoclosure, so evaluation will be forced.\n        public typealias Handler = (Bool, String, file: StaticString, line: UWord) -> ()\n        \n        /// The handler associated with overriding the `assert` behavior.\n        public static var assertionHandler: Handler? = nil\n        \n        /// The handler associated with overriding the `precondition` behavior.\n        public static var preconditionHandler: Handler? = nil\n    }\n\n    /// This function shadows the `Swift.assert()` implementation in order to provide a mechanism to inject a\n    /// different version of the `assert` implementation at runtime.\n    public func assert(@autoclosure condition: () -> Bool, @autoclosure _ message: () -> String = \"\", file: StaticString = __FILE__, line: UWord = __LINE__)\n    {\n        if let handler = AssertionHandlers.assertionHandler {\n            handler(condition(), message(), file: file, line: line)\n        }\n        else {\n            Swift.assert(condition, message, file: file, line: line)\n        }\n    }\n\nI am also able to shadow properties on types:\n\nextension Array {\n        var isEmpty: Bool {\n            print(\"monkey patch!\")\n            return false\n        }\n    }\n\n    let a: [Int] = []\n    a.isEmpty  // outputs false and prints “monkey patch!”\n\n\nHowever, functions in the extension have a compiler error when using them:\n\n    extension Array {\n        mutating func reserveCapacity(minimumCapacity: Int) {\n            print(\"hi\")\n        }\n    }\n\n    var a: [Int] = []\n    a.reserveCapacity(0) // error: ambiguous use of reserveCapacity()\n\nIt would seem to be advantageous to be able to shadow implementations with our for use within our own modules, however, this does not seem to be able to be done in a consistent manner. That seems like a bug to me."
+    email: owensd@gmail.com
+    modified: "2015-07-11T03:50:47.89081Z"
+    number: "21779311"
+    number_intvalue: 21779311
+    originated: 10-Jul-2015 08:51 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A152u)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode-beta (7A152u): Shadowing seems to be implemented inconsistently'

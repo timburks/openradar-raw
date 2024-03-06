@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15582862"
+    labels:
+        datastore_id: "5316366890434560"
+data:
+    classification: UI/Usability
+    created: "2013-12-04T13:07:14.004827Z"
+    description: "When an UIAlertView is shown on iOS 7, all controls below the UIAlertView are greyed to emphasise the alert and re-colored on the UIAlertView dismisses. \r\n\r\nA best practice very often advertised by Apple with UIAlertView is to dismiss an UIAlertView when your app goes in background. \r\n\r\nDoing this, from iOS 4 to iOS 6 has been really simple and straightforward. \r\n\r\nGiven a view controller that has a IBAction showing an UIAlertView:\r\n\r\n- (IBAction)tap:(id)sender\r\n{\r\n    self.alertView = [[UIAlertView alloc] initWithTitle:@\"Hello\"\r\n        message:@\"A standard UIAlertView\"\r\n        delegate:nil\r\n        cancelButtonTitle:@\"OK\"\r\n        otherButtonTitles:nil];\r\n\r\n    [self.alertView show];\r\n}\r\n\r\nOne has just register to UIApplicationDidEnterBackgroundNotification in viewDidLoad :\r\n\r\n- (void)viewDidLoad\r\n{\r\n    [super viewDidLoad];\r\n\r\n    [[NSNotificationCenter defaultCenter] addObserver:self\r\n        selector:@selector(applicationDidEnterBackground:)\r\n        name:UIApplicationDidEnterBackgroundNotification\r\n            object:nil];\r\n\r\n}\r\n\r\nand dismiss the UIAlertView when handling UIApplicationDidEnterBackgroundNotification:\r\n\r\n- (void)applicationDidEnterBackground:(NSNotification *)theNotification\r\n{\r\n    NSInteger cancelButtonIndex = self.alertView.cancelButtonIndex;\r\n    [self.alertView dismissWithClickedButtonIndex:cancelButtonIndex\r\n                                         animated:NO];\r\n}\r\n\r\nOn iOS 7, this code should have work flawlessly. The alert view is dismissed when the app goes into background. But the app is activated again into foreground, all controls that have been automatically dimmed by the system while the alert view was shown are still dimmed.\r\n\r\nRepro steps:\r\n\r\n1. Create a simple app with a view controller\r\n2. Add a UIButton that show an UIAlertView.\r\n3. In the viewDidLoad method of this UIViewController, register to UIApplicationDidEnterBackgroundNotification to dismiss a potential alert view.\r\n4. In the handler of UIApplicationDidEnterBackgroundNotification, dismiss the UIAlertView\r\n5. Launch the app, tap on the button to show an alert view.\r\n6. While the alert view is shown, send the app to the background.\r\n7. Launch the app, the alert view has been dismissed, but the dimmed controls are still gray and active.\r\n\r\nExpected results:\r\nThe dimmed controls should have recovered their tintColor.\r\n\r\nActual results:\r\nThe dimmed controls are greyed."
+    email: contact@manbolo.com
+    modified: "2014-07-31T08:50:17.843538Z"
+    number: "15582862"
+    number_intvalue: 15582862
+    originated: 04/12/2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 7.0.4
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 14924714 (Open)
+    title: UIAlertView dims controls issue on iOS 7 when dismissed in background.

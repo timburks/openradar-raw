@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23737778"
+    labels:
+        datastore_id: "5565987873095680"
+data:
+    classification: Serious Bug
+    created: "2015-12-03T05:44:57.70121Z"
+    description: "Summary:\r\nAll default property values are missing for a UIViewController that's a subclass of a generic class after instantiation. These do not become available until after the view has been loaded.\r\n\r\nUIViewControllers that do not subclass a generic class do not have this problem. This is specifically an issue with generics and view controllers.\r\n\r\nThe default values are not nil. They are in some partially initialized state. For example, if I interact with `rows` in lldb I can do a few things, but not everything:\r\n\r\n(lldb) p rows\r\n([Int]) $R1 = 0 values {}\r\n(lldb) po rows\r\n0 values\r\n {}\r\n(lldb) po rows.enumerate()\r\n {\r\n  base = 0 values {}\r\n}\r\n(lldb) po rows.count\r\nerror: Execution was interrupted, reason: EXC_BAD_ACCESS (code=1, address=0x10).\r\nThe process has been returned to the state before expression evaluation.\r\n\r\nAnd if I create another property with a default value, var foo = \"Foo\", it becomes an empty string:\r\n\r\n(lldb) p foo\r\n(String) $R0 = \"\"\r\n(lldb) po foo\r\n\"\"\r\n\r\nSo it's not that these aren't initialized, it's that they aren't initialized properly.\r\n\r\nSteps to Reproduce:\r\n1. Open sample project in Xcode\r\n2. Build & Run\r\n3. Press button twice (because of rdar://23737527)\r\n4. EXC_BAD_ACCESS is thrown\r\n\r\nExpected Results:\r\nI expect default values to be set on the view controller after it has been initialized\r\n\r\nActual Results:\r\nThe default values are not set after instantiation if a view controller is a concrete subclass of a type-generic class\r\n\r\nVersion:\r\niOS 9.1 & Xcode 7.1\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nAll\r\n\r\nAttachments:\r\n'StoryboardNotInitialized.zip' was successfully uploaded.\r\n\r\nhttp://cl.ly/1n1c2Z2M2L2h"
+    email: michele.titolo@gmail.com
+    modified: "2015-12-03T15:46:20.51183Z"
+    number: "23737778"
+    number_intvalue: 23737778
+    originated: 12/2/2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Default property values not set in an instantiated view controller when it is a concrete subclass of a type-generic uiviewcontroller (Swift)

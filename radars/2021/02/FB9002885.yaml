@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9002885
+    labels:
+        datastore_id: "4939905142620160"
+data:
+    classification: Bug
+    created: "2021-02-13T01:48:40.375758Z"
+    description: "When running an HDR asset through AVAssetReader with the intent to convert to SDR, we use the following settings on AVAssetReaderOutput:\r\n\r\nkCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA),\r\nAVVideoColorPropertiesKey: @{                                                                               \r\n    AVVideoColorPrimariesKey : AVVideoColorPrimaries_ITU_R_709_2,\r\n    AVVideoTransferFunctionKey : AVVideoTransferFunction_ITU_R_709_2,\r\n    AVVideoYCbCrMatrixKey : AVVideoYCbCrMatrix_ITU_R_709_2\r\n}\r\n\r\nThe sample buffers vended by the output have the following properties:\r\n    CVImageBufferColorPrimaries = \"ITU_R_709_2\";\r\n    CVImageBufferTransferFunction = \"ITU_R_709_2\";\r\n    CVImageBufferYCbCrMatrix = \"ITU_R_2020\";\r\n\r\nIn other words, AVVideoYCbCrMatrixKey is not getting applied. This is particularly a problem for AVCompositions consisting of both HDR and SDR assets, as it causes the SDR asset to appear darker than it should.\r\n\r\nIt seems that there are two ways to mitigate this.\r\n- Using a different pixel format such as kCVPixelFormatType_420YpCbCr8Planar.\r\n- Applying an AVVideoComposition with the same properties:\r\n    colorPrimaries = AVVideoColorPrimaries_ITU_R_709_2;\r\n    colorTransferFunction = AVVideoTransferFunction_ITU_R_709_2;\r\n    colorYCbCrMatrix = AVVideoYCbCrMatrix_ITU_R_709_2;\r\n\r\nThen, the buffers vended appear as follows:\r\n    CVImageBufferColorPrimaries = \"ITU_R_709_2\";\r\n    CVImageBufferTransferFunction = \"ITU_R_709_2\";\r\n    CVImageBufferYCbCrMatrix = \"ITU_R_709_2\";"
+    email: cellsworth@gmail.com
+    modified: "2021-02-13T01:48:40.375919Z"
+    number: FB9002885
+    number_intvalue: 9002885
+    originated: 2/12/2021
+    parent_number: '&{NULL_VALUE}'
+    product: AVFoundation
+    product_version: iOS 14.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AVVideoYCbCrMatrix_ITU_R_709_2 not applied to HDR input via AVAssetReaderOutput when using kCVPixelFormatType_32BGRA

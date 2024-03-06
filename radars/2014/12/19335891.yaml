@@ -1,0 +1,58 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19335891"
+    labels:
+        datastore_id: "5876816166256640"
+data:
+    classification: Other Bug
+    created: "2014-12-23T15:10:22.537538Z"
+    description: |-
+        Summary:
+        The compiler crashes when I destructure & use the elements of a Sliceable constrained to be recursive.
+
+
+        Steps to Reproduce:
+        1. Write this:
+
+        func uncons<S: Sliceable>(sliceable: S) -> (S.Generator.Element, S.SubSlice)? {
+        	return first(sliceable).map { ($0, dropFirst(sliceable)) }
+        }
+
+        struct Pattern<T, U> {
+        	let f: T -> U?
+        }
+
+        func cond<T, U, S: Sliceable where S.SubSlice == S, S.Generator.Element == Pattern<T, U>>(x: T, patterns: S) -> U? {
+        	return uncons(patterns).map { pattern, rest in pattern.f(x) } ?? nil
+        }
+
+
+        Expected Results:
+        I expected it to run.
+
+
+        Actual Results:
+        The compiler crashes.
+
+
+        Regression:
+        It doesn’t crash if you remove the recursive slice constraint (S.SubSlice == S).
+
+        I couldn’t make an iterative version of this due to spurious errors, radar to follow.
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2014-12-23T15:10:22.537729Z"
+    number: "19335891"
+    number_intvalue: 19335891
+    originated: 23-Dec-2014 10:10 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Using elements of Sliceable constrained to be recursive crashes the compiler'

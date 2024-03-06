@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30595706"
+    labels:
+        datastore_id: "5002069857533952"
+data:
+    classification: Other Bug
+    created: "2017-02-19T18:03:14.69456Z"
+    description: "An iOS share extension can include an \"ExtensionPreProcessing.js\" file. It is able to interpret contents of the web page for use by the extension when invoked from Mobile Safari.\r\n\r\nLet's say you have a web page at \"http://foo.com/\" and that this web page has a frame with a URL of \"http://bar.com/\". If the extension preprocessing script attempts to access contents of both the top web page and the frame, it will be unable to access the contents of the frame. This is the error that will appear in the Web Inspector Console:\r\n\r\nBlocked a frame with origin \"http://foo.com\" from accessing a frame with origin \"http://bar.com\". Protocols, domains, and ports must match.\r\n\r\nI imagine that this is a side effect of the restriction that a web page cannot access contents of its frames if they are served from a different host. I appreciate the reasoning behind that restriction, but I do not believe it should apply to scripts embedded in an app extension.\r\n\r\nI included a sample app that demonstrates the problem.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\n1.  Run the \"ShareExtension\" target of the attached project in Mobile Safari.\r\n\r\n2.  In Mobile Safari, visit this URL:\r\n    http://jb\U0001F4A9.tk\r\n    \r\n    Note that this page has a frame with a URL of:\r\n    http://jbframed.blogspot.com\r\n    \r\n3.  Open Web Inspector from the Mac and navigate to the Console.\r\n\r\n4.  Invoke the extension from within the share sheet.\r\n\r\n\r\nExpected Results:\r\n\r\nI would expect the script to return the following to the Swift code:\r\n\r\n    NSExtensionJavaScriptPreprocessingResultsKey =     {\r\n        docUrl = \"http://xn--jb-9t72a.tk/\";\r\n        title = \"xn--jb-9t72a.tk\";\r\n        frame = {\r\n            docUrl = \"http://jbframed.blogspot.com/\";\r\n            title = \"framed blog\";\r\n        };\r\n    };\r\n\r\nI would then expect the Swift code to print that to the console.\r\n\r\n\r\nActual Results:\r\n\r\nThe app logs the following:\r\n\r\ninputObj: {\r\n    NSExtensionJavaScriptPreprocessingResultsKey =     {\r\n        docUrl = \"http://xn--jb-9t72a.tk/\";\r\n        title = \"xn--jb-9t72a.tk\";\r\n    };\r\n}\r\n\r\nThis error appears in the Console of Web Inspector:\r\n\r\nBlocked a frame with origin \"http://xn--jb-9t72a.tk\" from accessing a frame with origin \"http://jbframed.blogspot.com\". Protocols, domains, and ports must match.\r\n\r\n\r\nConfiguration:  \r\n\r\niPhone 5S being invoked by Xcode 8.2.1 (8C1002)\r\n\r\nVersion & Build:  \r\n\r\nMobile Safari on iOS 10.2.1 (14D27)\r\n\r\nAdditional Notes:\r\n\r\nThis issue makes it more complicated for my app, Feed Hawk (https://www.goldenhillsoftware.com/feed-hawk/), to get RSS feed information when domain forwarding (using frames) is used to assign a domain name to a blog. My workaround is for the app to retrieve the framed page independently.\r\n\r\n===\r\n\r\nMy sample project is at:\r\nhttps://www.virtualsanity.com/radars/radar30595706.zip"
+    email: johnbrayton@gmail.com
+    modified: "2017-02-19T18:03:14.69484Z"
+    number: "30595706"
+    number_intvalue: 30595706
+    originated: "2017-02-19"
+    parent_number: '&{NULL_VALUE}'
+    product: Mobile Safari
+    product_version: Mobile Safari on iOS 10.2.1 (14D27)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: In an app extension, ExtensionPreProcessing.js does not have access to framed content from hosts other than that serving the top page.

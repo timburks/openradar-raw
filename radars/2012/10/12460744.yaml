@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12460744"
+    labels:
+        datastore_id: "2184401"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2012-10-22T14:53:25.342511Z"
+    description: "Summary:\r\n\r\nClasses that inherit from UIResponder get a readonly property called inputAccessoryView of type UIView. The documentation's discussion paragraph talks about how consumers of UIKit classes that inherit from UIResponder can mutate this property: \r\n---\r\nThe default value of this property is nil. Subclasses that want to attach custom controls to either a system-supplied input view (such as the keyboard) or a custom input view (one you provide in the inputView property) should redeclare this property as readwrite and use it to manage their custom accessory view. When the receiver subsequently becomes the first responder, the responder infrastructure attaches the view to the appropriate input view before displaying it.\r\n---\r\n\r\nUISearchBar inherits from UIResponder, therefore on iOS 5.x it was acceptable to subclass UISearchBar and redeclare UIResponder's inputAccessoryView as readwrite and then set it to any object inheriting from or of type UIView.\r\n\r\nUnder iOS 6, Apple have already re-declared UISearchBar's inputAccessoryView as readwrite. Therefore when linking against iOS 6 the compiler ignores my property redeclaration because it is the same as the declaration that now exists on UISearchBar.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a view-based iOS app (non-storyboard). Set the base SDK as 5.0 and link against the 6.0 SDK.\r\n2. Create a subclass of UISearchBar and redeclare the inputAccessoryView property as @property (nonatomic, readwrite, strong).\r\n3. In the view controller's nib, add a UISearchBar and change the UISearchBar object's class to your subclass. Hook up an outlet on your view controller to the UISearchBar object.\r\n4. In the view controller's implementation file, create a UIView with a red background and set it as the UISearchBar subclass's inputAccessoryView using -[MySearchBarSubclass setInputAccessoryView:].\r\n5. Compile and run on the iOS 6 simulator.\r\n6. Compile and run on the iOS 5.0 or 5.1 simulator.\r\n\r\nExpected Results:\r\n\r\nRunning on the iOS 6 simulator AND iOS 5 simulator does not crash the app and when you tap on the search bar it displays the keyboard attached to a red UIView.\r\n\r\nActual Results:\r\n\r\niOS 6 simulator: Behavior is as expected.\r\niOS 5 simulator: Crash on load: -[MySearchBarSubclass setInputAccessoryView:]: unrecognized selector sent to instance.\r\n\r\nRegression:\r\n\r\nTo get around this you can conditionally (ios 5 vs ios 6) iterate through the subviews of the UISearchBar and find a view of class UITextField and attach the subview to it, however this is extremely brittle.\r\n\r\nNotes:\r\n\r\nI tried redeclaration at runtime:\r\nobjc_property_attribute_t type = { \"T\", \"@\\\"UIView\\\"\" };\r\nobjc_property_attribute_t ownership = { \"N\", \"\" };\r\nobjc_property_attribute_t backingivar  = { \"V\", \"_inputAccessoryView\" };\r\nobjc_property_attribute_t attrs[] = { type, ownership, backingivar };\r\nclass_addProperty([UISearchBar class], \"inputAccessoryView\", attrs, 3);\r\n\r\nBut it ignored my backing ivar part and when I printed the property attributes of the property I created via property_getAttributes() it gave me back \"T@\\\"UIView\\\",&,N which doesn't match the signature it should have, which is \"T@\\\"UIView\\\",&,N,V_inputAccessoryView\".\r\n\r\nThis is most likely because the compiler is what's generating the accessor/mutator pair and I don't have access to the ivar so I can't implement my own.\r\n\r\nRegardless, using the runtime to do this is even more brittle than iterating through the UISearchBar's subviews.\r\n\r\nAlso I'm not sure I understand why Apple decided to redeclare it for me. Sure, it's somewhat convenient, but it breaks a lot of code for a lot of people and it goes against what UIResponder promises of UIKit classes that inherit from it."
+    email: jack@jackhl.com
+    modified: "2012-10-22T14:53:25.342797Z"
+    number: "12460744"
+    number_intvalue: 12460744
+    originated: 09-Oct-2012 10:26 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: iOS 6.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Linking against iOS 6 breaks iOS 5 UISearchBar/UIResponder

@@ -1,0 +1,42 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19793929"
+    labels:
+        datastore_id: "6747996326723584"
+data:
+    classification: Enhancement
+    created: "2015-02-11T08:23:25.911954Z"
+    description: |-
+        We run into a problem where an app target depends on libs *and* resource bundles defined in another project, same workspace.
+
+        Code libraries dependencies are correctly handled by the dependency mechanism of Xcode. But resource bundle dependencies are not handled at all, and that forces us to make specific schemes to build the app. Scheme that will build the bundle before building the app (in that order).
+
+        This has all kind of implications, including IBDesignable mechanics: IBDesignable requires the app to be built to include the custom control. But the app cannot be built without the scheme (mentioned above), and is therefore not useable because IBDesignable builds aren't aware of schemes.
+
+        Generally speaking, it actually makes a lot of sense of having an app relying on non-code targets defined in different projects (same workspace). Moreover, an app target should be the one responsible for building the app, and should not depend on some other data (scheme) to achieve that. This is why it makes sense that targets should be able to depend on targets of other projects in the same workspace. The lose coupling could be implemented by defining dependencies based on names (just like code libs)
+
+        Could you please consider defining such dependencies outside of the scheme semantics, just like you do for code libraries? Thank you.
+
+        Workspace illustration:
+
+        Workspace 1
+        	Project A
+        		Lib A.1
+        		Bundle A.2
+        	Project B
+        		App B.1
+
+        (App B.1 depends on both LibA.1 & Bundle A.2)
+    email: raphael@creaceed.com
+    modified: "2015-02-11T08:23:25.912119Z"
+    number: "19793929"
+    number_intvalue: 19793929
+    originated: 11-Feb-2015 09:23 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode: cross project target dependencies for resources (in addition to code libraries)'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12178659"
+    labels:
+        datastore_id: "1891401"
+data:
+    classification: Serious bug
+    created: "2012-08-27T11:50:34.277238Z"
+    description: "27-Aug-2012 01:45 PM Jorgen Isaksson:\r\nSummary:\r\nWhen using AVFoundation to open assets with H.264 and/or AAC tracks it doesn't work if the file is not a .mp4 or .m4v file. This problem happens with .mkv containers with proper H.264 and AAC tracks inside. There's really no reason for AVFoundation to ignore to handle such files. This also applies to AVMediaTypeSubtitle tracks inside .mkv containers. These are exactly the same sort of track that would have been in a .mp4 or .m4v container, but as it's part of a .mkv container it doesn't work with AVFoundation for no appearent reason.\r\n\r\nSteps to Reproduce:\r\nInstantiate an AVAsset from an .mkv file and load it's tracks. Even though the tracks are proper H.264 tracks nothing comes back. Some code...\r\n\r\nAVAsset *sourceAsset = [AVURLAsset assetWithURL:[NSURL fileURLWithPath:@\"/Users/me/Movies/movie.mkv\"]];\r\n    \r\nNSArray *assetKeysToLoadAndTest = [NSArray arrayWithObjects:@\"tracks\", nil];\r\n\t[sourceAsset loadValuesAsynchronouslyForKeys:assetKeysToLoadAndTest completionHandler:^(void) {\r\n\t// The asset invokes its completion handler on an arbitrary queue when loading is complete.\r\n\tif ([[sourceAsset tracksWithMediaType:AVMediaTypeVideo] count] != 0) {\r\n            NSLog(@\"Found video tracks\");\r\n        } else {\r\n            NSLog(@\"No video tracks!!!\");\r\n        }\r\n}];\r\n\r\nExpected Results:\r\nExpected AVFoundation to properly load AVMediaTypeVideo, AVMediaTypeAudio and AVMediaTypeSubtitle if they are in the correct format. The container type, in this case .mkv, shouldn't matter at all.\r\n\r\nActual Results:\r\nAVFoundation fails to read tracks it should be able to read just because they are part of an .mkv container.\r\n\r\nRegression:\r\n\r\nNotes:\r\nI have supplied a screenshot from the .mkv file I used in the example. As you can see it contains proper AVMediaTypeVideo, AVMediaTypeAudio and AVMediaTypeSubtitle tracks but it still doesn't work with AVFoundation.\r\n\r\n27-Aug-2012 01:45 PM Jorgen Isaksson:\r\n'Media Information.jpg' was successfully uploaded"
+    email: jorgenisaksson@gmail.com
+    modified: "2012-08-27T11:50:34.279437Z"
+    number: "12178659"
+    number_intvalue: 12178659
+    originated: "2012-08-27"
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.8.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: AVFoundation doesn't load H.264 and/or AAC tracks from AVAsset

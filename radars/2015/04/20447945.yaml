@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20447945"
+    labels:
+        datastore_id: "5754702327185408"
+data:
+    classification: Other Bug
+    created: "2015-04-07T11:48:20.992186Z"
+    description: "Summary:\r\nI would like to display UIAlertController after document picker dismissed. However currently there is no way to coordinate that. It would be really helpful to have a delegate method to be notified that picker dismissed or move didPickDocumentAtURL to the point when controller already dismissed.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Present UIDocumentPickerViewController\r\n2. Present UIAlertController from didPickDocumentAtURL\r\n\r\nExpected Results:\r\nUIAlertController presented from parent controller.\r\n\r\nActual Results:\r\nUIAlertController does not even show up and I receive a warning in console:\r\n\r\nWarning: Attempt to present <UIAlertController: 0x19084a50> on <MYViewController: 0x190a08f0> whose view is not in the window hierarchy!\r\n\r\nRegression:\r\n\r\nNotes:\r\nCurrently I skip one run loop to hook up transitionCoordinator.\r\n\r\n- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentAtURL:(NSURL *)url {\r\n    dispatch_async(dispatch_get_main_queue(), ^{\r\n        NSAssert(controller.transitionCoordinator, @\"UIDocumentPickerViewController does not have transitionCoordinator?\");\r\n        \r\n        [controller.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context) {\r\n            \r\n        } completion:^(id<UIViewControllerTransitionCoordinatorContext> context) {\r\n            [self _showAlertController];\r\n        }];\r\n    });\r\n}"
+    email: and.mikhaylov@gmail.com
+    modified: "2015-09-14T13:06:10.04603Z"
+    number: "20447945"
+    number_intvalue: 20447945
+    originated: 07-Apr-2015 01:48 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "8.2"
+    reproducible: Always
+    resolved: YES
+    status: Resolved
+    title: Coordinate UIDocumentPickerViewController's dismissal

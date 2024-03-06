@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "41996031"
+    labels:
+        datastore_id: "5001303105208320"
+data:
+    classification: Bug
+    created: "2018-07-09T23:29:57.92081Z"
+    description: "Summary: Interface builder does not detect correct class for an IBOutlet when the owning view controllers of the same name exist in multiple static libraries.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nBackground: Lyft has two different versions of it's app (linked dynamically at run time as static libraries), one corresponding to the legacy design, one corresponding to the new design.\r\n\r\nSetup: A view controller implementation (including its storyboard layout) copied from the \"old design\" to the \"new design\". More specifically:\r\n- An Xcode workspace with multiple static library targets, `ModuleA` and `ModuleB`.\r\n- Inside each of these modules, a view controller called `ViewController`.\r\n- Inside each of these modules, a storyboard which contains a layout for each their modules respective `ViewController` implementation.\r\n- Inside each of the ViewController layouts is an @IBOutlet UIButton reference `actionButton`.\r\n\r\n\r\nSteps summary: attempt to change one ViewController's UIButton to be a different class (Button), break that storyboard reference to the old UIButton and attempt to link it to a Button instance in the storyboard.\r\n\r\nMore specifically:\r\n1. In one `ViewController` change the class to be something new. (In our case we had a `Button` class for our shared component button implementation.)\r\n2. In the corresponding storyboard in the same static library, delete the `UIButton` corresponding to the outlet that just changed. Add a new `UIView` and change its class to `Button`.\r\n3. Attempt to control drag from the view controller to the newly created `Button` (or otherwise connect the outlet).\r\n4. Observe that IB does not consider `Button` a valid target for connecting the @IBOutlet.\r\n\r\nExpected Results:\r\nThe `Button` storyboard element be a valid target for connection in interface builder.\r\n\r\nActual Results:\r\nThe `Button` storyboard element can not be connected to the @IBOutlet, despite the class being `Button` the ViewController.swift implementation.\r\n\r\nWorkaround:\r\nIf you change the class to UIButton, connect the outlet (even though UIButton should be considered invalid), and THEN change the class to Button, the connection works and it links correctly at run-time.\r\n\r\nVersion/Build: Xcode Version 9.4.1 (9F2000) (and all previous)"
+    email: awolf@lyft.com
+    modified: "2018-07-09T23:29:57.92105Z"
+    number: "41996031"
+    number_intvalue: 41996031
+    originated: 7/9/2018
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: 9.4.1 (9F2000)
+    reproducible: Always
+    resolved: NO
+    status: Open
+    title: Interface builder does not always detect correct class for an IBOutlet

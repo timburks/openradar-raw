@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11142652"
+    labels:
+        datastore_id: "1624401"
+data:
+    classification: Serious Bug
+    created: "2012-03-28T23:20:06.090137Z"
+    description: "28-Mar-2012 04:15 PM Tim Sanders:\r\nSummary:\r\nThe \"Converting To Storyboards Release Notes\" document says dequeueReusableCellWithIdentifier: method is guaranteed to return a cell. This is not true if the end user has VoiceOver on.\r\n\r\n\"The dequeueReusableCellWithIdentifier: method is guaranteed to return a cell (provided that you have defined a cell with the given identifier). Thus there is no need to use the “check the return value of the method” pattern as was the case in the previous typical implementation of tableView:cellForRowAtIndexPath:.\"\r\n\r\nSteps to Reproduce:\r\n\r\n1 ) Build and run the provided sample application.\r\n\r\n2 ) With VoiceOver off a prototype cell will be loaded and returned. See the console out log for output like: \r\n\r\n\"2012-03-28 15:47:15.619 VoiceOverPrototypeTest[8501:707] dequeue returned <CustomTableCell: 0x1a65b0; baseClass = UITableViewCell\".\r\n\r\n3 ) Turn on VoiceOver on the device.\r\n\r\n4 ) Run the sample application again.\r\n\r\n5 ) The dequeue call will return null and you'll see console output more like:\r\n\r\n \"2012-03-28 15:48:17.760 VoiceOverPrototypeTest[8520:707] dequeue returned (null)\r\n\r\nAssertion failed: (newCell), function -[TableViewController tableView:cellForRowAtIndexPath:], file /Users/tsanders/code/VoiceOverPrototypeTest/VoiceOverPrototypeTest/TableViewController.m, line 39.\r\n\"\r\n\r\nExpected Results:\r\ndequeue should return a table cell as documented with VoiceOver On and Off. In both cases the code in TableViewController table:cellForRowAtIndexPath: should return a CustomTableCell object and not trigger the assert.\r\n\r\n\r\nActual Results:\r\n\r\nThe sample app behaves correctly with VoiceOver off but will assert with VoiceOver on\r\n\r\nRegression:\r\n\r\nThis was true in both iOS 5.0 and 5.1. While this sample app is iPhone–only I've seen the same thing happen on iPad. Since the simulator doesn't have VoiceOver you have to run on hardware to see the problem. I've tried it both on a current-gen iPod Touch and an iPhone 4S, as well as an iPad 2.\r\n\r\nNotes:\r\n\r\nAs far as I can tell this means table cell prototypes are unusable. For now I've just resorted to older-style code which loads the cell from a nib file if needed.\r\n\r\nI believe this is a dupe of at least radar 10675427 and 10550644.\r\n\r\n28-Mar-2012 04:15 PM Tim Sanders:\r\n'VoiceOverPrototypeTest.zip' was successfully uploaded"
+    email: timothy.sanders@gmail.com
+    modified: "2014-10-08T16:10:25.482241Z"
+    number: "11142652"
+    number_intvalue: 11142652
+    originated: 28-Mar-2012
+    parent_number: "10487852"
+    product: iPhone SDK
+    product_version: "5.1"
+    reproducible: Always
+    resolved: ""
+    status: Duplicate of 10487852 which is closed
+    title: VoiceOver causes storyboards to not return a UITableCell properly

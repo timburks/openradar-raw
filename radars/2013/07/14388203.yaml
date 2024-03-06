@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14388203"
+    labels:
+        datastore_id: "3114408"
+data:
+    classification: UI/Usability
+    created: "2013-07-09T12:51:24.52833Z"
+    description: "Summary:\nWhen memory mapping a file of 305mb on iOS 7 using NSData or directly with mmap the operation will fail. \n\nSteps to Reproduce:\n\nVia NSData:\nNSString* dataFileName = @\"path to 305mb file on the device\";\nNSError *error = nil;\nNSData *data = [NSData dataWithContentsOfFile:dataFileName options:NSDataReadingMappedAlways error:&error];\n\nExpected Results:\nA pointer to an NSData object with the mapped data.\n\nActual Results:\n\nA nil pointer and the following error:\nError Domain=NSCocoaErrorDomain Code=256 \"The operation couldn’t be completed. (Cocoa error 256.)\" UserInfo=0x1640f910 {NSFilePath=/var/mobile/Applications/BED90A40-2303-4C4B-A4A3-E60D627A96B4/theapp.app/dataFile.blob, NSUnderlyingError=0x1640f5b0 \"The operation couldn’t be completed. Cannot allocate memory\"}\n\nRegression:\nThis has been reproduced on an iPhone 4, but not on an iPhone 5. Both running iOS 7 beta 3. All devices are able to map the file on iOS 6.\n\nNotes:\nThe following code will also fail on the iPhone 4:\n\n- (NSData*)manuallyMapFile:(NSString*)file\n{\n\tint fd = open([file fileSystemRepresentation], O_RDONLY);\n\tif(fd < 0)\n\t{\n\t\treturn nil;\n\t}\n\t\n\tNSDictionary* attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:file error:nil];\n\tif(attributes == nil)\n\t{\n\t\tclose(fd);\n\t\treturn nil;\n\t}\n\t\n\tself.size = [attributes objectForKey:NSFileSize];\n\t\n\t_mappedPointer = mmap(0, [_size intValue], PROT_READ, MAP_FILE|MAP_PRIVATE, fd, 0);\n\tclose(fd);\n\t\n\tif(_mappedPointer == MAP_FAILED)\n\t{\n\t\tDDLogError(@\"Map failed, errno=%d, %s\", errno, strerror(errno));\n\t\t_mappedPointer = NULL;\n\t\treturn nil;\n\t}\n\t\n\tNSData* retVal = [NSData dataWithBytesNoCopy:_mappedPointer length:[_size intValue] freeWhenDone:NO];\n\treturn retVal;\n}"
+    email: earltedly@googlemail.com
+    modified: "2013-07-09T12:51:24.528523Z"
+    number: "14388203"
+    number_intvalue: 14388203
+    originated: 09-Jul-2013 01:51 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone/iPod touch
+    product_version: 7.0 (11A4414e)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSDataReadingMappedAlways fails on iOS 7

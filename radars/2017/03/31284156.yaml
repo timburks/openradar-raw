@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31284156"
+    labels:
+        datastore_id: "6180575597559808"
+data:
+    classification: Serious Bug
+    created: "2017-03-27T22:23:34.20339Z"
+    description: "I have a URLSession delegate that blocks redirects as follows:\r\n\r\nfunc urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Swift.Void) {\r\n        \r\n\tcompletionHandler(nil)\r\n        \r\n}\r\n\r\nI begin a task with:\r\n\r\nlet dataTask = session.dataTask(with: URL(string: self.initialUrlString)!)\r\ndataTask.resume()\r\n\r\nIf a server returns a redirect, I expect the following to happen after my \"willPerformHTTPRedirection\" method calls completionHandler(nil):\r\n\r\n1.  The \"didReceive response\" method of the session delegate be called with the HTTP response containing the redirect.\r\n\r\n2.  The \"didReceive data\" method be called as many times as necessary to send the body of the redirect response to the delegate.\r\n\r\n3.  The \"didCompleteWithError\" method be called with a null error.\r\n\r\nSometimes this happens, but other times nothing happens until one minute (depending on timeoutIntervalForRequest) passes. Then didCompleteWithError is called with an error indicating that the request timed out. I believe the pattern is that it works as expected the first time that code is executed on a device or simulator with a specific URL. Every time thereafter, I get the 60 second delay and then a timeout. I am seeing this behavior against a variety of servers including www.apple.com.\r\n\r\nSteps to Reproduce:\r\n\r\n1.  Open the attached sample project.\r\n\r\n2.  Observe that the code in the project retrieves \"https://www.goldenhillsoftware.com/feed-hawk\" when the app launches. That URL redirects to \"https://www.goldenhillsoftware.com/feed-hawk/\" (with a trailing slash). Observe that the code uses a URLSession delegate as described above. Observe that the code attempts to retrieve the same URL two seconds later. Also observe that the SessionDelegate class logs all calls.\r\n\r\n3.  Run the code on an iPhone or in a simulator.\r\n\r\nExpected Results:\r\n\r\nI expect the console output to reflect that the URLSession delegate methods were called, as follows:\r\n\r\nStarting request\r\ngot redirect\r\ngot response\r\ngot data\r\nfinished successfully\r\nStarting request\r\ngot redirect\r\ngot response\r\ngot data\r\nfinished successfully\r\n\r\n\r\nActual Results:\r\n\r\nSometimes I see that the URLSession delegate methods are only called as expected the first time I initiate the request and that the second request times out:\r\n\r\nStarting request\r\ngot redirect\r\ngot response\r\ngot data\r\nfinished successfully\r\nStarting request\r\ngot redirect\r\n(long delay)\r\nfinished with error: The request timed out.\r\n\r\nOther times I see both requests time out:\r\n\r\nStarting request\r\ngot redirect\r\nStarting request\r\ngot redirect\r\n(long delay)\r\nfinished with error: The request timed out.\r\nfinished with error: The request timed out.\r\n\r\nConfiguration:  \r\n\r\niPhone 5S or in the iOS Simulator. I also see this in a macOS app running on my 2012 Retina MacBook Pro.\r\n\r\nVersion & Build:  \r\n\r\niOS 10.3 (14E277)\r\n\r\n\r\nAdditional Notes:\r\n\r\nThank you for looking into this.\r\n\r\n==\r\n\r\nThe sample project I attached to the radar is at:\r\nhttps://www.virtualsanity.com/radars/31284156.zip"
+    email: johnbrayton@gmail.com
+    modified: "2017-03-27T22:24:28.98246Z"
+    number: "31284156"
+    number_intvalue: 31284156
+    originated: "2017-03-27"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 10.3 (14E277)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Inconsistent Handling of HTTP Redirects in URLSession

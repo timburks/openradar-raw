@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7593726
+    labels:
+        datastore_id: "4950502169116672"
+data:
+    classification: ""
+    created: "2020-02-22T03:29:14.631681Z"
+    description: "This worked in iPadOS13.4 Beta 1. No longer works in iOS 13.4 Beta 2.\r\n\r\nI'm developing a third party app which uses ImageCaptureCore on iPadOS to control a DSLR. For astrophotography.\r\n\r\nThe rough steps, and there is an attached code sample that reproduces this.\r\n\r\n- Instantiate an ICDeviceBrowser, set it's delegate and tell it start browser.\r\n- Tap \"OK\" at the permission prompt.\r\n- Device Browser's delegate is called after it finds my connected DSLR (`deviceBrowser(_:didAdd:moreComing:)`).\r\n- I then set that added ICCameraDevice's delegate and request that the camera device open a session.\r\n- After ImageCaptureCore finishes indexing the files on my DSLR (after `deviceDidBecomeReady(withCompleteContentCatalog:)` is called on my `ICCameraDeviceDelegate`) [1], I make a PTP request.\r\n- The completion for `ICCameraDevice.requestSendPTPCommand(_:outData:completion:)` is then called with empty data, empty data, and a non-nil error with domain \"com.apple.ImageCaptureCore\" and code -21249. Looking through the documentation, I see that that corresponds to a PTP unauthorized error.\r\n\r\nI also set breakpoints (in the sample project, I have print statements there) at `cameraDeviceDidRemoveAccessRestriction(_:)` and `cameraDeviceDidEnableAccessRestriction(_:)`, in case maybe those ever get called (despite the documentation indicating that they're only for Apple cameras), but I never got a callback for them.\r\n\r\n[1]: In iPadOS/iOS 13.4 beta 1, I learned that unlike the macOS version of ImageCaptureCore, you need to wait until `deviceDidBecomeReady(withCompleteContentCatalog:)` is called on your `ICCamereDeviceDelegate` before you can make PTP requests. In the macOS version of ImageCaptureCore, you can start making PTP requests as soon as `device(_:didOpenSessionWithError:)` is called.\r\n\r\nFor openradar: The minimum code sample to reproduce this is at https://gist.github.com/younata/4adad9299d1913f96993070351908d8d\r\n\r\n---\r\n\r\nEdit/Update: To get this to work, you need to add a value for `NSCameraUsageDescription` to your info.plist."
+    email: you@subluminal.net
+    modified: "2020-02-26T04:31:57.831724Z"
+    number: FB7593726
+    number_intvalue: 7593726
+    originated: "2020-02-21"
+    parent_number: '&{NULL_VALUE}'
+    product: Image I/O
+    product_version: iPadOS 13.4 Beta 2
+    reproducible: 100%
+    resolved: Resolved!
+    status: Closed
+    title: 'ImageCaptureCore: PTPNotAuthorizedToSendCommand upon making PTP request'

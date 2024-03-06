@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24042545"
+    labels:
+        datastore_id: "5032670241226752"
+data:
+    classification: ""
+    created: "2016-01-04T18:12:16.38634Z"
+    description: "Summary:\r\nWhen using NSURLSession with a concurrent NSOperationQueue, sometimes the events are processed out-of-order.\r\n\r\nThis isn't always reproducible, but it seems to happen more often in a heavily concurrent environment, with multiple tasks being handled and other CPU heavy logic in the app.\r\nThe issue also seems to happen more frequently when many requests fail in sequence (e.g. by timing out).\r\n\r\nPlease see attached sample project, which reproduces the issue. The app essentially does a series of dummy file uploads to a Dropbox account (The hardcoded token is from a dummy account too).\r\nIt might be necessary to run the app multiple times until the issue reveals itself. Lowering the timeout thresholds can also help.\r\nThe app will invoke `fatalError()` when the ordering issue occurs.\r\n\r\nMy suggestion would be to add dependencies between the multiple task event's operations, so that even if the queue is concurrent, the events are processed in the correct order.\r\n\r\nCheers!\r\n\r\nSteps to Reproduce:\r\n1. Create an NSURLSessionTask with a concurrent NSOperationQueue\r\n2. Schedule multiple data tasks (I've observed this more often in this type of task)\r\n\r\nExpected Results:\r\nThe session tasks' events should be processed in the correct order. \r\n\r\nNamely, `URLSession:task:didCompleteWithError:` should always be the last delegate being called.\r\n\r\nActual Results:\r\nThe session tasks' events are (sometimes) fired out-of-order.\r\n\r\nEspecially on the data tasks, the URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend: delegate method is sometimes invoked *after*  URLSession:task:didCompleteWithError:\r\n\r\nVersion:\r\niOS 7, iOS 8, iOS 9 (9.0.2 and 9.2), using Xcode 7.2 (7C68) \r\n\r\nNotes:\r\nThis issue was initially reported as rdar://21897559, but was closed due to a lack of response from my part.\r\n\r\nConfiguration:\r\niPhone 4, iPhone 5S, iPhone 6S, possibly others\r\n\r\nAttachments:\r\n'NSURLSession-event-order.zip' was successfully uploaded."
+    email: p4checo@gmail.com
+    modified: "2016-01-04T18:12:16.38668Z"
+    number: "24042545"
+    number_intvalue: 24042545
+    originated: 04/01/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 7, iOS 8, iOS 9
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: NSURLSession delegate methods are sometimes invoked out-of-order, when using concurrent backing NSOperationQueue

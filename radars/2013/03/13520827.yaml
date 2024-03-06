@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13520827"
+    labels:
+        datastore_id: "2891406"
+data:
+    classification: Other Bug
+    created: "2013-03-27T22:52:51.598526Z"
+    description: "Summary:\r\n\r\nNSManagedObjectIDs created using -[NSIncrementalStore newObjectIDForEntity:referenceObject:] are never released under ARC. This is causing them to leak later on.\r\n\r\nSteps to Reproduce:\r\n\r\nI reproduced the problem simply by running this method somewhere in my NSIncrementalStore subclass and having an NSManagedObjectID category logging deallocs.\r\n\r\n- (void)deadObjectIDs:(NSRelationshipDescription *)relationship\r\n{\r\n\tNSEntityDescription *relatedEntity = relationship.destinationEntity;\r\n\t\r\n\tNSManagedObjectID *testObjectID1 = [self newObjectIDForEntity:relatedEntity referenceObject:@\"Some-ID\"];\r\n\tNSLog( @\"testObjectID1: %p\", testObjectID1 );\r\n\t\r\n\tNSManagedObjectID *testObjectID2 = [[NSManagedObjectID alloc] init];\r\n\tNSLog( @\"testObjectID2: %p\", testObjectID2 );\r\n}\r\n\r\nFurther, I can pass nil for both the entity and referenceObject to the same result.\r\n\r\n\r\nExpected Results:\r\n\r\nThat both testObjectID1 and testObjectID2 would show up deallocated when the method ends.\r\n\r\n\r\nActual Results:\r\n\r\nWhen run twice, the method and category produce the following log output:\r\n\r\n2013-03-27 16:26:04.533 PCR[7763:1a903] testObjectID1: 0xa69b520\r\n2013-03-27 16:26:04.534 PCR[7763:1a903] testObjectID2: 0xa2dcab0\r\n2013-03-27 16:26:09.382 PCR[7763:1a903] NSManagedObjectID dealloc: 0xa2dcab0\r\n2013-03-27 16:26:11.905 PCR[7763:1a903] testObjectID1: 0xa257cd0\r\n2013-03-27 16:26:11.905 PCR[7763:1a903] testObjectID2: 0xa69b520\r\n2013-03-27 16:26:13.108 PCR[7763:1a903] NSManagedObjectID dealloc: 0xa69b520\r\n\r\nSo, testObjectID1 is never being released and in fact shows up as a leak in Instruments.\r\n\r\n\r\nRegression:\r\n\r\nOccurs all the time\r\n\r\nNotes:\r\n\r\nThis is an ARC enabled project."
+    email: will.helling@inspiringapps.com
+    modified: "2013-03-27T22:52:51.59872Z"
+    number: "13520827"
+    number_intvalue: 13520827
+    originated: 3/27/2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "6.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'NSIncrementalStore newObjectIDForEntity: Memory Leak'

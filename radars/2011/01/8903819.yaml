@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8903819"
+    labels:
+        datastore_id: "1071401"
+data:
+    classification: Serious Bug
+    created: "2011-01-22T19:04:35.613259Z"
+    description: "Summary:\r\nOrdinarily, when sending a message to an instance for which several method signatures match, one is chosen at random and a warning is emitted. The warning is not emitted for CGFloat/NSInteger mixups. This applies to GCC 4.2, LLVM-GCC 4.2 and LLVM Compiler 1.7.\r\n\r\nSteps to Reproduce:\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\n@interface Unrelated\r\n-(NSInteger)foo;\r\n@end\r\n\r\n@interface Obj : NSObject\r\n@end\r\n@implementation Obj\r\n-(CGFloat)foo { return 124.2452; }\r\n@end\r\n\r\nint main (int argc, const char * argv[]) {\r\n    float myLength = 42 + [[Obj new] foo];\r\n    NSLog(@\"Hello, World! %f\", myLength);\r\n    return 0;\r\n}\r\n\r\n\r\nExpected Results:\r\nCompiler to emit:\r\nlengthTest.m:15: warning: multiple methods named '-foo' found\r\nlengthTest.m:4: warning: using '-(NSInteger)foo'\r\nlengthTest.m:11: warning: also found '-(CGFloat)foo'\r\n\r\nActual Results:\r\nNo warning is emitted.\r\n\r\nRegression:\r\nUnknown.\r\n\r\nNotes:\r\nI ran into this when I wrote a -(CGFloat)[Vector2D length]. When called on an id pointer, the compiler chooses to compile that as if it was a call to -(NSUInteger)[NSData length], and does math on that int; not by casting, but by interpreting the bits as an int. This is fine, and not unexpected given that this is ObjC. However, emitting the int math code and not warning about it led to quite a bit of debugging before finding out why stuff went wrong.\r\n\r\nOutput of program is:\r\n2011-01-22 19:56:10.907 lengthTest[42053:a0f] Hello, World! 4294971392.000000\r\nbecause the compiler interprets the bits in the float as an int and does math on that (addq instead of addsd)."
+    email: joachimb@gmail.com
+    modified: "2011-08-28T05:38:15.370862Z"
+    number: "8903819"
+    number_intvalue: 8903819
+    originated: 22-Jan-2011 08:03 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: iOS SDK 4.3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Wrong method signature chosen without warning on CGFloat<>NSUInteger conflict

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8339557"
+    labels:
+        datastore_id: "854401"
+data:
+    classification: Other Bug
+    created: "2010-11-11T22:15:10.096172Z"
+    description: "21-Aug-2010 05:15 PM J Tyler Bindon:\r\nSummary: \r\n\r\nThe NSXMLNode method - (NSArray *)nodesForXPath:(NSString *)xpath error:(NSError **)error can return results outside current context when using // operator in some cases.\r\n\r\nSteps to Reproduce:\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\nint main (int argc, const char * argv[]) {\r\n    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];\r\n\r\n\tNSError *error = nil;\r\n\r\n\tNSString *xmlString = \r\n\t@\"<Document>\\\r\n\t<Node><Node><Node>\\\r\n\t    <Text>text1</Text>\\\r\n\t    <Text>text2</Text>\\\r\n\t</Node></Node></Node>\\\r\n\t<Node><Node><Node>\\\r\n   \t    <Text>text3</Text>\\\r\n\t    <Text>text4</Text>\\\r\n\t</Node></Node></Node>\\\r\n\t</Document>\";\r\n\t\r\n\t\r\n\tNSXMLDocument *xmlDoc = [[[NSXMLDocument alloc] initWithXMLString:xmlString options:NSXMLDocumentTidyXML error:&error] autorelease];\r\n\tif (!xmlDoc) {\r\n\t\tNSLog( @\"%@\", [error userInfo] );\r\n\t\tassert( 0 );\r\n\t}\r\n\t\r\n\tNSXMLNode *topNode = [[xmlDoc rootElement] childAtIndex:0];\r\n\t\r\n\tNSXMLNode *childNode = [topNode childAtIndex:0];\r\n\tNSLog( @\"%@\", childNode );\r\n\tNSArray *childText = [childNode nodesForXPath:@\".//text()\" error:&error];\r\n\tNSLog( @\"%@\", childText );\r\n\t\t\r\n\tNSXMLNode *grandchildNode = [childNode childAtIndex:0];\r\n\tNSLog( @\"%@\", grandchildNode );\r\n\tNSArray *grandchildText = [grandchildNode nodesForXPath:@\".//text()\" error:&error];\r\n\tNSLog( @\"%@\", grandchildText );\r\n\t\r\n    [pool drain];\r\n    return 0;\r\n}\r\n\r\nExpected Results:\r\n\r\n2010-08-21 18:00:51.803 TestApp[80692:a0f] <Node><Node><Text>text1</Text><Text>text2</Text></Node></Node>\r\n2010-08-21 18:00:51.808 TestApp[80692:a0f] (\r\n    text1,\r\n    text2\r\n)\r\n2010-08-21 18:00:51.809 TestApp[80692:a0f] <Node><Text>text1</Text><Text>text2</Text></Node>\r\n2010-08-21 18:00:51.810 TestApp[80692:a0f] (\r\n    text1,\r\n    text2,\r\n)\r\n\r\nActual Results:\r\n\r\n2010-08-21 18:00:51.803 TestApp[80692:a0f] <Node><Node><Text>text1</Text><Text>text2</Text></Node></Node>\r\n2010-08-21 18:00:51.808 TestApp[80692:a0f] (\r\n    text1,\r\n    text2\r\n)\r\n2010-08-21 18:00:51.809 TestApp[80692:a0f] <Node><Text>text1</Text><Text>text2</Text></Node>\r\n2010-08-21 18:00:51.810 TestApp[80692:a0f] (\r\n    text1,\r\n    text2,\r\n    text3,\r\n    text4\r\n)\r\n\r\nRegression:\r\n\r\nOnly tested on 10.6.4.\r\n\r\nNotes:\r\n\r\nThe XPath specification is available at http://www.w3.org/TR/xpath/\r\n\r\nThe operator // is defined to be equivalent to /descendant-or-self::node()/ which should only be searching within the current context node. The definition for nodesForXPath states that the receiver is used as the context node. \"The receiver acts as the context item for the query (“.”).\" It appears that the search is continuing beyond the descendant-or-self axis into the following axis in some cases."
+    email: tyler.bindon@gmail.com
+    modified: "2011-08-28T05:40:09.129365Z"
+    number: "8339557"
+    number_intvalue: 8339557
+    originated: 21-Aug-2010 05:15 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.4
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: nodesForXPath can return results outside current context when using // operator

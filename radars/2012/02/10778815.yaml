@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10778815"
+    labels:
+        datastore_id: "1513407"
+data:
+    classification: Enhancment
+    created: "2012-02-20T23:43:34.049353Z"
+    description: "30-Jan-2012 04:23 PM Richard Heard:\r\nNeed a way to determine if additional overlay UIWindows should rotate with main.\r\n(Based on the main windows root view controllers decision wether or not to auto-rotate)\r\n\r\n\r\nHere is the deal. \r\nIm a window sitting up above the main app window\r\nI'm registered for device orientation change notifications \r\n(\r\n[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications]; \r\n[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];\r\n)\r\ni receive an orientation changed notification\r\nbefore i handle the orientation change in my window i need to find out if the main app UI will be rotating or not.\r\nthe only way i can think of querying this is via a call to [[[[UIApplication sharedApplication] keyWindow] rootViewController] shouldAutorotateToInterfaceOrientation:newOrientation] passing in the currentDeviceOrientation\r\n\r\nThis however does not actually work because when i set my overlay window to no longer be hidden, my overlayView is returned as the keyWindow. \r\nMy overlay view has no controller associated with it, hence has no rootViewController. \r\nEven if i did have a controller associated with my window, I'm actually interested in knowing if the main app UI will be rotating or not.\r\n\r\nThis seems like a deficiency in UIWindow etc\r\n\r\n\r\nSome other related issues that make things harder:\r\n-- Device orientation and interface orientation are flipped in landscape\r\n-- pre iOS5 if a user calls [window addSubview:] is the rootViewController guaranteed to be populated?\r\n-- UIWindow keyWindow is not necessarily the apps main window (it could be any current alert / overlay etc)\r\n\r\nPossible additions that would make this stuff easier:\r\n-- Explicit notifications for when the main app window will / did rotate, which include the animated flag\r\n-- UIApplication could expose a mainWindow property. (which always pointed to the window of the rootViewController that is asked about autorotation)\r\n-- every window that has a rootViewController could be asked shouldAutorotateToInterfaceOrientation:newOrientation, this would make it easier for accessory windows to channel their response from the mainWindow property on UIApplication mentioned in the precious point.\r\n-- Have a way to specifically turn autorotation on and off for additional windows, either by use of the previous lines controller goop, or a flag on the window itself.\r\n\r\n\r\n-------a possible (hacky) solution\r\nRegister and use the UIApplicationWillChangeStatusBarOrientationNotification to detect main window orientation changes. \r\nOn receipt transform our accessory windows for this new orientation.\r\nThis seems like a hack in that we are basing our accessory windows transforms off of the status bars orientation, not the main app windows orientation. \r\nOther code could specifically call [UIApplication setStatusBarOrientation:] and our overlay window would rotate but the main window would not.\r\n\r\nHelp."
+    email: heardrwt@gmail.com
+    modified: "2012-02-20T23:43:34.049527Z"
+    number: "10778815"
+    number_intvalue: 10778815
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: iphone SDK
+    product_version: ""
+    reproducible: NA
+    resolved: ""
+    status: Open
+    title: Need a way to determine if additional overlay UIWindows should rotate with main.

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17211521"
+    labels:
+        datastore_id: "4824502538076160"
+data:
+    classification: ""
+    created: "2014-06-07T04:24:03.136731Z"
+    description: "Summary:\r\nAttempting to create an \"ExtAudioFileOpenURL\" from Swift causes the program to subsequently crash with a memory-related error.\r\n\r\nSteps to Reproduce:\r\n================================================\r\n\timport AVFoundation\r\n\r\n\tlet path = NSBundle.mainBundle().pathForSoundResource( \"Glass.aiff\" )\r\n\tlet audio_path = NSURL.fileURLWithPath( path )          \r\n\r\n\tvar unmanaged_audio_file: Unmanaged<ExtAudioFile>?\r\n\tvar err = ExtAudioFileOpenURL( audio_path, &unmanaged_audio_file )\r\n\tvar audio_file: ExtAudioFile = unmanaged_audio_file!.takeRetainedValue()\r\n          \r\n\tprintln( \"ExtAudioFileOpenURL error code: \\(err)\" )\r\n\r\n\tExtAudioFileDispose( audio_file )\r\n================================================\r\n\r\nExpected Results:\r\nI expect to see the output \"ExtAudioFileOpenURL error code: 0\"\r\n\r\nActual Results:\r\nWhile I do see the output \"ExtAudioFileOpenURL error code: 0\", the program subsequently crashes: with the message: \" EXC_BAD_ACCESS(code=1, address=0x...)\"\r\n\r\n\r\n\r\nVersion:\r\n System Version:\tOS X 10.9.3 (13D65)\r\n Kernel Version:\tDarwin 13.2.0\r\n\r\nNotes:\r\nOne of your engineers replied to my post in the Forums:\r\n\r\nhttps://devforums.apple.com/message/977528#977528\r\n\r\n\"This is a bug in the Swift SDK. Swift thinks ExtAudioFileRef is a CoreFoundation-style object that can retained and released, but that is not true. Please file a bug report so we can fix that.\r\n \r\nI can't think of any workaround that will convince Swift not to try to retain and release your ExtAudioFileRef objects.\"\r\n\r\nConfiguration:\r\nXcode Version 6.0 (6A215l)"
+    email: charlesism.com@gmail.com
+    modified: "2014-06-07T05:07:00.491544Z"
+    number: "17211521"
+    number_intvalue: 17211521
+    originated: 06-Jun-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Swift
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Crash when using "ExtAudioFileRef"'

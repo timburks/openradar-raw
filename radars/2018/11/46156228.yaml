@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "46156228"
+    labels:
+        datastore_id: "5037818137018368"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2018-11-18T16:21:07.072179Z"
+    description: "Summary:\r\nWe see crashers in the crash reporting of PDF Viewer in the form of UICollectionView (…) was deallocated while an update was in flight.\n\nThis seems to be an implementation detail in UIKit that is leaking out to developers. It’s not clear what “update in flight” means - did we forget to close an update group? Is an update scheduled and we have to wait a runloop before deallocating the view?\n\nSo far we are not able to reliably reproduce this issue, thus the radar has no sample project attached (sorry!)\n\nOur preferred fix would be to hide this implementation detail and allow to deallocate UICollectionView no matter in what state is currently is in.\n\n\nStack Trace (this is from an iOS 10 system, but this also happens on iOS 11 and iOS 12.*)\n\nFatal Exception: NSInternalInconsistencyException\n0  CoreFoundation                 0x1b537b3d __exceptionPreprocess\n1  libobjc.A.dylib                0x1a7bf067 objc_exception_throw\n2  CoreFoundation                 0x1b537a19 +[NSException raise:format:]\n3  Foundation                     0x1be2d52d (Missing)\n4  UIKit                          0x208de4df -[UICollectionView dealloc]\n5  CoreFoundation                 0x1b5291bb common_removeAllObjects\n6  CoreFoundation                 0x1b44cc85 -[__NSArrayM dealloc]\n7  libobjc.A.dylib                0x1a7d9259 objc_object::sidetable_release(bool)\n8  libobjc.A.dylib                0x1a7d97a1 (anonymous namespace)::AutoreleasePoolPage::pop(void*)\n9  UIKit                          0x2076202d -[UIView dealloc]\n10 libobjc.A.dylib                0x1a7d97a1 (anonymous namespace)::AutoreleasePoolPage::pop(void*)\n11 CoreFoundation                 0x1b444f49 _CFAutoreleasePoolPop\n12 CoreFoundation                 0x1b4f1e23 __CFRunLoopRun\n13 CoreFoundation                 0x1b4451af CFRunLoopRunSpecific\n14 CoreFoundation                 0x1b444fd1 CFRunLoopRunInMode\n15 GraphicsServices               0x1cbefb41 GSEventRunModal\n16 UIKit                          0x207c7a53 UIApplicationMain\n17 Viewer                         0x25aa1 main (main.swift:12)\n18 libdyld.dylib                  0x1ac324eb start\r\n\r\nSteps to Reproduce:\r\n-\r\n\r\nExpected Results:\r\n-\r\n\r\nActual Results:\r\n-\r\n\r\nVersion:\r\niOS 12\r\n\r\nNotes:\r\nGoogling for this property looks like countless developer hours have been wasted, trying to work around these issues:\n\nhttps://github.com/facebookarchive/AsyncDisplayKit/issues/2612\nhttps://github.com/GitHawkApp/GitHawk/issues/1433\nhttps://github.com/GitHawkApp/GitHawk/issues/1441\nhttps://github.com/Instagram/IGListKit/issues/1127\nhttps://github.com/Citrrus/MBContactPicker/issues/66\nhttps://stackoverflow.com/questions/28713337/uicollectionview-delegate-deallocated-while-performing-reload\nhttps://stackoverflow.com/questions/39597503/crash-collection-view-layout-mylayout-was-deallocated-while-an-update-was-i\n\n(Internal link for my own reference: https://console.firebase.google.com/u/1/project/pspdfkit-pdf-viewer/crashlytics/app/ios:com.pspdfkit.viewer/issues/5b811de56007d59fcdc50cbc?time=last-seven-days&sessionId=e32e3fa31d69437cbe1356cda6ce856d_DNE_0_v2)"
+    email: steipete@gmail.com
+    modified: "2018-11-18T16:21:07.072425Z"
+    number: "46156228"
+    number_intvalue: 46156228
+    originated: 18-Nov-2018 05:21 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 12
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: UICollectionView was deallocated while an update was in flight

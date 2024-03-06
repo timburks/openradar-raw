@@ -1,0 +1,42 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22176638"
+    labels:
+        datastore_id: "5648359473807360"
+data:
+    classification: Other Bug
+    created: "2015-08-06T20:37:35.9306Z"
+    description: |-
+        Summary:
+        Adding an overload for `flatMap` that takes a function from `T -> U?` and then removes `.None` values resulting in value of the type `[U]` is super convenient to have in the standard lib, but _calling_ it `flatMap` is confusing and unnecessary. `flatMap` has a very specific meaning for a lot of people, and overloading it to mean something _completely different_ is adding a completely unneeded amount of complexity to a language trying to find its bearings.
+
+        If we keep the word `flatMap` limited to it’s application in other languages (cough Monads cough), we only have to learn/teach that version of `flatMap`. What you’ve introduced here is essentially `map` composed with what would be called `catMaybes` in Haskell (possibly `catOptionals` in Swift). `catOptionals` would be useful in the stdlib, and I can even see the use in creating a convenience function for `catOptionals . map`, but it _should not_ be overloading `flatMap`.
+
+        Steps to Reproduce:
+        Look in the standard lib for implementations of `flatMap` on `Array`
+
+        Expected Results:
+        Expect to see the common function signature of `[T] -> (T -> [U]) -> [U]`
+        Expect _not_ to see a new function with a different signature
+
+        Actual Results:
+        See a function with a signature closer to `catOptionals . map` instead of `flatten . map`
+
+        Regression:
+        This did not exist in Swift 1.2
+
+        Notes:
+        Provide additional information, such as references to related problems, workarounds and relevant attachments.
+    email: gordon@thoughtbot.com
+    modified: "2015-08-06T20:37:35.93094Z"
+    number: "22176638"
+    number_intvalue: 22176638
+    originated: 06-Aug-2015 04:37 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Swift 2.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: flatMap on Array with optional removal should be called something else

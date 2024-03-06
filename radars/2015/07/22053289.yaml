@@ -1,0 +1,43 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22053289"
+    labels:
+        datastore_id: "5426514749292544"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-07-29T17:15:33.99279Z"
+    description: |-
+        Summary:
+        Using a subclass of a subclass of a CIFilter written in Swift causes a crash. I've attached a very basic sample project that shows the problem.
+
+        From what I can tell this is what's happening: When instantiating the custom CIFilter subclass -[CIFilterClassInfo initWithClass:] is being called. That initializer tries to receive the type encoding of all instance variables that have the prefix 'input' in their name by calling ivar_getTypeEncoding and then classNameFromTypeEncoding. Because the instance variables have been created through properties in Swift this does not succeed, the return value of classNameFromTypeEncoding is nil and the classes of the instance variables are not added to an internal array (inputClasses). The console prints "CIFilter inputImage has a type that is not supported." at this point. This also happens for direct subclasses of CIFilter.
+
+        Further down in that method [inputClasses objectAtIndex:inputKeys.count - 1] is being called at which point the app crashes because inputClasses is an empty array. This only happens for subclass of subclasses because there is an if-clause which checks "if ([rbx superclass] != [CIFilter class])".
+
+        Steps to Reproduce:
+        1. Create a subclass of CIFilter and add at least one custom property that starts with "input"
+        2. Create a subclass of above subclass
+        3. Instantiate that subclass
+        4. App crashes
+
+        Expected Results:
+        The app should not crash and Swift properties work properly.
+
+        Actual Results:
+        The app does crash and Swift properties seem to cause problems.
+
+        Regression:
+        The "CIFilter property has a type that is not supported." problem occurs on iOS 9 beta 1 - beta 4. The crash did not happen with beta 1 IIRC. I did not try beta 2 or beta 3. Both problems don't occur on iOS 8.
+    email: sascha@evolved.io
+    modified: "2015-07-29T17:15:33.99299Z"
+    number: "22053289"
+    number_intvalue: 22053289
+    originated: 29-Jul-2015 07:15 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9 beta 4 (13A4305g)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CIFilter sub-subclasses written in Swift cause a crash

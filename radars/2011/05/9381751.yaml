@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9381751"
+    labels:
+        datastore_id: "1189401"
+data:
+    classification: Serious Bug
+    created: "2011-05-04T14:28:53.992909Z"
+    description: "Summary:\r\nOn some wifi networks, the iPhone stops receiving ARP responses after a set of procedures. This breaks establishment of connections between hosts on the local subnet with an EHOSTDOWN error.\r\n\r\nSteps to Reproduce:\r\n1. Put a Mac and an iPhone on the same wifi network\r\n2. Confirm that the Mac can ping and otherwise connect to the iPhone\r\n3. Lock the iPhone's screen and wait for the wifi to time out and disconnect.\r\n4. Unlock and let iPhone reconnect to the wifi\r\n\r\nExpected Results:\r\n4. Ping and other local subnet communication works fine\r\n\r\nActual Results:\r\n4. Ping fails with \"host is down\", connect() fails with EHOSTDOWN\r\n\r\nNotes:\r\nIt appears that gratuitous ARPs correctly update the device's ARP cache, but that ARP responses to queries sent by the device are sometimes ignored by the device. \r\n\r\nThis is only reproducible on a few wifi networks and even then, only sometimes.\r\n\r\nThe reason why we suspect the OS rather than the network is because the way we encountered this problem: our iPhone app connects to our Mac app with TCP, but only after receiving an UDP broadcast announcing the Mac app's existence on the network. Since we're receiving the UDP packet, there is obviously some sort of connection between the Mac and iOS app.\r\n\r\nWe have encountered the problem on several devices; we jailbroke one of them to capture network logs with tcpdump, and did testing with ping and Safari (to apache on the Mac) to confirm that the problem was not in our app (since ping and Safari exhibited the same problem).\r\n\r\nUsing tcpdump we thought we found that the iPhone did not receive the ARP response from the Mac, even though we clearly saw the response going out from the Mac in Wireshark.\r\n\r\nTaking the Mac's wifi down and up again seems to temporarily fix the problem; perhaps because of the gratuitous ARP that is sent when this happens.\r\n\r\nAlternative steps to reproduce:\r\n1. Mac joins wifi\r\n2. iPhone joins wifi\r\n3. iPhone lists `arp -an`:\r\n? (192.168.1.1) at 0:9:f:d0:86:51 on en0 [ethernet]\r\n4. Mac pings  iPhone.\r\n5. Mac successfully looks up IP for iPhone with ARP.\r\n6. iPhone receives ping. iPhone tries to look up Mac with ARP; fails.\r\n7. iPhone lists `arp -an`:\r\n? (192.168.1.1) at 0:9:f:d0:86:51 on en0 [ethernet]\r\n? (192.168.1.84) at (incomplete) on en0 [ethernet]\r\n8. Mac shows \"Request timeout for icmp_seq [n]\""
+    email: joachimb@gmail.com
+    modified: "2011-08-28T05:36:50.211409Z"
+    number: "9381751"
+    number_intvalue: 9381751
+    originated: 04-May-2011 04:27 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 4.3.1
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: ARP responses not getting through after wifi powerdown

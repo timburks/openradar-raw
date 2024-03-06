@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24641873"
+    labels:
+        datastore_id: "4987221098627072"
+data:
+    classification: Important
+    created: "2016-02-13T02:38:55.2427Z"
+    description: "Summary:\r\nWhen defining a custom modulemap in a Framework with a non-standard umbrella header, the Objective-C Generated Interface Header (ModuleName-Swift.h) doesn't contain the correct #import if the Swift classes in the module extend any of the ObjC classes in the same module.\r\n\r\nIn the provided sample project, there are 2 App targets and 2 Framework targets, with the same exact source files.\r\n\r\nThe first is a standard setup, where the modulemap is generated automatically and the umbrella header is \"Module.h\". In this scenario everything works as expected.\r\n\r\nThe second is a custom setup, where the modulemap is explicitly defined with a custom umbrella header \"ModuleName-umbrella.h\". In this scenario, the generated \"ModuleName-Swift.h\" will have an #include pointing to an non-existent (default/hardcoded) header (#import <ModuleName/ModuleName.h>), when it should be pointing to the umbrella header defined in the given modulemap (#import <ModuleName/ModuleName-umbrella.h>).\r\n\r\nSteps to Reproduce:\r\n1. Open provided project.\r\n2. Build and Run \"StandardFrameworkApp\" target, the app should build and run.\r\n3. Build and Run \"CustomFrameworkApp\" target, the app will fail to build.\r\n\r\n\r\nExpected Results:\r\nWhen building \"CustomFrameworkApp\" target, the app should build and run.\r\n\r\nMore specifically, the generated Objective-C Generated Interface Header should honor the umbrella header defined in the custom modulemap's when #import'ing the framework's own code.\r\n\r\nActual Results:\r\nThe generated Objective-C Generated Interface Header doesn't honor the umbrella header defined in the custom modulemap's, and assumes the default value \"ModuleName.h\" when generating the #import for the framework's own code.\r\n\r\nIn the provided project, when the \"CustomFrameworkApp\" fails to build, if you change the line:\r\n\r\n\"#import <CustomMixedFramework/CustomMixedFramework.h>\"\r\n\r\nto:\r\n\r\n\"#import <CustomMixedFramework/CustomMixedFramework-umbrella.h>\"\r\n\r\nthen the target will correctly build and run, proving that the fix is quite simple\r\n\r\n\r\n\r\nVersion:\r\nXcode 7.2.1 and Xcode 7.3b2\r\n\r\nNotes:\r\nThere's also an issue in the indexer, which doesn't correctly detect the framework's module name when importing using \"@import ModuleName;\". However, the app builds and runs fine.\r\n\r\nConfiguration:\r\nAny Mac with Xcode installed\r\n\r\nAttachments:\r\n'ObjCGeneratedInterfaceHeaderTests.zip' was successfully uploaded."
+    email: p4checo@gmail.com
+    modified: "2016-02-13T02:48:58.85876Z"
+    number: "24641873"
+    number_intvalue: 24641873
+    originated: 13/02/2016
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode
+    product_version: Xcode 7.2.1, 7.3b2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Objective-C Generated Interface Header doesn't respect custom modulemap's umbrella header

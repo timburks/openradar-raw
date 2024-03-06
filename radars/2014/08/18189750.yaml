@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18189750"
+    labels:
+        datastore_id: "6379700800716800"
+data:
+    classification: ""
+    created: "2014-08-31T20:23:37.753017Z"
+    description: "Summary:\r\nIt is impossible to using Core Foundation collections directly in Swift, because `CFDictionaryGetValue`, `CFArrayGetValueAtIndex`, etc return `UnsafePointer` (and you can't downcast that to anything useful). So, we're stuck casting the collection to its bridged Foundation counterpart.\r\n\r\nWhich leads us to the problem: kSecSharedPassword is declared as `Unmanaged<AnyObject>!` in the Swift header. Since `kSecSharedPassword` is meant to be used as a key to a dictionary, it should be declared as NSCopying.\r\n\r\nSteps to Reproduce:\r\nAttempt to get a password with `SecRequestSharedWebCredential()` in Swift. You'll end up with code that looks a bit like this:\r\n\r\nSecRequestSharedWebCredential(nil, nil) { (cfCredentialsArray: CFArray!, error: CFError!) -> Void in\r\n    let credentialsArray = cfCredentialsArray as NSArray\r\n    if let credentials = credentialsArray.objectAtIndex(0) as? NSDictionary {\r\n        let username = credentials[kSecAttrAccount] as? String\r\n        let password = credentials[kSecSharedPassword] as? String\r\n        let service = credentials[kSecAttrService] as? String\r\n        NSLog(\"username: %@, password: %@, service: %@\", username, password, service)\r\n    }\r\n}\r\n\r\nExpected Results:\r\nThe code should compile.\r\n\r\nActual Results:\r\n>> let password = credentials[kSecSharedPassword] as? String\r\n\r\nType 'Unmanaged<AnyObject>!' does not conform to protocol 'NSCopying'\r\n\r\nVersion:\r\nXcode Version 6.0 (6A280e), iOS 8 SDK, beta 5\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 5s Verizon\r\n\r\nAttachments:"
+    email: tangphillip@gmail.com
+    modified: "2016-05-09T22:07:29.33447Z"
+    number: "18189750"
+    number_intvalue: 18189750
+    originated: 31-Aug-2014 04:18 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: Xcode Version 6.0 (6A280e), iOS 8 SDK, beta 5
+    reproducible: Always
+    resolved: ""
+    status: Closed
+    title: kSecSharedPassword is unusable in Swift

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8699385"
+    labels:
+        datastore_id: "912401"
+data:
+    classification: Other Bug
+    created: "2010-11-24T16:43:14.300315Z"
+    description: "24-Nov-2010 11:39 AM Jim Dovey:\r\nSummary:\r\n\r\nIf -[UIView setNeedsLayout] is called on a background thread which then exits, the pthread cleanup process causes CoreAnimation to run the layout process for that view's layer.\r\n\r\nSteps to Reproduce:\r\n\r\nSpawn a background thread and call -setNeedsLayout on a view from that thread. Then exit the thread.\r\n\r\nExpected Results:\r\n\r\nThe main thread would check the 'needsLayout' flag and perform layout there.\r\n\r\nActual Results:\r\n\r\nCoreAnimation, in cleaning up some thread-specific-data, causes -layoutSubviews to be invoked on the background thread, which is in the process of shutting down, thus causing parts of the Foundation runtime to go awry (specifically, [[NSThread currentThread] threadDictionary] returns nil, causing problems for my app but also potentially for other system APIs).\r\n\r\nRegression:\r\n\r\nUnknown\r\n\r\nNotes:\r\n\r\nI have filed a companion bug to this one suggesting that the documentation around -setNeedsLayout should be updated to specifically state that the method should only be called from the main thread. This is at <rdar://problem/8699372>."
+    email: jimdovey@gmail.com
+    modified: "2011-08-28T05:38:54.977134Z"
+    number: "8699385"
+    number_intvalue: 8699385
+    originated: 2010/11/24
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "4.2"
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: CoreAnimation should not perform layout as part of thread shutdown

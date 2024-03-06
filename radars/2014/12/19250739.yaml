@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19250739"
+    labels:
+        datastore_id: "5794406481264640"
+data:
+    classification: Other Bug
+    created: "2014-12-15T17:14:22.903997Z"
+    description: "Summary:\r\nI have a UITextField which should not permit leading whitespace, so I implemented textField(textField:shouldChangeCharactersInRange:replacementString:) and return false for all edits that would lead to a content with leading whitespace. This works as expected. \r\n\r\nIf the textField is empty and I press the space bar multiple times those are rejected and the textField stays empty. If I tap on a quicktype suggestion after doing that the inserted suggestion has multiple whitespaces in front of it. The delegate method therefor rejects the quicktype suggestion.\r\n\r\nSteps to Reproduce:\r\nSteps to reproduce\r\n\r\n1. Run attached demo project\r\n2. Enter any letter in case Quicktype is not ready yet. Delete this letter\r\n3. Press space bar one or more times\r\n4. Tap any quicktype suggestion (e.g.: \"I'm\")\r\n\r\n\r\nExpected Results:\r\nQuicktype inserts the suggestion into the textField\r\n\r\n\r\nActual Results:\r\nQuicktype suggestion is rejected because it contains leading whitespace (e.g.: \"   I'm\")\r\n\r\n\r\nVersion:\r\niOS 8.1.2\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niOS Simulator, iPhone 5c\r\n\r\nAttachments:\r\n'QuicktypeBug.zip' was successfully uploaded.\r\n\r\n\r\n\r\nI asked a stackoverflow question about that problem: \r\nhttp://stackoverflow.com/q/27361566/457406\r\n\r\nThe UITextFieldDelegate method:\r\n\r\n    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {\r\n        let currentText = textField.text as NSString\r\n        let proposedText = currentText.stringByReplacingCharactersInRange(range, withString: string)\r\n        \r\n        if proposedText.hasPrefix(\" \") {\r\n            // Don't allow space at beginning\r\n            println(\"Ignore text \\\"\\(proposedText)\\\"\")\r\n            \r\n    /*\r\n            // workaround\r\n            if textField.text == \"\" && countElements(string) > 1 {\r\n                // mass insert into empty field. probably from QuickType\r\n                // so strip whitespace and set text\r\n                let trimmedString = proposedText.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())\r\n                println(\"Inserted \\\"\\(trimmedString)\\\" with Quicktype. \")\r\n                textField.text = trimmedString\r\n            }\r\n    */\r\n            \r\n            return false\r\n        }\r\n        return true\r\n    }"
+    email: matthias.bauch@gmail.com
+    modified: "2014-12-15T17:14:22.904243Z"
+    number: "19250739"
+    number_intvalue: 19250739
+    originated: 15-Dec-2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "8.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Tapping Quicktype suggestion inserts leading whitespace

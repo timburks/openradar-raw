@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14182015"
+    labels:
+        datastore_id: "3149402"
+data:
+    classification: Enhancement
+    created: "2013-06-25T23:09:25.888485Z"
+    description: "17-Jun-2013 04:31 PM Jason Gregori:\r\nSummary:\r\n\r\nIs there anyway to use background NSURLSessions without `-application:handleEventsForBackgroundURLSession:completionHandler:` ever getting called on my application delegate?\r\n\r\nI work on an SDK and we would love to use NSURLSession for sending our SDK data back to our servers (we want the data to be sent in the background without requiring the app to stay running). However, we do not want to interfere with the main application delegate since they won't know what they are seeing and we don't want them to have to worry about it.\r\n\r\nIn addition, we don't really need to know when the request completed right away. It is fine for us to wait until the next time the app runs to get our delegate callbacks. If the app is completely shut down (not suspended), then on startup we can create a new NSURLSession with a matching identifier to the old one and continue to get delegate callbacks there. \r\n\r\nPreferably, I would just want a property on NSURLSessionConfiguration that disabled app delegate callbacks. It would behave like:\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nSo what I would want is: Create a background NSURLSession as normal. Set special property on NSURLSessionConfiguration. If the app goes into the background or shuts down completely, and there is a delegate call needed...\r\n\r\n\r\nExpected Results:\r\n\r\n... app does not get launched into the background. On next start up, when matching NSURLSession is created, delegate calls stream in.\r\n\r\n\r\nActual Results:\r\n\r\n... app gets launched into the background. Developer (user of our sdk) does not handle our NSURLSession correctly or just forgets to handle it.\r\n\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\n\r\nThanks!\r\n\r\n25-Jun-2013 04:04 PM Jason Gregori:\r\nNote:\r\n\r\nWithout something like this we are forced to continue to use NSURLConnection and background tasks.\r\n\r\n29-Jul-2013 11:21 AM Apple Developer Bug Reporting Team :\r\nEngineering has requested the following information in order to further investigate this issue:\r\n\r\nDoes this issue also occur with iOS 7 beta 4 (11A4435d)? Please verify with this release, and update your report with the results.\r\n\r\n06-Aug-2013 03:05 PM Jason Gregori:\r\nWow this is awesome! Thank you so much! `sessionSendsLaunchEvents` sounds like exactly what I wanted. There isn't any documentation yet, but I assume this works exactly the same it just doesn't launch the app when a connection fails or succeeds? I would just create a new matching session on next start up and get any pending notifications at that time?\r\n\r\n19-Aug-2013 06:18 PM Apple Developer Bug Reporting Team :\r\nIt is yes for both your question."
+    email: jasongregori@gmail.com
+    modified: "2013-08-27T18:22:05.28816Z"
+    number: "14182015"
+    number_intvalue: 14182015
+    originated: June 17, 2013
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "7.0"
+    reproducible: ""
+    resolved: Yes
+    status: Closed
+    title: Background NSURLSession without application delegate callback

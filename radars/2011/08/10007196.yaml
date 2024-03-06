@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10007196"
+    labels:
+        datastore_id: "1315405"
+data:
+    classification: ""
+    created: "2011-08-23T22:09:13.798774Z"
+    description: "23-Aug-2011 12:25 PM Rafael Espindola:\r\nGiven\r\n\r\nstruct foo {\r\n  foo();\r\n  ~foo();\r\n  foo(const foo&);\r\n  void bar() const;\r\n};\r\ntypedef void (^bar)();\r\nvoid g(bar x);\r\nvoid f() {\r\n  foo x;\r\n  g(^{x.bar();});\r\n}\r\n\r\nllvm-gcc produces the following IL\r\n\r\ndefine internal void @__f_block_invoke_1(%struct.__block_literal_1* %.block_descriptor) nounwind optsize ssp {\r\nentry:\r\n  %x = alloca %struct.foo, align 8                ; <%struct.foo*> [#uses=3]\r\n  %0 = getelementptr inbounds %struct.__block_literal_1* %.block_descriptor, i64 0, i32 5 ; <%struct.foo*> [#uses=1]\r\n  call void @_ZN3fooC1ERKS_(%struct.foo* %x, %struct.foo* %0) nounwind\r\n  call void @_ZN3fooD1Ev(%struct.foo* %x) nounwind\r\n  call void @_ZNK3foo3barEv(%struct.foo* %x) nounwind\r\n  ret void\r\n}\r\n\r\nNote the destructor being called on x just before it is passed to bar. Testing shows that gcc-4.2 has a similar bug."
+    email: rafael.espindola@gmail.com
+    modified: "2011-08-28T05:51:51.763386Z"
+    number: "10007196"
+    number_intvalue: 10007196
+    originated: 23-Aug-2011 12:25 PM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: open
+    title: gcc/llvm-gcc can call a destructor before the object is used in a block

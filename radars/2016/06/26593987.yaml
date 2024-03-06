@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26593987"
+    labels:
+        datastore_id: "4985807114862592"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2016-06-02T04:14:43.67215Z"
+    description: "Summary:\r\nUsing ImageIO and CoreGraphics, getting the properties of a particular image will crash 100% of the time\r\n\r\nSteps to Reproduce:\r\n1) Run Sample project\r\n\r\nExpected Results:\r\nNo crash, image is shown and image properties are logged\r\n\r\nActual Results:\r\nCrash when getting the image properties\r\n\r\nHere's the code outside of the project:\r\n\r\nstatic UIImage *LoadImageFromData(NSData *data, BOOL logImageProperties)\r\n{\r\n    NSDictionary *options = @{ (NSString *)kCGImageSourceShouldCache : @NO };\r\n    CGImageSourceRef imageSourceRef = CGImageSourceCreateIncremental((__bridge CFDictionaryRef)options);\r\n    CGImageSourceUpdateData(imageSourceRef, (__bridge CFDataRef)data, NO);\r\n    if (logImageProperties) {\r\n        // This crashes 100% of the time with the given image resource\r\n        NSDictionary *imageProperties = CFBridgingRelease(CGImageSourceCopyPropertiesAtIndex(imageSourceRef, 0, NULL));\r\n        NSLog(@\"%@\", imageProperties);\r\n    }\r\n    CGImageRef cgImage = CGImageSourceCreateImageAtIndex(imageSourceRef, 0, NULL);\r\n    UIImage *image = (cgImage) ? [UIImage imageWithCGImage:cgImage scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp] : nil;\r\n    CFRelease(cgImage);\r\n    CFRelease(imageSourceRef);\r\n    return image;\r\n}\r\n\r\nHere's the image URL:\r\nhttps://pbs.twimg.com/profile_images/1205320369/logo_only_final_reasonably_small.jpg"
+    email: nobrien@twitter.com
+    modified: "2016-07-20T21:41:15.54161Z"
+    number: "26593987"
+    number_intvalue: 26593987
+    originated: 01-Jun-2016 09:13 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 9
+    reproducible: Always
+    resolved: Fixed in iOS 10 betas
+    status: Open
+    title: Crash on jpg image in ImageIO (100% repro)

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23069237"
+    labels:
+        datastore_id: "5055926281175040"
+data:
+    classification: Serious Bug
+    created: "2015-10-12T13:05:31.43461Z"
+    description: "This is a duplicate of rdar://20622011\n\nSummary:\r\nPrior to Xcode 6, we could extract an xcappdata package from a device and use it in either a device or simulator to prepopulate data. This was useful for stress/scale testing, migration testing, or reproducing pathological cases. I described its use in a blog post here: http://corporationunknown.com/blog/2014/07/10/preloading-development-data-into-your-ios-app/\r\n\r\nIn Xcode 6, the ability to use the package on a simulator broke (possibly due to the simulator disk directory rearrangement?) and would repeatedly post an alert saying the data couldn't be loaded, but will on next launch of the app in the simulator. Unfortunately, relaunching would simply present the same alert, again and again.\r\n\r\nNow in Xcode 6.3, it doesn't even seem to try. The xcappdata package is not installed in the simulator, and no alert is presented. It just silently fails.\r\n\r\nSteps to Reproduce:\r\n1. Create a new project using the “Master-Detail Application” template that uses Core Data.\r\n2. Run the application on a device.\r\n3. Add 5 items.\r\n4. You may stop running the application on your device—the following steps aren’t affected by it running or not.\r\n5. Open the Xcode Organizer, select the “Applications” section of your device under the Devices tab.\r\n6. Select your test application. You should see a bunch of folders and files populate the “Data files in Sandbox”. (This may not populate right away, so be patient.)\r\n7. Click the “Download” button at the bottom and save the xcappdata package to your Desktop, giving it a descriptive name like 'v0 - 5 items.xcappdata'.\r\n8. Click “Delete” to remove the application from the device—we will try to start with a clean install for the next steps.\r\n9. Create a new Group in your project. I name mine “Test Data”.\r\n10. Add v0 - 5 items.xcappdata to the group.\r\n11. Select “Copy items into group folder”.\r\n12. Do not add it to any targets.\r\n13. Launch the app while holding the Option key—either Option-clicking the Run button, or Option-Command-R. A scheme configuration sheet will appear.\r\n14. In the Options tab, select v0 - 5 items.xcappdata from the Application Data menu and click “Run”.\r\n\r\nExpected Results:\r\nThe app would launch with 5 records pre-installed, based on the xcappdata package.\r\n\r\nActual Results:\r\nThe app always launches fresh.\r\n\r\nVersion:\r\nXcode 6.3 (6D570), OS X 10.10.3 (14D136)\r\n\r\nNotes:\r\nA similar report is known to have been filed as rdar://20621826\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'AppDataTest.zip' was successfully uploaded."
+    email: Bernhard.Loibl@googlemail.com
+    modified: "2015-10-12T13:05:31.43481Z"
+    number: "23069237"
+    number_intvalue: 23069237
+    originated: 12-Oct-2015 03:05 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 7.0.1 (7A1001)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 6.3: Cannot use xcappdata package in simulator'

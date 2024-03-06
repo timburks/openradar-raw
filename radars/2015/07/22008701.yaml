@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22008701"
+    labels:
+        datastore_id: "6207994517782528"
+data:
+    classification: Serious Bug
+    created: "2015-07-27T12:43:40.38082Z"
+    description: "Summary:\r\nBuilding a project randomly fails if it refers to a module which exists for both iOS and OS X with the same name. Sometimes it would correctly build the iOS version and succeed. Sometimes it would incorrectly try to build the OS X version which fails because the OS X cannot be compiled with iOS headers.\r\n\r\nI have tried different variants of \"enabling modules\", \"defines module\" and enabling framework auto-linking. As far as I can tell, the problem goes away if I disable \"defines module\" for the OS X framework, but that cannot be the solution.\r\n\r\nAs a developer I would expect for xcodebuild to always build the same dependent targets and not make non-deterministic/incorrect choices.\r\n\r\nSteps to Reproduce:\r\n1. Clone the DTRichTextEditor project from github\r\n\r\ngit clone --recursive https://github.com/Cocoanetics/DTRichTextEditor.git \r\n\r\n2. Change into the cloned folder\r\n\r\ncd DTRichTextEditor\r\n\r\n3. Build the demo app:\r\n\r\nxcodebuild -project DTRichTextEditor.xcodeproj -scheme \"Demo App\" build -sdk iphonesimulator -arch x86_64 | grep \"^=\\|^*\"\r\n\r\n4. Repeat step 3 a couple of times\r\n\r\nExpected Results:\r\n- The build should always show ** BUILD SUCCEEDED **\r\n- It should do that every time\r\n- The output of step 3 should be:\r\n\r\n=== BUILD TARGET Resource Bundle OF PROJECT DTLoupe WITH CONFIGURATION Debug ===\r\n=== BUILD TARGET Static Library OF PROJECT DTLoupe WITH CONFIGURATION Debug ===\r\n=== BUILD TARGET DTFoundation (iOS) OF PROJECT DTFoundation WITH CONFIGURATION Debug ===\r\n=== BUILD TARGET Static Library OF PROJECT DTWebArchive WITH CONFIGURATION Debug ===\r\n=== BUILD TARGET DTCoreText (iOS) OF PROJECT DTCoreText WITH CONFIGURATION Debug ===\r\n=== BUILD TARGET DTRichTextEditor (iOS) OF PROJECT DTRichTextEditor WITH CONFIGURATION Debug ===\r\n=== BUILD TARGET Demo App OF PROJECT DTRichTextEditor WITH CONFIGURATION Debug ===\r\n** BUILD SUCCEEDED **\r\n\r\nActual Results:\r\n- Some builds succeed, some builds fail\r\n- when the build fails you can see in the output that \"DTFoundation (OS X)\" is included there\r\n- when a build fails the output of step 3 is:\r\n\r\n=== BUILD TARGET Resource Bundle OF PROJECT DTLoupe WITH CONFIGURATION Debug ===\r\n=== BUILD TARGET Static Library OF PROJECT DTLoupe WITH CONFIGURATION Debug ===\r\n=== BUILD TARGET DTFoundation (OSX) OF PROJECT DTFoundation WITH CONFIGURATION Debug ===\r\n=== BUILD TARGET DTFoundation (iOS) OF PROJECT DTFoundation WITH CONFIGURATION Debug ===\r\n=== BUILD TARGET Static Library OF PROJECT DTWebArchive WITH CONFIGURATION Debug ===\r\n=== BUILD TARGET DTCoreText (iOS) OF PROJECT DTCoreText WITH CONFIGURATION Debug ===\r\n** BUILD FAILED **\r\n\r\nVersion:\r\nXcode 6.4 (6E35b), OS X 10.10.5 (14F6a)\r\n\r\nNotes:\r\nHere's a Travis-CI build that worked, with an easier to read xctool log: https://travis-ci.org/Cocoanetics/DTRichTextEditor/builds/72820037\r\n\r\nAnd here's a Travis-CI that didn't just before. See line 683 where it fails to build a category on NSDocument which of course couldn't be built for iOS:\r\nhttps://travis-ci.org/Cocoanetics/DTRichTextEditor/builds/72819401"
+    email: oliver.drobnik@gmail.com
+    modified: "2015-08-09T14:35:45.6461Z"
+    number: "22008701"
+    number_intvalue: 22008701
+    originated: 27 July 2015
+    parent_number: "17310873"
+    product: Xcode
+    product_version: 6.4 (6E35b)
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/17310873
+    title: Xcode randomly builds dependent framework for wrong platform

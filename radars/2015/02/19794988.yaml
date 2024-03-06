@@ -1,0 +1,45 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19794988"
+    labels:
+        datastore_id: "6328609950138368"
+data:
+    classification: Other Bug
+    created: "2015-02-11T11:35:10.752889Z"
+    description: |-
+        Summary:
+        We embed a framework in our apps that is already signed by the framework vendor (with a certificate that is valid for our non-AppStore application). We thus wanted to keep the vendor signature instead of re-codesigning the framework with our certificate.
+        However, when I added this framework to the copy frameworks build phase in our application’s target, I ended up with an application package that was rejected by spctl because („some sealed resources are missing“).
+        Interestingly, „codesign -v“ did not flag this for the application package, but it turned out that the headers from the embedded framework were missing.
+        Originally, I figured I’d have to leave the „sign on copy“ checkbox signed in order to get things working, but when I verified my changes before committing the project changes to SCM, I noticed there is another attribute for the copied framework, named „RemoveHeadersOnCopy“, which apparently was set when I added the framework to the copy files build phase in Xcode 6.
+        Unfortunately, this flag is not reflected in Xcode’s UI, so it may really, really confuse developers that are trying to find out what is corrupting their application bundles…
+
+        (In this specific case, it was the HockeyApp framework, but the same issue might happen for other pre-signed frameworks sold by 3rd party vendors.)
+
+
+        Steps to Reproduce:
+        Create application target, add signed framework (containing embedded headers) to copy files build phase; uncheck the „sign on copy“
+
+        Expected Results:
+        Xcode should either leave the framework untouched, or indicate in the UI that the framework will be modified and the code-signature will break.
+        Ideally, it would have a checkbox that allows to toggle the state of the „RemoveHeadersOnCopy“ attribute. In addition, it should display a warning that an existing code-signature will be broken when „RemoveHeadersOnCopy“ is enabled, but „SignOnCopy“ is disabled.
+
+        Actual Results:
+        Xcode „silently“ removed the headers from the framework during the copy build phase, which broke the code signature. No warning was shown in the UI or when building that the code signature will be broken due to the copy phase stripping the headers, but the „sign on copy“ checkbox being disabled.
+        This left me with an invalid signature of my application package (actually of the embedded framework), which caused gatekeeper to reject the app.
+
+        Regression:
+        This did not happen in Xcode 5 or before. Also, projects created by Xcode 5 or earlier will not exhibit this problem unless new frameworks are added to the copy files build phase (which makes things worse, since it will appear to work for some frameworks, but not for others - depending on which version of Xcode was used to add them to the copy files build phase).
+    email: jum@mac.com
+    modified: "2015-02-11T11:35:10.753048Z"
+    number: "19794988"
+    number_intvalue: 19794988
+    originated: 11-Feb-2015 12:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Xcode 6 sets hidden "RemoveHeadersOnCopy" attribute for frameworks added to Copy Frameworks build phase, which is not reflected in the UI

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25520516"
+    labels:
+        datastore_id: "5029100586532864"
+data:
+    classification: Usability
+    created: "2016-04-04T02:13:26.13884Z"
+    description: "Summary:\r\nSince you need to do bitwise operations on it, using CGEventFlags when it is defined as a strong enum becomes basically impossible.\r\n\r\nEven conceptually it does not make much sense, the type is specifically designed to hold bitwise flags, not just the specific enumerated values listed.\r\n\r\nThere is not even any \"no flags\" constant defined.\r\n\r\nTrying to use CGEventFlags in code with strong enums is a complete nightmare.  Try implementing code like:\r\n\r\nCGEventFlags ef = 0;\r\nif ( test ) {\r\n  ef |= kCGEventFlagMaskShift;\r\n}\r\nCGEventSetFlags( keyEvent, ef );\r\n\r\nThe first line fails because 0 is not valid, and the third line fails because you can't do bitwise operations on enums.\r\n\r\nIf you instead use std::underlying_type<CGEventFlags>::type, then you are left casting it back for every call to the OS.\r\n\r\nIt is extremely ugly and inappropriate use of a strong enum - I'm sure there are other Flag cases as well which should not be strong enums.\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\nXcode 7.3, OS X 10.11.4\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: peter@stairways.com.au
+    modified: "2016-09-16T06:44:11.86853Z"
+    number: "25520516"
+    number_intvalue: 25520516
+    originated: 04-Apr-2016 10:12 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: SDK 10.11
+    reproducible: Always
+    resolved: Fixed in 10.12/XCode 8
+    status: Closed
+    title: CGEventFlags (and the like) should not be a strong enum

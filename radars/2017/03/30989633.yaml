@@ -1,0 +1,44 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30989633"
+    labels:
+        datastore_id: "4982202211237888"
+data:
+    classification: Other Bug
+    created: "2017-03-11T04:23:41.27477Z"
+    description: |-
+        Summary:
+
+        Per the APIs provided, there only thing we can do is: A) remove fetched data records (which basically allows us to filter by domain) and B) remove fetched data records modified since a date (pasted for reference).
+
+        /*! @abstract Removes all website data of the given types that has been modified since the given date.
+         @param dataTypes The website data types that should be removed.
+         @param date A date. All website data modified after this date will be removed.
+         @param completionHandler A block to invoke when the website data has been removed.
+        */
+        - (void)removeDataOfTypes:(NSSet<NSString *> *)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)(void))completionHandler;
+
+
+        If I want to clear all records of a type, I can provide [NSDate distantPast], which is fine.  But if I just want to prune the cache (since it easily gets to be over 1GB for our users which is pretty wasteful), we cannot.  The API says it can clear data/records "since" a given date.  If I provide a date in time where everything older is before it  and everything newer (or touched recently) if after, then this API will end up clearing all my "new" and "fresh" records leaving me with a cache of stale records.  I don't really understand the use case for wanting to remove the most recent (and likely more useful) data.
+
+        Would very much like a new API so we can prune older data:
+
+        - (void)removeDataOfTypes:(NSSet<NSString *> *)websiteDataTypes modifiedBefore:(NSDate *)date completionHandler:(void (^)(void))completionHandler;
+
+        If I'm misunderstanding the API, I think it might warrant revised documentation.
+
+
+        Additionally, it would be even better if we could provide a "cap" to prune to.  Either one that we can set and is enforced OR just another remove data method that takes a target size to prune the cache down to (removing the oldest data first).
+    email: nobrien@twitter.com
+    modified: "2017-03-11T04:23:41.27495Z"
+    number: "30989633"
+    number_intvalue: 30989633
+    originated: 10-Mar-2017 08:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "10"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: WKWebsiteDataStore has no way to remove old records and keep new/recent records

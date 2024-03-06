@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "44324967"
+    labels:
+        datastore_id: "5054512918167552"
+data:
+    classification: ""
+    created: "2018-09-11T00:45:45.057995Z"
+    description: "Summary: \r\nIn 10.14 18A384a (Beta 10), after a move, writes to a resource fork are being issued with file events at the old path instead of the new path.\r\n\r\nI've attached minimal code repros. WatchTmpForever.m is the Objective-C source that starts a FileEvents on /tmp and prints out info it receives. WatchTmpForever is the compiled binary. fileops.py creates a file, writes a resource fork, moves it, updated the resource fork again, and then deletes the file. \r\n\r\n\r\nSteps to Reproduce:\r\n1. Create a file (`srcfork.txt` in the example).\r\n2. Write a resource fork to it.\r\n3. Move the file (moved to `dstfork.txt` in the example)\r\n4. Write to the new file's resource fork.\r\n\r\nTo run the example, start `WatchTmpForever` in a Terminal window, and run `fileops.py` in another Terminal window to observe the discrepancy.\r\noutput_comparison.log is a comparison of the outputs on 10.13 and 10.14. The wrong event is #5 in the log. \r\n\r\nExpected Results:\r\nFile events (event #5 in the example) issued on the destination path being written to. \r\nHere is the correct event output on 10.13.6 with APFS when writing to the resource fork at the new location\r\n```\r\n2018-09-10 17:30:09.485 WatchTmpForever[3307:49601640] Event 5: Item modified: /private/tmp/forkdst.txt\r\n2018-09-10 17:30:09.485 WatchTmpForever[3307:49601640] Event 5: Item renamed: /private/tmp/forkdst.txt\r\n2018-09-10 17:30:09.485 WatchTmpForever[3307:49601640] Event 5: XAttr changed: /private/tmp/forkdst.txt\r\n```\r\n\r\nActual Results:\r\nFile events on the old path being written to.\r\nHere is the wrong event output on 10.14 18A384a with APFS when writing to the resource fork at the new location\r\n```\r\n2018-09-10 17:24:20.822 WatchTmpForever[499:9526] Event 5: Item created: /private/tmp/forksrc.txt\r\n2018-09-10 17:24:20.822 WatchTmpForever[499:9526] Event 5: Item modified: /private/tmp/forksrc.txt\r\n2018-09-10 17:24:20.822 WatchTmpForever[499:9526] Event 5: Item renamed: /private/tmp/forksrc.txt\r\n2018-09-10 17:24:20.822 WatchTmpForever[499:9526] Event 5: XAttr changed: /private/tmp/forksrc.txt\r\n```\r\n\r\nVersion/Build:\r\n10.14 18A384a (Beta 10) with APFS\r\n\r\nConfiguration:\r\nTested on 10.13.6 with APFS and HFS+ (did not repro), and tested on 10.14 18A384a (Beta 10) with APFS (100% repro)."
+    email: jchien@dropbox.com
+    modified: "2020-05-11T17:34:09.490004Z"
+    number: "44324967"
+    number_intvalue: 44324967
+    originated: 9/10/2018
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.14 18A384a
+    reproducible: 100%
+    resolved: macOS 10.14.4 beta 3 (18E194d)
+    status: Resolved
+    title: Resource Fork updates are being issued with a wrong path in 10.14 Mojave

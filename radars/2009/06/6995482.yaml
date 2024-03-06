@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6995482"
+    labels:
+        datastore_id: "49401"
+data:
+    classification: Serious Bug
+    created: "2009-06-22T22:57:27.840651Z"
+    description: "Summary:\r\nThe UIViewController -dealloc implementation no longer calls -setView with a nil parameter\r\n\r\nSteps to Reproduce:\r\nRemove a view controller from a UINavigationController-based stack.\r\n\r\nExpected Results:\r\nDuring the process of deallocating memory for that view controller, a subclass' implementation of -setView with a parameter of nil should be called to release NIB outlets and free memory.\r\n\r\nActual Results:\r\n-setView is never called.\r\n\r\nRegression:\r\nIn the 2.0 SDK, -setView was called with nil. This regression is causing code that was previously free of leaked NIB objects to use up memory with abandon.\r\n\r\nNotes:\r\nI know about the best practices for managing the memory of NIB objects:\r\nhttp://developer.apple.com/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmNibObjects.html#//apple_ref/doc/uid/TP40004998-SW1\r\n\r\nI also know why this change probably occurred:\r\nhttp://lists.apple.com/archives/objc-language/2009/Feb/msg00323.html\r\n\r\nThe problem is therefore a pragmatic one: the suggested approach effectively duplicates code. In the documentation example, the following code in -setView:\r\n\r\n  self.anOutlet = nil;\r\n\r\nIs duplicated in -dealloc:\r\n\r\n  [anOutlet release], anOutlet = nil;\r\n\r\nFor a view controller that has many more than just one outlet, this becomes a maintenance headache. Any time a change is made in -setView, a corresponding change must be made in -dealloc. Leaks can occur if you forget one or the other.\r\n\r\nAlternatively, a method for doing the outlet cleanup can be called from both -setView and -dealloc. But this is a lot of messy code that can't use the accessors if it's to follow the rule of no accessors in init/dealloc. We love properties, and will probably ignore this advice (intentionally or not.)\r\n\r\nPlease continue to call setView with nil. Or at least viewDidUnload."
+    email: craig.hockenberry@gmail.com
+    modified: "2011-08-28T05:46:18.772834Z"
+    number: "6995482"
+    number_intvalue: 6995482
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone
+    product_version: 3.0 GM
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIViewController -dealloc no longer calls -setView:nil

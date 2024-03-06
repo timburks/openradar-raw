@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21373621"
+    labels:
+        datastore_id: "5833353748021248"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-06-13T23:17:09.6121Z"
+    description: "Summary:\nRecursive type constraints seem to kill Swift in a variety of interesting ways.\n\n\nSteps to Reproduce:\n1. This:\nprotocol AlgebraicType {\n\ttypealias Term\n}\n\nenum Expr<T>: AlgebraicType {\n\ttypealias Term = T\n\n\tcase Var(String)\n\tcase Abstraction(String, T)\n\tcase Application(T, T)\n}\n\nstruct Term<E: AlgebraicType where Expr.Term == Term> {\n\tlet expression: E\n}\n\n\nExpected Results:\nshould not crash the compiler\n\n\nActual Results:\nbut totally does:\nterm.swift:14:36: error: reference to generic type 'Expr' requires arguments in <...>\nstruct Term<E: AlgebraicType where Expr.Term == Term> {\n                                   ^\nterm.swift:6:6: note: generic type 'Expr' declared here\nenum Expr<T>: AlgebraicType {\n     ^\n0  swift                    0x000000010c4dde0b llvm::sys::PrintStackTrace(__sFILE*) + 43\n1  swift                    0x000000010c4de54b SignalHandler(int) + 379\n2  libsystem_platform.dylib 0x00007fff84de5f1a _sigtramp + 26\n3  libc++.1.dylib           0x00007fff8e9dffff std::__1::basic_string<wchar_t, std::__1::char_traits<wchar_t>, std::__1::allocator<wchar_t> >::__get_pointer() + 19\n4  swift                    0x000000010ac96487 swift::DeclContext::lookupQualified(swift::Type, swift::DeclName, unsigned int, swift::LazyResolver*, llvm::SmallVectorImpl<swift::ValueDecl*>&) const + 71\n5  swift                    0x000000010ac95894 swift::UnqualifiedLookup::UnqualifiedLookup(swift::DeclName, swift::DeclContext*, swift::LazyResolver*, bool, swift::SourceLoc, bool, bool) + 2228\n6  swift                    0x000000010ac98074 swift::UnqualifiedLookup::UnqualifiedLookup(swift::DeclName, swift::DeclContext*, swift::LazyResolver*, bool, swift::SourceLoc, bool, bool) + 36\n7  swift                    0x000000010ab9109f swift::TypeChecker::lookupUnqualified(swift::DeclContext*, swift::DeclName, swift::SourceLoc, swift::OptionSet<swift::NameLookupFlags, unsigned int>) + 223\n…\nStack dump:\n0.\tProgram arguments: /Applications/Xcode-7-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift -frontend -c -primary-file term.swift -target x86_64-apple-darwin14.3.0 -enable-objc-interop -module-name term -o /var/folders/9y/f7n4rvx901nctm_5d16c1wm40000gn/T/term-a36ff2.o \n1.\tWhile type-checking 'Term' at term.swift:14:1\n2.\tWhile resolving type E at [term.swift:15:18 - line:15:18] RangeText=\"E\"\n<unknown>:0: error: unable to execute command: Segmentation fault: 11\n<unknown>:0: error: swift frontend command failed due to signal (use -v to see invocation)\n\n\nRegression:\nThis also crashed Swift 1.2 but with a shorter backtrace.\n\nNotes:\nN/A"
+    email: rix.rob@gmail.com
+    modified: "2015-06-13T23:17:09.61239Z"
+    number: "21373621"
+    number_intvalue: 21373621
+    originated: 13-Jun-2015 07:17 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-7-beta (7A120f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2: Error in recursive type constraint crashes the compiler'

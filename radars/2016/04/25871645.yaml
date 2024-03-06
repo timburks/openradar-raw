@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25871645"
+    labels:
+        datastore_id: "5025028890427392"
+data:
+    classification: Enhancement
+    created: "2016-04-22T05:45:29.51909Z"
+    description: "Summary:\r\nI have a complication that uses CLKRelativeDateTextProvider to show a countdown to a particular day. I was able to accomplish that like this:\r\n\r\nNSDate *date = [calendar endOfDayForDate:date];\r\ntemplate.textProvider = [CLKRelativeDateTextProvider textProviderWithDate:date style:CLKRelativeDateStyleNatural units:NSCalendarUnitDay];\r\n\r\nThe method endOfDayForDate: looks like this:\r\n\r\n- (NSDate *)endOfDayForDate:(NSDate *)date {\r\n\tNSDate *startDate = [self startOfDayForDate:date];\r\n\tNSDateComponents *adjustment = [NSDateComponents new];\r\n\tadjustment.day = 1;\r\n\tadjustment.second = -1;\r\n\treturn [self dateByAddingComponents:adjustment toDate:startDate options:0];\r\n}\r\n\r\nConfigured this way, when the time reaches midnight, \"5 days\" becomes \"4 days\", and so on. It's pretty close to perfect. The one problem I've discovered is when the time zone changes. Because it's actually counting down to a specific second in time, if the time zone changes it's no longer counting down to the correct time.\r\n\r\nIf my extension runs, checks for a time zone change, and calls reloadTimelineForComplication: then I can update the templates with the new date. The problem is there's not any way to do that automatically.\r\n\r\nIdeally, I'd love if I could configure CLKRelativeDateTextProvider to count down to a specific day, rather than a specific moment in time. Then watchOS could deal with time zone changes on its own. Alternatively, it would be extremely helpful to at least get notified when a time zone changes happens, so I have the opportunity to provide new data. For example, CLKComplicationDataSource could have an optional method named timeZoneDidChange that wakes up my extension as needed.\r\n\r\nSteps to Reproduce:\r\nN/A\r\n\r\nExpected Results:\r\nN/A\r\n\r\nActual Results:\r\nN/A\r\n\r\nVersion:\r\nAny\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nApple Watch 42mm\r\n\r\nAttachments:"
+    email: robotspacer@gmail.com
+    modified: "2016-04-22T05:45:29.51932Z"
+    number: "25871645"
+    number_intvalue: 25871645
+    originated: 22-Apr-2016 01:44 AM
+    parent_number: '&{NULL_VALUE}'
+    product: watchOS
+    product_version: Any
+    reproducible: N/A
+    resolved: ""
+    status: Open
+    title: Need a way to ensure a complication counting down "X Days" will be correct after a time change

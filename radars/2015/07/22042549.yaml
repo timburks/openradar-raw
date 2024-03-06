@@ -1,0 +1,83 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22042549"
+    labels:
+        datastore_id: "4681505796259840"
+data:
+    classification: Other Bug
+    created: "2015-07-29T00:14:16.00514Z"
+    description: |-
+        Summary:
+        When a function is generic over its return type and there is a mismatch, the error only mentions mismatching arguments.
+
+        Steps to Reproduce:
+        Paste the following code into a swift source file and run swiftc:
+
+        protocol Stringable {
+          static func string() -> Self
+        }
+
+        final class Box<T> {
+          let value: T
+          init (_ value: T) {
+            self.value = value
+          }
+        }
+
+        struct Foo: Stringable {
+          let name = "Foo"
+          static func string() -> Foo {
+            return Foo()
+          }
+        }
+
+        struct Bar: Stringable {
+          let name = "Bar"
+          static func string() -> Bar {
+            return Bar()
+          }
+        }
+
+        func box<T: Stringable>(string: String) -> Box<T> {
+          return Box(T.string())
+        }
+
+        func box<T: Stringable>(string: String) -> Box<[T]> {
+          return Box([T.string(), T.string()])
+        }
+
+        let a: Box<Foo> = box("foo")
+        let b: Box<Bar> = box("bar")
+        let c: Box<String> = box("baz")
+
+        Expected Results:
+        Expected the code to compile.
+
+        Actual Results:
+        The following error message is given:
+
+        ErrorMessages.swift:36:22: error: cannot find an overload for 'box' that accepts an argument list of type '(String)'
+        let c: Box<String> = box("baz")
+                             ^
+        ErrorMessages.swift:36:22: note: overloads for 'box' exist with these partially matching parameter lists: (String)
+        let c: Box<String> = box("baz")
+                             ^
+
+        Regression:
+        N/A
+
+        Notes:
+        The issue still appears to be present in Xcode 7 beta 4.
+    email: apsharp@gmail.com
+    modified: "2015-07-29T00:14:16.00535Z"
+    number: "22042549"
+    number_intvalue: 22042549
+    originated: 29-Jul-2015 10:14 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.4 (6E35b)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Failure to infer generic return type generates misleading error message about argument types'

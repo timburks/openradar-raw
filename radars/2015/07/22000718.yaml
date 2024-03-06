@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22000718"
+    labels:
+        datastore_id: "5668504212602880"
+data:
+    classification: Other Bug
+    created: "2015-07-26T18:46:58.57614Z"
+    description: "Summary:\r\nAttempting to check the extended MIME type 'audio/mpeg; codecs=\".mp3\"' returns false, despite the \".mp3\" codec being listed in the AudioCodecs section of the MediaValidator.plist file in the MediaToolbox.framework.\r\n\r\nA few things I have noticed:\r\n\r\n1. Almost all implementations and documentation on the internet for the HTML5 audio check the MIME type 'audio/mpeg; codecs=\"mp3\"' (without the dot), which fails on OS X because it is not a listed codec in the MediaToolbox framework. Because of this, WebKit will report the 'audio/mpeg; codecs=\"mp3\"' MIME type as \"maybe\" playable instead of \"probably\" playable, despite the fact that MP3 is obviously supported. It seems like it would be beneficial to add \"mp3\" to the AudioCodecs section of the file?\r\n\r\n2. All codecs in that section that have a dot or a space, such as \".mp3\", \".mp2\", \"aac \" return as not playable, while the others are playable, which led me to believe there was an implementation bug in the isPlayableExtendedMIMEType: function. \r\n\r\n3. I stepped with my debugger into the that function and subsequently the FigMediaValidatorValidateRFC4281ExtendedMIMEType function where I believe I found the source of the bug. There is a line that probably looks something like `char *ret = strsep(&codec, \".\")`, where `codec` in my case is \".mp3\". This call would set the first instance of \".\" to a null byte, making the `codec` string now \"\\0mp3\", but the updated pointer to \"mp3\" somehow is not being used. Consequently, later code references the old pointer \"\\0mp3\" which, of course, is effectively a 0 length string, and causes the logic to fail and return as not playable.\r\n\r\nSteps to Reproduce:\r\n1. Call [AVURLAsset isPlayableExtendedMIMEType:@\"audio/mpeg; codecs=\\\".mp3\\\"];\r\n\r\nExpected Results:\r\nYES ==  [AVURLAsset isPlayableExtendedMIMEType:@\"audio/mpeg; codecs=\\\".mp3\\\"]\r\n\r\nand also it would be nice to have:\r\n\r\nYES == [AVURLAsset isPlayableExtendedMIMEType:@\"audio/mpeg; codecs=\\\"mp3\\\"]\r\n\r\nActual Results:\r\nBoth return NO.\r\n\r\nVersion:\r\nXcode version 6.4 (6E35b)\r\nOS X Yosemite version 10.10.1"
+    email: sajidanwar94@gmail.com
+    modified: "2015-07-26T18:46:58.57637Z"
+    number: "22000718"
+    number_intvalue: 22000718
+    originated: 26-Jul-2015 00:08 AM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: Xcode version 6.4 (6E35b) --- OS X Yosemite version 10.10.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: '[AVURLAsset isPlayableExtendedMIMEType:] has internal implementation bug with codecs such as ".mp3"'

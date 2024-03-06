@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17560031"
+    labels:
+        datastore_id: "5902481884184576"
+data:
+    classification: ""
+    created: "2014-07-09T02:45:23.438108Z"
+    description: "Summary:\r\nA number of hobbyist devices (Arduino, BASIC Stamp, etc) use signaling on DTR to indicate that the device should reset.\r\n\r\nI can toggle DTR using FTDI's driver (FTDIUSBSerialDriver.kext, 2.2.18) but not the driver built into Mavericks (AppleUSBFTDI.kext).\r\n\r\nSteps to Reproduce:\r\n1. Aquire an FTDI based USB-serial adapter.\r\n\r\n2. Rig up some way to observe the TX and DTR signals provided by the adapter. \r\n\r\nI used a Parallax USB Board of Education which has a built-in FTDI based adapter, with LEDs plugged into the socket where the BS2 chip would normally go. One LED across Sin (Pin2) and Vss (Pin16) shows the state of TX, another LED across ATN (Pin3) and the other Vss (Pin4) monitors DTR (see enclosed schematic for reference).\r\n\r\n3. Plug the rig into a Mac running Mavericks with XCode installed.\r\n\r\n4. Build and run the enclosed project \"SerialPortSample (FTDI Bug)\" which is the Apple supplied \"SerialPortSample\" modified to find and use a FTDI chip based usb-serial interface.\r\n\r\nWhen SerialPortSample attempts to communicate over the serial port, the LED driven by the DTR signal never flashes, though the TX LED does.\r\n\r\n5. Download and install the latest available driver from <http://www.ftdichip.com/Drivers/VCP.htm>\r\n\r\n6. Restart the Mac.\r\n\r\n7. Re-run the enclosed project \"SerialPortSample (FTDI Bug)\".\r\n\r\nResult: Both TX and DTR LEDs flash. \r\n\r\n\r\nExpected Results:\r\nI expect that the DTR LED should light up when the code asserts DTR (i.e. ioctl(fileDescriptor, TIOCSDTR)).\r\n\r\n(If you use the Parallax USB Board of Education to try to reproduce this, the DTR LED will flash instead of lighting up. This is due to the capacitor in line with the DTR line.)\r\n\r\nActual Results:\r\nThe DTR LED does *not* light up at all. Ever.\r\n\r\nVersion:\r\n10.9.4, 13E28\r\n\r\nNotes:\r\nNote that for many schools who use these devices and also have strict security requirements, using the driver supplied by FTDI is not an option. FTDI does not sign their installer so it won't even launch on locked down systems. Additionally, there are reports of (and I have experienced) kernel panics when both the FTDI supplied driver and the Apple supplied driver are installed (see <https://developer.apple.com/library/mac/technotes/tn2315/_index.html>) .\r\n\r\nConfiguration:\r\nMacBook Air, Mid 2012\r\n\r\nAttachments:\r\n'SerialPortSample (FTDI Bug).zip' and '28850-BOE-USB-Schematic-D.pdf' were successfully uploaded."
+    email: murat1@gmail.com
+    modified: "2014-07-09T02:48:59.318994Z"
+    number: "17560031"
+    number_intvalue: 17560031
+    originated: July 3 2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.9.4
+    reproducible: always
+    resolved: ""
+    status: open
+    title: Can't set DTR using AppleUSBFTDI.kext

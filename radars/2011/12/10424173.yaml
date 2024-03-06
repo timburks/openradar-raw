@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10424173"
+    labels:
+        datastore_id: "1469404"
+data:
+    classification: ""
+    created: "2011-12-13T22:34:35.967485Z"
+    description: "09-Nov-2011 06:24 PM W Lewis:\r\nSummary:\r\n\r\nThe symbols kSecDigestHMACMD5, kSecDigestHMACSHA1, and kSecDigestHMACSHA2 are declared in SecDigestTransform.h, but are not actually available from the Security framework.\r\n\r\nSteps to Reproduce:\r\n\r\nWrite & compile a program which references any of these symbols\r\n\r\nExpected Results:\r\n\r\nProgram links successfully\r\n\r\nActual Results:\r\n\r\nLd /Volumes/Local/Users/omnibuild/wiml-tmp/Prods/Debug/OmniFoundation.framework/Versions/A/OmniFoundation normal x86_64\r\n    cd /Volumes/Local/Users/omnibuild/wiml-tmp/OmniGroup/Frameworks/OmniFoundation\r\n    setenv MACOSX_DEPLOYMENT_TARGET 10.7\r\n    /Developer/usr/bin/gcc-4.2 -arch x86_64 -dynamiclib -isysroot /Developer/SDKs/MacOSX10.7.sdk -L/Volumes/Local/Users/omnibuild/wiml-tmp/Prods/Debug -F/Volumes/Local/Users/omnibuild/wiml-tmp/Prods/Debug -F/Developer/SDKs/MacOSX10.7.sdk/Library/Frameworks -filelist /Volumes/Local/Users/omnibuild/wiml-tmp/Prods/Builds/OmniFoundation.build/Debug/OmniFoundation.build/Objects-normal/x86_64/OmniFoundation.LinkFileList -install_name /Volumes/Local/Users/omnibuild/wiml-tmp/Prods/Debug/OmniFoundation.framework/Versions/A/OmniFoundation -mmacosx-version-min=10.7 -sectorder __TEXT __text OmniFoundation.order -lbz2 -framework OmniBase -framework System -framework Foundation -framework CoreServices -framework CoreFoundation -framework SystemConfiguration -lz -framework ExceptionHandling -lxml2 -framework Security -single_module -compatibility_version 1 -current_version 1 -o /Volumes/Local/Users/omnibuild/wiml-tmp/Prods/Debug/OmniFoundation.framework/Versions/A/OmniFoundation\r\nUndefined symbols for architecture x86_64:\r\n  \"_kSecDigestHMACMD5\", referenced from:\r\n      _lionAlgorithmParameters in OFXMLSignature.o\r\n  \"_kSecDigestHMACSHA1\", referenced from:\r\n      _lionAlgorithmParameters in OFXMLSignature.o\r\n  \"_kSecDigestHMACSHA2\", referenced from:\r\n      _lionAlgorithmParameters in OFXMLSignature.o\r\nld: symbol(s) not found for architecture x86_64\r\ncollect2: ld returned 1 exit status\r\n\r\nRegression:\r\n\r\nThis is a regression from the 10.6 crypto APIs --- many of them worked!\r\n\r\nNotes:\r\n\r\n% fgrep kSecDigestHMAC Security.framework/Headers/*\r\nSecurity.framework/Headers/SecDigestTransform.h:extern const CFStringRef kSecDigestHMACMD5;\r\nSecurity.framework/Headers/SecDigestTransform.h:extern const CFStringRef kSecDigestHMACSHA1;\r\nSecurity.framework/Headers/SecDigestTransform.h:extern const CFStringRef kSecDigestHMACSHA2;\r\n% nm Security.framework/Security | fgrep kSecDigestHMAC\r\n00000000003039f8 s _kSecDigestHMACKeyAttribute\r\n00000000003039d0 s _kSecDigestHMACMD5\r\n00000000003039d8 s _kSecDigestHMACSHA1\r\n00000000003039e0 s _kSecDigestHMACSHA2\r\n\r\nNote the lower-case 's', indicating that the symbol is private/static/not visible."
+    email: wiml@omnigroup.com
+    modified: "2014-08-27T01:06:46.716239Z"
+    number: "10424173"
+    number_intvalue: 10424173
+    originated: 09-Nov-2011 06:24 PM
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: "10.7"
+    reproducible: Always
+    resolved: 30-Apr-2012
+    status: Closed
+    title: kSecDigestHMACMD5, SHA1, SHA2 missing from Security.framework

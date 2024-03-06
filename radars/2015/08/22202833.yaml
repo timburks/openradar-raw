@@ -1,0 +1,96 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "22202833"
+    labels:
+        datastore_id: "6714997790998528"
+data:
+    classification: Serious Bug
+    created: "2015-08-08T17:35:52.02807Z"
+    description: |-
+        Summary:
+        A malformed program which crashes the compiler (rdar://problem/22202790) can be made to compile despite remaining malformed.
+
+
+        Steps to Reproduce:
+        1. This code:
+        enum E<R> {
+        	case U
+
+        	static func f(t: R, _ f: R -> R) -> E {
+        		return .U
+        	}
+        }
+
+        enum D {
+        	case C
+        	case A(() -> E<D>, E<D> -> D)
+
+        	var v: E<D> {
+        		return .U
+        		switch self {
+        		case let .A(x, c):
+        			return E.f(x) { a in c(a.v) }
+        		}
+        	}
+        }
+
+
+        Expected Results:
+        should not compile
+
+
+        Actual Results:
+        but totally does.
+
+
+        Regression:
+        This does not occur if the initial return is omitted, making the switch reachable. But then, rdar://problem/22202790.
+
+
+        Notes:
+        This should not compile, first off because the switch is not exhaustive; there is no case to handle .C, and, much worse, because it is ill-typed.
+
+        We have the following assumptions and constraints:
+
+        A = {
+        	∀ R . E<R>.f  :  (R, R -> R) -> E<R>,		(by definition)
+        	x  :  () -> E<D>,						(by definition)
+        	c  :  E<D> -> D,						(by definition)
+        	v  :  D -> E<D>,						(by definition; it’s a property but this should be semantically equivalent)
+        }
+
+        C = {
+        	R is () -> E<D>,						(by application of E.f to x)
+        	R is D,							(by returning the result of E.f from a property of type E<D>)
+        }
+
+        These constraints are mutually exclusive; here is how I arrived at them:
+
+        `E<R>.f` is of type `(R, R -> R) -> E<R>`. The call to it passes `x`, which is of type `() -> E<D>`. Thus, the second parameter, the closure, must have type `(() -> E<D>) -> () -> E<D>` in order to unify.
+
+        However, the body of the closure applies `c` of type `E<D> -> D` to the parameter `a.v`. This should not unify: `a` cannot both have a property `v` and be of function type `() -> E<D>`.
+
+        Finally, we are returning the value of a property declared to be of type E<D>, which is again mutually exclusive with E<() -> E<D>>.
+
+        ----
+
+        For your amusement, and as parallax on the issue, I also submit a variation on the malformed line which likewise enjoys the same (mis)behaviour of not having much attempt made at typechecking it:
+
+        	return E.f(x) { a in c(a.perfectly!.cromulent?().expression) }
+
+        Note that there are no other occurrences of `perfectly`, `cromulent`, or `expression` in the program; they are untypable.
+
+        The only restriction (apart from parsing) appears to be that chains involving unknown identifiers start with a known identifier, in this case our parameter `a`.
+    email: rix.rob@gmail.com
+    modified: "2015-08-08T17:35:52.02828Z"
+    number: "22202833"
+    number_intvalue: 22202833
+    originated: 08-Aug-2015 01:35 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A176x)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2b5: (Some) typechecking skipped on unreachable code'

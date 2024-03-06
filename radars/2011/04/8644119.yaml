@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8644119"
+    labels:
+        datastore_id: "1173401"
+data:
+    classification: Enhancement
+    created: "2011-04-15T01:43:14.243549Z"
+    description: "08-Nov-2010 07:44 PM Ryan Sleevi:\r\nSummary:\r\n\r\nAs documented at http://developer.apple.com/library/mac/DOCUMENTATION/Security/Reference/certifkeytrustservices/Reference/reference.html#//apple_ref/c/func/SecIdentityCopyPreference , the third argument in SecIdentityCopyPreference takes a CFArrayRef of distinguished names to filter identities by.\r\n\r\nHowever, if a CFArrayRef is passed, the returned list will not be constrained to the CA. \r\n\r\nSteps to Reproduce:\r\n1. Connect to an SSL server whose CertificateRequest message contains a list of one or more CAs to constrain client certificates to.\r\n2. Have a client certificate identity preference, where the client certificate is NOT issued by one of those CAs.\r\n3. Call SecIdentityCopyPreference(), passing in the array obtained via SSLCopyDistinguishedNames()\r\n\r\nExpected Results:\r\nNo client certificate will be returned, because it does not meet the criteria established by the server / passed in.\r\n\r\nActual Results:\r\nThe non-matching client certificate will be returned.\r\n\r\nNotes:\r\n\r\nSee\r\nhttp://www.opensource.apple.com/source/libsecurity_keychain/libsecurity_keychain-38504/lib/SecIdentity.cpp\r\n\r\n_SecIdentityCopyPreferenceMatchingName, which provides the implementation details for SecIdentityCopyPreference, contains this code:\r\n\r\n    // filter on valid issuers, if provided\r\n    if (validIssuers) {\r\n        //%%%TBI\r\n    }\r\n\r\nSee also http://lists.apple.com/archives/apple-cdsa/2010/Mar/msg00003.html for more discussion about this issue."
+    email: ryan.sleevi@gmail.com
+    modified: "2011-08-28T05:39:09.093533Z"
+    number: "8644119"
+    number_intvalue: 8644119
+    originated: 08-Nov-2010
+    parent_number: '&{NULL_VALUE}'
+    product: Documentation
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: SecIdentityCopyPreference does not filter on validIssuers

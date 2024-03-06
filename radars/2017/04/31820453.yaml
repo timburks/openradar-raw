@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31820453"
+    labels:
+        datastore_id: "5522013766549504"
+data:
+    classification: Crash
+    created: "2017-04-25T21:19:22.04322Z"
+    description: "Summary:\r\nThe `handler` argument to +[UITableViewRowAction rowActionWithStyle:title:handler:] accepts a nonnil `action` and `indexPath`, but in some situations it is invoked with a nil `action`. Aside from unintended behavior, this can cause a crash if the UITableViewRowAction is instantiated from Swift, since the `handler` is a Swift closure that expects a non-optional `indexPath`.\r\n\r\nA quick look through -[UITableView _actionButton:pushedInCell:] reveals that the result of -[UITableView indexPathForCell:] (which may be nil) is passed directly to the handler without validation.\r\n\r\nSteps to Reproduce:\r\nUnsure what exactly causes indexPathForCell: to return nil for a cell that is handling a UITableViewRowAction, but it's possible that the table view may reloadData before the tap gesture recognized?\r\n\r\nI've attached a stack trace from a recent crash in the Twitter for iOS app.\r\n\r\nExpected Results:\r\nEither maintain the existing behavior and annotate UITableViewRowAction to match the behavior, or do not invoke the UITableViewRowAction handler if the indexPath is nil.\r\n\r\nActual Results:\r\nUITableViewRowAction's handler is passed a nil argument, causing a crash.\r\n\r\nVersion:\r\niOS 10.3.1 (14E304)\r\n\r\nNotes:\r\n Also observed on:\r\niPhone 4s/iOS 9.3.5 (13G36)\r\niPhone 5s/iOS 10.2.0 (14C92)\r\niPhone 7/iOS 10.3.1 (14E304)\r\niPhone 6/iOS 10.2.1 (14D27)\r\nand many other configurations.\r\n\r\nTwitter for iOS sees about 100 of these crashes per day.\r\n\r\nConfiguration:\r\niPhone 5s\r\n\r\nAttachments:\r\n'stacktrace.txt' was successfully uploaded."
+    email: B.H.Carpenter@gmail.com
+    modified: "2017-04-25T21:19:22.04357Z"
+    number: "31820453"
+    number_intvalue: 31820453
+    originated: 25-Apr-2017
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: ""
+    reproducible: Rarely
+    resolved: ""
+    status: Open
+    title: Incorrect nullability specifier in UITableViewRowAction

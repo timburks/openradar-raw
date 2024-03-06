@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21875745"
+    labels:
+        datastore_id: "5100347416641536"
+data:
+    classification: Other Bug
+    created: "2015-07-17T17:42:26.60298Z"
+    description: "Summary:\r\nThe goal is to present a UIViewController as a popover in both horizontally compact and regular environments.\r\n\r\nThis is accomplished by using a modalPresentationStyle of UIModalPresentationPopover while the UIViewController's popoverPresentationController's\r\n delegate is set to a UIPopoverPresentationControllerDelegate conforming object that returns UIModalPresentationNone from -adaptivePresentationStyleForPresentationController….\r\n \r\nThe documentation for \"UIPopoverPresentationController - Configuring a Popover for Display – Listing 1\" shows that you are to configure the popoverPresentationController after calling -presentViewController:\r\n\r\n<quote>\r\nConfiguring the popover presentation controller after calling presentViewController:animated:completion: might seem counter-intuitive but UIKit does not create a presentation controller until after you initiate a presentation. In addition, UIKit must wait until the next update cycle to display new content onscreen anyway. That delay gives you time to configure the presentation controller for your popover.\r\n</quote>\r\n\r\nThe documentation for UIPopoverPresentationControllerDelegate offers similar advice:\r\n\r\n<quote>\r\nAfter defining an object that adopts this protocol, assign that object to the delegate property of a UIPopoverPresentationController object. You must present a view controller using the UIModalPresentationPopover style before you can obtain such an object.\r\n</quote>\r\n\r\nIf you follow this advice, things work fine if you present a view controller in a horizontally regular environment and then switch to a compact environment. However, if you initially present the view controller in a horizontally compact environment, the delegate is not consulted and the presentation is adapted in the default way (i.e. a fullscreen presentation).\r\n\r\nIf you ignore the advice in the documentation and access and configure the view controller's -popoverPresentationController before you call -presentViewController…, then the adaptive presentation is respected in all situations and environments.\r\n\r\nSteps to Reproduce:\r\n1. Open the attached sample project in Xcode 7 (beta 3 (7A152u))\r\n2. Run on an iPhone 6 simulator (iOS 8 or 9)\r\n3. Tap \"Present Popover\"\r\n4. Notice the fullscreen presentation. Tap \"Done\" to dismiss.\r\n5. Tap the switch to \"Before Presentation\"\r\n6. Tap \"Present Popover\"\r\n7. Notice the popover presentation.\r\n8. Run in the iPad Air 2 simulator.\r\n9. Switch to a horizontally compact environment.\r\n10. Repeat steps 3 through 7.\r\n\r\nExpected Results:\r\nWhen the view controller's -popoverControllerDelegate is configured after presentation, as the documentation suggests, that the UIPopoverControllerDelegate is consulted for the initial presentation in a horizontally compact environment.\r\n\r\nActual Results:\r\nThe UIPopoverControllerDelegate is not consulted when initally presented in a compact horizontal environemnt.\r\n\r\nVersion:\r\niOS 8.3 (12F70) or iOS 9.0 (13A4293g)\r\n\r\nNotes:\r\nThe sample project is using the iOS 9 SDK to demonstate the issue in a the splitview multitasking environment.\r\n\r\nThe documentation for UIPopoverPresentationControllerDelegate does not mention that it conforms to UIAdaptivePresentationControllerDelegate, but it does in the header.\r\n\r\nConfiguration:\r\niPhone 6 Simulator and iPad Air 2 Simulator\r\n\r\nAttachments:\r\nhttps://dl.dropboxusercontent.com/u/1076749/Radars/Adaptive%20Popovers.zip"
+    email: jason.medeiros@gmail.com
+    modified: "2015-07-17T17:42:26.60321Z"
+    number: "21875745"
+    number_intvalue: 21875745
+    originated: July 17, 2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: iOS 8.3 (12F70) or iOS 9.0 (13A4293g)
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: UIPopoverPresentationController's delegate's -adaptivePresentationStyleForPresentationController… not called when presenting in compact environments

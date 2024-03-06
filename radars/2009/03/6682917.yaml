@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6682917"
+    labels:
+        datastore_id: "14411"
+data:
+    classification: Crash
+    created: "2009-03-14T18:52:57.883856Z"
+    description: "14-Mar-2009 07:49 PM Guillaume CERQUANT:\r\nAuthor: Guillaume Cerquant - www.macmation.com - www.twitter.com/gcerquant\r\n\r\nSummary:\r\nWhen used in a garbage collected application that has applescript support,  NSXMLDocument crash when trying to parse an invalid feed.\r\n\r\nSteps to reproduce:\r\nDownload the following archive of Xcode project:\r\nhttp://www.cerquant.com/files/Mac_OS_X/NSXMLDocument_CrashProof.zip\r\n\r\n\r\nCompile and run the project.\r\nClick the \"Crash demo\" button.\r\n\r\nExpected results:\r\nCode does not crash.\r\nLine of code\r\ndocument = [[NSXMLDocument alloc] initWithData:feedData options:0 error:&error];\r\nmight set an error, but should not crash.\r\n\r\n\r\nActual results:\r\nIt crashes.\r\n\r\nHere is a backtrace of a crash:\r\n(gdb) bt\r\n#0  0x9482c6a0 in objc_msgSend ()\r\n#1  0x96e5bc0a in _structuredErrorFunc ()\r\n#2  0x93e062ba in __xmlRaiseError ()\r\n#3  0x93e113f2 in xmlIOParseDTD ()\r\n#4  0x93deaf08 in xmlParseChunk ()\r\n#5  0x93e869a0 in xmlUCSIsCatZs ()\r\n#6  0x93dea01e in xmlTextReaderRead ()\r\n#7  0x96d2cc4d in -[NSXMLTreeReader parse] ()\r\n#8  0x96d0adca in -[NSXMLDocument initWithData:options:error:] ()\r\n#9  0x00001ec5 in -[FeedNSXMLDocumentWithInvalidData feedWithInvalidData:] (self=0x102fab0, _cmd=0x1fde, sender=0x1022d90) at /Users/lv/Documents/code/Objective-C/MisterTwo/NSXMLDocument_CrashProof/FeedNSXMLDocumentWithInvalidData.m:32\r\n#10 0x9567953b in -[NSApplication sendAction:to:from:] ()\r\n#11 0x95679478 in -[NSControl sendAction:to:] ()\r\n#12 0x956792fe in -[NSCell _sendActionFrom:] ()\r\n#13 0x95678957 in -[NSCell trackMouse:inRect:ofView:untilMouseUp:] ()\r\n#14 0x956781aa in -[NSButtonCell trackMouse:inRect:ofView:untilMouseUp:] ()\r\n#15 0x95677a64 in -[NSControl mouseDown:] ()\r\n#16 0x956761a3 in -[NSWindow sendEvent:] ()\r\n#17 0x95642d49 in -[NSApplication sendEvent:] ()\r\n#18 0x955a069f in -[NSApplication run] ()\r\n#19 0x9556d8a4 in NSApplicationMain ()\r\n#20 0x00001d98 in main (argc=1, argv=0xbffff774) at /Users/lv/Documents/code/Objective-C/MisterTwo/NSXMLDocument_CrashProof/main.m:13\r\n\r\n\r\nRegression:\r\nUnknown\r\n\r\nNotes:\r\nEnvironnement: Mac OS X 10.5.6. Intel machine.\r\n\r\nHere is a few conditions required to have the crash:\r\n\r\n - Application must be garbage collected.\r\n - URL of the DTD definition of the xml file must be invalid: it contains one line return between 'http://' and 'www.andymatuschak.org/xml-namespaces/sparkle' (it should not).\r\n - the application must have an applescript definition. Cf. the difference of behavior when for the file 'Info.plist', you use the file 'Info CRASH.plist' or 'Info OK.plist'\r\n\r\nEven though having a valid xml file is a good workaround, to ensure you have a non crashing app whatever the feed you are trying is very important for general stability.\r\n\r\n\r\nRelated:\r\nhttps://bugs.launchpad.net/sparkle/+bug/333825\r\n\r\n\r\n'crash_report.txt' was successfully uploaded"
+    email: gcerquant@gmail.com
+    modified: "2013-04-05T21:36:46.019122Z"
+    number: "6682917"
+    number_intvalue: 6682917
+    originated: 14/03/2009
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.6
+    reproducible: YES
+    resolved: ""
+    status: Closed
+    title: NSXMLDocument crash when used under very specific conditions.

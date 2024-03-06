@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10452161"
+    labels:
+        datastore_id: "1436404"
+data:
+    classification: Other bug
+    created: "2011-11-16T01:16:57.772565Z"
+    description: "Summary: the argument to the @selector keyword in Objective-C is checked for method name validity, not selector name validity; selectors with punctuation, spaces, or a final non-argument part give a compiler error. It seems acceptable to limit punctuation (since the symbol cannot be escaped in any way), but disallowing spaces and a non-argument final part is excessive. The runtime allows selector names like \"hi+ :foobar:baz\" and \"foobar:baz\", though the compiler only allows \"foobar:baz:\" or \"foobar\" or \"foobar:\"\r\n\r\nSteps to Reproduce:\r\nin Foo.m:\r\n#import <objc/runtime.h>\r\nvoid doSomething(id self, SEL _cmd, NSString *param);\r\n@implementation Foo\r\n...\r\n- (void)doHorribleThingsToTheRuntime:(NSString *)str\r\n{\r\n    SEL sele = @selector(foobar:baz);\r\n    class_addMethod([Foo class], sele, (IMP)doSomething, \"v@:@\");\r\n    [self performSelector:sele withObject:str];\r\n}\r\n@end\r\nvoid doSomething(id self, SEL _cmd, NSString *param)\r\n{\r\n    NSLog(@\"hello, %@\", param);\r\n}\r\n\r\nExpected Results:\r\nThis should compile, run, and print hello... While the compiler limits what method names are legal, there is no such limitation on selector names. The compiler should respect that, and only generate a(n optional) warning \"'foobar:baz' is a valid selector, but not a valid method name\"\r\n\r\nActual Results:\r\nCompile error in @selector: \"expected :\" at end of baz\r\n\r\nRegression:\r\nUnknown\r\n\r\nNotes:\r\nWorkaround: Use SEL sele = NSSelectorFromString(@\"foobar:baz\"); instead.\r\nOther notes: this bug report is slightly tongue-in-cheek, but only slightly. Seriously, it'd be cool if we could have foobar:baz as a valid method name too."
+    email: chaos42@gmail.com
+    modified: "2013-06-21T07:37:54.799832Z"
+    number: "10452161"
+    number_intvalue: 10452161
+    originated: 11/15/11
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 4.2/4C199 LLVM 3.0
+    reproducible: Always
+    resolved: Behaves Correctly
+    status: Closed
+    title: '@selector() disallows legal selector names if they aren''t valid method names'

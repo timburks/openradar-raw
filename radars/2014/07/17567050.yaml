@@ -1,0 +1,86 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17567050"
+    labels:
+        datastore_id: "5790557183934464"
+data:
+    classification: Enhancement
+    created: "2014-07-05T12:41:32.29821Z"
+    description: |-
+        Summary:
+        Value types, i.e. immutable structs/enums (which therefore have by-value semantics) could be given a default implementation of ==, defined property-/case-wise, respectively.
+
+        Equality can be considered to be distributive for these types, at the very least by default. That would reduce a lot of boilerplate that is currently necessary to implement a “good citizen” type. This is already available with simple enums; this appears to compile successfully without complaint:
+
+        enum Cutlery {
+        	case Fork
+        	case Knife
+        	case Spoon
+        }
+
+        func test(a: Cutlery, b: Cutlery) -> Bool {
+        	return a == b
+        }
+
+        But once we add elements, we’re in trouble. Changing the definition of Fork breaks the == in test:
+
+        case Fork(Int) // number of tines
+
+        There also appears to be no such handling for structs, meaning that between that and tuples, product types are out in the cold.
+
+        I’d like to suggest that this automatic == function be defined parametrically in the same manner as the type itself. That is, if the type is:
+
+        struct Product<T>
+
+        Then define == as:
+
+        func == <T : Equatable>(…) -> Bool
+
+        That way, the struct always gets a generic == implementation, but an instance parameterized by a non-Equatable type is, appropriately, not equatable.
+
+        You could always override this with a specific definition to avoid the default one:
+
+        struct UnorderedPair<T> {
+        	let x: T
+        	let y: T
+        }
+
+        func == <T : Equatable> (a: T, b: T) -> Bool {
+        	return (a.x == b.x && a.y == b.y) || (a.x == b.y && a.y == b.x)
+        }
+
+        Here we’ve defined unordered equality; the default == definition would not be available. You could also use this with some @unavailable attribute to opt out of the default implementation altogether if you wanted.
+
+
+
+        Steps to Reproduce:
+        N/A
+
+
+        Expected Results:
+        N/A
+
+
+        Actual Results:
+        N/A
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        Obviously this would require some notion of immutability. Access control would presumably allow us to state that there are no public setters; so if all of your properties are private and none of your functions are mutable then you’re probably in the clear.
+    email: rix.rob@gmail.com
+    modified: "2014-07-05T12:41:32.298388Z"
+    number: "17567050"
+    number_intvalue: 17567050
+    originated: 05-Jul-2014 08:41 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode6-Beta2 (6A216f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Value types could have default implementations of ==.'

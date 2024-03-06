@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21333511"
+    labels:
+        datastore_id: "4510263302684672"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2015-06-11T02:35:46.6882Z"
+    description: "Summary:\nThis is another one where the compiler correctly reports that it can’t compile but then crashes trying anyway\n\n\nSteps to Reproduce:\n1. This:\nprotocol FixpointType {\n\ttypealias Algebra : AlgebraicType\n\tinit(_ : Algebra)\n\tvar out: Algebra { get }}\nprotocol AlgebraicType {typealias Recur}\nenum Expr<T>: AlgebraicType {\n\ttypealias Recur = T\n\tcase Null\n\tfunc map<U>(transform: T -> U) -> Expr<U> {return .Null}\n}\nfunc out<Fix: FixpointType>(v: Fix) -> Fix.Recur {return v.out}\nfunc cata<T, Fix: FixpointType where Fix.Recur == Expr<Fix>>(f: Expr<T> -> T)(_ term: Fix) -> T {\n\treturn f({ $0.map(cata(f)) }(out(term)))\n}\nstruct Term: FixpointType, CustomDebugStringConvertible {\n\ttypealias Algebra = Expr<Term>\n\tvar debugDescription: String {return cata(Term.toDebugString)(self)}\n\tstatic func toDebugString(expression: Expr<String>) -> String {return \"\"}\n}\n\n\nExpected Results:\nshould not crash the compiler\n\nActual Results:\nbut totally does:\n…errors…\n…\n3  swift                    0x0000000100b503e6 swift::Type::transform(std::__1::function<swift::Type (swift::Type)> const&) const + 54\n4  libsystem_c.dylib        0x00007fff86f90b53 abort + 129\n5  libsystem_c.dylib        0x00007fff86f58c39 basename + 0\n6  swift                    0x0000000100b45c9f swift::Substitution::Substitution(swift::ArchetypeType*, swift::Type, llvm::ArrayRef<swift::ProtocolConformance*>) + 271\n…\nStack dump:\n0.\tProgram arguments: /Applications/Xcode-7-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift -frontend -c -primary-file recur.swift -target x86_64-apple-darwin14.3.0 -enable-objc-interop -module-name recur -o /var/folders/9y/f7n4rvx901nctm_5d16c1wm40000gn/T/recur-42ee18.o \n1.\tWhile type-checking getter for debugDescription at recur.swift:17:31\n2.\tWhile type-checking expression at [recur.swift:17:39 - line:17:68] RangeText=\"cata(Term.toDebugString)(self)\"\n<unknown>:0: error: unable to execute command: Abort trap: 6\n<unknown>:0: error: swift frontend command failed due to signal (use -v to see invocation)"
+    email: rix.rob@gmail.com
+    modified: "2015-06-11T02:35:46.6884Z"
+    number: "21333511"
+    number_intvalue: 21333511
+    originated: 10-Jun-2015 10:35 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-7-beta (7A120f)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2: “Substitution conformances don’t match archetype” crasher'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21477694"
+    labels:
+        datastore_id: "4805074052186112"
+data:
+    classification: Bug
+    created: "2015-06-21T17:32:31.65088Z"
+    description: "Summary:\r\nWhereas the Carbon AEMSendMessage function takes a timeout value in ticks, the new -[NSAppleEventDescriptor sendEventWithOptions:timeout:error:] method (rdar://19169736) accepts a timeout value in seconds (NSTimeInterval). \r\n\r\nThis is not a problem when the timeout is an arbitrary non-negative float (e.g. 30.0 = 30 seconds). However, it fails to work correctly when one of the standard timeout constants - kAEDefaultTimeout, kNoTimeOut - is given. AEDataModel.h defines these constants as follows:\r\n\r\n/* Constants for timeout durations */\r\nenum {\r\n  kAEDefaultTimeout             = -1,   /* timeout value determined by AEM */\r\n  kNoTimeOut                    = -2    /* wait until reply comes back, however long it takes */\r\n};\r\n\r\nIt appears that the current sendEvent... implementation converts the given timeout-in-seconds to ticks by multiplying by 60 then casting to long, but fails to treat negative floats as a special case.\r\n\r\nThe simplest solution would be to modify the method implementation so that negative timeout values are not multiplied but are simply cast to long as-is, thus ensuring the existing constants continue to work as expected. For example (https://bitbucket.org/hhas/appleeventbridge/src/7995324fde315eb830c669f2b1a4c7b8dd069614/AppleEventBridge/NSAppleEventDescriptor+AEDescExtensions.m?at=swift-support):\r\n\r\n- (instancetype)sendEventWithOptions:(AESendMode)sendOptions timeout:(NSTimeInterval)timeoutInSeconds error:(NSError * __autoreleasing *)error {\r\n    if (error) *error = nil;\r\n    AEDesc reply = {typeNull, NULL};\r\n    OSStatus err = AESendMessage(self.aeDesc, &reply, sendOptions, (long)(timeoutInSeconds > 0 ? timeoutInSeconds * 60 : timeoutInSeconds)); // FIX\r\n    if (err != noErr) {\r\n        if (error) *error = [NSError errorWithDomain: NSOSStatusErrorDomain code: err userInfo: nil];\r\n        return nil;\r\n    }\r\n    return [[self.class alloc] initWithAEDescNoCopy: &reply];\r\n}\r\n\r\nSteps to Reproduce:\r\n\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\nOS X 10.11 (15A178w)\r\nXcode Version 7.0 beta (7A120f)\r\n\r\nNotes:\r\nNSAppleEventDescriptor.h now aliases the old AESendMode constants from AEDataModel.h as NSAppleEventSend.. constants for use in the new -sendMessage method. It would be helpful if the following constants from AEDataModel.h could be similarly aliased as these are also required in creating and sending events via NSAppleEventDescriptor:\r\n\r\n/* Constants for timeout durations */\r\nenum {\r\n  kAEDefaultTimeout             = -1,   /* timeout value determined by AEM */\r\n  kNoTimeOut                    = -2    /* wait until reply comes back, however long it takes */\r\n};\r\n\r\n\r\nenum {\r\n                                        /* Constant for the returnID param of AECreateAppleEvent */\r\n  kAutoGenerateReturnID         = -1,   /* AECreateAppleEvent will generate a session-unique ID */\r\n                                        /* Constant for transaction IDs */\r\n  kAnyTransactionID             = 0     /* no transaction is in use */\r\n};"
+    email: automate.mantasystems@gmail.com
+    modified: "2015-06-21T17:32:31.65111Z"
+    number: "21477694"
+    number_intvalue: 21477694
+    originated: 21-Jun-2015 06:24 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: OS X 10.11 (15A178w)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Timeout constants are broken on -[NSAppleEventDescriptor sendEventWithOptions:timeout:error:]

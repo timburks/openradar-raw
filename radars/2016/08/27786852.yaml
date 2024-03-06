@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27786852"
+    labels:
+        datastore_id: "5565652395884544"
+data:
+    classification: Serious Bug
+    created: "2016-08-10T16:00:46.13336Z"
+    description: "There are two ways for an app to have it automatically launched when the user logs in (or starts up the Mac). The older method is to add the app to the list of \"Login Items\" visible to the user in the \"Users & Groups\" control panel, the other is to register the app's bundle ID (and which the user cannot easily control outside of the app doing this).\r\n\r\nNow, with 10.12, due to the new App Translocation feature, an app that does not get moved by the user away from initial download location won't be able to register itself for launch at login using the older API.\r\n\r\nAnd since Sierra so far does not let the user know that he needs to move the app away from the download location, this will result in unexpected behavior: Even though the app believes it has enabled itself for auto-lauch at login, it won't happen.\r\n\r\nTo fix this, I suggest that either the responsible APIs for adding login items, e.g. AppleScript System Events' \"make new login item\" and LSSharedFileListInsertItemURL, special-handle translocated app paths by replacing them with the original app path, or the user gets told somehow that he should move the app to another location first.\r\n\r\nI understand that the older APIs accessing the Login Items list is now discouraged, but (a) there are apps out there that still do this, and they're currently broken in Sierra, and (b) there are still good reasons to use them, i.e. (1) giving user easier control over the app's start and (2) letting the app control the version that gets launched - with the new API the system automatically chooses the newest version if there are multiple versions available, which is not always desired.\r\n\r\nSteps to Reproduce:\r\nAttached are three demo apps, including source code. To test this, you'll have to download them again using a webbrowser, so that they're quarantined. So, upload them to a web server and download them from there. Then when downloaded, uncompress the zip and launch the apps directly from there, without moving them.\r\n\r\n- \"Add Self to Login Items.app\" is an AppleScript app that adds itself to the Login Items.\r\n- \"LoginItems ObjC Test.app\" is the same using the ObjC API.\r\n- \"LoginItems Test.app\" is yet another app using the ObjC API, showing the current list of Login Items with their paths, for easier understanding of what's happening.\r\n\r\nLauch either of the first two apps and then open the System Preferences, Users & Groups, switch to \"Login Items\" tab.\r\nNote that the app got added.\r\nHowever, as soon as the app is quit again, the added path is not valid any more, e.g. the icon will get a yellow warning tag and right-clicking the Login Item's entry won't offer \"Show in Finder\" any more as the app does not exist any more at the (translocated) path.\r\n\r\nThe 3rd app can be started to see the paths while the 1st or 2nd app is still running - you can see that the path is a temp path and not the actual path that \r\n\r\nExpected Results:\r\nThe apps that add themselves to the Login Items should have their original path and not the translocated path added to the Login Items."
+    email: tempelmann@gmail.com
+    modified: "2017-08-30T04:17:35.99795Z"
+    number: "27786852"
+    number_intvalue: 27786852
+    originated: 10-Aug-2016
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.12 (16A286a)
+    reproducible: Always
+    resolved: ""
+    status: Fixed
+    title: Sierra breaks apps that add themselves to User & Groups Login Items

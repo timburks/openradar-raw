@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13022588"
+    labels:
+        datastore_id: "2567401"
+data:
+    classification: Serious Bug
+    created: "2013-01-16T09:25:31.370758Z"
+    description: "Summary:\r\nCore Audio on iOS 5 and 6 exhibits a persistent session state bug for apps using PlayAndRecord session category and background audio, when sharing the audio system with other such apps under certain conditions.\r\n\r\nSteps to Reproduce:\r\nThere are two currently known ways to reproduce this problem.\r\n\r\nThe first involves any two apps that (a) use the PlayAndRecord audio session category and (b) use the \"audio\" background mode. Apps that match this description include Loopy/Loopy HD, Multitrack DAW, Auria, BeatMaker 2, Audiobus and NLog.\r\n\r\n1. Start one such app (App A)\r\n2. Start another such app (App B)\r\n3. Quit App A via the multitasking bar\r\n4. Start App A again. App A will experience the audio session bug.\r\n\r\nAll other PlayAndRecord apps that are launched after step 4 also exhibit the bug, until all running audio apps are quit via the multitasking bar.\r\n\r\nThe second way to reproduce this problem involves 3 apps, although the features of the apps in question that cause this problem are not understood. The problem is reproduced by starting each of the apps, one after the other, in a particular sequence.\r\n\r\nSome combinations that produce the error - which occurs in the final app - are as follows:\r\n\r\n- Multitrack DAW, Audiobus, Loopy\r\n- Auria, Audiobus, Loopy\r\n- Auria, Audiobus, Multitrack DAW\r\n- Multitrack DAW, Audiobus, Auria\r\n- Auria, Audiobus, Multitrack DAW\r\n- Auria, NLog, Loopy\r\n\r\nWhen the bug is reproduced this way, the problem can be remedied by quitting and restarting the final app.\r\n\r\nExpected Results:\r\n\r\nAll apps work as normal\r\n\r\nActual Results:\r\n\r\nOnce the bug manifests, the entire audio system for the affected apps ceases to function: Callbacks are not invoked, and no audio is produced or recorded. In addition, the bug results in a kAudioSessionIncompatibleCategory (\"!cat\") error when querying the kAudioSessionProperty_CurrentHardwareInputNumberChannels audio session property via AudioSessionGetProperty. \r\n\r\nIn some conditions, the problem can be remedied by quitting the app via the multitasking bar and relaunching it. In other conditions, all active audio apps must be quit this way before the problem is fixed.\r\n\r\nRegression:\r\n\r\nThis appears to occur on all versions of iOS 6 and at least some iOS 5 versions.\r\n\r\nNotes:\r\n\r\nThis bug is causing problems with the new Audiobus inter-app audio technology, due to the resulting widespread use of multitasking."
+    email: michael@tyson.id.au
+    modified: "2013-01-16T09:25:31.371498Z"
+    number: "13022588"
+    number_intvalue: 13022588
+    originated: 16-Jan-2013 08:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPad SDK
+    product_version: 5,6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Severe PlayAndRecord audio session bug when under some multitasking conditions

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19322619"
+    labels:
+        datastore_id: "6442431146885120"
+data:
+    classification: Enhancement/Bug
+    created: "2014-12-22T06:45:21.430013Z"
+    description: "In order to create an object of the same type by using `self.dynamicType()`, an object must implement `override required init()`. In most cases, this works OK, but there are some cases in which it doesn't. \r\n\r\nIn particular, when a subclass does implement the required init, but the superclass either does not implement it, or it is not marked as required.\r\n\r\nFor example, the following code will die with EXC_BAD_ACCESS on line 11: \r\n\r\n1 class SuperClass {\r\n2 \r\n3 }\r\n4 \r\n5 class ChildClass: SuperClass {\r\n6     required override init() {\r\n7         super.init()\r\n8     }\r\n9     \r\n10     func makeCopy() -> Self {\r\n11        return self.dynamicType()\r\n12     }\r\n13   \r\n14     func toString() -> String {\r\n15         return \"Child Class\"\r\n16     }\r\n17 }\r\n18 \r\n19 let childObject = ChildClass()\r\n20 let copyChild = childObject.makeCopy()\r\n21 println(copyChild.toString())\r\n\r\nbut will succeed if you add\r\n`required init() {}`\r\nto line 2 and remove `override` from line 6\r\n\r\nI understand that perhaps this could be considered user error, but it also seems like something that maybe the compiler could notice, and throw out an error or warning. Maybe even just having a better error message than exc_bad_error. That way it would be easier to debug when these problems arise in code where it is not so easy to notice what the cause is.\r\n\r\nVersion:\r\nXcode Version 6.2 (6C86e)\r\niOS 8 Simulator (iPhone 6 Simulator)\r\nMac OS X 10.9.5"
+    email: wirth_caesar@cyberagent.co.jp
+    modified: "2015-07-27T06:20:08.40515Z"
+    number: "19322619"
+    number_intvalue: 19322619
+    originated: 22-Dec-2014
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode Version 6.2 (6C86e)
+    reproducible: Always
+    resolved: ""
+    status: Closed (Resolved)
+    title: '[Swift] Runtime crash with `self.dynamicType()` if superclass does not have `required init() {}` method'

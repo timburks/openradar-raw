@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9976744"
+    labels:
+        datastore_id: "1312401"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2011-08-19T13:26:40.030198Z"
+    description: "Summary:\r\n\r\nWith: Safari 5.1 on Mac OS X Lion (10.7) and Java plugin 1.6.0_26\r\n\r\nWhen Java Applet Connect with java.net.URLConnection Class on a Authenticated URL with Basic Authentication. \r\n\r\nJava Applet build the HTTP header \"Authorization Basic base64string\" wrongly.\r\n\r\nSteps to Reproduce:\r\n\r\n0. Java Applet connect to an Authorized URL with Basic authentication \r\n1. Safari prompts the Safari window and asks the user password\r\n2. The Java plugin writes the standard HTTP header \"Authorization\"\r\n3. The Java plugin builds the user:password and transforms it into a base64 string\r\n4. The Java plugin set the header value: \"Basic \" + the base64 string\r\n5. The Java plugin sends the http request content to the HTTP server\r\n6. The Server replies with HTTP status 401 Unauthorized\r\n\r\nExpected Results:\r\n\r\nHTTP Header \"Authorization\" value = \"Basic \" + base64.encode(username + \":\" + password)\r\n\r\nActual Results:\r\n\r\nHTTP Header \"Authorization\" value = \"Basic \" + base64.encode(username + \"randomcharacters:randomcharacters\" + password + \"randomcharacters\")\r\n\r\nRegression: YES\r\n\r\nNote:\r\n\r\nThis bug is not present if we use Google Chrome which prompts the regular Username Password Java Applet Plugin window\r\n\r\n01-Oct-2011 12:41 AM Pierrick:\r\nI created a very simple example to show the bug:\r\n\r\nYou will find a secure.zip file attached.\r\nhttp://www.pterrettaz.ch/stream/secure.zip/?attachment\r\n\r\n\r\nIt contains : \r\n - apache config for my user: pik\r\n - applet.html\r\n - applet.jar (with source)\r\n - crash log from java console\r\n - htpasswd containing where user is abcd1234 and password 111111\r\n\r\nI noticed the problems happened only with a username composed 4 letters and 4 digits\r\n\r\n1. extract the zip into your ~/Sites\r\n2. configure your apache2 with the same config in apache2.conf.txt\r\n3. run safari to your http://localhost/~<username>/secure\r\n4. safari will prompt a username/password window\r\n5 enter user: abcd1234, password: 111111 and save password into your keychain\r\n6. clic on applet.html\r\n7 open the java console to see the problem. (it happens almost every time)\r\n\r\nI used Webscarab tp intercept each request sent from JavaPlugin to http://localhost:80/~<username>/secure/applet.jar to download the jar file and I can see the username password base64 String send to server is wrong.\r\n\r\n\r\n18-Oct-2011 09:18 AM Pierrick Terrettaz:\r\nHi,\r\n\r\nDo you have any news about this issue ?\r\n\r\nWe encountered this problems since our clients upgraded there Mac OS X to Lion\r\n\r\nPlease, contact me for any informations\r\n\r\nRegards\r\n\r\n19-Oct-2011 11:20 AM Pierrick Terrettaz:\r\nIt seems the problem happend because of a bug when safari follow redirections pages. Information can be found here: https://discussions.apple.com/message/15971301\r\n\r\n20-Oct-2011 11:50 AM Pierrick Terrettaz:\r\nHi,\r\n\r\nI updated the new version of MAC OS X 10.7.2 and the problem is still present\r\n\r\nHave you try this example et got the error too ?\r\n\r\nDo you have any information about this issue ?\r\n\r\nRegards\r\n\r\nPierrick\r\n\r\n28-Oct-2011 08:13 AM Pierrick Terrettaz:\r\nHi,\r\n\r\nI tried the nightly build r97664 of Webkit and the problem is still present.\r\n\r\nDo you have some information about this ?\r\n\r\nBest regards\r\n\r\nPierrick"
+    email: pierrick@gmail.com
+    modified: "2011-11-28T14:16:51.584172Z"
+    number: "9976744"
+    number_intvalue: 9976744
+    originated: "2011-08-18"
+    parent_number: '&{NULL_VALUE}'
+    product: Safari
+    product_version: 5.1 (7534.48.3)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Safari Java plugin Basic authentication

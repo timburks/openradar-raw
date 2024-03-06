@@ -1,0 +1,57 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21861908"
+    labels:
+        datastore_id: "4562274719105024"
+data:
+    classification: Enhancement
+    created: "2015-07-16T20:51:20.29055Z"
+    description: |-
+        Summary:
+        When passing `init` methods to higher order functions at the type level, you need to use `self.init` or else the compiler throws errors. However, the errors the compiler throws aren’t helpful and don’t tell you what the actual problem is.
+
+        Steps to Reproduce:
+        1. Create a simple struct:
+
+        ```swift
+        struct Foo {
+          let foo: String
+        }
+        ```
+
+        2. Add a type level method to the struct, and pass the init method without prefixing with `self`:
+
+        ```swift
+        extension Foo {
+          static func bar(opt: String?) -> Foo? {
+            return opt.map(init)
+          }
+        }
+        ```	
+
+        Expected Results:
+        Expect to see a helpful error message that describes the actual problem (that the init method must be invoked on an explicit type)
+
+        Actual Results:
+        Multiple error messages (up to 8, with some duplications) are thrown at the same time, none of which are helpful:
+
+        - Consecutive statements on a line must be separated by ‘;’
+        - Expected ‘,’ separator
+        - Expected ‘(‘ for initializer parameters
+        - Expected expression in list of expressions
+        - Expected ‘)’ in expression list
+        - Expected expression
+        - Initializers may only be declared within a type
+    email: gordon@thoughtbot.com
+    modified: "2015-07-16T20:51:20.29089Z"
+    number: "21861908"
+    number_intvalue: 21861908
+    originated: 16-Jul-2015 04:51 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Swift 2.0
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Error messages when passing `init` methods at the type level are ambiguous and unhelpful

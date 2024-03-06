@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "38232046"
+    labels:
+        datastore_id: "4622476118065152"
+data:
+    classification: Memory leak
+    created: "2018-04-13T10:02:09.09534Z"
+    description: "SecTrustSettingsCopyCertificates seems to have a memory leak inside that is reported when using clang's address sanitizer (a.k.a ASAN). Apple's provided clang does not support the memory sanitizer in 10.13.3, so I installed clang6 using brew. Instruments also reports it as a memory leak.\r\n\r\nSteps to Reproduce:\r\n\r\nCompile with `-fsanitize=address -framework CoreFoundation -framework Security` flags and run with `ASAN_OPTIONS=detect_leaks=1` environment variable.\r\n\r\nvoid ssl_leak() {\r\n    for (int dom = kSecTrustSettingsDomainUser; dom <= int(kSecTrustSettingsDomainSystem); dom++) {\r\n        CFArrayRef cfCerts;\r\n        OSStatus status = SecTrustSettingsCopyCertificates(SecTrustSettingsDomain(dom), &cfCerts);\r\n        CFRelease(cfCerts);\r\n    }\r\n}\r\n\r\nCalling `SecTrustSettingsCopyCertificates` with `kSecTrustSettingsDomainSystem` as the first parameter is the one that generates the biggest leak (~1322342 bytes per call).\r\n\r\nExpected Results:\r\nNo memory leaks\r\n\r\nActual Results:\r\nCalling ssl_leak once:\r\nSUMMARY: AddressSanitizer: 1322606 byte(s) leaked in 5179 allocation(s).\r\n\r\nCalling ssl_leak 1000 times without ASAN: \r\nhttps://snag.gy/YCzkXG.jpg\r\n\r\nVersion/Build:\r\nmacOS 10.13.3 and 10.13.4"
+    email: pablo.marcos.oltra@gmail.com
+    modified: "2018-07-10T18:47:03.1281Z"
+    number: "38232046"
+    number_intvalue: 38232046
+    originated: "2018-03-07"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13.3, 10.13.4
+    reproducible: Yes
+    resolved: Yes
+    status: Duplicate of 36861460, Closed
+    title: Memory leak inside of SecTrustSettingsCopyCertificates

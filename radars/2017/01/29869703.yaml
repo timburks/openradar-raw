@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29869703"
+    labels:
+        datastore_id: "6117595337981952"
+data:
+    classification: ""
+    created: "2017-01-04T20:47:36.27317Z"
+    description: "Summary:\r\nI run my own mail server.  The mail server logs captured this failed attempt by Apple to send mail to me (my address is REDACTED@REDACTED.com):\r\n\r\nDec 31 15:16:37 milter-greylist: (unknown id): Sender IP 17.171.2.31 and address <saintecatherine@apple.com> are SPF-compliant, bypassing greylist\r\nDec 31 15:16:37 postfix/smtpd[24117]: B8D6F40133: client=mail-out21.apple.com[17.171.2.31]\r\nDec 31 15:16:38 postfix/cleanup[24121]: B8D6F40133: message-id=<1788176292.1483197395559.JavaMail.nexusp@ma-posp-lapp315.corp.apple.com>\r\nDec 31 15:16:38 opendkim[1322]: B8D6F40133: s=mailout2048s d=apple.com SSL error:04091068:rsa routines:INT_RSA_VERIFY:bad signature\r\nDec 31 15:16:38 opendkim[1322]: B8D6F40133: bad signature data\r\nDec 31 15:16:38 postfix/cleanup[24121]: B8D6F40133: milter-reject: END-OF-MESSAGE from mail-out21.apple.com[17.171.2.31]: 5.7.0 bad DKIM signature data; from=<saintecatherine@apple.com> to=<REDACTED@REDACTED.com> proto=ESMTP helo=<mail-in21.apple.com>\r\nDec 31 15:16:43 ip-172-31-32-215 postfix/smtpd[24117]: disconnect from mail-out21.apple.com[17.171.2.31] ehlo=2 starttls=1 mail=1 rcpt=1 data=0/1 quit=1 commands=6/7\r\n\r\nTimestamps are UTC.\r\n\r\nSteps to Reproduce:\r\n1. On 2016-12-31, at 10:15 Montreal Time, I bought something from the Sainte Catherine Apple Store.\r\n2. I paid by credit card. When asked whether I wanted the receipt on paper or by e-mail, I said that e-mail was fine.\r\n3. The e-mail bounced due to an invalid DKIM signature. (See http://dkim.org.)\r\n\r\nExpected Results:\r\nDKIM signature should be valid, matching the published key for mailout2048s._domainkey.apple.com, which, at the time of this writing, is:\r\n\r\nmailout2048s._domainkey.apple.com. 60 IN TXT\t\"v=DKIM1;\" \"k=rsa;\" \"h=sha256;\" \"p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4c/TfEpA3ry1fYjhKQl5\" \"pEZorCF66/9U3IBJLGv01Fxzj54jNfedegeafYCWiX8nBwSVcAs2MiQsJt2ZtND+\" \"Uuqag637yAw7VbmXiVkinU/QKSHy7+314VQWf1ic6RpnT6DfyHJk7tyOM3DiXKya\" \"1VrPDqHMau3KwW0M9wrxKe1GOQWtxryxconUUGylTL7ObaneqyyNBu4OYDtvH39K\" \"AxUys1S32lus2HutCb9/Ef9ztHEpthYh5+iNN4UvUwVGLqA3nJfHDG3AxSuBC01l\" \"6WQiOMVaZDCDGLGh9A01Nuy3I91v9xm7Q9Y1jLspfsRerBet1MGHfzYXX5roneGb\" \"MwIDAQAB\"\r\n\r\nActual Results:\r\nMail from Apple was rejected due to an invalid DKIM signature.\r\n\r\nVersion:\r\n\r\n\r\nNotes:\r\nSince the mail was rejected, all I have as evidence of this transaction on 2016-12-31 is those few lines in my mail server log.\r\n\r\nHowever, having discovered the problem, I also dug through my history and found a similar receipt from 2016-02-15, captured from a time when my server was not yet verifying DKIM signatures.  (See attachment.)  It also fails DKIM verification today — assuming that the DKIM key has not changed in the past year.\r\n\r\nFor comparison, I have attached another e-mail from 2016-02-21 for a Genius Bar appointment, whose signature is valid.  It uses the \"emailapple2048\" DKIM selector instead of \"mailout2048s\".\r\n\r\nConfiguration:\r\nA mail server that verifies DKIM signatures is likely to reject e-mailed receipts from Apple stores. Mail servers that don't verify DKIM signatures would deliver these invalid messages.\r\n\r\nAttachments:\r\n'dkim-success-example.eml' and 'dkim-failure-example.eml' were successfully uploaded."
+    email: dwpoon@gmail.com
+    modified: "2017-01-04T20:47:36.2734Z"
+    number: "29869703"
+    number_intvalue: 29869703
+    originated: "2017-01-04"
+    parent_number: '&{NULL_VALUE}'
+    product: Other
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Apple Store receipt lost due to bad signature from Apple's misconfigured e-mail server

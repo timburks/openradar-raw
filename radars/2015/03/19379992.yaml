@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19379992"
+    labels:
+        datastore_id: "4525265388568576"
+data:
+    classification: ""
+    created: "2015-03-09T23:10:32.037867Z"
+    description: "I have a toolbar with multiple buttons each of which are connected to other view controllers in my storyboard via adaptive popover segue. When I tap a button, the first popover displays. If, however, I tap the second button next to it, it won't automatically dismiss the first popover, so I need to dismiss it programmatically. The problem there, though, is that I cannot typecast the segue to a UIStoryboardPopoverSegue inside of prepareForSegue because the actual type of the segue when running with the debugger is type UIStoryboardPopoverPresentationSegue which is not a concrete type that we (developers) have access to. This code fails at the typecast (I also tried it with the 'if let' syntax):\r\n\r\noverride func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {\r\n    if self.popoverController != nil {\r\n        self.popoverController!.dismissPopoverAnimated(true)\r\n    }\r\n    \r\n    if segue.identifier == \"Popover1Segue\" {\r\n        var popoverSegue = (segue as UIStoryboardPopoverSegue)\r\n        var destination = segue.destinationViewController as PoppedViewController\r\n        \r\n        self.popoverController = popoverSegue.popoverController\r\n    }\r\n}\r\n\r\nIf I change the segue type in the storyboard to use the deprecated popover segue, rather than the adaptive one, it works fine.\r\n\r\nSteps to Reproduce:\r\n1. Create a basic iPad app\r\n2. Add a toolbar to the main view and add two buttons to it\r\n3. Add two view controllers to the storyboard and drag a connection from button one to one of them and from button two to the other\r\n4. Implement prepareForSegue in the main view controller using the following code:\r\n\r\noverride func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {\r\n    if self.popoverController != nil {\r\n        self.popoverController!.dismissPopoverAnimated(true)\r\n    }\r\n    \r\n    if segue.identifier == \"Popover1Segue\" {\r\n        var popoverSegue = (segue as UIStoryboardPopoverSegue)\r\n        var destination = segue.destinationViewController as PoppedViewController\r\n        \r\n        self.popoverController = popoverSegue.popoverController\r\n    }\r\n}\r\n\r\n5. Place a breakpoint on the line where the typecast to UIStoryboardPopoverSegue is happening. \r\n6. Run to the breakpoint and step over\r\n\r\nThe app will crash because the typecast fails. I can prevent a crash by using the 'if let' syntax, however, this does not solve the problem of not being able to dismiss the popover programmatically since the typecast is still failing.\r\n\r\nExpected Results:\r\nI expect to be able to typecast to a UIStoryboardPopoverSegue or something like it so that I can keep a reference to the UIPopoverController being used so that I can dismiss it later (and not have to refer to a deprecated API to do so)\r\n\r\nActual Results:\r\nI am unable to typecast to a type that is available to developers since the actual type of the segue in prepareForSegue is UIStoryboardPopoverPresentationSegue\r\n\r\nVersion:\r\niOS 8.1.2"
+    email: matt.long@gmail.com
+    modified: "2015-11-23T19:02:17.16298Z"
+    number: "19379992"
+    number_intvalue: 19379992
+    originated: 05-Jan-2015 04:48 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 8.1.2
+    reproducible: 100%
+    resolved: 09-Jun-2015 11:27 AM
+    status: Closed
+    title: UIPopoverController Setup In Storyboard Cannot Be Dismissed Programmatically Without Reverting to Deprecated API

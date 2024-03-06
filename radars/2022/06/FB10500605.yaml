@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB10500605
+    labels:
+        datastore_id: "5557681653809152"
+data:
+    classification: ""
+    created: "2022-06-29T10:25:54.286247Z"
+    description: "We observe a rare crash (SIGTRAP) in pthread_jit_write_protect_np() in our CI setup for Truffleruby [1]. It’s using HotSpot (OpenJDK), this is what the stack trace looks like:\r\n\r\n\r\n    Thread 0 Crashed:: Dispatch queue: com.apple.main-thread\r\n    0   libsystem_pthread.dylib         0x000000018515c6f0 pthread_jit_write_protect_np + 516\r\n    1   libjvm.dylib                    0x000000010119e394 Threads::create_vm(JavaVMInitArgs*, bool*) + 140\r\n    2   libjvm.dylib                    0x0000000100d5aa04 JNI_CreateJavaVM + 120\r\n    3   ruby                            0x0000000100699260 main + 892\r\n    4   libdyld.dylib                   0x0000000185179430 start + 4\r\n\r\n\r\nDisassembling pthread_jit_write_protect_np() we see the following instruction at offset 516:\r\n\r\n(lldb) dis -n pthread_jit_write_protect_np\r\nlibsystem_pthread.dylib`pthread_jit_write_protect_np:\r\n    0x19bb34f5c <+0>:   pacibsp\r\n    0x19bb34f60 <+4>:   stp    x29, x30, [sp, #-0x10]!\r\n    0x19bb34f64 <+8>:   mov    x29, sp\r\n    [...]\r\n    0x19bb35160 <+516>: brk    #0x1\r\n\r\nwhere brk causes a SIGTRAP.  So how do we get here?\r\n\r\n    0x19bb34fe4 <+136>: movk   x0, #0xc110\r\n    0x19bb34fe8 <+140>: movk   x0, #0xffff, lsl #16\r\n    0x19bb34fec <+144>: movk   x0, #0xf, lsl #32\r\n    0x19bb34ff0 <+148>: movk   x0, #0x0, lsl #48\r\n    0x19bb34ff4 <+152>: ldr    x0, [x0]\r\n    0x19bb34ff8 <+156>: msr    S3_6_C15_C1_5, x0\r\n    0x19bb34ffc <+160>: isb\r\n    0x19bb35000 <+164>: movk   x1, #0xc110\r\n    0x19bb35004 <+168>: movk   x1, #0xffff, lsl #16\r\n    0x19bb35008 <+172>: movk   x1, #0xf, lsl #32\r\n    0x19bb3500c <+176>: movk   x1, #0x0, lsl #48\r\n    0x19bb35010 <+180>: ldr    x9, [x1]\r\n    0x19bb35014 <+184>: mrs    x10, S3_6_C15_C1_5\r\n    0x19bb35018 <+188>: b      0x19bb350ac               ; <+336>\r\n    [...]\r\n    0x19bb350ac <+336>: cmp    x9, x10\r\n    0x19bb350b0 <+340>: b.ne   0x19bb35160               ; <+516>\r\n    [...]\r\n    0x19bb35160 <+516>: brk    #0x1\r\n\r\nSo the verification fails, and thus a jump to brk happens.\r\n\r\nWe managed to replace pthread_jit_write_protect_np() with a custom implementation that retries writing to S3_6_C15_C1_5 until successful. However, it looks like a context switch must happen between retries; I guess whatever the kernel is doing this helps to “fixup” the situation.\r\n\r\nHere is our workaround for HotSpot with more details on the issue: https://gist.githubusercontent.com/lewurm/3ae189f55de13621708aefb52d12fe1d/raw/09f70b66d91c7961b7229f9be3f76ac355c95bf4/jit-protect.patch\r\n\r\nUnfortunately we have not been able to come up with a reproducer outside of our CI setup.\r\n\r\nWe are observing this on Macmini9,1 machines.\r\n\r\n\r\n[1] https://github.com/oracle/truffleruby/"
+    email: lewurm@gmail.com
+    modified: "2022-06-29T10:25:54.286438Z"
+    number: FB10500605
+    number_intvalue: 10500605
+    originated: 06/29/2022
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Write to system register S3_6_C15_C1_5 (aka. SPRR_PERM_EL0 ) in pthread_jit_write_protect_np  can fail rarely

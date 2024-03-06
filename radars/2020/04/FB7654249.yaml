@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB7654249
+    labels:
+        datastore_id: "5035472862576640"
+data:
+    classification: Crash
+    created: "2020-04-06T20:40:44.603598Z"
+    description: "The swift compiler with versions 5.2, 5.1.3 crashes if you run any project containing C/C++ dependencies with --repl attribute. This behavior appears on macOS only. On Ubuntu 18 same packages works well with the `swift run --repl`. The crash appears on import Swift Package that contains the C/C++ dependencies into repl.\r\n\r\nThe `swift test` command within the same setup works properly.\r\nThe same project, but as executable (e.g. MyLibrary.swift renamed to main.swift) works properly with `swift run` command.\r\n\r\nSteps to reproduce:\r\n1. `swift package init --type library MyLibrary`.\r\n2.1 Add the following dependency to the package dependencies: `.package(url: \"https://github.com/swift-server/async-http-client.git\", from: \"1.0.0\")`.\r\n2.2 Add follow dependency to MyLibrary target dependencies: `.product(name: \"AsyncHTTPClient\", package: \"async-http-client\"),`.\r\n3. Run `swift run --repl`.\r\n4. In swift console console type: `import MyLibrary`.\r\n\r\nExpected behavior:\r\nPackage loads and its public types and methods are available within repl runtime.\r\n\r\nCurrent behavior:\r\nRepl crashes with the following stacktrace:\r\nwarning: Swift error in fallback scratch context: <module-includes>:1:9: note: in file included from <module-includes>:1:\r\n#import \"./.build/checkouts/swift-nio-ssl/Sources/CNIOBoringSSLShims/include/CNIOBoringSSLShims.h\"\r\n        ^\r\n\r\nerror: ./.build/checkouts/swift-nio-ssl/Sources/CNIOBoringSSLShims/include/CNIOBoringSSLShims.h:22:10: error: 'CNIOBoringSSL.h' file not found\r\n#include \"CNIOBoringSSL.h\"\r\n         ^\r\n\r\nerror: could not build Objective-C module 'CNIOBoringSSLShims'\r\n\r\n\r\nnote: This error message is displayed only once. If the error displayed above is due to conflicting search paths to Clang modules in different images of the debugged executable, this can slow down debugging of Swift code significantly, since a fresh Swift context has to be created every time a conflict is encountered.\r\n\r\n0  lldb                     0x0000000103a43f08 llvm::sys::PrintStackTrace(llvm::raw_ostream&) + 40\r\n1  lldb                     0x0000000103a434c5 llvm::sys::RunSignalHandlers() + 85\r\n2  lldb                     0x0000000103a44550 SignalHandler(int) + 272\r\n3  libsystem_platform.dylib 0x00007fff7218f5fd _sigtramp + 29\r\n4  libsystem_platform.dylib 0x000070000baca650 _sigtramp + 2576593008\r\n5  LLDB                     0x0000000103caa957 lldb_private::IOHandlerEditline::Run() + 375\r\n6  LLDB                     0x0000000103c92b89 lldb_private::Debugger::ExecuteIOHandlers() + 105\r\n7  LLDB                     0x0000000103c95463 lldb_private::Debugger::IOHandlerThread(void*) + 19\r\n8  LLDB                     0x0000000103d3c547 lldb_private::HostNativeThreadBase::ThreadCreateTrampoline(void*) + 103\r\n9  libsystem_pthread.dylib  0x00007fff7219b109 _pthread_start + 148\r\n10 libsystem_pthread.dylib  0x00007fff72196b8b thread_start + 15\r\n[1]    7804 segmentation fault  swift run --repl"
+    email: Yaroslav.Yashin@gmail.com
+    modified: "2020-04-06T20:40:44.603755Z"
+    number: FB7654249
+    number_intvalue: 7654249
+    originated: 06.04.2020
+    parent_number: '&{NULL_VALUE}'
+    product: Swift Compiler
+    product_version: "5.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: swift run --reps crashes with C/C++ dependencies

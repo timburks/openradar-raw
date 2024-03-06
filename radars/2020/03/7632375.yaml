@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7632375"
+    labels:
+        datastore_id: "5045641768075264"
+data:
+    classification: ""
+    created: "2020-03-20T20:14:59.105803Z"
+    description: "When playing music from the watch into a Bluetooth speaker or headset (not airpods), after a Siri interaction, the playback volume is not correctly reset to the original value and remains ducked. Rebooting the watch has no effect on the issue. Rebooting the speaker or headset fixes the issue immediately.\r\n\r\nSteps to reproduce using the Pandora app:\r\n1) Pair the watch to a bluetooth speaker or headset (not airpods).\r\n2) Start playing music from the watch into the speaker. To ensure we're playing from the watch, I uninstalled the app from the phone that is paired to the watch.\r\n3) Go to the content list and hit Search, then search by voice\r\n4) Don't say anything and just hit Cancel\r\n\r\nExpected: speaker volume recovers to original level\r\nObserved: speaker volume remains ducked\r\n\r\nFor the trace below, I set the playback volume (using the of the crown) to around 50% and as expected does not change after the Siri interaction. I monitored the AVPlayer volume and the AVAudioSession outputVolume and they were always at the expected values as listed below. However the output volume of the bluetooth device was degraded.\r\n\r\n== Before Siri interaction, just playing music\r\n\r\nAVAudioSession currentRoute BluetoothA2DP, outputVolume: 0.5066253\r\nAVPlayer volume: 1.0\r\nAVSystemController_AudioCategoryNotificationParameter: Audio/Video\r\nAVSystemController_AudioVolumeNotificationParameter: 0.5066252946853638\r\n\r\n== During Siri interaction\r\n\r\nAVAudioSession currentRoute BluetoothHFP, outputVolume: 0.5066253\r\nAVPlayer volume: 1.0\r\nAVSystemController_AudioCategoryNotificationParameter: VoiceCommand <======== Category changed\r\nAVSystemController_AudioVolumeNotificationParameter: 0.5 <======== Volume changed\r\n\r\n== After Siri interaction\r\n\r\nAVAudioSession currentRoute BluetoothA2DP, outputVolume: 0.5066253\r\nAVPlayer volume: 1.0\r\nAVSystemController_AudioCategoryNotificationParameter: Audio/Video <======== Category changes back\r\nAVSystemController_AudioVolumeNotificationParameter: 0.5066252946853638 <======== Volume changes back (does not match speaker)\r\n\r\n== After speaker reboot and re-discovery by the watch\r\n\r\nAVAudioSession currentRoute BluetoothA2DP, outputVolume: 0.5066253\r\nAVPlayer volume: 1.0\r\nAVSystemController_AudioCategoryNotificationParameter: Audio/Video\r\nAVSystemController_AudioVolumeNotificationParameter: 0.2796252965927124 <======== Watch picks up actual speaker volume\r\n\r\n== Hit play after reconnecting with the speaker\r\n\r\nAVAudioSession currentRoute BluetoothA2DP, outputVolume: 0.5066253\r\nAVPlayer volume: 1.0\r\nAVSystemController_AudioCategoryNotificationParameter: Audio/Video\r\nAVSystemController_AudioVolumeNotificationParameter: 0.5066252946853638"
+    email: lramos@pandora.com
+    modified: "2020-03-20T20:14:59.105965Z"
+    number: "7632375"
+    number_intvalue: 7632375
+    originated: Mar 19, 2020
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: watchOS Bluetooth volume drops 40% after Siri interaction

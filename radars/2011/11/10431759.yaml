@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10431759"
+    labels:
+        datastore_id: "1433401"
+data:
+    classification: Serious bug
+    created: "2011-11-11T09:19:00.095979Z"
+    description: "11-Nov-2011 10:14 AM Johan Sorensen:\r\n'pdftest.zip' was successfully uploaded\r\n\r\n11-Nov-2011 10:14 AM Johan Sorensen:\r\nSummary:\r\n\r\nWhen using a UIWebView to load up a PDF in the mainbundle, it'll crash when the webview is released with\r\n\r\n(gdb) po $eax\r\nCannot remove an observer <UIWebPDFView 0x6d4a820> for the key path \"backgroundImage\" from <UIPDFPageView 0x6e36000> because it is not registered as an observer.\r\n(gdb) bt\r\n#0  0x0154acf0 in objc_exception_throw ()\r\n#1  0x01361a78 in +[NSException raise:format:arguments:] ()\r\n#2  0x013619e9 in +[NSException raise:format:] ()\r\n#3  0x00922c94 in -[NSObject(NSKeyValueObserverRegistration) _removeObserver:forProperty:] ()\r\n#4  0x00922911 in -[NSObject(NSKeyValueObserverRegistration) removeObserver:forKeyPath:] ()\r\n#5  0x0046a8b0 in -[UIWebPDFView _removeBackgroundImageObserverIfNeeded:] ()\r\n#6  0x0046ab7a in -[UIWebPDFView dealloc] ()\r\n#7  0x0155de4d in _objc_rootRelease ()\r\n#8  0x0046e171 in -[UIWebPDFViewHandler clearAllViews] ()\r\n#9  0x0046e030 in -[UIWebPDFViewHandler dealloc] ()\r\n#10 0x0155de4d in _objc_rootRelease ()\r\n#11 0x001c509c in -[UIWebView dealloc] ()\r\n#12 0x001c4e9f in -[UIWebView release] ()\r\n#13 0x00047153 in -[UIView(Hierarchy) removeFromSuperview] ()\r\n#14 0x000431e0 in -[UIView dealloc] ()\r\n#15 0x0155de4d in _objc_rootRelease ()\r\n#16 0x0155de10 in objc_release ()\r\n#17 0x0155ec60 in (anonymous namespace)::AutoreleasePoolPage::pop ()\r\n#18 0x012eded8 in _CFAutoreleasePoolPop ()\r\n#19 0x012f083b in __CFRunLoopRun ()\r\n#20 0x012efdb4 in CFRunLoopRunSpecific ()\r\n#21 0x012efccb in CFRunLoopRunInMode ()\r\n#22 0x012a2879 in GSEventRunModal ()\r\n#23 0x012a293e in GSEventRun ()\r\n#24 0x00010a9b in UIApplicationMain ()\r\n#25 0x00001ac2 in main (argc=1, argv=0xbffff664) at /Users/johan/backyard/pdftest/pdftest/main.m:16\r\n\r\nIt would appear it attempts to remove an observer for the keypath \"backgroundImage\" which it didn't actually register for.\r\n\r\nThis appears to be a iOS5 issue only both in the simulator and device. I can't reproduce it with 4.3\r\n\r\nThe PDF is loaded with the following code:\r\n    NSURL *url = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@\"test\" ofType:@\"pdf\"]];\r\n    NSURLRequest *request = [NSURLRequest requestWithURL:url];\r\n    [self.webView loadRequest:request];\r\n\r\nand it'll crash when [webView release] is called in the viewcontroller's -dealloc\r\n\r\nSteps to Reproduce:\r\n\r\nCompile and run the attached simplified example project . Click the button to open up the modal webview, hit the close button in that and observe the crashing.\r\n\r\nExpected Results:\r\n\r\nUIWebView shouldn't crash when rendering a PDF when the webview is deallocated\r\n\r\nActual Results:\r\n\r\nUIWebView (nee the internal UIWebPDFView) crashes\r\n\r\nRegression:\r\n\r\nUnable to render PDFs in practice as it crashes when you're done showing that PDF\r\n\r\nNotes:\r\n\r\nExample project included with an isolated reproducible application demonstrating the crash"
+    email: johan@shortcut.no
+    modified: "2011-11-11T09:19:00.097772Z"
+    number: "10431759"
+    number_intvalue: 10431759
+    originated: 11-Nov-2011 10:14 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: Build 4D199
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIWebPDFView removes an observer it didn't register

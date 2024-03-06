@@ -1,0 +1,46 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19259764"
+    labels:
+        datastore_id: "6380970164879360"
+data:
+    classification: Serious Bug
+    created: "2014-12-16T03:05:00.84771Z"
+    description: |-
+        Summary:
+        According to Apple's documentation on the Show segue:
+
+        Present the content in the detail or master area depending on the content of the screen. If the app is displaying a master and detail view, the content is pushed onto the detail area. If the app is only displaying the master or the detail, the content is pushed on top of the current view controller stack.
+        If used on an iPhone (other than an iPhone 6/6+ showing a master detail) a Show segue should push a view controller into the current view controller stack.
+
+        However this behavior is broken with "retrocompatibility" issues when running iOS 7. Weirdly enough this only happens when we first push a UIViewController via code and then call a Show segue from that pushed VC; the UINavigationController of this child VC gets lost and the Show segue will presenting the UIViewController modally.
+
+        When running this example app on iOS 8 you'll notice that both UIViceControllers are pushed ito the stack and the last one will display a UIActivityController whereas running this on iOS 7.1 will result on the last UIViewController being presented modally and no UIActivityController will be displayed due to the lack of a navigationController property on the last child view controller.
+
+        Steps to Reproduce:
+        Open the sample project and first run it on iOS 8 simulator; everything will work as expected; then run it on 7.1 and you’ll notice how the last view controller is presented modally rather than pushed and there’s no UIActivityController due to the last’s view controller’s navigationController property being nil.
+
+        Expected Results:
+        In both iOS7.1 and iOS8.x calling a “Show” segue should produce the same result (unless the scenario of running master/detail where it explicitly will yield a different behavior).
+
+        Actual Results:
+        Instead of pushing the last view controller as one would expect it is being presented modally; leaving that view controller hanging with no possible way for the user to dismiss it (mainly because there’s no Back button because there’s no stack and the developer did not foresee this view being presented modally).
+
+        Regression:
+        Does not apply regression since “Show” was introduced on iOS8
+
+        Notes:
+        The workaround here would be to use the deprecated segue “Push”’ although we shouldn’t have to resort to this code hacks and instead we should be able to use the newly introduced “Show” and it should work as expected.
+    email: me@estebantorr.es
+    modified: "2014-12-16T03:05:00.847952Z"
+    number: "19259764"
+    number_intvalue: 19259764
+    originated: 15-Dec-2014 09:04 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.1.1 (6A2008a)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 6.1.1: "Show" segue inconsistenly pushing or presenting modally'

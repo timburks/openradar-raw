@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12008589"
+    labels:
+        datastore_id: "1844412"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2012-08-01T20:23:25.09703Z"
+    description: "01-Aug-2012 04:21 PM Mark Mentovai:\r\nSummary:\r\n\r\nI should be able to access the C standard “environ” variable documented in “man environ” and http://pubs.opengroup.org/onlinepubs/9699919799/functions/environ.html simply by declaring it:\r\n\r\nextern char** environ;\r\n\r\nWhen I attempt to do so under certain conditions, attempts to access environ at runtime cause the program to crash. environ has value 0, and dereferencing it results in a crash. Similarly, NXArgc and NXArgv also both have value 0, and dereferencing NXArgv causes a crash.\r\n\r\nI have found that this problem occurs in a 32-bit x86 program built with the SDK set to 10.6 or 10.7, the deployment target set to 10.6 or 10.7, and dead code stripping enabled. This does not happen in 64-bit programs, or with the deployment target or SDK set to 10.5 or 10.8.\r\n\r\nUnder these conditions, the linker is not placing environ in the output and is in fact removing the entire __DATA,__program_vars section that is intended to contain these variables.\r\n\r\nSteps to Reproduce:\r\n\r\nThis simple test program:\r\n\r\n--\r\n#include <stdio.h>\r\n\r\nextern char** environ;\r\n\r\nint main(int argc, char* argv[]) {\r\n  for (char** variable = environ; *variable; ++variable) {\r\n    printf(\"%s\\n\", *variable);\r\n  }\r\n  return 0;\r\n}\r\n--\r\n\r\ncompiled with\r\n\r\nclang -Wall -arch i386 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk\r\n -mmacosx-version-min=10.6.0 t.c -o t -dead_strip\r\n\r\nwhen run, should print the contents of the environment, but instead crashes.\r\n\r\nExpected Results:\r\n\r\nenviron should be accessible. The contents of the environment should be printed when running the test program above.\r\n\r\nActual Results:\r\n\r\nenviron is not usable. The program crashes with SIGBUS. “environ” has value 0 (NULL), so the attempt to dereference it results in a crash.\r\n\r\nRegression:\r\n\r\nYes, this is a regression. This works correctly in Xcode 3.2.\r\n\r\nNotes:\r\n\r\nI am attaching* this sample test program as an Xcode project. To exhibit the bug, I have made the following changes to the default template for a command-line tool project at the project level:\r\n\r\nARCHS = $(ARCHS_STANDARD_32_BIT)\r\nSDKROOT = macosx10.7\r\nMACOSX_DEPLOYMENT_TARGET = 10.6\r\nDEAD_CODE_STRIPPING = YES\r\n\r\nI have made these changes for both Debug and Release modes, although I don’t normally enable dead code stripping for debug mode, because Xcode 4 makes it painful to run anything other than the Debug product from within the Xcode environment itself.\r\n\r\nIf you open the attached project and build it and run it (command-R), it will crash. The program is well-formed. It shouldn’t crash, it should simply print the contents of the environment.\r\n\r\n* http://crbug.com/139902#c17"
+    email: mark@chromium.org
+    modified: "2013-09-16T20:39:41.795421Z"
+    number: "12008589"
+    number_intvalue: 12008589
+    originated: "2012-08-01"
+    parent_number: "6435909"
+    product: Developer Tools
+    product_version: 4.4 4F250 ld64-133.3
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/6435909
+    title: environ (and NXArgc, NXArgv) are dead-stripped and unusable; x86 program crashes

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "45414727"
+    labels:
+        datastore_id: "4964929186562048"
+data:
+    classification: MDM
+    created: "2018-10-19T22:56:43.092492Z"
+    description: "Area:\r\nMDM\r\n\r\nSummary:\r\nThe MDM ScheduleOSUpdate only returns with a Status of Idle, Downloading, UpdateAvailable, or Installing (and others). However, if a passcode exists on the device, the user can schedule the update for later, at which the MDM status returns \"Installing\".\r\n\r\nHowever, if one more ScheduleOSUpdate is sent (with Default, or InstallASAP as the InstallAction), the update is triggered IMMEDIATELY, which is undocumented, unexpected behavior.\r\n\r\nSteps to reproduce:\r\n- iOS device (not on latest version) with passcode configured.\r\n- Send \"ScheduleOSUpdate\" with InstallAction of Default\r\n- When upgrade notification appears on device, schedule update for later (between 1AM and 3AM). \r\n- Send MDM command \"OSUpdateStatus\" \r\n- Note that status is \"Installing\"\r\n- Send MDM command \"ScheduleOSUpdate\" again \r\n\r\nActual behavior\r\n- Device begins update IMMEDIATELY.\r\n\r\nExpected behavior: \r\n- Device should not be forced to upgrade immediately, since the user has entered the passcode agreeing to a LATER update, not explicit permission for the MDM to upgrade whenever. \r\n- Device should return a different status of \"Scheduled\""
+    email: frank@fleetsmithhq.com
+    modified: "2018-10-19T22:56:43.092681Z"
+    number: "45414727"
+    number_intvalue: 45414727
+    originated: October 19 2018
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: ScheduleOSUpdate command will trigger update on iOS device immediately if it is already "scheduled for later"

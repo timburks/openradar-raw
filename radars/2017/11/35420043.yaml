@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35420043"
+    labels:
+        datastore_id: "6069240213798912"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2017-11-08T19:43:46.66046Z"
+    description: "Summary:\r\n\r\n`NSArrayController` crashes when using `addObject`.\r\nThis happens when a predicate is set, and when the `clearsFilterPredicateOnInsertion` property is set to false.\r\n\r\n--------------------------------------------------\r\n\r\nSteps to Reproduce:\r\n\r\nAttached is an example Xcode project demonstrating the issue.\r\nBut basically:\r\n\r\n    let controller = NSArrayController()\r\n    let names      = [ \"foo\", \"bar\", \"foobar\" ]\r\n    let predicate  = NSPredicate( format: \"self contains %@\", \"foo\" )\r\n    \r\n    controller.clearsFilterPredicateOnInsertion = false\r\n    controller.filterPredicate                  = predicate\r\n    \r\n    for name in names\r\n    {\r\n        controller.addObject( name ) /* Crashes here... */\r\n    }\r\n\r\n--------------------------------------------------\r\n\r\nExpected Results:\r\n\r\nNo crash is expected here. The object should be added to the controller, whether it matches the predicate or not.\r\nHaving a `clearsFilterPredicateOnInsertion` option makes no sense if it's not possible to add an object when a predicate is set.\r\n\r\n--------------------------------------------------\r\n\r\nActual Results:\r\n\r\nAn exception is raised, because `addObject` calls `insertObject` with a wrong offset:\r\n\r\n'NSInternalInconsistencyException', reason: 'Error inserting object at arranged object index 1'\r\n*** First throw call stack:\r\n(\r\n\t0   CoreFoundation                      0x00007fff527b614b __exceptionPreprocess + 171\r\n\t1   libobjc.A.dylib                     0x00007fff797ffc76 objc_exception_throw + 48\r\n\t2   CoreFoundation                      0x00007fff52847d2d +[NSException raise:format:] + 205\r\n\t3   AppKit                              0x00007fff5016616c -[NSArrayController _assertFilterRestrictsInsertionOfObjects:atArrangedObjectIndexes:] + 313\r\n\t4   AppKit                              0x00007fff50051fa2 -[NSArrayController insertObject:atArrangedObjectIndex:] + 246\r\n\t5   AppKit                              0x00007fff50051e76 -[NSArrayController addObject:] + 153\r\n\t6   Predicate                           0x00000001000021f6 main + 982\r\n\t7   libdyld.dylib                       0x00007fff7a3ef115 start + 1\r\n)\r\n\r\n--------------------------------------------------\r\n\r\nVersion/Build:\r\n\r\nmacOS 10.13.2 Beta (17C60c)\r\nXcode 9.1 (9B55)"
+    email: jdgadina@gmail.com
+    modified: "2017-11-08T19:43:46.66081Z"
+    number: "35420043"
+    number_intvalue: 35420043
+    originated: November 8 2017
+    parent_number: '&{NULL_VALUE}'
+    product: AppKit
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSArrayController crashes when adding an object with an active predicate

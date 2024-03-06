@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18469761"
+    labels:
+        datastore_id: "5871888026828800"
+data:
+    classification: crash/hang/data loss
+    created: "2014-09-26T17:16:41.578649Z"
+    description: "Summary:\r\nUIStoryboardSegue's identifier property is of the non-optional String type in Swift. However, failing to assign an identifier in Interface Builder creates a nil identifier, which crashes if inspected in prepareForSegue().\r\n\r\nSteps to Reproduce:\r\nRun the attached SegueAndDie project. Key points of this project:\r\n\r\n* Two scenes, first has a single button that segues to the second. The segue is not named (different from being blank / empty string: I have never looked at the inspectors for the segue).\r\n\r\n* The first scene's ViewController implements prepareForSegue() to look at the identifier:\r\n\tif segue.identifier.utf16Count > 0 {\r\n\t\tprintln (\"Oh good, you named your segue\");\r\n\t}\r\n\r\n\r\nExpected Results:\r\nApp navigates to the second scene\r\n\r\nActual Results:\r\nCrash: EXC_BAD_ACCESS (code=1, address = 0x00)\r\n#2\t0x00000001027eff1c in SegueAndDie.ViewController.prepareForSegue (SegueAndDie.ViewController)(ObjectiveC.UIStoryboardSegue, sender : Swift.Optional<Swift.AnyObject>) -> () at /Users/cadamson/dev/apple-buglets/SegueAndDie/SegueAndDie/ViewController.swift:24\r\n\r\n\r\nVersion:\r\nXcode Version 6.0.1 (6A317)\r\n\r\nNotes:\r\n\t// this crashes too\r\n\toverride func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {\r\n\t\tvar identOpt : String? = segue.identifier\r\n\t\tif let ident = identOpt {\r\n\t\t\tif segue.identifier.utf16Count > 0 {\r\n\t\t\t\tprintln (\"Oh good, you named your segue\");\r\n\t\t\t}\r\n\t\t}\r\n\t}\r\n\r\n\r\nConfiguration:\r\nMac Pro Early 2008, OS X 10.9.4\r\n\r\nAttachments:\r\n'SegueAndDie.zip' was successfully uploaded."
+    email: invalidname@gmail.com
+    modified: "2014-10-02T16:36:46.11995Z"
+    number: "18469761"
+    number_intvalue: 18469761
+    originated: 9/26/14
+    parent_number: "18213186"
+    product: iOS SDK
+    product_version: "8.0"
+    reproducible: always
+    resolved: 10/2/14
+    status: Duplicate/18213186
+    title: '#IUO: UIStoryboardSegue.identifier should be of optional type in Swift'

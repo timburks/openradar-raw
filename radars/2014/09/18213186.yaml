@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18213186"
+    labels:
+        datastore_id: "5785011038978048"
+data:
+    classification: Serious Bug
+    created: "2014-09-03T12:10:29.303157Z"
+    description: "Summary:\r\nThe Swift interface for UIStoryboardSegue declares the \"identifier\" property like this:\r\n\r\n    var identifier: String { get }\r\n\r\nHowever, this value can be nil, so it should be declared as an Optional\r\n\r\nSteps to Reproduce:\r\nCreate a new iOS project using the single-view template\r\n\r\nAdd a second view controller to the storyboard\r\n\r\nAdd a button to the first view controller, and create a \"show\" segue from that button to the second view controller. Leave the segue's \"Identifier\" field unset (blank).\r\n\r\nAdd an override of UIViewController.prepareForSegue to the first view controller that tries to use the segue.identifier property, like this:\r\n\r\n    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {\r\n        // Crash here because segue.identifier is nil, but not Optional\r\n        if segue.identifier == \"Doesn't matter\" {\r\n            println(\"OK\")\r\n        }\r\n    }\r\n\r\nRun the app and tap the button. The result is EXC_BAD_ACCESS on the line that attempts to use segue.identifier.\r\n\r\nExpected Results:\r\nThe \"identifier\" property should be declared as an optional, so that it can be checked for nil before attempts to use its value.\r\n\r\nActual Results:\r\nNot Optional, so can't check for nil\r\n\r\nVersion:\r\nXcode 6 beta 7 (6A280n); OS X 10.9.4\r\n\r\nNotes:\r\nDemo Xcode project attached. Run it and tap the button, and it will crash in ViewController.prepareForSegue, as described in the Steps to Reproduce section above.\r\n\r\nConfiguration:\r\nOS X\r\n\r\nAttachments:\r\n'KDJStoryboardSegueIdentifierNullCrash.zip' was successfully uploaded.\r\n\r\n\r\n----\r\n\r\nApple Developer Relations 29-Sep-2014 06:55 PM\r\n\r\nWe believe this issue has been addressed in the latest Xcode 6.1 beta.  \r\n\r\nThis pre-release version of the Xcode 6.1 developer tools is required when developing for OS X Yosemite, and includes the Swift programming language. Xcode 6.1 beta runs on OS X Mavericks and OS X Yosemite Developer Preview.\r\n\r\nXcode 6.1 beta - Build 6A1042b"
+    email: kristopherdjohnson@gmail.com
+    modified: "2014-10-13T16:28:18.425767Z"
+    number: "18213186"
+    number_intvalue: 18213186
+    originated: 03-Sep-2014 08:07 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6 Beta 7
+    reproducible: Always
+    resolved: Fixed
+    status: Closed/Fixed
+    title: '#IUO UIStoryboardSegue.identifier property should be Optional'

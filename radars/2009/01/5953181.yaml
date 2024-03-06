@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "5953181"
+    labels:
+        datastore_id: "2611"
+data:
+    classification: Other Bug
+    created: "2009-01-13T03:30:34.522728Z"
+    description: "21-May-2008 12:10 PM Dave Dribin:\r\nSummary: \r\nUsing Cocoa Bindings sometimes requires binding to properties that get updated on a background thread.  Often this is used to show status of a background operation.  However, properties that get changed on a background thread causes KVO to fire on the background thread, not the main thread.  AppKit reacts the KVO notification and updates the UI, however it does so on the background thread and can cause crashes.  AppKit should forward KVO notifications that it sets up for Cocoa Bindings to the main thread, since it is not thread safe.\r\n\r\nSteps to Reproduce:\r\nSetup a background thread, and bind to a property that gets updated by this background thread.\r\n\r\nExpected Results:\r\nThe user interface should run, without crashes.\r\n\r\nActual Results:\r\nThe user interface may crash, as the property is run from a background thread.\r\n\r\nRegression:\r\nOccurs on all versions of Mac OS X up through 10.5.2.\r\n\r\nNotes:\r\nI've attached a sample project that demonstrates the issue.  Click on Add Operation, and the assert should kick in a few seconds later when the count goes back to 0.  The only solution is to only modify properties that are bindable from the main thread.  This can be a pain, as this simple example shows.  I'd need to create a count ivar and then update that using performSelectorOnMainThread:\r\n\r\nApart from the code complication, forcing the model objects to only modify properties on the main thread violates MVC.  Model classes should not be affected by view classes.  If AppKit is not thread safe, *it* should be responsible for moving KVO notifications to the main thread."
+    email: ddribin@gmail.com
+    modified: "2011-08-28T05:50:14.368414Z"
+    number: "5953181"
+    number_intvalue: 5953181
+    originated: 21-May-2008 12:10 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: AppKit should not crash when bound properties modified in a background thread

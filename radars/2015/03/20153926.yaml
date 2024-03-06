@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20153926"
+    labels:
+        datastore_id: "5064820655128576"
+data:
+    classification: Serious Bug
+    created: "2015-03-16T15:58:30.666457Z"
+    description: "Summary:\r\nWhen using Core Data with Swift, Xcode's generated NSManagedObject subclass files are dangerous and likely to cause app crashes. This can occur whenever a Core Data attribute is marked as \"optional\" in the managed object model file. In the generated NSManagedObject subclass, these attributes are represented as non-optional properties. As a result it's possible to have a nil value for an object property which is not considered to be optional by Swift.\r\n\r\nSteps to Reproduce:\r\n1. Start a new Swift project that uses Core Data\r\n2. Create an entity with at least one attribute marked as \"optional\" in the managed object model.\r\n3. Have Xcode generate a custom NSManagedObject subclass file for this entity.\r\n\r\nExpected Results:\r\nSince the attribute is optional to Core Data, it would also be optional in the Swift property in the new subclass file.\r\n\r\nActual Results:\r\nThe property is not optional in the new subclass file. This creates a situation where it's entirely valid to have an instance of the class in which there's a nil value for a non-optional Swift property. Swift normally requires that non-optional properties have values by the time an object has been initialized, but Xcode's generated code allows this rule to be violated. This is likely to lead to app crashes since Swift code will assume that the non-optional property has a non-nil value.\r\n\r\nVersion:\r\nXcode 6.3 (6D543q)\r\nOS X 10.10.2 (14C1510)\r\n\r\nNotes:\r\nSample project attached. In this project there's a single entity called Event that has three attributes. Two are required, one is optional. In the generated subclass Event.swift, all three are non-optional properties.\r\n\r\nIn MasterViewController's configureCell method there are a couple of ways of assigning the table view cell's text. Since the \"timeStamp\" attribute is not optional in the managed object model, this is safe:\r\n\r\n        cell.textLabel!.text = object.timeStamp.description\r\n\r\nHowever the \"summary\" attribute is optional in the managed object model but not optional in Event.swift. As a result this version crashes:\r\n\r\n        cell.textLabel!.text = object.summary\r\n\r\nThe definition in Event.swift guarantees that \"summary\" has a value, but Core Data allows it to not have a value, and this conflict causes the crash.\r\n\r\nI don't expect Xcode's generated code to be as complete as something like mogenerator's code, but I would expect it to at least be safe to use."
+    email: atomicbird@gmail.com
+    modified: "2015-03-16T15:58:30.666593Z"
+    number: "20153926"
+    number_intvalue: 20153926
+    originated: 13-Mar-2015 11:06 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6.3b3
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Generated Swift NSManagedObject subclasses are dangerous

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13110886"
+    labels:
+        datastore_id: "2628401"
+data:
+    classification: Serious Bug
+    created: "2013-01-30T00:05:00.900048Z"
+    description: "29-Jan-2013 04:04 PM Brian Webster:\r\nSummary:\r\nWhen using Applescript to set the date of a photo in the iPhoto library, if the date is on a day when daylight savings time is either beginning or ending, the date is incorrectly adjusted by an hour.\r\n\r\nSteps to Reproduce:\r\nCopy and paste the following Applescript into AppleScript Editor and click \"Run\":\r\n\r\nset aDate to date \"Saturday, January 1, 2000 4:24:05 PM\"\r\nrepeat until aDate > date \"Sunday, January 1, 2012 4:24:05 PM\"\r\n\ttell application \"iPhoto\"\r\n\t\tset date of first photo to aDate\r\n\t\tset newDate to date of first photo\r\n\t\tif not aDate = newDate then\r\n\t\t\tdisplay dialog \"Date mismatch: \" & aDate & \" vs \" & newDate\r\n\t\tend if\r\n\tend tell\r\n\tset day of aDate to (1 + (day of aDate))\r\nend repeat\r\n\r\nExpected Results:\r\nSetting the photo's date then immediately retrieving it again should always result in the two values being equal, with the \"display dialog\" command never being hit.\r\n\r\nActual Results:\r\nOn certain days, the values do not match, and a message is displayed in a dialog via the script. When I run the script, I get mismatches on:\r\n\r\nApril 2, 2000\r\nOctober 29, 2000\r\nApril 1, 2001\r\nOctober 28, 2001\r\nApril 7, 2002\r\nOctober 27, 2002\r\n...\r\nMarch 11, 2007\r\nNovember 4, 2007\r\nMarch 9, 2008\r\nNovember 2, 2008\r\n... and so on\r\n\r\nOn the dates in the spring, the times are behind by an hour, and in the fall they are ahead by an hour.\r\n\r\nRegression:\r\nNote that the days are definitely the switch days, since they change from April/October to March/November in 2007, when congress passed legislation to lengthen daylight savings time.\r\n\r\nNotes:"
+    email: bewebste@gmail.com
+    modified: "2013-01-30T00:05:00.900205Z"
+    number: "13110886"
+    number_intvalue: 13110886
+    originated: 29-Jan-2013 04:04 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iLife
+    product_version: iPhoto 9.4.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'iPhoto: Setting photo date via Applescript off by an hour on DST switch days'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18310483"
+    labels:
+        datastore_id: "5234977662828544"
+data:
+    classification: Serious Bug
+    created: "2014-09-11T20:40:13.142127Z"
+    description: "Summary:\r\nIf I set a value in NSUserDefaults in the UIApplicationDelegate, I expect to be able to launch the app with Instruments.app and inspect that value in UIAutomation.\r\n\r\n> preferencesValueForKey\r\n>> Gets the value of a specified app user preference.\r\n\r\nThis works in iOS 6 and iOS 7.\r\n\r\nIt works on the iOS 6 - 8 Simulators.\r\n\r\nIt does not work on iOS GM.\r\n\r\nPossibly related to:\r\n\r\n* rdar://18296714\r\n* rdar://17821465\r\n* rdar://15530604\r\n\r\nSteps to Reproduce:\r\n### To Reproduce\r\n\r\n**Requires**\r\n\r\n* iOS 8 GM device\r\n* The source code of an iOS app.\r\n* Instruments 6 GM\r\n\r\n1.  In the UIApplicationDelegete application:didFinishLaunchingWithOptions: method.\r\n\r\n```\r\n[[NSUserDefaults standardUserDefaults] setObject:@\"Hey!\" forKey:@\"com.example.set-in-uiapplication-delegate\"];\r\n[[NSUserDefaults standardUserDefaults] synchronize];\r\n\r\n// Optionally log the NSUserDefaults to visually confirm that the value has been set.\r\nreturn YES;\r\n```\r\n\r\n2. Build and run the application, targeting the iOS 8 GM device\r\n3. Stop the run from Xcode.\r\n4. Launch Instruments 6 GM and select the Automation template.\r\n5. Target the iOS 8 GM device and the app you just built and ran.\r\n6. Execute this script\r\n\r\n```\r\nvar target = UIATarget.localTarget();\r\nvar valueSetInAppDelegate  = target.frontMostApp().preferencesValueForKey(\"com.example.set-in-uiapplication-delegate\");\r\nif (valueSetInAppDelegate == \"Hey!\") {\r\n    UIALogger.logPass(\"The value I set in the app delegate was '\" + valueSetInAppDelegate + \"'\");\r\n} else {\r\n    UIALogger.logFail(\"Expected to see 'Hey!' but found '\" + valueSetInAppDelegate + \"'\");\r\n}\r\n```\r\n\r\nExpected Results:\r\n\r\n### Expected\r\n\r\nTo be able to inspect the value I set in the  application:didFinishLaunchingWithOptions: method.\r\n\r\nActual Results:\r\n### Found\r\n\r\n* Works on iOS 6 - 8 on simulators.\r\n* Works on iOS 6 - 7 on devices.\r\n\r\nOn iOS 8 GM\r\n\r\n```\r\nExpected to see 'Hey!' but found 'null'\r\n```\r\n\r\n\r\nVersion:\r\n\r\nOS X 10.9.4 (13E28)\r\nXcode6 GM\r\ninstruments, version 6.0 (56156)\r\niOS 8 GM"
+    email: joshuajmoody@gmail.com
+    modified: "2014-09-11T20:40:13.142358Z"
+    number: "18310483"
+    number_intvalue: 18310483
+    originated: 11-Sep-2014 10:38 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 6 GM
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: REGRESSION UIAApplication.preferencesValueForKey() does not work iOS 8 GM

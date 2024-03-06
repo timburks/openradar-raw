@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23280454"
+    labels:
+        datastore_id: "5725427796541440"
+data:
+    classification: Other Bug
+    created: "2015-10-27T18:58:42.52396Z"
+    description: "Summary:\nOn iOS 9.1, when I call UIView.snapshotViewAfterScreenUpdates inside a UIView-based animation, the snapshot is erroneously displayed on-screen until the enclosing animation transaction is committed. On iPhone in landscape orientation, the duplicate layer is rotated/scaled to upside-down portrait orientation, then gradually animated in place until it is removed from screen. \n\nAnimation blocks usually finish quickly; however, the bogus layer is often still displayed for a single frame, which, when combined with the landscape animation, leads to visible (and highly unexpected) flickering.\n\nI expect screen contents not to change as a side effect of calling UIView.snapshotViewAfterScreenUpdates at all.\n\nSteps to Reproduce:\n1. Run the attached sample project (on device or in simulator)\n2. Rotate the device to landscape orientation.\n3. Press the on-screen button. The button’s action runs the following code:\n\nUIView.animateWithDuration(1) {\n    view.snapshotViewAfterScreenUpdates(true)\n    sleep(1)\n}\n\nExpected Results:\nThe app freezes for one second with no animation.\n\nActual Results:\nThe view’s contents are duplicated; the duplicate layer is displayed squished in an upside-down portrait orientation, then slowly animated into landscape. This is entirely unexpected.\n\nRemoving the sleep(1) call does not fully eliminate the animation; often the first frame is still displayed, leading to highly annoying flickering that is quite hard to track down.\n\nRegression:\nTested in Xcode 7.1 on iOS 9.1 (iPhone 6s device, various iPhone simulators).\n\nNotes:\n- It is not always obvious that snapshotViewAfterScreenUpdates is called inside an animation block; sometimes a caller sets up the animation further up the call stack.\n- Always creating snapshots inside a UIView.performWithoutAnimation block works around the issue."
+    email: Karoly.Lorentey@gmail.com
+    modified: "2015-10-27T18:58:42.52415Z"
+    number: "23280454"
+    number_intvalue: 23280454
+    originated: 27-Oct-2015 07:58 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9.1 (13B143)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'UIKit in iOS 9.1: Calling UIView.snapshotViewAfterScreenUpdates creates a bogus animation'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18341265"
+    labels:
+        datastore_id: "6372508341108736"
+data:
+    classification: Enhancement
+    created: "2014-09-15T20:29:47.245021Z"
+    description: "Summary:\r\nAn app should be able to register for a notification or implement a delegate callback (UIApplicationDelegate?) to be notified when the user has changed the notifications settings for the app (Settings > App > Notifications > ), particularly the \"Badge App Icon\" setting.\r\n\r\nCurrently, if an app registers user notification settings to change the app icon's badge number and the user denies permission, then setting the icon badge number results in a console message, indicating that the app should not do so. If the user subsequently enables the \"Badge App Icon\" setting, the badge number is displayed with the last value, if any, set by the app. There is no opportunity for the app to be notified that the setting has been enabled and to update the badge number appropriately. This causes the app to continue to update the badge number even when permission is denied, since a console warning is preferable to displaying incorrect data to the user.\r\n\r\nSteps to Reproduce:\r\nI'm working on an app that, as part of its functionality, updates the app's icon badge number to reflect the number of \"pending items\":\r\n\r\n[[UIApplication sharedApplication] setApplicationIconBadgeNumber:updatedCount];\r\n \r\nWhen running on iOS 8 (GM), this triggers the following message to the console:\r\n     \"Attempting to badge the application icon but haven't received permission from the user to badge the application\"\r\n \r\nReviewing the documentation and WWDC 2014 Session 713 (What's New in iOS Notifications), leads to registering user notification settings for badging the app's icon:\r\nUIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge categories:nil];\r\n[[UIApplication sharedApplication] registerUserNotificationSettings:settings];\r\n\r\nWhich presents an alert to the user (once), asking for permission with the title:\r\n     \"<App Name>\" Would Like to Send You Notifications\r\nand message:\r\n     Notifications may include alerts, sounds, and icon badges. These can be configured in Settings.\r\n \r\nWhen I update the icon badge, I check the notification settings and only update if allowed:\r\nUIUserNotificationSettings *settings = [[UIApplication sharedApplication] currentUserNotificationSettings];\r\nif (settings.types & UIUserNotificationTypeBadge) {\r\n     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:updatedCount];\r\n}\r\n\r\nThis eliminates the console message and updates the icon badge only when the user allows the app to \"Badge App Icon\" (in Settings).\r\n \r\nWhen the user enables the \"Badge App Icon\" option in Settings, the icon badge displays the last value of applicationIconBadgeNumber which was set (if any), but it hasn't been updated while the \"Badge App Icon\" setting was disabled. I looked for a delegate method or notification, but the only one I found was the delegate method -[UIApplicationDelegate application:didRegisterUserNotificationSettings:], which is not called when the Settings value changes (only when the settings are first registered).\r\n\r\nExpected Results:\r\nA notification or delegate callback that the app could receive when the user changes the user notification settings in the Settings app, particularly the \"Badge App Icon\" setting.\r\n\r\nActual Results:\r\nNo such notification or delegate callback is currently available.\r\n\r\nVersion:\r\niOS 8.0 (12A365)"
+    email: mbabin@casababin.net
+    modified: "2014-09-15T20:29:47.245214Z"
+    number: "18341265"
+    number_intvalue: 18341265
+    originated: 15-Sep-2014 03:24 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "8.0"
+    reproducible: N/A
+    resolved: ""
+    status: Open
+    title: Should be notified when user changes notification settings for an app, particularly "Badge App Icon"

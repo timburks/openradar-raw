@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8888558"
+    labels:
+        datastore_id: "1067401"
+data:
+    classification: Serious Bug
+    created: "2011-01-20T00:13:43.298521Z"
+    description: "20-Jan-2011 01:10 AM Daniel Norberg:\r\nSummary:\r\n\r\n[NSManagedObjectContext executeFetchRequest:error:] does not correctly take pending changes into account when executing a fetch request having predicates using array operators.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a Cocoa project using core data in Xcode with two entities (hereafter called \"Blog\" and \"Post\").\r\n2. Create a one-to-many relation between Blog and Post. \r\n3. Name the relation \"posts\" on the Blog entity.\r\n3. Add a string attribute named \"content\" to the Post entity.\r\n4. Write code to do the following:\r\n * Instantiate one of each entity.\r\n * Add the Post instance to the Blog instance. \r\n * Assign any string value to the content attribute on the Post instance.\r\n * Call save: on the NSManagedObjectContext instance.\r\n * Assign nil to the content attribute on the Post instance.\r\n * Create a fetch request for the Blog entity using the following predicate: \"ANY posts.content != NULL\"\r\n * Execute the fetch request.\r\n5. Build and execute\r\n\r\nExpected Results:\r\n\r\nThe executed fetch request should return an empty array.\r\n\r\nActual Results:\r\n\r\nThe executed fetch request returns an array with the Post instance.\r\n\r\nNotes:\r\n\r\nA project that reproduces this error is attached and also available at github: \r\nhttps://github.com/danielnorberg/CoreDataBug\r\n\r\nThe interesting code:\r\n\r\n\r\n\tNSError *error = nil;\r\n\r\n\tNSManagedObjectContext *moc = [self managedObjectContext];\r\n\r\n\t// Blog <->> Post\r\n\t// Post has one property named content of type NSString\r\n\r\n\tBlog *blog = [NSEntityDescription insertNewObjectForEntityForName:@\"Blog\"\r\n\t\t\t\t\t\t\t\t\t\t\t inManagedObjectContext:moc];\r\n\r\n\tPost *post = [NSEntityDescription insertNewObjectForEntityForName:@\"Post\"\r\n\t\t\t\t\t\t\t\t\t\t\t inManagedObjectContext:moc];\r\n\r\n\tpost.content = @\"content\";\r\n\t[blog addPostsObject:post];\r\n\r\n\t// Removing this save makes the issue go away\r\n\tif (![moc save:&error])\r\n\t\tNSAssert(NO, ([NSString stringWithFormat:@\"Failed to save: %@\", error]));\r\n\r\n\t// Setting post.content to nil should make the Blog fetch request below return an empty array\r\n\tpost.content = nil;\r\n\r\n\t// First make sure that there's no Post instance with any content\r\n\tNSFetchRequest *req1 = [[[NSFetchRequest alloc] init] autorelease];\r\n\tNSPredicate *pred1 = [NSPredicate predicateWithFormat:@\"content != NULL\"];\r\n\t[req1 setIncludesPendingChanges:YES]; // Just to be sure. The docs say that default = YES\r\n\t[req1 setEntity:[NSEntityDescription entityForName:@\"Post\" inManagedObjectContext:moc]];\r\n\t[req1 setPredicate:pred1];\r\n\tNSArray *posts = [moc executeFetchRequest:req1 error:&error];\r\n\tNSAssert(posts.count == 0, nil);\r\n\r\n\t// The following fetch should return all Blog instances where post.content != nil\r\n\t// There are none, so it should return an empty array.\r\n\tNSFetchRequest *req2 = [[[NSFetchRequest alloc] init] autorelease];\r\n\tNSPredicate *pred2 = [NSPredicate predicateWithFormat:@\"ANY posts.content != NULL\"];\r\n\t[req2 setIncludesPendingChanges:YES]; // Just to be sure. The docs say that default = YES\r\n\t[req2 setEntity:[NSEntityDescription entityForName:@\"Blog\" inManagedObjectContext:moc]];\r\n\t[req2 setPredicate:pred2];\r\n\tNSArray *blogs = [moc executeFetchRequest:req2 error:&error];\r\n\r\n\t// blogs should be empty!\r\n\tNSAssert([blogs indexOfObject:blog] == NSNotFound, @\"blog encountered!\");\r\n\tNSAssert(blogs.count == 0, @\"fetch request does not return empty array!\");"
+    email: daniel.norberg@gmail.com
+    modified: "2011-08-28T05:38:17.835776Z"
+    number: "8888558"
+    number_intvalue: 8888558
+    originated: 20-Jan-2011 01:10 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.6
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSManagedObjectContext executeFetchRequest does not include pending changes

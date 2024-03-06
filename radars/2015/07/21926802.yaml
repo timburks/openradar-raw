@@ -1,0 +1,55 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21926802"
+    labels:
+        datastore_id: "4688464180150272"
+data:
+    classification: Other Bug
+    created: "2015-07-21T20:34:46.75169Z"
+    description: |-
+        Summary:
+        Indirect enums are great but still allow construction of infinite types. IMO these should be rejected.
+
+        Steps to Reproduce:
+        1. Compiling this:
+        indirect enum E { case C(E) }
+
+
+        Expected Results:
+        should error out because the type is infinite and cannot be constructed
+
+
+        Actual Results:
+        but it compiles just fine.
+
+
+        Regression:
+        N/A
+
+
+        Notes:
+        Technically you can compile a program which constructs an instance of it but since the instance is also infinite it doesn’t work too well:
+
+        indirect enum E {
+        	case C(E)
+        }
+
+        func fix<T, U>(f: (T -> U) -> T -> U) -> T -> U {
+        	return { f(fix(f))($0) }
+        }
+
+        let f = fix { e in { E.C(e()) } }
+        f()
+    email: rix.rob@gmail.com
+    modified: "2015-07-21T20:34:46.75191Z"
+    number: "21926802"
+    number_intvalue: 21926802
+    originated: 21-Jul-2015 04:34 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-beta (7A165t)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift 2b4: Infinite enums should probably be rejected'

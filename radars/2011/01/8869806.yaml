@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8869806"
+    labels:
+        datastore_id: "1057401"
+data:
+    classification: ""
+    created: "2011-01-15T11:58:21.834637Z"
+    description: "Summary:\r\n\r\nWhen trying to guess the usedEncoding of a text file content, the usedEncoding can be guessed when the file is in the project directory BUT if the file is copied by the Xcode build phase to the application bundle in the iphone simulator, the usedEncoding cannot be guessed and throws an error:\r\n\r\nError Domain=NSCocoaErrorDomain Code=264 \"The operation couldn’t be completed. (Cocoa error 264.)\" UserInfo=0x7908a60 {NSFilePath=/Users/orion/Library/Application Support/iPhone Simulator/4.1/Applications/B99D94D1-C0AD-4F5F-8429-2373D3257AEF/Albanu.app/Products.txt}\r\n\r\nSteps to Reproduce:\r\n\r\nTo reproduce the issue I build this little foundation tool that I can run on the command line inside the development directory of my xcode project:\r\n$ cat main.m\r\n#import <Foundation/Foundation.h>\r\n\r\nint main(int argc, char**argv) {\r\n  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc]init];\r\n\r\n\tNSString *fileName = [NSString stringWithCString:argv[1] encoding:NSASCIIStringEncoding];\r\n\tNSStringEncoding encoding;\r\n\tNSError *error = nil;\r\n\t\t\r\n  NSString *fileContent = [NSString stringWithContentsOfFile:fileName usedEncoding:&encoding error:&error];\r\n\tNSLog(@\"Filename: %@ (encoding: %d)\", fileName, encoding);\r\n\tif (error == nil) {\r\n\t\tif (encoding != NSUTF8StringEncoding) {\r\n\t\t\tNSLog(@\"Converting to UTF-8 ...\");\r\n\t\t\tNSData *convertedData = [fileContent dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];\r\n\t\t\tNSString *convertedString = [[NSString alloc]initWithData:convertedData encoding:NSUTF8StringEncoding];\r\n\t\t\tNSLog(@\"\\n\\nConverted string length: \\n%d\\n\",[[convertedString autorelease]length]);\r\n\t\t}\t\t\r\n\t} else {\r\n\t\tNSLog(@\"Error: %@\", error);\r\n\t}\r\n\t\r\n  [pool release];\r\n  return 0;\r\n}\r\n\r\n$ gcc -framework Foundation main.m -o main \r\n$ ./main Products.csv \r\n2011-01-15 11:51:27.093 main[17491:903] Filename: Products.csv (encoding: 30)\r\n2011-01-15 11:51:27.096 main[17491:903] Converting to UTF-8 ...\r\n2011-01-15 11:51:27.096 main[17491:903] \r\n\r\nConverted string length: \r\n8881\r\n\r\n\r\nExpected Results:\r\n\r\nThe program should output the very same information for a project bundle resource file whether it is run against the local copy or the xcode copy to the bundle dir of the iphone simulator.\r\n\r\nActual Results:\r\n\r\n ./main Products.txt\r\n2011-01-15 11:51:27.093 main[17491:903] Filename: Products.txt (encoding: 30)\r\n2011-01-15 11:51:27.096 main[17491:903] Converting to UTF-8 ...\r\n2011-01-15 11:51:27.096 main[17491:903] \r\n\r\nConverted string length: \r\n8881\r\n\r\n$ ./main /Users/orion/Library/Application\\ Support/iPhone\\ Simulator/4.1/Applications/B99D94D1-C0AD-4F5F-8429-2373D3257AEF/Albanu.app/Products.csv2011-01-15 11:57:02.987 main[17514:903] Filename: /Users/orion/Library/Application Support/iPhone Simulator/4.1/Applications/B99D94D1-C0AD-4F5F-8429-2373D3257AEF/Albanu.app/Products.txt (encoding: 0)\r\n2011-01-15 11:57:02.994 main[17514:903] Error: Error Domain=NSCocoaErrorDomain Code=264 UserInfo=0x10010d580 \"The file “Products.txt” couldn’t be opened because the text encoding of its contents can’t be determined.\"\r\n\r\nRegression:\r\n\r\nNotes:\r\n\r\nFull Pastie: http://pastie.org/1463071\r\nFilesystem: http://pastie.org/1463087\r\n\r\n\r\n\r\n\r\n15-Jan-2011 12:49 PM Thierry Passeron:\r\nI'm using xcode 3.2.4 on OSX 10.6.6"
+    email: Thierry.Passeron@gmail.com
+    modified: "2011-08-28T05:38:20.580373Z"
+    number: "8869806"
+    number_intvalue: 8869806
+    originated: 01/15/11
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "4.1"
+    reproducible: always
+    resolved: ""
+    status: open
+    title: +[NSString stringWithContentsOfFile:usedEncoding:error:] issue

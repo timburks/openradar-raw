@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "37550628"
+    labels:
+        datastore_id: "4931860060700672"
+data:
+    classification: Bug
+    created: "2018-02-14T23:22:37.89015Z"
+    description: "If the .events field of a struct pollfd is POLLHUP (see rdar://37537852 for why this is needed) and the associated fd is readable but has not received hangup, poll will return with 0 if timeout is -1 and no other fds are ready.\r\n\r\nSee the following test case:\r\n\r\n#include <sys/types.h>\r\n#include <unistd.h>\r\n#include <poll.h>\r\n#include <stdio.h>\r\n#include <sys/wait.h>\r\n#include <stdlib.h>\r\n\r\nint monitor_process(int fd) {\r\n  struct pollfd spec = { .fd = fd, .events = POLLHUP };\r\n  int res = poll(&spec, 1, -1);\r\n  switch (res) {\r\n  case -1:\r\n    perror(\"waiting for events\");\r\n    return 1;\r\n  case 0:\r\n    fprintf(stderr, \"poll timed out\\n\");\r\n    return 1;\r\n  default:\r\n    return 0;\r\n  }\r\n}\r\n\r\nint main(int argc, char ** argv) {\r\n  int pipe_fds[2];\r\n  if (pipe(pipe_fds) == -1) {\r\n    perror(\"making a pipe\");\r\n    return 1;\r\n  }\r\n\r\n  pid_t child = fork();\r\n  switch (child) {\r\n  case -1:\r\n    perror(\"forking\");\r\n    return 1;\r\n  case 0:\r\n    close(pipe_fds[1]);\r\n    exit(monitor_process(pipe_fds[0]));\r\n  }\r\n  close(pipe_fds[0]);\r\n  char c = 'c';\r\n  write(pipe_fds[1], &c, 1);\r\n  sleep(1);\r\n  close(pipe_fds[1]);\r\n  int status;\r\n  waitpid(child, &status, 0);\r\n  if (WIFSIGNALED(status)) {\r\n    fprintf(stderr, \"child process died with signal: %d\", WTERMSIG(status));\r\n    return 1;\r\n  }\r\n  return WEXITSTATUS(status);\r\n}"
+    email: shea@shealevy.com
+    modified: "2018-02-14T23:22:37.89044Z"
+    number: "37550628"
+    number_intvalue: 37550628
+    originated: February 14 2018
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: poll(2) returns 0 with -1 timeout when .events = POLLHUP and fd is readable

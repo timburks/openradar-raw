@@ -1,0 +1,57 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29408381"
+    labels:
+        datastore_id: "6162704439967744"
+data:
+    classification: Security
+    created: "2016-11-28T22:29:10.41596Z"
+    description: |-
+        Summary:
+        The only automated management option Apple provides to re-enable SIP is incompatible with 802.1x high security environments.
+
+        Steps to Reproduce:
+        1. Disable SIP from Recovery partition.
+        2. Restart and log into macOS 10.12 as normal.
+        3. Run the command: sudo csrutil enable
+
+        Expected Results:
+        SIP should be re-enabled on next reboot.
+
+        Actual Results:
+        Error message: csrutil: failed to modify system integrity configuration. This tool needs to be executed from the Recovery OS.
+
+        Notes:
+        An example of an automated SIP configuration workflow exists here:
+        https://derflounder.wordpress.com/2015/10/05/configuring-system-integrity-protection-without-booting-to-recovery-hd/
+
+        This example uses the command "csrutil netboot add", but could also be adjusted to use the command csrutil enable"
+
+        In environments where 802.1x is in use (especially EAP-TLS), netboot automation solutions such as this are not available since unauthenticated devices do not have network access to reach the automation images.
+
+        This means that we are currently able to remotely detect SIP protection status with "csrutil status" or "nvram csr-active-config" output but are unable to remediate it without obtaining physical access to the device.
+
+        As of right now, some models are apparently shipping with SIP disabled:
+        http://appleinsider.com/articles/16/11/17/system-integrity-protection-disabled-by-default-on-some-touch-bar-macbook-pros
+        http://www.macrumors.com/2016/11/17/system-integrity-protection-disabled-macbook-pro/
+
+        This means that even with DEP enrolled devices that automatically enroll with an MDM server, devices that are purchased and shipped directly to remote offices may not have SIP enabled when received by end users. We have no remote management ability to re-enable it without physically gaining access to the device.
+
+        "csrutil enable" should function from outside of Recovery.
+
+        Alternatively, any of the following would also be acceptable:
+        - A configuration profile that forces SIP to be enabled (on reboot, if necessary)
+        - An nvram command like "nvram -c" or "nvram csr-reset=1" with a reboot should re-enable SIP
+    email: frogor@dropbox.com
+    modified: "2016-11-28T22:29:10.41624Z"
+    number: "29408381"
+    number_intvalue: 29408381
+    originated: 28-Nov-2016 02:29 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: Mac OS X 10.12.1 (16B2657)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Mac OS X 10.12.1: Unable to re-enable System Integrity Protection without physical interaction in 802.1x environment'

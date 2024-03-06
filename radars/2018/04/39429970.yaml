@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39429970"
+    labels:
+        datastore_id: "4958914059698176"
+data:
+    classification: UI/Usability
+    created: "2018-04-14T01:06:47.97408Z"
+    description: "Summary:\r\nxargs will not replace the `-I` argument with the string it's operating on if the resulting string would be over 255 characters.\r\n\r\nSteps to Reproduce:\r\nRun this command:\n\n```\necho \"thisisaveryveryveryverylongstring\" | /usr/bin/xargs -I % sh -c 'echo % && echo % && echo % && echo % && echo % && echo % && echo % && echo % && echo % && echo % && echo %'\n```\r\n\r\nExpected Results:\r\n`thisisaveryveryveryverylongstring` should get echoed 11 times. \r\n\r\nActual Results:\r\nInstead it is only echoed 4 times, and the others are percent signs:\n\n```\nthisisaveryveryveryverylongstring\nthisisaveryveryveryverylongstring\nthisisaveryveryveryverylongstring\nthisisaveryveryveryverylongstring\n%\n%\n%\n%\n%\n%\n%\n```\n\r\n\r\nVersion:\r\nmacOS 10.13.4\r\n\r\nNotes:\r\nIf you pass the `-t` argument to xargs you can see it is running this command:\n\n```\nsh -c echo thisisaveryveryveryverylongstring && echo thisisaveryveryveryverylongstring && echo thisisaveryveryveryverylongstring && echo thisisaveryveryveryverylongstring && echo % && echo % && echo % && echo % && echo % && echo % && echo %\n```\n\nIf you look at xargs.c for 10.13.3 here: https://opensource.apple.com/source/shell_cmds/shell_cmds-203/xargs/xargs.c.auto.html\n\nYou can see on line 507 the string size is hard coded to 255.\n\nThis is not a bug with xargs from findutils."
+    email: keithbsmiley@gmail.com
+    modified: "2018-04-14T01:06:47.97434Z"
+    number: "39429970"
+    number_intvalue: 39429970
+    originated: 13-Apr-2018 18:06
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: macOS 10.13.4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: xargs doesn't support replacements that would make a string longer than 255 characters

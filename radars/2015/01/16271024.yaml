@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "16271024"
+    labels:
+        datastore_id: "6369099680579584"
+data:
+    classification: ""
+    created: "2015-01-27T08:07:52.366597Z"
+    description: "Summary:\r\nAfter working with Ziqiao Chen at Apple Developer Technical Support I have been informed there are two possible ways to sync Core Data documents through iCloud:\r\n\"1. If you choose to sync the whole document package, including Core Data store file, you’ll have to reload the document object and refetch Core Data objects you are using when there is a change coming from iCloud. \r\n\r\n2. If you choose to sync the changes in Core Data record level, you’ll enable Core Data iCloud integration by specifying NSPersistentStoreUbiquitousContentNameKey and let Core Data sync the transaction logs for you...\"\r\nThe first method involves breaking the user's current flow when the document window goes away and re-appears. The second method DOES NOT WORK!!! If you set a value for NSPersistentStoreUbiquitousContentNameKey Core Data will try to store things in a new directory within the CoreData portion of the iCloud container NOT the Documents directory where ALL Documents belong.\r\n\r\nSteps to Reproduce:\r\nSteps for method one listed above:\r\n1. In Xcode create a new Core Data Document based application and configure it to use iCloud.\r\n2. Add at least one entity to the data model.\r\n3. Configure a UI to display the contents of the persistent store and allow for editing of the store.\r\n4. Run the application on at least two machines with the same iCloud account.\r\n5. Create a document on one machine and save it.\r\n6. Open the document on the other machine.\r\n7. Make at least one change to the document on one of the machines.\r\n\r\nSteps for method two listed above:\r\n1. In Xcode create a new Core Data Document based application and configure it to use iCloud.\r\n2. Add at least one entity to the data model.\r\n3. Configure a UI to display the contents of the persistent store and allow for editing of the store.\r\n4. In the document class's -configurePersistentStoreCoordinatorForURL: ofType: modelConfiguration: storeOptions: error: method add a value for the NSPersistentStoreUbiquitousContentNameKey key (I used a unique ID from [[NSProcessInfo processInfo] globallyUniqueString] but any value should work)\r\n5. Run the application on at least two machines with the same iCloud account.\r\n6. Create a document on one machine and save it.\r\n7. Try to open the document on the other machine.\r\n\r\n\r\nExpected Results:\r\nFor method one I would expect for the document to get saved to the Documents directory of the  iCloud container if that is what the user chooses and to get notifications when changes come in that includes what the changes were so that the UI and in-memory store can both be updated to reflect the on-disk store. Perhaps there would need to be some way to tell Core Data it is working in iCloud not just locally.\r\n\r\nFor method two I would expect to be able to open the document and then to have the same expectations as with method one for changes minus the need to tell Core Data the store is in iCloud.\r\n\r\nActual Results:\r\nIf method one is used the document window vanishes taking any edit the user was in the process of making and then re-opens with the new data displayed.\r\n\r\nIf method two is used (which is the method that is supposed to allow for incremental changes to the in-memory store to keep from re-opening the document) everything goes into the CoreData directory in the iCloud container (if it even goes there, I have seen the whole app just explode instead) meaning when the user wants to open the document again later they can't since the Open Panel ONLY shows what is in the Documents directory.\r\n\r\nVersion:\r\nXcode 5.0.2 build 5A3005 & OS X 10.9.2 build 13C64\r\n\r\nNotes:\r\nAt present there seems to be no way to use iCloud with Core Data Documents.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: theMikeSwan@gmail.com
+    modified: "2015-01-27T08:07:52.366774Z"
+    number: "16271024"
+    number_intvalue: 16271024
+    originated: 08-Mar-2014
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: Xcode 5.0.2 build 5A3005 & OS X 10.9.2 build 13C64
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: There is currently no way to sync Core Data Documents without re-opening the document after changes

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "48920090"
+    labels:
+        datastore_id: "5007272912617472"
+data:
+    classification: Other Bug
+    created: "2019-03-15T10:12:21.77279Z"
+    description: "Area:\r\nFoundation\r\n\r\nSummary:\r\nChanging the locale on a MeasurementFormatter voids numberFormatter settings. \r\nOne would expect to be able to change the format of the numbers even after settings a locale on the formatter. Whether or not this is intended behaviour is not documented anywhere or reported on popular development forums (e.g. StackOverflow, although I will put something there to notify others).\r\n\r\nSteps to Reproduce:\r\n1. Run this:\r\n\r\n```\r\nimport Foundation\r\nlet formatter = MeasurementFormatter()\r\nformatter.numberFormatter.minimumFractionDigits = 4\r\nformatter.numberFormatter.maximumFractionDigits = 4\r\nlet distanceInKm = 16.093 // ~10 mi\r\nvar measurement: Measurement<UnitLength> = Measurement(value: distanceInKm, unit: .kilometers)\r\nlet string = formatter.string(from: measurement) // 9.998 mi\r\nassert(string == \"9.9998 mi\")\r\n```\r\n\r\n2. Now add a locale to the MeasurementFormatter instance and create a string from the same distance\r\n\r\n```\r\nformatter.locale = Locale(identifier: \"en_GB\") // Set the locale\r\nlet string2 = formatter.string(from: measurement) // 10 mi\r\nassert(string2 == \"9.9998 mi\") // No longer formatted to 4 fractional digits\r\n```\r\n\r\nExpected Results:\r\nChanging the locale on MeasurementFormatter should retain the options set in the associated numberFormatter property. If there is a reason this doesn't work, it should be documented to save developers time trying to get it to work.\r\n\r\nActual Results:\r\nSetting a locale on the MeasurementFormatter voids any options set in the numberFormatter property.\r\n\r\nVersion:\r\niOS 10.0+\r\n\r\nNotes:\r\nSwift 4.2\r\n\r\nSetting the numberFormatter properties again after setting a locale to the MeasurementFormatter instance does not re-enable functionality. e.g.\r\n\r\n```\r\nformatter.locale = Locale(identifier: \"en_GB\") // Set the locale\r\nformatter.numberFormatter.minimumFractionDigits = 4 // set numberFormatter properties again\r\nformatter.numberFormatter.maximumFractionDigits = 4\r\nlet string3 = formatter.string(from: measurement) // still 10 mi\r\nassert(string3 == \"9.9998 mi\") // Still not formatted as per numberFormatter options\r\n```"
+    email: beshbashbosh@gmail.com
+    modified: "2019-03-15T10:12:21.773011Z"
+    number: "48920090"
+    number_intvalue: 48920090
+    originated: 15-Mar-2019
+    parent_number: '&{NULL_VALUE}'
+    product: iOS+SDK
+    product_version: iOS 10+
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Setting locale on MeasurementFormatter voids settings of numberFormatter property

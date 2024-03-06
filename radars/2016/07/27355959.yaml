@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27355959"
+    labels:
+        datastore_id: "6186290202542080"
+data:
+    classification: Other Bug
+    created: "2016-07-14T20:03:51.65149Z"
+    description: "Summary:\r\nWhen Safari requests a URL, e.g. for fetching an inline image, and the URL has non-ASCII characters that are not URL escaped, then when Safari provides the actual request on the wire, the URL has URL escapes that were generated from the bytes of the string after changing the composition of the characters from what they were in the HTML document.\r\n\r\nSteps to Reproduce:\r\n1. Visit http://wanderingcoder.net/projects/Radar/SafariUniComposition/ with Safari\r\n\r\nExpected Results:\r\nThe image appears, as it does when the page is visited using e.g. Firefox or Chrome, because it was requested with:\r\nGET /projects/Radar/SafariUniComposition/fe%CC%81lines.png HTTP/1.1\r\n\r\nActual Results:\r\nThe image does not appear, because it was requested with:\r\nGET /projects/Radar/SafariUniComposition/f%C3%A9lines.png HTTP/1.1\r\nwhich answers a 404\r\n\r\nVersion:\r\nReproduced on all three of:\r\nMac OS: Safari 9.1.1 (11601.6.17)\r\nMobileSafari: iOS 9.3.2 (13F69)\r\nMobileSafari: iOS 10.0 beta 1 (14A5297c)\r\n\r\nNotes:\r\nWorkaround is to write the URL in the HTML document as \"fe%CC%81lines.png\", i.e. to properly escape it, as demonstrated in http://wanderingcoder.net/projects/Radar/SafariUniComposition/index2.html\r\n\r\nI do realize Safari is already trying to compensate for invalid data, as the URL should be properly escaped in the first place, however some CMS apparently haven't got the memo and will blindly write the URL without escaping it… e.g. at the time of this writing the issue is still live at http://maliki.com/nouveau-mois-tipeee/ (the image just above the article does not load).\r\n\r\nLast note: if you want to reproduce the issue on another server, be very careful as many processes may themselves canonicalize the composition of the file name, e.g. a Mac OS X host and/or an HFS+ filesystem will fold the Unicode composition, and may cause the problem to no longer be reproduced, or on the contrary cause the image not to load including when using other browsers.\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: lebpierre@wanadoo.fr
+    modified: "2016-07-14T20:03:51.65166Z"
+    number: "27355959"
+    number_intvalue: 27355959
+    originated: "2016-07-14"
+    parent_number: '&{NULL_VALUE}'
+    product: Safari
+    product_version: 9.1.1
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: Safari changes the Unicode composition of URLs when requesting them, causing the load to fail

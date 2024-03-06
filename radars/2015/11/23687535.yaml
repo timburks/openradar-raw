@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23687535"
+    labels:
+        datastore_id: "4927927531601920"
+data:
+    classification: Other Bug
+    created: "2015-11-30T14:47:07.46463Z"
+    description: "Summary:\nIt is sometimes convenient to define type aliases for types that are repeatedly used in an API. This can be useful for documenting the intended meaning of values of those types. Swift provides typealias to name complex types, and it comes handy in APIs like Source below:\n\nstruct Source<Value> {\n    typealias Sink = Value -> Void\n    func connect(sink: Sink) -> Connection { … }\n}\n\nIdeally, I would like to be able to provide these in protocols, too:\n\nprotocol SourceProtocol {\n    typealias Value\n    typealias Sink = Value -> Void\n    func connect(sink: Sink) -> Connection\n}\n\nMy intended meaning in this case is this:\n\nprotocol SourceProtocol {\n    typealias Value\n    func connect(sink: Value->Void) -> Connection\n}\n\nHowever, Swift 2.0 and 2.1.1 (as of Xcode 7.2 beta 4) ignores the defined value of SourceProtocol.Sink, and considers it an unbound type requirement, as if I wrote the following:\n\nprotocol SourceProtocol {\n    typealias Value\n    typealias Sink\n    func connect(sink: Sink) -> Connection\n}\n\nThis is surprising behavior — if shorthand type aliases cannot be supported in protocols, I’d strongly prefer the compiler to throw an error when encountering one rather than silently ignoring the parts after ’=’.\n\nSteps to Reproduce:\nTry compiling the following input:\n\nprotocol P {\n    typealias V = Int   // (1)\n\n    func foo(v: V)\n}\n\nstruct S: P {   // (2)\n    typealias V = String\n\n    func foo(v: V) { }\n}\n\nlet p: P = S() // (3)\np.foo(42)\n\nExpected Results:\nI expected that P.V is simply a shorthand for Int, so P is equivalent to the following:\n\nprotocol P { \n    func foo(v: Int)\n}\n\nThis reading implies that P does not have an associated type requirement, and struct S does not conform to protocol P.\nThus, I expected the compiler to either\n- complain that struct S does not conform to protocol P (error in line marked (2))\n- or warn that shorthand typealiases aren’t supported in protocols (error in line marked (1))\n\nActual Results:\nP.V is considered a fully generic associated type. The ’= Int’ clause is silently ignored. Thus, struct S is considered by the compiler to be conforming to it, and p’s declaration is rejected by the compiler:\n\nrepl.swift:13:8: error: protocol 'P' can only be used as a generic constraint because it has Self or associated type requirements\nlet p: P = S() // (3)\n       ^\nrepl.swift:14:1: error: member 'foo' cannot be used on value of protocol type 'P'; use a generic constraint instead\np.foo(42)\n^ ~~~\n\nRegression:\n\nUnknown\n\nNotes:"
+    email: Karoly.Lorentey@gmail.com
+    modified: "2015-11-30T14:47:07.46485Z"
+    number: "23687535"
+    number_intvalue: 23687535
+    originated: 30-Nov-2015 03:46 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode (7C62b)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode 7.2 beta 4 (7C62b) / Swift 2.1.1: Protocol with shorthand typealias is considered to have an associated type requirement'

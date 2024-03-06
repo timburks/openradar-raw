@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17259141"
+    labels:
+        datastore_id: "5786083438624768"
+data:
+    classification: ""
+    created: "2014-06-11T08:47:01.797995Z"
+    description: "With java enums, it's possible to store a lot of associated data with each enum value.\r\n\r\nWith Swift, we're stuck with to/fromRaw and switch/case.\r\n\r\nFor enum style enums, the following properties are interesting:\r\n\r\nSo for \"enum\" enums, there are actually 4 interesting properties:\r\n \r\n1. The ordinal used to concisely store the enum. \r\n2. The current \"raw type\" as the primary way to retrieve the enum that isn't position dependent (the ordinal may change depending on ordering)\r\n3. One or more associated values for each enum case\r\n4. A default string representation for each enum entry that reflects its name in the source code. So enum \"FooBar\" should have a string representation of \"FooBar\".\r\n5. Access to an array of all enum values (ordinal ordering)\r\n6. Access to a dictionary of raw value => enum value mapping (or alternatively an array of all raw values)\r\n\r\nAn example - defining all protocol values:\r\n\r\nSwift's current enum\r\n\r\nenum Protocol : Int\r\n{\r\n     case Login = 1, Welcome = 2 ...\r\n     func parameters() -> String[] {\r\n          switch (self) {\r\n               case Login:\r\n                    return [\"username\", \"password\"]\r\n               case Welcome:\r\n                    return [\"image\"]\r\n               ...\r\n          }\r\n     }\r\n}\r\n\r\nWhat I want:\r\n\r\nenum Protocol\r\n{\r\n     ...\r\n     case Login([\"username\", \"password\"]) = 1\r\n     case Welcome([\"image\"]) = 2\r\n     ...\r\n}\r\n\r\nAnother example:\r\n\r\nSwift today:\r\n\r\nenum PriceFunction : Int\r\n{\r\n     case ExpensivePrice, AffordablePrice, CheapPrice, VeryCheapPrice\r\n     func meanValue() {\r\n          switch (self) {\r\n               case ExpensivePrice:\r\n                    return 1137.0\r\n               case AffordablePrice:\r\n                    return 401.0\r\n               ...\r\n     func amplitude() {\r\n           ....\r\n}\r\n\r\nWhat I'd like to see:\r\n\r\nenum PriceFunction : Int\r\n{\r\n     let meanValue : Double\r\n     let amplitude : Double\r\n     let periodLength : Double\r\n     let ripple : Int\r\n\r\n     case ExpensivePrice(meanValue: 1137.0, amplitude: 455.0, periodLength: 5.0, ripple: 30) = 0\r\n     ...\r\n}\r\n\r\nFurthermore, one should be able to do something like\r\n\r\nProtocol.fromRaw(1)  and get Protocol.Login\r\nProtocol.byOrdinal(1) and get Protocol.Welcome\r\nProtocol.all() and get [Procol.Login, Protocol.Welcome]\r\nProtocol.dict() and get [1:Protocol.Login, 2:Protocol.Welcome]"
+    email: christoffer@aegik.com
+    modified: "2014-06-11T08:47:01.798148Z"
+    number: "17259141"
+    number_intvalue: 17259141
+    originated: 11-Jun-2014 00:30 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Version 6.0 (6A215l)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Swift: Extend "enum" enum capabilities to enhance usefulness'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13213361"
+    labels:
+        datastore_id: "2710405"
+data:
+    classification: Serious Bug
+    created: "2013-02-14T03:42:07.470357Z"
+    description: "Summary:\r\n\r\nThere is not enough information about -[UITableView dequeueReusableCellWithIdentifier:forIndexPath:], and using it throws exceptions.\r\n\r\nSteps to Reproduce:\r\n\r\nAs usual, in the table view's data source cellForRowAtIndexPath method, use dequeueReusableCellWithIdentifier:forIndexPath: where one would normally use dequeueReusableCellWithIdentifier:\r\n\r\nIf you forgot to register a class or nib, expect an exception.\r\n(This behavior is documented).\r\n\r\nIf you pass nil for the index path parameter, expect an exception, but don't get one!\r\n\r\nIf you pass an index path that is not known to the table view, don't expect an exception but get one anyway!\r\n> request for rect at invalid index path (<NSIndexPath 0x8361f40> 2 indexes [0, 0])\r\n\r\nThis last exception is a \"deal breaker\" for this method - it makes unit testing a table view data source 10x harder then it needs to be.\r\n\r\nExpected Results:\r\n\r\nThe only real mention of the index path argument is this snippet from documentation - \r\nThe index path specifying the location of the cell. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the index path to perform additional configuration based on the cell’s position in the table view.\r\n\r\nDigging into the UITableView.h header we get this tidbit - \r\n// newer dequeue method guarantees a cell is returned and resized properly, assuming identifier is registered\r\n\r\nActual Results:\r\n\r\nBased on the documentation available to me, I don't understand why I'd use this method over the older dequeueReusableCellWithIdentifier:\r\n\r\nRegression:\r\n\r\nNotes:"
+    email: evan@thinkfishhook.com
+    modified: "2013-02-14T03:42:07.470967Z"
+    number: "13213361"
+    number_intvalue: 13213361
+    originated: 13-Feb-2013 10:40 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "6.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: New Table View Dequeue Method in iOS 6

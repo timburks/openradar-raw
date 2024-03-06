@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29159280"
+    labels:
+        datastore_id: "4928732821192704"
+data:
+    classification: Enhancement
+    created: "2016-11-08T16:18:15.85387Z"
+    description: "Summary:\r\nNSWorkspace currently provides the following methods for launching apps by file URL or bundle identifier:\r\n\r\nlaunchApplication(at url: URL, options: NSWorkspaceLaunchOptions = [], configuration: [String : Any]) throws -> NSRunningApplication\r\n\r\nlaunchApplication(withBundleIdentifier bundleIdentifier: String, options: NSWorkspaceLaunchOptions = [], additionalEventParamDescriptor descriptor: NSAppleEventDescriptor?, launchIdentifier identifier: AutoreleasingUnsafeMutablePointer<NSNumber?>?) -> Bool\r\n\r\nThe first works well:\r\n\r\n- it accepts a first AppleEvent via its configuration parameter, \r\n\r\n- throws an error on failure, and \r\n\r\n- returns an NSRunningApplication instance identifying the [newly launched] process on success. \r\n\r\nHowever, it requires the path to the app bundle be known, so cannot be used in sandboxed apps that restrict file system information and access.\r\n\r\nIn principle, launchApplication(withBundleIdentifier:...) provides a sandbox-friendly alternative to launchApplication(at:...); however it is seriously deficient in several respects: \r\n\r\n- it does not take a configuration parameter, \r\n\r\n- its additionalEventParamDescriptor is useless for specifying a first AppleEvent (or anything useful as far as I can tell), \r\n\r\n- it does not provide any error information beyond a Boolean NO to indicate failure, and \r\n\r\n- it does not return an NSRunningApplication instance that identifies the process it _actually_ launched, which in turn means there's no reliable way to get identify that process. (A subsequent call to NSRunningApplication.runningApplications(withBundleIdentifier:String) provides a partial workaround, but _only_ if a single match is found; if multiple matches exist then there is no way to determine which was created by the launchApplication call.)\r\n\r\nTo remedy these problems, please add a launchApplication(withBundleIdentifier:...) method to NSWorkspace that takes the same options and configurations arguments as launchApplication(at:...), and throws the same NSError returns the same NSRunningApplication result on failure/success:\r\n\r\nlaunchApplication(withBundleIdentifier bundleID: String, options: NSWorkspaceLaunchOptions = [], configuration: [String : Any]) throws -> NSRunningApplication"
+    email: automate.mantasystems@gmail.com
+    modified: "2016-11-08T16:18:15.85417Z"
+    number: "29159280"
+    number_intvalue: 29159280
+    originated: "2016-11-08"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS SDK
+    product_version: "10.12"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Please add better launchApplication(withBundleIdentifier:...) to NSWorkspace

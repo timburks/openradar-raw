@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "46115233"
+    labels:
+        datastore_id: "5504401372348416"
+data:
+    classification: Other Bug
+    created: "2018-11-16T02:20:09.310445Z"
+    description: "Area:\r\nAppKit\r\n\r\nSummary:\r\n-[NSAttributedString dataFromRange:documentAttributes:error:] outputs HTML expressing colors in the calibrated (generic) RGB color space instead of the sRGB color space.\r\n\r\nColors in webpages are supposed to be expressed in sRGB according to the CSS standard. [1][2] Colors in the <font color> attribute and color CSS property are correctly interpreted as sRGB when calling +[NSAttributedString initWithHTML:options:documentAttributes:] to create an attributed string. However, when calling -[NSAttributedString dataFromRange:documentAttributes:error:] on that same attributed string with NSHTMLTextDocumentType as a document attribute, the resulting HTML string contains <font color> attributes and color and -webkit-text-stroke CSS properties that are expressed in the calibrated RGB (aka generic RGB) color space.\r\n\r\nSteps to Reproduce:\r\nPlace the following code in a macOS playground (also attached):\r\n\r\n///////////////////////////\r\nimport Cocoa\r\n\r\nfunc roundTrip(_ html: String) -> String {\r\n    let originalHTMLData = html.data(using: .utf8)!\r\n    let redString = NSAttributedString(html: originalHTMLData, options: [:], documentAttributes: nil)!\r\n    // At this point, the output includes NSColors in sRGB as expected.\r\n//    print(redString)\r\n    let htmlData = try! redString.data(from: NSRange(location: 0, length: redString.length), documentAttributes: [\r\n        .documentType: NSAttributedString.DocumentType.html,\r\n        .characterEncoding: String.Encoding.utf8.rawValue,\r\n        .excludedElements: [\"XML\", \"DOCTYPE\", \"html\", \"head\", \"meta\", \"title\", \"style\", \"body\", \"p\"],\r\n        ])\r\n    return String(data: htmlData, encoding: .utf8)!\r\n}\r\n\r\nroundTrip(\"<font color='#ff0000'>red</font>\")\r\nroundTrip(\"<span style='color: #ff0000;'>red</span>\")\r\n///////////////////////////\r\n\r\nExpected Results:\r\n<font face=\"Times\" size=\"3\" color=\"#ff0000\" style=\"font: 12.0px Times; font-kerning: none; color: #ff0000; -webkit-text-stroke: 0px #ff0000\">red</font>\r\n<font face=\"Times\" size=\"3\" color=\"#ff0000\" style=\"font: 12.0px Times; font-kerning: none; color: #ff0000; -webkit-text-stroke: 0px #ff0000\">red</font>\r\n\r\nActual Results:\r\n<font face=\"Times\" size=\"3\" color=\"#fb0007\" style=\"font: 12.0px Times; font-kerning: none; color: #fb0007; -webkit-text-stroke: 0px #fb0007\">red</font>\r\n<font face=\"Times\" size=\"3\" color=\"#fb0007\" style=\"font: 12.0px Times; font-kerning: none; color: #fb0007; -webkit-text-stroke: 0px #fb0007\">red</font>\r\n\r\n#FB0007 is the result of the following code:\r\n\r\nNSColor(srgbRed: 1, green: 0, blue: 0, alpha: 1).usingColorSpace(.genericRGB)\r\n\r\nVersion/Build:\r\nXcode 10.1 (10B61)\r\nmacOS 10.14.1 Mojave (18B75)\r\nLCD Color display configuration\r\n\r\nConfiguration:\r\nReproduces in a macOS playground as well as in an application with a 10.14 deployment target. Does not reproduce in an iOS playground.\r\n\r\n[1] https://developer.mozilla.org/en-US/docs/Web/CSS/color_value\r\n[2] https://webkit.org/blog/6682/improving-color-on-the-web/"
+    email: mxn@1ec5.org
+    modified: "2018-11-16T02:20:09.310654Z"
+    number: "46115233"
+    number_intvalue: 46115233
+    originated: "2018-11-15"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.14.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: -[NSAttributedString dataFromRange:documentAttributes:error:] uses incorrect color space in HTML

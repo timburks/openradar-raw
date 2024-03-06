@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "5999458"
+    labels:
+        datastore_id: "227"
+data:
+    classification: '&{NULL_VALUE}'
+    created: "2008-11-16T10:05:33.368363Z"
+    description: "Summary:\r\nThe preflight script that PackageMaker creates for the pre-install actions in the PackageMaker documents breaks easily in the presence of spaces.\r\n\r\nSteps to Reproduce:\r\n1. Add three pairs of actions to the pre-install section of the Actions tab of the package:\r\n   1. Get Application com.apple.systempreferences | Quit Application\r\n   2. Get Application com.Growl.GrowlHelperApp | Quit Application\r\n   3. Get Application com.Growl.MenuExtra | Quit Application\r\n2. Build the package.\r\n\r\nExpected Results:\r\nThe pre-install script that PackageMaker generates for this workflow correctly handles all pathnames and all results from pkmkpidforapp.\r\n\r\nActual Results:\r\nThe pre-install script that PackageMaker generates for this workflow chokes on spaces, causing empty results from the `` expressions that are supposed to run pkmkpidforapp, causing further breakage.\r\n\r\nRegression:\r\nPackageMaker 2 didn't have the workflow feature, so it didn't have this problem.\r\n\r\nNotes:\r\nThe problem lines are the invocations of pkmkpidforapp:\r\n\r\nRESULT=`$PKMKPIDFORAPP 'com.apple.systempreferences' ''`\r\nRESULT=`$PKMKPIDFORAPP 'com.Growl.GrowlHelperApp' ''`\r\nRESULT=`$PKMKPIDFORAPP 'com.Growl.MenuExtra' ''`\r\n\r\nThe script does not have quotes around the $PKMKPIDFORAPP reference, causing it to become multiple arguments. For example, if the package is on a volume named “Growl 1.1.3”:\r\n\r\n0. “/Volumes/Growl”\r\n1. “1.1.3/Growl.mpkg/Contents/Resources/pkmkpidforapp”\r\n2. “com.apple.systempreferences”\r\n3. “”\r\n\r\nThere's no executable at /Volumes/Growl, so the `` expression fails:\r\n\r\nJun 10 20:48:41 Four-Sided-Cheese-Grater runner[5472]: preflight[5478]: /Volumes/Growl 1.1.3/Growl.mpkg/Contents/Packages/growlPreflight.pkg/Contents/Resources/preflight: line 5: /Volumes/Growl: No such file or directory\r\n\r\n The shell continues on, setting the RESULT variable to the empty string.\r\n\r\nThe script also does not have quotes around the two references to $RESULT, so the next line fails, too:\r\n\r\nif [ $RESULT -gt 0 ]; then\r\n\r\nThat expression expands to:\r\n\r\nif [  -gt 0 ]; then\r\n\r\nThe shell ignores the double-space, collapsing it to a single space. It runs the command:\r\n\r\n0. [\r\n1. -gt\r\n2. 0\r\n3. ]\r\n\r\nAnd the [ command also fails:\r\n\r\nJun 10 20:48:41 Four-Sided-Cheese-Grater runner[5472]: preflight[5478]: /Volumes/Growl 1.1.3/Growl.mpkg/Contents/Packages/growlPreflight.pkg/Contents/Resources/preflight: line 6: [: -gt: unary operator expected\r\n\r\nThe fix is simply to put \" \" around *ALL* variable references."
+    email: boredzo@gmail.com
+    modified: "2011-08-28T05:50:05.647658Z"
+    number: "5999458"
+    number_intvalue: 5999458
+    originated: '&{NULL_VALUE}'
+    parent_number: '&{NULL_VALUE}'
+    product: '&{NULL_VALUE}'
+    product_version: '&{NULL_VALUE}'
+    reproducible: '&{NULL_VALUE}'
+    resolved: '&{NULL_VALUE}'
+    status: Open
+    title: PackageMaker pre-install actions are brittle

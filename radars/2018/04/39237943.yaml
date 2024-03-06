@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39237943"
+    labels:
+        datastore_id: "4983936539164672"
+data:
+    classification: Bug
+    created: "2018-04-06T14:56:32.10097Z"
+    description: "If a Today Extension only includes the main storyboard, and all other associated files exist in a separate module / framework, building and running either the host app or the extension target in the simulator produces the error in Xcode: \"This app could not be installed at this time.\"\r\n\r\nFurther investigation in `mobile_installation.log.0` reveals that the appex could not be found. From the attached samples:\r\n\r\nFri Apr  6 10:12:44 2018 [1240] <err> (0x700008a06000) copy_entitlements_for_path: Unable to load entitlements from \"/Users/Michael/Library/Developer/CoreSimulator/Devices/51417E58-232D-45D5-9DAB-EB4C6F0AA301/data/Library/Caches/com.apple.mobile.installd.staging/temp.jgeydh/extracted/Payload/TodayExtensionIssues.app/PlugIns/TodayExtension.appex/TodayExtension\": (-2) No such file or directory\r\n\r\nSteps to Reproduce:\r\n\r\nYou can used the attached sample project (\"TodayExtensionIssues\") and skip to step 16, but here’s how we set this up.\r\n\r\n1. In Xcode, File > New Project\r\n2. Single View App\r\n3. Name the project\r\n4. File > New > Target…\r\n5. Today Extension\r\n6. Name the today extension\r\n7. File > New > Target…\r\n8. Cocoa Touch Framework\r\n9. Name the framework\r\n10. Change the \"Require Only App-Extension-Safe API\" Build Setting on this framework from \"No\" to \"Yes\".\r\n11. Run the extension scheme on any simulator (sometimes you need to run it twice for the new extension to appear) and verify that the today extension displays \"Hello World\", which is the default UI.\r\n12. In Xcode, move `TodayViewController.swift` from the today extension target to the new cocoa touch framework target.\r\n13. In MainInterface.storyboard, select \"Today View Controller\" in the outline view, and open the identity inspector. Uncheck \"Inherit Module From Target\", and retype \"TodayViewController\" in the \"Class Field\". When exiting the field, \"Module\" should fill in to whatever you named your framework.\r\n14. In TodayViewController.swift, make `TodayViewController` public.\r\n15. Clean the project build folder with Shift+Option+Command+K. This is important, as not doing so will not reproduce the issue since the extension may exist on disk from testing it earlier.\r\n16. Try to run either the host app or the extension from Xcode in any simulator.\r\n\r\nExpected Results:\r\n\r\nThe application should launch fine. If the extension is installed, it should display \"Hello World\".\r\n\r\nActual Results:\r\n\r\nXcode displays a message: \"This app could not be installed at this time.\" Also see the note about `mobile_installation.log.0` above.\r\n\r\nTo fix this, you must link at least one source file to the extension target, even if it’s empty. Then, the application will successfully install in the simulator.\r\n\r\nVersion/Build:\r\n\r\nXcode Version 9.3 (9E145)\r\nSimulator Version 10.0 (SimulatorApp-851.2 CoreSimulator-518.19)\r\niOS 11.3 (15E217)\r\nRunning on macOS High Sierra Version 10.13.4 (17E199)\r\n\r\nConfiguration:\r\n\r\nN/A\r\n\r\nSample Project: https://www.dropbox.com/s/ih31x7c7sj50ivr/TodayExtensionIssues.zip?dl=0"
+    email: michael@lickability.net
+    modified: "2018-05-04T13:24:46.95673Z"
+    number: "39237943"
+    number_intvalue: 39237943
+    originated: April 6 2018, 10:50 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: ""
+    reproducible: Yes
+    resolved: Closed. Engineering has determined that this issue behaves as intended.
+    status: Closed
+    title: Today Extension With No Linked Files Causes App To Fail To Install In Simulator

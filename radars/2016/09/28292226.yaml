@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28292226"
+    labels:
+        datastore_id: "5042667700355072"
+data:
+    classification: UI/Usability
+    created: "2016-09-14T01:33:50.62649Z"
+    description: "Summary:\r\n\r\nOften with our Swift 2.3 app when changing small portions of internal functions,\r\nwe notice the entire app gets recompiled. I enabled the private\r\n`ExplainWhyBuildCommandsAreRun` flag (rdar://27516128) and the explanation is:\r\n\r\n```\r\n(running because command line arguments are different from the last time)\r\n```\r\n\r\nWith a little more digging, I diffed the command line arguments before and after\r\nand noticed this difference:\r\n\r\n```\r\n% diff -Nur beforeargs.txt afterargs.txt | diff-highlight | less\r\n--- beforeargs.txt      2016-09-13 18:17:08.000000000 -0700\r\n+++ afterargs.txt       2016-09-13 18:17:18.000000000 -0700\r\n@@ -64,7 +64,10 @@\r\n  -Xcc \\\r\n  -I/Users/ksmiley/dev/lyft-ios/build/Intermediates/Lyft.build/Debug-iphoneos/Lyft.build/Lyft-own-target-headers.hmap \\\r\n  -Xcc \\\r\n- -I/Users/ksmiley/dev/lyft-ios/build/Intermediates/Lyft.build/Debug-iphoneos/Lyft.build/Lyft-all-target-headers.hmap \\\r\n+ -I/Users/ksmiley/dev/lyft-ios/build/Intermediates/Lyft.build/Debug-iphoneos/Lyft.build/Lyft-all-non-framework-target-headers.hmap \\\r\n+ -Xcc \\\r\n+ -ivfsoverlay \\\r\n+ -Xcc /Users/ksmiley/dev/lyft-ios/build/Intermediates/Lyft.build/all-product-headers.yaml \\\r\n  -Xcc \\\r\n  -iquote \\\r\n  -Xcc /Users/ksmiley/dev/lyft-ios/build/Intermediates/Lyft.build/Debug-iphoneos/Lyft.build/Lyft-project-headers.hmap \\\r\n```\r\n\r\nIt seems that this `ivfsoverlay` flag is getting added without any project file\r\nor configuration changes, only small source changes. This requires our app to\r\nbuild from scratch which takes quite a few minutes.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a Swift 2.3 project\r\n2. Compile the project a few times\r\n3. Check the build logs for why it was recompiled\r\n\r\nExpected Results:\r\n\r\nIt should be incremental each time the app compiles.\r\n\r\nActual Results:\r\n\r\nIt is incrementally compiled sometimes, sometimes it recompiles from scratch with new arguments.\r\n\r\nNotes:\r\n\r\nOur general app layout involves a few Swift and Objective-C dynamic framworks\r\nand static libraries, along with a few app extensions and of course our main\r\ntarget."
+    email: keithbsmiley@gmail.com
+    modified: "2017-09-20T18:39:03.54567Z"
+    number: "28292226"
+    number_intvalue: 28292226
+    originated: 13-Sep-2016 06:33 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8 GM
+    reproducible: Sometimes
+    resolved: Xcode 9.0
+    status: Resolved
+    title: Swift 2.3 incremental compilation doesn't work occassionally

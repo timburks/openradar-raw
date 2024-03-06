@@ -1,0 +1,91 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "14261999"
+    labels:
+        datastore_id: "3147402"
+data:
+    classification: Other Bug
+    created: "2013-06-25T17:12:50.87559Z"
+    description: |-
+        Summary:
+        Clang accepts code that synthesizes getters and setters for Objective-C properties with abstract C++ class reference types. No diagnostic is produced, but a backing ivar is silently generated with the abstract class type, which should not be possible: the generated code creates instances of the abstract class. When unrelated code attempts to call pure virtual methods via the returned reference, the C++ runtime produces an error that can be challenging to track down.
+
+        Clang should refuse to synthesize ivars and getters for Objective-C properties with abstract C++ types.
+
+        Example code:
+
+          class TestInterface
+          {
+          public:
+              TestInterface() {}
+              virtual ~TestInterface() {}
+              virtual int TestMethod() const = 0;
+          };
+
+          @interface TestClass : NSObject
+          @property (nonatomic, readonly) const TestInterface& test; // This should not compile without an explicit getter.
+          @end
+
+          @implementation TestClass
+          @end
+
+          int main(int argc, const char * argv[])
+          {
+              @autoreleasepool {
+                  TestClass *testClass = [[TestClass alloc] init];
+                  const TestInterface& testInterface = testClass.test;
+                  NSLog(@"%d", testInterface.TestMethod()); // Runtime error: "libc++abi.dylib: pure virtual method called"
+              }
+              return 0;
+          }
+
+        As far as I can see, the compiler generates code that is roughly equivalent to the following (invalid) implementation:
+
+          @implementation TestClass
+          {
+              TestInterface _test;
+          }
+
+          - (const TestInterface&)test
+          {
+              return _test;
+          }
+         @end
+
+
+        Steps to Reproduce:
+        Open and run the attached project in Xcode 4.6.3 or Xcode 5 DP2.
+
+        Expected Results:
+        Compiler error complaining that @properties with abstract values cannot be synthesized.
+
+        Actual Results:
+        Runtime error "libc++abi.dylib: pure virtual method called" leading to abort().
+
+        Regression:
+        Unknown
+
+        Notes:
+        This issue is reproducible with the following compilers:
+
+        $ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang --version
+        Apple LLVM version 4.2 (clang-425.0.28) (based on LLVM 3.2svn)
+        Target: x86_64-apple-darwin12.4.0
+        Thread model: posix
+        $ /Applications/Xcode5-DP2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang --version
+        Apple LLVM version 5.0 (clang-500.1.61) (based on LLVM 3.3svn)
+        Target: x86_64-apple-darwin12.4.0
+        Thread model: posix
+    email: Karoly.Lorentey@gmail.com
+    modified: "2013-06-25T17:12:50.875709Z"
+    number: "14261999"
+    number_intvalue: 14261999
+    originated: 25-Jun-2013 07:12 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 4.6.3 (4H1503)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Clang 4.2: synthesized Objective-C properties can instantiate abstract C++ classes'

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27870881"
+    labels:
+        datastore_id: "5539272169881600"
+data:
+    classification: ""
+    created: "2016-08-16T19:34:23.32788Z"
+    description: "Summary:\r\nWhen establishing a connection to the HTTP/2-based APNs server, the server sends an initial SETTINGS frame that sets the maximum number of concurrent streams to 500. If the client sends a notification that is rejected by the server, the server immediately reduces the number of concurrent streams to 1.\r\n\r\nSteps to Reproduce:\r\n1. Connect to an APNs server via HTTP/2.\r\n2. Wait for the initial SETTINGS frame, which will have a maximum concurrent stream limit of 500.\r\n3. Send a HEADER/DATA frame pair for a push notification with an invalid token.\r\n4. The server will reject the notification and send a SETTINGS frame that sets the maximum number of concurrent streams to 1.\r\n5. Send a HEADER/DATA frame pair for a push notification with a valid token.\r\n6. The server will accept the notification and send a SETTINGS frame that sets the maximum number of concurrent streams back to 500.\r\n\r\nExpected Results:\r\nThe stream limit should remain the same, or at least wait for a larger number of failed notifications before throttling the connection, and then by smaller steps.\r\n\r\nActual Results:\r\nThe server immediately sets the concurrent stream limit to 1. After a successful notification, it immediately restores the stream limit to 500.\r\n\r\nVersion:\r\n\r\n\r\nNotes:\r\nBecause the stream limit changes so drastically and is restored to the \"normal\" limit of 500 notifications so easily, this behavior doesn't seem to provide much meaningful rate limiting. In fact, we've seen it cause auxiliary problems where, in high-traffic conditions, the server will drop the stream limit to 1, then close the connection almost immediately with a GOAWAY frame complaining of a violated stream limit. It's not yet clear if this problem is on the client or server side.\r\n\r\nCertainly, the server is entitled to change stream limits however it sees fit, but it seems like this particular strategy is causing non-trivial trouble without much gain.\r\n\r\nFor additional discussion, please see https://forums.developer.apple.com/message/162457 and https://github.com/relayrides/pushy/issues/356.\r\n\r\nThanks!\r\n\r\nConfiguration:\r\nThis behavior is reproducible in both the development and production environments.\r\n\r\nAttachments:"
+    email: jon@turo.com
+    modified: "2016-08-17T21:54:03.09379Z"
+    number: "27870881"
+    number_intvalue: 27870881
+    originated: "2016-08-16"
+    parent_number: '&{NULL_VALUE}'
+    product: Other
+    product_version: ""
+    reproducible: Always
+    resolved: "2016-08-17"
+    status: Resolved
+    title: APNs server sets maximum concurrent streams to 1 after a failed notification

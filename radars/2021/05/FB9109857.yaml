@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9109857
+    labels:
+        datastore_id: "4994073270157312"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2021-05-18T08:37:40.07757Z"
+    description: "Summary:\r\nJust pushed via NavigationLink view gets popped out.\r\n\r\nSteps to reproduce:\r\n1. Create SwiftUI iOS app with following implementation\r\n```\r\nimport SwiftUI\r\n\r\n@main\r\nstruct PopBug1App: App {\r\n    var body: some Scene {\r\n        WindowGroup {\r\n            FirstView()\r\n        }\r\n    }\r\n}\r\n\r\nstruct FirstView: View {\r\n    var body: some View {\r\n        NavigationView {\r\n            NavigationLink(destination: SecondView()) {\r\n                Text(\"Second view\")\r\n            }\r\n        }\r\n    }\r\n}\r\n\r\nstruct SecondView: View {\r\n    @Environment(\\.presentationMode) var presentationMode\r\n    @StateObject var viewModel = SecondViewModel()\r\n\r\n    var body: some View {\r\n        VStack(spacing: 8) {\r\n            NavigationLink(destination: Text(\"Details\"), isActive: $viewModel.detailsVisible) {\r\n                EmptyView()\r\n            }\r\n\r\n            NavigationLink(destination: Text(\"About\")) {\r\n                Text(\"About\")\r\n            }\r\n\r\n            Button(\"Details\") {\r\n                viewModel.detailsVisible = true\r\n            }\r\n        }\r\n    }\r\n}\r\n\r\nclass SecondViewModel: ObservableObject {\r\n    @Published var detailsVisible: Bool = false\r\n}\r\n```\r\n2. Run the app\r\n3. Navigate to second screen by tapping 'Second view' button\r\n4. Tap on 'About' or 'Details' button\r\n\r\nObserved behavior:\r\nNew screen gets pushed and immediately popped.\r\n\r\nExpected behavior:\r\nUser stays on pushed screen\r\n\r\nNote:\r\nBelieve issue was introduced in iOS 14.5, because I can’t reproduce it on previous versions.\r\nChanging view hierarchy by adding another NavigationLink fixes the issue.\r\n\r\nVersions:\r\nXcode 12.5 (12E262)\r\niOS 14.5.1 (18E212)\r\nmacOS 11.2.3 (20D91)"
+    email: azeffin@gmail.com
+    modified: "2021-05-18T08:38:00.002076Z"
+    number: FB9109857
+    number_intvalue: 9109857
+    originated: 18 May 2021
+    parent_number: '&{NULL_VALUE}'
+    product: SwiftUI
+    product_version: ""
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: NavigationLink pops out by itself

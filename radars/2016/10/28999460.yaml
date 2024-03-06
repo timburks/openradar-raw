@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28999460"
+    labels:
+        datastore_id: "6186354140512256"
+data:
+    classification: Enhancement
+    created: "2016-10-28T11:00:41.41355Z"
+    description: "Summary:\n\nA common pattern we use for propagating state changes to our collection view cells is to iterate over the collection view’s visibleCells and re-configure them with the changed data. Cells that are currently not visible wold later be configured in the standard collectionView:cellForItemAtIndexPath: data source method. \n\nWith iOS 10, this no longer works reliably when cell prefetching is enabled (the default behavior). With prefetching, certain cells receive collectionView:cellForItemAtIndexPath: well before they are on screen. Those cells are already configured, but not accessible via visibleCells or any other UICollectionView properties. Lacking easy access to those cells, we have no way to easily update the cell data during a state change, unless we result to workarounds. We would thus like to ask for a preparedCells property to be added to the UICollectionView / UITableView APIs. \n\nSteps to Reproduce:\n\nCheck out the UICollectionView API. Notice there is no convenient way to get prepared cells that are offscreen. visibleCells does not list those cells. We also can’t use cellForItemAtIndexPath: to obtain references to offscreen cells. \n\nExpected Results:\n\nThe API would expose a way to get references to prepared cells so they can be updated with new data if needed. indexPathForCell: should also work for those cells, so they can be correctly mapped to corresponding model objects.\n\nActual Results:\n\nThe API does not expose a way to reference prepared cells. \n\nRegression:\n\nHappens on iOS 10+ when collection view prefetching is enabled. \n\nNotes:\n\nThere are a couple of ways to get around the issue with the current API, however those approaches are suboptimal. \n\nWe can perform cell configuration at a later point, in collectionView:willDisplayCell:. This works, but negates some of the performance benefits that cell preloading is trying to achieve. Instead of configuring the cells at an opportune moment in the collection view lifecycle, we essentially revert back to the old behavior where the cells are configured right before they are displayed. \n\nAn empty performBatchUpdates:completion: can be trigged to when a state update is requested. This call apparently as a side effect discards prepared offscreen cells, resulting in no stale cell data. As far as I can tell, this is undocumented behavior, which is one obvious down side of this approach. Another one being that we’re essentially throwing away work that has already been done. In our specific use cases where those state changes do not occur frequently (mostly transitioning into an “editing” state in an animated fashion) this is not a big issue, but still not ideal. \n\nThere might be other approaches as well, including manually tracking loaded cells. I have not tried that, fearing that that might be both inconvenient and unreliable."
+    email: matej@bukovinski.com
+    modified: "2016-10-28T11:00:41.41384Z"
+    number: "28999460"
+    number_intvalue: 28999460
+    originated: 28-Oct-2016 01:00 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "10.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Porvide UICollectionView API for acessing prepared cells

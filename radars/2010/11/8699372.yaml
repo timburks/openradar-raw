@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8699372"
+    labels:
+        datastore_id: "911401"
+data:
+    classification: Enhancement
+    created: "2010-11-24T16:41:50.701403Z"
+    description: "24-Nov-2010 11:33 AM Jim Dovey:\r\nSummary:\r\n\r\nThe documentation for -[UIView setNeedsLayout] should explicitly state that it should only be called on the main thread.\r\n\r\nSteps to Reproduce:\r\n\r\nI have some background code which updates the content items in a subview of UIView. It then calls -setNeedsLayout so that the new items will be laid out in the next tick of the main runloop by CoreAnimation.\r\n\r\nExpected Results:\r\n\r\nThe calling thread exits, and the main thread sees the 'needsLayout' flag and calls -layoutSubviews on my view.\r\n\r\nActual Results:\r\n\r\nThe calling thread exits, and in its cleanup (actually through pthread_tsd_cleanup()) CoreAnimation triggers the layout on the calling thread. Since +[NSThread exit] has been called already, the result of [[NSThread currentThread] threadDictionary] is now nil, which is what alerted me to this issue by causing a crash in my application (since I was relying on a managed object context stored in that dictionary, and created upon demand).\r\n\r\nRegression:\r\n\r\nN/A\r\n\r\nNotes:\r\n\r\nI'm also filing a bug against CoreAnimation suggesting that the behaviour of triggering a layout in response to a thread exiting is incorrect.\r\n\r\n\r\n24-Nov-2010 11:40 AM Jim Dovey:\r\nAddendum:\r\n\r\nThe reason for the report is that the current documentation can be read to imply that -setNeedsLayout sets a flag which is only checked by the thread running the UI.\r\n\r\nThe companion bug to this can be found at <rdar://problem/8699385>"
+    email: jimdovey@gmail.com
+    modified: "2011-08-28T05:38:55.275998Z"
+    number: "8699372"
+    number_intvalue: 8699372
+    originated: 2010/11/24
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "4.2"
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Non-ideal documentation of -[UIView setNeedsLayout]

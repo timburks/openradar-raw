@@ -1,0 +1,46 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28493732"
+    labels:
+        datastore_id: "5012535283548160"
+data:
+    classification: UI/Usability
+    created: "2016-09-27T12:35:24.31618Z"
+    description: |-
+        Summary:
+
+        When opening an app from a notification (and the app is already running in background), application:didReceiveRemoteNotification:userInfo:fetchCompletionHandler: will not be called.
+
+        Steps to Reproduce:
+        1. Add a `application:didReceiveRemoteNotification:userInfo:fetchCompletionHandler:` method to your UIAppDelegate
+        2. Open the app, then close it (let it run in background)
+        3. Have a push notification appear
+        4. Tap the notification to open the app with it
+
+        Expected Results:
+        - `application:didReceiveRemoteNotification:userInfo:fetchCompletionHandler:` will be called with the notification info.
+
+        Actual Results:
+        - Nothing happens
+
+        Regression:
+        - This is a regression from iOS 9
+        - `application:didReceiveRemoteNotification:userInfo:fetchCompletionHandler` is called just fine for background pushes, just not when app is opened from a notification
+        - UNUserNotification API for this seems to work
+
+        Notes:
+
+        Workaround is to *also* implement `application:didReceiveRemoteNotification:userInfo:` method. Then this one will be called when opening app from a notification, and the variant with the fetch completion handler will be called for background pushes.
+    email: radexpl@gmail.com
+    modified: "2016-09-27T12:35:24.31637Z"
+    number: "28493732"
+    number_intvalue: 28493732
+    originated: 27-Sep-2016 02:35 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 10
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'application:didReceiveRemoteNotification:userInfo:fetchCompletionHandler: not called when opening app from notification'

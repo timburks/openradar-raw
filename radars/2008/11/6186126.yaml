@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6186126"
+    labels:
+        datastore_id: "842"
+data:
+    classification: ""
+    created: "2008-11-19T14:35:27.190365Z"
+    description: "29-Aug-2008 01:12 PM Dave Dribin:\r\nSummary: \r\nIf /private/tmp does not exist when OS X boots, it does not get recreated.  This breaks many parts of OS X that require it for temp files (/tmp is symlinked to /private/tmp).  The system will appear to work, as I can get to the login screen and still login, but many launchd daemons will not get started.  The most obvious symptom is pboard, the pasteboard server, does not get started and thus cut and paste between applications will not work.  I also noticed that Apache and ssh-agent also were not started.  I'm sure there are others, too, that I just didn't notice yet.\r\n\r\nSteps to Reproduce:\r\n1. Remove /private/tmp:\r\n   % sudo rm -rf /private/tmp\r\n   \r\n2. Reboot.\r\n\r\nExpected Results:\r\n/private/tmp should be created on boot and the system should continue normally.\r\n\r\nActual Results:\r\n/private/tmp (and hence /tmp) does not exist.\r\n\r\nRegression:\r\nThis worked fine on 10.4.  /private/tmp was cleaned and recreated by /etc/rc.  Here's an excerpt from /etc/rc on 10.4.11:\r\n\r\n# Clean out /private/tmp.\r\nif [ -d /private/tmp ]; then\r\n       # blow away any _tmp_ in case it exists as well\r\n       if [ -e /private/_tmp_ ]; then\r\n               chflags -R -P 0 /private/_tmp_\r\n               rm -rf /private/_tmp_\r\n       fi\r\n       mv /private/tmp /private/_tmp_\r\n       chflags -R -P 0 /private/_tmp_\r\n       RMRF_ITEMS=\"$RMRF_ITEMS /private/_tmp_\"\r\nfi\r\nmkdir -p -m 01777 /private/var/tmp /private/tmp\r\n\r\nThe important part is the last line that recreates /private/tmp unconditionally.\r\n\r\nOn 10.5, /etc/rc was replaced by launchd.  I do not know how (or if) it cleans out /private/tmp at boot.\r\n\r\nNotes:\r\nI'm not sure how /private/tmp went missing on my machine in the first place.  That's probably a separate bug, if I could ever recreate it. :)"
+    email: ddribin@gmail.com
+    modified: "2011-08-28T05:49:44.69886Z"
+    number: "6186126"
+    number_intvalue: 6186126
+    originated: 29-Aug-2008 01:12 PM
+    parent_number: "6010023"
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Duplicate/6010023
+    title: /private/tmp does not get recreated on boot, if missing

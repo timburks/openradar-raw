@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "48406118"
+    labels:
+        datastore_id: "6090067441352704"
+data:
+    classification: Developer Tools
+    created: "2019-02-26T18:54:13.066946Z"
+    description: "Summary:\r\nWhen the New Build System was introduced, we gained the functionality to resolved $(inherited) build settings from other, included .xcconfig files.\r\nHowever, the build settings pane within Xcode does not display these settings as such and, more importantly, command line: \"xcodebuild -showBuildSettings ...\" does not either. \r\n(Instead, they show the $(inherited) settings incorrectly - as if they were resolved under the Legacy Build system).\r\n\r\nSteps to Reproduce:\r\n- Create a new project, ensure that you are using the New Build System. \r\n- Add 2 .xcconfig files.   We'll call them Included.xcconfig and MySettings.xcconfig.\r\n- In Xcode, add MySettings.xcconfig (NOT Included.xcconfig) as the configuration file for all your configurations (can add to either Project, or Target doesn't matter).\r\n- in Included.xcconfig, define a build setting with value. Let's say: MY_BUILD_SETTING = \"VALUE_ONE\".\r\n- in MySettings.xcconfig, add 2 lines:\r\n #include \"Included.xcconfig\"\r\nMY_BUILD_SETTING = $(inherited) \"VALUE_TWO\"\r\n\r\n- Inspect the Build Settings pane in Xcode and observe reported value for MY_BUILD_SETTING (you may need to go to menu: Editor->Show Values if Definitions are currently showing).\r\n- At the terminal, run \"xcodebuild -showBuildSettings - project <path to your project>\" and observe reported value for MY_BUILD_SETTING.\r\n\r\nExpected Results:\r\nIn both cases (Xcode buld settings pane, xcodebuild -showBuildSettings), resolved value for MY_BUILD_SETTING *should* be reported as \"VALUE_ONE VALUE_TWO\".\r\n\r\nActual Results:\r\nMY_BUILD_SETTING value is reported as \"VALUE_TWO\". (i.e. VALUE_ONE is truncated).\r\nNote that this issue can be observed with *any* build setting, not just user-defined ones. \r\n\r\nVersion/Build:\r\nXcode 10.1 / Build version 10B61\r\n\r\nConfiguration:\r\nAny.\r\n\r\n\r\nDiscussion. \r\nNote that you can observer the \"real\" result by adding a Run Script build phase to your Target which includes the line \"export\".\r\nThis will dump all build settings out to the build log. You can observe it by going to Xcode's Report navigator, selecting your build and viewing the output of your new build phase.  If you do this, you will observe that MY_BUILD_SETTING actually has the *correct* value (\"VALUE_ONE VALUE_TWO\"), in contradiction to what is reported by Xcode's build settings pane and xcodebuild -showBuildSettings.\r\n\r\nFor your convenience, I've attached a sample project with all the steps outlined above already implemented."
+    email: joemuers.developer@gmail.com
+    modified: "2019-02-27T10:25:45.153788Z"
+    number: "48406118"
+    number_intvalue: 48406118
+    originated: 26 Feb 2019
+    parent_number: '&{NULL_VALUE}'
+    product: Xcode / xcodebuild
+    product_version: Xcode 10.1 / Build 10B61
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: xcodebuild -showBuildSettings reports incorrect values for $(inherited) in .xcconfig files

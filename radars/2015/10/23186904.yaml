@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23186904"
+    labels:
+        datastore_id: "6175889737908224"
+data:
+    classification: Security
+    created: "2015-10-20T18:33:11.98491Z"
+    description: "Summary:\r\n\r\nIt is possible to construct a very simple VPN configuration profile that contains a handful of On Demand Rules that, given enough time, will be mis-evaluated, resulting in the VPN turning on (or off) when it shouldn't. This appears to be a regression starting with iOS 9; while this is an intermittent issue, we have yet to see it reproduce on an iOS 8 device.\r\n\r\nSteps to Reproduce:\r\n\r\n1. Create a VPN configuration profile with OnDemand enabled, and with the following rules, replacing \"Trusted SSID\" with the SSID for your favorite trusted network:\r\n\r\n<key>OnDemandRules</key>\r\n<array>\r\n\t<dict>\r\n\t\t<key>InterfaceTypeMatch</key>\r\n\t\t<string>WiFi</string>\r\n\t\t<key>SSIDMatch</key>\r\n\t\t<array>\r\n\t\t\t<string>Trusted SSID</string>\r\n\t\t</array>\r\n\t\t<key>Action</key>\r\n\t\t<string>Disconnect</string>\r\n\t</dict>\r\n\r\n\t<dict>\r\n\t\t<key>InterfaceTypeMatch</key>\r\n\t\t<string>Cellular</string>\r\n\t\t<key>Action</key>\r\n\t\t<string>Disconnect</string>\r\n\t</dict>\r\n\r\n\t<dict>\r\n\t\t<key>InterfaceTypeMatch</key>\r\n\t\t<string>WiFi</string>\r\n\t\t<key>Action</key>\r\n\t\t<string>Connect</string>\r\n\t</dict>\r\n\r\n\t<dict>\r\n\t\t<key>Action</key>\r\n\t\t<string>Ignore</string>\r\n\t</dict>\r\n</array>\r\n\r\n2. Install the profile\r\n\r\n3. Wait until you see an unexpected activation of the VPN when connected to the trusted network. As we mentioned, this is an intermittent issue; you may be waiting a few hours... or a week. (We have a huge number of customers, and a large number of test devices in-house, and we see the bug happen quite often.)\r\n\r\nExpected Results:\r\n\r\nExpected: the VPN is always disconnected on the \"Trusted SSID\" Wi-Fi network, and is always connected on *all other networks*\r\n\r\nActual Results:\r\n\r\nActual: on occasion, the VPN is enabled even on the \"Trusted SSID\" Wi-Fi network.\r\n\r\nNotes:\r\n\r\n- This bug exists in the iOS 9.1 beta series, too.\r\n\r\n- The bug does not exist in iOS 8, at least as far as we can tell.\r\n\r\n- We've noticed that this bug seems to happen _more_ often when your device is either locked on your trusted network and then later unlocked, or when your device is locked and transitions either from cellular or another Wi-Fi network to your trusted network. But because of the intermittent nature of this bug, it's hard to say for sure whether this is actually related.\r\n\r\n- It sure feels like a race condition of some kind.\r\n\r\n- It's probably impacting Apple's enterprise customers to some degree. The specific configuration profile included in this report is effectively a whitelist, so perhaps it's not the end of the world as a bug. \r\n\r\nHowever, if you flipped the sense of the rules around, you've got a potentially quite serious bug."
+    email: davepeck@getcloak.com
+    modified: "2016-06-28T16:12:43.16938Z"
+    number: "23186904"
+    number_intvalue: 23186904
+    originated: 20-Oct-2015 11:29 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS 9
+    product_version: iOS 9.0.2 (13A452)
+    reproducible: Sometimes
+    resolved: Fixed
+    status: Closed
+    title: VPN On Demand Rules are sometimes mis-evaluated

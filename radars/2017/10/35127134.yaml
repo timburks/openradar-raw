@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35127134"
+    labels:
+        datastore_id: "4995116137709568"
+data:
+    classification: Crash
+    created: "2017-10-26T18:20:39.28003Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\n\r\nCalls to setNeedsUpdateOfHomeIndicatorAutoHidden result in doesNotRecognizeSelector crash.\r\n\r\nThe crash only occurs in iOS 11 as the call is wrapped within an #available scope:\r\n\r\n    override func viewDidAppear(_ animated: Bool) {\r\n        super.viewDidAppear(animated)\r\n        \r\n        if #available(iOS 11, *) {\r\n            setNeedsUpdateOfHomeIndicatorAutoHidden()   // crash on iOS 11 with doesNotRecognizeSelector\r\n        }\r\n        \r\n        setNeedsStatusBarAppearanceUpdate()\r\n    }\r\n\r\nThis works, but we shouldn't need to make the additional \"responds\" check:\r\n\r\n        if #available(iOS 11, *) {\r\n            if responds(to: #selector(setNeedsUpdateOfHomeIndicatorAutoHidden)) {\r\n                setNeedsUpdateOfHomeIndicatorAutoHidden()\r\n            }\r\n        }\r\n\r\nSteps to Reproduce:\r\n\r\n1. Subclass UIViewController.\r\n2. Call setNeedsUpdateOfHomeIndicatorAutoHidden in viewDidAppear within an #available scope.\r\n\r\nExpected Results:\r\n\r\nNo crash.\r\n\r\nActual Results:\r\n\r\nCrash.\r\n\r\nVersion/Build:\r\n\r\nXcode 9.0.1. Swift 4.0"
+    email: eholley@gmail.com
+    modified: "2018-02-21T20:42:58.96131Z"
+    number: "35127134"
+    number_intvalue: 35127134
+    originated: 10/23/2017
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 9.0.1 (9A1004)
+    reproducible: Always
+    resolved: 11/08//2017
+    status: Closed
+    title: setNeedsUpdateOfHomeIndicatorAutoHidden not implemented in iOS 11

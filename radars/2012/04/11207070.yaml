@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11207070"
+    labels:
+        datastore_id: "1647403"
+data:
+    classification: Crash
+    created: "2012-04-08T03:47:51.625396Z"
+    description: "Summary:\r\n\r\nIn a method with an @autoreleasepool, an if statement, and a return within the if statement, clang can emit code that autoreleases the return value before popping the autorelease pool, causing a crash.\r\n\r\nSteps to Reproduce:\r\n\r\nCompile and run the following program with clang -O3:\r\n\r\n#import <Foundation/Foundation.h>\r\n\r\n@interface MyClass : NSObject\r\n+ (id)test: (int)x;\r\n@end\r\n\r\n@implementation MyClass\r\n\r\n+ (id)test: (int)x\r\n{\r\n    @autoreleasepool\r\n    {\r\n        if (x)\r\n            return [NSMutableDictionary dictionary];\r\n        return nil;\r\n    }\r\n}\r\n\r\n@end\r\n\r\nint main()\r\n{\r\n    @autoreleasepool\r\n    {\r\n        NSLog(@\"%@\", [MyClass test: 1]);\r\n    }\r\n}\r\n\r\n\r\nExpected Results:\r\n\r\nIt should print an empty dictionary.\r\n\r\nActual Results:\r\n\r\nIt crashes with a segmentation fault. The problem is obvious in a disassembly of the binary:\r\n\r\n0000000100000e23\tcallq\t0x100000ec0\t; symbol stub for: _objc_retainAutoreleasedReturnValue\r\n0000000100000e28\tmovq\t%rax,%rdi\r\n0000000100000e2b\tcallq\t0x100000eb4\t; symbol stub for: _objc_autoreleaseReturnValue\r\n0000000100000e30\tmovq\t%r14,%rdi\r\n0000000100000e33\tcallq\t0x100000ea8\t; symbol stub for: _objc_autoreleasePoolPop\r\n0000000100000e38\tmovq\t%rbx,%rax\r\n0000000100000e3b\tpopq\t%rbx\r\n0000000100000e3c\tpopq\t%r14\r\n0000000100000e3e\tpopq\t%rbp\r\n0000000100000e3f\tret\r\n\r\nNote the autoreleaseReturnValue before the autoreleasePoolPop. This means the return value is destroyed before being returned to the caller. When the caller tries to use it, it crashes.\r\n\r\nRegression:\r\n\r\nUnknown.\r\n\r\nNotes:\r\n\r\nB flat, A."
+    email: michael.ash@gmail.com
+    modified: "2012-04-08T03:47:51.625559Z"
+    number: "11207070"
+    number_intvalue: 11207070
+    originated: 07-Apr-2012 11:46 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X SDK
+    product_version: Xcode 4.3.2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Incorrect codegen with ARC, @autoreleasepool, an if statement, and -O3

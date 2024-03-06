@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6849924"
+    labels:
+        datastore_id: "36413"
+data:
+    classification: UI/Usability
+    created: "2009-05-02T09:35:57.174899Z"
+    description: "Summary:\r\nDirect dependencies between targets on differing SDKs can use the wrong SDK for the depended-upon target.\r\n\r\n\r\nSteps to Reproduce:\r\n1. Make a new Xcode project, using an iPhone application project template.\r\n2. Add a new target to it, using the Mac Cocoa framework target template.\r\n3. Create a direct dependency from the iPhone application target to the Mac Cocoa framework target (such that the Mac Cocoa framework target will be built before the iPhone application target is).\r\n4. Build the iPhone application target.\r\n\r\n\r\nExpected Results:\r\nThe Mac Cocoa framework target should be built against its base SDK (macosx10.5), and then the iPhone application target should be built against the active SDK (one of the iPhone SDKs, perhaps the OS 3.0 device one).\r\n\r\n\r\nActual Results:\r\nInstead, the Mac Cocoa framework target is built against the active SDK, which fails with the following error:\r\n\r\n\ttarget specifies product type 'com.apple.product-type.framework', but there's no such product type for the 'iphonesimulator' platform\r\n\r\nNote that we are _not_ trying to link the iPhone application against the framework, which of course would be expected to not work.\r\n\r\n\r\nRegression:\r\nN/A\r\n\r\n\r\nNotes:\r\nI understand what’s happening here—the active SDK which is selected is being used. And, sure enough, if you set the active SDK to “Base SDK”, it works as intended.\r\n\r\nHowever, if you then want to switch the iPhone application target between the device and simulator, you can’t change the active SDK, but you instead have to change the target’s base SDK, or even set up two targets (one building against the device SDK, the other against the simulator SDK).\r\n\r\nIt might help if I give you some background on why I’m trying to set up a kooky dependency like this in the first place. I’m developing some middleware for game development which can be used with the iPhone and Mac OS X. The iPhone version is built as a static library, and the Mac OS X version is built as a framework.\r\n\r\nHowever, static libraries lack the convenience of frameworks. I would like to ship one unified distribution: a Mac framework which has all the appropriate headers, and which bundles the static library inside it. Project/target templates will be set up that look for the framework in ~/Library/Frameworks (or a different path, should the client developer specify one via a target variable) and have header and library search paths set up to look into the framework.\r\n\r\nAs it stands, this works exactly as intended, and is a great solution for this sort of development—client developers need only put the framework in ~/Library/Frameworks and they can develop and go without having to do any further setup as far as tracking down the headers, making sure the library is in the library search paths, etc.\r\n\r\nThe only hitch is that in my _own_ development of projects which use my middleware, I would like to set up a dependency to make sure that the framework packaging is current before building the application. Since I develop my client projects and my middleware concurrently, making sure I’m linking against the very latest version is essential—and unfortunately impossible with direct dependencies."
+    email: rix.rob@gmail.com
+    modified: "2011-08-28T05:46:56.525546Z"
+    number: "6849924"
+    number_intvalue: 6849924
+    originated: May 2, 2009
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 3.1.3 (1190.0)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: You cannot set up useful direct dependencies from iPhone targets onto frameworks

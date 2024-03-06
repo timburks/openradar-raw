@@ -1,0 +1,54 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "27195876"
+    labels:
+        datastore_id: "5531486065262592"
+data:
+    classification: Other Bug
+    created: "2016-07-06T15:26:27.8361Z"
+    description: |-
+        Summary:
+        NSManagedObjects are KVC for the entity as defined in the model file, so methods are generated at runtime if they’re accessed. To expose these methods to the compiler, the obj-c code generation generates stubs like follows:
+
+        @interface Event (CoreDataGeneratedAccessors)
+
+        - (void)addNotesObject:(Note *)value;
+        - (void)removeNotesObject:(Note *)value;
+        - (void)addNotes:(NSSet<Note *> *)values;
+        - (void)removeNotes:(NSSet<Note *> *)values;
+
+        @end
+
+        The runtime then provides the implementation. This behavior can be done in swift as well:
+
+        extension Event {
+            @NSManaged func addNotesObject(value: Note)
+        }
+
+
+        Steps to Reproduce:
+        Create a managed object entity with a to many relationship and look at the generated code.
+
+        Expected Results:
+        There should be KVC compliant mutation methods stubs generated.
+
+        Actual Results:
+        There are no KVC compliant mutation method stubs generated.
+
+        Regression:
+        This does not appear to be a regression.
+
+        Notes:
+    email: brianaking@gmail.com
+    modified: "2016-07-06T15:26:27.83626Z"
+    number: "27195876"
+    number_intvalue: 27195876
+    originated: 06-Jul-2016 11:26 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8 beta 2
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Swift Code Generation does not create KVC compliant mutation stubs

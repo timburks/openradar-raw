@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "13775441"
+    labels:
+        datastore_id: "2969403"
+data:
+    classification: Serious Bug
+    created: "2013-04-30T20:00:01.446108Z"
+    description: "Summary: A trivial program fails to link properly with -fopenmp. llvm-gcc doesn't recognize __builtin_expect() inside an OpenMP section.\r\n\r\nSteps to Reproduce: Cut and paste into a terminal window. I'm using OSX 10.8.2 and llvm-gcc 4.2.1.\r\n\r\ncat >test.c <<EOF\r\n#include <assert.h>\r\nint foo() { return 1; }\r\nint main() {\r\n    #pragma omp parallel\r\n    assert(foo());\r\n}\r\nEOF\r\ngcc -fopenmp test.c\r\n\r\n\r\nExpected Results: The program should link correctly.\r\n\r\nActual Results: llvm-gcc produces a linker error.\r\n\r\nUndefined symbols for architecture x86_64:\r\n  \"___builtin_expect\", referenced from:\r\n      _main.omp_fn.0 in ccJY6t0O.o\r\nld: symbol(s) not found for architecture x86_64\r\ncollect2: ld returned 1 exit status\r\n\r\nRegression:\r\n\r\nNotes: This has been reported many other places on the Web, but I cannot find a public bug report about it, nor do I see any public admission that Apple knows about this bug; therefore I'm filing a new bug report about it.\r\n\r\nI've attached \"gcc-v.txt\", the output of \"gcc -fopenmp test.c -v\".\r\n\r\nAs of 2013-04-30, Clang doesn't support OpenMP at all; so using Clang is not a workaround.\r\n\r\n30-Apr-2013 12:57 PM Arthur O'Dwyer:\r\n'gcc-v.txt' was successfully uploaded"
+    email: arthur.j.odwyer@gmail.com
+    modified: "2013-05-08T17:57:03.077911Z"
+    number: "13775441"
+    number_intvalue: 13775441
+    originated: 30-Apr-2013 12:57 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: gcc 4.2.1 (5658) (LLVM 2336.11.00)
+    reproducible: Always
+    resolved: WONTFIX
+    status: Closed
+    title: __builtin_expect() not recognized within an OpenMP section

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15605406"
+    labels:
+        datastore_id: "5853905669849088"
+data:
+    classification: Other Bug
+    created: "2013-12-06T18:49:52.454075Z"
+    description: "Summary:\r\nIt is possible to generate the files necessary for creating a code coverage report using the workaround documented here: http://stackoverflow.com/a/19386835/1751969\r\n\r\nUnfortunately, this workaround depends on the availability of Application Delegate methods +initialize and -applicationWillTerminate: particularly to trigger __gcov_flush() from within the target application, thereby generating the .gcda files necessary for visualizing code coverage.\r\n\r\nIn a project for a static library, with a separate target for performing unit tests on that static library, there does not appear to be a way to register a subclass of XCTestObserver such that when the test suite has completed __gcov_flush() can be triggered.\r\n\r\nSteps to Reproduce:\r\n1. Launch Xcode 5.0.1 on Mavericks 13A598\r\n2. File > New Project...\r\n3. Framework & Library > Cocoa Touch Static Library\r\n4. Give the Project the name \"SampleKit\" and create a git repo for it (on My Mac)\r\n5. Add a non-library target to workaround rdar://15156225\r\n6. At the project (not target) level set GCC_GENERATE_TEST_COVERAGE_FILES = YES and\r\nset GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES\r\nper http://stackoverflow.com/a/19386835/1751969\r\n6. Pick a simulator (not a device)\r\n7. Cmd + U to run the tests\r\n8. Open a terminal and cd ~/Library/Developer/Xcode/DerivedData/\r\n9. Check for .gcno files via find . -name *.gcno  (.gcno files will be available as expected.)\r\n10. Check for .gcda files via find . -name *.gcda  No .gcda files are created.\r\n\r\nAttempting to use the workaround for calling __gcov_flush() documented in http://stackoverflow.com/a/19386835/1751969 does not work as it is not clear how to register the subclass of XCTestObserver as SampleKitTestLog (added to the to the Unit Test Target) from within the static library.  \r\n\r\nThat is the subclass of XCTestObserver is never instantiated and therefore it is not possible to hook in and trigger __gcov_flush() when the suite of tests has completed.\r\n\r\nExpected Results:\r\nFor __gcov_flush() to get call automatically (for iOS Apps and Static Libraries) when a set of unit tests completes, without the need for the workarounds documented in http://stackoverflow.com/a/19386835/1751969\r\n\r\nActual Results:\r\nIt is possible to manually call __gcov_flush() for iOS apps, but the same opportunity to register a subclass of XCTestObserver and trigger __gcov_flush() at the end of the test suite is not available for static libraries.\r\n\r\nVersion:\r\nXcode 5.0.2\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: david.anderson@robotsandpencils.com
+    modified: "2013-12-06T18:49:52.454212Z"
+    number: "15605406"
+    number_intvalue: 15605406
+    originated: December 6, 2013
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: 5.0.2
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Inability to generate Code Coverage files for static library

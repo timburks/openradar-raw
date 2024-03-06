@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "11541277"
+    labels:
+        datastore_id: "1754401"
+data:
+    classification: Other Bug
+    created: "2012-05-26T21:34:11.993872Z"
+    description: "Summary:\r\n\r\nAdding a relationship after a save does not update NSFetchedResultsController that uses a predicate containing this relationship. \r\n\r\nCreate Entity -> Save Context -> Add Relationship -> Save Context  => does not show object in fetched results controller\r\n\r\nCreate Entity -> Add Relationship -> Save Context => does show object\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nA NSFetchedResultsController is based on a predicate where in a many-to-many relationship one element in the searches relationship needs to be a certain one. i.e. \r\n\r\nNSPredicate *predicate = [NSPredicate predicateWithFormat:@\"(isRetweet == NO) AND (%@ IN searches)\", _search];\r\n\r\nCreate a new entity on a background queue that has the same store coordinator as the main thread MOC so it can write to disk. Save the background MOC which will merge the changes via change notification into the mainMOC. Releationship is not yet set, so the fetched results are empty.\r\n\r\nNow set the relationship, this would now qualify the fetched results to contain this new object. But it does not show up.\r\n\r\nLeaving the view controller using the fetched results controller and returning has the items show up.\r\n\r\nExpected Results:\r\n\r\nAdding a relationship should trigger the expected update of the fetched results controller having a predicate to include these objects. \r\n\r\nActual Results:\r\n\r\nThe update is not triggered if the adding of the relationship is done after the first save of the new managed object. Only setting the relationship and then saving does not trigger anything on the fetched results controller.\r\n\r\nRegression: n/a\r\n\r\nNotes: Obviously the workaround is to have all the changes of the new object occur together so that the setting of other attributes made the object \"dirty\" and cause the notification.  But this is confusing nevertheless."
+    email: oliver.drobnik@gmail.com
+    modified: "2012-05-26T21:34:11.994011Z"
+    number: "11541277"
+    number_intvalue: 11541277
+    originated: May 26, 2012
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "5.1"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSFetchedResultsController does not get refreshed for added relationship

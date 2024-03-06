@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33005768"
+    labels:
+        datastore_id: "5031905116291072"
+data:
+    classification: UI/Usability
+    created: "2017-06-27T16:04:36.46759Z"
+    description: "Summary:\r\nWhen installing an upgrade package that contains an application bundle that does not match the CFBundleIdentifier of the application that is being upgraded, macOS installer creates a .localized directory and installs the upgrade in this directory instead of upgrading the application in place.\r\n\r\nSteps to Reproduce:\r\nThe issue appears in multiple apps (SPSS for instance) but for a minimal example, I created this shell script:\r\n\r\n#!/bin/sh\r\n# Script that creates two installer packages with the same destination app\r\n# but different CFBundleIdentifiers.\r\n# These trigger in macOS installer the creation of a .localized version\r\n\r\nmkdir -p /tmp/test/Applications/Test.app/Contents\r\n/usr/libexec/plistbuddy -c \"Set :CFBundleIdentifier string macadmins.test.1\" /tmp/test/Applications/Test.app/Contents/Info.plist\r\npkgbuild --root /tmp/test /tmp/test.1.pkg\r\n\r\n/usr/libexec/plistbuddy -c \"Set :CFBundleIdentifier string macadmins.test.2\" /tmp/test/Applications/Test.app/Contents/Info.plist\r\npkgbuild --root /tmp/test /tmp/test.2.pkg\r\n\r\nsudo installer -pkg /tmp/test.1.pkg  -tgt /\r\nsudo installer -pkg /tmp/test.2.pkg  -tgt /\r\n\r\n\r\n\r\nExpected Results:\r\nI expect to see just one application called Test.app in /Applications which has a CFBundleIdentifier value of macadmins.test.2.\r\n\r\nActual Results:\r\nAfter installing the second package with the above script, there is one version of Test.app in Applications and another one in /Applications/Test.localized as demonstrated in the find command below.\r\n\r\nfind /Applications/Test.*\r\n/Applications/Test.app\r\n/Applications/Test.app/Contents\r\n/Applications/Test.app/Contents/Info.plist\r\n/Applications/Test.localized\r\n/Applications/Test.localized/.localized\r\n/Applications/Test.localized/Test.app\r\n/Applications/Test.localized/Test.app/Contents\r\n/Applications/Test.localized/Test.app/Contents/Info.plist\r\n\r\nVersion:\r\n10.12.6 Beta\r\n\r\nNotes:"
+    email: Arjen.van.Bochoven@gmail.com
+    modified: "2017-07-07T11:08:27.25915Z"
+    number: "33005768"
+    number_intvalue: 33005768
+    originated: 27-Jun-2017 06:04 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.12.6 Beta
+    reproducible: Always
+    resolved: ""
+    status: Closed as duplicate of 33006519
+    title: Installer creates .localized directory for application bundle

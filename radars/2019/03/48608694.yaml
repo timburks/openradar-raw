@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "48608694"
+    labels:
+        datastore_id: "6084263443169280"
+data:
+    classification: Bug
+    created: "2019-03-05T20:18:21.26175Z"
+    description: "Summary:\r\n`UIApplication.keyboardIsLocalUserInfoKey ` is documented with:\r\n\r\nThe key for an NSNumber object containing a Boolean that identifies whether the keyboard belongs to the current app. With multitasking on iPad, all visible apps are notified when the keyboard appears and disappears. The value of this key is true for the app that caused the keyboard to appear and false for any other apps.\r\n\r\nFrom this, one can draw 2 conclusions:\r\n- iPhone apps shouldn't receive keyboard related notifications when the keyboard is not visible in them. This is not 100% clear to me based on the documentation, and is not the focus of this radar, but could potentially be a separate one (this project and the specified repro steps also show this).\r\n- `UIApplication.keyboardIsLocalUserInfoKey` should never be `true` when the keyboard is not visible in the app that receives the notification.\r\n\r\nSteps:\r\n- Open attached Xcode project\r\n- Launch this app on the simulator\r\n- Make sure software keyboard is enabled\r\n- Background it\r\n- Open messages.app\r\n- Tap on a conversation\r\n- Tap on the message text view to open the keyboard\r\n- Use the task switcher to switch back\r\n\r\nExpected:\r\nKeyboard related notifications are not posted to our app because it hasn’t presented the keyboard.\r\n\r\nActual:\r\nThe assertion in `ViewController.keyboardFrameWillUpdate(_:)` hits, because the notification is posted, and with the `UIApplication.keyboardIsLocalUserInfoKey` key set to true.\r\n\r\nNotes:\r\nThis causes UI glitches in a lot of apps that update their layout to avoid the keyboard by shifting UI elements. The Twitch app which I work on is a good example of this. Because those layout updates are also animated, switching from Twitch to another app where you’re writing text with the keyboard, and then switching back, can result in the UI shifting up and down briefly, which looks very buggy."
+    email: javier.api@gmail.com
+    modified: "2019-03-05T20:18:21.261965Z"
+    number: "48608694"
+    number_intvalue: 48608694
+    originated: 3/5/2019
+    parent_number: '&{NULL_VALUE}'
+    product: UIKit
+    product_version: "12.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIApplication.keyboardWillChangeFrameNotification posted on iPhone with UIApplication.keyboardIsLocalUserInfoKey true when a background app has presented the keyboard

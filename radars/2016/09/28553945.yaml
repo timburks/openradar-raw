@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28553945"
+    labels:
+        datastore_id: "4980766484201472"
+data:
+    classification: Serious Bug
+    created: "2016-09-29T22:55:01.27633Z"
+    description: "Summary:\r\nAfter exporting a video using AVAssetExportSession and AVVideoCompositionCoreAnimationTool to composite a layer on top of the video during export, videos played using AVPlayerLayer fail to show video but audio plays so the player is playing (sometimes seeking spurs the video into action). This doesn't seem to be caused by hitting the AV encode/decode pipeline limit because it often happens after a single export, which as far as I know only spins up 2 pipelines: 1 for the AVAssetExportSession and another for the AVPlayer.\r\n\r\nThis seems to happen most frequently when the video is played within several seconds of the export. Once I see it happen if I try to play a video again without waiting for 20-30 seconds it often reoccurs the next time. It is sporadic though, if you do it over and over it sometimes works and sometimes does not. Overall it is pretty consistently reproducible.\r\n\r\nSteps to Reproduce:\r\n1. Export an AVAsset using AVVideoComposionCoreAnimationTool to overlay a CALayer on the video.\r\n\r\n2. Show a video using AVPlayerLayer soon after the export completes.\r\n\r\n\r\nExpected Results:\r\nI expect the video to play, with video visible and audio audible, even when playing a video immediately after exporting an asset with the CA tool.\r\n\r\n\r\nActual Results:\r\nThe video does not appear, but the audio is audible so the player is playing. In the attached example project the player layer has a blue background so you can plainly see that it is set up correctly and visible, but no video shows up.\r\n\r\nVersion:\r\niOS 10.0.2 (14A456), iOS 10.1 (14B55c)\r\n\r\nNotes:\r\nI’ve worked around this issue by using a custom video compositor using CoreImage instead of the provided CA tool.\r\n\r\nThe attached project illustrates the problem on iOS 10 devices (not the simulator). Tapping the “Cause Trouble” button exports a video using AVVIdeoCompositionCoreAnimationTool and then plays a video in the middle of the screen when the export completes. The CAPlayerLayer and CAPlayer are reused as to not hit the AV encode/decode pipeline limit, and the layer has a blue background so it’s obvious when it is not showing video. You will want to turn the volume up a bit to hear the audio so you can confirm the player is playing the asset.\r\n\r\nConfiguration:\r\niPhone 6s, iPhone 6 Plus, iPhone 7 Plus\r\n\r\nAttachments:\r\n'AVPlayerLayerSoundOnlyBug_iOS10.zip' was successfully uploaded.\r\n\r\nhttps://www.dropbox.com/s/5p384mogjzflvqk/AVPlayerLayerSoundOnlyBug_iOS10.zip?dl=0"
+    email: sami@samhuri.net
+    modified: "2017-06-19T15:34:42.60003Z"
+    number: "28553945"
+    number_intvalue: 28553945
+    originated: "2016-09-29"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: "10.0"
+    reproducible: Sometimes
+    resolved: ""
+    status: Resolved
+    title: AVPlayerLayer doesn't always show video after using AVVideoCompositionCoreAnimationTool, but audio still plays

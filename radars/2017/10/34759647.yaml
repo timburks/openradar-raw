@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "34759647"
+    labels:
+        datastore_id: "6118646162128896"
+data:
+    classification: Serious Bug
+    created: "2017-10-09T14:20:52.12231Z"
+    description: "Area:\r\nAppKit\r\n\r\nSummary:\r\nIn my Mac app Textastic, a text editor, I store the preferences in NSUserDefaults and bind UI controls to NSUserDefaultsController to get notified when the preferences change.\r\n\r\nThis used to work without problems, but on High Sierra I see this problem:\r\n\r\nSometimes when I open an NSOpenPanel or NSavePanel, I get notifications from NSUserDefaultsController and all settings are reset to the defaults I registered with -[[NSUserDefaults standardUserDefaults] registerDefaults:] and \r\n[[NSUserDefaultsController sharedUserDefaultsController] setInitialValues:].\r\n\r\nThis means that all settings are reverted to their initial values. But, when I restart the app, it uses the correct values again. \r\n\r\nSo it seems that calling open or save panels makes the app lose access to the preferences and thus it uses the default values instead.\r\n\r\nThis is a major problem in my app.\r\n\r\nSteps to Reproduce:\r\n- open Textastic, set the editor theme and font size to something different than the default\r\n- quit and restart the app\r\n- hit Cmd-O to open an open panel (or close an untitled file which shows a save panel)\r\n\r\nExpected Results:\r\n- the user-selected theme and font size should stay\r\n\r\nActual Results:\r\n- the theme and font size are reverted to their default values. NSUserDefaultsController fires notifications for the values stored in NSUserDefaults, so the theme and font size of the text editor is change to the default values.\r\n\r\n\r\nVersion/Build:\r\nmacOS 10.13 (17A365)\r\n\r\nConfiguration:\r\nMacBookPro10,1\r\n\r\n\r\nI have added a sysdiagnose to this bug report that I created right after the problem occured. \r\nThe problem happened at about this time: So  1 Oct 2017 15:06:58 CEST\r\nThe PID of my app was 60030\r\n\r\n\r\nUnfortunately I cannot reproduce this bug reliably. It only happens sometimes and it seems to happen more often if I wait a few minutes before opening the app and opening the open or save panel.\r\n\r\nMaybe this happens because the open panel is a remote view and my app is sandboxed?\r\n\r\nWas something changed regarding KVO in High Sierra? I don't know how to debug this, but the same app worked without problems in macOS Sierra. I have looked through my code and cannot find anything unusual in how I use NSUserDefaultsController, so I think this is a bug in High Sierra.\r\n\r\nI would welcome any insights as to what might cause this issue. Maybe there is something I can fix in my app."
+    email: lextar@gmail.com
+    modified: "2017-10-09T14:20:52.12262Z"
+    number: "34759647"
+    number_intvalue: 34759647
+    originated: October 1 2017, 3:11 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: macOS 10.13 (17A365)
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: NSUserDefaults are reset to defaults when opening an NSOpenPanel or NSSavePanel on macOS High Sierra

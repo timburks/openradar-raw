@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB761103
+    labels:
+        datastore_id: "5008382524129280"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2020-03-03T10:16:14.29621Z"
+    description: "Downcasting `CIFilters` (or at least the `CIPerspectiveCorrection `, but I suspect the problem is broader) created using convenience methods defined in `CoreImage.CIFilterBuiltins` fails.\r\n\r\nMy app supports systems older than iOS 13, and I was hoping to support both pre-iOS 13 and the iOS 13 convenience API like so:\r\n\r\n```\r\nprivate let perspectiveFilter: CIFilter = {\r\n        if #available(iOS 13, *) {\r\n            return CIFilter.perspectiveCorrection()\r\n        } else {\r\n            return CIFilter(name: \"CIPerspectiveCorrection\")!\r\n        }\r\n    }()\r\n```\r\n\r\nwhich then would get used at callsite like such:\r\n\r\n```\r\n  if #available(iOS 13, *) {\r\n            guard let filter = perspectiveFilter as? CIPerspectiveCorrection else {\r\n                return nil\r\n            }\r\n```\r\n\r\nTo my surprise, this guard/let statement fails and returns nil.\r\n\r\nI also confirmed this in a simple playground like so:\r\n\r\n```\r\nimport UIKit\r\nimport CoreImage\r\nimport CoreImage.CIFilterBuiltins\r\n\r\nlet filter: CIFilter = CIFilter.perspectiveCorrection()\r\n\r\nif let perspectiveFilter = filter as? CIPerspectiveCorrection {\r\n    print(\"downcast successfull\")\r\n} else {\r\n    print(\"failed\")\r\n}\r\n```\r\n\r\nwhich prints out “failed”. \r\n\r\nTested on iPhone 11 Pro Max / iOS 13.3.1, and iOS 13.3 Simulator bundled with Xcode 11.3.1  (11C505)."
+    email: klausa@gmail.com
+    modified: "2020-03-03T10:16:14.29638Z"
+    number: FB761103
+    number_intvalue: 761103
+    originated: 3 Mar 2020
+    parent_number: '&{NULL_VALUE}'
+    product: Core Image API
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Downcasting filters created using `CIFilter.perspectiveCorrection()` from `CIFilter` to `CIPerspectiveCorrection` fails

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23339313"
+    labels:
+        datastore_id: "5621168941826048"
+data:
+    classification: ""
+    created: "2015-10-30T21:43:45.50745Z"
+    description: "Method from specialized extension of generic protocol that calls another method, defined by the same protocol and implemented in the same specialized extension as well as in general extension, should invoke implementation from the same specialized extension, not from general extension.\r\n\r\nSteps to Reproduce:\r\n1. Define some generic protocol that defines type alias, 'methodA()' and 'callA()' (static or instance). \r\n\r\nprotocol GenericProtocol {\r\n    typealias Element\r\n    func methodA() -> String\r\n    func callsA() -> String\r\n}\r\n\r\n2. Define protocol extension that defines implementation for all kinds of type alias:\r\n\r\nextension GenericProtocol {\r\n    func methodA() -> String {\r\n        return \"general\"\r\n    }\r\n    \r\n    func callsA() -> String {\r\n        return self.methodA().uppercaseString\r\n    }\r\n}\r\n\r\n3. Define specialized extension for type alias of some arbitrary type:\r\n\r\nextension GenericProtocol where Self.Element == A {\r\n    func methodA() -> String {\r\n        return \"special\"\r\n    }\r\n\r\n    func callsA() -> String {\r\n        return self.methodA.uppercaseString\r\n    }\r\n}\r\n\r\n4. Call 'methodA' and 'callA' on instance of this protocol\r\n\r\nstruct A {}\r\n\r\nlet structA = GenericStruct<A>()\r\nprint(structA.methodA()) // prints \"special\" - ok\r\nprint(structA.callsA()) // prints \"GENERAL\" - wrong, should be \"SPECIAL\"\r\n\r\nstruct B {}\r\nlet structB = GenericStruct<B>()\r\nprint(structB.methodA()) // prints \"general\" - ok\r\nprint(structB.callMethodA()) // prints \"GENERAL\" - ok\r\n\r\n\r\n\r\nExpected Results:\r\nMethod from specialized extension is called\r\n\r\nActual Results:\r\nMethod from general extension is called"
+    email: ilyapuchka@gmail.com
+    modified: "2015-10-30T21:45:29.25582Z"
+    number: "23339313"
+    number_intvalue: 23339313
+    originated: 30.10.15
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 7.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Methods in specialized extensions of generic protocols do not call other methods from the same extensions

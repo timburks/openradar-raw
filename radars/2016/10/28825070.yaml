@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28825070"
+    labels:
+        datastore_id: "6191833126273024"
+data:
+    classification: ""
+    created: "2016-10-18T16:44:21.1623Z"
+    description: "This bug is in regards to applying an offset to the following predicates of the HMEventTrigger class: \r\n  \r\n- predicateForEvaluatingTriggerOccurringBeforeSignificantEvent\r\n- predicateForEvaluatingTriggerOccurringAfterSignificantEvent\r\n\r\nWhen creating a predicate that evaluates whether an event occurred before or after a significant event with an offset, (eg. 4 hours after sunrise), the 4 hours is currently being added to time now() rather than the time of the solar event. \r\n\r\nExample: Creating an HMEventTrigger in HomeKit \r\n\r\nHMCharacteristicEvent: Arbitrary HMCharacteristicEvent\r\nNSPredicate: Sunrise (+ 4 hours)\r\nHMActionSet: Arbitrary action set\r\n\r\nIf sunrise is at 7:00am and it's currently 10:00am, the predicate is evaluated as follows: \r\n7:00am <= now() + 4 hours\r\n7:00am <= 2:00pm\r\n\r\nThis evaluates to true, and the HMEventTrigger fires, but it should not fire until 11:00am at the earliest (4 hours after sunrise). Adding the date components to the time of sunrise would resolve this issue.\r\n\r\n7:00am + 4 hours <= now()\r\n11:00am <= 10:00am\r\n\r\nThis expression evaluates to false and the HMEventTrigger will not fire, which is correct. \r\n\r\nThis is the case for adding an offset to the following conditions: before sunrise, after sunrise, before sunset, and after sunset."
+    email: angelad@gridconnect.com
+    modified: "2017-06-12T13:45:48.59776Z"
+    number: "28825070"
+    number_intvalue: 28825070
+    originated: 10/18/2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "10.0"
+    reproducible: Yes
+    resolved: ""
+    status: Closed
+    title: Applying an offset to HMEventTrigger predicates has incorrect logic

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15805525"
+    labels:
+        datastore_id: "6142771211534336"
+data:
+    classification: ""
+    created: "2014-01-13T18:27:04.85246Z"
+    description: "Sample code: https://www.dropbox.com/s/1q3vqfnsmmbhnuj/AutocorrectBug.zip\r\n\r\nSummary:\r\nI'm able to reproduce this behavior on my device (iPad retina) and on the simulator only if I use the software keyboard (i.e. use my mouse to click the on-screen keyboard).\r\n\r\nConsider the following UITextViewDelegate method:\r\n\r\n- (BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {\r\n\r\n    if ([text isEqualToString:@\" \"]\r\n        && range.length == 0\r\n        && (range.location == 0\r\n            || [[textView.text substringWithRange:NSMakeRange(range.location-1, 1)] isEqualToString:@\"\\n\"])) {\r\n                textView.backgroundColor = [UIColor yellowColor];\r\n                return NO;\r\n    }\r\n    return YES;\r\n}\r\n\r\nMy intention with this code is that when the user types a space, and that space is the first character on the line, the space is ignored and instead some other functionality happens, in this case the UITextView turns yellow.\r\n\r\nWhat appears to be an autocorrection bug ignores my attempt to disregard the space, and presents autocorrection options with a leading space.\r\n\r\nSteps to Reproduce:\r\nConsider the attached sample project.\r\n\r\n1. Tap in the text view to make it first responder\r\n2. Type \"Apple\", hit return and note the positioning\r\n3. Now, type a space (turning the text view yellow), type \"Apple\" again and hit return.\r\n\r\nExpected Results:\r\nExpected: A yellow background and text reading:\r\n\r\nApple\r\nApple\r\n\r\n(no space before either word)\r\n\r\nActual Results:\r\nObserved: A yellow background and text reading (due to an autocorrection):\r\n\r\nApple\r\n Apple\r\n\r\n(space before the second \"Apple\")\r\n\r\nVersion:\r\niOS iPad simulator 7.0.3\r\niPad MD328LL/A - 7.0.2 (11A501)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nDoes not occur if using the simulator and a hardware keyboard, must click on software keyboard in simulator."
+    email: james@mobiledistortion.com
+    modified: "2014-01-13T18:27:04.852647Z"
+    number: "15805525"
+    number_intvalue: 15805525
+    originated: 1/13/14
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: 'UITextView: autocorrect ignores textView:shouldChangeTextInRange:replacementText: returning NO'

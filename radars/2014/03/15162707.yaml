@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15162707"
+    labels:
+        datastore_id: "5278349718978560"
+data:
+    classification: Serious Bug
+    created: "2014-03-11T00:46:13.20884Z"
+    description: "Summary:\r\nI have an Apache server that houses a Git server via ProxyPass. I have been using Git with client certificate authentication daily for a couple years now. On Friday, I installed Mavericks GM, and discovered Git was not longer functional with this dev environment.\r\n\r\nI discovered that libcurl was the culprit and that failure is probably due to a bug in Secure Transport or the handling of curl using Secure Transport.\r\n\r\nIt works if you rebuild curl to use OpenSSL.\r\n\r\nSteps to Reproduce:\r\nMavericks GM /usr/bin/curl:\r\n\r\n/usr/bin/curl -I https://x.x.x.x/\r\ncurl: (35) Unknown SSL protocol error in connection to x.x.x.x:-9824\r\n\r\nAttempting to use a valid credential with it looks like:\r\n\r\n/usr/bin/curl --verbose -E ~/mgrimes.crt --key ~/mgrimes.key -I https://x.x.x.x/\r\n* About to connect() to x.x.x.x port 443 (#0)\r\n*   Trying x.x.x.x...\r\n* Adding handle: conn: 0x7f8cd2003a00\r\n* Adding handle: send: 0\r\n* Adding handle: recv: 0\r\n* Curl_addHandleToPipeline: length: 1\r\n* - Conn 0 (0x7f8cd2003a00) send_pipe: 1, recv_pipe: 0\r\n* Connected to x.x.x.x (x.x.x.x) port 443 (#0)\r\n* Unknown SSL protocol error in connection to x.x.x.x:-9824\r\n* Closing connection 0\r\ncurl: (35) Unknown SSL protocol error in connection to x.x.x.x:-9824\r\n\r\n----\r\n\r\nCustom built curl (built using OpenSSL instead of SecureTransport)\r\n\r\n/opt/curl/bin/curl -I https://x.x.x.x/\r\ncurl: (35) error:14094410:SSL routines:SSL3_READ_BYTES:sslv3 alert handshake failure\r\n\r\nThat's what we want to see... and to follow up with a successful connection, I can present the certs...\r\n\r\n/opt/curl/bin/curl --verbose -E ~/mgrimes.crt --key ~/mgrimes.key -I https://x.x.x.x/\r\n* About to connect() to x.x.x.x port 443 (#0)\r\n*   Trying x.x.x.x...\r\n* Adding handle: conn: 0x7fc9aa005400\r\n* Adding handle: send: 0\r\n* Adding handle: recv: 0\r\n* Curl_addHandleToPipeline: length: 1\r\n* - Conn 0 (0x7fc9aa005400) send_pipe: 1, recv_pipe: 0\r\n* Connected to x.x.x.x (x.x.x.x) port 443 (#0)\r\n* SSLv3, TLS handshake, Client hello (1):\r\n* SSLv3, TLS handshake, Server hello (2):\r\n* SSLv3, TLS handshake, CERT (11):\r\n* SSLv3, TLS handshake, Server key exchange (12):\r\n* SSLv3, TLS handshake, Request CERT (13):\r\n* SSLv3, TLS handshake, Server finished (14):\r\n* SSLv3, TLS handshake, CERT (11):\r\n* SSLv3, TLS handshake, Client key exchange (16):\r\n* SSLv3, TLS handshake, CERT verify (15):\r\n* SSLv3, TLS change cipher, Client hello (1):\r\n* SSLv3, TLS handshake, Finished (20):\r\n* SSLv3, TLS change cipher, Client hello (1):\r\n* SSLv3, TLS handshake, Finished (20):\r\n* SSL connection using DHE-RSA-AES256-SHA\r\n* Server certificate:\r\n...\r\n\r\nFINALLY, Git needs to be built against this new version of curl and the before/after shot looks like:\r\n\r\nmark@entropy authtest on master(0f7d791) tracking origin/master\r\n/Work/repos/authtest:master % git fetch -v\r\nfatal: unable to access 'https://x.x.x.x/git/authtest.git/': Unknown SSL protocol error in connection to x.x.x.x:-9824\r\n\r\nvs.\r\n\r\nmark@entropy authtest on master(0f7d791) tracking origin/master\r\n/Work/repos/authtest:master % /opt/git/bin/git fetch -v              \r\nFrom https://x.x.x.x/git/authtest\r\n = [up to date]      master     -> origin/master\r\n\r\nExpected Results:\r\nI expect curl built using darwinssl would behave like it should when it uses openssl.\r\n\r\nActual Results:\r\nSee discussion comparing and contrasting the two different builds of curl.\r\n\r\nVersion:\r\n10.9 (13A598)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nMid-2010 15\" MacBook Pro running Mavericks GM."
+    email: mark@stateful.net
+    modified: "2014-03-11T00:46:13.209043Z"
+    number: "15162707"
+    number_intvalue: 15162707
+    originated: 10/06/2013
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: "10.9"
+    reproducible: Always
+    resolved: ""
+    status: Duplicate/10535951 (Open)
+    title: libcurl compiled against SecureTransport fails mutual authentication

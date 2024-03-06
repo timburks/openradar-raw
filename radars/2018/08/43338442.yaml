@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "43338442"
+    labels:
+        datastore_id: "4981518900396032"
+data:
+    classification: Crash
+    created: "2018-08-15T17:18:02.45689Z"
+    description: "This is a Mojave crash we see in our crash reports. It is new in 10.14.0 18A353d and 18A347e.\r\n\r\nIn Chromium we have a zombie treadmill. Essentially we run with NSZombiesEnabled in production Chromes we ship to users. This allows us to debug our zombie issues. We seem to have caught a Mojave zombie issue.\r\n\r\nThe msgsend to the zombie is:\r\n\r\n0x000000010a49cdac (Google Chrome Framework - objc_zombie.mm: 234)\t(anonymous namespace)::ZombieObjectCrash(objc_object*, objc_selector*, objc_selector*)\r\n0x000000010a49cc00 (Google Chrome Framework - objc_zombie.mm: 269)\t-[CrZombie forwardingTargetForSelector:]\r\n0x00007fff52700519 (CoreFoundation + 0x00067519)\t___forwarding___\r\n0x00007fff527003b7 (CoreFoundation + 0x000673b7)\t__forwarding_prep_0___\r\n0x00007fff503b4230 (AppKit + 0x0078f230)\t-[NSApplication(NSEvent) discardEventsMatchingMask:beforeEvent:]\r\n0x00007fff5043b019 (AppKit + 0x00816019)\t-[NSTextView _consumeMouseEventsUntilMouseUpStartingWithEvent:]\r\n0x00007fff4ffb9912 (AppKit + 0x00394912)\t-[NSTextView mouseDown:]\r\n\r\nThis message was attempting to send the -_cgsEventTime message to a deallocated NSEvent. What is interesting is that the NSEvent was deallocated at:\r\n\r\n0x03977312 [Google Chrome Framework -\t objc_zombie.mm:134] (anonymous namespace)::ZombieDealloc(objc_object*, objc_selector*)\r\n0x0015da3c [AppKit +\t 0x15da3c] -[NSEvent dealloc]\r\n0x0000ac8c [libobjc.A.dylib +\t 0xac8c] (anonymous namespace)::AutoreleasePoolPage::pop(void*)\r\n0x0092a2e0 [AppKit +\t 0x92a2e0] -[NSWindow(NSEventRouting) trackEventsMatchingMask:timeout:mode:handler:]\r\n0x00815fef [AppKit +\t 0x815fef] -[NSTextView _consumeMouseEventsUntilMouseUpStartingWithEvent:]\r\n0x00394913 [AppKit +\t 0x394913] -[NSTextView mouseDown:]\r\n\r\nWhat appears to be happening is that -[NSTextView _consumeMouseEventsUntilMouseUpStartingWithEvent:] is\r\n\r\n1. calling -[NSWindow(NSEventRouting) trackEventsMatchingMask:timeout:mode:handler:] which uses an @autorelease{} to dispose of events\r\n2. calling -[NSApplication(NSEvent) discardEventsMatchingMask:beforeEvent:] which is querying the event times of NSEvents that were released and deallocated in step 1\r\n\r\nAgain, this appears to be new in Mojave. We hope that, given this information and these stack traces, you can track down the issue.\r\n\r\nThank you! Please let us know if we can help.\r\n\r\nThis is accessible in the Chromium bug tracker as crbug.com/873933"
+    email: motownavi@gmail.com
+    modified: "2018-08-15T17:18:16.57954Z"
+    number: "43338442"
+    number_intvalue: 43338442
+    originated: August 15 2018
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: Mojave
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: '[Chrome] -[NSTextView mouseDown:] zombie accesses NSEvents it just autoreleased'

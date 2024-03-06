@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25320942"
+    labels:
+        datastore_id: "6704619942051840"
+data:
+    classification: ""
+    created: "2016-03-23T19:55:54.96241Z"
+    description: "Summary:\r\nIf a Swift module is introduced dynamically to an executable at runtime, the corresponding Swift code in the module is not imported into lldb until and unless a breakpoint is set in the module itself and expressions parsed that cause the module to be imported.\r\n\r\nI ran into this while converting some Objective-C based debugging helpers, categories on Cocoa classes, to Swift. Simply loading the bundle is enough to get the imported category methods to be available from lldb expressions from then on out. However, Swift-based class extension methods are not available unless explicitly imported in lldb or caused to be implicitly imported.\r\n\r\nThe attached sample project presents a concise example that can hopefully be used to refine this functionality.\r\n\r\nSteps to Reproduce:\r\n1. Open attached SwiftExtensionTest.zip\r\n2. Set a breakpoint in applicationDidFinishLaunching in AppDelegate.swift, on the NSLog line.\r\n3. Build and run the project.\r\n4. When you break at the NSLog line, open the debugger console and type:\r\n\r\npo myView.vh()\r\n\r\n\r\nExpected Results:\r\nThe vh method is defined as a class extension on NSView in the dynamically loaded DebuggingBundle.bundle. Evaluating Swift expressions that rely upon modules that were dynamically loaded should work without jumping through extra hoops.\r\n\r\n\r\nActual Results:\r\nAn error is emitted: \"error: value of type 'NSView' has no member 'vh'\"\r\n\r\nVersion:\r\nVersion 7.3 (7D175)\r\n\r\nNotes:\r\nWhatever implicit module importing lldb is doing, it's enough to break in the module in question and force it to evaluate an expression relying upon the module's own code. From this point onward the evaluation will work as expected:\r\n\r\n1. Set a breakpoint in ViewDebuggingHelpers.swift, at the super.initialize line.\r\n2. Type po myView.vh() in the debugger console\r\n\r\nFrom this point onward the module is imported into lldb and works as expected.\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'SwiftExtensionTest.zip' was successfully uploaded."
+    email: jalkut@red-sweater.com
+    modified: "2016-03-23T19:55:54.96259Z"
+    number: "25320942"
+    number_intvalue: 25320942
+    originated: 23-Mar-2016 03:54 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: Swift modules from from dynamically loaded bundles not imported by lldb

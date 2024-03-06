@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10259048"
+    labels:
+        datastore_id: "1428418"
+data:
+    classification: Feature (new)
+    created: "2011-11-21T17:49:10.817956Z"
+    description: "Summary:\r\nWe need an API to allow apps to customize the order of UIMenuItems, including system items.\r\n\r\nSteps to Reproduce:\r\n\r\nAs documented in -[UIMenuController setMenuItems:], \" Custom items appear in the menu after any system menu items.\"\r\n\r\nThis is a problem when a system menu item has desirable functionality, but should not receive more prominent placement than the app's custom menu items.\r\n\r\nWe have an eBook reader that uses UIWebView to render pages.  We've added UIMenuItems to perform highlighting and sticky-noting, similar to the iBooks app.  iOS 5 adds a new system menu item, \"Define\", which shows a dictionary definition popover.  This is a useful feature, but it is far less important to our end-users than the common highlight and note commands.  However, since it is a system menu item, it appears first in the list of menu items (along with any other menu items, such as \"Copy\", that we accept our willingness to handle via the canPerformAction:withSender: callback).\r\n\r\nDepending on how many menu items we have, and whether we feel the need to suppress menu items by putting a canPerformAction:withSender: in a UIWebView subclass, the define menu item can appear entirely by itself in an oversized button, with all our custom (and more useful) menu items buried behind the right-arrow \"page\" button on the side of the menu popover.  For us, it is a usability disaster to have the menu popover go into paged mode, putting the less useful \"Copy\" and \"Define\" menus on the first page, and burying the app's core functionality on a second or even third page.\r\n\r\nWe also note that iBooks is somehow able to get around this: it gets a single-page menu popover, with a \"Dictionary\" menu item that seems to be a synonym for \"Define\".\r\n\r\nWe would like to have the Define menu in our app, but not at the cost of our core usability, pushing our essential menu items into a second page.  If we can't put it at the end of the list of menu items, we'd rather not allow it at all.\r\n\r\nExpected Results:\r\n\r\nActual Results:\r\n\r\nRegression:\r\n\r\nNotes:\r\nOne workaround is to re-implement system menus.  In the attached project, DefineMenuBuglet, there are #define's to selectively disable the Copy and Define menu items.  There is also a technique for providing a functional equivalent to the system copy menu item, but keeping all the menu items on one page of the popover (like iBooks does).  It does this by suppressing the system \"Copy\" menu item by catching it in canPerformAction:withSender: in a UIWebView subclass, then adding a custom menu item also called copy (this buglet uses \"Copy*\" for clarity), whose implementation calls the copy: method from the UIResponderStandardEditActions protocol.\r\n\r\nTo see this iBooks-like behavior, leave all the #defines in SNFDefineBugletDefines.h on.  To see the (default) paging behavior, comment out #define SUPPRESS_COPY_MENU_ITEM and #define USE_NON_PAGING_COPY_MENU_ITEM, which produces a first page with just the one \"Copy\" menu item.\r\n\r\nThis re-implementation of system menu items only works for menu items that make straightforward calls to public methods. By comparison, the \"Define\" menu item is backed by the non-public _define: method, so we can't use this technique to move a re-implemented \"Define\" to the end of the list (where it would be more appropriate for our app).\r\n\r\nAlso, it's totally gross and we wouldn't have to do it if the API would stop treating custom menu items as second-class citizens and instead let us reorder all the menu items, including the system items."
+    email: invalidname@gmail.com
+    modified: "2011-11-21T17:49:10.818413Z"
+    number: "10259048"
+    number_intvalue: 10259048
+    originated: 10/10/2011
+    parent_number: "10259071"
+    product: iPhone SDK
+    product_version: "5.0"
+    reproducible: Always
+    resolved: 10/12/2011
+    status: Duplicate/10259071
+    title: Allow system UIMenuItems to be reordered

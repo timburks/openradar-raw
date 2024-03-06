@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28426901"
+    labels:
+        datastore_id: "6136092554166272"
+data:
+    classification: Serious Bug
+    created: "2016-09-22T15:08:49.92843Z"
+    description: "When creating a NetBoot image with System Image Utility the creation fails due to lack of disk image space.\r\n\r\nSteps to Reproduce\r\n---\r\n1. Install plain macOS Sierra on a disk or disk image (I used Sierra 10.12.0 16A323, AutoDMG 1.6, and included the iTunes 12.5.1update)\r\n2. Mount the AutoDMG-created disk image\r\n3. Open System Image Utility\r\n4. Select the mounted Disk Image, click \"Next\"\r\n5. Network Disk Image Type, select \"NetBoot Image\", click \"Next\"\r\n6. Add Configuration Profiles, Packages, and Post-Install Scripts, click \"Next\"\r\n7. System Configuration, click \"Next\"\r\n8. Directory Servers, click \"Next\"\r\n9. Image Settings, I set the \"Network Disk\" to \"Sierra NetBoot 2016-9-21\" and the \"Description\" to \"macOS 10.12 (16A323)\", and \"Assign a specific image index\" to \"10760\", click \"Next\"\r\n10. Supported Computer Models, click \"Next\"\r\n11. Filter Clients by MAC Address, click \"Next\"\r\n12. Save As: \"Sierra NetBoot 2016-9-21\", Where: Desktop, click \"Save\"\r\n\r\nExpected Results\r\n---\r\nThe NetBoot image is properly created.\r\n\r\nActual Results\r\n---\r\nThe NetBoot image fails to be created and reports the following in the debug log:\r\n\r\n[localhost/x86_64] update_dyld_shared_cache failed: write() failure creating cache file, requested 649297920, wrote -1, errno=28 (No space left on device)\r\n\r\nConfiguration\r\n---\r\nFusion VM created with macOS 10.12.0.  Otherwise default VM settings.  Also fails with physical hardware with 90GB free on startup disk.\r\n\r\nmacOS Version/Build\r\n---\r\nmacOS Sierra 10.12.0 16A323\r\n\r\nAdditional Notes\r\n---\r\nIf I disable SIP and edit the following file:\r\n\r\n/System/Library/PrivateFrameworks/SIUFoundation.framework/Versions/A/XPCServices/com.apple.SIUAgent.xpc/Contents/Resources/createNetboot.sh\r\n\r\nAnd edit line 163 from:\r\n\r\ncacheSize=1300\r\n\r\nto\r\n\r\ncacheSize=2000\r\n\r\nThe NetBoot image creation from SIU is successful.\r\n\r\nIn previous versions of OS X, this workflow worked properly."
+    email: ferguspa@gmail.com
+    modified: "2016-09-27T13:21:02.58003Z"
+    number: "28426901"
+    number_intvalue: 28426901
+    originated: 9/22/2016
+    parent_number: '&{NULL_VALUE}'
+    product: macOS 10.12 Sierra
+    product_version: 16A323
+    reproducible: Always
+    resolved: ""
+    status: Duplicate (28407873)
+    title: System Image Utility NetBoot Image Creation Fails

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17396603"
+    labels:
+        datastore_id: "5859549927964672"
+data:
+    classification: ""
+    created: "2014-06-20T17:03:28.218164Z"
+    description: "Summary:\r\nThis bug is in both iOS 7 and iOS 8.\r\n\r\nBeginning in iOS 7, Core Data enabled WAL mode on the SQLite database by default. But in determining if a cache file is valid, an NSFetchedResultsController cache only looks for date changes on the .sqlite file, not on the .sqlite-wal file.\r\n\r\nIn WAL mode, saved data is often written first to the .sqlite-wal file and only later flushed to the main .sqlite file. But this means that often NSFRC cache does not detect that there have been any changes to the database, so it assumes its cache is up-to-date. In this invalid state, if an object has been added to the DB it is not included in the NSFRC. If an object has been deleted from the DB the NSFRC still thinks it's there and an app will crash when it tries to access that object.\r\n\r\nSteps to Reproduce:\r\nSteps to use in the sample project:\r\n\r\n1. Run the project on an iOS 7 or iOS 8 device\r\n2. Enable WAL mode\r\n3. Enable caching\r\n4. Tap \"Add Record\"\r\n5. Tap \"Load TableView\". Note the number of results.\r\n6. Tap \"Back\" to unload the TableView and its NSFRC\r\n7. Tap \"Delete Record\"\r\n8. Tap \"Load TableView\".\r\n\r\n\r\nExpected Results:\r\nThe table view would load and a record will be gone (because it was deleted).\r\n\r\nActual Results:\r\nThe app crashes because NSFRC still includes the deleted record in its results.\r\n\r\nYou can work around this with these additional steps:\r\n\r\n9. Restart the project\r\n10. Disable WAL mode\r\n11. Perform steps 4-8. Note that there is no longer a crash.\r\n\r\nVersion:\r\niOS 8.0 (12A4297e)\r\n\r\nNotes:\r\nThe workaround for this is to disable WAL mode by passing the following dictionary to the store options dictionary you pass to NSPersistentStoreCoordinator’s addPersistentStoreWithType:configuration:URL:options:error: method:\r\n\r\n@{ NSSQLitePragmasOption : @{ @\"journal_mode\" : @\"DELETE\" } }\r\n\r\nConfiguration:\r\niPhone 4S 16GB\r\n\r\nAttachments:\r\n'FetchedResultsController.zip' was successfully uploaded.\r\n\r\nDownload it: https://dl.dropboxusercontent.com/u/8211174/FetchedResultsController.zip"
+    email: ben.dolman@gmail.com
+    modified: "2014-06-23T21:59:15.70591Z"
+    number: "17396603"
+    number_intvalue: 17396603
+    originated: 20-Jun-2014 11:00 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 8.0 (12A4297e)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSFetchedResultsController does not detect stale cache

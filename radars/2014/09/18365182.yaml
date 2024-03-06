@@ -1,0 +1,61 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18365182"
+    labels:
+        datastore_id: "5576341663514624"
+data:
+    classification: Serious Bug
+    created: "2014-09-17T13:24:39.020547Z"
+    description: |-
+        Summary:
+        In a pure Swift CLI tool, I’m unable to po anything in lldb. Any attempt to do so results in it failing to dlopen the appropriate dylib.
+
+        I’m not sure where the dylib lives normally, but if it’s expecting it to be copied inside the app bundle then that would explain why it’s not working—there isn’t one.
+
+
+        Steps to Reproduce:
+        1. Write a pure Swift CLI tool.
+        2. Set a breakpoint.
+        3. Run.
+        4. When running pauses in the debugger, attempt to po any variable or other accessible symbol, e.g. `po Process`.
+
+
+        Expected Results:
+        I expected it to print the value bound to the symbol.
+
+
+        Actual Results:
+        It errored:
+
+        error: Error in auto-import:
+        Failed to load linked library swiftDarwin of module Swift - errors:
+        Looking for "@rpath/libswiftDarwin.dylib", error: dlopen error: dlopen(@rpath/libswiftDarwin.dylib, 2): image not found
+
+
+        Regression:
+        You can workaround this by setting LD_RUNPATH_SEARCH_PATHS to:
+
+        $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx
+
+        This works quite well, however any time you get quite a few messages like this:
+
+        objc[9009]: Class _TtCSs20_IndirectArrayBuffer is implemented in both /Users/rob/Library/Developer/Xcode/DerivedData/boom-aaolihuubdazajalrhptcajlaiaf/Build/Products/Debug/boom and /Applications/Xcode-Beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/libswiftCore.dylib. One of the two will be used. Which one is undefined.
+
+        So evidently lldb doesn’t need to be nabbing the dylib at all, it just doesn’t realize that. Alas, I don’t know how to make it stop.
+
+
+        Notes:
+        N/A
+    email: rix.rob@gmail.com
+    modified: "2014-09-17T13:24:39.020745Z"
+    number: "18365182"
+    number_intvalue: 18365182
+    originated: 17-Sep-2014 09:24 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode-Beta (6A1030)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Xcode-Beta (6A1030): lldb can’t po anything from Swift CLI tool'

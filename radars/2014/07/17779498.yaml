@@ -1,0 +1,53 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17779498"
+    labels:
+        datastore_id: "5855891152699392"
+data:
+    classification: Serious Bug
+    created: "2014-07-23T16:04:50.120646Z"
+    description: |-
+        Summary:
+        Cannot add persistent store for a SQLite database in recovery mode and read-only store option.
+
+        Steps to Reproduce:
+        I tried to setup a PSC with a read-only store option to get the metadata (as a work around for Bug 17708880). I get a an error if the SQLite database is in a recovery mode, because of a previous crash. This happens also in Yosemite Beta4.
+
+        NSDictionary *sqliteOptions = @{@"journal_mode":@"WAL"};
+        NSDictionary *options = @{NSSQLitePragmasOption:sqliteOptions, NSReadOnlyPersistentStoreOption:@YES};
+        NSString *storeType = NSSQLiteStoreType;
+        NSError *error = nil;
+         NSPersistentStore *persistentStore = [persistentStoreCoordinator addPersistentStoreWithType:storeType configuration:nil URL:storeURL options:storeOptions error:&error];
+
+
+        Expected Results:
+        I don’t know the best way to handle this. I can re-try the loading of the persistent store without the read-only option. But then I might change the store unintentionally .
+
+        Actual Results:
+        2014-07-23 16:28:29.619 ATLAS.ti[1420:10347] CoreData: error: (264) attempt to write a readonly database
+        2014-07-23 16:28:50.444 ATLAS.ti[1420:10347] CoreData: error: Encountered exception error during prepareSQL for SQL string 'SELECT TBL_NAME FROM SQLITE_MASTER WHERE TBL_NAME = 'Z_METADATA'' : attempt to write a readonly database with userInfo {
+            NSFilePath = "/Users/stephan/Library/Application Support/ATLAS.ti/Library/Library.sqlite";
+            NSSQLiteErrorDomain = 264;
+        } while checking table name from store: <NSSQLiteConnection: 0x6000001e0a00>
+        2014-07-23 16:28:50.462 ATLAS.ti[1420:10347] CoreData: error: -addPersistentStoreWithType:SQLite configuration:(null) URL:file:///Users/stephan/Library/Application%20Support/ATLAS.ti/Library/Library.sqlite options:{
+            NSReadOnlyPersistentStoreOption = 1;
+            NSSQLitePragmasOption =     {
+                "journal_mode" = WAL;
+            };
+        } ... returned error Error Domain=NSCocoaErrorDomain Code=256 "The file couldn’t be opened." UserInfo=0x608000267c00 {NSSQLiteErrorDomain=264, NSUnderlyingException=error during prepareSQL for SQL string 'SELECT TBL_NAME FROM SQLITE_MASTER WHERE TBL_NAME = 'Z_METADATA'' : attempt to write a readonly database} with userInfo dictionary {
+            NSSQLiteErrorDomain = 264;
+            NSUnderlyingException = "error during prepareSQL for SQL string 'SELECT TBL_NAME FROM SQLITE_MASTER WHERE TBL_NAME = 'Z_METADATA'' : attempt to write a readonly database";
+        }
+    email: stephan.michels@gmail.com
+    modified: "2014-07-23T16:04:50.120758Z"
+    number: "17779498"
+    number_intvalue: 17779498
+    originated: 23-Jul-2014 06:04 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: Mac OS X 10.9.4 (13E28)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'CoreData: Cannot add persistent store for a SQLite database in recovery mode and read-only store option.'

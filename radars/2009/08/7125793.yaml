@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7125793"
+    labels:
+        datastore_id: "65403"
+data:
+    classification: Serious Bug
+    created: "2009-08-07T08:42:17.235146Z"
+    description: "Summary:\r\n\r\nIf one migrates one's system volume (\"Macintosh HD\") to a different disk or partition, Time Machine (backupd) will still run a backup but fail when linking the backup on the Time Machine volume because the UUID of the new partition does not match the one in the Time Machine volume.\r\n \r\n\r\nSteps to Reproduce:\r\n\r\n1. Enable Time Machine backup to a volume shared via AFP residing on a Mac OS X Server 10.5.7 machine (likely the same would occur when using an external hard disk)\r\n\r\n2. Run a few backups.\r\n\r\n3. Block-copy system volume to another partition (using Disk Utility) and boot from the new partition\r\n\r\n4. Run a backup\r\n\r\n\r\nExpected Results:\r\n\r\nTime Machine checks the SnapshotVolumeUUID of the volume in the Time Machine volume and notices that it differs from the UUID of the volume it should back up. Therefore it asks the user if they are certain it is the same volume and offers to change the SnapshotVolumeUUID in the Time Machine volume.\r\n\r\nThe intent is similar to how Mobile Me lets the user register a machine with an existing hostname again if they promise to never again connect the previous machine\r\n\r\n\r\nActual Results:\r\n\r\nTime Machine starts to backup and only fails after all data has been transferred. Log entries:\r\n08/06/09 15:41:18  /System/Library/CoreServices/backupd[8797] 8797 Error (12): Link of previous volume failed for macosx. \r\n08/06/09 15:41:25  /System/Library/CoreServices/backupd[8797] 8797 Backup failed with error: 12 \r\n\r\n\r\nRegression:\r\n\r\nProblem can be fixed by changing the UUID of the volume in the Time Machine volume manually:\r\n\r\nsudo fsaclctl -p \"/Volumes/Backup of blue\" -d\r\n \r\nsudo xattr -w com.apple.backupd.SnapshotVolumeUUID \"<UUID of new volume>\" \\\r\n    \"/Volumes/Backup of blue\"/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*/\"Macintosh HD\"\r\n \r\n# Re-enable ACL protection on Time Machine volume\r\nsudo fsaclctl -p \"/Volumes/Backup of blue\" -e\r\n\r\n\r\nNotes:\r\n\r\nScript to implement the above fix: http://simon.heimlicher.com/public/tips/macosx/time-machine-volume-uuid"
+    email: shmlchr@gmail.com
+    modified: "2011-08-28T05:45:29.989714Z"
+    number: "7125793"
+    number_intvalue: 7125793
+    originated: 07-Aug-2009 10:40 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.7
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Time Machine verifies SnapshotVolumeUUID of volume in Backups.backupdb only after backing up

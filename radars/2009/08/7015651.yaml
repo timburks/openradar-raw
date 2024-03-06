@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7015651"
+    labels:
+        datastore_id: "69411"
+data:
+    classification: Serious Bug
+    created: "2009-08-18T14:33:17.12264Z"
+    description: "29-Jun-2009 11:28 AM Derek Morr:\r\nSummary:\r\n\r\nWhen connecting to an HTTP server over IPv6, if an IPv6 literal address is used, Safari mal-forms the HTTP 1.1 Host header. This can break certain web sites. The problem is exacerbated if a non-standard TCP port is used, such as 8080.\r\n\r\nSteps to Reproduce:\r\n\r\n1) Ensure that IPv6 is enabled. OS X enables it default.\r\n\r\n2) Open Safari, connect to an IPv6-reachable web site via its literal address. For example, http://[2001:200::8002:203:47ff:fea5:3085]/ for www.kame.net\r\n\r\nExpected Results:\r\n\r\nThe HTTP 1.1 Host header should include brackets around a literal address (the so-called RFC 2732 style). In the example above, the Host header should be this:\r\n\r\nHost: [2001:200:0:8002:203:47ff:fea5:3085]\\r\\n\r\n\r\nActual Results:\r\n\r\nThe Host header is this:\r\n\r\nHost: 2001:200:0:8002:203:47ff:fea5:3085\\r\\n\r\n\r\nRegression:\r\n\r\nNot technically a regression, but FireFox, IE and Opera all properly format the header.\r\n\r\nNotes:\r\n\r\nOur University is part of Google's IPv6 pilot program (see http://www.google.com/ipv6). This bug broke Google's \"Cached\" links when accessing Google over IPv6 using Safari 3.2.x and 4.0 on Windows and Mac OS X. Google has since fixed the problem by liberalizing their parser, but the issue should be fixed in the browser as well.\r\n\r\nIf a non-standard port is used, such as 8080, this problem is made worse. This is what Safari 4.0 will send:\r\n\r\nWhen connecting to: http://[2610:8:6800:1::408]:8080/~dvm105/\r\n\r\nIt sends: Host: 2610:8:6800:1::408:8080\r\n\r\nThis header is ambiguous. The parser has no clear way to tell if \"8080\" is part of the address or a port number. Although RFC 2732 applies to URLs not the Host header, its syntax should be adopted in Safari, as it has been for other browsers.\r\n\r\nIf desired, I can send packet captures for any of the above sites, platforms and browser combinations.\r\n\r\n\r\n\r\n12-Aug-2009 05:48 PM Derek Morr:\r\nThis appears to be fixed on OS X as of 4.0.3. It still appears on the Windows builds, however.\r\n\r\n20-Aug-2009 06:49 PM KIT CHEUNG :\r\nEngineering has provided the following feedback regarding this issue:\r\n\r\nYes, we have a completely separate CFURL on windows.\r\n\r\n21-Aug-2009 04:18 PM KIT CHEUNG :\r\nEngineering has provided the following feedback regarding this issue:\r\n\r\nWe have a completely separate CFURL on windows."
+    email: derek.morr.test@gmail.com
+    modified: "2011-08-28T05:46:07.525804Z"
+    number: "7015651"
+    number_intvalue: 7015651
+    originated: 29-Jun-2009 11:28 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Safari
+    product_version: 4.x
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Safari mal-forms IPv6 addresses in HTTP HOST header

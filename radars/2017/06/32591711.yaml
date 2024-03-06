@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32591711"
+    labels:
+        datastore_id: "6146108082356224"
+data:
+    classification: Bug
+    created: "2017-06-06T17:25:28.96749Z"
+    description: "One of the MCSessionDelegate methods has the following signature in Swift:\r\n\r\npublic func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL, withError error: Error?)\r\n\r\nNote the localURL parameter being a non-nullable URL. Whenever an error occurs (e.g. connection is suddenly closed) and theres an ongoing file transfer, MSSession will call this method with a nil URL which will crash the app if the delegate was implemented in Swift. localURL needs to be made optional (interestingly though, the Swift documentation for this method says that this parameter is nil).\r\n\r\nSteps to Reproduce:\r\nCreate a simple multipeer app written in swift and initiate a file transfer from one device to the other. Close either one of the apps before the transfer is completed. The app on the other device will crash.\r\n\r\nExpected Results:\r\nThe delegate method should be called with a nil URL and an error object\r\n\r\nObserved Results:\r\nDue to the Swift delegate method signature not having the URL parameter optional, there will be a runtime bridging error and the app will crash\r\n\r\nVersion:\r\n10.3.2"
+    email: raphaelcruzeiro@raphaelcruzeiro.com
+    modified: "2017-06-06T17:25:28.96773Z"
+    number: "32591711"
+    number_intvalue: 32591711
+    originated: "2017-06-06"
+    parent_number: '&{NULL_VALUE}'
+    product: Multipeer Connectivity Framework
+    product_version: ""
+    reproducible: Always
+    resolved: no
+    status: open
+    title: Swift bridging for MCSessionDelegate treats optional URL parameter as non optional and will crash whenever MCSession calls the delegate method with a nil

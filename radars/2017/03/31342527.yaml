@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "31342527"
+    labels:
+        datastore_id: "4942529531215872"
+data:
+    classification: Bug
+    created: "2017-03-30T09:25:43.08401Z"
+    description: "Summary:\r\nPrior to Xcode 8.2 (possibly 8.1) Xcode would seemingly completely ignore CODE_SIGN_ENTITLEMENTS passed to xcodebuild. When passing custom CODE_SIGN_ENTITLEMENTS at CLI, the original CODE_SIGN_ENTITLEMENTS would be read and the build would fail prerequisite checks because of the erroneous entitlements. Removing the entitlements file, to nudge Xcode to read the CODE_SIGN_ENTITLEMENTS file passed to xcodebuild would error because the original entitlements file could not be found. Leading me to believe that CODE_SIGN_ENTITLEMENTS passed as override is completely ignored.\r\n\r\nXcode 8.2 fixed this. Everything worked as expected.\r\n\r\nXcode 8.3 breaks this. CODE_SIGN_ENTITLEMENTS overrides are once more ignored. This time hiding the original entitlements file specified in the project, by temporarily renaming it, successfully gets Xcode to read the custom entitlements.\r\n\r\nThis currently requires us to have a rather dirty and failure prone hack in our build system:\r\n\r\n    mv Project/project.entitlements Project/project.entitlements.bak\r\n    xcodebuild archive -scheme Project CODE_SIGN_ENTITLEMENTS=custom.entitlements\r\n    mv Project/project.entitlements.bak Project/project.entitlements\r\n\r\nSteps to Reproduce:\r\nUsing a project with some entitlements (we'll use push for example)\r\n\r\n1. Create an override entitlements without push\r\n2. Run xcodebuild archive -scheme Project CODE_SIGN_ENTITLEMENTS=/path/to/custom.entitlements PROVISIONING_PROFILE=profile-id-without-push\r\n\r\n\r\nExpected Results:\r\nxcodebuild should build\r\n\r\nActual Results:\r\nxcodebuild fails prerequisite check because profile-id-without-push doesn't support push, even though the entitlements in /path/to/custom.entitlements match those in profile-id-without-push\r\n\r\nVersion:\r\nXcode 8.3\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:"
+    email: nicholas.helke@kaldorgroup.com
+    modified: "2017-05-18T09:45:13.60227Z"
+    number: "31342527"
+    number_intvalue: 31342527
+    originated: "2017-03-30"
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 8.3
+    reproducible: Always
+    resolved: DUPLICATE OF 31456053 (CLOSED)
+    status: Closed
+    title: '[REGRESSION] Xcode doesn''t read CODE_SIGN_ENTITLEMENTS passed in xcconfig specified at CLI'

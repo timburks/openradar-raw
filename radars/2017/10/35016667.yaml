@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "35016667"
+    labels:
+        datastore_id: "4942564796923904"
+data:
+    classification: Serious Bug
+    created: "2017-10-16T22:23:27.6971Z"
+    description: "Summary:\r\nThere is a support article titled HT208171: \"If you see authentication server errors when turning FileVault on in macOS High Sierra\"\n\nThat support article details a problem that Active Directory environments can experience with the upgrade to 10.13 where Active Directory mobile accounts are unable to be added to FileVault users.\n\nThis radar contains a different problem and is unrelated to HT208171.\n\nIn this particular situation, the user is already a FileVault user under 10.12 and after the upgrade to 10.13, they can unlock the disk with their password.\n\nThey cannot, however, continue the login and get to their desktop.\n\r\n\r\nSteps to Reproduce:\r\n- Install 10.12.6\n- Create local user (\"testuser\") with admin\n- Important: Put 10.13.0 installer app on disk for future use\n- Bind the Mac to Active Directory - enable \"create mobile account at login\" and disable/uncheck \"require confirmation before creating a mobile account\"\n- Reboot\n- Log in as AD user, creating a mobile account\n- Log out, then log back in with local account (\"testuser\"), go to Users & Groups and enable admin for the AD user\n- Important: Disconnect all network access (ethernet, wifi, etc.)\n- Reboot\n- Log in as same AD user and confirm admin rights\n- As AD user, enable FileVault: sudo fdesetup enable\n- Confirm AD user account can login+unlock Mac, reboot & confirm a second time (proof 10.12.6+HFS+FileVault did not require domain net access for AD user and user could login after).\n- With AD user, delete local \"testuser\"\n- Important: While network is *still off*, run 10.13 installer as the AD user\n- Reboot when prompted\n- Wait for OS installation to complete\r\n\r\nExpected Results:\r\n- Should able unlock the Mac using the Active Directory credentials and eventually log back in, seeing the desktop of the AD user.\r\n\r\nActual Results:\r\n- The AD user credentials successfully unlock the FileVault disk\n- However, the login process stops and goes to the real/actual login window (after disk unlock) and prompts for the user password again\n- At this point, the user password does _not_ successfully log into the machine.\n\nThe only remediation steps possible at this point are bringing the laptop into an office environment where Active Directory is available at the login window or going through a complicated recovery environment process of re-creating a local user account by removing .AppleSetupDone and additional steps - none of which is appropriate to walk end users through over the phone/via chat.\r\n\r\nVersion:\r\n10.13.0 17a365\r\n\r\nNotes:\r\nNumber of affected devices: 32000+ \n\nThe AD mobile user cached password should be valid to get into the machine at this point. There is no reason for it to be invalidated.\n\nInstead, a user who attempted to upgrade to 10.13 while they didn't have access to their AD environment - ie. a user with a laptop who took it home, is at a cafe, etc. - is now no longer able to log into their machine until they get back to a work network.\n\nIf you do not delete the \"testuser\" account, it's still possible to log in as this local user account. However, this account does not have FileVault rights, so it can't be used to unlock the disk.\n\nThis scenario simulates a not uncommon Active Directory environment:\n- 1-to-1 laptop deployment\n- Primary user is Active Directory mobile account\n- Primary user has admin rights on machine\n- May be zero or more local admin accounts on machine, but none of them have FileVault unlock capability.\n- User may attempt to upgrade to 10.13 when Active Directory is unavailable"
+    email: frogor.fb.openradar@gmail.com
+    modified: "2017-10-16T22:23:27.69736Z"
+    number: "35016667"
+    number_intvalue: 35016667
+    originated: 16-Oct-2017 03:23 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.13.0 17a365
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Upgrading from encrypted 10.12.6 HFS+ to 10.13.0 APFS makes user unable to login in some situations

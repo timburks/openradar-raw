@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "45603890"
+    labels:
+        datastore_id: "4956150541844480"
+data:
+    classification: Bug
+    created: "2018-10-29T17:40:55.057671Z"
+    description: "Originally reported to WebKit, copied over to rdar.\r\n\r\nWhen using the older WebView API to build a simple application that can download files the thread that the WebDownloadDelegate methods are called on changed between AppleWebKit/604.5.6 and AppleWebKit/605.1.15. I have confirmed that the issue still occurs with r237410.\r\n\r\nI have attached a very simple (and hacked together) macOS Xcode project that shows the problem when downloading WebKit Build Archives from https://webkit.org/build-archives\r\n\r\nIn the attached project all of the code that exercises the bug is in WindowController.m. First, there is an implementation of -[WebPolicyDelegate webView:decidePolicyForMIMEType:request:frame:decisionListener:] that checks for the MIME type \"binary/octet-stream\" and calls -[WebPolicyDecisionListener download] for that MIME type (and -use for all others). This method is called on the main thread as expected.\r\n\r\nSo running the application and clicking on a WebKit Build Archive will result in the WebDownloadDelegate methods getting called. Before AppleWebKit/605.1.15, in my case macOS Sierra 10.12.6 (16G1510) with AppleWebKit/603.3.8, all of the WebDownloadDelegate methods are called on the main thread as expected. Under AppleWebKit/605.1.15, macOS High Sierra 10.13.6 or above including macOS Mojave, the following WebDownloadDelegate methods are called on the main thread:\r\n\r\n- (void)downloadDidBegin:(NSURLDownload *)download;\r\n- (void)downloadDidFinish:(NSURLDownload *)download;\r\n\r\nUnfortunately, the following delegate methods are called on a different thread:\r\n\r\n- (void)download:(NSURLDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename;\r\n- (void)download:(NSURLDownload *)download didCreateDestination:(NSString *)path;\r\n\r\nWhich thread the following are called on is unknown (untested):\r\n- (BOOL)download:(NSURLDownload *)download shouldDecodeSourceDataOfMIMEType:(NSString *)encodingType;\r\n- (void)download:(NSURLDownload *)download didFailWithError:(NSError *)error;\r\n- (NSWindow *)downloadWindowForAuthenticationSheet:(WebDownload *)download;\r\n\r\nMy testing on macOS High Sierra 10.13.6 (17G64) the thread that -download:decideDestinationWithSuggestedFilename: and -download:didCreateDestination: are called on is an NSURLConnection thread (enqueued in order from com.apple.network.connections, com.apple.CFNetwork.Connection, com.apple.NSURLSession-work).\r\n\r\nI have confirmed that this also occurs with AppleWebKit/605.1.15 running on macOS Mojave 10.14 and on macOS Sierra 10.12.6 when I use the r237410 WebKit Build Archive to launch the test application. During testing I initially installed macOS High Sierra 10.13.3 which includes AppleWebKit/604.5.6 which does not have this issue so the regression happened between 604.5.6 and 605.1.15.\r\n\r\nWhile the attached test application does not crash, the application that this was originally reported against does because it calls WebKit from one of the delegate methods that no longer get called back on the main thread. I am able to workaround this issue by calling -[NSObject performSelectorOnMainThread:withObject:waitUntilDone:]"
+    email: nbeadman@gmail.com
+    modified: "2018-10-29T17:40:55.057834Z"
+    number: "45603890"
+    number_intvalue: 45603890
+    originated: "2018-10-25"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK/WebKit
+    product_version: 605.1.15
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: WebDownloadDelegate delegate methods called on non-main thread

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7810450"
+    labels:
+        datastore_id: "229401"
+data:
+    classification: Serious Bug
+    created: "2010-03-30T22:46:28.443063Z"
+    description: "SUMMARY\r\n\r\nPrior to the Mac OS X 10.5.8 Security Update 2010-002, when curl was used with an ftp server, if sending the USER command resulted in a successful login (230 response) it did not send the PASS command.  As of Security Update 2010-002, curl sends the PASS command regardless of whether or not the USER command results in a successful login.\r\n\r\nThis breaks access to some devices (brother printer/scanner) that provide ftp access and login with the USER command but do not implement the PASS command.\r\n\r\nSTEPS\r\n\r\nThe following assumes you have a Brother MFC-495CW printer/scanner located at IP address 172.16.16.85.\r\n\r\n1. Issue this curl command:\r\n\r\n/usr/bin/curl -v -I ftp://172.16.16.85/\r\n\r\n2. Observe the output:\r\n\r\n* About to connect() to 172.16.16.85 port 21 (#0)\r\n*   Trying 172.16.16.85... connected\r\n* Connected to 172.16.16.85 (172.16.16.85) port 21 (#0)\r\n< 220 FTP print service:V-1.13/Use the network password for the ID if updating.\r\n> USER anonymous\r\n< 230 User anonymous logged in.\r\n> PASS ftp@example.com\r\n< 502 Unknown command received.\r\n* Access denied: 502\r\n* Closing connection #0\r\ncurl: (67) Access denied: 502\r\n\r\n3. Notice how even though the USER command resulted in a 230 response indicating a successful login, curl sent the PASS command anyway resulting in failure to connect to the ftp server since it does not implement the PASS command.\r\n\r\nEXPECTED RESULTS\r\n\r\nPrior to the Mac OS X 10.5.8 Security Update 2010-002, the output from step 2 above would be the following instead:\r\n\r\n* About to connect() to 172.16.16.85 port 21 (#0)\r\n*   Trying 172.16.16.85... connected\r\n* Connected to 172.16.16.85 (172.16.16.85) port 21 (#0)\r\n< 220 FTP print service:V-1.13/Use the network password for the ID if updating.\r\n> USER anonymous\r\n< 230 User anonymous logged in.\r\n> PWD\r\n< 257 \"/\" is current directory.\r\n* Entry path is '/'\r\n* Remembering we are in dir \"\"\r\n* Connection #0 to host 172.16.16.85 left intact\r\n> QUIT\r\n< 221 Good bye.\r\n* Closing connection #0\r\n\r\nNotice how with the receipt of the 230 response to the USER command indicating successful login that curl does not send the PASS command.  This is correct.\r\n\r\nACTUAL RESULTS\r\n\r\nSee Steps to Reproduce section\r\n\r\nREGRESSION\r\n\r\nThis worked properly with Mac OS X 10.5.8 fully patched through security update 2010-001 and broke after installing security update 2010-002.\r\n\r\nNOTES\r\n\r\n/usr/bin/curl --version reports:\r\n\r\ncurl 7.16.4 (i386-apple-darwin9.0) libcurl/7.16.4 OpenSSL/0.9.7l zlib/1.2.3\r\nProtocols: tftp ftp telnet dict ldap http file https ftps \r\nFeatures: GSS-Negotiate IPv6 Largefile NTLM SSL libz \r\n\r\nReplacing /usr/lib/libcurl.4.dylib with the version that was present prior to installing the Mac OS X 10.5.8 Security Update 2010-002 corrects the problem.\r\n\r\nCurrent versions of curl do not suffer from this problem either.\r\n\r\n02-Jun-2010 03:32 PM STEVEN ANDRIELLA :\r\nThis minor regression affects an extremely small number of users (Leopard-only), and only affects certain ftp servers.  Because resources are currently allocated to other projects affecting larger numbers of users, there is nothing we can do.\r\n\r\nWe are now closing this bug since our engineers are aware of the issue and will continue to track it offline. A different resolution to this issue may be considered in a future release."
+    email: mackyle@gmail.com
+    modified: "2011-08-28T05:42:06.074023Z"
+    number: "7810450"
+    number_intvalue: 7810450
+    originated: 30-Mar-2010 03:32 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.8/9L30
+    reproducible: Always
+    resolved: Won't Fix
+    status: Closed
+    title: Mac OS X 10.5.8 Security Update 2010-002 breaks curl ftp support

@@ -1,0 +1,73 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26280158"
+    labels:
+        datastore_id: "4930870322397184"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2016-05-13T23:35:28.31078Z"
+    description: |-
+        Summary:
+        We are seeing occasional crashing (many hundred per day), plus many more "nil" return values for UIGraphicsGetImageFromCurrentImageContext (many thousand per day) when scaling images.
+
+        Steps to Reproduce:
+        We cannot reproduce this crash (nor the nil return value), but with 100 million users view billions of images, it happens enough to want to get to the bottom of it.
+
+        Code:
+        UIImage *TIPImageScaled(UIImage *sourceImage, CGSize targetDimensionsOrZero, UIViewContentMode targetContentMode)
+        {
+            if (!sourceImage) {
+                return nil;
+            }
+
+           UIImage *image = sourceImage;
+
+            CGSize dimensions = TIPImageGetDimensionsWithoutScale(image);
+            targetDimensionsOrZero = TIPImageScaleDimensions(dimensions, targetDimensionsOrZero, targetContentMode);
+
+            // If we have a target size and the target size is not the same as our source image's size, draw the resized image
+            if (!CGSizeEqualToSize(CGSizeZero, targetDimensionsOrZero) && !CGSizeEqualToSize(dimensions, targetDimensionsOrZero)) {
+                CGFloat scale = [UIScreen mainScreen].scale;
+                CGSize targetSize = targetDimensionsOrZero;
+                targetSize.width /= scale;
+                targetSize.height /= scale;
+                CGRect drawRect = CGRectMake(0, 0, targetSize.width, targetSize.height);
+                BOOL hasAlpha = TIPImageHasAlpha(image, NO);
+
+                UIGraphicsBeginImageContextWithOptions(targetSize, !hasAlpha, scale);
+                if (!image.images.count) {
+                    [image drawInRect:drawRect]; // <--- can crash here
+                    image = UIGraphicsGetImageFromCurrentImageContext(); // <-- can return nil (I might have seen it crash too)
+                } else {
+                    NSMutableArray *newFrames = [[NSMutableArray alloc] initWithCapacity:image.images.count];
+                    for (UIImage *frame in image.images) {
+                        [frame drawInRect:drawRect];
+                        UIImage *newFrame = UIGraphicsGetImageFromCurrentImageContext();
+                        [newFrames addObject:newFrame];
+                    }
+                    image = [UIImage animatedImageWithImages:newFrames duration:image.duration];
+                 }
+                 UIGraphicsEndImageContext();
+            }
+
+            if (image == sourceImage) {
+                TIPImageDecode(image);
+            }
+
+            TIPAssert(image != nil); // <-- assert can trigger
+
+            return image;
+        }
+    email: nobrien@twitter.com
+    modified: "2016-05-13T23:35:28.31106Z"
+    number: "26280158"
+    number_intvalue: 26280158
+    originated: 13-May-2016 04:35 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "9.3"
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: 'Crash happens when using UIImage''s drawRect:'

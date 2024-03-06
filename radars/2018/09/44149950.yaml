@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "44149950"
+    labels:
+        datastore_id: "4944222880792576"
+data:
+    classification: Other Bug
+    created: "2018-09-05T19:46:11.0399Z"
+    description: "Summary:\r\nA regression exists in Xcode 10/Foundation 1554 where NSLinguisticTagger will incorrectly classify the word “optional” as having the lexical class `verb` (instead of `adjective`, as it correctly does in Xcode 9.x).\r\n\r\nSteps to Reproduce:\r\n1. Create a string with the value “optional”.\n2. Use `-[NSString linguisticTagsInRange:scheme:options:orthography:tokenRanges:]` with `NSLinguisticTagSchemeLexicalClass` on this string.\n\nReproduction test case:\n\n```\n- (void)testLexicalClassOfTheWordOptional {\n    NSString *word = @\"optional\";\n\n    NSOrthography *orthography = [NSOrthography orthographyWithDominantScript:@\"Latn\"\n                                                                  languageMap:@{@\"Latn\": @[@\"en\"]}];\n    NSLinguisticTaggerOptions options = (NSLinguisticTaggerOmitPunctuation\n                                         | NSLinguisticTaggerOmitWhitespace\n                                         | NSLinguisticTaggerOmitOther);\n    NSArray<NSString *> *lexicalClasses = [word linguisticTagsInRange:NSMakeRange(0, word.length)\n                                                               scheme:NSLinguisticTagSchemeLexicalClass\n                                                              options:options\n                                                          orthography:orthography\n                                                          tokenRanges:NULL];\n\n    NSLog(@\"%@ has the following lexical classes: %@\", word, lexicalClasses);\n    // Xcode 9.4.1 → optional has the following lexical classes: ( Adjective )\n    // Xcode 10b6 → optional has the following lexical classes: ( Verb )\n\n    XCTAssertTrue([lexicalClasses containsObject:NSLinguisticTagAdjective], @\"The word '%@' should be tagged as an adjective.\", word);\n    XCTAssertFalse([lexicalClasses containsObject:NSLinguisticTagVerb], @\"The word '%@' should not be tagged as a verb.\", word);\n}\n```\r\n\r\nExpected Results:\r\nThe string “optional” should be tagged as an `adjective` by NSLinguisticTagger.\r\n\r\nActual Results:\r\nThe string “optional” is incorrectly tagged as a `verb` by NSLinguisticTagger.\r\n\r\nVersion:\r\n1554\r\n\r\nNotes:"
+    email: jason@mapbox.com
+    modified: "2018-09-05T19:46:11.04025Z"
+    number: "44149950"
+    number_intvalue: 44149950
+    originated: 05-Sep-2018 03:46 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "1554"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSLinguisticTagSchemeLexicalClass misclassifies the word 'optional' as a verb

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30420468"
+    labels:
+        datastore_id: "5511684907073536"
+data:
+    classification: ""
+    created: "2017-02-08T15:52:02.97442Z"
+    description: "Summary:\r\nWhen we use the `/frame` WebDriver end point to switch to an iframe, click events will no be\r\ntriggered although the `/click` endpoint does not error.\r\n\r\nI've added a simple HTML page that attaches an event listener to an input field and alert() when the\r\nvalue contains the private use unicode character on a `keydown`. If you have to tool `jq`[1]\r\ninstalled to parse JSON, you can use the supplied shell script to automate the reproduction steps.\r\n\r\nSee example here: https://github.com/PSPDFKit-labs/radar.apple.com/tree/master/30420468%20-%20Safaridriver%20can't%20click%20inside%20frames\r\n\r\n[1] https://stedolan.github.io/jq/\r\n\r\nSteps to Reproduce:\r\n1. Start a simple HTTP server within the supplied archive. (e.g. python -m SimpleHTTPServer 8000)\r\n2. Start `safaridriver -p 8910`\r\n3. Create a session like this: `curl -d '{\"desiredCapabilities\":{}}' http://localhost:8910/session`\r\n4. Navigate to the test HTML file: `curl -d '{\"url\":\"http://localhost:8000/test.html\"}' http://localhost:8910/session/$SESSION/url`\r\n5. Switch to the `iframe`: `curl -d '{\"id\": 0}' http://localhost:8910/session/$SESSION/frame`\r\n6. Find the button inside the iframe: `curl -d '{\"using\":\"id\", \"value\": \"button\"}' http://localhost:8910/session/$SESSION/element`\r\n7. Click the button: `curl -d '{}' http://localhost:8910/session/$SESSION/element/$ELEMENT/click`\r\n8. You should now see that the button is gone, but it is still there.\r\n\r\nExpected Results:\r\nThe button should be gone since it's `onclick` is `this.destroy()`\r\n\r\nActual Results:\r\nNothing happens\r\n\r\nVersion:\r\nmacOS 10.12.3 (16D32)\r\nSafari Version 10.0.3 (12602.4.8)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nThis occurs on my MacBook Pro (15-inch, Late 2016)"
+    email: hello@philippspiess.com
+    modified: "2017-02-10T18:52:26.91629Z"
+    number: "30420468"
+    number_intvalue: 30420468
+    originated: ""
+    parent_number: '&{NULL_VALUE}'
+    product: Safari
+    product_version: 10.0.2 (12602.4.8)
+    reproducible: Yes
+    resolved: No
+    status: Duplicate
+    title: Safaridriver can't click inside frames

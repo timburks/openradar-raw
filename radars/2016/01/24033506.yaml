@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "24033506"
+    labels:
+        datastore_id: "5005199898836992"
+data:
+    classification: Other Bug
+    created: "2016-01-03T17:04:53.28657Z"
+    description: "Summary:\r\nIn Xcode 7.1.1 and earlier, specifying an iOS simulator by name to xcodebuild would imply the associated platform and OS. This is no longer the case and now the platform and OS must be supplied redundantly.\r\n\r\nSteps to Reproduce:\r\n1. Create a new iOS project with Xcode 7.1.1 or earlier.\r\n2. Select Xcode 7.1.1 through xcode-select or DEVELOPER_DIR.\r\n3. Create a new iOS simulator named \"Test\" using for example:\r\nxcrun simctl create Test com.apple.CoreSimulator.SimDeviceType.iPhone-6 com.apple.CoreSimulator.SimRuntime.iOS-9-1\r\n4. Run the tests with:\r\nxcodebuild -configuration Debug -scheme <scheme> -destination name=Test clean test\r\n5. Observe success.\r\n6. Select Xcode 7.2 through xcode-select or DEVELOPER_DIR.\r\n7. Repeat steps 3 and 4.\r\n\r\nExpected Results:\r\nXcode 7.2 should successfully run the tests in the named iOS simulator.\r\n\r\nActual results:\r\nXcode 7.2 fails to infer the platform and OS and fails with:\r\n\r\nxcodebuild: error: Unable to find a destination matching the provided destination specifier:\r\n\t\t{ name:Test }\r\n\r\n\tUnsupported device specifier option.\r\n\tThe device “My Mac” does not support the following options: name\r\n\tPlease supply only supported device specifier options.\r\n\r\n\tAvailable destinations for the \"DestinationTest\" scheme:\r\n\t\t{ platform:iOS Simulator, id:2B1AFBD4-D9FC-411B-84F0-3C22C1EB122E, OS:9.1, name:Test }\r\n\t\t{ platform:iOS Simulator, id:4E8D841F-710C-42C8-A0D3-0441C31135D7, OS:9.1, name:iPad 2 }\r\n\t\t…\r\n\r\nNotes:\r\n\r\nA workaround is to pass the platform and OS redundantly like this:\r\nxcodebuild -configuration Debug -scheme <scheme> -destination \"platform=iOS Simulator,OS=9.1,name=Test\" clean test\r\n\r\nThis is redundancy is undesirable as it breaks the DRY principle.\r\n\r\nThe attached archive contains:\r\n* A sample project (just a Single View App template with the deployment target lowered to 9.0)\r\n* A script to run test builds consistently and gather versioned logs\r\n* Example output from Xcode 7.1.1 and 7.2.\r\n\r\nrdar://23973685 may be related. (https://openradar.appspot.com/23973685)\r\n\r\nXcode Version 7.2 (7C68)\r\nOS X 10.10.5 (14F1509)"
+    email: richardb@sailmaker.co.uk
+    modified: "2016-01-03T17:04:53.28692Z"
+    number: "24033506"
+    number_intvalue: 24033506
+    originated: 3 Jan 2016
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode Version 7.2 (7C68)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Regression: xcodebuild no longer infers destination platform and OS from named iOS simulator'

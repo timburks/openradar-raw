@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "10646348"
+    labels:
+        datastore_id: "3140403"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2013-06-19T19:18:02.251385Z"
+    description: "04-Jan-2012 06:49 PM W Lewis:\r\nSummary:\r\n\r\nPages will silently truncate the user's document if uploading to a WebDAV server that issues a redirect. Pages is able to \"sign in\" and to browse the DAV server without any problems, but if you upload a file to the DAV server, Pages will upload a 0-byte file (and claim success).\r\n\r\nSteps to Reproduce:\r\n\r\nThe easiest way to reproduce this is to set up Apache with vhosts on two ports, one of which offers DAV service and the other of which always redirects to the first. (It doesn't seem to matter whether the redirect is a 302 or 307.) Pages' conversation with the web server will look like this (assuming DAV is on port 8081 and the redirect is on port 8082; examine this using Apache's logging and a packet-capture tool such as tcpflow):\r\n\r\n --> PROPFIND http://example.com:8082/somedir/\r\n <-- 307, redirect to http://example.com:8081/somedir/\r\n \r\n --> PROPFIND http://example.com:8081/somedir/\r\n <-- 207, propfind results\r\n \r\n --> PUT http://example.com:8082/somedir/Document.pages\r\n     --> and a 1-byte dummy payload (?!?)\r\n <-- 307, redirect to http://example.com:8081/somedir/Document.pages\r\n\r\n --> PUT http://example.com:8081/somedir/Document.pages\r\n     --> and a 0-byte payload (?!!)\r\n <-- 201, document created\r\n\r\n --> PUT http://example.com:8082/somedir/Document.pages\r\n     --> and all of the document data\r\n <-- 307, redirect to http://example.com:8081/somedir/Document.pages\r\n \r\n --> PUT http://example.com:8081/somedir/Document.pages\r\n     --> and a 0-byte payload (!!!)\r\n <-- 204, no content (already-empty document replaced with new 0-byte payload)\r\n\r\n\r\nThis reveals a handful of problems in Pages' DAV implementation:\r\n\r\n1. When it follows a redirect for PUT, the second PUT is performed with a 0-byte body. If it performs the second PUT, it should include the document in the body.\r\n\r\n2. It follows redirects for PUTs: perhaps it shouldn't (see RFC2626 10.3.8 and 10.3.3)\r\n\r\n3. It does not interpret the PROPFIND response. Among other things, the PROPFIND informs the DAV client of the canonical names of resources, in this case of the collection that Pages is planning to PUT the document into. See RFC4918 5.2 and 9.1. If Pages interpreted the redirect+PROPFIND, then it would not have to follow any redirects for PUT."
+    email: wiml@omnigroup.com
+    modified: "2013-06-19T19:18:02.251604Z"
+    number: "10646348"
+    number_intvalue: 10646348
+    originated: 04-Jan-2012 06:49 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iWork
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Pages WebDAV export produces 0-byte file, no warning (iPad)

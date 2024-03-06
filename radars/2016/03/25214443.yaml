@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25214443"
+    labels:
+        datastore_id: "4996316027420672"
+data:
+    classification: Serious Bug
+    created: "2016-03-17T10:48:32.19791Z"
+    description: "Summary:\nIf a watch app has never been launched or is not in memory, and a local notification arrives, if the notification is tapped too quickly (< ~3 seconds) then the app either fails to launch (sticks on the loading spinner) or finally launches with unresponsive UI. If the app is stuck on the loading spinner, switching to the watch face and back to the app gives you unresponsive UI. \n\nIf the user waits longer before tapping the notification, the watch app opens normally.\n\nSteps to Reproduce:\n\n1. Install the sample project (the iOS app scheme) on an iPhone which is paired to a watch. Don’t launch the watch app from Xcode. Using the Watch app on the phone, install the watch app. \n2. Open the sample app on the phone, hit the button, then sleep the iPhone. This schedules a local notification to arrive in 5 seconds time.\n3. Wait for the paired watch to display the notification\n4. Tap the notification as soon as the interface allows\n5. Observe that the app fails to launch, or launches with unresponsive UI\n6. If you are stuck on the spinner, switch back to the watch face then into the app again and observe the unresponsive UI. \n7. Delete the app from the watch\n8. On the Watch app on the iPhone, reinstall the watch app\n9. Open the iPhone app, hit the button and sleep the iPhone\n10. Observe the notification arriving on the watch. Wait for >5 seconds before tapping it\n11. Observe that the application opens correctly and the UI is responsive\n\nExpected Results:\n\nI expect the watch app to launch successfully in all cases\n\nActual Results:\n\nThe watch app does not launch if the notification is tapped too quickly\n\nRegression:\n\nThis only seems to occur on first launch. Subsequent launches are fine. \n\nNotes:\n\nA sample project demonstrating the issue is attached. Looking at logging from the watch (which is difficult, since that seems to affect the problem) it appears to fail when \n\nxxxxx.watchkitextension is now running in the foreground\n\nis not logged before \n\nGot notification URL. Will pass notification ID …\n\nYou see several messages in the failure states, but one of them we see all the time is\n\n<Notice>: (Error) WatchKit: <SPRemoteInterface.m -[SPRemoteInterface _handleAction:forNotification:remoteNotificationContext:localNotification:handler:controller:]:2863> called but remoteNotification and localNotification are both nil. This shouldn't have happened"
+    email: jrturton@gmail.com
+    modified: "2016-03-17T10:48:32.19809Z"
+    number: "25214443"
+    number_intvalue: 25214443
+    originated: 17-Mar-2016 10:48 AM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 9.2 / watchOS 2.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: First launch of watchOS2 apps fails when opening from a notification

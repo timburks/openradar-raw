@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "39390733"
+    labels:
+        datastore_id: "4943933347987456"
+data:
+    classification: Serious Bug
+    created: "2018-05-04T22:51:39.37844Z"
+    description: "Summary:\r\nWhen using NSLocalizedString with a stringsdict file, if the NSStringLocalizedFormatKey specifies a format string that uses positional arguments in order to skip an argument, the string is mishandled such that the wrong plural string is chosen for the argument(s) after the skipped argument.\r\n\r\nMore generally, I believe that the code that determines what argument to look at in order to determine the plural category for a numeric argument doesn't understand positional arguments, so it ends up looking at the wrong spot.\r\n\r\nFor example, if I have three arguments %1$@, %2$lu, %3$lu, and I skip the second argument in the NSStringLocalizedFormatKey, it still uses the second argument to determine the plural rule to apply to the third.\r\n\r\nHowever, it's even more broken than that; in that plural rule, if it just references %3$lu, the second argument actually gets substituted in that spot instead of the 3rd. However if the plural rule references both the second and third arguments, they get substituted correctly (though the wrong plural rule is still chosen).\r\n\r\nI've attached a sample project that demonstrates this. It does 3 substitutions on 3 different strings. For each string the numeric parameter used to control the plural is 0, 1, and 2 in order. The first string doesn't skip any arguments and works correctly. The second string skips one argument and references %3$lu in the plural rule. In this one you can see it's applying the plural rule from the second argument instead of the third (the second argument here is ordered 2, 0, 1). It also only references %3$lu in the plural rule, but the actual substitution is using the second argument. The third string is the same but it references both %2$lu and %3$lu in the plural rule, so you can see it's suddenly substituting the correct argument (though again, with the wrong plural rule).\r\n\r\nSteps to Reproduce:\r\n1. Build and run the attached project.\r\n\r\nExpected Results:\r\n2. All 3 sections of the output should look like Correct (with the slight modification that the third section should say \"(zero: 0 - 2)\" and \"(one: 1 - 0)\").\r\n\r\nActual Results:\r\nThe first section is correct, but the other 2 sections are incorrect. They're picking the wrong plural rule to apply, and the second section is substituting the wrong argument in the zero/one plural rules.\r\n\r\nVersion/Build:\r\niOS 11.2 (15C107)\r\n\r\nConfiguration:\r\niPhone X Simulator"
+    email: kevin@sb.org
+    modified: "2018-05-04T22:51:39.37875Z"
+    number: "39390733"
+    number_intvalue: 39390733
+    originated: 4/12/2018
+    parent_number: '&{NULL_VALUE}'
+    product: Foundation
+    product_version: ""
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: stringsdict files don't correctly handle NSStringLocalizedFormatKey skipping an argument

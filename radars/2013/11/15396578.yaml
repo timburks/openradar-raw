@@ -1,0 +1,62 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "15396578"
+    labels:
+        datastore_id: "6445025776893952"
+data:
+    classification: Other Bug
+    created: "2013-11-05T20:30:29.239102Z"
+    description: |-
+        Summary:
+
+        -[NSPointerArray compact] does not remove NULL entries from the array, contrary to its documented behaviour
+
+        Steps to Reproduce:
+
+        Compile and run the following:
+
+        #import <Foundation/Foundation.h>
+
+        int main(int argc, char *argv[]) {
+            @autoreleasepool {
+                NSPointerArray *pa;
+                pa = [NSPointerArray weakObjectsPointerArray];
+                [pa addPointer:(void *)@"Hello world"];
+                @autoreleasepool {
+                    for (int i = 0; i < 3; i++) {
+                        [pa addPointer:(void *)[NSString stringWithFormat:@"String %i", i]];
+                    }
+                    NSLog(@"Size: %lu, items: %@", [pa count], [pa allObjects]);
+                }
+                NSLog(@"Size: %lu, items: %@", [pa count], [pa allObjects]);
+                [pa compact];
+
+                // Next line should show the count as 1, actually shows it as 4
+                NSLog(@"Size: %lu, items: %@", [pa count], [pa allObjects]);
+            }
+        }
+
+        Expected Results:
+
+        The last NSLog shows the array's count as 1
+
+        Actual Results:
+
+        The last NSLog shows the array's count as 4
+
+        Regression:
+
+        Notes:
+    email: simon@goosoftware.co.uk
+    modified: "2013-11-05T20:30:29.239265Z"
+    number: "15396578"
+    number_intvalue: 15396578
+    originated: 05-Nov-2013 08:30 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: "10.9"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: -[NSPointerArray compact] doesn't work as documented

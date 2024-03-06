@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "51354699"
+    labels:
+        datastore_id: "5057212443525120"
+data:
+    classification: macOS + SDK
+    created: "2019-06-04T11:55:40.563961Z"
+    description: "When using `/usr/bin/security cms -S` command to sign profiles, the resulting signed profile is signed by another (seemingly) random certificate from my login keychain.\r\n\r\nSteps to Reproduce:\r\n1. Verify a code signing cert is available: `/usr/bin/security find-identity -p codesigning`\r\n2. Grab the nickname of the cert: `/usr/bin/security find-identity -p codesigning -v | awk -F\\\" '/Developer ID/ {print $2}'`\r\n3. Attempt to sign a profile with the cert's nickname: \r\n`/usr/bin/security cms -S -G -H SHA256 -N 'Developer ID Application: ROCHESTER INSTITUTE OF TECHNOLOGY (INC) (77JG5V6MM7)' -i '/Users/n8felton/edu.rit.certificates.root.mobileconfig' -o '/Users/n8felton/edu.rit.certificates.root.mobileconfig'`\r\n\r\nExpected Results:\r\n`openssl pkcs7 -inform DER -print_certs -in '/Users/n8felton/edu.rit.certificates.root.mobileconfig'`\r\n<snip>\r\nsubject=/UID=77JG5V6MM7/CN=Developer ID Application: ROCHESTER INSTITUTE OF TECHNOLOGY (INC) (77JG5V6MM7)/OU=77JG5V6MM7/O=ROCHESTER INSTITUTE OF TECHNOLOGY (INC)/C=US\r\nissuer=/CN=Developer ID Certification Authority/OU=Apple Certification Authority/O=Apple Inc./C=US\r\n<snip>\r\n\r\nActual Results:\r\n`openssl pkcs7 -inform DER -print_certs -in '/Users/n8felton/edu.rit.certificates.root.mobileconfig'`\r\n<snip>\r\nsubject=/O=member: A7483DA9-FAFD-43ED-A0D7-BB9E3BFF02A1 F17B58C4-D512-4DFB-9839-C1C51D6FAC4F/CN=member: A7483DA9-FAFD-43ED-A0D7-BB9E3BFF02A1 F17B58C4-D512-4DFB-9839-C1C51D6FAC4F\r\nissuer=/O=member: A7483DA9-FAFD-43ED-A0D7-BB9E3BFF02A1 F17B58C4-D512-4DFB-9839-C1C51D6FAC4F/CN=member: A7483DA9-FAFD-43ED-A0D7-BB9E3BFF02A1 F17B58C4-D512-4DFB-9839-C1C51D6FAC4F\r\n<snip>\r\n\r\nVersion/Build:\r\nProductName:    Mac OS X\r\nProductVersion: 10.14.5\r\nBuildVersion:   18F132\r\n\r\nNote that signing with the `-Z` option to use the certificate subject key ID works:\r\n`security cms -S -G -H SHA256 -Z '7DEDC3FEAAE2CB96F5233153AF1D459CB80185E7' -i '/Users/n8felton/edu.rit.certificates.root.mobileconfig' -o '/Users/n8felton/edu.rit.certificates.root.mobileconfig'`\r\n\r\nPS - The fact that the `-Z` option for the `security cms` command is a certificate subject key ID and not the SHA-1 hash of the certificate, like every other `-Z` option for the security commands is annoying and frustrating, considering `security find-identity -p codesigning` will give you the SHA-1 as another potential option to find certs with."
+    email: n8felton@gmail.com
+    modified: "2019-06-04T11:55:40.564093Z"
+    number: "51354699"
+    number_intvalue: 51354699
+    originated: "2019-06-03"
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.14.5
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: /usr/bin/security cms failing to sign profiles with correct certificate

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB5538176
+    labels:
+        datastore_id: "4957319523729408"
+data:
+    classification: Serious Bug
+    created: "2020-04-10T18:32:51.87742Z"
+    description: "Our application installs a kernel extension to \"/Library/Extensions\" and then tries to load it from there using a privileged helper tool running with root privileges and simply calling \"kextload\" to load it. This works fine for the broad majority of our customers as our kernel extension is correctly signed and we make sure that ownership (root:wheel) and permissions (rwxr-xr-x) are correct. It also works fine on systems with SIP enabled. On newer systems the customers first have to go to the System Preferences and allow loading the kernel extension (in the security settings) but after doing so, it still works as expected.\r\n\r\nHowever recently more and more customers in our support complain, that our kernel extension cannot be loaded on their systems any longer. When we make them run:\r\n\r\nsudo kextutil -t /Library/Extensions/<our-kext>\r\n\r\nhere's the output they get:\r\n\r\nkext rejected due to insecure location: { URL = file:///Library/StagedExtensions/Library/Extensions/<our-kext>/”, ID = “<our-kext-id>” }\r\n\r\nWe don't know what the folder \"/Library/StagedExtensions/Library/Extensions\" is good for, why our extension is located there and why the system tries to load it from there but apparently the system considers that location as unsafe.\r\n\r\nThe only known work-around we found that sometimes work was the following:\r\n\r\n1. Boot into Recovery Mode.\r\n2. Disable SIP.\r\n3. Boot normally.\r\n4. Delete our extension in \"/Library/Extensions\"\r\n5. Clear the kext cache (\"sudo kextcache -i /\")\r\n6.  Boot into Recovery Mode.\r\n7. Re-enable SIP.\r\n8. Boot normally.\r\n\r\nAnd now everything works again as expected. Yet this doesn't work for all customers. For some the problem persists even after performing all theses steps."
+    email: m.hanauska@gmail.com
+    modified: "2020-04-10T18:32:51.877583Z"
+    number: FB5538176
+    number_intvalue: 5538176
+    originated: Jul 13, 2018
+    parent_number: '&{NULL_VALUE}'
+    product: macOS
+    product_version: 10.13 and later
+    reproducible: Depends
+    resolved: ""
+    status: Open
+    title: Kernel Extension in /Library/Extensions cannot be loaded, system says location is insecure

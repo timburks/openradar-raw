@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "19171449"
+    labels:
+        datastore_id: "5213650667175936"
+data:
+    classification: ""
+    created: "2014-12-08T02:37:43.013302Z"
+    description: "Summary:\r\nNSWindowController's init method calls [self initWithWindow:].  In particular, it calls an initializer on self.  This means that -[NSWindowController init] is not a designated initializer: designated initializers are exactly those that call an initializer on super.  However, -[NSWindowController init] is NOT marked as a convenience, so it is understood by the compiler to be designated.\r\n\r\nThis results in the possibility of writing an NSWindowController subclass that with a new designated initializer that compiles (but shouldn't) and traps when instantiated.\r\n\r\nSteps to Reproduce:\r\n1.  Open the attached project.\r\n\r\nAlternatively.\r\n\r\nAlt.1.1:  Create a new project using the Cocoa Application template (with \"Use Storyboard\", \"Create Document-Based Application\", and \"Use Core Data\" all unchecked).\r\nAlt.1.2:  Into AppDelegate.swift, paste the following class (outside of the definition of the AppDelegate class).\r\n\r\nclass WindowController: NSWindowController {\r\n    init(arg: Int) {\r\n        super.init()\r\n    }\r\n\r\n    required init?(coder: NSCoder) {\r\n        fatalError(\"init(coder:) has not been implemented\")\r\n    }\r\n}\r\n\r\nAlt.1.3.  Into AppDelegate.applicationDidFinishLaunching(_:), paste the following line:\r\n\r\nlet wc = WindowController(arg: 0)\r\n\r\n2.  Attempt to run the app.\r\n\r\nExpected Results:\r\n1.  The app should fail to compile. \r\n2.  In Xcode, the line <<super.init()>> in WindowController.init(arg:) should be highlighted red with the error message <<Must call a designated initializer of the superclass 'NSWindowController'>>.\r\n\r\nActual Results:\r\n1.  The app compiles.\r\n2.  When the app runs, it traps inside WindowController's implicitly generated override of init(window:).  Here is the header in the disassembly for the implicitly generated method.\r\n\r\nNSWindowControllerInitIsDesignatedBug`NSWindowControllerInitIsDesignatedBug.WindowController.init (NSWindowControllerInitIsDesignatedBug.WindowController.Type)(window : Swift.Optional<ObjectiveC.NSWindow>) -> NSWindowControllerInitIsDesignatedBug.WindowController at AppDelegate.swift:\r\n\r\nVersion:\r\nLatest 6.2 beta.\r\n\r\nNotes:\r\nThe \"workaround\" is to call super.init(window:) (or super.init(coder:)) from the subclass' DI.  This is actually the right thing to do.  The compiler should enforce this.  It will enforce it when -[NSWindowController init] is properly tagged as convenience.\r\n\r\nConfiguration:"
+    email: nathaniel.chandler@gmail.com
+    modified: "2014-12-08T02:37:43.013451Z"
+    number: "19171449"
+    number_intvalue: 19171449
+    originated: "2014-12-07"
+    parent_number: '&{NULL_VALUE}'
+    product: OS X SDK
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: Open
+    title: -[NSWindowController init] is a Designated Initializer

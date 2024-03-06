@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "21105874"
+    labels:
+        datastore_id: "6106163527548928"
+data:
+    classification: Serious Bug
+    created: "2015-05-26T17:46:42.19123Z"
+    description: "Summary:\r\nNSDateFormatter on the Mac used to respect format strings such as e.g.:\r\n\r\n\"HH:mm:ss\" \r\n\r\nYielding a 24-hour formatted time, even if the user's default locale is not overridden on the NSDateFormatter instance.\r\n\r\nAt some point recently (I think starting with 10.10.3), the behavior changed such that when the default locale is set, a literal format such as the one above MAY be used to rewrite the resulting string with 12-hour time.\r\n\r\nThis change in behavior is problematic and has caused a real-world bug in MarsEdit, my blog editor app. The documentation for NSDateFormatter makes a point of stating that setDateFormat: should be used for situations where a very specific format is required e.g. for internet dates. This is precisely the reason and context I'm using setDateFormat, and the change in behavior is causing dates formatted by my app for use in XML documents to be formatted incorrectly.\r\n\r\nThe documentation also hints that the behavior I'm now seeing on Mac could have been seen previously on iOS. Maybe it's just a new feature that Mac now allows users to override the 12/24 hour formatting default?\r\n\r\nIn any case it's confusing and unclear how a developer who wants to convert literally to 24-hour time, using a format string, should do so. It feels fragile to set an explicit locale (e.g. to en_US), but I guess that is the best workaround?\r\n\r\nSteps to Reproduce:\r\n1. Open System Preferences and change the locale to a region e.g. United Kingdom where 24-hour time is default.\r\n2. Manualy uncheck the 24-hour time to switch to 12-hour time.\r\n3. Run the attached Python script which runs NSDateFormatter through the paces of formatting the current date first with no explicit locale, and then with an explicit one.\r\n\r\n\r\nExpected Results:\r\n\r\n\r\nActual Results:\r\n\r\n\r\nVersion:\r\n10.10.4 (14E17e)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\n\r\n\r\nAttachments:\r\n'TestDate.py' was successfully uploaded."
+    email: jalkut@gmail.com
+    modified: "2015-05-27T00:54:45.08237Z"
+    number: "21105874"
+    number_intvalue: 21105874
+    originated: 26-May-2015 01:46 PM
+    parent_number: '&{NULL_VALUE}'
+    product: OS X
+    product_version: 10.10.4
+    reproducible: Always
+    resolved: 26-May-2015 8:45 PM
+    status: Open
+    title: Mac NSDateFormatter behavior change with respect to 24-hour time formats

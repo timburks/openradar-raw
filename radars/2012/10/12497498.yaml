@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "12497498"
+    labels:
+        datastore_id: "2195401"
+data:
+    classification: Serious Bug
+    created: "2012-10-23T22:12:58.495717Z"
+    description: "Summary:\r\nI am using AudioQueue to do offline rendering. When the app goes into the background, then returns the offline rendering function returns 0 bytes. The only way I can see to recover the AudioQueue is to dispose it and rebuild and as such have been doing this successfully for quite some time. \r\n\r\nWith iOS 6.0 the AudioQueueDispose call is now taking over 1 seconds, considering the offline decoding code I have is inside our audio streamer, a 1 second pause is totally unworkable. If the same code is run on iOS 5 AudioQueueDispose executes in the order of milliseconds, perfectly acceptable. \r\n\r\nSteps to Reproduce:\r\nI have provided a modified version of the Apple offline render example. To reproduce the issue run the app, click the on screen button then press the home button. Now open the app again and watch the TTY output, you will see that the offline render returns 0, which is where I call dispose. It will print out the time taken to do the dispose, generally over 1 second. \r\n\r\nExpected Results:\r\nAudioQueueDispose finishes in a reasonable amount of time.\r\n\r\nActual Results:\r\nAudioQueueDispose takes over 1 second.\r\n\r\nRegression:\r\nWorks as expected on iOS 5.\r\n\r\nNotes:\r\nThe key ingredient in causing this extended time during dispose is the use of an AudioUnit, simply initializing it is enough to reproduce the bad behavior. You will note that commenting out the audio unit init call at the top of DoAQOfflineRender will significantly reduce the time it takes to process the dispose."
+    email: fmod.mathew@gmail.com
+    modified: "2012-10-23T22:16:55.690523Z"
+    number: "12497498"
+    number_intvalue: 12497498
+    originated: 5-Oct-2012
+    parent_number: '&{NULL_VALUE}'
+    product: iPhone SDK
+    product_version: "6.0"
+    reproducible: Always
+    resolved: No
+    status: Open
+    title: AudioQueueDispose taking over 1 second

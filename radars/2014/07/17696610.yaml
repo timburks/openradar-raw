@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "17696610"
+    labels:
+        datastore_id: "4998836871233536"
+data:
+    classification: Crash/Hang/Data Loss
+    created: "2014-07-16T16:41:06.606779Z"
+    description: "Summary:\r\nOccasionally a dispatch_barrier_sync will block the main thread. It will do this even when the queue passed into the function call isn't running. It also happens when the queue is running, but not suspended, and while the queue is suspended.\r\n\r\nIt gets into this state:\r\n<OS_dispatch_queue: com.hackemist.SDWebImageDownloaderBarrierQueue[0x15dfa800] = { xrefcnt = 0x1, refcnt = 0x2, suspend_cnt = 0x0, locked = 1, target = com.apple.root.default-priority[0x3b43a580], width = 0x7fffffff, running = 0x0, barrier = 0 }>\r\n\r\nSteps to Reproduce:\r\n**NOTE: Due to a bug in Xcode 6 (rdar://17696438), this can only be reproduced using Xcode 5**\r\n\r\nCode: https://github.com/mtitolo/cats/tree/sdwebimage-scrolling\r\n\r\nHow to reproduce: \r\n1. Set a breakpoint in applicationDidFinishLaunching...\r\n2. Get a device, iPhone 4 or equiv, and enable Network Link Conditioner on the 3G setting.\r\n2. Run on the device.\r\n3. When the breakpoint is hit, in lldb run breakpoint set -n semaphore_wait_trap\r\n4. Next, run script and paste in this:\r\n\r\nfind_in_stack = ['-[SDWebImageDownloader addProgressCallback:andCompletedBlock:forURL:createCallback:]']\r\ndef continue_ignored(frame, bp_loc, dict):\r\n    global find_in_stack\r\n    names = set([frame.GetFunctionName() for frame in frame.GetThread()])\r\n    all_ignored = set(find_in_stack)\r\n    ignored_here = all_ignored.intersection(names)\r\n    if len(ignored_here) == 0:\r\n        frame.GetThread().GetProcess().Continue()\r\n\r\nquit()\r\n\r\nThere are a number of semaphore_wait_traps that we want to skip. We are only interested in ones with -addProgressCallback:... in its stack frame\r\n5. Lastly, run br comm add -F continue_ignored 2 where 2 is the ID of the breakpoint printed from step 1 (it may be a different number).\r\n6. Continue. Scroll around a bit, and the breakpoint will be hit.\r\n\r\nExpected Results:\r\nA queue that is not running should not block the thread.\r\n\r\nActual Results:\r\nIt blocks the thread, sometimes for 4-6 seconds.\r\n\r\nVersion:\r\n7.1.2 (11D257)\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\niPhone 4 64GB GSM\r\n\r\nAttachments:\r\n'stackshots.zip' was successfully uploaded."
+    email: michele.titolo@gmail.com
+    modified: "2014-07-16T16:41:06.607034Z"
+    number: "17696610"
+    number_intvalue: 17696610
+    originated: 7/16/2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 7.1.2 (11D257)
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: Barrier sync blocks thread when queue isn't running

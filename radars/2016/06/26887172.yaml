@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "26887172"
+    labels:
+        datastore_id: "5607872461275136"
+data:
+    classification: Performance
+    created: "2016-06-20T07:13:56.8461Z"
+    description: "Summary:\r\nUsing a collection view with UICollectionViewFlowLayout instance configured with default estimatedItemSize property value (zero) results in cell's preferredLayoutAttributesFittingAttributes method still called, which results in a potentially expensive Auto Layout-based computation of fitting size. This behaviour is unexpected since, as per documentation of estimatedItemSize:\r\n\r\n> The default value of this property is CGSizeZero. Setting it to any other value causes the collection view to query each cell for its actual size using the cell’s preferredLayoutAttributesFittingAttributes: method.\r\n\r\nwhich implies that default behaviour (using static or delegate-returned item size) does not include calling that method or performing extra size calculations.\r\n\r\nCalling preferredLayoutAttributesFittingAttributes method on a cell and then discarding its result incurs a performance overhead, noticeable during scrolling of collection view.\r\n\r\nSteps to Reproduce:\r\n1. Create a single-view iOS project with a storyboard.\r\n2. Add a collection view controller as an initial scene of the storyboard.\r\n3. Configure the cell in the collection view with an identifier and add, for example, a label aligned to the centre of the cell using constraints. Keep the default size of the cell (50,50).\r\n4. Create a UICollectionViewController subclass and assign it to the collection view in the storyboard. Add a basic implementation of numberOfItemsInSection and cellForItemAtIndexPath methods that would display a thousand cells dequeued from the collection view. Do not configure collection view flow layout properties.\r\n5. Launch the app in Time Profiler, and scroll the collection view for a few seconds.\r\n\r\nExpected Results:\r\nTime profiler results do not include calls to cell's preferredLayoutAttributesFittingAttributes method, so default static item size is used as-is. Performance overhead is not incurred. Cells are laid out correctly and have default size.\r\n\r\nActual Results:\r\nTime Profiler reports substantial amount of time spent in preferredLayoutAttributesFittingAttributes method and Auto Layout code in its implementation, which results in performance drop. Cells are still laid out correctly and have default size (fitting size is not used to determine cell size).\r\n\r\nVersion:\r\niOS 9.3 (13E230); also reproducible on iOS 8.x and iOS 10 seed 1.\r\n\r\nNotes:\r\nA functioning workaround is to override preferredLayoutAttributesFittingAttributes method in UICollectionViewCell subclass and immediately return supplied layoutAttributes from there, thus circumventing any layout computations and forcing the collection view to just use static or delegate-provided item size. However, having to do so for all cells is not ideal and undocumented. Not all apps use auto sizing in collection views, but many still wish to use Auto Layout in cells to layout their contents based on static or manually calculated dimensions. This issue thus introduces unexpected performance issues for all such apps.\r\n\r\nAttached sample project demonstrates the issue; please refer to comments and #warnings in its source code for more information.\r\n\r\nConfiguration:\r\nAny device or simulator\r\n\r\nAttachments:\r\n'CollectionViewTest.zip' was successfully uploaded. (https://github.com/vlas-voloshin/CollectionViewAutoSizingBug)"
+    email: argentumko@gmail.com
+    modified: "2020-04-10T06:44:13.148247Z"
+    number: "26887172"
+    number_intvalue: 26887172
+    originated: 20-Jun-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 9.3 (13E230); also reproducible on iOS 8.x and iOS 10 seed 1.
+    reproducible: Always
+    resolved: Yes
+    status: Duplicate of 26956638 (Closed)
+    title: UICollectionView attempts to calculate cell's fitting size regardless of flow layout's estimatedItemSize value

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "41790438"
+    labels:
+        datastore_id: "5064994878128128"
+data:
+    classification: Enhancement
+    created: "2018-07-03T20:53:36.89741Z"
+    description: "Summary:\r\nIn our application, we allow users to import PDF documents via the iOS 11 Drag & Drop APIs.\r\n\r\nThe suite of Drag & Drop APIs, however, assumes that every drop item in a drop session represents one \"unit\" to be dropped in the given view. \r\n\r\nThis is not always true. For instance, when importing a PDF into our application, even though the drop item it's correctly represented as a single URL on disk, the assumption that we'd like only one item dropped in our view is not correct, as a PDF document inflated from a given URL can (and almost always will) have more than just one page.\r\n\r\nI think it would be really useful for the Drag & Drop APIs to provide a way to tell the receiver of the drop that the drop item can represent more than one \"unit\".\r\n\r\nThis could either be achieved at the UIDragItem level with some API like this:\r\n\r\n```\r\nlet dragItem = [[UIDragItem alloc] initWithItemProvider:provider];\r\ndragItem.representedNumberOfItems = 3 // This drag item represents 3 units (PDF document with 3 pages)\r\n```\r\n\r\nThen, the drop coordinators could take the information out of that item and, for instance, insert the correct number of placeholders on the collection view/table view. Since the `dropItem:toPlaceholder:` method already returns a placeholder context, removing/updating all placeholders at once would be relatively easy as well.\r\n\r\nI'm not certain, but it seems like this kind of API could be useful at the NSItemProvider level as well.\r\n\r\nOur current solution for this issue is to always remove the placeholder that inserted with the drop coordinator, and then manually add the appropriate index paths for the pages that were just added to the document. \r\n\r\nSteps to Reproduce:\r\nImplement Drag & Drop APIs and try to make an informed decision about how many \"units\" an actual drag item represents.\r\n\r\nExpected Results:\r\nThere's a way to specify the \"unit\" count per drag item so that the drops can be handled more easily.\r\n\r\nActual Results:\r\nThere's no way to know how many items an actual drag item represents.\r\n\r\nVersion:\r\n11.4\r\n\r\nNotes:"
+    email: oscar@swanros.com
+    modified: "2018-07-10T12:08:42.08263Z"
+    number: "41790438"
+    number_intvalue: 41790438
+    originated: 03-Jul-2018 03:53 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: "11.4"
+    reproducible: Always
+    resolved: Duplicate of 41811293
+    status: Open
+    title: UIDragItem should allow to specify a count for items to be dropped

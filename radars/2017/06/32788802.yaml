@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32788802"
+    labels:
+        datastore_id: "6111801225773056"
+data:
+    classification: Feature (New)
+    created: "2017-06-15T11:03:42.57366Z"
+    description: "Summary:\r\nThis is a followup to a discussion with Kevin in the File Providers lab at WWDC.\n\nWe would like to request that the NSFilePresenter API is extended with a way to determine, if the NSFilePresenter call was triggered by a coordinated operation from inside the same application or if the call came out of process. \n\nThis would be extremely useful for us (and likely others) to ensure proper behavior and locking when receiving callbacks. This is also unfortunately something that we cannot add on our own in a thread safe manner. A potential solution, that we discussed in the WWDC labs was to provide the fill presenter and/or purpose identifier of the coordinator that triggered the operation (or similar) when invoking file presenter callbacks. \n\nSee notes for details on our setup and the issue we are trying to avoid. \r\n\r\nSteps to Reproduce:\r\nN/A\r\n\r\nExpected Results:\r\nNSFilePresenter API would provider a way to determine if a call came from inside the same process (and ideally what object triggered it). \r\n\r\nActual Results:\r\nNSFilePresenter provides no such API. \r\n\r\nVersion:\r\niOS 11\r\n\r\nNotes:\r\nOur framework uses coordinated file operations for file access and implements the file presenter API on our document class to receive various notifications about the file state. To ensure our data and global state (something we sadly can’t avoid just yet) stays consistent, we require strict locking when reading and writing data. This can lead to issues, when we have two or more documents working with the same file on disk. During a read, our main lock needs to be held by the reader, this then ten triggers savePresentedItemChangesWithCompletionHandler: on the second document which needs to do a save by taking the same global lock. This then deadlocks the process. \n\nThe requested API would allow us to determine if the required lock is already held by the blocked called and therefore simply continue saving without locking again, thereby avoiding any possibility of a deadlock."
+    email: matej@bukovinski.com
+    modified: "2017-06-15T11:03:42.57387Z"
+    number: "32788802"
+    number_intvalue: 32788802
+    originated: 15-Jun-2017 01:03 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 11
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSFilePresenter API should allow determining if a callback was triggered in-process

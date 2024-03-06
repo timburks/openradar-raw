@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "18245068"
+    labels:
+        datastore_id: "5283446368763904"
+data:
+    classification: Performance
+    created: "2014-09-05T16:39:22.254377Z"
+    description: "Summary:\r\nWhen releasing a CFTree, the children of this CFTree are not released, even if the documentation says so:\r\n\r\n\"Releasing a tree releases its child trees, and all of their child trees (recursively).\"\r\n\r\nThis results in a 64 bytes memory leak per child of the released CFTree.\r\n\r\nNote that:\r\n - This does not happen when using CFTree on OS X. The bug is present in iOS only.\r\n - A possible workaround is to release the children CFTree manually using CFTreeRemoveAllChildren.\r\n\r\nSteps to Reproduce:\r\n1. Create 2 CFTree A and B with CFTreeCreate()\r\n2. Append B as a child of A with CFTreeAppendChild(A, B) (B's retain count is 2)\r\n3. Release B (B's retain count is now 1)\r\n4. Release A\r\n\r\nExpected Results:\r\nReleasing A automatically release B; producing no memory leak.\r\n\r\nActual Results:\r\nB is never released, its retain count stays at 1, resulting in a 64 bytes memory leak.\r\n\r\nVersion:\r\niOS 7.1, iOS8b4\r\n\r\nNotes:\r\nRelated blog post: http://blog.spacemanlabs.com/2011/09/cftree-leaks-its-children/\r\n\r\nAttached is an iOS project manifesting this issue; to run under Instruments.\r\n\r\nConfiguration:\r\niPhone Simulator, iPad mini Retina"
+    email: guillaume.algis@gmail.com
+    modified: "2014-09-05T16:39:22.254596Z"
+    number: "18245068"
+    number_intvalue: 18245068
+    originated: 05-Sep-2014
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 7.*, 8.0b4
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: CFTree leaks its children

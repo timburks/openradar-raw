@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "8448107"
+    labels:
+        datastore_id: "933401"
+data:
+    classification: Serious Bug
+    created: "2010-12-01T18:25:38.278954Z"
+    description: "Summary:\r\n\r\nAn iOS application that plays background audio and responds to remote control events will be terminated when a remote control event is generated (from a Bluetooth device or other device such as a car connection dock) when the application has been running in the background with paused audio for 10 minutes or longer.\r\n\r\nSteps to Reproduce:\r\n\r\nCreate an application using proper Audio Sessions for background audio playback and use the proper implementation of beginReceivingRemoteControlEvents and endReceivingRemoteControlEvents.  Begin playing audio in the application with a Bluetooth A2DP adapter connected, press the Home button to send the application to the background and then use remote control events to pause audio.  Wait 10 minutes or more with audio paused and then press \"play\" on the Bluetooth or other device to resume audio.\r\n\r\nExpected Results:\r\n\r\nAudio playback should resume.\r\n\r\nActual Results:\r\n\r\niOS terminates the application based on \"active assertions beyond permitted time\"\r\n\r\nUpdate #1\r\nThis bug still appears to be present in iOS 4.2.  Additional information I've found with more testing:\r\n\r\n- This does not appear to be isolated to remote control events initiated by Bluetooth devices. I can reproduce it using an in-car iPhone dock as well.\r\n\r\n- The time frame for when this crash occurs appears to vary, but appears to be sometime after 10 minutes of paused background audio.  It also appears to happen more consistently when other tasks and applications are run while the app is in the background.\r\n\r\nUpdate #2:\r\nFurther testing reveals a clearer description of the bug. It appears that this forced iOS crash of the application happens when attempting to resume background audio after the audio has been paused for 10 minutes or more and the application has experienced a low memory warning.\r\n\r\nThe following steps are necessary to reproduce the bug:\r\n\r\n1. Either pause the application's audio and then send it to the background (hit the home button or switch to another app) or pause the application's audio while it is in the background\r\n2. Cause the application to experience a low memory warning (either simulated or real)\r\n3. After 10 minutes attempt to play audio using a remote control event triggered from a device such as a Bluetooth device or speaker dock, etc.\r\n\r\nNote: iOS only seems to force-crash the application when the final remote control event is initiated from an external device such as a Bluetooth device, speaker dock or car adapter. Using iOS's built-in \"remote control\" interface or remote controls on headphones do not appear to cause the crash."
+    email: ptackbar@jamawkinaw.com
+    modified: "2011-08-28T05:39:51.046438Z"
+    number: "8448107"
+    number_intvalue: 8448107
+    originated: 9/17/2010
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: 4.x
+    reproducible: Yes
+    resolved: ""
+    status: Open
+    title: Remote Control Events Cause App Termination

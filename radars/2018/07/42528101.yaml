@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "42528101"
+    labels:
+        datastore_id: "4934641815388160"
+data:
+    classification: Serious Bug
+    created: "2018-07-24T04:25:42.54658Z"
+    description: "Summary:\r\nSwift-based authorization plug-ins fail to load in 10.14 beta 4 (18A336e) at the loginwindow (and possibly elsewhere).\n\nThis bug was also present in macOS 10.14 developer beta 2 (18A314h).\n\nThis bug was not present in macOS 10.14 developer beta 3 (18A326g).\n\nThis is a serious bug regression in beta 4.\n\nPotential number of affected devices: In excess of 40,000. Uncorrected, this will be a blocker for 10.14 adoption.\r\n\r\nSteps to Reproduce:\r\n1. Write any Authorization Plug-in in Swift meant for the loginwindow.\n2. Install it (by placing it at /Library/Security/SecurityAgentPlugins, owned by root:wheel, and configuring the authorizationdb mechanisms for system.login.console to load it)\n3. Attempt to use it by logging in at the loginwindow.\n\nIf you don't have on available, you can use this open source one: https://github.com/grahamgilbert/crypt/releases\n\nThe pkg provided also includes a postinstall script that configures the authorization database to load the plug-in at the loginwindow.\r\n\r\nExpected Results:\r\nThe plug-in loads and executes and login completes.\r\n\r\nActual Results:\r\ndlopen throws an error with the inability to load any of the embedded Swift dynamic libraries (as placed there by Xcode during compile), visible by running this command as root via ssh: sudo log stream --info --debug --style=json\n\nMessages similar to this (depending on your plug-in) will appear:\n\n\"eventMessage\" : \"Error loading \\/Library\\/Security\\/SecurityAgentPlugins\\/Crypt.bundle\\/Contents\\/MacOS\\/Crypt:  dlopen(\\/Library\\/Security\\/SecurityAgentPlugins\\/Crypt.bundle\\/Contents\\/MacOS\\/Crypt, 0x0106): dependent dylib '@rpath\\/libswiftAppKit.dylib' not found for '\\/Library\\/Security\\/SecurityAgentPlugins\\/Crypt.bundle\\/Contents\\/MacOS\\/Crypt'\"\n\nIt does not matter what plug-in you attempt this with - it doesn't even need to be Swift-based. It just needs to attempt to load a dynamic library from an rpath.\r\n\r\nVersion:\r\n10.14 beta 4 (18A336e)\r\n\r\nNotes:\r\nThe bug appears to be that either LD_RPATH commands are ignored in the mach-o binary of the plug-in (or that dlopen path resolving is not properly taking them into account).\n\nAs a workaround, I used install_name_tool to rewrite all relative path dynamic libraries (like \"@rpath/libswiftAppKit.dylib\") to fully qualified paths referencing the installation path of the plug-in (\"/Library/Security/SecurityAgentPlugins/Crypt.bundle/Contents/Frameworks/libswiftAppKit.dylib\")\n\nAfter doing this, the plug-in loaded with no problems and ran as expected - with absolutely no changes to the code of the plug-in itself. This also corrected the issue for Objective-C based plug-ins that included internal Framework resources."
+    email: frogor.fb.openradar@gmail.com
+    modified: "2018-07-24T04:25:42.54679Z"
+    number: "42528101"
+    number_intvalue: 42528101
+    originated: 23-Jul-2018 09:25 PM
+    parent_number: '&{NULL_VALUE}'
+    product: macOS + SDK
+    product_version: 10.14 beta 4 (18A336e)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Authorization Plug-ins in /Library/Security/SecurityAgentPlugins unable to load @rpath dylibs

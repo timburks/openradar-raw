@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "33762193"
+    labels:
+        datastore_id: "4933752899764224"
+data:
+    classification: UI/Usability
+    created: "2017-08-07T21:45:24.81935Z"
+    description: "Summary:\r\nFor example, this is a folded declaration:\n\nfunc timestamp(_ timeZoneHour: Int = 0, ...}\n\nAnd so is this:\n\n@discardableResult func YamsAssertEqual(_ lhs: Any?, _ rhs: Any?, ...}\n\nThe curly braces aren’t balanced.\n\nXcode 8’s code folding avoided this issue by never folding a declaration, even if it was declared on multiple lines. It only ever folded the body.\r\n\r\nSteps to Reproduce:\r\nFold the following function:\n\nfunc timestamp(_ timeZoneHour: Int = 0,\n               _ year: Int? = nil,\n               _ month: Int? = nil,\n               _ day: Int? = nil,\n               _ hour: Int? = nil,\n               _ minute: Int? = nil,\n               _ second: Int? = nil,\n               _ fraction: Double? = nil ) -> Date {\n    let calendar = Calendar(identifier: .gregorian)\n    let timeZone = TimeZone(secondsFromGMT: timeZoneHour * 60 * 60)\n    #if os(Linux)\n        let NSEC_PER_SEC = 1000000000\n    #endif\n    let nanosecond = fraction.map { Int($0 * Double(NSEC_PER_SEC)) }\n    let datecomponents = DateComponents(calendar: calendar, timeZone: timeZone,\n                          year: year, month: month, day: day,\n                          hour: hour, minute: minute, second: second, nanosecond: nanosecond)\n    // Using `DateComponents.date` causes crash on Linux\n    guard let date = NSCalendar(identifier: .gregorian)?.date(from: datecomponents) else {\n        fatalError(\"Never happen this\")\n    }\n    return date\n}\r\n\r\nExpected Results:\r\nThe folded result should be one of the following:\n\nfunc timestamp(_ timeZoneHour: Int = 0, ...) {...}\n\nOr:\n\nfunc timestamp(_ timeZoneHour: Int = 0,\n               _ year: Int? = nil,\n               _ month: Int? = nil,\n               _ day: Int? = nil,\n               _ hour: Int? = nil,\n               _ minute: Int? = nil,\n               _ second: Int? = nil,\n               _ fraction: Double? = nil ) -> Date {...}\r\n\r\nActual Results:\r\nThe folded result is the following:\n\nfunc timestamp(_ timeZoneHour: Int = 0, ...}\r\n\r\nVersion:\r\nXcode 9 beta 5 (9M202q)\r\n\r\nNotes:\r\nSee attached gif of folding in action."
+    email: jp@jpsim.com
+    modified: "2017-08-07T21:45:24.81952Z"
+    number: "33762193"
+    number_intvalue: 33762193
+    originated: 07-Aug-2017 02:45 PM
+    parent_number: '&{NULL_VALUE}'
+    product: Developer Tools
+    product_version: Xcode 9 beta 5 (9M202q)
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Xcode 9 beta 5's code folding does not truncate functions with multi-line parameters consistently

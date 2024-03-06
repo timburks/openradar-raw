@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9477351"
+    labels:
+        datastore_id: "6378945557561344"
+data:
+    classification: ""
+    created: "2013-10-10T20:55:48.10451Z"
+    description: "There appears to be a bug in the Mac OS X kernel's handling of passing Unix domain socket FDs in messages.  I can reproduce this on OS X 10.5 and 10.6.\r\n\r\nSuppose a socket descriptor S is sent in a message across another socket pair using sendmsg().  The sending process then closes its reference to S, such that the only reference to S is from the other socket's message queue.  In some cases, after S is retrieved from the message queue (using recvmsg()), it no longer behaves normally.  Presumably there is a bug in the kernel's socket garbage collector which incorrectly decides that S is no longer referenced and tries to destroy it.\r\n\r\nWhen this occurs, the following happens to socket S:\r\n 1) Socket S's incoming message queue is emptied.\r\n 2) Socket S can still be used to receive later incoming messages, but if its message queue is empty, then read()/recv()/recvmsg() calls will return 0 immediately rather than blocking.  Furthermore, calling poll() on S returns the POLLHUP flag.\r\n\r\nHowever, socket S can still be used to send messages.\r\n\r\n\r\nSteps to Reproduce:\r\n\r\nRun the attached C test program, which demonstrates the bug:\r\n\r\ngcc unix_socket_loss.c -o unix_socket_loss\r\n./unix_socket_loss\r\n\r\n\r\nExpected Results:\r\n\r\nOn Linux the test program produces the following expected output:\r\n\r\nTest writing through transferred socket...\r\nselect=rw poll=5 POLLIN POLLOUT: got=8 data=\"howdyfoo\" - PASS\r\nselect=w poll=4 POLLOUT: read() would block - skipping - PASS\r\nTest reading through transferred socket...\r\nselect=rw poll=5 POLLIN POLLOUT: got=10 data=\"helloworld\" - PASS\r\nselect=rw poll=5 POLLIN POLLOUT: got=4 data=\"blah\" - PASS\r\nselect=w poll=4 POLLOUT: read() would block - skipping - PASS\r\nselect=w poll=4 POLLOUT: read() would block - skipping - PASS\r\nselect=w poll=4 POLLOUT: read() would block - skipping - PASS\r\nselect=w poll=4 POLLOUT: read() would block - skipping - PASS\r\nselect=w poll=4 POLLOUT: read() would block - skipping - PASS\r\nselect=rw poll=5 POLLIN POLLOUT: got=5 data=\"blah2\" - PASS\r\n\r\n\r\nActual Results:\r\n\r\nI get the following output on Mac OS X 10.5 and 10.6:\r\n\r\nTest writing through transferred socket...\r\nselect=rw poll=5 POLLIN POLLOUT: got=8 data=\"howdyfoo\" - PASS\r\nselect=w poll=4 POLLOUT: read() would block - skipping - PASS\r\nTest reading through transferred socket...\r\nselect=rw poll=17 POLLIN POLLHUP: got=5 data=\"world\" - FAIL\r\nselect=rw poll=17 POLLIN POLLHUP: got=4 data=\"blah\" - PASS\r\nselect=rw poll=17 POLLIN POLLHUP: got=0 data=\"\" - FAIL\r\nselect=rw poll=17 POLLIN POLLHUP: got=0 data=\"\" - FAIL\r\nselect=rw poll=17 POLLIN POLLHUP: got=0 data=\"\" - FAIL\r\nselect=rw poll=17 POLLIN POLLHUP: got=0 data=\"\" - FAIL\r\nselect=rw poll=17 POLLIN POLLHUP: got=0 data=\"\" - FAIL\r\nselect=rw poll=17 POLLIN POLLHUP: got=5 data=\"blah2\" - PASS\r\n\r\n\r\nRegression:\r\n\r\nThis does not seem to be a regression.\r\n\r\n\r\nNotes:\r\n\r\nA workaround, for code that relies on socket-passing, is for the sender to keep socket S open until it gets an acknowledgement that the receiver has received it OK.\r\n\r\nSee https://code.google.com/p/nativeclient/issues/detail?id=1796."
+    email: mseaborn@chromium.org
+    modified: "2013-10-10T20:55:48.104708Z"
+    number: "9477351"
+    number_intvalue: 9477351
+    originated: 2011/05/20
+    parent_number: '&{NULL_VALUE}'
+    product: ""
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: Unix domain socket garbage collection prematurely destroys socket FDs

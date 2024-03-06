@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "9974588"
+    labels:
+        datastore_id: "1309404"
+data:
+    classification: Other Bug
+    created: "2011-08-18T05:22:50.784125Z"
+    description: "18-Aug-2011 01:20 AM Ryan Sleevi:\r\nSummary:\r\nIn all prior versions of OS X prior to 10.6.8/10.7.0, the default behaviour of SecTrustEvaluate() was that it would NOT attempt to retrieve issuer certificates from the network, using the caIssuers field of the authorityInfoAccess extension. This was true regardless of the trust policy supplied to SecTrustEvaluate.\r\n\r\nHowever, in 10.6.8/10.7.0, this has changed, in that if an SSL policy is located, SecTrustEvaluate() forces network fetches to be enabled. This regression means there is no API-supported way to disable revocation checking.\r\n\r\nSteps to Reproduce:\r\n1) Create a policy with CSSMOID_APPLE_TP_SSL/SecPolicyCreateSSL.\r\n2) Pass the new SecPolicyRef into SecTrustCreateWithCertificates, specifying a certificate with an AIA extension. For example, the certificate for https://encrypted.google.com\r\n3) Call SecTrustSetParameters, making sure to explicitly NOT specify CSSM_TP_ACTION_FETCH_CERT_FROM_NET in the CSSM_APPLE_TP_ACTION_DATA.ActionFlags\r\n4) Call SecTrustEvaluate()\r\n\r\nExpected Results:\r\nThere should be no attempt to retrieve http://www.gstatic.com/GoogleInternetAuthority/GoogleInternetAuthority.crt, which is the caIssuer found in the authorityInfoAccess. Because the \"Google Internet Authority\" intermediate certificate is not included in the Keychain/system roots, the certificate should fail to validate.\r\n\r\nActual Results:\r\nThe certificate validates fine, as the intermediate is fetched via AIA, and it chains to a trusted root, the \"Equifax Secure Certificate Authority\".\r\n\r\nRegression:\r\nThis regressed in 10.6.8/10.7.0. Within the source, this is lines 229-232 of http://www.opensource.apple.com/source/libsecurity_keychain/libsecurity_keychain-55017/lib/Trust.cpp , which were added between 10.6.7 and 10.6.8.\r\n\r\nThe source specifically refers to rdar://7422356\r\n\r\nNotes:\r\nAs an application developer, there are times when I actively and explicitly want to disable AIA chasing, as either a privacy risk or as a matter of performance. This has been possible since OS X 10.2, and regressed without much explanation or an alternative (such as CSSM_TP_ACTION_DISABLE_FETCH_FROM_NET, if FETCH_FROM_NET was to become the new default)."
+    email: ryan.sleevi@gmail.com
+    modified: "2011-08-28T05:34:54.306916Z"
+    number: "9974588"
+    number_intvalue: 9974588
+    originated: 18-Aug-2011 01:20 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.6.8
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: 'Regression: SecTrustEvaluate no longer lets callers disable AIA fetching'

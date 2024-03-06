@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "25163791"
+    labels:
+        datastore_id: "4931940373233664"
+data:
+    classification: Serious Bug
+    created: "2016-03-15T09:34:58.20146Z"
+    description: "Summary:\r\nHAP requests are based on HTTP/1.1. iOS uses the published accessory name as the http host header field value for hap requests.\r\nFor example, if the accessory name \"Test Accessory\" is published using mDNS, the iOS HomeKit client establishes a connection with a host header field\r\n\r\n    Host: Test\\032Accessory._hap._tcp.local\r\n\r\nThe whitespace (\" \") is encoded as \\032. But host names must not include a backslash character (\"\\\").\r\n\r\nRFC7230 defines Host as\r\n\r\n    Host = uri-host [ \":\" port ]\r\n    uri-host = <host, see [RFC3986], Section 3.2.2>\r\n    \r\nwhere uri-host is defined in RFC3986 as\r\n\r\n    host = IP-literal / IPv4address / reg-name\r\n    reg-name = *( unreserved / pct-encoded / sub-delims )\r\n    unreserved  = ALPHA / DIGIT / \"-\" / \".\" / \"_\" / \"~\"\r\n    pct-encoded   = \"%\" HEXDIG HEXDIG\r\n    sub-delims    = \"!\" / \"$\" / \"&\" / \"'\" / \"(\" / \")\"\r\n                     / \"*\" / \"+\" / \",\" / \";\" / \"=\"\r\n\r\n[RFC7230] http://tools.ietf.org/html/rfc7230#section-5.4\r\n[RFC3986] http://tools.ietf.org/html/rfc3986#section-3.2.2\r\n\r\nSteps to Reproduce:\r\n1. Publish a HomeKit accessory mDNS service containing whitespaces (\" \") in the name\r\n2. Check host header field value of hap request\r\n\r\nExpected Results:\r\nWhitespaces in the host header field value should be percentage encoded.\r\n\r\nActual Results:\r\nWhitespace are encoded as \"\\032\"\r\n\r\nVersion:\r\niOS 9.2\r\n\r\nNotes:\r\nGo1.6 check for valid host names\r\n\r\nhttps://github.com/golang/go/commit/6e11f45ebdbc7b0ee1367c80ea0a0c0ec52d6db5#diff-b97af51863ce82bf2a13003b52034aa9R1088\r\n\r\nConfiguration:\r\niPhone 6s\r\n\r\nAttachments:"
+    email: matthias.hochgatterer@gmail.com
+    modified: "2016-03-15T09:34:58.20176Z"
+    number: "25163791"
+    number_intvalue: 25163791
+    originated: "2016-03-16"
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "9.2"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: iOS HomeKit client uses invalid characters in the http host header field value for hap requests

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "32082880"
+    labels:
+        datastore_id: "6092049342267392"
+data:
+    classification: Enhancement
+    created: "2017-05-09T19:33:33.65455Z"
+    description: "Area:\r\nUIKit\r\n\r\nSummary:\r\niOS 8 added incremental layout invalidation and self-sizing to UICollectionViewLayout. iOS 8 also introduced the `systemLayoutSizeFittingSize(_:withHorizontalFittingPriority:verticalFittingPriority:)` layout primitive, which has a clear use case for supporting the former.\r\n\r\nUnfortunately, these do not interact by default. Default self-sizing uses the no-arguments version, which is the equivalent of sending the fitting size priority to both axes. In many designs, this is deficient and causes layout ambiguity. At scale, this source of ambiguity leads to a weaker understanding of Auto Layout by the community and, quite frequently, abandonment of self-sizing.\r\n\r\nA reusable view can choose to change its implementation by overriding `UICollectionReusableView.preferredLayoutAttributesFitting(_:)`. For instance, a vertically-scrolling list might prefer to pin its width and only express its preferred height. It is lacking this context from the layout. The benefit of the split between UICollectionView, UICollectionReusableView, and UICollectionViewLayout is to reduce coupling. Fixing this problem in the view class creates coupling between a layout and the views displayed within.\r\n\r\nThis radar serves as a proposal to add `horizontalFittingPriority` and `verticalFittingPriority` to `UICollectionViewLayoutAttributes`, to be consumed appropriately in the default implementation of `UICollectionReusableView.preferredLayoutAttributesFitting(_:)`.\r\n\r\nSteps to Reproduce:\r\nIn lieu of repro steps, I'll provide some usage examples:\r\n\r\n- I have a layout that scrolls only vertically, like a table view. I want cells to be pinned to the width of the collection view's frame minus any padding, and resizing to fit their height in that scenario.\r\n- I have a layout that acts as a horizontally scrolling carousel. I may want to reuse cells from the above layout, but flip the axis they resize on.\r\n- I have an advanced layout that adds carousels to a vertically scrolling UI. (It's per-section modular, like the App Store.) I'd be using the same cells\r\n\r\nExpected Results:\r\nAs a layout author, I can express to cells the ways they may resize to their preferred layout attributes within my layout.\r\n\r\nActual Results:\r\nAs a layout author, I must require all cells that are clients of my layout derive from the same class in order to size correctly.\r\n\r\nVersion:\r\niOS 10.3 (14E269)\r\n\r\nNotes:\r\nThe new attributes would default to `UILayoutPriorityFittingSizeLevel` to preserve the old behavior. \r\n\r\nThe default implementation in `UICollectionReusableView.preferredLayoutAttributesFitting(_:)` may choose to conditionalize the new call to `systemLayoutSizeFittingSize(_:withHorizontalFittingPriority:verticalFittingPriority:)` so as to not cause inconsistent behavior across SDKs, but I don't personally think that's needed. A client would likely not conditionalize use of the new layout attribute but continue to use the above workarounds while they support previous deployment targets.\r\n\r\nConfiguration:\r\nN/A. All configurations.\r\n\r\nAttachments:\r\nN/A."
+    email: zach@waldowski.me
+    modified: "2017-05-09T19:33:33.65485Z"
+    number: "32082880"
+    number_intvalue: 32082880
+    originated: 09-May-2017 03:32 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS + SDK
+    product_version: iOS 10.3 (14E269)
+    reproducible: Sometimes
+    resolved: "false"
+    status: Open
+    title: UICollectionViewAttributes should be able to dictate fitting priorities of elements

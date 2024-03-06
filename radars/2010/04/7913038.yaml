@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "7913038"
+    labels:
+        datastore_id: "305401"
+data:
+    classification: Serious Bug
+    created: "2010-04-27T18:37:50.440495Z"
+    description: "When an [Objective-]C[++] source file has a header file dependency, it must be rebuilt whenever the header file is removed, because the removal may affect the results of the compilation. This is true even if the source file and the rest of its dependencies haven’t changed. With the header file dependency removed, the source file may be unbuildable, or it may resolve the header file dependency using a different header file, which can change the results of compilation.\r\n\r\nThe header file dependency may be removed locally by a developer, or by a version control system upon synchronizing with a repository.\r\n\r\nThe impact of this bug is that changes that ought to trigger a rebuild do not. This means that builds that ought to fail appear to succeed, and builds that ought to use updated object code instead use stale code. The nature of this problem in a large collaborative project makes it difficult to determine what caused a build to fail or an undesirable behavior, because a recompilation may not be triggered until well after the change that should have altered the behavior (or caused a failure) by removing a file.\r\n\r\nThe attached testcase.zip contains two test cases, testcase1 and testcase2. testcase1 can be used to demonstrate a build that ought to fail when a header is removed, but does not. testcase2 can be used to demonstrate a build whose behavior should change when a header is removed, but does not.\r\n\r\ntestcase1 Steps to Reproduce\r\n1. Open testcase/testcase1/testcase1.xcodeproj in Xcode.\r\n2. Build the project (Build:Build or Command-B). Leave the project open.\r\n3. In the Finder, rename testcase/testcase1/testcase.h, or drag it to the Trash.\r\n4. Back in Xcode, build the project again.\r\n\r\nExpected behavior: The build ought to fail, because main.c depends on testcase.h, which is missing.\r\n\r\nObserved behavior: Xcode does not attempt to recompile anything, and reports “Build succeeded”. If the project is cleaned (Build:Clean or Command-Shift-K) and then built, Xcode correctly reports “Build failed” on gcc’s error, “testcase.h: No such file or directory”.\r\n\r\ntestcase2 Steps to Reproduce\r\n1. Open testcase/testcase2/testcase2.xcodeproj in Xcode.\r\n2. Build the project.\r\n3. Open the console window (Run:Console or Command-Shift-R)\r\n4. Run the program (Run:Run or Command-Option-Return). Note the program’s output in the console window (“FUNNY_WORD is iPhone”). FUNNY_WORD is defined by impl1/testcase.h.\r\n5. In the Finder, rename or remove testcase/testcase2/impl1/testcase.h.\r\n6. Back in Xcode, build the project again. Xcode reports “Build succeeded”.\r\n7. Run the program.\r\n\r\nExpected behavior: After rebuilding and running, the console output should have been “FUNNY_WORD is iPad”. With impl1/testcase.h gone, FUNNY_WORD’s definition should have been provided by impl2/testcase.h. Note that this project has its header search path set to first search impl1 and then impl2.\r\n\r\nObserved behavior: The console output is “FUNNY_WORD is iPhone”. Even though impl1/testcase.h, the file that defined FUNNY_WORD as such is gone, Xcode never rebuilt main.c in step 6. If the project is cleaned, rebuilt, and run again, the program uses the correct value of FUNNY_WORD from impl2."
+    email: mark@chromium.org
+    modified: "2011-08-28T05:41:43.11257Z"
+    number: "7913038"
+    number_intvalue: 7913038
+    originated: 04-27-2010
+    parent_number: "5284753"
+    product: Developer Tools
+    product_version: 3.2.2 10M2148 (1650.0/1648.0/1631.0)
+    reproducible: Always
+    resolved: 05-05-2010
+    status: Duplicate/5284753
+    title: Xcode does not rebuild files when their dependencies (like headers) are deleted

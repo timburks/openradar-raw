@@ -1,0 +1,51 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "28608776"
+    labels:
+        datastore_id: "4943362687762432"
+data:
+    classification: Serious Bug
+    created: "2016-10-04T14:08:18.11848Z"
+    description: |-
+        Summary:
+        The documentation for NSURLSession::getTasksWithCompletionHandler: states:
+
+        “The returned arrays contain any tasks that you have created within the session, not including any tasks that have been invalidated after completing, failing, or being cancelled.”
+
+        So I’d expect suspended tasks to feature in those arrays (the documentation for the newer getAllTasksWithCompletionHandler: is empty but I’d expect the same).
+
+        This is not always the case, however. Suspended tasks do appear if they were at one point started via a “resume” message before being subsequently suspended, but non-started tasks which naturally start in the suspended state do not appear – presenting a clear inconsistency.
+
+        Steps to Reproduce:
+        See the example project (attached, or at https://github.com/Bipsync/ios-nsurlsession-getsuspendedtasks).
+
+        - Create a NSURLSessionTask in a NSURLSession
+        - Observe that its state is NSURLSessionTaskSuspended
+        - Call either getTasksWithCompletionHandler or getAllTasksWithCompletionHandler
+
+        Expected Results:
+        As the task is not complete, failing, or being cancelled, it should be present in the array.
+
+        Actual Results:
+        The task is not present.
+
+        Regression:
+        Unsure
+
+        Notes:
+        I think it would be better if this was addressed in line with the documentation (i.e. rather than excluding suspended tasks in all cases, suspended tasks should always feature in the results irrespective of whether they were ever resumed). Personally, I often find the need to decouple the resumption of tasks from the creation code, so being able to find suspended tasks after their creation is a crucial requirement.
+
+        Example project is at https://github.com/Bipsync/ios-nsurlsession-getsuspendedtasks
+    email: craig@bipsync.com
+    modified: "2016-10-04T14:08:18.11874Z"
+    number: "28608776"
+    number_intvalue: 28608776
+    originated: 04-Oct-2016 03:08 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 10.0.1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: NSURLSession's getAllTasksWithCompletionHandler and getTasksWithCompletionHandler methods don't include suspended tasks unless they've been previously resumed.

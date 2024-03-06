@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: FB9631965
+    labels:
+        datastore_id: "5062329695731712"
+data:
+    classification: Incorrect/Unexpected Behavior
+    created: "2021-09-16T22:02:21.462526Z"
+    description: "(I have also raised this issue on the Developer forums, here: https://developer.apple.com/forums/thread/689468, and raised TSI #779605308)\r\n\r\nI’m trying to use NSMetadataQuery on iOS to track changes to folders users have imported from elsewhere but, no matter what I try, I get no results.\r\n\r\nFollowing the [documentation for searching file metadata with NSMetadataQuery](https://developers.apple.com/library/archive/documentation/Carbon/Conceptual/SpotlightQuery/Concepts/QueryingMetadata.html), I’m creating a live query (albeit in Swift) and listening for […]QueryDidFinishGathering and […]QueryDidUpdate. The former fires, with no results, and the latter never fires.\r\n\r\nI’ve also tried following the [Synchronizing Documents in the iCloud Environment](https://developer.apple.com/documentation/uikit/documents_data_and_pasteboard/synchronizing_documents_in_the_icloud_environment) example, adding the appropriate Ubiquity keys to my Info.plist and .entitlements file, with no change. The sample application, however, works as described, but doesn't really match my use case.\r\n\r\nI’m importing files and folders using [SwiftUI’s View.fileImporter(isPresented:allowedContentTypes:allowsMultipleSelection:onCompletion:)](https://developer.apple.com/documentation/swiftui/view/fileimporter%28ispresented:allowedcontenttypes:allowsmultipleselection:oncompletion:%29), but can’t see how I might security-scope the NSMetadataQuery’s execution (if that’s even a thing?).\r\n\r\nMy test project is on GitHub (https://github.com/SteveMarshall/ios-imported-directory-monitoring), but the main parts are below…\r\n\r\nMy query method:\r\n\r\n```swift\r\nextension NSMetadataQueryUbiquitousExternalDocumentsTestApp {\r\n    func findAccessibleFiles() {\r\n        query.stop()\r\n        fileMonitor?.cancel()\r\n\r\n\r\n        fileMonitor = Publishers.MergeMany(\r\n            [\r\n                .NSMetadataQueryDidFinishGathering,\r\n                .NSMetadataQueryDidUpdate\r\n            ].map { NotificationCenter.default.publisher(for: $0) }\r\n        )\r\n            .receive(on: DispatchQueue.main)\r\n            .sink { notification in\r\n                query.disableUpdates()\r\n                defer { query.enableUpdates() }\r\n\r\n\r\n                foundItems = query.results as! [NSMetadataItem]\r\n                print(\"Query posted \\(notification.name.rawValue) with results: \\(query.results)\")\r\n            }\r\n\r\n\r\n        query.searchScopes = [\r\n            NSMetadataQueryAccessibleUbiquitousExternalDocumentsScope\r\n        ]\r\n        query.predicate = NSPredicate(\r\n            format: \"%K LIKE %@\",\r\n            argumentArray: [NSMetadataItemFSNameKey, \"*\"]\r\n        )\r\n        query.sortDescriptors = [\r\n            NSSortDescriptor(key: NSMetadataItemFSNameKey, ascending: true)\r\n        ]\r\n\r\n\r\n        if query.start() {\r\n            print(\"Query started\")\r\n        } else {\r\n            print(\"Query didn't start for some reason\")\r\n        }\r\n    }\r\n}\r\n```\r\n\r\nSTEPS TO REPRODUCE\r\n- Import external files using View.fileImporter(isPresented:allowedContentTypes:allowsMultipleSelection:onCompletion:)\r\n- Configure and start NSMetadataQuery, per the code provided\r\n- Observe that no results are returned"
+    email: steviebm@gmail.com
+    modified: "2021-09-16T22:02:21.462729Z"
+    number: FB9631965
+    number_intvalue: 9631965
+    originated: 2021/09/16
+    parent_number: '&{NULL_VALUE}'
+    product: Foundation
+    product_version: ""
+    reproducible: ""
+    resolved: ""
+    status: ""
+    title: NSMetadataQuery with NSMetadataQueryAccessibleUbiquitousExternalDocumentsScope does not find files and folders imported into app container

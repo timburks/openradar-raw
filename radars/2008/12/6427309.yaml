@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "6427309"
+    labels:
+        datastore_id: "118"
+data:
+    classification: ""
+    created: "2008-12-08T18:35:58.982709Z"
+    description: "Querying -[NSTimeZone nextDaylightSavingTimeTransitionAfterDate:] with a date beyond 2037-11-01  01:00:00 results in a transition of 2001-04-01 03:00:00 which is not *after* the date.\r\n\r\nTo reproduce, run the following code with startDate around today, and endDate past 2038. It will loop forever:\r\n\r\nNSDate* nextDST = [timeZone nextDaylightSavingTimeTransitionAfterDate:startDate];\r\nwhile ([nextDST isLessThan:endDate]) {\r\n\t// NOTE: using magicNumber is required due to rdar://problem/6425623\r\n\tconst NSTimeInterval magicNumber = 1.5 * 60.0 * 60.0;\r\n\tNSDate* adjustedDST = [nextDST addTimeInterval:magicNumber];\r\n\tNSDate* potentialNextDST = [timeZone nextDaylightSavingTimeTransitionAfterDate:adjustedDST];\r\n\tif (!potentialNextDST || [potentialNextDST isEqualTo:nextDST]) break;\r\n\tnextDST = potentialNextDST;\r\n\tNSLog(@\"nextDST is %@\\n\", potentialNextDST);\r\n}\r\n\r\n\r\nActual results:\r\nThe output will recurringly include the following two lines (in Pacific Time), in both 32- and 64-bit builds:\r\n2008-12-08 10:12:47.222 Mercatalog[499:10b] nextDST is 2037-11-01 01:00:00 -0800\r\n2008-12-08 10:12:47.223 Mercatalog[499:10b] nextDST is 2000-12-31 16:00:00 -0800\r\n\r\n\r\nExpected results:\r\nIf -[NSTimeZone nextDaylightSavingTimeTransitionAfterDate:] is unable to provide a next transition for some reason, it should return nil and never a DST transition *BEFORE* the requested date.\r\n\r\n2008-12-08 10:12:47.222 Mercatalog[499:10b] - nextDST is 2037-11-01 01:00:00 -0800\r\n2008-12-08 10:12:47.223 Mercatalog[499:10b] - nextDST is (null)\r\n\r\nor:\r\n2008-12-08 10:12:47.222 Mercatalog[499:10b] - nextDST is 2037-11-01 01:00:00 -0800\r\n2008-12-08 10:12:47.223 Mercatalog[499:10b] - nextDST is [something like] 2038-03-10 01:00:00 -0800\r\n\r\n\r\n\r\nTo workaround I must replace the (rdar://problem/642562-inspired) check:\r\nif (!potentialNextDST || [potentialNextDST isEqualTo:nextDST]) break;\r\n\r\nwith:\r\nif (!potentialNextDST || [potentialNextDST isLessThanOrEqualTo:nextDST]) break;\r\n\r\n\r\nWhen this bug and rdar://problem/6425623 are fixed, this check should be as simple as:\r\nif (!potentialNextDST) break;\r\n...though in the case of this example loop logic it wouldn't even be necessary by nil-messaging rules!"
+    email: natevw@gmail.com
+    modified: "2011-08-28T05:48:55.75584Z"
+    number: "6427309"
+    number_intvalue: 6427309
+    originated: 08-Dec-2008 10:32 AM
+    parent_number: '&{NULL_VALUE}'
+    product: Mac OS X
+    product_version: 10.5.5
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: -[NSTimeZone nextDaylightSavingTimeTransitionAfterDate:] not 2038-safe

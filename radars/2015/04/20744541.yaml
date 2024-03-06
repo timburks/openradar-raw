@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "20744541"
+    labels:
+        datastore_id: "6681674213490688"
+data:
+    classification: Security Documentation
+    created: "2015-04-29T14:12:02.57845Z"
+    description: "Salvatore Randazzo29-Apr-2015 09:46 AM\r\n\r\nSummary:\r\nre: Apple Developer Technical Support incident/case/Follow-up: 621992615. \r\n\r\n\"Starting with iOS 8, an app’s effective keychain access group list is formed by concatenating the values from the keychain-access-groups, application-identifier, and com.apple.security.application-groups entitlements, in that order.\r\nThere's no documentation on this yet. Please file a bug report...\"\r\n\r\nKeychain group sharing may fail when keychain access groups between apps and extensions are not identical.\r\n\r\nIn our particular case, details from Apple Developer Support:\r\n<---Begin Quote--->\r\n\"In the main iOS app:\r\n\r\n\t\"keychain-access-groups\" = ( \"$(TeamIdentifier).com.paperless.paperlesspost\" ); \r\n\r\nIn your WatchKit extension:\r\n\r\n\t\"keychain-access-groups\" = ( \"$(TeamIdentifier).com.paperless.paperlesspost.watchkitextension\", \r\n\t\t\t\t\t\t\t\"$(TeamIdentifier).com.paperless.paperlesspost\" );\r\n\r\nNormally one creates keychain items without setting the access group attribute kSecAttrAccessGroup. In that case, Keychain Services will automatically set that attribute to the default value. The default value is the value of the first array element in the effective keychain access groups list. That means your iOS app's default keychain access group is \"$(TeamIdentifier).com.paperless.paperlesspost\", but your WatchKit extension's default keychain access group is \"$(TeamIdentifier).com.paperless.paperlesspost.watchkitextension\".\r\n\r\nSo if you create any keychain items in your WatchKit extension, you must set the kSecAttrAccessGroup attribute to \"$(TeamIdentifier).com.paperless.paperlesspost\" if you want your main iOS app to be able to access them too.\r\n\r\n\r\n<--- End Quote --->\r\n\r\nSteps to Reproduce:\r\n- Create and iOS app and extension\r\n- Enable keychain sharing\r\n- For the extension, add a second keychain point to it's own bundle identifier\r\n- Sharing data between the two does not always work, which is OK so long as it's documented \r\n\r\nExpected Results:\r\nKeychain sharing should work OR this should be documented\r\n\r\nActual Results:\r\nKeychain sharing does not work and this is not documented\r\n\r\nVersion:\r\niOS 8+\r\n\r\nNotes:\r\nAs per Apple Developer Support, I would like to request documentation on this issue\r\n\r\nConfiguration:\r\niPhone + Apple Watch\r\n\r\nAttachments:"
+    email: SJ.Randazzo@gmail.com
+    modified: "2015-04-29T14:12:02.57863Z"
+    number: "20744541"
+    number_intvalue: 20744541
+    originated: 04/29/2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: "8.0"
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: Undocumented behavior with keychain sharing

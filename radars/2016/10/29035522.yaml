@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "29035522"
+    labels:
+        datastore_id: "4937325440139264"
+data:
+    classification: Other Bug
+    created: "2016-10-31T23:42:29.49074Z"
+    description: "Summary:\r\nIn a UIWebView, when attempting to set a URL on the document.documentElement which ends in \"==\", the URL is incorrectly loaded as \"about:blank\" on iOS 10 devices.\r\n\r\nSteps to Reproduce:\r\nDownload sample project.\r\nRun sample application on an iOS 9 simulator or physical device (any model).\r\nWhen the UIWebView loads, tap on the button that says \"clickme.\"\r\nObserve the correct URL is logged (onStatusChange://eyJ1c2VyTmFtZSI6IkpBTCIsLCJwcm92aWRlciI6IkVtYWlsIn0==)\r\n\r\nNow stop the application and run it again on an iOS 10 simulator or physical device (any model).\r\nWhen the UIWebView loads, tap on the button that says \"clickme.\"\r\nObserve that the URL is not logged, as the webview has tried to load  the \"about:blank\" page.\r\n\r\nExpected Results:\r\nI would expect the URL (onStatusChange://eyJ1c2VyTmFtZSI6IkpBTCIsLCJwcm92aWRlciI6IkVtYWlsIn0==) to load the same way on both iOS 9 and 10 runtimes.\r\n\r\nActual Results:\r\nThe iOS 10 runtime does not load the URL properly.\r\n\r\nVersion:\r\niOS 10.x.x\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nAny iOS 9 and 10 devices or simulators\r\n\r\nAttachments:\r\n'WebViewSwift3.zip' was successfully uploaded.\r\n\r\nSample Code:\r\n\r\nimport UIKit\r\n\r\nclass ViewController: UIViewController {\r\n    \r\n    @IBOutlet weak var webView: UIWebView!\r\n    \r\n    var testHTML = \"<html>\" +\r\n    \"<body><input id=\\\"clickMe\\\" type=\\\"button\\\" value=\\\"clickme\\\" onclick=\\\"changeWindow();\\\" /></body>\" +\r\n    \"<script type=\\\"text/javascript\\\">\" +\r\n    \"function changeWindow() {\" +\r\n    \"iFrame = this.createIFrame('onStatusChange://eyJ1c2VyTmFtZSI6IkpBTCIsLCJwcm92aWRlciI6IkVtYWlsIn0==');\" +\r\n    \"iFrame.parentNode.removeChild(iFrame);\" +\r\n    \"}\" +\r\n    \"function createIFrame(src) {\" +\r\n    \"var rootElm = document.documentElement;\" +\r\n    \"var newFrameElm = document.createElement('IFRAME');\" +\r\n    \"newFrameElm.setAttribute('src', src);\" +\r\n    \"rootElm.appendChild(newFrameElm);\" +\r\n    \"return newFrameElm;\" +\r\n    \"}\" +\r\n    \"</script>\" +\r\n    \"</html>\"\r\n\r\n    override func viewDidLoad() {\r\n        super.viewDidLoad()\r\n        \r\n        webView.loadHTMLString(testHTML, baseURL: nil)\r\n        webView.delegate = self\r\n    }\r\n}\r\n\r\nextension ViewController: UIWebViewDelegate {\r\n    \r\n    func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {\r\n        print(request.url!.absoluteString)\r\n        \r\n        return true\r\n    }\r\n    \r\n    func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {\r\n        print(error)\r\n    }\r\n}"
+    email: Josh.Lieberman92@gmail.com
+    modified: "2016-10-31T23:47:09.58854Z"
+    number: "29035522"
+    number_intvalue: 29035522
+    originated: 31-Oct-2016
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: iOS 10
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: UIWebView incorrectly loads URLs that end with two equals sign characters from JavaScript on iOS 10

@@ -1,0 +1,22 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "23223338"
+    labels:
+        datastore_id: "5022371043868672"
+data:
+    classification: Crash
+    created: "2015-10-23T18:14:00.15799Z"
+    description: "Summary:\r\nWe're getting a fair number of crashes due to issues with synchronized access to NSPersistentStoreCoordinator's NSSQLConnection. It looks like there's a situation where the coordinator chooses not to use the barrier queue, despite it being necessary (See Thread 9 in crash). When the main queue context attempts to do a fetch at the same time, NSQLConnection checks _statement and throws 'NSInternalInconsistencyException', reason: 'statement is still active' because the background context's fetch is still happening.\r\n\r\nOur setup is kinda weird. We have two contexts in a parent/child relationship and a third context, all sharing the same persistence coordinator. I'm not clear on how relevant that is to the issue.\r\n\r\n\r\nGritty investigation details:\r\nIt looks like you're using pthread data to keep track of which queues the thread has gone through, and under some circumstance this doesn't get cleaned up correctly. In the case of the crash I'm seeing, it looks like [what I'm assuming is] an anti-deadlock mechanism incorrectly believes it's already past the persistence coordinator's barrier and starts executing code that uses the NSSQLConnection immediately.\r\n\r\nMy suspicion is there's some exception that gets caught, which leads to an instance of gutsOfBlockToNSPersistentStoreCoordinatorPerform not getting executed to completion. Unfortunately it doesn't seem to be on our side, as none of our @catch blocks appear to fire before the crash.\r\n\r\nSteps to Reproduce:\r\nThe actual setup for this is probably pretty convoluted, but basically imagine you have our codebase, which has a few contexts: a parent, a child, and a non-nested one.\r\n\r\n1. <Have Our Setup>\r\n2. Schedule a timer to run a ton of UI updates using the child thread\r\n3. Schedule a timer to run a ton of fetches on the non-nested context\r\n4. Wait a few minutes\r\n5. <Something happens>\r\n6. Non-nested context gets its fetch request executed without synchronizing with the barrier queue\r\n7. Child context correctly uses barrier queue, despite it having been rendered symbolic in Step 6\r\n5. Crash when the child context attempts to use the SQLConnection at the same time as the non-nested context.\r\n\r\nExpected Results:\r\nThe coordinator's barrier queue is used correctly.\r\n\r\nActual Results:\r\nThe coordinator's barrier queue can be bypassed despite not having synchronized with it previously.\r\n\r\nVersion:\r\niOS 8.4-9.0.1, iOS SDK 8-9\r\n\r\nNotes:\r\n\r\n\r\nConfiguration:\r\nAny device"
+    email: cwilliams@fitbit.com
+    modified: "2015-10-23T18:14:00.15819Z"
+    number: "23223338"
+    number_intvalue: 23223338
+    originated: 22-Oct-2015
+    parent_number: '&{NULL_VALUE}'
+    product: iOS SDK
+    product_version: ""
+    reproducible: Sometimes
+    resolved: ""
+    status: Open
+    title: 'CoreData: Private-queue context occasionally skips persistence controller''s barrier queue'

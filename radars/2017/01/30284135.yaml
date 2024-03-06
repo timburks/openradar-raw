@@ -1,0 +1,42 @@
+apiVersion: openapi/v1alpha1
+kind: Radar
+metadata:
+    name: "30284135"
+    labels:
+        datastore_id: "6153027140452352"
+data:
+    classification: Enhancement
+    created: "2017-01-31T12:54:32.42856Z"
+    description: |-
+        When calling -[UIViewController dismissViewControllerAnimated:completion:] this method checks if the receiver has a presented view controller. If it has one, it will dismiss this view controller, making the receiver of this method the top most view controller. However, if the receiver does not have a presented view controller, it checks for presentingViewControler and forwards this message to it, if there is one.
+
+        This leads to some pitfalls that could easily be avoided by designing this API without the forwarding part. One thing that happens quite easily is this:
+
+        - View controller R presents a view controller A.
+        - View controller A presents another view controller B.
+        - View controller A then calls dismissViewControllerAnimated:completion:
+        - Immediately after that - maybe through some complex architecture - it triggers a second call to dismissViewControllerAnimated:completion:
+        - View controller A will now dismiss view controller B
+        - After that it will dismiss itself, making view controller R the top most view controller as the second call to dismissViewControllerAnimated:completion: checks for a presentedViewController which by now is nil (because the calls to these methods are delayed by UIKit) and thus forward the call to view controller R
+
+        This can be worked around by always checking `isBeingDismissed` on the receiver and only call dismissViewControllerAnimated:completion: if this returns NO, however this is a lot of boilerplate and can easily be forgotten.
+
+        I therefore propose the following:
+
+        - The receiver should not check presentingViewController but instead should do nothing if presentedViewController is nil
+        - As this would be a breaking API change, there should be a new method introduced with has the described behavior and also makes it clear that this method should be called on the view controller that is presenting the other view controller (i.e. on the same view controller that presentViewController:animated:completion: was called on). This method could be named `dismissPresentedViewControllerAnimated:completion:`
+        - With the new method, dismissViewControllerAnimated:completion: should be deprecated
+
+        The new method name matches the `presentedViewController` property and makes it clear that the view controller being dismissed is the one that represents the current value of this property. See rdar://30263707
+    email: steipete@gmail.com
+    modified: "2017-01-31T12:54:32.42881Z"
+    number: "30284135"
+    number_intvalue: 30284135
+    originated: 31-Jan-2017 01:54 PM
+    parent_number: '&{NULL_VALUE}'
+    product: iOS
+    product_version: 10.3b1
+    reproducible: Always
+    resolved: ""
+    status: Open
+    title: -[UIViewController dismissViewControllerAnimated:completion:] should not reach out to presentingViewController
